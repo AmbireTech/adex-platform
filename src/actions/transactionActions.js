@@ -303,6 +303,35 @@ export function validateIdentityWithdraw({
 	}
 }
 
+export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
+	return async function(dispatch, getState) {
+		try {
+			const account = selectAccount(getState())
+			const result = await withdrawFromIdentity({
+				account,
+				amountToWithdraw,
+				withdrawTo,
+			})
+			addToast({
+				type: 'accept',
+				label: t('IDENTITY_WITHDRAW_NOTIFICATION', {
+					args: [result],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		} catch (err) {
+			console.error('ERR_IDENTITY_WITHDRAW_NOTIFICATION', err)
+			addToast({
+				type: 'cancel',
+				label: t('ERR_IDENTITY_WITHDRAW_NOTIFICATION', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+	}
+}
+
 export function updateIdentityPrivilege({ setAddr, privLevel }) {
 	return async function(dispatch, getState) {
 		try {
