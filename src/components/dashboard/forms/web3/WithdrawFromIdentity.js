@@ -36,7 +36,6 @@ const WithdrawFromIdentity = ({ stepsId, validateId } = {}) => {
 	return (
 		<div>
 			<div>
-				{' '}
 				{t('EXCHANGE_CURRENT_MAIN_TOKEN_BALANCE_AVAILABLE_ON_IDENTITY', {
 					args: [max, symbol],
 				})}
@@ -49,7 +48,6 @@ const WithdrawFromIdentity = ({ stepsId, validateId } = {}) => {
 				label={t('WITHDRAW_TO')}
 				name='withdrawTo'
 				value={withdrawTo || ''}
-				// onChange={ev => handleChange('withdrawTo', ev.target.value)}
 				onChange={ev =>
 					execute(
 						updateNewTransaction({
@@ -64,10 +62,11 @@ const WithdrawFromIdentity = ({ stepsId, validateId } = {}) => {
 			/>
 			{spinner ? <InputLoading /> : null}
 			<TextField
+				disabled={spinner}
 				type='text'
 				fullWidth
 				required
-				label={t('TOKENS_TO_WITHDRAW')}
+				label={t('PROP_WITHDRAWAMOUNT')}
 				name='amountToWithdraw'
 				value={amountToWithdraw || ''}
 				onChange={ev =>
