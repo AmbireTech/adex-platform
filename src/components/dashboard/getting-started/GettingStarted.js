@@ -21,8 +21,8 @@ import {
 	KeyboardArrowRight,
 	ExpandMore,
 	Close,
-	Star,
-	StarBorder,
+	CheckCircleOutline,
+	CheckCircle,
 } from '@material-ui/icons'
 import EmailEddie from 'resources/getting-started/GS-email-ic.png'
 import FundEddie from 'resources/getting-started/GS-fund-ic.png'
@@ -69,7 +69,11 @@ const useStyles = makeStyles(theme => {
 			marginBottom: theme.spacing(1),
 		},
 		expansionPanel: {
-			color: stepperBackgroundColor,
+			color: theme.palette.common.white,
+			backgroundColor: stepperBackgroundColor,
+			'& .MuiExpansionPanelSummary-expandIcon': {
+				color: theme.palette.common.white,
+			},
 		},
 	}
 })
@@ -224,13 +228,13 @@ export default function GettingStarted(props) {
 		sideSteps.length && (
 			<Box mb={2}>
 				<ExpansionPanel
-					classes={{ root: classes.expansionPanel }}
 					expanded={expanded}
 					onChange={() => execute(setGettingStartedExpanded(!expanded))}
 					square={true}
 				>
 					<ExpansionPanelSummary
 						expandIcon={<ExpandMore />}
+						classes={{ root: classes.expansionPanel }}
 						aria-controls='expand-getting-started'
 						id='getting-started-header'
 					>
@@ -242,12 +246,14 @@ export default function GettingStarted(props) {
 							justifyContent='space-between'
 						>
 							<Typography variant={'h6'}>
-								{t('GETTING_STARTED_HEADING')}
+								{`${t('GETTING_STARTED_HEADING')} ${
+									side === 'publisher' ? t('PUBLISHER') : t('ADVERTISER')
+								}`}
 							</Typography>
 
 							<Box display='flex' flexDirection='row' alignItems='center'>
 								{sideSteps.map(({ label, icon, check }, index) => {
-									const Icon = check ? Star : StarBorder
+									const Icon = check ? CheckCircle : CheckCircleOutline
 									const color = check ? 'secondary' : 'inherit'
 
 									return (
