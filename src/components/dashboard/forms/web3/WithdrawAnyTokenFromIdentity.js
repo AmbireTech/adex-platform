@@ -1,197 +1,140 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import actions from 'actions'
-// import Translate from 'components/translate/Translate'
-import NewTransactionHoc from './TransactionHoc'
+import { useSelector } from 'react-redux'
 import TextField from '@material-ui/core/TextField'
-import { validateNumber } from 'helpers/validators'
 import { InputLoading } from 'components/common/spinners/'
+import {
+	t,
+	selectValidationsById,
+	selectNewTransactionById,
+	selectSpinnerById,
+} from 'selectors'
+import { execute, updateNewTransaction } from 'actions'
+import { Alert } from '@material-ui/lab'
 
-class WithdrawAnyTokenFromIdentity extends Component {
-	componentDidMount() {
-		const { validate, transaction } = this.props
-		// If nothing entered will validate
-		if (!transaction.amountToWithdraw) {
-			validate('amountToWithdraw', {
-				isValid: true,
-				dirty: false,
-			})
-		}
-		if (!transaction.withdrawTo) {
-			validate('withdrawTo', {
-				isValid: false,
-				err: { msg: 'ERR_REQUIRED_FIELD' },
-				dirty: false,
-			})
-		}
-		if (!transaction.tokenAddress) {
-			validate('tokenAddress', {
-				isValid: false,
-				err: { msg: 'ERR_REQUIRED_FIELD' },
-				dirty: false,
-			})
-		}
-	}
+const WithdrawAnyTokenFromIdentity = ({ stepsId, validateId } = {}) => {
+	const {
+		amountToWithdraw,
+		withdrawTo,
+		tokenAddress,
+		tokenDecimals,
+	} = useSelector(state => selectNewTransactionById(state, stepsId))
 
-	validateAmount = (numStr, dirty) => {
-		let isValid = validateNumber(numStr)
-		let msg = 'ERR_INVALID_AMOUNT_VALUE'
+	const spinner = useSelector(state => selectSpinnerById(state, validateId))
 
-		this.props.validate('amountToWithdraw', {
-			isValid: isValid,
-			err: { msg: msg },
-			dirty: dirty,
-		})
-	}
+	const {
+		amountToWithdraw: errAmount,
+		withdrawTo: errAddr,
+		tokenAddress: errTokenAddress,
+		tokenDecimals: errTokenDecimals,
+		fees: errFees,
+	} = useSelector(state => selectValidationsById(state, validateId) || {})
 
-	render() {
-		const {
-			actions,
-			validate,
-			transaction,
-			t,
-			invalidFields,
-			handleChange,
-			withdrawToSpinner,
-			balanceAnySpinner,
-		} = this.props
-		const {
-			withdrawTo,
-			amountToWithdraw,
-			tokenAddress,
-			tokenBalance,
-			tokenDecimals,
-		} = transaction || {}
-		const errAmount = invalidFields['amountToWithdraw']
-		const errAddr = invalidFields['withdrawTo']
-		const errToken = invalidFields['tokenAddress']
-		return (
-			<div>
-				<TextField
-					disabled={balanceAnySpinner}
-					type='text'
-					required
-					fullWidth
-					label={t('WITHDRAW_TOKEN_ADDRESS')}
-					name='tokenAddress'
-					value={tokenAddress || ''}
-					onChange={ev => handleChange('tokenAddress', ev.target.value)}
-					onBlur={() =>
-						actions.validateAddress({
-							addr: tokenAddress,
-							dirty: true,
-							validate,
-							name: 'tokenAddress',
+	return (
+		<div>
+			<TextField
+				disabled={spinner}
+				type='text'
+				required
+				fullWidth
+				label={t('WITHDRAW_TOKEN_ADDRESS')}
+				name='tokenAddress'
+				value={tokenAddress || ''}
+				onChange={ev =>
+					execute(
+						updateNewTransaction({
+							tx: stepsId,
+							key: 'tokenAddress',
+							value: ev.target.value,
 						})
-					}
-					onFocus={() =>
-						actions.validateAddress({
-							addr: tokenAddress,
-							dirty: false,
-							validate,
-							name: 'tokenAddress',
-						})
-					}
-					error={errToken && !!errToken.dirty}
-					helperText={errToken && !!errToken.dirty ? errToken.errMsg : ''}
-				/>
+					)
+				}
+				error={errTokenAddress && !!errTokenAddress.dirty}
+				helperText={
+					errTokenAddress && !!errTokenAddress.dirty
+						? errTokenAddress.errMsg
+						: ''
+				}
+			/>
 
-				<TextField
-					type='text'
-					fullWidth
-					required
-					label={t('TOKENS_TO_WITHDRAW_DECIMALS')}
-					name='tokenDecimals'
-					value={tokenDecimals || ''}
-					onChange={ev => handleChange('tokenDecimals', ev.target.value)}
-				/>
-				<TextField
-					disabled={withdrawToSpinner}
-					type='text'
-					required
-					fullWidth
-					label={t('WITHDRAW_TO')}
-					name='withdrawTo'
-					value={withdrawTo || ''}
-					onChange={ev => handleChange('withdrawTo', ev.target.value)}
-					onBlur={() =>
-						actions.validateAddress({
-							addr: withdrawTo,
-							dirty: true,
-							validate,
-							name: 'withdrawTo',
-							nonERC20: true,
+			<TextField
+				type='text'
+				disabled={spinner}
+				fullWidth
+				required
+				label={t('TOKENS_TO_WITHDRAW_DECIMALS')}
+				name='tokenDecimals'
+				value={tokenDecimals || ''}
+				onChange={ev =>
+					execute(
+						updateNewTransaction({
+							tx: stepsId,
+							key: 'tokenDecimals',
+							value: ev.target.value,
 						})
-					}
-					onFocus={() =>
-						actions.validateAddress({
-							addr: withdrawTo,
-							dirty: false,
-							validate,
-							name: 'withdrawTo',
-							nonERC20: true,
+					)
+				}
+				error={errTokenDecimals && !!errTokenDecimals.dirty}
+				helperText={
+					errTokenDecimals && !!errTokenDecimals.dirty
+						? errTokenDecimals.errMsg
+						: ''
+				}
+			/>
+			<TextField
+				disabled={spinner}
+				type='text'
+				required
+				fullWidth
+				label={t('WITHDRAW_TO')}
+				name='withdrawTo'
+				value={withdrawTo || ''}
+				onChange={ev =>
+					execute(
+						updateNewTransaction({
+							tx: stepsId,
+							key: 'withdrawTo',
+							value: ev.target.value,
 						})
-					}
-					error={errAddr && !!errAddr.dirty}
-					helperText={errAddr && !!errAddr.dirty ? errAddr.errMsg : ''}
-				/>
-				{withdrawToSpinner ? <InputLoading /> : null}
-				<TextField
-					type='text'
-					fullWidth
-					required
-					label={t('TOKENS_AMOUNT_TO_WITHDRAW')}
-					name='amountToWithdraw'
-					value={amountToWithdraw || ''}
-					onChange={ev => handleChange('amountToWithdraw', ev.target.value)}
-					onBlur={() => this.validateAmount(amountToWithdraw, true)}
-					onFocus={() => this.validateAmount(amountToWithdraw, false)}
-					error={errAmount && !!errAmount.dirty}
-					helperText={
-						errAmount && !!errAmount.dirty
-							? errAmount.errMsg
-							: t('MAX_AMOUNT_TO_WITHDRAW', {
-									args: [tokenBalance],
-							  })
-					}
-				/>
-			</div>
-		)
-	}
+					)
+				}
+				error={errAddr && !!errAddr.dirty}
+				helperText={errAddr && !!errAddr.dirty ? errAddr.errMsg : ''}
+			/>
+			{spinner ? <InputLoading /> : null}
+			<TextField
+				disabled={spinner}
+				type='text'
+				fullWidth
+				required
+				label={t('PROP_WITHDRAWAMOUNT')}
+				name='amountToWithdraw'
+				value={amountToWithdraw || ''}
+				onChange={ev =>
+					execute(
+						updateNewTransaction({
+							tx: stepsId,
+							key: 'amountToWithdraw',
+							value: ev.target.value,
+						})
+					)
+				}
+				error={errAmount && !!errAmount.dirty}
+				helperText={errAmount && !!errAmount.dirty ? errAmount.errMsg : ''}
+			/>
+			{errFees && errFees.dirty && errFees.errMsg && (
+				<Alert variant='outlined' severity='error'>
+					{errFees.errMsg}
+				</Alert>
+			)}
+		</div>
+	)
 }
 
 WithdrawAnyTokenFromIdentity.propTypes = {
-	actions: PropTypes.object.isRequired,
-	label: PropTypes.string,
-	txId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 	stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-	transaction: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired,
+	validateId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+		.isRequired,
 }
 
-function mapStateToProps(state, props) {
-	// const persist = state.persist
-	const memory = state.memory
-	const txId = props.stepsId
-	return {
-		txId: txId,
-		withdrawToSpinner: memory.spinners['withdrawTo'],
-		balanceAnySpinner: memory.spinners['tokenAddress'],
-	}
-}
-
-function mapDispatchToProps(dispatch) {
-	return {
-		actions: bindActionCreators(actions, dispatch),
-	}
-}
-
-const WithdrawAnyTokenFromIdentityForm = NewTransactionHoc(
-	WithdrawAnyTokenFromIdentity
-)
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(WithdrawAnyTokenFromIdentityForm)
+export default WithdrawAnyTokenFromIdentity
