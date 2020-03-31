@@ -329,13 +329,14 @@ export async function addIdentityENS({ username = '', account, getFeesOnly }) {
 	})
 
 	const { mainToken } = selectRelayerConfig()
-	const { total } = await getIdentityTxnsTotalFees({
+	const { total, totalBN } = await getIdentityTxnsTotalFees({
 		txnsByFeeToken,
 		mainToken,
 	})
 	if (getFeesOnly) {
 		return {
 			fees: total,
+			feesBN: totalBN,
 		}
 	}
 
