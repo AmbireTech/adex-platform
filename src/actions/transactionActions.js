@@ -10,6 +10,7 @@ import {
 	addToast,
 	validateFees,
 	validateENS,
+	validateNumberString,
 } from 'actions'
 import {
 	selectNewTransactionById,
@@ -29,6 +30,7 @@ import {
 	withdrawFromIdentity,
 	setIdentityPrivilege,
 	addIdentityENS,
+	withdrawOtherTokensFromIdentity,
 } from 'services/smart-contracts/actions/identity'
 import Helper from 'helpers/miscHelpers'
 
@@ -206,6 +208,35 @@ export function validatePrivilegesChange({
 	}
 }
 
+export function updateIdentityPrivilege({ setAddr, privLevel }) {
+	return async function(dispatch, getState) {
+		try {
+			const account = selectAccount(getState())
+			const result = await setIdentityPrivilege({
+				account,
+				setAddr,
+				privLevel,
+			})
+			addToast({
+				type: 'accept',
+				label: t('IDENTITY_SET_ADDR_PRIV_NOTIFICATION', {
+					args: [result],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		} catch (err) {
+			console.error('ERR_IDENTITY_SET_ADDR_PRIV_NOTIFICATION', err)
+			addToast({
+				type: 'cancel',
+				label: t('ERR_IDENTITY_SET_ADDR_PRIV_NOTIFICATION', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+	}
+}
+
 export function validateIdentityWithdraw({
 	stepsId,
 	validateId,
@@ -291,6 +322,132 @@ export function validateIdentityWithdraw({
 	}
 }
 
+export function validateIdentityWithdrawAny({
+	stepsId,
+	validateId,
+	dirty,
+	onValid,
+	onInvalid,
+}) {
+	return async function(dispatch, getState) {
+		await updateSpinner(validateId, true)(dispatch)
+		await updateAccountIdentityData()(dispatch, getState)
+
+		const state = getState()
+		const account = selectAccount(state)
+		const {
+			amountToWithdraw,
+			withdrawTo,
+			tokenAddress,
+			tokenDecimals,
+		} = selectNewTransactionById(state, stepsId)
+		const authType = selectAuthType(state)
+
+		const inputValidations = await Promise.all([
+			validateEthAddress({
+				validateId,
+				addr: withdrawTo,
+				prop: 'withdrawTo',
+				nonERC20: true,
+				nonZeroAddr: true,
+				authType,
+				dirty,
+			})(dispatch),
+			validateEthAddress({
+				validateId,
+				addr: tokenAddress,
+				prop: 'tokenAddress',
+				nonERC20: false,
+				nonZeroAddr: true,
+				authType,
+				dirty,
+			})(dispatch),
+			validateNumberString({
+				validateId,
+				prop: 'amountToWithdraw',
+				value: amountToWithdraw,
+				dirty,
+			})(dispatch),
+			validateNumberString({
+				validateId,
+				prop: 'tokenDecimals',
+				value: tokenDecimals,
+				integerOnly: true,
+				dirty,
+			})(dispatch),
+		])
+
+		let isValid = inputValidations.every(v => v === true)
+
+		let feesData = null
+
+		if (isValid) {
+			try {
+				feesData = await withdrawOtherTokensFromIdentity({
+					account,
+					amountToWithdraw,
+					withdrawTo,
+					getFeesOnly: true,
+				})
+
+				await updateNewTransaction({
+					tx: stepsId,
+					key: 'feesData',
+					value: feesData,
+				})(dispatch, getState)
+
+				isValid = await validateFees({
+					validateId,
+					feesAmountBN: feesData.totalBN,
+					amountToSpendBN: feesData.actualWithdrawAmount,
+					dirty,
+				})(dispatch, getState)
+			} catch (err) {
+				isValid = false
+			}
+		}
+
+		await handleAfterValidation({ isValid, onValid, onInvalid })
+
+		await updateSpinner(validateId, false)(dispatch)
+	}
+}
+
+export function identityWithdrawAny({
+	amountToWithdraw,
+	withdrawTo,
+	tokenAddress,
+	tokenDecimals,
+}) {
+	return async function(dispatch, getState) {
+		try {
+			const account = selectAccount(getState())
+			const result = await withdrawOtherTokensFromIdentity({
+				account,
+				amountToWithdraw,
+				withdrawTo,
+				tokenAddress,
+				tokenDecimals,
+			})
+
+			addToast({
+				type: 'accept',
+				label: t('IDENTITY_WITHDRAW_NOTIFICATION', { args: [result] }),
+				timeout: 20000,
+			})(dispatch)
+		} catch (err) {
+			console.error('ERR_IDENTITY_WITHDRAW_NOTIFICATION', err)
+			addToast({
+				type: 'cancel',
+				label: t('ERR_IDENTITY_WITHDRAW_NOTIFICATION', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+	}
+}
+
 export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
 	return async function(dispatch, getState) {
 		try {
@@ -312,35 +469,6 @@ export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
 			addToast({
 				type: 'cancel',
 				label: t('ERR_IDENTITY_WITHDRAW_NOTIFICATION', {
-					args: [getErrorMsg(err)],
-				}),
-				timeout: 20000,
-			})(dispatch)
-		}
-	}
-}
-
-export function updateIdentityPrivilege({ setAddr, privLevel }) {
-	return async function(dispatch, getState) {
-		try {
-			const account = selectAccount(getState())
-			const result = await setIdentityPrivilege({
-				account,
-				setAddr,
-				privLevel,
-			})
-			addToast({
-				type: 'accept',
-				label: t('IDENTITY_SET_ADDR_PRIV_NOTIFICATION', {
-					args: [result],
-				}),
-				timeout: 20000,
-			})(dispatch)
-		} catch (err) {
-			console.error('ERR_IDENTITY_SET_ADDR_PRIV_NOTIFICATION', err)
-			addToast({
-				type: 'cancel',
-				label: t('ERR_IDENTITY_SET_ADDR_PRIV_NOTIFICATION', {
 					args: [getErrorMsg(err)],
 				}),
 				timeout: 20000,
