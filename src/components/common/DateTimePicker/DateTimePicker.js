@@ -125,7 +125,7 @@ function WeekSelectDatePicker({ classes, calendarIcon, icon, ...rest }) {
 		<DatePicker
 			label='Week picker'
 			value={selectedDate}
-			onChange={val => handleWeekChange(val)}
+			onChange={handleWeekChange}
 			renderDay={renderWrappedWeekDay}
 			labelFunc={formatWeekSelectLabel}
 			InputProps={{
