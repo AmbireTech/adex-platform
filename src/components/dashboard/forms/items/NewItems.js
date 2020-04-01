@@ -28,6 +28,7 @@ import {
 	validateNewCampaignFinance,
 	validateNewCampaignAdUnits,
 	validateNewSlotBasics,
+	validateNewSlotPassback,
 } from 'actions'
 
 const SaveBtn = ({ newItem, t, save, ...rest }) => {
@@ -84,9 +85,9 @@ export const NewUnitSteps = props => (
 		itemType={'AdUnit'}
 		stepsId={'new-adunit-'}
 		steps={[
-			{ title: 'UNIT_BASIC_STEP', page: AdUnitBasic },
-			{ title: 'UNIT_MEDIA_STEP', page: AdUnitMedia },
-			{ title: 'UNIT_TARGETS_STEP', page: AdUnitTargeting },
+			{ title: 'UNIT_BASIC_STEP', component: AdUnitBasic },
+			{ title: 'UNIT_MEDIA_STEP', component: AdUnitMedia },
+			{ title: 'UNIT_TARGETS_STEP', component: AdUnitTargeting },
 			{
 				title: 'PREVIEW_AND_SAVE_ITEM',
 				page: AdUnitFormPreview,
@@ -131,8 +132,8 @@ export const NewCampaignSteps = props => (
 		steps={[
 			{
 				title: 'CAMPAIGN_UNITS_STEP',
-				page: CampaignUnits,
-				pageValidation: ({ validateId, dirty, onValid, onInvalid }) =>
+				component: CampaignUnits,
+				validationFn: ({ validateId, dirty, onValid, onInvalid }) =>
 					execute(
 						validateNewCampaignAdUnits({
 							validateId,
@@ -146,8 +147,8 @@ export const NewCampaignSteps = props => (
 			// { title: 'CAMPAIGN_TARGETING_STEP', page: CampaignTargeting },
 			{
 				title: 'CAMPAIGN_FINANCE_STEP',
-				page: CampaignFinance,
-				pageValidation: ({ validateId, dirty, onValid, onInvalid }) =>
+				component: CampaignFinance,
+				validationFn: ({ validateId, dirty, onValid, onInvalid }) =>
 					execute(
 						validateNewCampaignFinance({
 							validateId,
@@ -191,8 +192,8 @@ export const NewSlotSteps = props => (
 		steps={[
 			{
 				title: 'SLOT_BASIC_STEP',
-				page: AdSlotBasic,
-				pageValidation: ({ validateId, dirty, onValid, onInvalid }) =>
+				component: AdSlotBasic,
+				validationFn: ({ validateId, dirty, onValid, onInvalid }) =>
 					execute(
 						validateNewSlotBasics({
 							validateId,
@@ -202,9 +203,13 @@ export const NewSlotSteps = props => (
 						})
 					),
 			},
-			{ title: 'SLOT_PASSBACK_STEP', page: AdSlotMedia },
-			{ title: 'SLOT_TAGS_STEP', page: AdSlotTargeting },
-			{ title: 'PREVIEW_AND_SAVE_ITEM', page: AdSlotPreview, final: true },
+			{
+				title: 'SLOT_PASSBACK_STEP',
+				component: AdSlotMedia,
+				validationFn: props => execute(validateNewSlotPassback(props)),
+			},
+			{ title: 'SLOT_TAGS_STEP', component: AdSlotTargeting },
+			{ title: 'PREVIEW_AND_SAVE_ITEM', component: AdSlotPreview, final: true },
 		]}
 		imgLabel='SLOT_AVATAR_IMG_LABEL'
 		imgAdditionalInfo='SLOT_AVATAR_IMG_INFO'
