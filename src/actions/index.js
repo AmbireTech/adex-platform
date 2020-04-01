@@ -1,6 +1,7 @@
 import * as common from './common'
 import * as uiActions from './uiActions'
 import * as validationActions from './validationActions'
+import * as mediaValidations from './mediaValidations'
 import * as itemActions from './itemActions'
 import * as accountActions from './accountActions'
 import * as identityActions from './identityActions'
@@ -17,6 +18,7 @@ export default {
 	...common,
 	...uiActions,
 	...validationActions,
+	...mediaValidations,
 	...itemActions,
 	...accountActions,
 	...identityActions,
@@ -33,6 +35,7 @@ export default {
 // execute(addTost())
 export * from './common'
 export * from './validationActions'
+export * from './mediaValidations'
 export * from './uiActions'
 export * from './itemActions'
 export * from './accountActions'
