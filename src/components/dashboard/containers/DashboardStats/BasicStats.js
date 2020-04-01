@@ -7,7 +7,9 @@ import Grid from '@material-ui/core/Grid'
 import { VALIDATOR_ANALYTICS_TIMEFRAMES } from 'constants/misc'
 import StatsCard from './StatsCard'
 import { makeStyles } from '@material-ui/core/styles'
-import DateTimePicker from 'components/common/DateTimePicker'
+import DateTimePicker, {
+	WeeklyDatePicker,
+} from 'components/common/DateTimePicker'
 import {
 	Visibility,
 	MonetizationOn,
@@ -171,7 +173,14 @@ export function BasicStats({ side }) {
 							/>
 						</Box>
 						<Box>
-							<DateTimePicker
+							<WeeklyDatePicker
+								emptyLabel={t('SET_CAMPAIGN_START')}
+								disablePast
+								fullWidth
+								calendarIcon
+								label={t('ANALYTICS_RANGE')}
+							/>
+							{/* <DateTimePicker
 								emptyLabel={t('SET_CAMPAIGN_START')}
 								disablePast
 								fullWidth
@@ -189,7 +198,7 @@ export function BasicStats({ side }) {
 								// 		? errFrom.errMsg
 								// 		: t('CAMPAIGN_STARTS_FROM_HELPER_TXT')
 								// }
-							/>
+							/> */}
 						</Box>
 					</StatsCard>
 					<StatsCard
