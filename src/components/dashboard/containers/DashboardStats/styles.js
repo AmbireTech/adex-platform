@@ -25,10 +25,11 @@ export const styles = theme => {
 		},
 		cardIcon: {
 			position: 'absolute',
-			bottom: '-25px',
-			right: '0px',
-			fontSize: '100px',
+			bottom: '-33px',
+			right: '-33px',
+			fontSize: '120px',
 			opacity: '0.4',
+			transform: 'rotate(-45deg)',
 		},
 	}
 }
