@@ -2,7 +2,6 @@ import * as types from 'constants/actionTypes'
 import {
 	uploadImage,
 	postAdUnit,
-	postAdSlot,
 	updateAdSlot,
 	updateAdUnit,
 	updateCampaign,
@@ -21,7 +20,6 @@ import { SOURCES } from 'constants/targeting'
 import {
 	selectRelayerConfig,
 	selectAuthSig,
-	selectMainToken,
 	selectAccount,
 	selectAuth,
 } from 'selectors'
@@ -35,7 +33,7 @@ const addToast = ({ type, toastStr, args, dispatch }) => {
 	})(dispatch)
 }
 
-const getImgsIpfsFromBlob = ({ tempUrl, authSig }) => {
+export const getImgsIpfsFromBlob = ({ tempUrl, authSig }) => {
 	return fetch(tempUrl)
 		.then(resp => {
 			return resp.blob()
@@ -90,82 +88,6 @@ export function addUnit(item) {
 				type: 'cancel',
 				toastStr: 'ERR_CREATING_ITEM',
 				args: ['AdUnit', err],
-			})
-		}
-	}
-}
-
-export function addSlot(item) {
-	const newItem = { ...item }
-	return async function(dispatch, getState) {
-		try {
-			const state = getState()
-			const authSig = selectAuthSig(state)
-			const mainToken = selectMainToken()
-			let fallbackUnit = null
-			if (newItem.temp.useFallback) {
-				const imageIpfs = (await getImgsIpfsFromBlob({
-					tempUrl: newItem.temp.tempUrl,
-					authSig,
-				})).ipfs
-
-				const unit = new AdUnit({
-					type: newItem.type,
-					mediaUrl: `ipfs://${imageIpfs}`,
-					targetUrl: newItem.targetUrl,
-					mediaMime: newItem.temp.mime,
-					created: Date.now(),
-					title: newItem.title,
-					description: newItem.description,
-					targeting: [],
-					tags: [],
-					passback: true,
-				})
-
-				const resUnit = await postAdUnit({
-					unit: unit.marketAdd,
-					authSig,
-				})
-
-				fallbackUnit = resUnit.ipfs
-			}
-
-			newItem.fallbackUnit = fallbackUnit
-			newItem.created = Date.now()
-
-			if (newItem.minPerImpression) {
-				newItem.minPerImpression = {
-					[mainToken.address]: numStringCPMtoImpression({
-						numStr: newItem.minPerImpression,
-						decimals: mainToken.decimals,
-					}),
-				}
-			}
-
-			const resItem = await postAdSlot({
-				slot: new AdSlot(newItem).marketAdd,
-				authSig,
-			})
-
-			dispatch({
-				type: types.ADD_ITEM,
-				item: new AdSlot(resItem).plainObj(),
-				itemType: 'AdSlot',
-			})
-
-			addToast({
-				dispatch: dispatch,
-				type: 'accept',
-				toastStr: 'SUCCESS_CREATING_ITEM',
-				args: ['AdSlot', newItem.title],
-			})
-		} catch (err) {
-			console.error('ERR_CREATING_ITEM', err)
-			addToast({
-				dispatch: dispatch,
-				type: 'cancel',
-				toastStr: 'ERR_CREATING_ITEM',
-				args: ['AdSlot', err],
 			})
 		}
 	}
