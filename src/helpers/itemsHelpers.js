@@ -60,3 +60,19 @@ export const itemAdSizeLabel = ({ size, t }) => {
 	const adSize = AdSizesByValue[size] || {}
 	return t(adSize.label, { args: adSize.labelArgs || [] })
 }
+
+export const getWidAndHightFromType = type => {
+	type = type || 'legacy_300x250'
+	if (!type) {
+		return {
+			width: 0,
+			height: 0,
+		}
+	}
+
+	const sizes = type.split('_')[1].split('x')
+	return {
+		width: parseInt(sizes[0], 10),
+		height: parseInt(sizes[1], 10),
+	}
+}
