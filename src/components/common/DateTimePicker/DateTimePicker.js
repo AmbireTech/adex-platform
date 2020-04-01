@@ -75,7 +75,7 @@ const dateTimePickerStyled = ({ classes, calendarIcon, icon, ...rest }) => {
 
 export const DateTimePickerContrast = withStyles(styles)(dateTimePickerStyled)
 
-function WeekSelectDatePicker({ classes }) {
+function WeekSelectDatePicker({ classes, calendarIcon, icon, ...rest }) {
 	const [selectedDate, setSelectedDate] = useState(new Date())
 
 	const handleWeekChange = date => {
@@ -128,6 +128,10 @@ function WeekSelectDatePicker({ classes }) {
 			onChange={val => handleWeekChange(val)}
 			renderDay={renderWrappedWeekDay}
 			labelFunc={formatWeekSelectLabel}
+			InputProps={{
+				endAdornment: calendarIcon ? <CalendarIconAdor icon={icon} /> : null,
+			}}
+			{...rest}
 		/>
 	)
 }
