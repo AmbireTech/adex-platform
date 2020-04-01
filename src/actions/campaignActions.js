@@ -5,7 +5,7 @@ import {
 	updateSpinner,
 	updateItems,
 	updateValidatorAuthTokens,
-	updateNewItem,
+	updateNewCampaign,
 	handleAfterValidation,
 	validateCampaignValidators,
 	validateCampaignAmount,
@@ -35,7 +35,6 @@ import {
 	selectMainToken,
 } from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
-import { Campaign } from 'adex-models'
 import {
 	OPENING_CAMPAIGN,
 	GETTING_CAMPAIGNS_FEES,
@@ -227,18 +226,6 @@ export function closeCampaign({ campaign }) {
 			})(dispatch)
 		}
 		updateSpinner('closing-campaign', false)(dispatch)
-	}
-}
-
-export function updateNewCampaign(prop, value, newValues) {
-	return async function(dispatch, getState) {
-		const currentCampaign = selectNewCampaign(getState())
-		await updateNewItem(
-			currentCampaign,
-			newValues || { [prop]: value },
-			'Campaign',
-			Campaign
-		)(dispatch)
 	}
 }
 
