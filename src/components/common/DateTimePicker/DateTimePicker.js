@@ -1,7 +1,7 @@
 import React, { Component, useState, useContext, PureComponent } from 'react'
 import {
 	DateTimePicker as MuiDateTimePicker,
-	DatePicker,
+	DatePicker as MuiDatePicker,
 } from '@material-ui/pickers'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
@@ -25,11 +25,42 @@ const CalendarIconAdor = ({
 	</InputAdornment>
 )
 
-export class DateTimePicker extends Component {
+export function DateTimePicker({
+	calendarIcon,
+	icon,
+	iconColor,
+	onIconClick,
+	roundHour,
+	...rest
+}) {
+	const now = utils.date(Date.now())
+	const date = roundHour ? utils.setMinutes(now, 0) : now
+	console.log('TEST', now, date)
+	return (
+		<MuiDateTimePicker
+			value={date}
+			InputProps={{
+				disabled: rest.disabled,
+				endAdornment: calendarIcon ? (
+					<CalendarIconAdor
+						icon={icon}
+						iconColor={iconColor}
+						onIconClick={onIconClick}
+					/>
+				) : null,
+			}}
+			{...rest}
+		/>
+	)
+}
+
+export default DateTimePicker
+
+export class DatePicker extends Component {
 	render() {
 		const { calendarIcon, icon, iconColor, onIconClick, ...rest } = this.props
 		return (
-			<MuiDateTimePicker
+			<MuiDatePicker
 				InputProps={{
 					disabled: rest.disabled,
 					endAdornment: calendarIcon ? (
@@ -45,8 +76,6 @@ export class DateTimePicker extends Component {
 		)
 	}
 }
-
-export default DateTimePicker
 
 const dateTimePickerStyled = ({ classes, calendarIcon, icon, ...rest }) => {
 	return (
@@ -76,7 +105,7 @@ const dateTimePickerStyled = ({ classes, calendarIcon, icon, ...rest }) => {
 export const DateTimePickerContrast = withStyles(styles)(dateTimePickerStyled)
 
 function WeekSelectDatePicker({ classes, calendarIcon, icon, ...rest }) {
-	const [selectedDate, setSelectedDate] = useState(new Date())
+	const [selectedDate, setSelectedDate] = useState(+Date.now())
 
 	const handleWeekChange = date => {
 		setSelectedDate(utils.startOfWeek(makeJSDateObject(date)))
@@ -122,7 +151,7 @@ function WeekSelectDatePicker({ classes, calendarIcon, icon, ...rest }) {
 	}
 
 	return (
-		<DatePicker
+		<MuiDatePicker
 			label='Week picker'
 			value={selectedDate}
 			onChange={handleWeekChange}
