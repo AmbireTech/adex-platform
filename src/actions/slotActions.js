@@ -3,14 +3,17 @@ import {
 	handleAfterValidation,
 	validateSchemaProp,
 	validateNumberString,
+	validateMediaSize,
 	updateNewSlot,
+	validate,
 } from 'actions'
 import { numStringCPMtoImpression } from 'helpers/numbers'
 import { selectMainToken, selectNewAdSlot } from 'selectors'
 import { schemas } from 'adex-models'
 import { verifyWebsite } from 'services/adex-market/actions'
+import { getWidAndHightFromType } from 'helpers/itemsHelpers'
 
-const { adSlotPost } = schemas
+const { adSlotPost, adUnitPost } = schemas
 
 export function validateNewSlotBasics({
 	validateId,
@@ -95,6 +98,74 @@ export function validateNewSlotBasics({
 
 			await handleAfterValidation({ isValid, onValid, onInvalid })
 		} catch (err) {}
+
+		await updateSpinner(validateId, false)(dispatch)
+	}
+}
+
+export function validateNewSlotPassback({
+	validateId,
+	dirty,
+	onValid,
+	onInvalid,
+}) {
+	return async function(dispatch, getState) {
+		await updateSpinner(validateId, true)(dispatch)
+
+		const state = getState()
+		const {
+			type,
+			targetUrl,
+			temp: { useFallback, tempUrl, mime },
+		} = selectNewAdSlot(state)
+
+		const { width, height } = getWidAndHightFromType(type)
+
+		const validations = await Promise.all([
+			...(useFallback
+				? [
+						validateMediaSize({
+							validateId,
+							dirty,
+							propName: 'temp',
+							widthTarget: width,
+							heightTarget: height,
+							msg: 'ERR_IMG_SIZE_EXACT',
+							exact: true,
+							required: true,
+							media: {
+								tempUrl,
+								mime,
+							},
+						})(dispatch),
+				  ]
+				: [
+						validate(validateId, 'temp', {
+							isValid: true,
+							dirty,
+						}),
+				  ]),
+			...(useFallback
+				? [
+						validateSchemaProp({
+							validateId,
+							value: targetUrl,
+							prop: 'targetUrl',
+							schema: adUnitPost.targetUrl,
+							dirty,
+						})(dispatch),
+				  ]
+				: [
+						validate(validateId, 'targetUrl', {
+							isValid: true,
+							dirty,
+						}),
+				  ]),
+		])
+
+		const isValid = validations.every(v => v === true)
+
+		await handleAfterValidation({ isValid, onValid, onInvalid })
 
 		await updateSpinner(validateId, false)(dispatch)
 	}
