@@ -1,9 +1,7 @@
-import React, { Component, Fragment } from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
+import React, { Fragment } from 'react'
+import { useSelector } from 'react-redux'
+import { makeStyles } from '@material-ui/core/styles'
 import { Typography } from '@material-ui/core'
-import NewAdSlotHoc from './NewAdSlotHoc'
-import Translate from 'components/translate/Translate'
 import Img from 'components/common/img/Img'
 import UnitTargets from 'components/dashboard/containers/UnitTargets'
 import Anchor from 'components/common/anchor/anchor'
@@ -13,11 +11,18 @@ import {
 	ContentBox,
 	ContentBody,
 } from 'components/common/dialog/content'
-import { withStyles } from '@material-ui/core/styles'
 import { styles } from '../styles'
-import { selectMainToken } from 'selectors'
+import {
+	t,
+	selectMainToken,
+	selectNewAdSlot,
+	selectAccountIdentityAddr,
+} from 'selectors'
 
-const SlotFallback = ({ img, targetUrl, t, classes }) => {
+const useStyles = makeStyles(styles)
+
+const SlotFallback = ({ img, targetUrl }) => {
+	const classes = useStyles()
 	return (
 		<div>
 			<PropRow
@@ -48,110 +53,78 @@ const SlotFallback = ({ img, targetUrl, t, classes }) => {
 	)
 }
 
-class AdSlotPreview extends Component {
-	constructor(props) {
-		super(props)
-		this.save = props.save
-	}
+const AdSlotPreview = ({ titleee }) => {
+	const {
+		type,
+		title,
+		description,
+		website,
+		temp,
+		tags,
+		targetUrl,
+		minPerImpression,
+	} = useSelector(selectNewAdSlot)
 
-	render() {
-		const { classes, account, mainTokenSymbol, ...rest } = this.props
-		const { newItem, t } = rest
-		const {
-			type,
-			title,
-			description,
-			website,
-			temp,
-			tags,
-			targetUrl,
-			minPerImpression,
-		} = newItem
+	const identityAddr = useSelector(selectAccountIdentityAddr)
+	const { symbol } = useSelector(selectMainToken)
 
-		return (
-			<ContentBox>
-				<ContentBody>
+	return (
+		<ContentBox>
+			<ContentBody>
+				<PropRow left={t('owner', { isProp: true })} right={identityAddr} />
+				<PropRow left={t('type', { isProp: true })} right={type} />
+				<PropRow left={t('title', { isProp: true })} right={title} />
+				<PropRow
+					left={t('description', { isProp: true })}
+					right={description}
+				/>
+				<PropRow left={t('website', { isProp: true })} right={website} />
+				<PropRow
+					right={
+						<Fragment>
+							<Typography component='div' color='primary' gutterBottom>
+								<div
+									dangerouslySetInnerHTML={{
+										__html: t('SLOT_WEBSITE_WARNING'),
+									}}
+								/>
+							</Typography>
+							<Typography component='div' color='primary' gutterBottom>
+								<div
+									dangerouslySetInnerHTML={{
+										__html: t('SLOT_WEBSITE_CODE_WARNING'),
+									}}
+								/>
+							</Typography>
+						</Fragment>
+					}
+				/>
+				{temp.hostname && temp.issues && temp.issues.length && (
+					<PropRow right={<WebsiteIssues issues={temp.issues} />} />
+				)}
+
+				<PropRow
+					left={t('MIN_CPM_SLOT_LABEL')}
+					right={`${minPerImpression} ${symbol}`}
+				/>
+				{temp.useFallback && <SlotFallback img={temp} targetUrl={targetUrl} />}
+				{/* </Grid> */}
+				<br />
+				{tags && (
 					<PropRow
-						left={t('owner', { isProp: true })}
-						right={account.wallet.address}
-					/>
-					<PropRow left={t('type', { isProp: true })} right={type} />
-					<PropRow left={t('title', { isProp: true })} right={title} />
-					<PropRow
-						left={t('description', { isProp: true })}
-						right={description}
-					/>
-					<PropRow left={t('website', { isProp: true })} right={website} />
-					<PropRow
+						left={t('tags', { isProp: true })}
 						right={
-							<Fragment>
-								<Typography component='div' color='primary' gutterBottom>
-									<div
-										dangerouslySetInnerHTML={{
-											__html: t('SLOT_WEBSITE_WARNING'),
-										}}
-									/>
-								</Typography>
-								<Typography component='div' color='primary' gutterBottom>
-									<div
-										dangerouslySetInnerHTML={{
-											__html: t('SLOT_WEBSITE_CODE_WARNING'),
-										}}
-									/>
-								</Typography>
-							</Fragment>
+							<UnitTargets
+								targets={tags}
+								t={t}
+								// subHeader={'TARGETING'}
+							/>
 						}
 					/>
-					{temp.hostname && temp.issues && temp.issues.length && (
-						<PropRow right={<WebsiteIssues issues={temp.issues} />} />
-					)}
-
-					<PropRow
-						left={t('MIN_CPM_SLOT_LABEL')}
-						right={`${minPerImpression} ${mainTokenSymbol}`}
-					/>
-					{temp.useFallback && (
-						<SlotFallback
-							img={temp}
-							targetUrl={targetUrl}
-							t={t}
-							classes={classes}
-						/>
-					)}
-					{/* </Grid> */}
-					<br />
-					{tags && (
-						<PropRow
-							left={t('tags', { isProp: true })}
-							right={
-								<UnitTargets
-									{...rest}
-									targets={tags}
-									t={t}
-									// subHeader={'TARGETING'}
-								/>
-							}
-						/>
-					)}
-				</ContentBody>
-			</ContentBox>
-		)
-	}
+				)}
+			</ContentBody>
+		</ContentBox>
+	)
 }
 
-AdSlotPreview.propTypes = {
-	account: PropTypes.object.isRequired,
-	newItem: PropTypes.object.isRequired,
-	title: PropTypes.string,
-}
-
-function mapStateToProps(state) {
-	const { persist } = state
-	return {
-		account: persist.account,
-		mainTokenSymbol: selectMainToken(state).symbol,
-	}
-}
-
-const NewAdSlotPreview = NewAdSlotHoc(withStyles(styles)(AdSlotPreview))
-export default connect(mapStateToProps)(Translate(NewAdSlotPreview))
+export default AdSlotPreview
