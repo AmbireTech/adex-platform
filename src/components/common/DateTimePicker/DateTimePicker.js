@@ -1,10 +1,17 @@
-import React, { Component } from 'react'
-import { DateTimePicker as MuiDateTimePicker } from '@material-ui/pickers'
+import React, { Component, useState, useContext, PureComponent } from 'react'
+import {
+	DateTimePicker as MuiDateTimePicker,
+	DatePicker,
+} from '@material-ui/pickers'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import IconButton from '@material-ui/core/IconButton'
 import CalendarIcon from '@material-ui/icons/DateRange'
 import InputAdornment from '@material-ui/core/InputAdornment'
+import utils, { makeJSDateObject } from 'helpers/dateUtils'
+import clsx from 'clsx'
+// EXTRACT
+// this guy required only on the docs site to work with dynamic date library
 
 const CalendarIconAdor = ({
 	icon = <CalendarIcon />,
@@ -67,3 +74,62 @@ const dateTimePickerStyled = ({ classes, calendarIcon, icon, ...rest }) => {
 }
 
 export const DateTimePickerContrast = withStyles(styles)(dateTimePickerStyled)
+
+function WeekSelectDatePicker({ classes }) {
+	const [selectedDate, setSelectedDate] = useState(new Date())
+
+	const handleWeekChange = date => {
+		setSelectedDate(utils.startOfWeek(makeJSDateObject(date)))
+	}
+
+	const formatWeekSelectLabel = (date, invalidLabel) => {
+		let dateClone = makeJSDateObject(date)
+
+		return dateClone && utils.isValid(dateClone)
+			? `Week of ${utils.format(utils.startOfWeek(dateClone), 'MMM Do')}`
+			: invalidLabel
+	}
+
+	const renderWrappedWeekDay = (date, selectedDate, dayInCurrentMonth) => {
+		let dateClone = makeJSDateObject(date)
+		let selectedDateClone = makeJSDateObject(selectedDate)
+
+		const start = selectedDateClone
+		const end = utils.addDays(selectedDateClone, 6)
+
+		const dayIsBetween = utils.isWithinInterval(dateClone, { start, end })
+		const isFirstDay = utils.isSameDay(dateClone, start)
+		const isLastDay = utils.isSameDay(dateClone, end)
+
+		const wrapperClassName = clsx({
+			[classes.highlight]: dayIsBetween,
+			[classes.firstHighlight]: isFirstDay,
+			[classes.endHighlight]: isLastDay,
+		})
+
+		const dayClassName = clsx(classes.day, {
+			[classes.nonCurrentMonthDay]: !dayInCurrentMonth,
+			[classes.highlightNonCurrentMonthDay]: !dayInCurrentMonth && dayIsBetween,
+		})
+
+		return (
+			<div className={wrapperClassName}>
+				<IconButton className={dayClassName}>
+					<span> {utils.format(dateClone, 'D')} </span>
+				</IconButton>
+			</div>
+		)
+	}
+
+	return (
+		<DatePicker
+			label='Week picker'
+			value={selectedDate}
+			onChange={val => handleWeekChange(val)}
+			renderDay={renderWrappedWeekDay}
+			labelFunc={formatWeekSelectLabel}
+		/>
+	)
+}
+
+export const WeeklyDatePicker = withStyles(styles)(WeekSelectDatePicker)
