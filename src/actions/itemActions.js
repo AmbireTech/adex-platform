@@ -50,34 +50,6 @@ const getImgsIpfsFromBlob = ({ tempUrl, authSig }) => {
 		})
 }
 
-export function updateNewItem(item, newValues, itemType, objModel) {
-	item = Base.updateObject({ item, newValues, objModel })
-	return function(dispatch) {
-		return dispatch({
-			type: types.UPDATE_NEW_ITEM,
-			item,
-			itemType,
-		})
-	}
-}
-
-export function resetNewItem(item) {
-	return function(dispatch) {
-		return dispatch({
-			type: types.RESET_NEW_ITEM,
-			item: item,
-		})
-	}
-}
-
-export function resetAllNewItems() {
-	return function(dispatch) {
-		return dispatch({
-			type: types.RESET_ALL_NEW_ITEMS,
-		})
-	}
-}
-
 // register item
 export function addUnit(item) {
 	const newItem = { ...item }
