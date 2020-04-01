@@ -9,6 +9,7 @@ import StatsCard from './StatsCard'
 import { makeStyles } from '@material-ui/core/styles'
 import DateTimePicker, {
 	WeeklyDatePicker,
+	DatePicker,
 } from 'components/common/DateTimePicker'
 import {
 	Visibility,
@@ -175,16 +176,16 @@ export function BasicStats({ side }) {
 						<Box>
 							<WeeklyDatePicker
 								emptyLabel={t('SET_CAMPAIGN_START')}
-								disablePast
+								disableFuture
 								fullWidth
 								calendarIcon
 								label={t('ANALYTICS_RANGE')}
 							/>
-							{/* <DateTimePicker
+							<DatePicker
 								emptyLabel={t('SET_CAMPAIGN_START')}
-								disablePast
 								fullWidth
 								calendarIcon
+								// minutesStep={60}
 								label={t('ANALYTICS_RANGE')}
 								// minDate={now}
 								// maxDate={to}
@@ -198,7 +199,29 @@ export function BasicStats({ side }) {
 								// 		? errFrom.errMsg
 								// 		: t('CAMPAIGN_STARTS_FROM_HELPER_TXT')
 								// }
-							/> */}
+							/>
+							<DateTimePicker
+								emptyLabel={t('SET_CAMPAIGN_START')}
+								fullWidth
+								views={['date', 'hours']}
+								calendarIcon
+								roundHour
+								minutesStep={60}
+								label={t('ANALYTICS_RANGE')}
+
+								// minDate={now}
+								// maxDate={to}
+								// onChange={val => {
+								// execute(updateNewCampaign('activeFrom', val.valueOf()))
+								// }}
+								// value={from || null}
+								// error={errFrom && !!errFrom.dirty}
+								// helperText={
+								// 	errFrom && !!errFrom.dirty
+								// 		? errFrom.errMsg
+								// 		: t('CAMPAIGN_STARTS_FROM_HELPER_TXT')
+								// }
+							/>
 						</Box>
 					</StatsCard>
 					<StatsCard
