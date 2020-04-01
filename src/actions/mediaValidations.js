@@ -15,31 +15,34 @@ export function validateMediaSize({
 	return async function(dispatch) {
 		const { mime, tempUrl } = media
 		let isValid = mime && tempUrl
+		let masgArgs = []
 
 		if (!required && !media.tempUrl) {
 			isValid = true
 		}
 
-		const size = await getMediaSize({ mime: media.mime, src: media.tempUrl })
-		const mediaWidth = size.width
-		const mediaHeight = size.height
+		if (required && isValid) {
+			const size = await getMediaSize({ mime: media.mime, src: media.tempUrl })
+			const mediaWidth = size.width
+			const mediaHeight = size.height
 
-		if (exact) {
-			isValid = checkExactishAspect(
-				widthTarget,
-				mediaWidth,
-				heightTarget,
-				mediaHeight
-			)
+			if (exact) {
+				isValid = checkExactishAspect(
+					widthTarget,
+					mediaWidth,
+					heightTarget,
+					mediaHeight
+				)
+			}
+
+			if (!exact && (widthTarget < mediaWidth || heightTarget < mediaHeight)) {
+				isValid = false
+			}
+
+			masgArgs = [widthTarget, heightTarget, 'px']
 		}
 
-		if (!exact && (widthTarget < mediaWidth || heightTarget < mediaHeight)) {
-			isValid = false
-		}
-
-		const masgArgs = [widthTarget, heightTarget, 'px']
-
-		validate(validateId, propName, {
+		await validate(validateId, propName, {
 			isValid,
 			err: { msg, masgArgs },
 			dirty,
