@@ -76,3 +76,56 @@ export const selectKnowUsFromSource = createSelector(
 	() => selectFromSource(WHERE_YOU_KNOW_US),
 	source => source
 )
+
+export const selectTargetingSources = createSelector(
+	sources => sources,
+	sources =>
+		Object.entries(sources).map(([key, { collection }]) => {
+			return {
+				value: {
+					source: key,
+					collection,
+					target: { tag: '', score: 1 },
+					label: t(`TARGET_LABEL_${key.toUpperCase()}`),
+					placeholder: t(`TARGET_LABEL_${key.toUpperCase()}`),
+				},
+				label: t(`ADD_NEW_${key.toUpperCase()}_TARGET`),
+			}
+		})
+)
+
+const autocompleteLocationsSingleSelect = () => {
+	constants.AllCountries.map(({ name, value } = {}) => ({
+		label: t(name),
+		value: value,
+	}))
+}
+
+const autocompleteGendersSingleSelect = () => {
+	return constants.Genders.map(gender => ({
+		label: t(gender.split('_')[1].toUpperCase()),
+		value: gender,
+	}))
+}
+
+const autocompleteTagsSingleSelect = () => {
+	return constants.PredefinedTags.map(({ _id }) => ({
+		label: t(_id),
+		value: _id,
+	}))
+}
+
+export const slotSources = () => ({
+	tags: { src: autocompleteTagsSingleSelect(), collection: 'tags' },
+	custom: { src: [], collection: 'tags' },
+})
+
+export const unitSources = () => ({
+	locations: {
+		src: autocompleteLocationsSingleSelect(),
+		collection: 'targeting',
+	},
+	genders: { src: autocompleteGendersSingleSelect(), collection: 'targeting' },
+	tags: { src: autocompleteTagsSingleSelect(), collection: 'targeting' },
+	custom: { src: [], collection: 'targeting' },
+})
