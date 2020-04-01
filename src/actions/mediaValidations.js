@@ -4,7 +4,7 @@ import { getMediaSize, checkExactishAspect } from 'helpers/mediaHelpers'
 export function validateMediaSize({
 	validateId,
 	media,
-	propsName,
+	propName,
 	dirty,
 	widthTarget,
 	heightTarget,
@@ -39,7 +39,7 @@ export function validateMediaSize({
 
 		const masgArgs = [widthTarget, heightTarget, 'px']
 
-		validate(validateId, propsName, {
+		validate(validateId, propName, {
 			isValid,
 			err: { msg, masgArgs },
 			dirty,
