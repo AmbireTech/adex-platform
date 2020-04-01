@@ -223,7 +223,7 @@ export function updateIdentityPrivilege({ setAddr, privLevel }) {
 					args: [result],
 				}),
 				timeout: 20000,
-			})(dispatch)
+			})
 		} catch (err) {
 			console.error('ERR_IDENTITY_SET_ADDR_PRIV_NOTIFICATION', err)
 			addToast({
@@ -585,6 +585,7 @@ export function completeTx({
 			await competeAction({ ...transaction })(dispatch, getState)
 			isValid = true
 		} catch (err) {
+			console.error('ERR_TRANSACTION', err)
 			addToast({
 				type: 'cancel',
 				label: t('ERR_TRANSACTION', { args: [Helper.getErrMsg(err)] }),
@@ -599,5 +600,6 @@ export function completeTx({
 			value: false,
 		})(dispatch)
 		await handleAfterValidation({ isValid, onValid, onInvalid })
+		// TODO: reset tx if OK
 	}
 }
