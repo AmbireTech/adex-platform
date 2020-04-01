@@ -74,3 +74,42 @@ export function updateNewCampaign(prop, value, newValues) {
 		)
 	}
 }
+
+export function updateNewItemTargets({
+	collection,
+	itemType,
+	target = {},
+	index,
+	remove,
+}) {
+	return async function(dispatch, getState) {
+		const state = getState()
+		const { temp } = selectNewItems(state)[itemType]
+		// We are keeping the state in temp because it dirty with extra data
+		const targets = [...(temp.targets || [])]
+		const hasIndex = Number.isInteger(index)
+
+		if (hasIndex && !remove) {
+			// NOTE: when updated with index target has only { target: { tag, score }}
+			targets[index] = { ...(targets[index] || {}), ...target }
+		} else if (hasIndex && remove) {
+			targets.splice(index, 1)
+		} else {
+			// NOTE: when updated w/o index target has no key
+			targets.push({ ...target, key: targets.length })
+		}
+
+		// The actual targets added to the spec
+		const filtered = targets.filter(x => x.target.tag).map(x => x.target)
+
+		const newValues = {
+			[collection]: filtered,
+			temp: { ...temp, targets },
+		}
+
+		await updateNewItemAction(itemType, null, null, newValues)(
+			dispatch,
+			getState
+		)
+	}
+}
