@@ -75,7 +75,7 @@ export function validateNewSlotBasics({
 
 			let isValid = validations.every(v => v === true)
 
-			if (isValid) {
+			if (validations[4]) {
 				isValid = await validateSchemaProp({
 					validateId,
 					value: {
@@ -143,7 +143,7 @@ export function validateNewSlotPassback({
 						validate(validateId, 'temp', {
 							isValid: true,
 							dirty,
-						}),
+						})(dispatch),
 				  ]),
 			...(useFallback
 				? [
@@ -159,14 +159,13 @@ export function validateNewSlotPassback({
 						validate(validateId, 'targetUrl', {
 							isValid: true,
 							dirty,
-						}),
+						})(dispatch),
 				  ]),
 		])
 
 		const isValid = validations.every(v => v === true)
 
 		await handleAfterValidation({ isValid, onValid, onInvalid })
-
 		await updateSpinner(validateId, false)(dispatch)
 	}
 }

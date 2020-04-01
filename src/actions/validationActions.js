@@ -90,6 +90,8 @@ export function validate(
 		} else {
 			resetValidationErrors(validateId, key)(dispatch)
 		}
+
+		return isValid
 	}
 }
 
