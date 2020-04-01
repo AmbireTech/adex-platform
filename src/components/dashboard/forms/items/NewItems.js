@@ -29,6 +29,8 @@ import {
 	validateNewCampaignAdUnits,
 	validateNewSlotBasics,
 	validateNewSlotPassback,
+	completeItem,
+	addSlot,
 } from 'actions'
 
 const SaveBtn = ({ newItem, t, save, ...rest }) => {
@@ -209,7 +211,17 @@ export const NewSlotSteps = props => (
 				validationFn: props => execute(validateNewSlotPassback(props)),
 			},
 			{ title: 'SLOT_TAGS_STEP', component: AdSlotTargeting },
-			{ title: 'PREVIEW_AND_SAVE_ITEM', component: AdSlotPreview, final: true },
+			{
+				title: 'PREVIEW_AND_SAVE_ITEM',
+				component: AdSlotPreview,
+				completeFn: props =>
+					execute(
+						completeItem({
+							...props,
+							competeAction: addSlot,
+						})
+					),
+			},
 		]}
 		imgLabel='SLOT_AVATAR_IMG_LABEL'
 		imgAdditionalInfo='SLOT_AVATAR_IMG_INFO'

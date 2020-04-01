@@ -650,6 +650,7 @@ export function validatePrivLevel({ validateId, privLevel, dirty }) {
 		return isValid
 	}
 }
+
 export function validateSchemaProp({ validateId, value, prop, schema, dirty }) {
 	return async function(dispatch) {
 		const result = Joi.validate(value, schema)
