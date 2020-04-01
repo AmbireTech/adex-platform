@@ -36,22 +36,18 @@ function AdSlotBasic({ validateId }) {
 		selectSpinnerById(state, UPDATING_SLOTS_DEMAND)
 	)
 
-	const invalidFields = useSelector(
-		state => selectValidationsById(state, validateId) || {}
-	)
-
-	useEffect(() => {
-		execute(updateSlotsDemandThrottled())
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
-
 	const {
 		title: errTitle,
 		description: errDescription,
 		website: errWebsite,
 		type: errType,
 		minPerImpression: errMin,
-	} = invalidFields
+	} = useSelector(state => selectValidationsById(state, validateId) || {})
+
+	useEffect(() => {
+		execute(updateSlotsDemandThrottled())
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	const { symbol } = selectMainToken
 
