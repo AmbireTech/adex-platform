@@ -3,10 +3,18 @@ import {
 	handleAfterValidation,
 	validateSchemaProp,
 	validateMediaSize,
+	selectAuthSig,
+	addToast,
+	getImgsIpfsFromBlob,
 } from 'actions'
-import { selectNewAdUnit } from 'selectors'
-import { schemas } from 'adex-models'
+import { selectNewAdUnit, t } from 'selectors'
+import { schemas, AdUnit } from 'adex-models'
 import { getWidAndHightFromType } from 'helpers/itemsHelpers'
+
+import { ADD_ITEM } from 'constants/actionTypes'
+import Helper from 'helpers/miscHelpers'
+
+import { postAdUnit } from 'services/adex-market/actions'
 
 const { adUnitPost } = schemas
 
@@ -100,5 +108,52 @@ export function validateNewUnitMedia({
 
 		await handleAfterValidation({ isValid, onValid, onInvalid })
 		await updateSpinner(validateId, false)(dispatch)
+	}
+}
+
+export function saveUnit() {
+	return async function(dispatch, getState) {
+		try {
+			const state = getState()
+			const item = selectNewAdUnit(state)
+			const newItem = { ...item }
+			const authSig = selectAuthSig(state)
+			const imageIpfs = (await getImgsIpfsFromBlob({
+				tempUrl: newItem.temp.tempUrl,
+				authSig,
+			})).ipfs
+
+			newItem.mediaUrl = `ipfs://${imageIpfs}`
+			newItem.mediaMime = newItem.temp.mime
+			newItem.created = Date.now()
+
+			const resItem = await postAdUnit({
+				unit: new AdUnit(newItem).marketAdd,
+				authSig,
+			})
+
+			dispatch({
+				type: ADD_ITEM,
+				item: new AdUnit(resItem).plainObj(),
+				itemType: 'AdUnit',
+			})
+
+			addToast({
+				dispatch: dispatch,
+				type: 'accept',
+				toastStr: 'SUCCESS_CREATING_ITEM',
+				args: ['AdUnit', newItem.title],
+			})
+		} catch (err) {
+			console.error('ERR_CREATING_ITEM', err)
+			addToast({
+				type: 'cancel',
+				label: t('ERR_CREATING_ITEM', {
+					args: ['AdUnit', Helper.getErrMsg(err)],
+				}),
+				timeout: 50000,
+			})(dispatch)
+			throw new Error('ERR_CREATING_ITEM', err)
+		}
 	}
 }

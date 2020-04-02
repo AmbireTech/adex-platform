@@ -32,7 +32,8 @@ import {
 	validateNewUnitMedia,
 	completeItem,
 	resetNewItem,
-	addSlot,
+	saveUnit,
+	openCampaign,
 } from 'actions'
 
 import { slotSources, unitSources } from 'selectors'
@@ -124,7 +125,7 @@ export const NewUnitSteps = props => (
 					execute(
 						completeItem({
 							...props,
-							competeAction: addSlot,
+							competeAction: saveUnit,
 						})
 					),
 			},
@@ -186,8 +187,14 @@ export const NewCampaignSteps = props => (
 			},
 			{
 				title: 'PREVIEW_AND_SAVE_ITEM',
-				page: CampaignFormPreview,
-				final: true,
+				component: CampaignFormPreview,
+				completeFn: props =>
+					execute(
+						completeItem({
+							...props,
+							competeAction: openCampaign,
+						})
+					),
 			},
 		]}
 		itemModel={Campaign}
@@ -241,7 +248,7 @@ export const NewSlotSteps = props => (
 					execute(
 						completeItem({
 							...props,
-							competeAction: addSlot,
+							competeAction: saveSlot,
 						})
 					),
 			},
