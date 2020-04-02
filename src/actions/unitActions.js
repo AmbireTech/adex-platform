@@ -2,9 +2,11 @@ import {
 	updateSpinner,
 	handleAfterValidation,
 	validateSchemaProp,
+	validateMediaSize,
 } from 'actions'
 import { selectNewAdUnit } from 'selectors'
 import { schemas } from 'adex-models'
+import { getWidAndHightFromType } from 'helpers/itemsHelpers'
 
 const { adUnitPost } = schemas
 
@@ -56,6 +58,47 @@ export function validateNewUnitBasics({
 			await handleAfterValidation({ isValid, onValid, onInvalid })
 		} catch (err) {}
 
+		await updateSpinner(validateId, false)(dispatch)
+	}
+}
+
+export function validateNewUnitMedia({
+	validateId,
+	dirty,
+	onValid,
+	onInvalid,
+}) {
+	return async function(dispatch, getState) {
+		await updateSpinner(validateId, true)(dispatch)
+
+		const state = getState()
+		const {
+			type,
+			temp: { tempUrl, mime },
+		} = selectNewAdUnit(state)
+
+		const { width, height } = getWidAndHightFromType(type)
+
+		const validations = await Promise.all([
+			validateMediaSize({
+				validateId,
+				dirty,
+				propName: 'temp',
+				widthTarget: width,
+				heightTarget: height,
+				msg: 'ERR_IMG_SIZE_EXACT',
+				exact: true,
+				required: true,
+				media: {
+					tempUrl,
+					mime,
+				},
+			})(dispatch),
+		])
+
+		const isValid = validations.every(v => v === true)
+
+		await handleAfterValidation({ isValid, onValid, onInvalid })
 		await updateSpinner(validateId, false)(dispatch)
 	}
 }
