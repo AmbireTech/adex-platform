@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
-import NewCampaignHoc from './NewCampaignHoc'
 import { Grid, CircularProgress } from '@material-ui/core'
 import { AdUnitsTable } from 'components/dashboard/containers/Tables'
 import { WalletAction } from 'components/dashboard/forms/FormsCommon'
@@ -18,10 +17,11 @@ import {
 	selectAuthType,
 	selectMainToken,
 	selectSpinnerById,
+	selectNewCampaign,
 	t,
 } from 'selectors'
 import { execute, getCampaignActualFees, checkNetworkCongestion } from 'actions'
-import { GETTING_CAMPAIGNS_FEES } from 'constants/spinners'
+import { GETTING_CAMPAIGNS_FEES, OPENING_CAMPAIGN } from 'constants/spinners'
 
 const UnitsTable = ({ items }) => {
 	return (
@@ -33,13 +33,17 @@ const UnitsTable = ({ items }) => {
 	)
 }
 
-function CampaignFormPreview({ newItem } = {}) {
+function CampaignFormPreview({ validateId } = {}) {
 	const identityAddr = useSelector(selectAccountIdentityAddr)
 	const authType = useSelector(selectAuthType)
 	const mainToken = useSelector(selectMainToken)
 	const { symbol } = mainToken
-	const spinner = useSelector(state =>
+	const feesSpinner = useSelector(state =>
 		selectSpinnerById(state, GETTING_CAMPAIGNS_FEES)
+	)
+
+	const openingSpinner = useSelector(state =>
+		selectSpinnerById(state, OPENING_CAMPAIGN)
 	)
 
 	const {
@@ -56,7 +60,7 @@ function CampaignFormPreview({ newItem } = {}) {
 		minTargetingScore,
 		// nonce
 		temp = {},
-	} = newItem
+	} = useSelector(selectNewCampaign)
 
 	const { feesFormatted, totalSpendFormatted } = temp
 
@@ -65,11 +69,11 @@ function CampaignFormPreview({ newItem } = {}) {
 		execute(checkNetworkCongestion())
 	}, [])
 
-	return spinner ? (
+	return feesSpinner ? (
 		<FullContentSpinner />
 	) : (
 		<ContentBox>
-			{temp.waitingAction ? (
+			{openingSpinner ? (
 				<ContentStickyTop>
 					<WalletAction t={t} authType={authType} />
 				</ContentStickyTop>
@@ -162,5 +166,4 @@ CampaignFormPreview.propTypes = {
 	newItem: PropTypes.object.isRequired,
 }
 
-const NewCampaignFormPreview = NewCampaignHoc(CampaignFormPreview)
-export default NewCampaignFormPreview
+export default CampaignFormPreview
