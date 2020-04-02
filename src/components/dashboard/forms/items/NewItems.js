@@ -25,6 +25,7 @@ import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty'
 
 import {
 	execute,
+	validateNewUnitBasics,
 	validateNewCampaignFinance,
 	validateNewCampaignAdUnits,
 	validateNewSlotBasics,
@@ -87,7 +88,19 @@ export const NewUnitSteps = props => (
 		itemType={'AdUnit'}
 		stepsId={'new-adunit-'}
 		steps={[
-			{ title: 'UNIT_BASIC_STEP', component: AdUnitBasic },
+			{
+				title: 'UNIT_BASIC_STEP',
+				component: AdUnitBasic,
+				validationFn: ({ validateId, dirty, onValid, onInvalid }) =>
+					execute(
+						validateNewUnitBasics({
+							validateId,
+							dirty,
+							onValid,
+							onInvalid,
+						})
+					),
+			},
 			{ title: 'UNIT_MEDIA_STEP', component: AdUnitMedia },
 			{ title: 'UNIT_TARGETS_STEP', component: AdUnitTargeting },
 			{
