@@ -8,6 +8,11 @@ import { createSelector } from 'reselect'
 
 export const selectNewItems = state => state.memory.newItem
 
+export const selectNewItemByType = createSelector(
+	[selectNewItems, (_, type) => type],
+	(items, type) => items[type]
+)
+
 export const selectNewCampaign = createSelector(
 	selectNewItems,
 	({ Campaign }) => new CampaignModel(Campaign)
