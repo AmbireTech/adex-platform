@@ -128,6 +128,8 @@ export const identityAnalytics = async ({
 	limit,
 	side,
 	segmentByChannel,
+	start,
+	end,
 }) => {
 	const baseUrl = ANALYTICS_DATA_VALIDATOR_URL
 	const requester = getValidatorRequester({ baseUrl })
@@ -142,6 +144,8 @@ export const identityAnalytics = async ({
 				limit,
 				segmentByChannel,
 				eventType,
+				start,
+				end,
 			},
 			headers: {
 				authorization: BEARER_PREFIX + leaderAuth,
