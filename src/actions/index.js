@@ -11,6 +11,7 @@ import * as analyticsActions from './analyticsActions'
 import * as newItemsActions from './newItemsActions'
 import * as campaignActions from './campaignActions'
 import * as slotActions from './slotActions'
+import * as unitActions from './unitActions'
 
 // keep it for class components that use connect and actions prop
 // without needing to change the code
@@ -28,6 +29,7 @@ export default {
 	...newItemsActions,
 	...campaignActions,
 	...slotActions,
+	...unitActions,
 }
 
 // used for minimal deps in hook components
@@ -46,3 +48,4 @@ export * from './analyticsActions'
 export * from './newItemsActions'
 export * from './campaignActions'
 export * from './slotActions'
+export * from './unitActions'
