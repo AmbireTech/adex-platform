@@ -31,6 +31,7 @@ import {
 	validateNewSlotPassback,
 	validateNewUnitMedia,
 	completeItem,
+	resetNewItem,
 	addSlot,
 } from 'actions'
 
@@ -100,8 +101,7 @@ const dialogCommon = {
 export const NewUnitSteps = props => (
 	<FormSteps
 		{...props}
-		SaveBtn={SaveBtnWithAdUnit}
-		CancelBtn={CancelBtnWithItem}
+		cancelFunction={() => execute(resetNewItem('AdUnit'))}
 		validateIdBase={'new-AdUnit-'}
 		itemType={'AdUnit'}
 		stepsId={'new-adunit-'}
@@ -120,7 +120,13 @@ export const NewUnitSteps = props => (
 			{
 				title: 'PREVIEW_AND_SAVE_ITEM',
 				component: AdUnitFormPreview,
-				final: true,
+				completeFn: props =>
+					execute(
+						completeItem({
+							...props,
+							competeAction: addSlot,
+						})
+					),
 			},
 		]}
 		imgLabel='UNIT_BANNER_IMG_LABEL'
@@ -153,8 +159,7 @@ export const NewCloneUnitDialog = props => (
 export const NewCampaignSteps = props => (
 	<FormSteps
 		{...props}
-		SaveBtn={SaveBtnWithCampaign}
-		CancelBtn={CancelBtnWithCampaign}
+		cancelFunction={() => execute(resetNewItem('Campaign'))}
 		validateIdBase={'new-Campaign-'}
 		itemType={'Campaign'}
 		stepsId={'new-campaign-'}
@@ -205,8 +210,7 @@ export const NewCampaignDialog = props => (
 export const NewSlotSteps = props => (
 	<FormSteps
 		{...props}
-		SaveBtn={SaveBtnWithAdSlot}
-		CancelBtn={CancelBtnWithAdSlot}
+		cancelFunction={() => execute(resetNewItem('AdSlot'))}
 		validateIdBase={'new-AdUnit-'}
 		itemType={'AdSlot'}
 		stepsId={'new-slot-'}
