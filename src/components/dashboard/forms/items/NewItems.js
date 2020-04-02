@@ -30,6 +30,7 @@ import {
 	validateNewCampaignAdUnits,
 	validateNewSlotBasics,
 	validateNewSlotPassback,
+	validateNewUnitMedia,
 	completeItem,
 	addSlot,
 } from 'actions'
@@ -91,17 +92,13 @@ export const NewUnitSteps = props => (
 			{
 				title: 'UNIT_BASIC_STEP',
 				component: AdUnitBasic,
-				validationFn: ({ validateId, dirty, onValid, onInvalid }) =>
-					execute(
-						validateNewUnitBasics({
-							validateId,
-							dirty,
-							onValid,
-							onInvalid,
-						})
-					),
+				validationFn: props => execute(validateNewUnitBasics(props)),
 			},
-			{ title: 'UNIT_MEDIA_STEP', component: AdUnitMedia },
+			{
+				title: 'UNIT_MEDIA_STEP',
+				component: AdUnitMedia,
+				validationFn: props => execute(validateNewUnitMedia(props)),
+			},
 			{ title: 'UNIT_TARGETS_STEP', component: AdUnitTargeting },
 			{
 				title: 'PREVIEW_AND_SAVE_ITEM',
@@ -148,15 +145,7 @@ export const NewCampaignSteps = props => (
 			{
 				title: 'CAMPAIGN_UNITS_STEP',
 				component: CampaignUnits,
-				validationFn: ({ validateId, dirty, onValid, onInvalid }) =>
-					execute(
-						validateNewCampaignAdUnits({
-							validateId,
-							dirty,
-							onValid,
-							onInvalid,
-						})
-					),
+				validationFn: props => execute(validateNewCampaignAdUnits(props)),
 			},
 			// NOTE: Only at ad units at the moment
 			// { title: 'CAMPAIGN_TARGETING_STEP', page: CampaignTargeting },
