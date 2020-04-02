@@ -21,6 +21,22 @@ export class DateUtils extends MomentUtils {
 	addHours(date, hours) {
 		return date.clone().add(hours, 'hour')
 	}
+
+	startOf(date, period) {
+		return date.clone().startOf(period)
+	}
+
+	endOf(date, period) {
+		return date.clone().endOf(period)
+	}
+
+	getLastSixHoursPeriod() {
+		const nowUTC = this.moment.utc()
+		return Math.floor(
+			(nowUTC.clone().valueOf() - nowUTC.clone().startOf('day')) /
+				(6 * 60 * 60 * 1000)
+		)
+	}
 }
 
 const utils = new DateUtils()
