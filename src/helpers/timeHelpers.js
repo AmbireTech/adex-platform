@@ -80,29 +80,35 @@ export const intervalsMs = () => {
 	}
 }
 
-export const fillEmptyTime = (prevAggr, timeframe, defaultValue = 0) => {
-	const intervals = intervalsMs()
+export const fillEmptyTime = (
+	prevAggr,
+	timeframe,
+	defaultValue = 0,
+	period
+) => {
+	// const intervals = intervalsMs()
 	const time = {
-		interval: intervals.lastHour,
+		interval: period,
 		step: { ammount: 1, unit: 'minute' },
 	}
 	switch (timeframe) {
 		case 'hour':
-			time.interval = intervals.lastHour
+			// time.interval = intervals.lastHour
 			time.step = { ammount: 1, unit: 'minute' }
 			break
 		case 'day':
-			time.interval = intervals.last24Hours
+			// time.interval = intervals.last24Hours
 			time.step = { ammount: 1, unit: 'hour' }
 			break
 		case 'week':
-			time.interval = intervals.last7Days
+			// time.interval = intervals.last7Days
 			time.step = { ammount: 6, unit: 'hour' }
 			break
 		default:
 			return prevAggr
 	}
 	const newAggr = []
+	// use DateUtils
 	for (
 		var m = moment(time.interval.start);
 		m.diff(time.interval.end) <= 0;
