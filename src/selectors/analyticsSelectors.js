@@ -25,6 +25,13 @@ export const selectAnalyticsTimeframe = createSelector(
 	}
 )
 
+export const selectAnalyticsPeriod = createSelector(
+	selectAnalytics,
+	({ period }) => {
+		return period || {}
+	}
+)
+
 export const selectCampaignAnalytics = createSelector(
 	[selectAnalytics],
 	({ campaigns }) => campaigns || {}
