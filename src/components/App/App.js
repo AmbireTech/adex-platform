@@ -11,7 +11,7 @@ import { PersistGate } from 'redux-persist/integration/react'
 import Root from './Root'
 import { MuiThemeProvider } from '@material-ui/core/styles'
 import { themeMUI } from './themeMUi'
-import MomentUtils from '@date-io/moment'
+import { DateUtils } from 'helpers/dateUtils'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import CacheBuster from './CacheBuster'
@@ -28,7 +28,7 @@ class App extends Component {
 			<React.Fragment>
 				<CssBaseline />
 				<MuiThemeProvider theme={themeMUI}>
-					<MuiPickersUtilsProvider utils={MomentUtils}>
+					<MuiPickersUtilsProvider utils={DateUtils}>
 						<Provider store={store}>
 							<PersistGate onBeforeLift={onBeforeLift} persistor={persistor}>
 								<ConnectedRouter history={history}>
