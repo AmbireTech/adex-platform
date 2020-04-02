@@ -1,16 +1,15 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import NewAdUnitHoc from './NewAdUnitHoc'
-import Translate from 'components/translate/Translate'
-import Grid from '@material-ui/core/Grid'
-import TextField from '@material-ui/core/TextField'
-import Dropdown from 'components/common/dropdown'
-import { constants, schemas, Joi } from 'adex-models'
-import Checkbox from '@material-ui/core/Checkbox'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import { addUrlUtmTracking } from 'helpers/utmHelpers'
+import React, { useCallback, useEffect } from 'react'
+import { useSelector } from 'react-redux'
 
-const { adUnitPost } = schemas
+import PropTypes from 'prop-types'
+import { Grid, TextField, Button } from '@material-ui/core'
+
+import Dropdown from 'components/common/dropdown'
+import { constants } from 'adex-models'
+
+import { addUrlUtmTracking } from 'helpers/utmHelpers'
+import { execute, updateNewUnit } from 'actions'
+import { t, selectValidationsById, selectNewAdUnit } from 'selectors'
 
 const AdTypes = constants.AdUnitsTypes.map(type => {
 	return {
@@ -19,197 +18,138 @@ const AdTypes = constants.AdUnitsTypes.map(type => {
 	}
 })
 
-class AdUnitBasic extends Component {
-	constructor(props) {
-		super(props)
-		const { newItem } = props
-		this.validateTitle(newItem.title, false)
-		this.validateDescription(newItem.description, false)
-		this.validateTargetUrl(newItem.targetUrl, false)
-		this.validateAndUpdateType(false, newItem.type)
-	}
+function AdUnitBasic({ validateId }) {
+	const { title, description, targetUrl, type, temp } = useSelector(
+		selectNewAdUnit
+	)
+	const { autoUtmAdded } = temp
+	const {
+		title: errTitle,
+		description: errDescription,
+		targetUrl: errTargetUrl,
+		type: errType,
+	} = useSelector(state => selectValidationsById(state, validateId) || {})
 
-	componentDidUpdate(prevProps) {
-		if (
-			prevProps.newItem.title !== this.props.newItem.title ||
-			prevProps.newItem.type !== this.props.newItem.type ||
-			prevProps.newItem.temp.addUtmLink !== this.props.newItem.temp.addUtmLink
-		) {
-			this.addUtmParameters()
+	const updateUtmParameters = useCallback(
+		removeFromUrl => {
+			if (targetUrl) {
+				const withUTM = addUrlUtmTracking({
+					targetUrl,
+					campaign: title,
+					content: type,
+					removeFromUrl,
+				})
+
+				execute(updateNewUnit('targetUrl', withUTM))
+			}
+		},
+		[targetUrl, title, type]
+	)
+
+	const handleUtmButton = useCallback(() => {
+		if (targetUrl) {
+			execute(updateNewUnit('temp', { ...temp, autoUtmAdded: !autoUtmAdded }))
+			updateUtmParameters(autoUtmAdded)
 		}
-	}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [autoUtmAdded, targetUrl, title, type])
 
-	validateTitle(name, dirty, errMsg) {
-		const result = Joi.validate(name, adUnitPost.title)
+	useEffect(() => {
+		autoUtmAdded && updateUtmParameters()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [title, type])
 
-		this.props.validate('title', {
-			isValid: !result.error,
-			err: { msg: result.error ? result.error.message : '' },
-			dirty: dirty,
-		})
-	}
-
-	validateDescription(name, dirty, errMsg) {
-		const result = Joi.validate(name, adUnitPost.description)
-
-		this.props.validate('description', {
-			isValid: !result.error,
-			err: { msg: result.error ? result.error.message : '' },
-			dirty: dirty,
-		})
-	}
-
-	validateTargetUrl(targetUrl, dirty) {
-		const withHttp = url => (!/^https?:\/\//i.test(url) ? `http://${url}` : url)
-		const result = Joi.validate(withHttp(targetUrl), adUnitPost.targetUrl)
-		this.props.validate('targetUrl', {
-			isValid: !result.error,
-			err: { msg: result.error ? result.error.message : '' },
-			dirty: dirty,
-		})
-		if (!result.error) this.addUtmParameters(withHttp(targetUrl))
-	}
-
-	validateAndUpdateType = (dirty, value) => {
-		const result = Joi.validate(value, adUnitPost.type)
-		this.props.handleChange('type', value)
-		this.props.validate('type', {
-			isValid: !result.error,
-			err: { msg: result.error ? result.error.message : '' },
-			dirty: dirty,
-		})
-	}
-
-	addUtmParameters(targetUrl) {
-		const { handleChange, newItem } = this.props
-		const { title, type, temp } = newItem
-		const { addUtmLink } = temp
-		if (!!targetUrl) {
-			const newTargetUrl = addUrlUtmTracking({
-				targetUrl,
-				campaign: title,
-				content: type,
-				removeFromUrl: !addUtmLink,
-			})
-			handleChange('targetUrl', newTargetUrl)
-		}
-	}
-
-	handleChangeAddUtmLink(ev) {
-		const { temp } = this.props.newItem
-		const newTemp = { ...temp }
-		// Need this to keep the state if user get back
-		newTemp.addUtmLink = ev.target.checked
-		this.props.handleChange('temp', newTemp)
-	}
-
-	render() {
-		const { t, newItem, invalidFields, handleChange } = this.props
-		const { targetUrl, type, title, description, temp } = newItem
-		const { addUtmLink } = temp
-		const errTitle = invalidFields['title']
-		const errDescription = invalidFields['description']
-		const errTargetUrl = invalidFields['targetUrl']
-
-		return (
-			<div>
-				<Grid container spacing={2}>
-					<Grid item sm={12}>
-						<TextField
-							fullWidth
-							type='text'
-							required
-							label={t('title', { isProp: true })}
-							name='name'
-							value={title}
-							onChange={ev => handleChange('title', ev.target.value)}
-							onBlur={() => this.validateTitle(title, true)}
-							onFocus={() => this.validateTitle(title, false)}
-							error={errTitle && !!errTitle.dirty}
-							maxLength={120}
-							helperText={
-								errTitle && !!errTitle.dirty
-									? errTitle.errMsg
-									: t('TITLE_HELPER')
-							}
-						/>
-					</Grid>
-					<Grid item sm={12}>
-						<TextField
-							fullWidth
-							type='text'
-							multiline
-							rows={3}
-							label={t('description', { isProp: true })}
-							value={description}
-							onChange={ev => handleChange('description', ev.target.value)}
-							onBlur={() => {
-								this.validateDescription(description, true)
-							}}
-							onFocus={() => this.validateDescription(description, false)}
-							error={errDescription && !!errDescription.dirty}
-							maxLength={300}
-							helperText={
-								errDescription && !!errDescription.dirty
-									? errDescription.errMsg
-									: t('DESCRIPTION_HELPER')
-							}
-						/>
-					</Grid>
-					<Grid item xs={12}>
-						<TextField
-							fullWidth
-							type='text'
-							required
-							label={t('targetUrl', { isProp: true })}
-							value={targetUrl}
-							onChange={ev => handleChange('targetUrl', ev.target.value)}
-							onBlur={() => this.validateTargetUrl(targetUrl, true)}
-							onFocus={() => this.validateTargetUrl(targetUrl, false)}
-							error={errTargetUrl && !!errTargetUrl.dirty}
-							helperText={
-								errTargetUrl && !!errTargetUrl.dirty ? errTargetUrl.errMsg : ''
-							}
-						/>
-					</Grid>
-					<Grid item xs={12}>
-						<FormControlLabel
-							control={
-								<Checkbox
-									checked={addUtmLink}
-									onChange={ev => this.handleChangeAddUtmLink(ev)}
-									value='checkedB'
-									color='primary'
-								/>
-							}
-							label={t('ADD_UTM_LINK')}
-						/>
-					</Grid>
-					<Grid item sm={12} md={12}>
-						<Dropdown
-							fullWidth
-							required
-							onChange={this.validateAndUpdateType.bind(this, true)}
-							source={AdTypes}
-							value={type + ''}
-							label={t('adType', { isProp: true })}
-							htmlId='ad-type-dd'
-							name='adType'
-						/>
-					</Grid>
+	return (
+		<div>
+			<Grid container spacing={2}>
+				<Grid item sm={12}>
+					<TextField
+						fullWidth
+						type='text'
+						required
+						label={t('title', { isProp: true })}
+						name='title'
+						value={title}
+						onChange={ev => execute(updateNewUnit('title', ev.target.value))}
+						error={errTitle && !!errTitle.dirty}
+						maxLength={120}
+						helperText={
+							errTitle && !!errTitle.dirty ? errTitle.errMsg : t('TITLE_HELPER')
+						}
+					/>
 				</Grid>
-			</div>
-		)
-	}
+				<Grid item sm={12}>
+					<TextField
+						fullWidth
+						type='text'
+						multiline
+						rows={3}
+						label={t('description', { isProp: true })}
+						value={description}
+						onChange={ev =>
+							execute(updateNewUnit('description', ev.target.value))
+						}
+						error={errDescription && !!errDescription.dirty}
+						maxLength={300}
+						helperText={
+							errDescription && !!errDescription.dirty
+								? errDescription.errMsg
+								: t('DESCRIPTION_HELPER')
+						}
+					/>
+				</Grid>
+				<Grid item xs={12}>
+					<TextField
+						fullWidth
+						type='text'
+						required
+						label={t('targetUrl', { isProp: true })}
+						value={targetUrl}
+						onChange={ev =>
+							execute(updateNewUnit('targetUrl', ev.target.value))
+						}
+						error={errTargetUrl && !!errTargetUrl.dirty}
+						helperText={
+							errTargetUrl && !!errTargetUrl.dirty
+								? errTargetUrl.errMsg
+								: t('TARGETIRL_HELPER')
+						}
+					/>
+				</Grid>
+				<Grid item xs={12}>
+					<Button
+						onClick={handleUtmButton}
+						color={!autoUtmAdded ? 'primary' : 'secondary'}
+						variant='contained'
+					>
+						{!autoUtmAdded ? t('ADD_UTM_LINK') : t('REMOVE_UTM_LINK')}
+					</Button>
+				</Grid>
+				<Grid item sm={12} md={12}>
+					<Dropdown
+						fullWidth
+						required
+						onChange={value => execute(updateNewUnit('type', value))}
+						source={AdTypes}
+						value={type + ''}
+						label={t('adType', { isProp: true })}
+						htmlId='ad-type-dd'
+						name='adType'
+						error={errType && !!errType.dirty}
+						helperText={
+							errType && !!errType.dirty
+								? errType.errMsg
+								: t('UNIT_TYPE_HELPER')
+						}
+					/>
+				</Grid>
+			</Grid>
+		</div>
+	)
 }
 
 AdUnitBasic.propTypes = {
-	newItem: PropTypes.object.isRequired,
-	title: PropTypes.string,
-	descriptionHelperTxt: PropTypes.string,
-	nameHelperTxt: PropTypes.string,
+	validateId: PropTypes.string.isRequired,
 }
 
-const NewAdUnitBasic = NewAdUnitHoc(AdUnitBasic)
-
-export default Translate(NewAdUnitBasic)
+export default AdUnitBasic
