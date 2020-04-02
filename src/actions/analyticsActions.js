@@ -207,14 +207,10 @@ export function updateAccountAnalytics() {
 							: aggregates.aggr
 						const defaultValue = aggrByChannelSegments ? null : 0
 
-						aggregates.aggr = aggregates.aggr.sort((a, b) => a.time - b.time)
-						//TODO: Fix fill empty time
-						// aggregates.aggr = fillEmptyTime(
-						// 	aggr,
-						// 	timeframe,
-						// 	defaultValue,
-						// 	start
-						// )
+						aggregates.aggr = fillEmptyTime(aggr, timeframe, defaultValue, {
+							start,
+							end,
+						})
 						accountChanged =
 							accountChanged || isAccountChanged(getState, account)
 
@@ -334,17 +330,27 @@ export function updateAnalyticsPeriod(start) {
 		try {
 			const timeframe = selectAnalyticsTimeframe(getState())
 			let end = null
-			const startClone = makeJSDateObject(start)
 			switch (timeframe) {
 				case 'hour':
-					start = +utils.addHours(utils.date(start), -1)
-					end = +utils.date(startClone)
+					start = +utils.date(start).startOf('hour')
+					end = +utils.date(start).endOf('hour')
 					break
 				case 'day':
-					end = +utils.addDays(startClone, 1)
+					start = +start.startOf('day')
+					end = +utils.date(start).endOf('day')
 					break
 				case 'week':
-					end = +utils.addDays(startClone, 6)
+					start = +utils
+						.date(start)
+						.startOf('day')
+						.add(utils.getLastSixHoursPeriod() * 6 + 2, 'hours')
+						.valueOf()
+					end = +utils
+						.date(start)
+						.startOf('day')
+						.add(utils.getLastSixHoursPeriod() * 6, 'hours')
+						.add(6, 'days')
+						.valueOf()
 					break
 				default:
 					break
