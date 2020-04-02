@@ -1,109 +1,53 @@
-import React, { Component } from 'react'
+import React from 'react'
+import { useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
-import NewAdUnitHoc from './NewAdUnitHoc'
-import Translate from 'components/translate/Translate'
 import ImgForm from 'components/dashboard/forms/ImgForm'
-import Grid from '@material-ui/core/Grid'
-import ValidImageHoc from 'components/dashboard/forms/ValidImageHoc'
+import { Grid } from '@material-ui/core'
+import { getWidAndHightFromType } from 'helpers/itemsHelpers'
+import { updateNewUnit, execute } from 'actions'
+import { t, selectNewAdUnit, selectValidationsById } from 'selectors'
 
-const getWidAndHightFromType = type => {
-	type = type || ''
-	if (!type) {
-		return {
-			width: 0,
-			height: 0,
-		}
-	}
+function AdUnitMedia({ validateId }) {
+	const { type, temp } = useSelector(selectNewAdUnit)
+	const { temp: errImg } = useSelector(
+		state => selectValidationsById(state, validateId) || {}
+	)
+	const { width, height } = getWidAndHightFromType(type)
+	const { tempUrl, mime } = temp
 
-	const sizes = type.split('_')[1].split('x')
-	return {
-		width: parseInt(sizes[0], 10),
-		height: parseInt(sizes[1], 10),
-	}
-}
-
-class AdUnitMedia extends Component {
-	componentDidMount() {
-		const { newItem, validate, validateMedia } = this.props
-		const { type, temp } = newItem
-		const { tempUrl, mime } = temp
-
-		const { width, height } = getWidAndHightFromType(type)
-
-		if (tempUrl) {
-			validateMedia(
-				{
-					propsName: 'temp',
-					widthTarget: width,
-					heightTarget: height,
-					msg: 'ERR_IMG_SIZE_EXACT',
-					exact: true,
-					required: true,
-				},
-				{
-					tempUrl,
-					mime,
-				}
-			)
-		} else {
-			validate('temp', {
-				isValid: false,
-				err: { msg: 'ERR_REQUIRED_FIELD' },
-				dirty: false,
-			})
-		}
-	}
-
-	handleImgChange = (prop, img) => {
-		const { newItem, handleChange } = this.props
-		const newTemp = { ...newItem.temp, ...img }
-		handleChange(prop, newTemp)
-	}
-
-	render() {
-		const { newItem, t, validateMedia } = this.props
-		const { type, temp } = newItem
-		const errImg = this.props.invalidFields['temp']
-		const { width, height } = getWidAndHightFromType(type)
-
-		return (
-			<div>
-				<Grid container>
-					<Grid item sm={12}>
-						<ImgForm
-							label={t('UNIT_BANNER_IMG_LABEL')}
-							imgSrc={temp.tempUrl || ''}
-							mime={temp.mime || ''}
-							onChange={validateMedia.bind(this, {
-								propsName: 'temp',
-								widthTarget: width,
-								heightTarget: height,
-								msg: 'ERR_IMG_SIZE_EXACT',
-								exact: true,
-								required: true,
-								onChange: this.handleImgChange,
-							})}
-							additionalInfo={t('UNIT_BANNER_IMG_INFO', {
-								args: [width, height, 'px'],
-							})}
-							errMsg={errImg ? errImg.errMsg : ''}
-							size={{
-								width: width,
-								height: height,
-							}}
-						/>
-					</Grid>
+	return (
+		<div>
+			<Grid container>
+				<Grid item sm={12}>
+					<ImgForm
+						label={t('UNIT_BANNER_IMG_LABEL')}
+						imgSrc={tempUrl || ''}
+						mime={mime || ''}
+						onChange={mediaProps =>
+							execute(
+								updateNewUnit('temp', {
+									...temp,
+									...mediaProps,
+								})
+							)
+						}
+						additionalInfo={t('UNIT_BANNER_IMG_INFO', {
+							args: [width, height, 'px'],
+						})}
+						errMsg={errImg ? errImg.errMsg : ''}
+						size={{
+							width: width,
+							height: height,
+						}}
+					/>
 				</Grid>
-			</div>
-		)
-	}
+			</Grid>
+		</div>
+	)
 }
 
 AdUnitMedia.propTypes = {
-	title: PropTypes.string,
-	newItem: PropTypes.object.isRequired,
+	validateId: PropTypes.string.isRequired,
 }
 
-const NewAdUnitMedia = NewAdUnitHoc(ValidImageHoc(AdUnitMedia))
-
-export default Translate(NewAdUnitMedia)
+export default AdUnitMedia

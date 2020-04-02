@@ -70,6 +70,7 @@ function AdSlotMedia({ validateId }) {
 							<ImgForm
 								label={t('SLOT_FALLBACK_MEDIA_LABEL')}
 								imgSrc={tempUrl || ''}
+								mime={mime || ''}
 								onChange={mediaProps =>
 									execute(
 										updateNewSlot('temp', {
