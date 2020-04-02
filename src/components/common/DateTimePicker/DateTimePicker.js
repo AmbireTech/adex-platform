@@ -35,7 +35,6 @@ export function DateTimePicker({
 }) {
 	const now = utils.date(Date.now())
 	const date = roundHour ? utils.setMinutes(now, 0) : now
-	console.log('TEST', now, date)
 	return (
 		<MuiDateTimePicker
 			value={date}
@@ -105,17 +104,14 @@ const dateTimePickerStyled = ({ classes, calendarIcon, icon, ...rest }) => {
 export const DateTimePickerContrast = withStyles(styles)(dateTimePickerStyled)
 
 function WeekSelectDatePicker({ classes, calendarIcon, icon, ...rest }) {
-	const [selectedDate, setSelectedDate] = useState(+Date.now())
-
-	const handleWeekChange = date => {
-		setSelectedDate(utils.startOfWeek(makeJSDateObject(date)))
-	}
-
 	const formatWeekSelectLabel = (date, invalidLabel) => {
 		let dateClone = makeJSDateObject(date)
 
 		return dateClone && utils.isValid(dateClone)
-			? `Week of ${utils.format(utils.startOfWeek(dateClone), 'MMM Do')}`
+			? `${utils.format(dateClone, 'MMM Do, YYYY')} - ${utils.format(
+					utils.addDays(dateClone, 6),
+					'MMM Do, YYYY'
+			  )}`
 			: invalidLabel
 	}
 
@@ -152,9 +148,7 @@ function WeekSelectDatePicker({ classes, calendarIcon, icon, ...rest }) {
 
 	return (
 		<MuiDatePicker
-			label='Week picker'
-			value={selectedDate}
-			onChange={handleWeekChange}
+			label='Week Picker'
 			renderDay={renderWrappedWeekDay}
 			labelFunc={formatWeekSelectLabel}
 			InputProps={{
