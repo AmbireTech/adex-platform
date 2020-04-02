@@ -124,7 +124,10 @@ const DatePickerSwitch = ({ timeframe, ...rest }) => {
 						`${utils.format(
 							utils.date(val),
 							'MMM Do, YYYY - (HH:mm'
-						)} - ${utils.format(utils.addHours(utils.date(val), 1), 'HH:mm)')}`
+						)} - ${utils.format(
+							utils.setMinutes(utils.date(val), 59),
+							'HH:mm)'
+						)}`
 					}
 					{...rest}
 				/>
@@ -138,7 +141,8 @@ export function BasicStats({ side }) {
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
 	const { symbol } = useSelector(selectMainToken)
-	const [selectedDate, setSelectedDate] = useState(+Date.now())
+	const defaultTimeNow = utils.setMinutes(utils.date(Date.now()), 0)
+	const [selectedDate, setSelectedDate] = useState(defaultTimeNow)
 	const timeframe = useSelector(selectAnalyticsTimeframe)
 	const totalImpressions = useSelector(state =>
 		selectTotalImpressions(state, {
@@ -204,8 +208,9 @@ export function BasicStats({ side }) {
 								label={t('SELECT_TIMEFRAME')}
 								// helperText={t(timeHints[timeframe])}
 								onChange={val => {
+									setSelectedDate(defaultTimeNow)
+									//TODO: fix change of timeframe, set default period as well
 									execute(updateAnalyticsTimeframe(val))
-									setSelectedDate(Date.now())
 								}}
 								source={timeFrames}
 								value={timeframe}
@@ -215,9 +220,8 @@ export function BasicStats({ side }) {
 						<Box>
 							<DatePickerSwitch
 								timeframe={timeframe}
-								setSelectedDate={setSelectedDate}
-								selectedDate={selectedDate}
 								value={selectedDate}
+								minutesStep={60}
 								onChange={val => {
 									setSelectedDate(val)
 									execute(updateAnalyticsPeriod(val))
