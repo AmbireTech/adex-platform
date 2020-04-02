@@ -9,7 +9,6 @@ import SaveIcon from '@material-ui/icons/Save'
 import NewAdUnitHoc from './AdUnit/NewAdUnitHoc'
 import AdUnitBasic from './AdUnit/AdUnitBasic'
 import AdUnitMedia from './AdUnit/AdUnitMedia'
-import AdUnitTargeting from './AdUnit/AdUnitTargeting'
 import AdUnitFormPreview from './AdUnit/AdUnitFormPreview'
 import NewCampaignHoc from './Campaign/NewCampaignHoc'
 import CampaignUnits from './Campaign/CampaignUnits'
@@ -19,7 +18,7 @@ import CampaignFormPreview from './Campaign/CampaignFormPreview'
 import NewAdSlotHoc from './AdSlot/NewAdSlotHoc'
 import AdSlotBasic from './AdSlot/AdSlotBasic'
 import AdSlotMedia from './AdSlot/AdSlotMedia'
-import AdSlotTargeting from './AdSlot/AdSlotTargeting'
+import NewItemTargeting from './NewItemTargeting'
 import AdSlotPreview from './AdSlot/AdSlotPreview'
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty'
 
@@ -34,6 +33,24 @@ import {
 	completeItem,
 	addSlot,
 } from 'actions'
+
+import { slotSources, unitSources } from 'selectors'
+
+const AdSlotTargeting = props => (
+	<NewItemTargeting
+		{...props}
+		itemType='AdSlot'
+		sourcesSelector={slotSources}
+	/>
+)
+
+const AdUnitTargeting = props => (
+	<NewItemTargeting
+		{...props}
+		itemType='AdUnit'
+		sourcesSelector={unitSources}
+	/>
+)
 
 const SaveBtn = ({ newItem, t, save, ...rest }) => {
 	return (
