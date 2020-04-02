@@ -1,7 +1,11 @@
 import MomentUtils from '@date-io/moment'
 import moment from 'moment'
 
-class DateUtils extends MomentUtils {
+// We can't use the new version of @date-io/moment or @date-io/date-fns
+// because the datepickers will crash, but we need some more functionality
+// as adding hours and start / end of weeks. This is why I have created an
+// extention class. We use this as MuiPickersUtilsProvider as well
+export class DateUtils extends MomentUtils {
 	startOfWeek(date) {
 		return date.clone().startOf('week')
 	}
@@ -13,6 +17,10 @@ class DateUtils extends MomentUtils {
 	isWithinInterval(date, { start, end }) {
 		return date.clone().isBetween(start, end, null, '[]')
 	}
+
+	addHours(date, hours) {
+		return date.clone().add(hours, 'hour')
+	}
 }
 
 const utils = new DateUtils()
@@ -20,21 +28,13 @@ const utils = new DateUtils()
 export default utils
 
 export function makeJSDateObject(date) {
-	// if (date instanceof dayjs) {
-	// 	return date.clone().toDate()
-	// }
-
 	if (moment.isMoment(date)) {
 		return date.clone()
 	}
-
-	// if (date instanceof DateTime) {
-	// 	return date.toJSDate()
-	// }
 
 	if (date instanceof Date) {
 		return new Date(date.getTime())
 	}
 
-	return date // handle case with invalid input
+	return date
 }
