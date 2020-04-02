@@ -53,7 +53,7 @@ const SlotFallback = ({ img, targetUrl }) => {
 	)
 }
 
-const AdSlotPreview = ({ titleee }) => {
+const AdSlotPreview = () => {
 	const {
 		type,
 		title,

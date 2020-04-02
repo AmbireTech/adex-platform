@@ -119,7 +119,7 @@ export const NewUnitSteps = props => (
 			{ title: 'UNIT_TARGETS_STEP', component: AdUnitTargeting },
 			{
 				title: 'PREVIEW_AND_SAVE_ITEM',
-				page: AdUnitFormPreview,
+				component: AdUnitFormPreview,
 				final: true,
 			},
 		]}
