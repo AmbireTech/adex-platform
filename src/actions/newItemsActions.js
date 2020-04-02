@@ -12,6 +12,7 @@ import {
 	selectAuthSig,
 	selectMainToken,
 	selectNewAdSlot,
+	selectNewAdUnit,
 } from 'selectors'
 import { Base, Models, AdSlot, AdUnit } from 'adex-models'
 import {
@@ -224,6 +225,7 @@ export function addSlot() {
 				timeout: 50000,
 			})(dispatch)
 		} catch (err) {
+			console.error('ERR_CREATING_ITEM', err)
 			addToast({
 				type: 'cancel',
 				label: t('ERR_CREATING_ITEM', {
@@ -231,7 +233,55 @@ export function addSlot() {
 				}),
 				timeout: 50000,
 			})(dispatch)
-			throw new Error()
+			throw new Error('ERR_CREATING_ITEM', err)
+		}
+	}
+}
+
+// register item
+export function addUnit() {
+	return async function(dispatch, getState) {
+		try {
+			const state = getState()
+			const item = selectNewAdUnit(state)
+			const newItem = { ...item }
+			const authSig = selectAuthSig(state)
+			const imageIpfs = (await getImgsIpfsFromBlob({
+				tempUrl: newItem.temp.tempUrl,
+				authSig,
+			})).ipfs
+
+			newItem.mediaUrl = `ipfs://${imageIpfs}`
+			newItem.mediaMime = newItem.temp.mime
+			newItem.created = Date.now()
+
+			const resItem = await postAdUnit({
+				unit: new AdUnit(newItem).marketAdd,
+				authSig,
+			})
+
+			dispatch({
+				type: ADD_ITEM,
+				item: new AdUnit(resItem).plainObj(),
+				itemType: 'AdUnit',
+			})
+
+			addToast({
+				dispatch: dispatch,
+				type: 'accept',
+				toastStr: 'SUCCESS_CREATING_ITEM',
+				args: ['AdUnit', newItem.title],
+			})
+		} catch (err) {
+			console.error('ERR_CREATING_ITEM', err)
+			addToast({
+				type: 'cancel',
+				label: t('ERR_CREATING_ITEM', {
+					args: ['AdUnit', Helper.getErrMsg(err)],
+				}),
+				timeout: 50000,
+			})(dispatch)
+			throw new Error('ERR_CREATING_ITEM', err)
 		}
 	}
 }
