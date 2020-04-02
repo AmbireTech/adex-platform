@@ -48,51 +48,6 @@ export const getImgsIpfsFromBlob = ({ tempUrl, authSig }) => {
 		})
 }
 
-// register item
-export function addUnit(item) {
-	const newItem = { ...item }
-	return async function(dispatch, getState) {
-		try {
-			const state = getState()
-			const authSig = selectAuthSig(state)
-			const imageIpfs = (await getImgsIpfsFromBlob({
-				tempUrl: newItem.temp.tempUrl,
-				authSig,
-			})).ipfs
-
-			newItem.mediaUrl = `ipfs://${imageIpfs}`
-			newItem.mediaMime = newItem.temp.mime
-			newItem.created = Date.now()
-
-			const resItem = await postAdUnit({
-				unit: new AdUnit(newItem).marketAdd,
-				authSig,
-			})
-
-			dispatch({
-				type: types.ADD_ITEM,
-				item: new AdUnit(resItem).plainObj(),
-				itemType: 'AdUnit',
-			})
-
-			addToast({
-				dispatch: dispatch,
-				type: 'accept',
-				toastStr: 'SUCCESS_CREATING_ITEM',
-				args: ['AdUnit', newItem.title],
-			})
-		} catch (err) {
-			console.error('ERR_CREATING_ITEM', err)
-			addToast({
-				dispatch: dispatch,
-				type: 'cancel',
-				toastStr: 'ERR_CREATING_ITEM',
-				args: ['AdUnit', err],
-			})
-		}
-	}
-}
-
 export function getAllItems() {
 	return async function(dispatch, getState) {
 		try {
