@@ -3,11 +3,10 @@ import {
 	handleAfterValidation,
 	validateSchemaProp,
 	validateMediaSize,
-	selectAuthSig,
 	addToast,
 	getImgsIpfsFromBlob,
 } from 'actions'
-import { selectNewAdUnit, t } from 'selectors'
+import { selectNewAdUnit, selectAuthSig, t } from 'selectors'
 import { schemas, AdUnit } from 'adex-models'
 import { getWidAndHightFromType } from 'helpers/itemsHelpers'
 
