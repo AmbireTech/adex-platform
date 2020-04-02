@@ -15,7 +15,15 @@ export const addUrlUtmTracking = ({
 			const newQuery = {}
 			if (removeFromUrl) {
 				for (let [key, value] of Object.entries(URL.query)) {
-					if (UTM_PARAMS[key] !== value) {
+					if (
+						(key === 'utm_campaign' &&
+							![campaign, UTM_PARAMS['utm_campaign']].includes(value)) ||
+						(key === 'utm_content' &&
+							![content, UTM_PARAMS['utm_content']].includes(value)) ||
+						(!['utm_campaign', 'utm_content'].includes(key) &&
+							UTM_PARAMS[key] &&
+							UTM_PARAMS[key] !== value)
+					) {
 						newQuery[key] = value
 					}
 				}
