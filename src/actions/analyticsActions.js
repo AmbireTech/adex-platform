@@ -23,8 +23,10 @@ import {
 	selectSide,
 	selectAccount,
 	selectAnalyticsTimeframe,
+	selectAnalyticsPeriod,
 } from 'selectors'
 import { bigNumberify } from 'ethers/utils'
+import utils, { makeJSDateObject } from 'helpers/dateUtils'
 
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
@@ -160,6 +162,7 @@ export function updateAccountAnalytics() {
 		const side = selectSide(state)
 		const timeframe = selectAnalyticsTimeframe(state)
 		const allChannels = selectChannelsWithUserBalancesAll(state)
+		const { start, end } = selectAnalyticsPeriod(state)
 		const feeTokens = selectFeeTokenWhitelist(state)
 		const withdrawTokens = selectRoutineWithdrawTokens(state)
 		try {
@@ -187,6 +190,8 @@ export function updateAccountAnalytics() {
 			const allAnalytics = params.map(async opts => {
 				identityAnalytics({
 					...opts,
+					start,
+					end,
 					leaderAuth,
 				})
 					.then(({ aggregates, metric }) => {
@@ -200,10 +205,16 @@ export function updateAccountAnalytics() {
 									withdrawTokens,
 							  })
 							: aggregates.aggr
-
 						const defaultValue = aggrByChannelSegments ? null : 0
 
-						aggregates.aggr = fillEmptyTime(aggr, timeframe, defaultValue)
+						aggregates.aggr = aggregates.aggr.sort((a, b) => a.time - b.time)
+						//TODO: Fix fill empty time
+						// aggregates.aggr = fillEmptyTime(
+						// 	aggr,
+						// 	timeframe,
+						// 	defaultValue,
+						// 	start
+						// )
 						accountChanged =
 							accountChanged || isAccountChanged(getState, account)
 
@@ -211,7 +222,7 @@ export function updateAccountAnalytics() {
 							dispatch({
 								type: types.UPDATE_ANALYTICS,
 								...opts,
-								value: { ...aggregates },
+								value: { ...aggregates }, // ADD TIME as well
 							})
 						}
 					})
@@ -312,6 +323,45 @@ export function updateAnalyticsTimeframe(timeframe) {
 			addToast({
 				type: 'cancel',
 				label: translate('ERR_ANALYTICS', { args: [getErrorMsg(err)] }),
+				timeout: 20000,
+			})(dispatch)
+		}
+	}
+}
+
+export function updateAnalyticsPeriod(start) {
+	return async function(dispatch, getState) {
+		try {
+			const timeframe = selectAnalyticsTimeframe(getState())
+			let end = null
+			const startClone = makeJSDateObject(start)
+			switch (timeframe) {
+				case 'hour':
+					start = +utils.addHours(utils.date(start), -1)
+					end = +utils.date(startClone)
+					break
+				case 'day':
+					end = +utils.addDays(startClone, 1)
+					break
+				case 'week':
+					end = +utils.addDays(startClone, 6)
+					break
+				default:
+					break
+			}
+			start = +start
+			dispatch({
+				type: types.UPDATE_ANALYTICS_PERIOD,
+				value: { start, end },
+			})
+			updateAccountAnalytics()(dispatch, getState)
+		} catch (err) {
+			console.error('ERR_ANALYTICS_START_DATE_END_DATE', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_ANALYTICS_START_DATE_END_DATE', {
+					args: [getErrorMsg(err)],
+				}),
 				timeout: 20000,
 			})(dispatch)
 		}
