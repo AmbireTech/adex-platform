@@ -20,7 +20,7 @@ export function validateNewUnitBasics({
 		await updateSpinner(validateId, true)(dispatch)
 		try {
 			const state = getState()
-			const { title, description, type, website } = selectNewAdUnit(state)
+			const { title, description, type, targetUrl } = selectNewAdUnit(state)
 
 			const validations = await Promise.all([
 				validateSchemaProp({
@@ -46,7 +46,7 @@ export function validateNewUnitBasics({
 				})(dispatch),
 				validateSchemaProp({
 					validateId,
-					value: website,
+					value: targetUrl,
 					prop: 'targetUrl',
 					schema: adUnitPost.targetUrl,
 					dirty,
