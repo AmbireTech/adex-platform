@@ -40,6 +40,7 @@ import {
 	GETTING_CAMPAIGNS_FEES,
 	PRINTING_CAMPAIGNS_RECEIPTS,
 } from 'constants/spinners'
+import Helper from 'helpers/miscHelpers'
 
 const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
@@ -53,11 +54,13 @@ const VALIDATOR_FOLLOWER_FEE_NUM = process.env.VALIDATOR_FOLLOWER_FEE_NUM
 const VALIDATOR_FOLLOWER_FEE_DEN = process.env.VALIDATOR_FOLLOWER_FEE_DEN
 const VALIDATOR_FOLLOWER_FEE_ADDR = process.env.VALIDATOR_FOLLOWER_FEE_ADDR
 
-export function openCampaign({ campaign }) {
+export function openCampaign() {
 	return async function(dispatch, getState) {
 		updateSpinner(OPENING_CAMPAIGN, true)(dispatch)
-		const account = selectAccount(getState())
 		try {
+			const state = getState()
+			const campaign = selectNewCampaign(state)
+			const account = selectAccount(state)
 			await getAllValidatorsAuthForIdentity({
 				withBalance: [{ channel: campaign }],
 				account,
@@ -85,10 +88,11 @@ export function openCampaign({ campaign }) {
 			addToast({
 				type: 'cancel',
 				label: t('ERR_OPENING_CAMPAIGN', {
-					args: [getErrorMsg(err)],
+					args: [Helper.getErrMsg(err)],
 				}),
-				timeout: 20000,
+				timeout: 50000,
 			})(dispatch)
+			throw new Error('ERR_OPENING_CAMPAIGN', err)
 		}
 		updateSpinner(OPENING_CAMPAIGN, false)(dispatch)
 		return true
