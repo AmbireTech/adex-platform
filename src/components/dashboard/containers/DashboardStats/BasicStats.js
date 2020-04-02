@@ -1,6 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { execute, updateAnalyticsTimeframe } from 'actions'
+import {
+	execute,
+	updateAnalyticsTimeframe,
+	updateAnalyticsPeriod,
+} from 'actions'
 import { SimpleStatistics } from 'components/dashboard/charts/simplified'
 import Dropdown from 'components/common/dropdown'
 import Grid from '@material-ui/core/Grid'
@@ -33,13 +37,14 @@ import {
 	selectTotalMoney,
 	selectAverageCPM,
 	selectMainToken,
-	selectAnalytics,
+	selectAnalyticsTimeframe,
 	selectTotalClicks,
 	selectChartDatapointsCPM,
 	selectChartDatapointsImpressions,
 	selectChartDatapointsClicks,
 	selectChartDatapointsPayouts,
 } from 'selectors'
+import utils from 'helpers/dateUtils'
 
 const timeFrames = VALIDATOR_ANALYTICS_TIMEFRAMES.map(tf => {
 	const translated = { ...tf }
@@ -98,12 +103,43 @@ const timeHints = {
 	week: 'SHOWING_LAST_7_DAYS',
 }
 
+const DatePickerSwitch = ({ timeframe, ...rest }) => {
+	switch (timeframe) {
+		case 'week':
+			return <WeeklyDatePicker {...rest} />
+		case 'day':
+			return (
+				<DatePicker
+					labelFunc={val => utils.format(utils.date(val), 'MMM Do, YYYY')}
+					{...rest}
+				/>
+			)
+		case 'hour':
+			return (
+				<DateTimePicker
+					views={['date', 'hours']}
+					roundHour
+					minutesStep={60}
+					labelFunc={val =>
+						`${utils.format(
+							utils.date(val),
+							'MMM Do, YYYY - (HH:mm'
+						)} - ${utils.format(utils.addHours(utils.date(val), 1), 'HH:mm)')}`
+					}
+					{...rest}
+				/>
+			)
+		default:
+			return <DatePicker {...rest} />
+	}
+}
+
 export function BasicStats({ side }) {
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
 	const { symbol } = useSelector(selectMainToken)
-
-	const timeframe = useSelector(selectAnalytics).timeframe || ''
+	const [selectedDate, setSelectedDate] = useState(+Date.now())
+	const timeframe = useSelector(selectAnalyticsTimeframe)
 	const totalImpressions = useSelector(state =>
 		selectTotalImpressions(state, {
 			side,
@@ -167,60 +203,30 @@ export function BasicStats({ side }) {
 								fullWidth
 								label={t('SELECT_TIMEFRAME')}
 								// helperText={t(timeHints[timeframe])}
-								onChange={val => execute(updateAnalyticsTimeframe(val))}
+								onChange={val => {
+									execute(updateAnalyticsTimeframe(val))
+									setSelectedDate(Date.now())
+								}}
 								source={timeFrames}
 								value={timeframe}
 								htmlId='timeframe-select'
 							/>
 						</Box>
 						<Box>
-							<WeeklyDatePicker
+							<DatePickerSwitch
+								timeframe={timeframe}
+								setSelectedDate={setSelectedDate}
+								selectedDate={selectedDate}
+								value={selectedDate}
+								onChange={val => {
+									setSelectedDate(val)
+									execute(updateAnalyticsPeriod(val))
+								}}
 								emptyLabel={t('SET_CAMPAIGN_START')}
 								disableFuture
 								fullWidth
 								calendarIcon
 								label={t('ANALYTICS_RANGE')}
-							/>
-							<DatePicker
-								emptyLabel={t('SET_CAMPAIGN_START')}
-								fullWidth
-								calendarIcon
-								// minutesStep={60}
-								label={t('ANALYTICS_RANGE')}
-								// minDate={now}
-								// maxDate={to}
-								// onChange={val => {
-								// execute(updateNewCampaign('activeFrom', val.valueOf()))
-								// }}
-								// value={from || null}
-								// error={errFrom && !!errFrom.dirty}
-								// helperText={
-								// 	errFrom && !!errFrom.dirty
-								// 		? errFrom.errMsg
-								// 		: t('CAMPAIGN_STARTS_FROM_HELPER_TXT')
-								// }
-							/>
-							<DateTimePicker
-								emptyLabel={t('SET_CAMPAIGN_START')}
-								fullWidth
-								views={['date', 'hours']}
-								calendarIcon
-								roundHour
-								minutesStep={60}
-								label={t('ANALYTICS_RANGE')}
-
-								// minDate={now}
-								// maxDate={to}
-								// onChange={val => {
-								// execute(updateNewCampaign('activeFrom', val.valueOf()))
-								// }}
-								// value={from || null}
-								// error={errFrom && !!errFrom.dirty}
-								// helperText={
-								// 	errFrom && !!errFrom.dirty
-								// 		? errFrom.errMsg
-								// 		: t('CAMPAIGN_STARTS_FROM_HELPER_TXT')
-								// }
 							/>
 						</Box>
 					</StatsCard>
