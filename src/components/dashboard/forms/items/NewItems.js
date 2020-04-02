@@ -1,26 +1,18 @@
 import React from 'react'
-import Button from '@material-ui/core/Button'
 import FormSteps from 'components/common/stepper/FormSteps'
 import WithDialog from 'components/common/dialog/WithDialog'
 import { AdUnit, AdSlot, Campaign } from 'adex-models'
 import FileCopyIcon from '@material-ui/icons/FileCopy'
-import AddIcon from '@material-ui/icons/Add'
-import SaveIcon from '@material-ui/icons/Save'
-import NewAdUnitHoc from './AdUnit/NewAdUnitHoc'
 import AdUnitBasic from './AdUnit/AdUnitBasic'
 import AdUnitMedia from './AdUnit/AdUnitMedia'
 import AdUnitFormPreview from './AdUnit/AdUnitFormPreview'
-import NewCampaignHoc from './Campaign/NewCampaignHoc'
 import CampaignUnits from './Campaign/CampaignUnits'
-// import CampaignTargeting from './Campaign/CampaignTargeting'
 import CampaignFinance from './Campaign/CampaignFinance'
 import CampaignFormPreview from './Campaign/CampaignFormPreview'
-import NewAdSlotHoc from './AdSlot/NewAdSlotHoc'
 import AdSlotBasic from './AdSlot/AdSlotBasic'
 import AdSlotMedia from './AdSlot/AdSlotMedia'
 import NewItemTargeting from './NewItemTargeting'
 import AdSlotPreview from './AdSlot/AdSlotPreview'
-import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty'
 
 import {
 	execute,
@@ -33,6 +25,7 @@ import {
 	completeItem,
 	resetNewItem,
 	saveUnit,
+	saveSlot,
 	openCampaign,
 } from 'actions'
 
@@ -53,50 +46,6 @@ const AdUnitTargeting = props => (
 		sourcesSelector={unitSources}
 	/>
 )
-
-const SaveBtn = ({ newItem, t, save, ...rest }) => {
-	return (
-		<Button color='primary' onClick={save}>
-			{/*TODO: withStyles */}
-			<SaveIcon style={{ marginRight: 8 }} />
-			{t('SAVE')}
-		</Button>
-	)
-}
-
-const SendBtn = ({ saveBtnLabel, saveBtnIcon, newItem, t, save, ...rest }) => {
-	return (
-		<Button
-			color='primary'
-			onClick={save}
-			disabled={newItem.temp.waitingAction}
-		>
-			{newItem.temp.waitingAction ? (
-				<HourglassEmptyIcon />
-			) : (
-				saveBtnIcon || <SaveIcon style={{ marginRight: 8 }} />
-			)}
-			{t(saveBtnLabel || 'OPEN_CAMPAIGN')}
-		</Button>
-	)
-}
-
-const SaveBtnWithAdUnit = NewAdUnitHoc(SaveBtn)
-const SaveBtnWithCampaign = NewCampaignHoc(SendBtn)
-const SaveBtnWithAdSlot = NewAdSlotHoc(SaveBtn)
-
-const CancelBtn = ({ ...props }) => {
-	return <Button onClick={props.cancel}>{props.t('CANCEL')}</Button>
-}
-
-const CancelBtnWithItem = NewAdUnitHoc(CancelBtn)
-const CancelBtnWithCampaign = NewCampaignHoc(CancelBtn)
-const CancelBtnWithAdSlot = NewAdSlotHoc(CancelBtn)
-
-const dialogCommon = {
-	darkerBackground: true,
-	icon: <AddIcon />,
-}
 
 // Ad unit
 export const NewUnitSteps = props => (
@@ -141,7 +90,6 @@ const NewUnitStepsWithDialog = WithDialog(NewUnitSteps)
 export const NewUnitDialog = props => (
 	<NewUnitStepsWithDialog
 		{...props}
-		{...dialogCommon}
 		btnLabel='NEW_UNIT'
 		title='CREATE_NEW_UNIT'
 	/>
@@ -170,8 +118,6 @@ export const NewCampaignSteps = props => (
 				component: CampaignUnits,
 				validationFn: props => execute(validateNewCampaignAdUnits(props)),
 			},
-			// NOTE: Only at ad units at the moment
-			// { title: 'CAMPAIGN_TARGETING_STEP', page: CampaignTargeting },
 			{
 				title: 'CAMPAIGN_FINANCE_STEP',
 				component: CampaignFinance,
@@ -207,7 +153,6 @@ const NewCampaignStepsWithDialog = WithDialog(NewCampaignSteps)
 export const NewCampaignDialog = props => (
 	<NewCampaignStepsWithDialog
 		{...props}
-		{...dialogCommon}
 		btnLabel='NEW_CAMPAIGN'
 		title='CREATE_NEW_CAMPAIGN'
 	/>
@@ -265,7 +210,6 @@ const NewSlotStepsWithDialog = WithDialog(NewSlotSteps)
 export const NewSlotDialog = props => (
 	<NewSlotStepsWithDialog
 		{...props}
-		{...dialogCommon}
 		btnLabel='NEW_SLOT'
 		title='CREATE_NEW_SLOT'
 	/>
