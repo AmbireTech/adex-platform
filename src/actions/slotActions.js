@@ -8,7 +8,7 @@ import {
 	validate,
 } from 'actions'
 import { numStringCPMtoImpression } from 'helpers/numbers'
-import { selectMainToken, selectNewAdSlot } from 'selectors'
+import { selectMainToken, selectNewAdSlot, t } from 'selectors'
 import { schemas } from 'adex-models'
 import { verifyWebsite } from 'services/adex-market/actions'
 import { getWidAndHightFromType } from 'helpers/itemsHelpers'
@@ -23,6 +23,7 @@ export function validateNewSlotBasics({
 }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
+		let isValid = false
 		try {
 			const mainToken = selectMainToken()
 			const state = getState()
@@ -73,7 +74,7 @@ export function validateNewSlotBasics({
 				})(dispatch),
 			])
 
-			let isValid = validations.every(v => v === true)
+			isValid = validations.every(v => v === true)
 
 			if (validations[4]) {
 				isValid = await validateSchemaProp({
@@ -95,10 +96,13 @@ export function validateNewSlotBasics({
 				: {}
 			const newTemp = { ...temp, hostname, issues }
 			updateNewSlot('temp', newTemp)(dispatch, getState)
+		} catch (err) {
+			// NOTE: Just log - most probably the error can be from verifyWebsite
+			// bet this doesn't matter at that point
+			console.error('ERR_VALIDATING_SLOT_BASIC', err)
+		}
 
-			await handleAfterValidation({ isValid, onValid, onInvalid })
-		} catch (err) {}
-
+		await handleAfterValidation({ isValid, onValid, onInvalid })
 		await updateSpinner(validateId, false)(dispatch)
 	}
 }
