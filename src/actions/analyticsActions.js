@@ -313,7 +313,7 @@ export function updateAnalyticsTimeframe(timeframe) {
 				type: types.UPDATE_ANALYTICS_TIMEFRAME,
 				value: timeframe,
 			})
-			updateAccountAnalytics()(dispatch, getState)
+			updateAnalyticsPeriod(Date.now())(dispatch, getState)
 		} catch (err) {
 			console.error('ERR_ANALYTICS', err)
 			addToast({
@@ -336,7 +336,7 @@ export function updateAnalyticsPeriod(start) {
 					end = +utils.date(start).endOf('hour')
 					break
 				case 'day':
-					start = +start.startOf('day')
+					start = +utils.date(start).startOf('day')
 					end = +utils.date(start).endOf('day')
 					break
 				case 'week':
