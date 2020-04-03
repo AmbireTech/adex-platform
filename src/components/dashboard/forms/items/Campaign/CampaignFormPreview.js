@@ -81,17 +81,6 @@ function CampaignFormPreview({ validateId } = {}) {
 			<ContentBody>
 				<PropRow left={t('title', { isProp: true })} right={title} />
 				<PropRow left={t('owner', { isProp: true })} right={identityAddr} />
-				{/* <PropRow
-						left={t('targeting', { isProp: true })}
-						right={
-							<UnitTargets
-								{...rest}
-								targets={targeting}
-								t={t}
-							// subHeader={'TARGETING'}
-							/>
-						}
-					/> */}
 
 				<PropRow
 					left={t('validators', { isProp: true })}

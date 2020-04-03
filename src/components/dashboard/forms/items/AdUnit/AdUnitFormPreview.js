@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import Img from 'components/common/img/Img'
-import UnitTargets from 'components/dashboard/containers/UnitTargets'
+import TargetsList from 'components/dashboard/containers/TargetsList'
 import {
 	PropRow,
 	ContentBox,
@@ -49,9 +49,8 @@ function AdUnitPreview() {
 					<PropRow
 						left={t('targeting', { isProp: true })}
 						right={
-							<UnitTargets
+							<TargetsList
 								targets={targeting}
-								t={t}
 								// subHeader={'TARGETING'}
 							/>
 						}
