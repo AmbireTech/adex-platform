@@ -10,12 +10,12 @@ import { selectNewAdUnit, selectAuthSig, t } from 'selectors'
 import { schemas, AdUnit } from 'adex-models'
 import { getWidAndHightFromType } from 'helpers/itemsHelpers'
 
-import { ADD_ITEM } from 'constants/actionTypes'
+import { ADD_ITEM, UPDATE_ITEM } from 'constants/actionTypes'
 import Helper from 'helpers/miscHelpers'
 
-import { postAdUnit } from 'services/adex-market/actions'
+import { postAdUnit, updateAdUnit } from 'services/adex-market/actions'
 
-const { adUnitPost } = schemas
+const { adUnitPost, adUnitPut } = schemas
 
 export function validateNewUnitBasics({
 	validateId,
@@ -154,5 +154,62 @@ export function saveUnit() {
 			})(dispatch)
 			throw new Error('ERR_CREATING_ITEM', err)
 		}
+	}
+}
+
+export function validateAndUpdateUnit({ validateId, dirty, item }) {
+	return async function(dispatch, getState) {
+		await updateSpinner(validateId, true)(dispatch)
+		try {
+			const { id, title, description } = item
+
+			const unit = new AdUnit(item).marketUpdate
+
+			const validations = await Promise.all([
+				validateSchemaProp({
+					validateId,
+					value: title,
+					prop: 'title',
+					schema: adUnitPut.title,
+					dirty,
+				})(dispatch),
+				validateSchemaProp({
+					validateId,
+					value: description,
+					prop: 'description',
+					schema: adUnitPut.description,
+					dirty,
+				})(dispatch),
+				validateSchemaProp({
+					validateId,
+					value: unit,
+					prop: 'unit',
+					schema: adUnitPut,
+					dirty,
+				})(dispatch),
+			])
+
+			const isValid = validations.every(v => v === true)
+
+			if (isValid) {
+				const updatedUnit = (await updateAdUnit({ unit, id })).unit
+				dispatch({
+					type: UPDATE_ITEM,
+					item: new AdUnit(updatedUnit).plainObj(),
+					itemType: 'AdUnit',
+				})
+			}
+		} catch (err) {
+			console.error('ERR_UPDATING_ITEM', err)
+			addToast({
+				type: 'cancel',
+				label: t('ERR_UPDATING_ITEM', {
+					args: ['AdUnit', Helper.getErrMsg(err)],
+				}),
+				timeout: 50000,
+			})(dispatch)
+		}
+
+		await updateSpinner(validateId, false)(dispatch)
 	}
 }
