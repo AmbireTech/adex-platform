@@ -66,6 +66,7 @@ export function useItem({ itemType, match, objModel }) {
 		item,
 		activeFields,
 		setActiveFields,
+		dirtyProps,
 		returnPropToInitialState,
 		validateId,
 		validations,
