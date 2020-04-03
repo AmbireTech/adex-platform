@@ -6,7 +6,7 @@ export function useItem({ itemType, match, objModel }) {
 	const [item, setItem] = useState({})
 	const [initialItemState, setInitialItemState] = useState({})
 	const [activeFields, setFields] = useState({})
-	const [dirtyProps, setDirtyProps] = useState({})
+	const [dirtyProps, setDirtyProps] = useState([])
 
 	const storeItem = useSelector(state =>
 		selectItemByTypeAndId(state, itemType, match.params.itemId)
@@ -40,5 +40,27 @@ export function useItem({ itemType, match, objModel }) {
 		[activeFields]
 	)
 
-	return { item, activeFields, setActiveFields, returnPropToInitialState }
+	const updateField = useCallback(
+		(field, value) => {
+			const newItem = new objModel(item)
+			newItem[field] = value
+
+			const dp = dirtyProps.slice(0)
+
+			if (!dp.includes(field)) {
+				dp.push(field)
+			}
+			setItem(newItem)
+			setDirtyProps(dp)
+		},
+		[dirtyProps, item, objModel]
+	)
+
+	return {
+		item,
+		activeFields,
+		setActiveFields,
+		returnPropToInitialState,
+		updateField,
+	}
 }
