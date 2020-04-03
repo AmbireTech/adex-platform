@@ -115,6 +115,9 @@ function WeekSelectDatePicker({ classes, calendarIcon, icon, ...rest }) {
 			: invalidLabel
 	}
 
+	const dayIsFuture = date =>
+		utils.isAfter(date, utils.addDays(utils.date(), -6))
+
 	const renderWrappedWeekDay = (date, selectedDate, dayInCurrentMonth) => {
 		let dateClone = makeJSDateObject(date)
 		let selectedDateClone = makeJSDateObject(selectedDate)
@@ -135,11 +138,12 @@ function WeekSelectDatePicker({ classes, calendarIcon, icon, ...rest }) {
 		const dayClassName = clsx(classes.day, {
 			[classes.nonCurrentMonthDay]: !dayInCurrentMonth,
 			[classes.highlightNonCurrentMonthDay]: !dayInCurrentMonth && dayIsBetween,
+			[classes.dayDisabled]: dayIsFuture(dateClone),
 		})
 
 		return (
 			<div className={wrapperClassName}>
-				<IconButton className={dayClassName}>
+				<IconButton className={dayClassName} dayDisabled={dayIsFuture}>
 					<span> {utils.format(dateClone, 'D')} </span>
 				</IconButton>
 			</div>
@@ -151,6 +155,7 @@ function WeekSelectDatePicker({ classes, calendarIcon, icon, ...rest }) {
 			label='Week Picker'
 			renderDay={renderWrappedWeekDay}
 			labelFunc={formatWeekSelectLabel}
+			shouldDisableDate={date => dayIsFuture(date)}
 			InputProps={{
 				endAdornment: calendarIcon ? <CalendarIconAdor icon={icon} /> : null,
 			}}
