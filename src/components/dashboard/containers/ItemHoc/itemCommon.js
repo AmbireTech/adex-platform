@@ -10,7 +10,7 @@ import {
 	InputAdornment,
 	IconButton,
 } from '@material-ui/core'
-import { Info, Edit } from '@material-ui/icons'
+import { Info, Edit, UndoOutlined } from '@material-ui/icons'
 import { t } from 'selectors'
 import { styles } from './styles'
 
@@ -32,7 +32,7 @@ export const DirtyProps = ({ dirtyProps = [], returnPropToInitialState }) => {
 								className={classes.changeChip}
 								key={p}
 								label={t(p, { isProp: true })}
-								onDelete={() => this.returnPropToInitialState(p)}
+								onDelete={() => returnPropToInitialState(p)}
 							/>
 						)
 					})}
@@ -47,9 +47,11 @@ export const ItemTitle = ({
 	titleErr,
 	updateField,
 	setActiveFields = {},
+	returnPropToInitialState,
 	activeFields,
 }) => {
 	const classes = useStyles()
+	const active = !!activeFields.title
 	return (
 		<FormControl
 			fullWidth
@@ -68,10 +70,7 @@ export const ItemTitle = ({
 					updateField('title', ev.target.value)
 				}}
 				maxLength={1024}
-				onBlur={ev => {
-					setActiveFields('title', false)
-				}}
-				disabled={!activeFields.title}
+				disabled={!active}
 				endAdornment={
 					<InputAdornment position='end'>
 						<IconButton
@@ -79,9 +78,14 @@ export const ItemTitle = ({
 							// size='small'
 							color='secondary'
 							className={classes.buttonRight}
-							onClick={ev => setActiveFields('title', true)}
+							onClick={() =>
+								active
+									? (returnPropToInitialState('title'),
+									  setActiveFields('title', false))
+									: setActiveFields('title', true)
+							}
 						>
-							<Edit />
+							{active ? <UndoOutlined /> : <Edit />}
 						</IconButton>
 					</InputAdornment>
 				}
@@ -100,9 +104,11 @@ export const ItemDescription = ({
 	descriptionErr,
 	updateField,
 	setActiveFields = {},
+	returnPropToInitialState,
 	activeFields,
 }) => {
 	const classes = useStyles()
+	const active = !!activeFields.description
 	return (
 		<FormControl
 			margin='dense'
@@ -132,9 +138,14 @@ export const ItemDescription = ({
 							// size='small'
 							color='secondary'
 							className={classes.buttonRight}
-							onClick={ev => setActiveFields('description', true)}
+							onClick={() =>
+								active
+									? (returnPropToInitialState('description'),
+									  setActiveFields('description', false))
+									: setActiveFields('description', true)
+							}
 						>
-							<Edit />
+							{active ? <UndoOutlined /> : <Edit />}
 						</IconButton>
 					</InputAdornment>
 				}
