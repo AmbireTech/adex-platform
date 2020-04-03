@@ -43,6 +43,7 @@ import {
 	selectChartDatapointsImpressions,
 	selectChartDatapointsClicks,
 	selectChartDatapointsPayouts,
+	selectAnalyticsPeriod,
 } from 'selectors'
 import utils from 'helpers/dateUtils'
 
@@ -141,8 +142,7 @@ export function BasicStats({ side }) {
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
 	const { symbol } = useSelector(selectMainToken)
-	const defaultTimeNow = utils.setMinutes(utils.date(Date.now()), 0)
-	const [selectedDate, setSelectedDate] = useState(defaultTimeNow)
+	const { start } = useSelector(selectAnalyticsPeriod)
 	const timeframe = useSelector(selectAnalyticsTimeframe)
 	const totalImpressions = useSelector(state =>
 		selectTotalImpressions(state, {
@@ -208,7 +208,6 @@ export function BasicStats({ side }) {
 								label={t('SELECT_TIMEFRAME')}
 								// helperText={t(timeHints[timeframe])}
 								onChange={val => {
-									setSelectedDate(defaultTimeNow)
 									//TODO: fix change of timeframe, set default period as well
 									execute(updateAnalyticsTimeframe(val))
 								}}
@@ -220,10 +219,9 @@ export function BasicStats({ side }) {
 						<Box>
 							<DatePickerSwitch
 								timeframe={timeframe}
-								value={selectedDate}
+								value={start}
 								minutesStep={60}
 								onChange={val => {
-									setSelectedDate(val)
 									execute(updateAnalyticsPeriod(val))
 								}}
 								emptyLabel={t('SET_CAMPAIGN_START')}
