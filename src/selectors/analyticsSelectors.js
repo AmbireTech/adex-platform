@@ -198,8 +198,8 @@ export const selectMaxAdUnitStatByChannel = createSelector(
 )
 
 export const selectAnalyticsDataAggr = createSelector(
-	[selectAnalytics, (_, opts = {}) => opts],
-	(analytics = {}, { side, eventType, metric, timeframe }) => {
+	[selectAnalytics, selectAnalyticsPeriod, (_, opts = {}) => opts],
+	(analytics = {}, { start }, { side, eventType, metric, timeframe }) => {
 		// return analytics[side]['eventType'][metric][timeframe].aggr
 		// NOTE: It was working fine with default initial state but
 		// when eventType CLICK was added if you were logged and had
@@ -207,7 +207,9 @@ export const selectAnalyticsDataAggr = createSelector(
 
 		const {
 			[side]: {
-				[eventType]: { [metric]: { [timeframe]: { aggr } = {} } = {} } = {},
+				[eventType]: {
+					[metric]: { [timeframe]: { [start]: { aggr } = {} } = {} } = {},
+				},
 			} = {},
 		} = analytics
 
