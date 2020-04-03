@@ -313,7 +313,9 @@ export function updateAnalyticsTimeframe(timeframe) {
 				type: types.UPDATE_ANALYTICS_TIMEFRAME,
 				value: timeframe,
 			})
-			updateAnalyticsPeriod(Date.now())(dispatch, getState)
+			const dateNow =
+				timeframe === 'week' ? utils.addDays(utils.date(), -6) : Date.now()
+			updateAnalyticsPeriod(dateNow)(dispatch, getState)
 		} catch (err) {
 			console.error('ERR_ANALYTICS', err)
 			addToast({
