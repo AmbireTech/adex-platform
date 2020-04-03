@@ -1,27 +1,20 @@
 import React, { Fragment } from 'react'
 import { Prompt } from 'react-router'
 import { makeStyles } from '@material-ui/core/styles'
-import { Chip } from '@material-ui/core'
-import { Info } from '@material-ui/icons'
+import {
+	Chip,
+	FormControl,
+	FormHelperText,
+	InputLabel,
+	Input,
+	InputAdornment,
+	IconButton,
+} from '@material-ui/core'
+import { Info, Edit } from '@material-ui/icons'
 import { t } from 'selectors'
+import { styles } from './styles'
 
-const useStyles = makeStyles(theme => {
-	const spacing = theme.spacing(1)
-	return {
-		changesLine: {
-			display: 'flex',
-			flexDirection: 'row',
-			flexWrap: 'wrap',
-			alignItems: 'center',
-			color: theme.palette.secondary.main,
-			marginBottom: spacing,
-		},
-		changeChip: {
-			margin: spacing,
-			marginLeft: 0,
-		},
-	}
-})
+const useStyles = makeStyles(styles)
 
 export const DirtyProps = ({ dirtyProps = [], returnPropToInitialState }) => {
 	const classes = useStyles()
@@ -46,5 +39,58 @@ export const DirtyProps = ({ dirtyProps = [], returnPropToInitialState }) => {
 				</div>
 			)}
 		</Fragment>
+	)
+}
+
+export const ItemTitle = ({
+	title,
+	titleErr,
+	updateField,
+	setActiveFields = {},
+	activeFields,
+}) => {
+	const classes = useStyles()
+	return (
+		<FormControl
+			fullWidth
+			className={classes.textField}
+			margin='dense'
+			error={!!titleErr && !!titleErr.errMsg}
+		>
+			<InputLabel>{t('title', { isProp: true })}</InputLabel>
+			<Input
+				fullWidth
+				autoFocus
+				type='text'
+				name={t('title', { isProp: true })}
+				value={title}
+				onChange={ev => {
+					updateField('title', ev.target.value)
+				}}
+				maxLength={1024}
+				onBlur={ev => {
+					setActiveFields('title', false)
+				}}
+				disabled={!activeFields.title}
+				endAdornment={
+					<InputAdornment position='end'>
+						<IconButton
+							// disabled
+							// size='small'
+							color='secondary'
+							className={classes.buttonRight}
+							onClick={ev => setActiveFields('title', true)}
+						>
+							<Edit />
+						</IconButton>
+					</InputAdornment>
+				}
+			/>
+			{titleErr && titleErr.errMsg && titleErr.dirty && (
+				<FormHelperText>
+					{t(titleErr.errMsg, { args: titleErr.errMsgArgs })}
+				</FormHelperText>
+			)}
+		</FormControl>
 	)
 }
