@@ -9,14 +9,24 @@ import {
 	Input,
 	InputAdornment,
 	IconButton,
+	Card,
+	CardMedia,
+	CardContent,
+	Button,
 } from '@material-ui/core'
 import { Info, Edit, UndoOutlined } from '@material-ui/icons'
+import Img from 'components/common/img/Img'
+import Anchor from 'components/common/anchor/anchor'
 import { t } from 'selectors'
 import { styles } from './styles'
 
 const useStyles = makeStyles(styles)
 
-export const DirtyProps = ({ dirtyProps = [], returnPropToInitialState }) => {
+export const DirtyProps = ({
+	dirtyProps = [],
+	returnPropToInitialState,
+	setActiveFields,
+}) => {
 	const classes = useStyles()
 
 	return (
@@ -29,10 +39,14 @@ export const DirtyProps = ({ dirtyProps = [], returnPropToInitialState }) => {
 					{dirtyProps.map(p => {
 						return (
 							<Chip
+								size='small'
 								className={classes.changeChip}
 								key={p}
 								label={t(p, { isProp: true })}
-								onDelete={() => returnPropToInitialState(p)}
+								onDelete={() => {
+									returnPropToInitialState(p)
+									setActiveFields(p)
+								}}
 							/>
 						)
 					})}
@@ -65,7 +79,7 @@ export const ItemTitle = ({
 				autoFocus
 				type='text'
 				name={t('title', { isProp: true })}
-				value={title}
+				value={title || ''}
 				onChange={ev => {
 					updateField('title', ev.target.value)
 				}}
@@ -123,7 +137,7 @@ export const ItemDescription = ({
 				fullWidth
 				autoFocus
 				multiline
-				rows={3}
+				rows={2}
 				type='text'
 				name='description'
 				value={description || ''}
@@ -162,5 +176,49 @@ export const ItemDescription = ({
 				)
 			)}
 		</FormControl>
+	)
+}
+
+export const MediaCard = ({
+	mediaUrl,
+	mediaMime,
+	title,
+	canEditImg,
+	toggleImgEdit,
+	url,
+}) => {
+	const classes = useStyles()
+	return (
+		<Card className={classes.card} raised={false}>
+			<CardMedia classes={{ root: classes.mediaRoot }}>
+				<Img
+					allowFullscreen={true}
+					src={mediaUrl}
+					alt={title}
+					className={classes.img}
+					mediaMime={mediaMime}
+					allowVideo
+				/>
+			</CardMedia>
+			{canEditImg && (
+				<Button
+					variant='fab'
+					mini
+					color='secondary'
+					onClick={toggleImgEdit}
+					className={classes.editIcon}
+				>
+					<Edit />
+				</Button>
+			)}
+
+			{url && (
+				<CardContent>
+					<Anchor href={url} target='_blank'>
+						{url}
+					</Anchor>
+				</CardContent>
+			)}
+		</Card>
 	)
 }
