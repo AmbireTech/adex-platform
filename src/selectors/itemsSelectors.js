@@ -8,6 +8,11 @@ export const selectItemsByType = createSelector(
 	(items, itemType) => items[itemType] || {}
 )
 
+export const selectItemByTypeAndId = createSelector(
+	[selectItems, (_, itemType, id) => ({ itemType, id })],
+	(items, { itemType, id }) => (items[itemType] || {})[id] || {}
+)
+
 export const selectItemsArrayByType = createSelector(
 	[selectItemsByType, (_, itemType) => itemType],
 	(items = {}) => Object.values(items)
