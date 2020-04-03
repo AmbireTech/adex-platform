@@ -94,3 +94,62 @@ export const ItemTitle = ({
 		</FormControl>
 	)
 }
+
+export const ItemDescription = ({
+	description,
+	descriptionErr,
+	updateField,
+	setActiveFields = {},
+	activeFields,
+}) => {
+	const classes = useStyles()
+	return (
+		<FormControl
+			margin='dense'
+			fullWidth
+			className={classes.textField}
+			error={!!descriptionErr && !!descriptionErr.errMsg}
+		>
+			<InputLabel htmlFor='description'>
+				{t('description', { isProp: true })}
+			</InputLabel>
+			<Input
+				fullWidth
+				autoFocus
+				multiline
+				rows={3}
+				type='text'
+				name='description'
+				value={description || ''}
+				onChange={ev => {
+					updateField('description', ev.target.value)
+				}}
+				maxLength={1024}
+				disabled={!activeFields.description}
+				endAdornment={
+					<InputAdornment position='end'>
+						<IconButton
+							// size='small'
+							color='secondary'
+							className={classes.buttonRight}
+							onClick={ev => setActiveFields('description', true)}
+						>
+							<Edit />
+						</IconButton>
+					</InputAdornment>
+				}
+			/>
+			{descriptionErr && !!descriptionErr.errMsg ? (
+				<FormHelperText>
+					{t(descriptionErr.errMsg, {
+						args: descriptionErr.errMsgArgs,
+					})}
+				</FormHelperText>
+			) : (
+				!description && (
+					<FormHelperText>{t('NO_DESCRIPTION_YET')}</FormHelperText>
+				)
+			)}
+		</FormControl>
+	)
+}
