@@ -58,5 +58,9 @@ export const styles = theme => {
 			borderTopRightRadius: '50%',
 			borderBottomRightRadius: '50%',
 		},
+		dayDisabled: {
+			color: 'rgba(0, 0, 0, 0.38)',
+			pointerEvents: 'none',
+		},
 	}
 }
