@@ -115,15 +115,14 @@ function WeekSelectDatePicker({ classes, calendarIcon, icon, ...rest }) {
 			: invalidLabel
 	}
 
-	const dayIsFuture = date =>
-		utils.isAfter(date, utils.addDays(utils.date(), -6))
+	const dayIsFuture = date => utils.isAfter(date, utils.date())
 
 	const renderWrappedWeekDay = (date, selectedDate, dayInCurrentMonth) => {
 		let dateClone = makeJSDateObject(date)
 		let selectedDateClone = makeJSDateObject(selectedDate)
 
-		const start = selectedDateClone
-		const end = utils.addDays(selectedDateClone, 6)
+		const start = utils.startOfWeek(selectedDateClone)
+		const end = utils.endOfWeek(selectedDateClone)
 
 		const dayIsBetween = utils.isWithinInterval(dateClone, { start, end })
 		const isFirstDay = utils.isSameDay(dateClone, start)
