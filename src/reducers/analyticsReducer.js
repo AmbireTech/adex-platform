@@ -30,6 +30,13 @@ export default function analyticsReducer(
 			}
 			newState[action.side][action.eventType][action.metric][
 				action.timeframe
+			] = {
+				...newState[action.side][action.eventType][action.metric][
+					action.timeframe
+				],
+			}
+			newState[action.side][action.eventType][action.metric][action.timeframe][
+				action.timestamp
 			] = { ...action.value }
 			return newState
 		case UPDATE_ADVANCED_ANALYTICS:
