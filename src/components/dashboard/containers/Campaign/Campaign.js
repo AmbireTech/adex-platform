@@ -95,10 +95,7 @@ export class Campaign extends Component {
 					item={campaign}
 					t={t}
 					rightComponent={
-						(status === 'Ready' ||
-							status === 'Active' ||
-							status === 'Withdraw' ||
-							status === 'Unhealthy') && (
+						['Ready', 'Active', 'Withdraw', 'Unhealthy'].includes(status) && (
 							<this.CampaignActions
 								campaign={campaign}
 								t={t}
