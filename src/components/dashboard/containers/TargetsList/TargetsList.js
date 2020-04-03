@@ -43,7 +43,7 @@ const TargetArrayValues = ({ target, addDivider }) => {
 	)
 }
 
-const TargetsList = ({ targets = [], subHeader, t, ...rest }) => (
+const TargetsList = ({ targets = [], subHeader }) => (
 	<List
 		dense
 		subheader={subHeader ? <ListSubheader>{t(subHeader)}</ListSubheader> : null}
@@ -61,7 +61,7 @@ const TargetsList = ({ targets = [], subHeader, t, ...rest }) => (
 )
 
 TargetsList.propTypes = {
-	targets: PropTypes.array.isRequired,
+	targets: PropTypes.array,
 	subHeader: PropTypes.string,
 }
 
