@@ -253,7 +253,7 @@ export const SimpleStatistics = ({
 			height={500}
 			data={chartData}
 			options={linesOptions}
-			plugins={ChartAnnotation}
+			plugins={[ChartAnnotation]}
 		/>
 	)
 }
