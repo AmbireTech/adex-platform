@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { makeStyles } from '@material-ui/core/styles'
 import { Typography } from '@material-ui/core'
 import Img from 'components/common/img/Img'
-import UnitTargets from 'components/dashboard/containers/UnitTargets'
+import TargetsList from 'components/dashboard/containers/TargetsList'
 import Anchor from 'components/common/anchor/anchor'
 import { WebsiteIssues } from 'components/dashboard/containers/Slot/WebsiteIssues'
 import {
@@ -113,13 +113,7 @@ const AdSlotPreview = () => {
 				{tags && (
 					<PropRow
 						left={t('tags', { isProp: true })}
-						right={
-							<UnitTargets
-								targets={tags}
-								t={t}
-								// subHeader={'TARGETING'}
-							/>
-						}
+						right={<TargetsList targets={tags} />}
 					/>
 				)}
 			</ContentBody>

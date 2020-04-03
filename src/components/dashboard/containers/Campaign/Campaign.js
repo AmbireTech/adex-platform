@@ -32,8 +32,6 @@ import {
 import StatsByCountryTable from 'components/dashboard/containers/Tables/StatsByCountryTable'
 import MapChart from 'components/dashboard/charts/map/MapChart'
 
-// import UnitTargets from 'components/dashboard/containers/UnitTargets'
-// import UnitTargets from 'components/dashboard/containers/UnitTargets'
 const VIEW_MODE = 'campaignRowsView'
 
 export class Campaign extends Component {
@@ -97,12 +95,6 @@ export class Campaign extends Component {
 					item={campaign}
 					t={t}
 					rightComponent={
-						// <UnitTargets
-						// 	{...rest}
-						// 	targets={campaign.targeting}
-						// 	t={t}
-						// 	subHeader={t('CAMPAIGN_TARGETING')}
-						// />
 						(status === 'Ready' ||
 							status === 'Active' ||
 							status === 'Withdraw' ||
