@@ -142,7 +142,7 @@ function WeekSelectDatePicker({ classes, calendarIcon, icon, ...rest }) {
 
 		return (
 			<div className={wrapperClassName}>
-				<IconButton className={dayClassName} dayDisabled={dayIsFuture}>
+				<IconButton className={dayClassName}>
 					<span> {utils.format(dateClone, 'D')} </span>
 				</IconButton>
 			</div>
