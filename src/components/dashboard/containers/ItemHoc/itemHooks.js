@@ -1,22 +1,28 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useSelector } from 'react-redux'
-import { selectItemByTypeAndId } from 'selectors'
+import { selectItemByTypeAndId, selectValidationsById } from 'selectors'
 
 export function useItem({ itemType, match, objModel }) {
 	const [item, setItem] = useState({})
 	const [initialItemState, setInitialItemState] = useState({})
 	const [activeFields, setFields] = useState({})
 	const [dirtyProps, setDirtyProps] = useState([])
+	const [validateId, setValidateId] = useState('update-default')
 
 	const storeItem = useSelector(state =>
 		selectItemByTypeAndId(state, itemType, match.params.itemId)
+	)
+
+	const validations = useSelector(
+		state => selectValidationsById(state, validateId) || {}
 	)
 
 	useEffect(() => {
 		const initial = new objModel(storeItem)
 		setItem(initial)
 		setInitialItemState(initial)
-	}, [objModel, storeItem])
+		setValidateId(`update-${item.id}`)
+	}, [item.id, objModel, storeItem])
 
 	const returnPropToInitialState = useCallback(
 		propName => {
@@ -61,6 +67,8 @@ export function useItem({ itemType, match, objModel }) {
 		activeFields,
 		setActiveFields,
 		returnPropToInitialState,
+		validateId,
+		validations,
 		updateField,
 	}
 }
