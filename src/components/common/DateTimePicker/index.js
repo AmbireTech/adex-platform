@@ -1,6 +1,1 @@
-export {
-	default,
-	DateTimePickerContrast,
-	WeeklyDatePicker,
-	DatePicker,
-} from './DateTimePicker'
+export { default, DateTimePickerContrast } from './DateTimePicker'
