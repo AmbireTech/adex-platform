@@ -6,7 +6,6 @@ import ListSubheader from '@material-ui/core/ListSubheader'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import ListItemText from '@material-ui/core/ListItemText'
-import Divider from '@material-ui/core/Divider'
 import LocationOnIcon from '@material-ui/icons/LocationOn'
 import WcIcon from '@material-ui/icons/Wc'
 import ChildCareIcon from '@material-ui/icons/ChildCare'
@@ -25,20 +24,19 @@ const getTargetType = tag => {
 	return type
 }
 
-const TargetArrayValues = ({ target, addDivider }) => {
+const TargetArrayValues = ({ target, addDivider, selected }) => {
 	const type = getTargetType(target.tag)
 	const TargetIcon = targetIcon[type] || CompareArrows
 
 	return (
 		<Fragment>
-			<ListItem>
+			<ListItem selected={selected}>
 				<ListItemIcon>
 					<TargetIcon />
 				</ListItemIcon>
 				<ListItemText primary={t(target.tag, { isTarget: true })} />
 				<ListItemSecondaryAction>{target.score}</ListItemSecondaryAction>
 			</ListItem>
-			{addDivider && <Divider />}
 		</Fragment>
 	)
 }
@@ -51,6 +49,7 @@ const TargetsList = ({ targets = [], subHeader }) => (
 		{targets.map((target, index) => {
 			return (
 				<TargetArrayValues
+					selected={index % 2 === 0}
 					target={target}
 					key={target.tag + target.score + index}
 					addDivider={targets.length - 1 > index}
