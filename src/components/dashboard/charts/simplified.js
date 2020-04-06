@@ -62,6 +62,16 @@ export const SimpleStatistics = ({
 		})
 	})
 
+	const getNearestSixHoursUTC = hoursToRound => {
+		const now = utils.date()
+		const hoursMulti = Math.floor(utils.getHours(now) / hoursToRound)
+		const nearestSix = utils.setHours(
+			now,
+			hoursMulti * hoursToRound + utils.getUTCOffset()
+		)
+		return utils.setMinutes(utils.setSeconds(nearestSix, 0), 0)
+	}
+
 	const getLabelByTimeframe = timeframe => {
 		switch (timeframe) {
 			case 'hour':
@@ -71,6 +81,8 @@ export const SimpleStatistics = ({
 					utils.setMinutes(utils.date(), 0),
 					'YYYY-MM-DD HH:mm'
 				)
+			case 'week':
+				return utils.format(getNearestSixHoursUTC(6), 'YYYY-MM-DD HH:mm')
 			default:
 				return utils.format(utils.date(), 'YYYY-MM-DD HH:mm')
 		}
