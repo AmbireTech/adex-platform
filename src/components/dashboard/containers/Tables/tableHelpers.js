@@ -4,7 +4,7 @@ import WarningIcon from '@material-ui/icons/Warning'
 import HourglassFullIcon from '@material-ui/icons/HourglassFull'
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn'
 
-const mapStatusIcons = (humanFriendlyStatus, status, size) => {
+const mapStatusIcons = (humanFriendlyStatus, status = '', size) => {
 	const icon = {
 		xs: { fontSize: 10 },
 		md: { fontSize: 15 },
