@@ -3,15 +3,12 @@ import { Prompt } from 'react-router'
 import { makeStyles } from '@material-ui/core/styles'
 import {
 	Chip,
-	FormControl,
-	FormHelperText,
-	InputLabel,
-	Input,
 	InputAdornment,
 	IconButton,
 	Card,
 	CardMedia,
 	CardContent,
+	TextField,
 	Button,
 } from '@material-ui/core'
 import { Info, Edit, UndoOutlined } from '@material-ui/icons'
@@ -67,28 +64,29 @@ export const ItemTitle = ({
 	const classes = useStyles()
 	const active = !!activeFields.title
 	return (
-		<FormControl
+		<TextField
 			fullWidth
-			className={classes.textField}
-			margin='dense'
+			id='item-title'
+			label={t('title', { isProp: true })}
+			type='text'
+			name='title'
+			value={title || ' '}
+			onChange={ev => {
+				updateField('title', ev.target.value)
+			}}
+			defaultValue=' '
+			disabled={!active}
 			error={!!titleErr && !!titleErr.errMsg}
-		>
-			<InputLabel>{t('title', { isProp: true })}</InputLabel>
-			<Input
-				fullWidth
-				autoFocus
-				type='text'
-				name={t('title', { isProp: true })}
-				value={title || ''}
-				onChange={ev => {
-					updateField('title', ev.target.value)
-				}}
-				maxLength={1024}
-				disabled={!active}
-				endAdornment={
+			helperText={
+				titleErr && titleErr.errMsg && titleErr.dirty
+					? t(titleErr.errMsg, { args: titleErr.errMsgArgs })
+					: ' '
+			}
+			variant='outlined'
+			InputProps={{
+				endAdornment: (
 					<InputAdornment position='end'>
 						<IconButton
-							// disabled
 							// size='small'
 							color='secondary'
 							className={classes.buttonRight}
@@ -102,14 +100,9 @@ export const ItemTitle = ({
 							{active ? <UndoOutlined /> : <Edit />}
 						</IconButton>
 					</InputAdornment>
-				}
-			/>
-			{titleErr && titleErr.errMsg && titleErr.dirty && (
-				<FormHelperText>
-					{t(titleErr.errMsg, { args: titleErr.errMsgArgs })}
-				</FormHelperText>
-			)}
-		</FormControl>
+				),
+			}}
+		/>
 	)
 }
 
@@ -124,29 +117,32 @@ export const ItemDescription = ({
 	const classes = useStyles()
 	const active = !!activeFields.description
 	return (
-		<FormControl
-			margin='dense'
+		<TextField
 			fullWidth
-			className={classes.textField}
+			id='item-description'
+			label={t('description', { isProp: true })}
+			type='text'
+			name='description'
+			value={description || ' '}
+			onChange={ev => {
+				updateField('description', ev.target.value)
+			}}
+			maxLength={1024}
+			multiline
+			rows={2}
+			defaultValue=' '
+			disabled={!activeFields.description}
 			error={!!descriptionErr && !!descriptionErr.errMsg}
-		>
-			<InputLabel htmlFor='description'>
-				{t('description', { isProp: true })}
-			</InputLabel>
-			<Input
-				fullWidth
-				autoFocus
-				multiline
-				rows={2}
-				type='text'
-				name='description'
-				value={description || ''}
-				onChange={ev => {
-					updateField('description', ev.target.value)
-				}}
-				maxLength={1024}
-				disabled={!activeFields.description}
-				endAdornment={
+			helperText={
+				descriptionErr && !!descriptionErr.errMsg
+					? t(descriptionErr.errMsg, {
+							args: descriptionErr.errMsgArgs,
+					  })
+					: ' '
+			}
+			variant='outlined'
+			InputProps={{
+				endAdornment: (
 					<InputAdornment position='end'>
 						<IconButton
 							// size='small'
@@ -162,20 +158,9 @@ export const ItemDescription = ({
 							{active ? <UndoOutlined /> : <Edit />}
 						</IconButton>
 					</InputAdornment>
-				}
-			/>
-			{descriptionErr && !!descriptionErr.errMsg ? (
-				<FormHelperText>
-					{t(descriptionErr.errMsg, {
-						args: descriptionErr.errMsgArgs,
-					})}
-				</FormHelperText>
-			) : (
-				!description && (
-					<FormHelperText>{t('NO_DESCRIPTION_YET')}</FormHelperText>
-				)
-			)}
-		</FormControl>
+				),
+			}}
+		/>
 	)
 }
 
