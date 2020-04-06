@@ -30,12 +30,8 @@ export class DateUtils extends MomentUtils {
 		return date.clone().endOf(period)
 	}
 
-	getLastSixHoursPeriod() {
-		const nowUTC = this.moment.utc()
-		return Math.floor(
-			(nowUTC.clone().valueOf() - nowUTC.clone().startOf('day')) /
-				(6 * 60 * 60 * 1000)
-		)
+	addWeeks(date, weeks) {
+		return date.clone().add(weeks, 'week')
 	}
 }
 
