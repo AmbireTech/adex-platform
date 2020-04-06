@@ -19,11 +19,7 @@ import { styles } from './styles'
 
 const useStyles = makeStyles(styles)
 
-export const DirtyProps = ({
-	dirtyProps = [],
-	returnPropToInitialState,
-	setActiveFields,
-}) => {
+export const DirtyProps = ({ dirtyProps = [], returnPropToInitialState }) => {
 	const classes = useStyles()
 
 	return (
@@ -42,7 +38,6 @@ export const DirtyProps = ({
 								label={t(p, { isProp: true })}
 								onDelete={() => {
 									returnPropToInitialState(p)
-									setActiveFields(p)
 								}}
 							/>
 						)
@@ -55,13 +50,14 @@ export const DirtyProps = ({
 
 export const ItemTitle = ({
 	title,
-	titleErr,
+	errTitle,
 	updateField,
-	setActiveFields = {},
+	setActiveFields,
 	returnPropToInitialState,
-	activeFields,
+	activeFields = {},
 }) => {
 	const active = !!activeFields.title
+	const showError = !!errTitle && !!errTitle.errMsg && errTitle.dirty
 	return (
 		<TextField
 			fullWidth
@@ -74,11 +70,9 @@ export const ItemTitle = ({
 				updateField('title', ev.target.value)
 			}}
 			disabled={!active}
-			error={!!titleErr && !!titleErr.errMsg}
+			error={showError}
 			helperText={
-				titleErr && titleErr.errMsg && titleErr.dirty
-					? t(titleErr.errMsg, { args: titleErr.errMsgArgs })
-					: ' '
+				showError ? t(errTitle.errMsg, { args: errTitle.errMsgArgs }) : ' '
 			}
 			variant='outlined'
 			InputProps={{
@@ -89,8 +83,7 @@ export const ItemTitle = ({
 							color='secondary'
 							onClick={() =>
 								active
-									? (returnPropToInitialState('title'),
-									  setActiveFields('title', false))
+									? returnPropToInitialState('title')
 									: setActiveFields('title', true)
 							}
 						>
@@ -105,13 +98,15 @@ export const ItemTitle = ({
 
 export const ItemDescription = ({
 	description,
-	descriptionErr,
+	errDescription,
 	updateField,
-	setActiveFields = {},
+	setActiveFields,
 	returnPropToInitialState,
-	activeFields,
+	activeFields = {},
 }) => {
 	const active = !!activeFields.description
+	const showError =
+		!!errDescription && !!errDescription.errMsg && errDescription.dirty
 	return (
 		<TextField
 			fullWidth
@@ -127,11 +122,11 @@ export const ItemDescription = ({
 			multiline
 			rows={2}
 			disabled={!activeFields.description}
-			error={!!descriptionErr && !!descriptionErr.errMsg}
+			error={showError}
 			helperText={
-				descriptionErr && !!descriptionErr.errMsg
-					? t(descriptionErr.errMsg, {
-							args: descriptionErr.errMsgArgs,
+				showError
+					? t(errDescription.errMsg, {
+							args: errDescription.errMsgArgs,
 					  })
 					: ' '
 			}
@@ -144,8 +139,7 @@ export const ItemDescription = ({
 							color='secondary'
 							onClick={() =>
 								active
-									? (returnPropToInitialState('description'),
-									  setActiveFields('description', false))
+									? returnPropToInitialState('description')
 									: setActiveFields('description', true)
 							}
 						>
