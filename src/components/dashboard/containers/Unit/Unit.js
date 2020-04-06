@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react'
+import PropTypes from 'prop-types'
 import { Grid, Paper, Box } from '@material-ui/core'
 import {
 	useItem,
@@ -69,6 +70,10 @@ function Unit({ match }) {
 			</Paper>
 		</Fragment>
 	)
+}
+
+Unit.propTypes = {
+	match: PropTypes.object.isRequired,
 }
 
 export default Unit
