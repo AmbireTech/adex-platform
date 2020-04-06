@@ -4,6 +4,7 @@ import {
 	execute,
 	updateAnalyticsTimeframe,
 	updateAnalyticsPeriod,
+	updateAnalyticsPeriodPrevNextLive,
 } from 'actions'
 import { SimpleStatistics } from 'components/dashboard/charts/simplified'
 import Dropdown from 'components/common/dropdown'
@@ -11,10 +12,8 @@ import Grid from '@material-ui/core/Grid'
 import { VALIDATOR_ANALYTICS_TIMEFRAMES } from 'constants/misc'
 import StatsCard from './StatsCard'
 import { makeStyles } from '@material-ui/core/styles'
-import DateTimePicker, {
-	WeeklyDatePicker,
-	DatePicker,
-} from 'components/common/DateTimePicker'
+import DateTimePicker from 'components/common/DateTimePicker'
+import { WeeklyDatePicker, DatePicker } from 'components/common/DatePicker'
 import {
 	Visibility,
 	MonetizationOn,
@@ -229,6 +228,18 @@ export function BasicStats({ side }) {
 								fullWidth
 								calendarIcon
 								label={t('ANALYTICS_RANGE')}
+								onLiveClick={e => {
+									e.stopPropagation()
+									execute(updateAnalyticsPeriodPrevNextLive({ live: true }))
+								}}
+								onNextClick={e => {
+									e.stopPropagation()
+									execute(updateAnalyticsPeriodPrevNextLive({ next: true }))
+								}}
+								onBackClick={e => {
+									e.stopPropagation()
+									execute(updateAnalyticsPeriodPrevNextLive({ next: false }))
+								}}
 							/>
 						</Box>
 					</StatsCard>
