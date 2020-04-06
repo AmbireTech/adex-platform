@@ -1,26 +1,16 @@
 import React from 'react'
-import {
-	Grid,
-	Card,
-	CardMedia,
-	TextField,
-	List,
-	ListItem,
-	ListItemText,
-	Divider,
-} from '@material-ui/core'
+import { Grid, Paper, Box } from '@material-ui/core'
 import {
 	useItem,
 	DirtyProps,
 	ItemTitle,
 	ItemDescription,
+	ItemAdType,
+	ItemTargetURL,
 	MediaCard,
 } from 'components/dashboard/containers/ItemCommon/'
 import { AdUnit } from 'adex-models'
 import TargetsList from 'components/dashboard/containers/TargetsList'
-import Anchor from 'components/common/anchor/anchor'
-import Img from 'components/common/img/Img'
-import { t } from 'selectors'
 
 function Unit({ match }) {
 	const { item, validations, ...hookProps } = useItem({
@@ -35,52 +25,43 @@ function Unit({ match }) {
 	if (!item) return <h1>Unit '404'</h1>
 
 	return (
-		<div>
-			<DirtyProps {...hookProps} />
-			<Grid container spacing={2}>
-				<Grid item xs={12} sm={12} md={6} lg={5}>
-					<List>
-						<ListItem>
-							<ListItemText
-								secondary={type}
-								primary={t('type', { isProp: true })}
-							/>
-						</ListItem>
-						<MediaCard mediaUrl={mediaUrl} mediaMime={mediaMime} />
-
-						<Divider />
-						<ListItem>
-							<ListItemText
-								secondary={
-									<Anchor href={targetUrl} target='_blank'>
-										{targetUrl}
-									</Anchor>
-								}
-								primary={t('targetUrl', { isProp: true })}
-							/>
-						</ListItem>
-					</List>
-				</Grid>
-				<Grid item xs={12} sm={12} md={6} lg={7}>
-					<List>
-						<ListItem>
+		<Paper>
+			<Box p={2}>
+				<DirtyProps {...hookProps} />
+				<Grid container spacing={2}>
+					<Grid item xs={12} sm={12} md={6} lg={5}>
+						<Box py={1}>
+							<MediaCard mediaUrl={mediaUrl} mediaMime={mediaMime} />
+						</Box>
+						<Box py={1}>
+							<ItemAdType type={type} />
+						</Box>
+						<Box py={1}>
+							<ItemTargetURL targetUrl={targetUrl} />
+						</Box>
+					</Grid>
+					<Grid item xs={12} sm={12} md={6} lg={7}>
+						<Box py={1}>
 							<ItemTitle title={title} errTitle={errTitle} {...hookProps} />
-						</ListItem>
-						<Divider />
-						<ListItem>
+						</Box>
+						<Box py={1}>
 							<ItemDescription
 								description={description}
 								errDescription={errDescription}
 								{...hookProps}
 							/>
-						</ListItem>
-						<Divider />
-					</List>
-					<TargetsList targets={item.targeting} subHeader={'PROP_TARGETING'} />
+						</Box>
+						<Box py={1}>
+							<TargetsList
+								targets={item.targeting}
+								subHeader={'PROP_TARGETING'}
+							/>
+						</Box>
+					</Grid>
+					<Grid item xs={12} sm={12} md={12} lg={6}></Grid>
 				</Grid>
-				<Grid item xs={12} sm={12} md={12} lg={6}></Grid>
-			</Grid>
-		</div>
+			</Box>
+		</Paper>
 	)
 }
 

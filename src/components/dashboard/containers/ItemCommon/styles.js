@@ -4,16 +4,11 @@ export const styles = theme => {
 
 	return {
 		card: {
-			marginRight: spacing,
-			marginBottom: spacing,
+			backgroundColor: theme.palette.grey.main,
 			width: '100%',
 			display: 'block',
 			position: 'relative',
 			maxWidth: '100%',
-			'@media(max-width:380px)': {
-				margin: 0,
-				marginBottom: spacing,
-			},
 		},
 		mediaRoot: {
 			height: 0,
