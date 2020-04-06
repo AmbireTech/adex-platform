@@ -33,6 +33,10 @@ export class DateUtils extends MomentUtils {
 	addWeeks(date, weeks) {
 		return date.clone().add(weeks, 'week')
 	}
+
+	getUTCOffset() {
+		return this.moment().utcOffset() / 60
+	}
 }
 
 const utils = new DateUtils()
