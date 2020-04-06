@@ -314,9 +314,7 @@ export function updateAnalyticsTimeframe(timeframe) {
 				type: types.UPDATE_ANALYTICS_TIMEFRAME,
 				value: timeframe,
 			})
-			const dateNow =
-				timeframe === 'week' ? utils.addDays(utils.date(), -6) : Date.now()
-			updateAnalyticsPeriod(dateNow)(dispatch, getState)
+			updateAnalyticsPeriod(+Date.now())(dispatch, getState)
 		} catch (err) {
 			console.error('ERR_ANALYTICS', err)
 			addToast({
@@ -333,31 +331,34 @@ export function updateAnalyticsPeriod(start) {
 		try {
 			const timeframe = selectAnalyticsTimeframe(getState())
 			let end = null
+			const startCopy = start
 			switch (timeframe) {
 				case 'hour':
-					start = +utils.date(start).startOf('hour')
-					end = +utils.date(start).endOf('hour')
+					start = +utils.date(startCopy).startOf('hour')
+					end = +utils.date(startCopy).endOf('hour')
 					break
 				case 'day':
-					start = +utils.date(start).startOf('day')
-					end = +utils.date(start).endOf('day')
+					start = +utils.date(startCopy).startOf('day')
+					end = +utils.date(startCopy).endOf('day')
 					break
 				case 'week':
 					start = +utils
-						.date(start)
+						.date(startCopy)
+						.startOf('week')
+						.add(23, 'hours')
+						.utc()
 						.startOf('day')
-						.add(utils.getLastSixHoursPeriod() * 6 + 2, 'hours')
-						.valueOf()
 					end = +utils
-						.date(start)
-						.startOf('day')
-						.add(utils.getLastSixHoursPeriod() * 6, 'hours')
-						.add(6, 'days')
-						.valueOf()
+						.date(startCopy)
+						.endOf('week')
+						.subtract(23, 'hours')
+						.utc()
+						.endOf('day')
 					break
 				default:
 					break
 			}
+
 			start = +start
 			dispatch({
 				type: types.UPDATE_ANALYTICS_PERIOD,
@@ -388,35 +389,23 @@ export function updateAnalyticsPeriodPrevNextLive({
 			const startCopy = start
 			switch (timeframe) {
 				case 'hour':
-					start = +utils.addHours(
-						utils.date(start).startOf('hour'),
-						next ? 1 : -1
-					)
+					start = +utils.addHours(utils.date(start), next ? 1 : -1)
 					break
 				case 'day':
-					start = +utils.addDays(
-						utils.date(start).startOf('day'),
-						next ? 1 : -1
-					)
+					start = +utils.addDays(utils.date(start), next ? 1 : -1)
 					break
 				case 'week':
-					start = +utils.addDays(
-						utils
-							.date(start)
-							.startOf('day')
-							.add(utils.getLastSixHoursPeriod() * 6 + 2, 'hours'),
-						next ? 7 : -7
-					)
+					start = +utils.addWeeks(utils.date(start), next ? 1 : -1)
 					break
 				default:
-					start = +utils.addDays(utils.date(start).startOf('day'), -1)
+					start = +utils.addDays(utils.date(start), next ? 1 : -1)
 					break
 			}
 			if (utils.isAfter(utils.date(start), utils.date())) {
 				start = startCopy
 			}
 			if (live) {
-				start = +utils.date(Date.now())
+				start = +utils.date()
 			}
 			updateAnalyticsPeriod(start)(dispatch, getState)
 		} catch (err) {
