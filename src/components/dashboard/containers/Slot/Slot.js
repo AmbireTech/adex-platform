@@ -4,7 +4,7 @@ import { AdSlot } from 'adex-models'
 import { Tab, Tabs, AppBar } from '@material-ui/core'
 
 import { useItem, SaveBtn } from 'components/dashboard/containers/ItemCommon/'
-import { validateAndUpdateUnit } from 'actions'
+import { validateAndUpdateSlot } from 'actions'
 
 import { t } from 'selectors'
 
@@ -18,7 +18,7 @@ function Slot({ match }) {
 		itemType: 'AdSlot',
 		match,
 		objModel: AdSlot,
-		validateAndUpdateFn: validateAndUpdateUnit,
+		validateAndUpdateFn: validateAndUpdateSlot,
 	})
 
 	return (

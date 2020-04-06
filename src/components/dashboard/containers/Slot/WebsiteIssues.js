@@ -47,13 +47,8 @@ export function WebsiteIssues({ issues, website }) {
 			{data.map((x = {}, index) => {
 				const { label, args } = getIssue(x)
 				return (
-					<Box my={index !== 0 && index < data.length - 1 ? 2 : 0}>
-						<Alert
-							key={label}
-							severity='warning'
-							variant='outlined'
-							gutterBottom
-						>
+					<Box key={label} my={index !== 0 && index < data.length - 1 ? 2 : 0}>
+						<Alert severity='warning' variant='outlined'>
 							{t(label, {
 								args: args.map((a, index) =>
 									a.type === 'anchor' ? (
