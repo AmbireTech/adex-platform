@@ -103,7 +103,13 @@ const dateTimePickerStyled = ({ classes, calendarIcon, icon, ...rest }) => {
 
 export const DateTimePickerContrast = withStyles(styles)(dateTimePickerStyled)
 
-function WeekSelectDatePicker({ classes, calendarIcon, icon, ...rest }) {
+function WeekSelectDatePicker({
+	classes,
+	calendarIcon,
+	icon,
+	onChange,
+	...rest
+}) {
 	const formatWeekSelectLabel = (date, invalidLabel) => {
 		let dateClone = makeJSDateObject(date)
 
@@ -158,6 +164,7 @@ function WeekSelectDatePicker({ classes, calendarIcon, icon, ...rest }) {
 			InputProps={{
 				endAdornment: calendarIcon ? <CalendarIconAdor icon={icon} /> : null,
 			}}
+			onChange={val => onChange(utils.startOfWeek(val))}
 			{...rest}
 		/>
 	)
