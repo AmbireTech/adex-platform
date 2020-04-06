@@ -50,6 +50,30 @@ export const DirtyProps = ({ dirtyProps = [], returnPropToInitialState }) => {
 	)
 }
 
+export const ItemSpecProp = ({
+	prop,
+	label,
+	value = '',
+	helperText,
+	InputProps,
+}) => {
+	return (
+		<TextField
+			fullWidth
+			id={prop}
+			label={label}
+			type='text'
+			margin='dense'
+			name={prop}
+			value={value || ''}
+			disabled
+			helperText={helperText}
+			variant='outlined'
+			InputProps={InputProps}
+		/>
+	)
+}
+
 export const ItemTitle = ({
 	title,
 	errTitle,
