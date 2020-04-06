@@ -1,8 +1,13 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useSelector } from 'react-redux'
-import { selectItemByTypeAndId, selectValidationsById } from 'selectors'
+import {
+	selectItemByTypeAndId,
+	selectValidationsById,
+	selectSpinnerById,
+} from 'selectors'
+import { execute } from 'actions'
 
-export function useItem({ itemType, match, objModel }) {
+export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 	const [item, setItem] = useState({})
 	const [initialItemState, setInitialItemState] = useState({})
 	const [activeFields, setFields] = useState({})
@@ -17,12 +22,34 @@ export function useItem({ itemType, match, objModel }) {
 		state => selectValidationsById(state, validateId) || {}
 	)
 
+	const spinner = useSelector(state => selectSpinnerById(state, validateId))
+
 	useEffect(() => {
 		const initial = new objModel(storeItem)
 		setItem(initial)
 		setInitialItemState(initial)
 		setValidateId(`update-${item.id}`)
 	}, [item.id, objModel, storeItem])
+
+	const setActiveFields = useCallback(
+		(field, value) => {
+			setFields({ ...activeFields, [field]: value })
+		},
+		[activeFields]
+	)
+
+	const validate = useCallback(
+		dirty => execute(validateAndUpdateFn({ item, validateId, dirty })),
+		[item, validateAndUpdateFn, validateId]
+	)
+
+	const save = useCallback(() => {
+		execute(
+			validateAndUpdateFn({ item, validateId, dirty: true, update: true })
+		)
+		setDirtyProps([])
+		setFields({})
+	}, [item, validateAndUpdateFn, validateId])
 
 	const returnPropToInitialState = useCallback(
 		propName => {
@@ -35,15 +62,10 @@ export function useItem({ itemType, match, objModel }) {
 
 			setItem(newItem)
 			setDirtyProps(dp)
+			setActiveFields(propName, false)
+			validate(false)
 		},
-		[dirtyProps, initialItemState, item, objModel]
-	)
-
-	const setActiveFields = useCallback(
-		(field, value) => {
-			setFields({ ...activeFields, [field]: value })
-		},
-		[activeFields]
+		[dirtyProps, initialItemState, item, objModel, setActiveFields, validate]
 	)
 
 	const updateField = useCallback(
@@ -68,8 +90,11 @@ export function useItem({ itemType, match, objModel }) {
 		setActiveFields,
 		dirtyProps,
 		returnPropToInitialState,
+		validate,
 		validateId,
 		validations,
 		updateField,
+		spinner,
+		save,
 	}
 }
