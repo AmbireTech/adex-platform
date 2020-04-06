@@ -86,22 +86,18 @@ export const fillEmptyTime = (
 	defaultValue = 0,
 	period
 ) => {
-	// const intervals = intervalsMs()
 	const time = {
 		interval: period,
 		step: { ammount: 1, unit: 'minute' },
 	}
 	switch (timeframe) {
 		case 'hour':
-			// time.interval = intervals.lastHour
 			time.step = { ammount: 1, unit: 'minute' }
 			break
 		case 'day':
-			// time.interval = intervals.last24Hours
 			time.step = { ammount: 1, unit: 'hour' }
 			break
 		case 'week':
-			// time.interval = intervals.last7Days
 			time.step = { ammount: 6, unit: 'hour' }
 			break
 		default:
