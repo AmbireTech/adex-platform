@@ -105,7 +105,7 @@ const datePickerStyled = ({ classes, calendarIcon, icon, ...rest }) => {
 
 export const DatePickerContrast = withStyles(styles)(datePickerStyled)
 
-function WeekSelectDatePicker({ classes, onChange, ...rest }) {
+function WeekSelectDatePicker({ classes, ...rest }) {
 	const formatWeekSelectLabel = (date, invalidLabel) => {
 		let dateClone = makeJSDateObject(date)
 
@@ -157,7 +157,6 @@ function WeekSelectDatePicker({ classes, onChange, ...rest }) {
 			renderDay={renderWrappedWeekDay}
 			labelFunc={formatWeekSelectLabel}
 			shouldDisableDate={date => dayIsFuture(date)}
-			onChange={val => onChange(utils.startOfWeek(val))}
 			{...rest}
 		/>
 	)
