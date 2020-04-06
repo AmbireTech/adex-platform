@@ -4,15 +4,17 @@ export function useKeyPress(targetKey) {
 	const [keyPressed, setKeyPressed] = useState(false)
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	function downHandler({ key }) {
-		if (key === targetKey) {
+	const downHandler = ev => {
+		if (ev.key === targetKey) {
+			ev.preventDefault()
 			setKeyPressed(true)
 		}
 	}
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const upHandler = ({ key }) => {
-		if (key === targetKey) {
+	const upHandler = ev => {
+		if (ev.key === targetKey) {
+			ev.preventDefault()
 			setKeyPressed(false)
 		}
 	}
