@@ -377,6 +377,61 @@ export function updateAnalyticsPeriod(start) {
 	}
 }
 
+export function updateAnalyticsPeriodPrevNextLive({
+	next = false,
+	live = false,
+}) {
+	return async function(dispatch, getState) {
+		try {
+			const timeframe = selectAnalyticsTimeframe(getState())
+			let { start } = selectAnalyticsPeriod(getState())
+			const startCopy = start
+			switch (timeframe) {
+				case 'hour':
+					start = +utils.addHours(
+						utils.date(start).startOf('hour'),
+						next ? 1 : -1
+					)
+					break
+				case 'day':
+					start = +utils.addDays(
+						utils.date(start).startOf('day'),
+						next ? 1 : -1
+					)
+					break
+				case 'week':
+					start = +utils.addDays(
+						utils
+							.date(start)
+							.startOf('day')
+							.add(utils.getLastSixHoursPeriod() * 6 + 2, 'hours'),
+						next ? 7 : -7
+					)
+					break
+				default:
+					start = +utils.addDays(utils.date(start).startOf('day'), -1)
+					break
+			}
+			if (utils.isAfter(utils.date(start), utils.date())) {
+				start = startCopy
+			}
+			if (live) {
+				start = +utils.date(Date.now())
+			}
+			updateAnalyticsPeriod(start)(dispatch, getState)
+		} catch (err) {
+			console.error('ERR_ANALYTICS_PREV_PERIOD', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_ANALYTICS_PREV_PERIOD', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+	}
+}
+
 export function resetAnalytics() {
 	return async function(dispatch, getState) {
 		return dispatch({
