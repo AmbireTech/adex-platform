@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import {
 	execute,
@@ -45,6 +45,7 @@ import {
 	selectAnalyticsPeriod,
 } from 'selectors'
 import utils from 'helpers/dateUtils'
+import { useKeyPress } from 'hooks/useKeyPress'
 
 const timeFrames = VALIDATOR_ANALYTICS_TIMEFRAMES.map(tf => {
 	const translated = { ...tf }
@@ -140,6 +141,9 @@ const DatePickerSwitch = ({ timeframe, ...rest }) => {
 export function BasicStats({ side }) {
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
+	const SPACE = useKeyPress(' ')
+	const ARROW_LEFT = useKeyPress('ArrowLeft')
+	const ARROW_RIGHT = useKeyPress('ArrowRight')
 	const { symbol } = useSelector(selectMainToken)
 	const { start } = useSelector(selectAnalyticsPeriod)
 	const timeframe = useSelector(selectAnalyticsTimeframe)
@@ -192,6 +196,12 @@ export function BasicStats({ side }) {
 		selectChartDatapointsCPM(state, { side, timeframe })
 	)
 
+	useEffect(() => {
+		SPACE && execute(updateAnalyticsPeriodPrevNextLive({ live: true }))
+		ARROW_RIGHT && execute(updateAnalyticsPeriodPrevNextLive({ next: true }))
+		ARROW_LEFT && execute(updateAnalyticsPeriodPrevNextLive({ next: false }))
+	}, [ARROW_LEFT, ARROW_RIGHT, SPACE])
+
 	const dataInSync =
 		(clicks.labels[clicks.labels.length - 1] ===
 			impressions[impressions.labels.length - 1]) ===
@@ -228,6 +238,10 @@ export function BasicStats({ side }) {
 								fullWidth
 								calendarIcon
 								label={t('ANALYTICS_RANGE')}
+								onBackClick={e => {
+									e.stopPropagation()
+									execute(updateAnalyticsPeriodPrevNextLive({ next: false }))
+								}}
 								onLiveClick={e => {
 									e.stopPropagation()
 									execute(updateAnalyticsPeriodPrevNextLive({ live: true }))
@@ -235,10 +249,6 @@ export function BasicStats({ side }) {
 								onNextClick={e => {
 									e.stopPropagation()
 									execute(updateAnalyticsPeriodPrevNextLive({ next: true }))
-								}}
-								onBackClick={e => {
-									e.stopPropagation()
-									execute(updateAnalyticsPeriodPrevNextLive({ next: false }))
 								}}
 							/>
 						</Box>
