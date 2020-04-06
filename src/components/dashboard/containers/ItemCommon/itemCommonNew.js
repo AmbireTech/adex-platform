@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, forwardRef } from 'react'
 import { Prompt } from 'react-router'
 import { makeStyles } from '@material-ui/core/styles'
 import {
@@ -73,7 +73,6 @@ export const ItemTitle = ({
 			onChange={ev => {
 				updateField('title', ev.target.value)
 			}}
-			defaultValue=' '
 			disabled={!active}
 			error={!!titleErr && !!titleErr.errMsg}
 			helperText={
@@ -127,7 +126,6 @@ export const ItemDescription = ({
 			maxLength={1024}
 			multiline
 			rows={2}
-			defaultValue=' '
 			disabled={!activeFields.description}
 			error={!!descriptionErr && !!descriptionErr.errMsg}
 			helperText={
@@ -175,6 +173,18 @@ export const ItemAdType = ({ type }) => {
 	)
 }
 
+const OpenInNewIconBtn = ({ forwardedRef, ...props }) => {
+	return (
+		<IconButton {...props}>
+			<OpenInNew />
+		</IconButton>
+	)
+}
+
+const IconButtonWithRef = forwardRef((props, ref) => (
+	<OpenInNewIconBtn {...props} forwardedRef={ref} />
+))
+
 export const ItemTargetURL = ({ targetUrl = '' }) => {
 	return (
 		<TextField
@@ -192,11 +202,7 @@ export const ItemTargetURL = ({ targetUrl = '' }) => {
 						<ExternalAnchor
 							color='primary'
 							href={targetUrl}
-							component={props => (
-								<IconButton {...props}>
-									<OpenInNew />
-								</IconButton>
-							)}
+							component={IconButtonWithRef}
 						/>
 					</InputAdornment>
 				),
