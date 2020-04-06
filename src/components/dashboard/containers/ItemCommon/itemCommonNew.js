@@ -11,9 +11,9 @@ import {
 	TextField,
 	Button,
 } from '@material-ui/core'
-import { Info, Edit, UndoOutlined } from '@material-ui/icons'
+import { Info, Edit, UndoOutlined, OpenInNew } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
-import Anchor from 'components/common/anchor/anchor'
+import Anchor, { ExternalAnchor } from 'components/common/anchor/anchor'
 import { t } from 'selectors'
 import { styles } from './styles'
 
@@ -61,7 +61,6 @@ export const ItemTitle = ({
 	returnPropToInitialState,
 	activeFields,
 }) => {
-	const classes = useStyles()
 	const active = !!activeFields.title
 	return (
 		<TextField
@@ -89,7 +88,6 @@ export const ItemTitle = ({
 						<IconButton
 							// size='small'
 							color='secondary'
-							className={classes.buttonRight}
 							onClick={() =>
 								active
 									? (returnPropToInitialState('title'),
@@ -114,7 +112,6 @@ export const ItemDescription = ({
 	returnPropToInitialState,
 	activeFields,
 }) => {
-	const classes = useStyles()
 	const active = !!activeFields.description
 	return (
 		<TextField
@@ -147,7 +144,6 @@ export const ItemDescription = ({
 						<IconButton
 							// size='small'
 							color='secondary'
-							className={classes.buttonRight}
 							onClick={() =>
 								active
 									? (returnPropToInitialState('description'),
@@ -157,6 +153,51 @@ export const ItemDescription = ({
 						>
 							{active ? <UndoOutlined /> : <Edit />}
 						</IconButton>
+					</InputAdornment>
+				),
+			}}
+		/>
+	)
+}
+
+export const ItemAdType = ({ type }) => {
+	return (
+		<TextField
+			fullWidth
+			id='item-type'
+			label={t('type', { isProp: true })}
+			type='text'
+			name='type'
+			value={type || ' '}
+			disabled={true}
+			variant='outlined'
+		/>
+	)
+}
+
+export const ItemTargetURL = ({ targetUrl = '' }) => {
+	return (
+		<TextField
+			fullWidth
+			id='item-targetUrl'
+			label={t('targetUrl', { isProp: true })}
+			type='text'
+			name='targetUrl'
+			value={targetUrl}
+			disabled={true}
+			variant='outlined'
+			InputProps={{
+				endAdornment: (
+					<InputAdornment position='end'>
+						<ExternalAnchor
+							color='primary'
+							href={targetUrl}
+							component={props => (
+								<IconButton {...props}>
+									<OpenInNew />
+								</IconButton>
+							)}
+						/>
 					</InputAdornment>
 				),
 			}}
