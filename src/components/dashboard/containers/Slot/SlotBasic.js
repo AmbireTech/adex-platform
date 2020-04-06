@@ -53,7 +53,7 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 									{...hookProps}
 								/>
 							</Box>
-							<Grid container spacing={1}>
+							<Grid container spacing={2}>
 								<Grid item xs={12} sm={12} md={6}>
 									<Box py={1}>
 										<ItemAdType type={type} />

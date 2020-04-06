@@ -368,13 +368,13 @@ export const ItemWebsite = ({
 				) : (
 					<Fragment>
 						{activeFields.website && (
-							<div
+							<span
 								dangerouslySetInnerHTML={{
 									__html: t('SLOT_MIN_CPM_HELPER'),
 								}}
 							/>
 						)}
-						<div
+						<span
 							dangerouslySetInnerHTML={{
 								__html: t('SLOT_WEBSITE_CODE_WARNING'),
 							}}
