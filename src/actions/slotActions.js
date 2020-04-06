@@ -16,13 +16,14 @@ import {
 	verifyWebsite,
 	postAdUnit,
 	postAdSlot,
+	updateAdSlot,
 } from 'services/adex-market/actions'
 import { getWidAndHightFromType } from 'helpers/itemsHelpers'
 
-import { ADD_ITEM } from 'constants/actionTypes'
+import { ADD_ITEM, UPDATE_ITEM } from 'constants/actionTypes'
 import Helper from 'helpers/miscHelpers'
 
-const { adSlotPost, adUnitPost } = schemas
+const { adSlotPost, adUnitPost, adSlotPut } = schemas
 
 export function validateNewSlotBasics({
 	validateId,
@@ -258,5 +259,88 @@ export function saveSlot() {
 			})(dispatch)
 			throw new Error('ERR_CREATING_ITEM', err)
 		}
+	}
+}
+
+export function validateAndUpdateSlot({ validateId, dirty, item, update }) {
+	return async function(dispatch, getState) {
+		await updateSpinner(validateId, true)(dispatch)
+		try {
+			const mainToken = selectMainToken()
+			const { id, title, description, minPerImpression, website } = item
+
+			const newSlot = new AdSlot(item)
+
+			if (typeof minPerImpression === 'string') {
+				newSlot.minPerImpression = {
+					[mainToken.address]: numStringCPMtoImpression({
+						numStr: minPerImpression,
+						decimals: mainToken.decimals,
+					}),
+				}
+			}
+
+			const slot = newSlot.marketUpdate
+
+			const validations = await Promise.all([
+				validateSchemaProp({
+					validateId,
+					value: title,
+					prop: 'title',
+					schema: adSlotPut.title,
+					dirty,
+				})(dispatch),
+				validateSchemaProp({
+					validateId,
+					value: description,
+					prop: 'description',
+					schema: adSlotPut.description,
+					dirty,
+				})(dispatch),
+				validateSchemaProp({
+					validateId,
+					value: website,
+					prop: 'website',
+					schema: adSlotPut.website,
+					dirty,
+				})(dispatch),
+				validateSchemaProp({
+					validateId,
+					value: slot.description,
+					prop: 'minPerImpression',
+					schema: adSlotPut.minPerImpression,
+					dirty,
+				})(dispatch),
+				validateSchemaProp({
+					validateId,
+					value: slot,
+					prop: 'slot',
+					schema: adSlotPut,
+					dirty,
+				})(dispatch),
+			])
+
+			const isValid = validations.every(v => v === true)
+
+			if (isValid && update) {
+				const updatedSlot = (await updateAdSlot({ slot, id })).unit
+				dispatch({
+					type: UPDATE_ITEM,
+					item: new AdSlot(updatedSlot).plainObj(),
+					itemType: 'AdSlot',
+				})
+			}
+		} catch (err) {
+			console.error('ERR_UPDATING_ITEM', err)
+			addToast({
+				type: 'cancel',
+				label: t('ERR_UPDATING_ITEM', {
+					args: ['AdSlot', Helper.getErrMsg(err)],
+				}),
+				timeout: 50000,
+			})(dispatch)
+		}
+
+		await updateSpinner(validateId, false)(dispatch)
 	}
 }
