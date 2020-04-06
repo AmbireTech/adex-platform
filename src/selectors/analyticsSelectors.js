@@ -204,12 +204,11 @@ export const selectAnalyticsDataAggr = createSelector(
 		// NOTE: It was working fine with default initial state but
 		// when eventType CLICK was added if you were logged and had
 		// old analytics the initialState is not applied === boom.
-
 		const {
 			[side]: {
 				[eventType]: {
 					[metric]: { [timeframe]: { [start]: { aggr } = {} } = {} } = {},
-				},
+				} = {},
 			} = {},
 		} = analytics
 
