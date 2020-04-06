@@ -70,11 +70,12 @@ export const styles = theme => {
 		content: {
 			flexGrow: 1,
 			backgroundColor: theme.palette.background.default,
-			padding: theme.spacing(2),
+			padding: 0,
 			paddingTop: theme.spacing(4),
 			overflow: 'auto',
 			[theme.breakpoints.up('md')]: {
 				marginLeft: drawerWidth,
+				padding: theme.spacing(2),
 			},
 		},
 		contentInner: {
