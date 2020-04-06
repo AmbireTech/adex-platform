@@ -157,7 +157,7 @@ export function saveUnit() {
 	}
 }
 
-export function validateAndUpdateUnit({ validateId, dirty, item }) {
+export function validateAndUpdateUnit({ validateId, dirty, item, update }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
 		try {
@@ -191,7 +191,7 @@ export function validateAndUpdateUnit({ validateId, dirty, item }) {
 
 			const isValid = validations.every(v => v === true)
 
-			if (isValid) {
+			if (isValid && update) {
 				const updatedUnit = (await updateAdUnit({ unit, id })).unit
 				dispatch({
 					type: UPDATE_ITEM,
