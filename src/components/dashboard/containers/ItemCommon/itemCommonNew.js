@@ -14,7 +14,9 @@ import {
 import { Info, Edit, UndoOutlined, OpenInNew } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
 import Anchor, { ExternalAnchor } from 'components/common/anchor/anchor'
-import { t } from 'selectors'
+import { formatTokenAmount } from 'helpers/formatters'
+import { bigNumberify } from 'ethers/utils'
+import { t, selectMainToken } from 'selectors'
 import { styles } from './styles'
 
 const useStyles = makeStyles(styles)
@@ -205,6 +207,33 @@ export const ItemTargetURL = ({ targetUrl = '' }) => {
 	)
 }
 
+export const ItemFallbackMediaURL = ({ targetUrl = '' }) => {
+	// TODO: need to take it from fallbackUnit
+	return (
+		<TextField
+			fullWidth
+			id='item-targetUrl'
+			label={t('targetUrl', { isProp: true })}
+			type='text'
+			name='targetUrl'
+			value={targetUrl}
+			disabled={true}
+			variant='outlined'
+			InputProps={{
+				endAdornment: (
+					<InputAdornment position='end'>
+						<ExternalAnchor
+							color='primary'
+							href={targetUrl}
+							component={IconButtonWithRef}
+						/>
+					</InputAdornment>
+				),
+			}}
+		/>
+	)
+}
+
 export const MediaCard = ({
 	mediaUrl,
 	mediaMime,
@@ -246,5 +275,131 @@ export const MediaCard = ({
 				</CardContent>
 			)}
 		</Card>
+	)
+}
+
+export const ItemMinPerImpression = ({
+	item = {},
+	validations,
+	updateField,
+	setActiveFields,
+	returnPropToInitialState,
+	activeFields = {},
+}) => {
+	const { address, decimals, symbol } = selectMainToken()
+	const { minPerImpression } = item
+	const active = !!activeFields.minPerImpression
+	const { minPerImpression: error } = validations
+	const showError = !!error && !!error.errMsg && error.dirty
+	const minCPM =
+		typeof minPerImpression === 'object'
+			? formatTokenAmount(
+					bigNumberify((item.minPerImpression || {})[address] || '0').mul(1000),
+					decimals,
+					true
+			  )
+			: minPerImpression
+
+	return (
+		<TextField
+			fullWidth
+			id='item-minPerImpression'
+			label={t('MIN_CPM_SLOT_LABEL', { args: [symbol] })}
+			type='text'
+			name='minPerImpression'
+			value={minCPM || ' '}
+			onChange={ev => {
+				updateField('minPerImpression', ev.target.value)
+			}}
+			disabled={!active}
+			error={showError}
+			helperText={showError ? t(error.errMsg, { args: error.errMsgArgs }) : ' '}
+			variant='outlined'
+			InputProps={{
+				endAdornment: (
+					<InputAdornment position='end'>
+						<IconButton
+							// size='small'
+							color='secondary'
+							onClick={() =>
+								active
+									? returnPropToInitialState('minPerImpression')
+									: setActiveFields('minPerImpression', true)
+							}
+						>
+							{active ? <UndoOutlined /> : <Edit />}
+						</IconButton>
+					</InputAdornment>
+				),
+			}}
+		/>
+	)
+}
+
+export const ItemWebsite = ({
+	item = {},
+	validations,
+	updateField,
+	setActiveFields,
+	returnPropToInitialState,
+	activeFields = {},
+}) => {
+	const { website } = item
+	const active = !!activeFields.website
+	const { website: error } = validations
+	const showError = !!error && !!error.errMsg && error.dirty
+
+	return (
+		<TextField
+			fullWidth
+			id='item-website'
+			label={t('SLOT_WEBSITE')}
+			type='text'
+			name='website'
+			value={website || ' '}
+			onChange={ev => {
+				updateField('website', ev.target.value)
+			}}
+			disabled={!active}
+			error={showError}
+			helperText={
+				error && !!error.errMsg && activeFields.website ? (
+					t(error.errMsg, { args: error.errMsgArgs })
+				) : (
+					<Fragment>
+						{activeFields.website && (
+							<div
+								dangerouslySetInnerHTML={{
+									__html: t('SLOT_MIN_CPM_HELPER'),
+								}}
+							/>
+						)}
+						<div
+							dangerouslySetInnerHTML={{
+								__html: t('SLOT_WEBSITE_CODE_WARNING'),
+							}}
+						/>
+					</Fragment>
+				)
+			}
+			variant='outlined'
+			InputProps={{
+				endAdornment: (
+					<InputAdornment position='end'>
+						<IconButton
+							// size='small'
+							color='secondary'
+							onClick={() =>
+								active
+									? returnPropToInitialState('website')
+									: setActiveFields('website', true)
+							}
+						>
+							{active ? <UndoOutlined /> : <Edit />}
+						</IconButton>
+					</InputAdornment>
+				),
+			}}
+		/>
 	)
 }
