@@ -231,7 +231,7 @@ export function updateAccountAnalytics() {
 								dispatch({
 									type: types.UPDATE_ANALYTICS,
 									...opts,
-									timestamp: start,
+									timestamp: liveTimestamp === start ? 'live' : start,
 									value: { ...aggregates }, // ADD TIME as well
 								})
 							}
