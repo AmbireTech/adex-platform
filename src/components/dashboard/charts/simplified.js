@@ -88,6 +88,12 @@ export const SimpleStatistics = ({
 		}
 	}
 
+	const labelFormating = (timeframe, date) => {
+		return timeframe === 'week'
+			? dateUtils.format(dateUtils.date(date), 'Do MMM, HH:mm')
+			: dateUtils.format(dateUtils.date(date), 'HH:mm')
+	}
+
 	const chartData = {
 		labels: payouts.labels,
 		datasets: [
@@ -188,8 +194,13 @@ export const SimpleStatistics = ({
 					},
 					ticks: {
 						autoSkip: false,
+						maxRotation: 0,
+						minRotation: 0,
 						callback: function(tick, index, array) {
-							return index % Math.floor(array.length / 12) ? '' : tick
+							return index === 0 || index === array.length - 1
+								? labelFormating(timeframe, tick)
+								: ''
+							// return index % Math.floor(array.length / 12) ? '' : tick
 						},
 					},
 				},
