@@ -152,7 +152,7 @@ export const SimpleStatistics = ({
 		// This and fixed height are used for proper mobile display of the chart
 		maintainAspectRatio: false,
 		title: {
-			display: true,
+			display: false,
 			text: options.title,
 		},
 		tooltips: {
