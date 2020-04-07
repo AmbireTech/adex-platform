@@ -198,7 +198,7 @@ export const SimpleStatistics = ({
 						maxRotation: 0,
 						minRotation: 0,
 						callback: function(tick, index, array) {
-							return index === 0 || index === array.length - 1 ? tick : ' '
+							return index === 0 || index === array.length - 1 ? tick : ''
 							// return index % Math.floor(array.length / 12) ? '' : tick
 						},
 					},
