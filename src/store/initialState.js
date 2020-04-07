@@ -20,7 +20,7 @@ let initialState = {
 	},
 	currentItem: {},
 	selectedItems: {
-		campaings: [],
+		campaigns: [],
 		adUnits: [],
 		slots: [],
 	},

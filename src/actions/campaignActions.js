@@ -13,7 +13,7 @@ import {
 	validateCampaignDates,
 	validateCampaignUnits,
 	confirmAction,
-	updateSelectedCampaigns,
+	updateSelectedItems,
 } from 'actions'
 import { push } from 'connected-react-router'
 import { parseUnits } from 'ethers/utils'
@@ -451,12 +451,12 @@ export function getCampaignActualFees() {
 	}
 }
 
-export function handlePrintSelectedReceipts(selected) {
+export function handlePrintSelectedReceiptsAdvertiser(selected) {
 	return async function(dispatch, getState) {
 		await updateSpinner(PRINTING_CAMPAIGNS_RECEIPTS, true)(dispatch)
 		confirmAction(
 			async () => {
-				await updateSelectedCampaigns(selected)(dispatch, getState)
+				await updateSelectedItems('campaigns', selected)(dispatch)
 				await dispatch(push('/dashboard/advertiser/receipts'))
 				await updateSpinner(PRINTING_CAMPAIGNS_RECEIPTS, false)(dispatch)
 			},

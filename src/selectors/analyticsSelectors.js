@@ -450,3 +450,13 @@ export const selectPublisherRevenueNoticeActive = createSelector(
 		websites.some(w => w.issues.length > 0) ||
 		!totalImpressions
 )
+
+export const selectPublisherReceipts = createSelector(
+	[selectAnalytics],
+	({ receipts }) => receipts || {}
+)
+
+export const selectPublisherReceiptsPresentMonths = createSelector(
+	[selectPublisherReceipts],
+	receipts => Object.keys(receipts).map(r => +r)
+)

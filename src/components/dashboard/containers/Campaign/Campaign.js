@@ -24,7 +24,7 @@ import Typography from '@material-ui/core/Typography'
 import Anchor from 'components/common/anchor/anchor'
 import CampaignStatsDoughnut from 'components/dashboard/charts/campaigns/CampaignStatsDoughnut'
 import CampaignStatsBreakdownTable from 'components/dashboard/containers/Tables/CampaignStatsBreakdownTable'
-import { CampaignReceipt } from 'components/dashboard/containers/Receipt/CampaignReceipt'
+import { Receipt } from 'components/dashboard/containers/Receipt'
 import {
 	selectCampaignAnalyticsToCountryTableData,
 	selectCampaignAnalyticsToCountryMapChartData,
@@ -221,7 +221,7 @@ export class Campaign extends Component {
 								</Anchor>
 							</List>
 						)}
-						{tabIndex === 4 && <CampaignReceipt itemId={campaign.id} />}
+						{tabIndex === 3 && <Receipt itemId={campaign.id} />}
 					</div>
 				</div>
 			</div>

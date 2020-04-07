@@ -190,3 +190,37 @@ export const campaignAnalytics = ({
 		})
 		.then(processResponse)
 }
+
+export const timeBasedAnalytics = async ({
+	leaderAuth,
+	limit,
+	timeframe,
+	eventType,
+	metric,
+	start,
+	end,
+	segmentByChannel,
+}) => {
+	const baseUrl = ANALYTICS_DATA_VALIDATOR_URL
+	const requester = getValidatorRequester({ baseUrl })
+
+	const result = await requester
+		.fetch({
+			route: `/analytics`,
+			method: 'GET',
+			queryParams: {
+				limit,
+				timeframe,
+				eventType,
+				metric,
+				start,
+				end,
+				segmentByChannel,
+			},
+			headers: {
+				authorization: BEARER_PREFIX + leaderAuth,
+			},
+		})
+		.then(processResponse)
+	return result
+}
