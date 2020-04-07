@@ -7,7 +7,7 @@ import {
 import { getState } from 'store'
 import { selectAuth } from 'selectors'
 
-const LOOP_TIMEOUT = 120 * 1000
+const LOOP_TIMEOUT = 60 * 1000
 
 const analyticsLoop = new Loop({
 	timeout: LOOP_TIMEOUT,
