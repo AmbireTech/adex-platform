@@ -354,7 +354,7 @@ export const selectChartDatapointsImpressions = createSelector(
 			timeframe,
 			eventType: 'IMPRESSION',
 			metric: 'eventCounts',
-			noLastOne: false, //TODO No last one when live
+			noLastOne: false,
 		}),
 	],
 	([impressions]) => impressions
@@ -367,7 +367,7 @@ export const selectChartDatapointsClicks = createSelector(
 			timeframe,
 			eventType: 'CLICK',
 			metric: 'eventCounts',
-			noLastOne: false, //TODO No last one when live
+			noLastOne: false,
 		}),
 	],
 	([clicks]) => clicks
@@ -380,7 +380,7 @@ export const selectChartDatapointsPayouts = createSelector(
 			timeframe,
 			eventType: 'IMPRESSION',
 			metric: 'eventPayouts',
-			noLastOne: false, //TODO No last one when live
+			noLastOne: false,
 		}),
 	],
 	([payouts]) => payouts
