@@ -202,6 +202,10 @@ export function BasicStats({ side }) {
 		ARROW_LEFT && execute(updateAnalyticsPeriodPrevNextLive({ next: false }))
 	}, [ARROW_LEFT, ARROW_RIGHT, SPACE])
 
+	useEffect(() => {
+		execute(updateAnalyticsPeriodPrevNextLive({ live: true }))
+	}, [side])
+
 	const dataInSync =
 		(clicks.labels[clicks.labels.length - 1] ===
 			impressions[impressions.labels.length - 1]) ===
