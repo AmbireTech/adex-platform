@@ -1,7 +1,6 @@
 import * as types from 'constants/actionTypes'
 import {
 	uploadImage,
-	postAdUnit,
 	updateAdSlot,
 	updateAdUnit,
 	updateCampaign,
@@ -10,19 +9,18 @@ import { Base, AdSlot, AdUnit, helpers, Campaign } from 'adex-models'
 import { addToast as AddToastUi, updateSpinner } from './uiActions'
 
 import { translate } from 'services/translations/translations'
-import { getAdUnits, getAdSlots } from 'services/adex-market/actions'
+import {
+	getAdUnits,
+	getAdSlots,
+	getAdUnitById,
+} from 'services/adex-market/actions'
 
 import initialState from 'store/initialState'
 import { getMediaSize } from 'helpers/mediaHelpers'
 import { getErrorMsg } from 'helpers/errors'
 import { numStringCPMtoImpression } from 'helpers/numbers'
 import { SOURCES } from 'constants/targeting'
-import {
-	selectRelayerConfig,
-	selectAuthSig,
-	selectAccount,
-	selectAuth,
-} from 'selectors'
+import { selectRelayerConfig, selectAccount, selectAuth } from 'selectors'
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
 	return AddToastUi({
@@ -48,6 +46,17 @@ export const getImgsIpfsFromBlob = ({ tempUrl, authSig }) => {
 		})
 }
 
+const getPassBackData = async slot => {
+	if (slot.fallbackUnit) {
+		const { unit } = await getAdUnitById({ unitId: slot.fallbackUnit })
+		const { mediaMime, mediaUrl, targetUrl } = unit
+
+		return { ...slot, mediaMime, mediaUrl, targetUrl }
+	}
+
+	return slot
+}
+
 export function getAllItems() {
 	return async function(dispatch, getState) {
 		try {
@@ -57,11 +66,16 @@ export function getAllItems() {
 			const slots = getAdSlots({ identity: address })
 
 			const [resUnits, resSlots] = await Promise.all([units, slots])
+			const userSlots = resSlots.slots || resSlots || []
 
+			// TODO: TEMP - need to get this from market
+			const slotsWithUnits = userSlots.map(async s => await getPassBackData(s))
+
+			const slotWithUnitsRes = await Promise.all(slotsWithUnits)
 			if (selectAuth(getState())) {
 				updateItems({ items: resUnits, itemType: 'AdUnit' })(dispatch)
 				updateItems({
-					items: resSlots.slots || resSlots || [],
+					items: slotWithUnitsRes,
 					itemType: 'AdSlot',
 				})(dispatch)
 				updateItems({ items: resSlots.websites || [], itemType: 'Website' })(

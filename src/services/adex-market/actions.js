@@ -90,6 +90,15 @@ export const getAdUnits = ({ identity }) => {
 		.then(processResponse)
 }
 
+export const getAdUnitById = ({ unitId }) => {
+	return requester
+		.fetch({
+			route: `units/${unitId}`,
+			method: 'GET',
+		})
+		.then(processResponse)
+}
+
 export const postAdUnit = ({ unit, authSig }) => {
 	return requester
 		.fetch({
