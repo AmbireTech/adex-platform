@@ -237,11 +237,14 @@ export function BasicStats({ side }) {
 								onChange={val => {
 									execute(updateAnalyticsPeriod(val))
 								}}
-								emptyLabel={t('SET_CAMPAIGN_START')}
 								disableFuture
 								fullWidth
 								calendarIcon
-								label={t('ANALYTICS_RANGE')}
+								label={t('ANALYTICS_PERIOD')}
+								max={Date.now()}
+								// Only when picking future hours as they can't be disabled
+								maxDateMessage={t('MAX_DATE_ERROR')}
+								strictCompareDates
 								onBackClick={e => {
 									e.stopPropagation()
 									execute(updateAnalyticsPeriodPrevNextLive({ next: false }))
