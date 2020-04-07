@@ -1,18 +1,20 @@
 import React, { Fragment } from 'react'
-import { Paper, Grid, Box, InputAdornment } from '@material-ui/core'
+import { Paper, Grid, Box, InputAdornment, Button } from '@material-ui/core'
+
+import { bigNumberify } from 'ethers/utils'
 import {
 	DirtyProps,
 	ItemTitle,
 	MediaCard,
 	ItemSpecProp,
 } from 'components/dashboard/containers/ItemCommon/'
-import { t, selectMainToken } from 'selectors'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
-import { bigNumberify } from 'ethers/utils'
+import { t, selectMainToken } from 'selectors'
+import { closeCampaign } from 'actions'
 
 export const CampaignBasic = ({ item, ...hookProps }) => {
-	const { title, mediaUrl, mediaMime } = item
+	const { title, mediaUrl, mediaMime, humanFriendlyName } = item
 
 	const { decimals, symbol } = selectMainToken()
 	const { title: errTitle } = hookProps.validations
@@ -29,6 +31,23 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 							<Box my={1}>
 								<MediaCard mediaUrl={mediaUrl} mediaMime={mediaMime} />
 							</Box>
+							{['Ready', 'Active', 'Withdraw', 'Unhealthy'].includes(
+								status.name
+							) && (
+								<Box my={1}>
+									<Button
+										variant='contained'
+										color='secondary'
+										size='large'
+										onClick={() => {
+											closeCampaign({ campaign: item })
+										}}
+										disabled={humanFriendlyName === 'Closed'}
+									>
+										{t('BTN_CLOSE_CAMPAIGN')}
+									</Button>
+								</Box>
+							)}
 						</Grid>
 
 						<Grid item xs={12} sm={12} md={6} lg={7}>
