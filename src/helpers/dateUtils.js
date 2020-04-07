@@ -18,6 +18,10 @@ export class DateUtils extends MomentUtils {
 		return date.clone().isBetween(start, end, null, '[]')
 	}
 
+	add(date, ammount, unit) {
+		return date.add(ammount, unit)
+	}
+
 	addHours(date, hours) {
 		return date.clone().add(hours, 'hour')
 	}
@@ -37,11 +41,15 @@ export class DateUtils extends MomentUtils {
 	getUTCOffset() {
 		return this.moment().utcOffset() / 60
 	}
+
+	getUnix(date) {
+		return date.unix()
+	}
 }
 
-const utils = new DateUtils()
+const dateUtils = new DateUtils()
 
-export default utils
+export default dateUtils
 
 export function makeJSDateObject(date) {
 	if (moment.isMoment(date)) {

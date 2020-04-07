@@ -1,5 +1,5 @@
 import { AdUnit, AdSlot, Campaign, Account } from 'adex-models'
-import utils from 'helpers/dateUtils'
+import dateUtils from 'helpers/dateUtils'
 
 let initialState = {
 	account: new Account(),
@@ -63,8 +63,8 @@ let initialState = {
 	analytics: {
 		timeframe: 'day',
 		period: {
-			start: +utils.startOfDay(utils.date()),
-			end: +utils.endOfDay(utils.date()),
+			start: +dateUtils.startOfDay(dateUtils.date()),
+			end: +dateUtils.endOfDay(dateUtils.date()),
 		},
 	},
 	channels: {

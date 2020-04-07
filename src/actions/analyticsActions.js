@@ -28,7 +28,7 @@ import {
 	selectAnalyticsLiveTimestamp,
 } from 'selectors'
 import { bigNumberify } from 'ethers/utils'
-import utils from 'helpers/dateUtils'
+import dateUtils from 'helpers/dateUtils'
 
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
@@ -348,21 +348,21 @@ export function updateAnalyticsPeriod(start) {
 			const startCopy = start
 			switch (timeframe) {
 				case 'hour':
-					start = +utils.date(startCopy).startOf('hour')
-					end = +utils.date(startCopy).endOf('hour')
+					start = +dateUtils.date(startCopy).startOf('hour')
+					end = +dateUtils.date(startCopy).endOf('hour')
 					break
 				case 'day':
-					start = +utils.date(startCopy).startOf('day')
-					end = +utils.date(startCopy).endOf('day')
+					start = +dateUtils.date(startCopy).startOf('day')
+					end = +dateUtils.date(startCopy).endOf('day')
 					break
 				case 'week':
-					start = +utils
+					start = +dateUtils
 						.date(startCopy)
 						.startOf('week')
 						.add(23, 'hours')
 						.utc()
 						.startOf('day')
-					end = +utils
+					end = +dateUtils
 						.date(startCopy)
 						.endOf('week')
 						.subtract(23, 'hours')
@@ -403,23 +403,23 @@ export function updateAnalyticsPeriodPrevNextLive({
 			const startCopy = start
 			switch (timeframe) {
 				case 'hour':
-					start = +utils.addHours(utils.date(start), next ? 1 : -1)
+					start = +dateUtils.addHours(dateUtils.date(start), next ? 1 : -1)
 					break
 				case 'day':
-					start = +utils.addDays(utils.date(start), next ? 1 : -1)
+					start = +dateUtils.addDays(dateUtils.date(start), next ? 1 : -1)
 					break
 				case 'week':
-					start = +utils.addWeeks(utils.date(start), next ? 1 : -1)
+					start = +dateUtils.addWeeks(dateUtils.date(start), next ? 1 : -1)
 					break
 				default:
-					start = +utils.addDays(utils.date(start), next ? 1 : -1)
+					start = +dateUtils.addDays(dateUtils.date(start), next ? 1 : -1)
 					break
 			}
-			if (utils.isAfter(utils.date(start), utils.date())) {
+			if (dateUtils.isAfter(dateUtils.date(start), dateUtils.date())) {
 				start = startCopy
 			}
 			if (live) {
-				start = +utils.date()
+				start = +dateUtils.date()
 			}
 			updateAnalyticsPeriod(start)(dispatch, getState)
 		} catch (err) {

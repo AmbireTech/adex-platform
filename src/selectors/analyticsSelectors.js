@@ -3,7 +3,7 @@ import { createSelector } from 'reselect'
 import { selectChannelsWithUserBalancesAll } from 'selectors'
 import { formatTokenAmount, formatDateTime } from 'helpers/formatters'
 import { selectWebsitesArray } from 'selectors'
-import utils from 'helpers/dateUtils'
+import dateUtils from 'helpers/dateUtils'
 
 export const selectAnalytics = state => state.persist.analytics
 
@@ -38,18 +38,18 @@ export const selectAnalyticsLiveTimestamp = createSelector(
 	timeframe => {
 		switch (timeframe) {
 			case 'hour':
-				return +utils.date().startOf('hour')
+				return +dateUtils.date().startOf('hour')
 			case 'day':
-				return +utils.date().startOf('day')
+				return +dateUtils.date().startOf('day')
 			case 'week':
-				return +utils
+				return +dateUtils
 					.date()
 					.startOf('week')
 					.add(23, 'hours')
 					.utc()
 					.startOf('day')
 			default:
-				return +utils.date().startOf('hour')
+				return +dateUtils.date().startOf('hour')
 		}
 	}
 )
