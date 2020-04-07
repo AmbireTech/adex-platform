@@ -44,7 +44,7 @@ import {
 	selectChartDatapointsPayouts,
 	selectAnalyticsPeriod,
 } from 'selectors'
-import utils from 'helpers/dateUtils'
+import dateUtils from 'helpers/dateUtils'
 import { useKeyPress } from 'hooks/useKeyPress'
 
 const timeFrames = VALIDATOR_ANALYTICS_TIMEFRAMES.map(tf => {
@@ -111,7 +111,9 @@ const DatePickerSwitch = ({ timeframe, ...rest }) => {
 		case 'day':
 			return (
 				<DatePicker
-					labelFunc={val => utils.format(utils.date(val), 'MMM Do, YYYY')}
+					labelFunc={val =>
+						dateUtils.format(dateUtils.date(val), 'MMM Do, YYYY')
+					}
 					{...rest}
 				/>
 			)
@@ -122,11 +124,11 @@ const DatePickerSwitch = ({ timeframe, ...rest }) => {
 					roundHour
 					minutesStep={60}
 					labelFunc={val =>
-						`${utils.format(
-							utils.date(val),
+						`${dateUtils.format(
+							dateUtils.date(val),
 							'MMM Do, YYYY - (HH:mm'
-						)} - ${utils.format(
-							utils.setMinutes(utils.date(val), 59),
+						)} - ${dateUtils.format(
+							dateUtils.setMinutes(dateUtils.date(val), 59),
 							'HH:mm)'
 						)}`
 					}

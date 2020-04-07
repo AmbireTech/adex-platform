@@ -6,7 +6,7 @@ import Helper from 'helpers/miscHelpers'
 import { selectMainToken, selectAnalyticsTimeframe } from 'selectors'
 import { formatFloatNumberWithCommas } from 'helpers/formatters'
 import * as ChartAnnotation from 'chartjs-plugin-annotation'
-import utils from 'helpers/dateUtils'
+import dateUtils from 'helpers/dateUtils'
 
 const commonDsProps = {
 	fill: false,
@@ -63,28 +63,28 @@ export const SimpleStatistics = ({
 	})
 
 	const getNearestSixHoursUTC = hoursToRound => {
-		const now = utils.date()
-		const hoursMulti = Math.floor(utils.getHours(now) / hoursToRound)
-		const nearestSix = utils.setHours(
+		const now = dateUtils.date()
+		const hoursMulti = Math.floor(dateUtils.getHours(now) / hoursToRound)
+		const nearestSix = dateUtils.setHours(
 			now,
-			hoursMulti * hoursToRound + utils.getUTCOffset()
+			hoursMulti * hoursToRound + dateUtils.getUTCOffset()
 		)
-		return utils.setMinutes(utils.setSeconds(nearestSix, 0), 0)
+		return dateUtils.setMinutes(dateUtils.setSeconds(nearestSix, 0), 0)
 	}
 
 	const getLabelByTimeframe = timeframe => {
 		switch (timeframe) {
 			case 'hour':
-				return utils.format(utils.date(), 'YYYY-MM-DD HH:mm')
+				return dateUtils.format(dateUtils.date(), 'YYYY-MM-DD HH:mm')
 			case 'day':
-				return utils.format(
-					utils.setMinutes(utils.date(), 0),
+				return dateUtils.format(
+					dateUtils.setMinutes(dateUtils.date(), 0),
 					'YYYY-MM-DD HH:mm'
 				)
 			case 'week':
-				return utils.format(getNearestSixHoursUTC(6), 'YYYY-MM-DD HH:mm')
+				return dateUtils.format(getNearestSixHoursUTC(6), 'YYYY-MM-DD HH:mm')
 			default:
-				return utils.format(utils.date(), 'YYYY-MM-DD HH:mm')
+				return dateUtils.format(dateUtils.date(), 'YYYY-MM-DD HH:mm')
 		}
 	}
 
