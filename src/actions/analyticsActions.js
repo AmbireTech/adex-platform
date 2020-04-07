@@ -197,8 +197,6 @@ export function updateAccountAnalytics() {
 				const { datasets, labels } = selectStatsChartData(getState(), {
 					...opts,
 				})
-				// don't update if already saved in store
-				// TODO: update if we are LIVE!
 				const liveTimestamp = selectAnalyticsLiveTimestamp(getState())
 				if (
 					liveTimestamp === start ||
