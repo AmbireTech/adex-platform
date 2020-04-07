@@ -114,7 +114,7 @@ class Img extends Component {
 		}
 	}
 
-	onFail = fallback => {
+	onFail = (fallback, image) => {
 		if (this.displayImage) {
 			this.displayImage.onerror = null
 			this.displayImage.onload = null
@@ -132,8 +132,9 @@ class Img extends Component {
 	}
 
 	setDisplayImage = ({ image, fallback }) => {
+		this.clearLoadTimeout()
 		this.loadTimeout = setTimeout(() => {
-			this.onFail(fallback)
+			this.onFail(fallback, image)
 		}, MAX_IMG_LOAD_TIME)
 
 		this.displayImage.onerror = this.displayImage.onabort = this.onFail.bind(
@@ -152,6 +153,7 @@ class Img extends Component {
 	}
 
 	setDisplayVideo = ({ image, fallback }) => {
+		this.clearLoadTimeout()
 		this.displayVideo.src = image
 
 		this.loadTimeout = setTimeout(() => {
