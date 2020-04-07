@@ -67,7 +67,7 @@ export const SimpleStatistics = ({
 		const hoursMulti = Math.floor(dateUtils.getHours(now) / hoursToRound)
 		const nearestSix = dateUtils.setHours(
 			now,
-			hoursMulti * hoursToRound + dateUtils.getUTCOffset()
+			hoursMulti * hoursToRound + dateUtils.getUTCOffset(now)
 		)
 		return dateUtils.setMinutes(dateUtils.setSeconds(nearestSix, 0), 0)
 	}
