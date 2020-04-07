@@ -1,4 +1,4 @@
-import * as types from 'constants/actionTypes'
+import { ADD_ITEM, UPDATE_ITEM } from 'constants/actionTypes'
 import {
 	execute,
 	addToast,
@@ -12,10 +12,12 @@ import {
 	validateCampaignTitle,
 	validateCampaignDates,
 	validateCampaignUnits,
+	validateSchemaProp,
 	confirmAction,
 	updateSelectedCampaigns,
 } from 'actions'
 import { push } from 'connected-react-router'
+import { schemas, Campaign } from 'adex-models'
 import { parseUnits } from 'ethers/utils'
 import { getAllValidatorsAuthForIdentity } from 'services/smart-contracts/actions/stats'
 import { getCampaigns } from 'services/adex-market/actions'
@@ -24,7 +26,10 @@ import {
 	closeChannel,
 } from 'services/smart-contracts/actions/core'
 import { lastApprovedState } from 'services/adex-validator/actions'
-import { closeCampaignMarket } from 'services/adex-market/actions'
+import {
+	closeCampaignMarket,
+	updateCampaign,
+} from 'services/adex-market/actions'
 import { getErrorMsg } from 'helpers/errors'
 import {
 	t,
@@ -41,6 +46,8 @@ import {
 	PRINTING_CAMPAIGNS_RECEIPTS,
 } from 'constants/spinners'
 import Helper from 'helpers/miscHelpers'
+
+const { campaignPut } = schemas
 
 const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
@@ -72,7 +79,7 @@ export function openCampaign() {
 			})
 
 			dispatch({
-				type: types.ADD_ITEM,
+				type: ADD_ITEM,
 				item: storeCampaign,
 				itemType: 'Campaign',
 			})
@@ -107,7 +114,7 @@ export const updateCampaignState = ({ campaign }) => {
 			newCampaign.state = state
 
 			return dispatch({
-				type: types.UPDATE_ITEM,
+				type: UPDATE_ITEM,
 				item: newCampaign,
 				itemType: 'Campaign',
 			})
@@ -207,7 +214,7 @@ export function closeCampaign({ campaign }) {
 				humanFriendlyName: 'Closed',
 			}
 			dispatch({
-				type: types.UPDATE_ITEM,
+				type: UPDATE_ITEM,
 				item: newCampaign,
 				itemType: 'Campaign',
 			})
@@ -461,5 +468,57 @@ export function handlePrintSelectedReceipts(selected) {
 				text: t('CONFIRM_DIALOG_PRINT_ALL_RECEIPTS_TEXT'),
 			}
 		)(dispatch, getState)
+	}
+}
+
+export function validateAndUpdateCampaign({ validateId, dirty, item, update }) {
+	return async function(dispatch, getState) {
+		await updateSpinner(validateId, true)(dispatch)
+		try {
+			const { id, title } = item
+
+			const campaign = new Campaign(item).marketUpdate
+
+			const validations = await Promise.all([
+				validateCampaignTitle({
+					validateId,
+					title,
+					dirty,
+				})(dispatch),
+				validateSchemaProp({
+					validateId,
+					value: campaign,
+					prop: 'campaign',
+					schema: campaignPut,
+					dirty,
+				})(dispatch),
+			])
+
+			const isValid = validations.every(v => v === true)
+
+			if (isValid && update) {
+				const updatedCampaign = (await updateCampaign({
+					campaign,
+					id,
+				})).campaign
+
+				dispatch({
+					type: UPDATE_ITEM,
+					item: new Campaign(updatedCampaign).plainObj(),
+					itemType: 'Campaign',
+				})
+			}
+		} catch (err) {
+			console.error('ERR_UPDATING_ITEM', err)
+			addToast({
+				type: 'cancel',
+				label: t('ERR_UPDATING_ITEM', {
+					args: ['Campaign', Helper.getErrMsg(err)],
+				}),
+				timeout: 50000,
+			})(dispatch)
+		}
+
+		await updateSpinner(validateId, false)(dispatch)
 	}
 }

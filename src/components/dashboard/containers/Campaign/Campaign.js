@@ -27,7 +27,7 @@ import {
 import StatsByCountryTable from 'components/dashboard/containers/Tables/StatsByCountryTable'
 import MapChart from 'components/dashboard/charts/map/MapChart'
 import { CampaignBasic } from './CampaignBasic'
-import { validateAndUpdateSlot } from 'actions'
+import { validateAndUpdateCampaign } from 'actions'
 import { useItem, SaveBtn } from 'components/dashboard/containers/ItemCommon/'
 
 export const styles = theme => {
@@ -69,12 +69,11 @@ const StyledTab = withStyles(theme => ({
 
 function Campaign({ match }) {
 	const [tabIndex, setTabIndex] = useState(0)
-
 	const { item, ...hookProps } = useItem({
 		itemType: 'Campaign',
 		match,
 		objModel: CampaignModel,
-		validateAndUpdateFn: validateAndUpdateSlot,
+		validateAndUpdateFn: validateAndUpdateCampaign,
 	})
 
 	const classes = useStyles()
