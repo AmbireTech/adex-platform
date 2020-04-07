@@ -89,6 +89,12 @@ export const SimpleStatistics = ({
 		}
 	}
 
+	const labelFormating = (timeframe, date) => {
+		return timeframe === 'week'
+			? dateUtils.format(dateUtils.date(date), 'Do MMM, HH:mm')
+			: dateUtils.format(dateUtils.date(date), 'HH:mm')
+	}
+
 	const chartData = {
 		labels: payouts.labels,
 		datasets: [
