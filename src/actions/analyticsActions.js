@@ -25,6 +25,7 @@ import {
 	selectAnalyticsTimeframe,
 	selectAnalyticsPeriod,
 	selectStatsChartData,
+	selectAnalyticsLiveTimestamp,
 } from 'selectors'
 import { bigNumberify } from 'ethers/utils'
 import utils from 'helpers/dateUtils'
@@ -194,7 +195,12 @@ export function updateAccountAnalytics() {
 				})
 				// don't update if already saved in store
 				// TODO: update if we are LIVE!
-				if (datasets.length === 0 || labels.length === 0) {
+				const liveTimestamp = selectAnalyticsLiveTimestamp(getState())
+				if (
+					liveTimestamp === start ||
+					datasets.length === 0 ||
+					labels.length === 0
+				) {
 					identityAnalytics({
 						...opts,
 						start,
