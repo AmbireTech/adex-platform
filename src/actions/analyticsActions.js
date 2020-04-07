@@ -24,9 +24,10 @@ import {
 	selectAccount,
 	selectAnalyticsTimeframe,
 	selectAnalyticsPeriod,
+	selectStatsChartData,
 } from 'selectors'
 import { bigNumberify } from 'ethers/utils'
-import utils, { makeJSDateObject } from 'helpers/dateUtils'
+import utils from 'helpers/dateUtils'
 
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
@@ -188,44 +189,51 @@ export function updateAccountAnalytics() {
 			const params = analyticsParams(timeframe, side)
 			let accountChanged = false
 			const allAnalytics = params.map(async opts => {
-				identityAnalytics({
+				const { datasets, labels } = selectStatsChartData(getState(), {
 					...opts,
-					start,
-					end,
-					leaderAuth,
 				})
-					.then(({ aggregates, metric }) => {
-						const aggrByChannelSegments =
-							side === 'publisher' && metric === 'eventPayouts'
-						let aggr = aggrByChannelSegments
-							? aggrByChannelsSegments({
-									aggr: aggregates.aggr,
-									allChannels,
-									feeTokens,
-									withdrawTokens,
-							  })
-							: aggregates.aggr
-						const defaultValue = aggrByChannelSegments ? null : 0
+				// don't update if already saved in store
+				// TODO: update if we are LIVE!
+				if (datasets.length === 0 || labels.length === 0) {
+					identityAnalytics({
+						...opts,
+						start,
+						end,
+						leaderAuth,
+					})
+						.then(({ aggregates, metric }) => {
+							const aggrByChannelSegments =
+								side === 'publisher' && metric === 'eventPayouts'
+							let aggr = aggrByChannelSegments
+								? aggrByChannelsSegments({
+										aggr: aggregates.aggr,
+										allChannels,
+										feeTokens,
+										withdrawTokens,
+								  })
+								: aggregates.aggr
+							const defaultValue = aggrByChannelSegments ? null : 0
 
-						aggregates.aggr = fillEmptyTime(aggr, timeframe, defaultValue, {
-							start,
-							end,
-						})
-						accountChanged =
-							accountChanged || isAccountChanged(getState, account)
-
-						if (!accountChanged) {
-							dispatch({
-								type: types.UPDATE_ANALYTICS,
-								...opts,
-								timestamp: start,
-								value: { ...aggregates }, // ADD TIME as well
+							aggregates.aggr = fillEmptyTime(aggr, timeframe, defaultValue, {
+								start,
+								end,
 							})
-						}
-					})
-					.catch(err => {
-						console.error('ERR_ANALYTICS_SINGLE', err)
-					})
+							accountChanged =
+								accountChanged || isAccountChanged(getState, account)
+
+							if (!accountChanged) {
+								dispatch({
+									type: types.UPDATE_ANALYTICS,
+									...opts,
+									timestamp: start,
+									value: { ...aggregates }, // ADD TIME as well
+								})
+							}
+						})
+						.catch(err => {
+							console.error('ERR_ANALYTICS_SINGLE', err)
+						})
+				}
 			})
 
 			await Promise.all(allAnalytics)
