@@ -442,6 +442,8 @@ export function updateAnalyticsPeriod(start) {
 			const timeframe = selectAnalyticsTimeframe(getState())
 			let end = null
 			const startCopy = start
+			const startOfWeek = dateUtils.date(startCopy).startOf('week')
+			const endOfWeek = dateUtils.date(startCopy).endOf('week')
 			switch (timeframe) {
 				case 'hour':
 					start = +dateUtils.date(startCopy).startOf('hour')
@@ -452,18 +454,14 @@ export function updateAnalyticsPeriod(start) {
 					end = +dateUtils.date(startCopy).endOf('day')
 					break
 				case 'week':
-					start = +dateUtils
-						.date(startCopy)
-						.startOf('week')
-						.add(23, 'hours')
-						.utc()
-						.startOf('day')
-					end = +dateUtils
-						.date(startCopy)
-						.endOf('week')
-						.subtract(23, 'hours')
-						.utc()
-						.endOf('day')
+					start = +dateUtils.addHours(
+						startOfWeek,
+						dateUtils.getUTCOffset(startOfWeek)
+					)
+					end = +dateUtils.addHours(
+						endOfWeek,
+						dateUtils.getUTCOffset(endOfWeek)
+					)
 					break
 				default:
 					break

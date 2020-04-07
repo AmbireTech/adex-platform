@@ -38,8 +38,8 @@ export class DateUtils extends MomentUtils {
 		return date.clone().add(weeks, 'week')
 	}
 
-	getUTCOffset() {
-		return this.moment().utcOffset() / 60
+	getUTCOffset(date = this.moment()) {
+		return this.moment(date).utcOffset() / 60
 	}
 
 	getUnix(date) {
