@@ -7,7 +7,7 @@ import {
 	backupWallet,
 	getIdentityData,
 } from 'services/adex-relayer/actions'
-import { updateSpinner, updateGlobalUi } from './uiActions'
+import { updateSpinner, updateGlobalUi } from 'actions'
 import { translate } from 'services/translations/translations'
 import { getAuthSig } from 'services/smart-contracts/actions/ethers'
 import {
@@ -536,7 +536,6 @@ export function loadAccountData() {
 		!isAccountChanged(getState, account) &&
 			(await analyticsCampaignsLoop.start())
 		!isAccountChanged(getState, account) && (await campaignsLoop.start())
-
 		updateSlotsDemandThrottled()(dispatch, getState)
 	}
 }
