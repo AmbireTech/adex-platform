@@ -7,6 +7,7 @@ import { selectMainToken, selectAnalyticsTimeframe } from 'selectors'
 import { formatFloatNumberWithCommas } from 'helpers/formatters'
 import * as ChartAnnotation from 'chartjs-plugin-annotation'
 import dateUtils from 'helpers/dateUtils'
+import { formatAbbrNum } from 'helpers/formatters'
 
 const commonDsProps = {
 	fill: false,
@@ -188,8 +189,11 @@ export const SimpleStatistics = ({
 					},
 					ticks: {
 						autoSkip: false,
+						maxRotation: 0,
+						minRotation: 0,
 						callback: function(tick, index, array) {
-							return index % Math.floor(array.length / 12) ? '' : tick
+							return index === 0 || index === array.length - 1 ? tick : ''
+							// return index % Math.floor(array.length / 12) ? '' : tick
 						},
 					},
 				},
@@ -220,6 +224,9 @@ export const SimpleStatistics = ({
 					ticks: {
 						beginAtZero: true,
 						precision: 0,
+						callback: function(tick) {
+							return formatAbbrNum(tick, 2)
+						},
 					},
 					// grid line settings
 					gridLines: {
@@ -238,6 +245,9 @@ export const SimpleStatistics = ({
 					ticks: {
 						beginAtZero: true,
 						precision: 0,
+						callback: function(tick) {
+							return formatAbbrNum(tick, 2)
+						},
 					},
 					// grid line settings
 					gridLines: {
