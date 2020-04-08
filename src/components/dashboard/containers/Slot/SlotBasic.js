@@ -17,10 +17,10 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 	const {
 		title,
 		description,
-		fallbackMediaUrl,
+		mediaUrl,
 		mediaMime,
 		type,
-		fallbackTargetUrl,
+		targetUrl,
 		website,
 	} = item
 	const { title: errTitle, description: errDescription } = hookProps.validations
@@ -33,10 +33,10 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={12} md={6} lg={5}>
 							<Box py={1}>
-								<MediaCard mediaUrl={fallbackMediaUrl} mediaMime={mediaMime} />
+								<MediaCard mediaUrl={mediaUrl} mediaMime={mediaMime} />
 							</Box>
 							<Box py={1}>
-								<ItemFallbackMediaURL targetUrl={fallbackTargetUrl} />
+								<ItemFallbackMediaURL targetUrl={targetUrl} />
 							</Box>
 							<Box py={1}>
 								<TargetsList targets={item.tags} subHeader={'PROP_TAGS'} />
