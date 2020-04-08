@@ -78,5 +78,10 @@ export const styles = theme => {
 			bottom: spacing,
 			right: spacing,
 		},
+		mediaPropChip: {
+			position: 'absolute',
+			top: spacing,
+			left: spacing,
+		},
 	}
 }
