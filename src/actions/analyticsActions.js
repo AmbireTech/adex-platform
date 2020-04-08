@@ -422,7 +422,7 @@ export function updateAnalyticsTimeframe(timeframe) {
 				type: types.UPDATE_ANALYTICS_TIMEFRAME,
 				value: timeframe,
 			})
-			updateAnalyticsPeriod(+Date.now())(dispatch, getState)
+			updateAnalyticsPeriod(Date.now())(dispatch, getState)
 		} catch (err) {
 			console.error('ERR_ANALYTICS', err)
 			addToast({
