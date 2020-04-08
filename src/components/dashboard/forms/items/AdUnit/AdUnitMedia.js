@@ -34,7 +34,7 @@ function AdUnitMedia({ validateId }) {
 						additionalInfo={t('UNIT_BANNER_IMG_INFO', {
 							args: [width, height, 'px'],
 						})}
-						errMsg={errImg ? errImg.errMsg : ''}
+						errMsg={errImg && errImg.dirty ? errImg.errMsg : ''}
 						size={{
 							width: width,
 							height: height,

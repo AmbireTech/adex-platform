@@ -82,7 +82,7 @@ function AdSlotMedia({ validateId }) {
 								additionalInfo={t('SLOT_FALLBACK_MEDIA_INFO', {
 									args: [width, height, 'px'],
 								})}
-								errMsg={errImg ? errImg.errMsg : ''}
+								errMsg={errImg && errImg.dirty ? errImg.errMsg : ''}
 								size={{
 									width: width,
 									height: height,
