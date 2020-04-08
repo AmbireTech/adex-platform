@@ -37,7 +37,7 @@ export const styles = theme => ({
 	position: {
 		position: 'fixed',
 		top: 86,
-		right: 40,
+		right: theme.spacing(2),
 		zIndex: theme.zIndex.appBar + 1,
 	},
 })
