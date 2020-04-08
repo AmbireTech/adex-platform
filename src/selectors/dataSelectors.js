@@ -129,7 +129,7 @@ export const selectTargetingSources = createSelector(
 )
 
 const autocompleteLocationsSingleSelect = () => {
-	constants.AllCountries.map(({ name, value } = {}) => ({
+	return constants.AllCountries.map(({ name, value } = {}) => ({
 		label: t(name),
 		value: value,
 	}))
