@@ -250,7 +250,7 @@ export function validateAccessWarning(validateId, accepted, dirty) {
 	}
 }
 
-export function validateCampaignUnits(validateId, adUnits, dirty) {
+export function validateCampaignUnits({ validateId, adUnits, dirty }) {
 	return async function(dispatch, getState) {
 		const isValid = !!adUnits && adUnits.length
 		validate(validateId, 'adUnits', {
