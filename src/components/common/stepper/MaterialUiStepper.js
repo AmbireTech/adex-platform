@@ -35,12 +35,13 @@ const StepperNav = ({ steps, currentPage, classes, ...other }) => {
 		return (
 			<div>
 				<StepLabel className={classes.mobileStepLabel}>
-					({currentPage + 1}/{steps.length}) {steps[currentPage].title}
+					({currentPage + 1}/{steps.length || 1}){' '}
+					{(steps[currentPage] || {}).title}
 				</StepLabel>
 				<MobileStepper
 					activeStep={currentPage}
 					steps={steps.length}
-					position={'static'}
+					position='static'
 					variant='progress'
 					className={classes.mobileStepper}
 				></MobileStepper>
@@ -168,49 +169,56 @@ const MaterialStepper = props => {
 	)
 
 	return (
-		<div className={classes.stepperWrapper} onKeyPress={onKeyPressed}>
-			<Paper
-				classes={{
-					root: classes.stepperNav,
-				}}
-			>
-				<StepperNav
-					{...props}
-					steps={steps}
-					classes={classes}
-					currentPage={currentPage}
-					goToPage={goToPage}
-				/>
-			</Paper>
-			<br />
+		<Box
+			className={classes.stepperWrapper}
+			onKeyPress={onKeyPressed}
+			display='flex'
+			flexDirection='column'
+			alignItems='space-between'
+		>
+			<Box mb={2}>
+				<Paper
+					classes={{
+						root: classes.stepperNav,
+					}}
+					elevation={0}
+				>
+					<StepperNav
+						{...props}
+						steps={steps}
+						classes={classes}
+						currentPage={currentPage}
+						goToPage={goToPage}
+					/>
+				</Paper>
+			</Box>
 
 			<Paper
 				classes={{
 					root: classes.pagePaper,
 				}}
+				elevation={0}
 			>
-				<div className={classes.pageContent}>
-					{!!Comp && <Comp {...pageProps} />}
-
-					{!!dirtyErrors && (
-						<Box color='error.main'>
-							{dirtyErrors.map(err => (
-								<Chip
-									key={err.field}
-									classes={{ root: classes.errChip }}
-									icon={<ErrorIcon />}
-									variant='outlined'
-									size='small'
-									label={`${err.field}: ${err.msg}`}
-									color='default'
-								/>
-							))}
-						</Box>
-					)}
-				</div>
+				<Box p={2}>{!!Comp && <Comp {...pageProps} />}</Box>
 			</Paper>
 
-			<div className={classes.controls}>
+			{!!dirtyErrors.length && (
+				<Box color='error.main' mt={2}>
+					{dirtyErrors.map(err => (
+						<Chip
+							key={err.field}
+							classes={{ root: classes.errChip }}
+							icon={<ErrorIcon />}
+							variant='outlined'
+							size='small'
+							label={`${err.field}: ${err.msg}`}
+							color='default'
+						/>
+					))}
+				</Box>
+			)}
+
+			<Box mt={2}>
 				<div className={classes.left}>
 					{canReverse && (
 						<Button onClick={goToPreviousPage}>{t('BACK')}</Button>
@@ -254,8 +262,8 @@ const MaterialStepper = props => {
 						)}
 					</span>
 				</div>
-			</div>
-		</div>
+			</Box>
+		</Box>
 	)
 }
 
