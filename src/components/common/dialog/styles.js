@@ -85,7 +85,7 @@ export const styles = theme => {
 		floating: {
 			position: 'fixed',
 			top: 86,
-			right: 40,
+			right: spacing,
 			zIndex: theme.zIndex.appBar,
 		},
 		breakLong: {
