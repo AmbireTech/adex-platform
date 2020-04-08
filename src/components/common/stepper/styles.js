@@ -1,5 +1,6 @@
 export const styles = theme => {
 	const spacing = theme.spacing(1)
+	const ds = theme.spacing(2)
 	const errColor = theme.palette.error.main
 	return {
 		root: {
@@ -12,44 +13,18 @@ export const styles = theme => {
 			color: 'yellow',
 		},
 		stepperWrapper: {
-			// display: 'flex',
 			position: 'absolute',
+			overflow: 'hidden',
 			bottom: 0,
 			left: 0,
 			right: 0,
 			top: 0,
 		},
 		pagePaper: {
-			position: 'absolute',
-			bottom: 0,
-			left: 0,
-			right: 0,
-			top: 115,
-		},
-		pageContent: {
-			position: 'absolute',
-			top: 20,
-			left: 20,
-			right: 20,
-			bottom: 50,
-			padding: 20,
+			flex: '1 1 auto',
 			overflowY: 'auto',
 			overflowX: 'hidden',
-			display: 'flex',
-			flex: 1,
-			justifyContent: 'space-between',
-			flexDirection: 'column',
-			WebkitOverflowScrolling: 'touch',
-			'@media(max-width:500px)': {
-				paddingLeft: 0,
-				paddingRight: 0,
-			},
-		},
-		controls: {
-			position: 'absolute',
-			bottom: 5,
-			left: 20,
-			right: 20,
+			height: 0,
 		},
 		right: {
 			textAlign: 'right',
