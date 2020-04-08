@@ -14,6 +14,7 @@ import {
 import { AdUnit } from 'adex-models'
 import TargetsList from 'components/dashboard/containers/TargetsList'
 import { validateAndUpdateUnit } from 'actions'
+import { t } from 'selectors'
 
 function Unit({ match }) {
 	const { item, validations, validateId, validate, ...hookProps } = useItem({
@@ -37,7 +38,11 @@ function Unit({ match }) {
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={12} md={6} lg={5}>
 							<Box py={1}>
-								<MediaCard mediaUrl={mediaUrl} mediaMime={mediaMime} />
+								<MediaCard
+									mediaUrl={mediaUrl}
+									mediaMime={mediaMime}
+									label={t('UNIT_MEDIA_IMG_LABEL')}
+								/>
 							</Box>
 							<Box py={1}>
 								<ItemAdType type={type} />

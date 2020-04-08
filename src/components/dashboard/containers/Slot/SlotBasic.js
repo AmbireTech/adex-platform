@@ -12,6 +12,7 @@ import {
 	ItemMinPerImpression,
 	ItemWebsite,
 } from 'components/dashboard/containers/ItemCommon/'
+import { t } from 'selectors'
 
 export const SlotBasic = ({ item, ...hookProps }) => {
 	const {
@@ -33,7 +34,11 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={12} md={6} lg={5}>
 							<Box py={1}>
-								<MediaCard mediaUrl={mediaUrl} mediaMime={mediaMime} />
+								<MediaCard
+									mediaUrl={mediaUrl}
+									mediaMime={mediaMime}
+									label={t('SLOT_FALLBACK_MEDIA_LABEL')}
+								/>
 							</Box>
 							<Box py={1}>
 								<ItemFallbackMediaURL targetUrl={targetUrl} />

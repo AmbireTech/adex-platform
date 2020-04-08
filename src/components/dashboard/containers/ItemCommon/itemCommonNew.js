@@ -258,14 +258,7 @@ export const ItemFallbackMediaURL = ({ targetUrl = '' }) => {
 	)
 }
 
-export const MediaCard = ({
-	mediaUrl,
-	mediaMime,
-	title,
-	canEditImg,
-	toggleImgEdit,
-	url,
-}) => {
+export const MediaCard = ({ mediaUrl = '', mediaMime = '', label = '' }) => {
 	const classes = useStyles()
 	return (
 		<Card className={classes.card} raised={false}>
@@ -273,31 +266,15 @@ export const MediaCard = ({
 				<Img
 					allowFullscreen={true}
 					src={mediaUrl}
-					alt={title}
+					alt={label || t('MEDIA')}
 					className={classes.img}
 					mediaMime={mediaMime}
 					allowVideo
 				/>
+				{label && (
+					<Chip size='small' className={classes.mediaPropChip} label={label} />
+				)}
 			</CardMedia>
-			{canEditImg && (
-				<Button
-					variant='fab'
-					mini
-					color='secondary'
-					onClick={toggleImgEdit}
-					className={classes.editIcon}
-				>
-					<Edit />
-				</Button>
-			)}
-
-			{url && (
-				<CardContent>
-					<Anchor href={url} target='_blank'>
-						{url}
-					</Anchor>
-				</CardContent>
-			)}
 		</Card>
 	)
 }
