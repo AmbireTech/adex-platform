@@ -23,5 +23,13 @@ export const styles = theme => {
 			padding: spacing,
 			width: `calc(100% - ${spacing * 2}px)`,
 		},
+		cardIcon: {
+			position: 'absolute',
+			bottom: '-33px',
+			right: '-33px',
+			fontSize: '120px',
+			opacity: '0.4',
+			transform: 'rotate(-45deg)',
+		},
 	}
 }

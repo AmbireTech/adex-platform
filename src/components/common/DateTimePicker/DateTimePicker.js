@@ -1,42 +1,85 @@
-import React, { Component } from 'react'
-import { DateTimePicker as MuiDateTimePicker } from '@material-ui/pickers'
+import React, { Component, useState, useContext, PureComponent } from 'react'
+import {
+	DateTimePicker as MuiDateTimePicker,
+	DatePicker as MuiDatePicker,
+} from '@material-ui/pickers'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import IconButton from '@material-ui/core/IconButton'
-import CalendarIcon from '@material-ui/icons/DateRange'
+import {
+	DateRange,
+	NavigateNextRounded,
+	NavigateBeforeRounded,
+	Update,
+} from '@material-ui/icons'
 import InputAdornment from '@material-ui/core/InputAdornment'
+import utils, { makeJSDateObject } from 'helpers/dateUtils'
+import clsx from 'clsx'
+// EXTRACT
+// this guy required only on the docs site to work with dynamic date library
 
 const CalendarIconAdor = ({
-	icon = <CalendarIcon />,
+	icon = <DateRange />,
 	iconColor,
 	onIconClick,
+	onLiveClick,
+	onNextClick,
 }) => (
 	<InputAdornment position='end'>
 		<IconButton color={iconColor} onClick={onIconClick}>
 			{icon}
 		</IconButton>
+		{onLiveClick && (
+			<IconButton color={iconColor} onClick={onLiveClick}>
+				<Update />
+			</IconButton>
+		)}
+		{onNextClick && (
+			<IconButton color={iconColor} onClick={onNextClick}>
+				<NavigateNextRounded />
+			</IconButton>
+		)}
 	</InputAdornment>
 )
 
-export class DateTimePicker extends Component {
-	render() {
-		const { calendarIcon, icon, iconColor, onIconClick, ...rest } = this.props
-		return (
-			<MuiDateTimePicker
-				InputProps={{
-					disabled: rest.disabled,
-					endAdornment: calendarIcon ? (
-						<CalendarIconAdor
-							icon={icon}
-							iconColor={iconColor}
-							onIconClick={onIconClick}
-						/>
-					) : null,
-				}}
-				{...rest}
-			/>
-		)
-	}
+export function DateTimePicker({
+	calendarIcon,
+	icon,
+	iconColor,
+	onIconClick,
+	onNextClick,
+	onLiveClick,
+	onBackClick,
+	roundHour,
+	...rest
+}) {
+	const now = utils.date(Date.now())
+	const date = roundHour ? utils.setMinutes(now, 0) : now
+	return (
+		<MuiDateTimePicker
+			value={date}
+			InputProps={{
+				disabled: rest.disabled,
+				endAdornment: calendarIcon ? (
+					<CalendarIconAdor
+						icon={icon}
+						iconColor={iconColor}
+						onIconClick={onIconClick}
+						onNextClick={onNextClick}
+						onLiveClick={onLiveClick}
+					/>
+				) : null,
+				startAdornment: onBackClick ? (
+					<InputAdornment position='start'>
+						<IconButton color={iconColor} onClick={onBackClick}>
+							<NavigateBeforeRounded />
+						</IconButton>
+					</InputAdornment>
+				) : null,
+			}}
+			{...rest}
+		/>
+	)
 }
 
 export default DateTimePicker
