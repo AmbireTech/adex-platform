@@ -18,7 +18,7 @@ function AdUnitMedia({ validateId }) {
 	return (
 		<div>
 			<Grid container>
-				<Grid item sm={12}>
+				<Grid item xs={12}>
 					<ImgForm
 						label={t('UNIT_BANNER_IMG_LABEL')}
 						imgSrc={tempUrl || ''}

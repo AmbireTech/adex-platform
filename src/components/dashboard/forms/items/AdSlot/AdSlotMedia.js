@@ -66,7 +66,7 @@ function AdSlotMedia({ validateId }) {
 								}
 							/>
 						</Grid>
-						<Grid item sm={12}>
+						<Grid item xs={12}>
 							<ImgForm
 								label={t('SLOT_FALLBACK_MEDIA_LABEL')}
 								imgSrc={tempUrl || ''}
