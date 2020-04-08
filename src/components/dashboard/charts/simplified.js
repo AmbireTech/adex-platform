@@ -3,8 +3,11 @@ import { useSelector } from 'react-redux'
 import { Line, Chart } from 'react-chartjs-2'
 import { CHARTS_COLORS } from 'components/dashboard/charts/options'
 import Helper from 'helpers/miscHelpers'
-import { selectMainToken } from 'selectors'
+import { selectMainToken, selectAnalyticsTimeframe } from 'selectors'
 import { formatFloatNumberWithCommas } from 'helpers/formatters'
+import * as ChartAnnotation from 'chartjs-plugin-annotation'
+import dateUtils from 'helpers/dateUtils'
+import { formatAbbrNum } from 'helpers/formatters'
 
 const commonDsProps = {
 	fill: false,
@@ -32,14 +35,14 @@ export const SimpleStatistics = ({
 	y4Color = CHARTS_COLORS[4],
 }) => {
 	const { symbol } = useSelector(selectMainToken)
-
+	const timeframe = useSelector(selectAnalyticsTimeframe)
 	// Vertical line / crosshair
 	useEffect(() => {
 		Chart.pluginService.register({
 			afterDraw: function(chart) {
+				const ctx = chart.ctx
 				if (chart.tooltip._active && chart.tooltip._active.length) {
 					const activePoint = chart.controller.tooltip._active[0]
-					const ctx = chart.ctx
 					const x = activePoint.tooltipPosition().x
 					const chartScalesy1 = chart.scales['y-axis-1']
 					if (chartScalesy1) {
@@ -59,6 +62,38 @@ export const SimpleStatistics = ({
 			},
 		})
 	})
+
+	const getNearestSixHoursUTC = hoursToRound => {
+		const now = dateUtils.date()
+		const hoursMulti = Math.floor(dateUtils.getHours(now) / hoursToRound)
+		const nearestSix = dateUtils.setHours(
+			now,
+			hoursMulti * hoursToRound + dateUtils.getUTCOffset(now)
+		)
+		return dateUtils.setMinutes(dateUtils.setSeconds(nearestSix, 0), 0)
+	}
+
+	const getLabelByTimeframe = timeframe => {
+		switch (timeframe) {
+			case 'hour':
+				return dateUtils.format(dateUtils.date(), 'YYYY-MM-DD HH:mm')
+			case 'day':
+				return dateUtils.format(
+					dateUtils.setMinutes(dateUtils.date(), 0),
+					'YYYY-MM-DD HH:mm'
+				)
+			case 'week':
+				return dateUtils.format(getNearestSixHoursUTC(6), 'YYYY-MM-DD HH:mm')
+			default:
+				return dateUtils.format(dateUtils.date(), 'YYYY-MM-DD HH:mm')
+		}
+	}
+
+	const labelFormating = (timeframe, date) => {
+		return timeframe === 'week'
+			? dateUtils.format(dateUtils.date(date), 'Do MMM, HH:mm')
+			: dateUtils.format(dateUtils.date(date), 'HH:mm')
+	}
 
 	const chartData = {
 		labels: payouts.labels,
@@ -102,10 +137,29 @@ export const SimpleStatistics = ({
 	const linesOptions = {
 		animation: false,
 		responsive: true,
+		annotation: {
+			annotations: [
+				{
+					type: 'line',
+					mode: 'vertical',
+					scaleID: 'x-axis-0',
+					value: getLabelByTimeframe(timeframe),
+					borderColor: 'red',
+					borderWidth: 2,
+					borderDash: [2, 2],
+					label: {
+						content: t('NOW'),
+						enabled: true,
+						position: 'bottom',
+						cornerRadius: 0,
+					},
+				},
+			],
+		},
 		// This and fixed height are used for proper mobile display of the chart
 		maintainAspectRatio: false,
 		title: {
-			display: true,
+			display: false,
 			text: options.title,
 		},
 		tooltips: {
@@ -141,8 +195,11 @@ export const SimpleStatistics = ({
 					},
 					ticks: {
 						autoSkip: false,
+						maxRotation: 0,
+						minRotation: 0,
 						callback: function(tick, index, array) {
-							return index % Math.floor(array.length / 12) ? '' : tick
+							return index === 0 || index === array.length - 1 ? tick : ''
+							// return index % Math.floor(array.length / 12) ? '' : tick
 						},
 					},
 				},
@@ -173,6 +230,9 @@ export const SimpleStatistics = ({
 					ticks: {
 						beginAtZero: true,
 						precision: 0,
+						callback: function(tick) {
+							return formatAbbrNum(tick, 2)
+						},
 					},
 					// grid line settings
 					gridLines: {
@@ -191,6 +251,9 @@ export const SimpleStatistics = ({
 					ticks: {
 						beginAtZero: true,
 						precision: 0,
+						callback: function(tick) {
+							return formatAbbrNum(tick, 2)
+						},
 					},
 					// grid line settings
 					gridLines: {
@@ -213,5 +276,12 @@ export const SimpleStatistics = ({
 		},
 	}
 
-	return <Line height={500} data={chartData} options={linesOptions} />
+	return (
+		<Line
+			height={500}
+			data={chartData}
+			options={linesOptions}
+			plugins={[ChartAnnotation]}
+		/>
+	)
 }

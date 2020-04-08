@@ -312,9 +312,9 @@ export function updatePrivilegesWarningAccepted(accepted) {
 	}
 }
 
-export function hideGettingStarted() {
+export function hideGettingStarted(side) {
 	return function(dispatch, getState) {
-		updateUiByIdentity('hideGettingStarted', true)(dispatch, getState)
+		updateUiByIdentity('hideGettingStarted', true, side)(dispatch, getState)
 	}
 }
 

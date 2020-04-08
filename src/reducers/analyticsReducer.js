@@ -2,6 +2,7 @@ import {
 	UPDATE_ANALYTICS,
 	RESET_ANALYTICS,
 	UPDATE_ANALYTICS_TIMEFRAME,
+	UPDATE_ANALYTICS_PERIOD,
 	UPDATE_PUBLISHER_RECEIPTS,
 	UPDATE_ADVANCED_ANALYTICS,
 	UPDATE_DEMAND_ANALYTICS,
@@ -30,6 +31,13 @@ export default function analyticsReducer(
 			}
 			newState[action.side][action.eventType][action.metric][
 				action.timeframe
+			] = {
+				...newState[action.side][action.eventType][action.metric][
+					action.timeframe
+				],
+			}
+			newState[action.side][action.eventType][action.metric][action.timeframe][
+				action.timestamp
 			] = { ...action.value }
 			return newState
 		case UPDATE_ADVANCED_ANALYTICS:
@@ -50,7 +58,10 @@ export default function analyticsReducer(
 		case RESET_ANALYTICS:
 			newState = { ...initialState.analytics }
 			return newState
-
+		case UPDATE_ANALYTICS_PERIOD:
+			newState = { ...state }
+			newState.period = action.value
+			return newState
 		default:
 			return state
 	}
