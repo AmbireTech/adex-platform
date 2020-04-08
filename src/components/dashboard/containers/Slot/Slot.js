@@ -67,7 +67,7 @@ function Slot({ match }) {
 					indicatorColor='primary'
 					textColor='primary'
 				>
-					<StyledTab label={t('SLOT_BASIC')} />
+					<StyledTab label={t('SLOT_MAIN')} />
 					<StyledTab label={t('INTEGRATION')} />
 					{/* There are no stats displayed currently so I will just comment this out */}
 					{/* <Tab label={t('STATISTICS')} /> */}
