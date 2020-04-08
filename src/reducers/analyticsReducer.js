@@ -2,6 +2,7 @@ import {
 	UPDATE_ANALYTICS,
 	RESET_ANALYTICS,
 	UPDATE_ANALYTICS_TIMEFRAME,
+	UPDATE_PUBLISHER_RECEIPTS,
 	UPDATE_ADVANCED_ANALYTICS,
 	UPDATE_DEMAND_ANALYTICS,
 } from 'constants/actionTypes'
@@ -41,6 +42,10 @@ export default function analyticsReducer(
 		case UPDATE_DEMAND_ANALYTICS:
 			newState = { ...state }
 			newState.demand = action.value
+			return newState
+		case UPDATE_PUBLISHER_RECEIPTS:
+			newState = { ...state }
+			newState.receipts = { ...newState.receipts, ...action.value }
 			return newState
 		case RESET_ANALYTICS:
 			newState = { ...initialState.analytics }

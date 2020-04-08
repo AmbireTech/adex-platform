@@ -18,7 +18,7 @@ import { makeStyles, withStyles } from '@material-ui/core/styles'
 import Anchor from 'components/common/anchor/anchor'
 import CampaignStatsDoughnut from 'components/dashboard/charts/campaigns/CampaignStatsDoughnut'
 import CampaignStatsBreakdownTable from 'components/dashboard/containers/Tables/CampaignStatsBreakdownTable'
-import { CampaignReceipt } from 'components/dashboard/containers/Receipt/CampaignReceipt'
+import { Receipt } from 'components/dashboard/containers/Receipt'
 import {
 	selectCampaignAnalyticsToCountryTableData,
 	selectCampaignAnalyticsToCountryMapChartData,
@@ -189,7 +189,7 @@ function Campaign({ match }) {
 						</Anchor>
 					</List>
 				)}
-				{tabIndex === 5 && <CampaignReceipt itemId={campaignId} />}
+				{tabIndex === 5 && <Receipt itemId={campaignId} />}
 			</Box>
 		</Fragment>
 	)
