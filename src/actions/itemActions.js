@@ -46,17 +46,6 @@ export const getImgsIpfsFromBlob = ({ tempUrl, authSig }) => {
 		})
 }
 
-const getPassBackData = async slot => {
-	if (slot.fallbackUnit) {
-		const { unit } = await getAdUnitById({ unitId: slot.fallbackUnit })
-		const { mediaMime, mediaUrl, targetUrl } = unit
-
-		return { ...slot, mediaMime, mediaUrl, targetUrl }
-	}
-
-	return slot
-}
-
 export function getAllItems() {
 	return async function(dispatch, getState) {
 		try {
@@ -66,10 +55,21 @@ export function getAllItems() {
 			const slots = getAdSlots({ identity: address })
 
 			const [resUnits, resSlots] = await Promise.all([units, slots])
-			const userSlots = resSlots.slots || resSlots || []
+			const userSlots = resSlots.slots || []
+			const userPassbackUnits = (resSlots.passbackUnits || []).reduce(
+				(passbacks, u) => {
+					const { id, mediaMime, mediaUrl, targetUrl } = u
+					passbacks[id] = { mediaMime, mediaUrl, targetUrl }
 
-			// TODO: TEMP - need to get this from market
-			const slotsWithUnits = userSlots.map(async s => await getPassBackData(s))
+					return passbacks
+				},
+				{}
+			)
+
+			const slotsWithUnits = userSlots.map(async s => ({
+				...s,
+				...(s.fallbackUnit ? userPassbackUnits[s.fallbackUnit] : {}),
+			}))
 
 			const slotWithUnitsRes = await Promise.all(slotsWithUnits)
 			if (selectAuth(getState())) {
