@@ -69,6 +69,7 @@ export const NewUnitSteps = props => (
 			{ title: 'UNIT_TARGETS_STEP', component: AdUnitTargeting },
 			{
 				title: 'PREVIEW_AND_SAVE_ITEM',
+				completeBtnTitle: 'SAVE',
 				component: AdUnitFormPreview,
 				completeFn: props =>
 					execute(
@@ -134,6 +135,7 @@ export const NewCampaignSteps = props => (
 			},
 			{
 				title: 'PREVIEW_AND_SAVE_ITEM',
+				completeBtnTitle: 'SAVE',
 				component: CampaignFormPreview,
 				completeFn: props =>
 					execute(
@@ -190,6 +192,7 @@ export const NewSlotSteps = props => (
 			{ title: 'SLOT_TAGS_STEP', component: AdSlotTargeting },
 			{
 				title: 'PREVIEW_AND_SAVE_ITEM',
+				completeBtnTitle: 'OPEN_CAMPAIGN',
 				component: AdSlotPreview,
 				completeFn: props =>
 					execute(
