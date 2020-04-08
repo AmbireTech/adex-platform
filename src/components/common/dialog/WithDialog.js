@@ -68,7 +68,7 @@ export default function WithDialogHoc(Decorated) {
 		}
 
 		const classes = useStyles()
-		const [open, setOpen] = useState(true)
+		const [open, setOpen] = useState(false)
 
 		const handleToggle = async () => {
 			if (typeof onBeforeOpen === 'function' && !open) {
