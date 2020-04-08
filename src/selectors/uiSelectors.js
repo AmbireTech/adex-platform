@@ -47,8 +47,13 @@ export const selectPrivilegesWarningAccepted = createSelector(
 	({ privilegesWarningAccepted }) => !!privilegesWarningAccepted
 )
 
+export const selectSideSpecificUI = createSelector(
+	[selectIdentityUi, selectSide],
+	(ui, side) => ui[side] || {}
+)
+
 export const selectHideGettingStarted = createSelector(
-	selectIdentityUi,
+	[selectSideSpecificUI],
 	({ hideGettingStarted }) => hideGettingStarted
 )
 

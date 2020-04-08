@@ -3,6 +3,7 @@ import { createSelector } from 'reselect'
 import { selectChannelsWithUserBalancesAll } from 'selectors'
 import { formatTokenAmount, formatDateTime } from 'helpers/formatters'
 import { selectWebsitesArray } from 'selectors'
+import dateUtils from 'helpers/dateUtils'
 
 export const selectAnalytics = state => state.persist.analytics
 
@@ -22,6 +23,34 @@ export const selectAnalyticsTimeframe = createSelector(
 	selectAnalytics,
 	({ timeframe }) => {
 		return timeframe
+	}
+)
+
+export const selectAnalyticsPeriod = createSelector(
+	selectAnalytics,
+	({ period }) => {
+		return period || {}
+	}
+)
+
+export const selectAnalyticsLiveTimestamp = createSelector(
+	[selectAnalyticsTimeframe],
+	timeframe => {
+		switch (timeframe) {
+			case 'hour':
+				return +dateUtils.date().startOf('hour')
+			case 'day':
+				return +dateUtils.date().startOf('day')
+			case 'week':
+				return +dateUtils
+					.date()
+					.startOf('week')
+					.add(23, 'hours')
+					.utc()
+					.startOf('day')
+			default:
+				return +dateUtils.date().startOf('hour')
+		}
 	}
 )
 
@@ -191,8 +220,18 @@ export const selectMaxAdUnitStatByChannel = createSelector(
 )
 
 export const selectAnalyticsDataAggr = createSelector(
-	[selectAnalytics, (_, opts = {}) => opts],
-	(analytics = {}, { side, eventType, metric, timeframe }) => {
+	[
+		selectAnalytics,
+		selectAnalyticsPeriod,
+		(_, opts = {}) => opts,
+		selectAnalyticsLiveTimestamp,
+	],
+	(
+		analytics = {},
+		{ start },
+		{ side, eventType, metric, timeframe },
+		liveTimestamp
+	) => {
 		// return analytics[side]['eventType'][metric][timeframe].aggr
 		// NOTE: It was working fine with default initial state but
 		// when eventType CLICK was added if you were logged and had
@@ -200,7 +239,13 @@ export const selectAnalyticsDataAggr = createSelector(
 
 		const {
 			[side]: {
-				[eventType]: { [metric]: { [timeframe]: { aggr } = {} } = {} } = {},
+				[eventType]: {
+					[metric]: {
+						[timeframe]: {
+							[liveTimestamp === start ? 'live' : start]: { aggr } = {},
+						} = {},
+					} = {},
+				} = {},
 			} = {},
 		} = analytics
 
@@ -346,7 +391,7 @@ export const selectChartDatapointsImpressions = createSelector(
 			timeframe,
 			eventType: 'IMPRESSION',
 			metric: 'eventCounts',
-			noLastOne: true,
+			noLastOne: false,
 		}),
 	],
 	([impressions]) => impressions
@@ -359,7 +404,7 @@ export const selectChartDatapointsClicks = createSelector(
 			timeframe,
 			eventType: 'CLICK',
 			metric: 'eventCounts',
-			noLastOne: true,
+			noLastOne: false,
 		}),
 	],
 	([clicks]) => clicks
@@ -372,7 +417,7 @@ export const selectChartDatapointsPayouts = createSelector(
 			timeframe,
 			eventType: 'IMPRESSION',
 			metric: 'eventPayouts',
-			noLastOne: true,
+			noLastOne: false,
 		}),
 	],
 	([payouts]) => payouts

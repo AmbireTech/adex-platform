@@ -24,10 +24,14 @@ import {
 	selectSide,
 	selectAccount,
 	selectAnalyticsTimeframe,
+	selectAnalyticsPeriod,
+	selectStatsChartData,
+	selectAnalyticsLiveTimestamp,
 	selectPublisherReceiptsPresentMonths,
 	selectMonthsRange,
 } from 'selectors'
 import { bigNumberify } from 'ethers/utils'
+import dateUtils from 'helpers/dateUtils'
 import moment from 'moment'
 import { FETCHING_PUBLISHER_RECEIPTS } from 'constants/spinners'
 
@@ -164,6 +168,7 @@ export function updateAccountAnalytics() {
 		const side = selectSide(state)
 		const timeframe = selectAnalyticsTimeframe(state)
 		const allChannels = selectChannelsWithUserBalancesAll(state)
+		const { start, end } = selectAnalyticsPeriod(state)
 		const feeTokens = selectFeeTokenWhitelist(state)
 		const withdrawTokens = selectRoutineWithdrawTokens(state)
 		try {
@@ -189,39 +194,54 @@ export function updateAccountAnalytics() {
 			const params = analyticsParams(timeframe, side)
 			let accountChanged = false
 			const allAnalytics = params.map(async opts => {
-				identityAnalytics({
+				const { datasets, labels } = selectStatsChartData(state, {
 					...opts,
-					leaderAuth,
 				})
-					.then(({ aggregates, metric }) => {
-						const aggrByChannelSegments =
-							side === 'publisher' && metric === 'eventPayouts'
-						let aggr = aggrByChannelSegments
-							? aggrByChannelsSegments({
-									aggr: aggregates.aggr,
-									allChannels,
-									feeTokens,
-									withdrawTokens,
-							  })
-							: aggregates.aggr
+				const liveTimestamp = selectAnalyticsLiveTimestamp(state)
+				if (
+					liveTimestamp === start ||
+					datasets.length === 0 ||
+					labels.length === 0
+				) {
+					identityAnalytics({
+						...opts,
+						start,
+						end,
+						leaderAuth,
+					})
+						.then(({ aggregates, metric }) => {
+							const aggrByChannelSegments =
+								side === 'publisher' && metric === 'eventPayouts'
+							let aggr = aggrByChannelSegments
+								? aggrByChannelsSegments({
+										aggr: aggregates.aggr,
+										allChannels,
+										feeTokens,
+										withdrawTokens,
+								  })
+								: aggregates.aggr
+							const defaultValue = aggrByChannelSegments ? null : 0
 
-						const defaultValue = aggrByChannelSegments ? null : 0
-
-						aggregates.aggr = fillEmptyTime(aggr, timeframe, defaultValue)
-						accountChanged =
-							accountChanged || isAccountChanged(getState, account)
-
-						if (!accountChanged) {
-							dispatch({
-								type: types.UPDATE_ANALYTICS,
-								...opts,
-								value: { ...aggregates },
+							aggregates.aggr = fillEmptyTime(aggr, timeframe, defaultValue, {
+								start,
+								end,
 							})
-						}
-					})
-					.catch(err => {
-						console.error('ERR_ANALYTICS_SINGLE', err)
-					})
+							accountChanged =
+								accountChanged || isAccountChanged(getState, account)
+
+							if (!accountChanged) {
+								dispatch({
+									type: types.UPDATE_ANALYTICS,
+									...opts,
+									timestamp: liveTimestamp === start ? 'live' : start,
+									value: { ...aggregates }, // ADD TIME as well
+								})
+							}
+						})
+						.catch(err => {
+							console.error('ERR_ANALYTICS_SINGLE', err)
+						})
+				}
 			})
 
 			await Promise.all(allAnalytics)
@@ -402,12 +422,105 @@ export function updateAnalyticsTimeframe(timeframe) {
 				type: types.UPDATE_ANALYTICS_TIMEFRAME,
 				value: timeframe,
 			})
-			updateAccountAnalytics()(dispatch, getState)
+			updateAnalyticsPeriod(Date.now())(dispatch, getState)
 		} catch (err) {
 			console.error('ERR_ANALYTICS', err)
 			addToast({
 				type: 'cancel',
 				label: translate('ERR_ANALYTICS', { args: [getErrorMsg(err)] }),
+				timeout: 20000,
+			})(dispatch)
+		}
+	}
+}
+
+export function updateAnalyticsPeriod(start) {
+	return async function(dispatch, getState) {
+		try {
+			const timeframe = selectAnalyticsTimeframe(getState())
+			let end = null
+			const startCopy = start
+			const startOfWeek = dateUtils.date(startCopy).startOf('week')
+			const endOfWeek = dateUtils.date(startCopy).endOf('week')
+			switch (timeframe) {
+				case 'hour':
+					start = +dateUtils.date(startCopy).startOf('hour')
+					end = +dateUtils.date(startCopy).endOf('hour')
+					break
+				case 'day':
+					start = +dateUtils.date(startCopy).startOf('day')
+					end = +dateUtils.date(startCopy).endOf('day')
+					break
+				case 'week':
+					start = +dateUtils.addHours(
+						startOfWeek,
+						dateUtils.getUTCOffset(startOfWeek)
+					)
+					end = +dateUtils.addHours(
+						endOfWeek,
+						dateUtils.getUTCOffset(endOfWeek)
+					)
+					break
+				default:
+					break
+			}
+
+			start = +start
+			dispatch({
+				type: types.UPDATE_ANALYTICS_PERIOD,
+				value: { start, end },
+			})
+			updateAccountAnalytics()(dispatch, getState)
+		} catch (err) {
+			console.error('ERR_ANALYTICS_START_DATE_END_DATE', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_ANALYTICS_START_DATE_END_DATE', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+	}
+}
+
+export function updateAnalyticsPeriodPrevNextLive({
+	next = false,
+	live = false,
+}) {
+	return async function(dispatch, getState) {
+		try {
+			const timeframe = selectAnalyticsTimeframe(getState())
+			let { start } = selectAnalyticsPeriod(getState())
+			const startCopy = start
+			switch (timeframe) {
+				case 'hour':
+					start = +dateUtils.addHours(dateUtils.date(start), next ? 1 : -1)
+					break
+				case 'day':
+					start = +dateUtils.addDays(dateUtils.date(start), next ? 1 : -1)
+					break
+				case 'week':
+					start = +dateUtils.addWeeks(dateUtils.date(start), next ? 1 : -1)
+					break
+				default:
+					start = +dateUtils.addDays(dateUtils.date(start), next ? 1 : -1)
+					break
+			}
+			if (dateUtils.isAfter(dateUtils.date(start), dateUtils.date())) {
+				start = startCopy
+			}
+			if (live) {
+				start = +dateUtils.date()
+			}
+			updateAnalyticsPeriod(start)(dispatch, getState)
+		} catch (err) {
+			console.error('ERR_ANALYTICS_PREV_PERIOD', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_ANALYTICS_PREV_PERIOD', {
+					args: [getErrorMsg(err)],
+				}),
 				timeout: 20000,
 			})(dispatch)
 		}

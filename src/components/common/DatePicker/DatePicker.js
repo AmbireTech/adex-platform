@@ -3,24 +3,52 @@ import { DatePicker as MuiDatePicker } from '@material-ui/pickers'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import IconButton from '@material-ui/core/IconButton'
-import CalendarIcon from '@material-ui/icons/DateRange'
+import {
+	DateRange,
+	NavigateNextRounded,
+	NavigateBeforeRounded,
+	Update,
+} from '@material-ui/icons'
 import InputAdornment from '@material-ui/core/InputAdornment'
+import utils, { makeJSDateObject } from 'helpers/dateUtils'
+import clsx from 'clsx'
 
 const CalendarIconAdor = ({
-	icon = <CalendarIcon />,
+	icon = <DateRange />,
 	iconColor,
 	onIconClick,
+	onNextClick,
+	onLiveClick,
 }) => (
 	<InputAdornment position='end'>
 		<IconButton color={iconColor} onClick={onIconClick}>
 			{icon}
 		</IconButton>
+		{onLiveClick && (
+			<IconButton color={iconColor} onClick={onLiveClick}>
+				<Update />
+			</IconButton>
+		)}
+		{onNextClick && (
+			<IconButton color={iconColor} onClick={onNextClick}>
+				<NavigateNextRounded />
+			</IconButton>
+		)}
 	</InputAdornment>
 )
 
 export class DatePicker extends Component {
 	render() {
-		const { calendarIcon, icon, iconColor, onIconClick, ...rest } = this.props
+		const {
+			calendarIcon,
+			icon,
+			iconColor,
+			onIconClick,
+			onNextClick,
+			onLiveClick,
+			onBackClick,
+			...rest
+		} = this.props
 		return (
 			<MuiDatePicker
 				InputProps={{
@@ -30,7 +58,16 @@ export class DatePicker extends Component {
 							icon={icon}
 							iconColor={iconColor}
 							onIconClick={onIconClick}
+							onNextClick={onNextClick}
+							onLiveClick={onLiveClick}
 						/>
+					) : null,
+					startAdornment: onBackClick ? (
+						<InputAdornment position='start'>
+							<IconButton color={iconColor} onClick={onBackClick}>
+								<NavigateBeforeRounded />
+							</IconButton>
+						</InputAdornment>
 					) : null,
 				}}
 				{...rest}
@@ -67,3 +104,62 @@ const datePickerStyled = ({ classes, calendarIcon, icon, ...rest }) => {
 }
 
 export const DatePickerContrast = withStyles(styles)(datePickerStyled)
+
+function WeekSelectDatePicker({ classes, ...rest }) {
+	const formatWeekSelectLabel = (date, invalidLabel) => {
+		let dateClone = makeJSDateObject(date)
+
+		return dateClone && utils.isValid(dateClone)
+			? `${utils.format(dateClone, 'MMM Do, YYYY')} - ${utils.format(
+					utils.addDays(dateClone, 6),
+					'MMM Do, YYYY'
+			  )}`
+			: invalidLabel
+	}
+
+	const dayIsFuture = date => utils.isAfter(date, utils.date())
+
+	const renderWrappedWeekDay = (date, selectedDate, dayInCurrentMonth) => {
+		let dateClone = makeJSDateObject(date)
+		let selectedDateClone = makeJSDateObject(selectedDate)
+
+		const start = utils.startOfWeek(selectedDateClone)
+		const end = utils.endOfWeek(selectedDateClone)
+
+		const dayIsBetween = utils.isWithinInterval(dateClone, { start, end })
+		const isFirstDay = utils.isSameDay(dateClone, start)
+		const isLastDay = utils.isSameDay(dateClone, end)
+
+		const wrapperClassName = clsx({
+			[classes.highlight]: dayIsBetween,
+			[classes.firstHighlight]: isFirstDay,
+			[classes.endHighlight]: isLastDay,
+		})
+
+		const dayClassName = clsx(classes.day, {
+			[classes.nonCurrentMonthDay]: !dayInCurrentMonth,
+			[classes.highlightNonCurrentMonthDay]: !dayInCurrentMonth && dayIsBetween,
+			[classes.dayDisabled]: dayIsFuture(dateClone),
+		})
+
+		return (
+			<div className={wrapperClassName}>
+				<IconButton className={dayClassName}>
+					<span> {utils.format(dateClone, 'D')} </span>
+				</IconButton>
+			</div>
+		)
+	}
+
+	return (
+		<DatePicker
+			label='Week Picker'
+			renderDay={renderWrappedWeekDay}
+			labelFunc={formatWeekSelectLabel}
+			shouldDisableDate={date => dayIsFuture(date)}
+			{...rest}
+		/>
+	)
+}
+
+export const WeeklyDatePicker = withStyles(styles)(WeekSelectDatePicker)
