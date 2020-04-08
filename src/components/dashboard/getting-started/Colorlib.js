@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import clsx from 'clsx'
 import { makeStyles, withStyles } from '@material-ui/core/styles'
 import { Box } from '@material-ui/core'
-import { Stars } from '@material-ui/icons'
+import { CheckCircle } from '@material-ui/icons'
 import { PRIMARY, SECONDARY } from 'components/App/themeMUi'
 import StepConnector from '@material-ui/core/StepConnector'
 
@@ -73,7 +73,9 @@ export function ColorlibStepIcon(props) {
 				backgroundSize: 'cover',
 			}}
 		>
-			{completed && <Stars className={clsx(classes.star)} color='secondary' />}
+			{completed && (
+				<CheckCircle className={clsx(classes.star)} color='secondary' />
+			)}
 		</Box>
 	)
 }
