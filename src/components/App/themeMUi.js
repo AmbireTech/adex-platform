@@ -21,7 +21,12 @@ export const ACCENT_TWO = '#699FA2'
 export const ACCENT_TWO_LIGHT = '#e4f3f5'
 
 export const palette = {
-	primary: { main: PRIMARY, contrastText: WHITE },
+	primary: {
+		main: PRIMARY,
+		contrastText: WHITE,
+		light: PRIMARY_LIGHT,
+		lightest: PRIMARY_LIGHTEST,
+	},
 	secondary: { main: SECONDARY, contrastText: WHITE },
 	accentOne: { main: ACCENT_ONE, light: ACCENT_ONE_LIGHT, contrastText: WHITE },
 	accentTwo: { main: ACCENT_TWO, light: ACCENT_TWO_LIGHT, contrastText: WHITE },

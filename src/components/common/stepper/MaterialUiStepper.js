@@ -199,7 +199,7 @@ const MaterialStepper = props => {
 				}}
 				elevation={0}
 			>
-				<Box p={2}>{!!Comp && <Comp {...pageProps} />}</Box>
+				{!!Comp && <Comp {...pageProps} />}
 			</Paper>
 
 			{!!dirtyErrors.length && (
