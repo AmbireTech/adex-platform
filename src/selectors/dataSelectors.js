@@ -114,9 +114,10 @@ export const selectKnowUsFromSource = createSelector(
 export const selectTargetingSources = createSelector(
 	sources => sources,
 	sources =>
-		Object.entries(sources).map(([key, { collection }]) => {
+		Object.entries(sources).map(([key, { collection }], index) => {
 			return {
 				value: {
+					key: key + index,
 					source: key,
 					collection,
 					target: { tag: '', score: 1 },
