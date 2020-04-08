@@ -194,10 +194,10 @@ export function updateAccountAnalytics() {
 			const params = analyticsParams(timeframe, side)
 			let accountChanged = false
 			const allAnalytics = params.map(async opts => {
-				const { datasets, labels } = selectStatsChartData(getState(), {
+				const { datasets, labels } = selectStatsChartData(state, {
 					...opts,
 				})
-				const liveTimestamp = selectAnalyticsLiveTimestamp(getState())
+				const liveTimestamp = selectAnalyticsLiveTimestamp(state)
 				if (
 					liveTimestamp === start ||
 					datasets.length === 0 ||
