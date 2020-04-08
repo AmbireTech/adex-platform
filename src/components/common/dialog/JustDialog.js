@@ -2,14 +2,9 @@ import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Dialog from '@material-ui/core/Dialog'
 import DialogContent from '@material-ui/core/DialogContent'
+import { styles } from './styles'
 
-const useStyles = makeStyles(theme => ({
-	dialog: {
-		height: '100vh',
-		width: theme.maxWidth || 1200,
-		maxWidth: '100%',
-	},
-}))
+const useStyles = makeStyles(styles)
 
 export default function DialogHoc(Decorated) {
 	function JustDialog({ ...rest }) {
@@ -17,7 +12,7 @@ export default function DialogHoc(Decorated) {
 
 		return (
 			<Dialog open={true} classes={{ paper: classes.dialog }}>
-				<DialogContent>
+				<DialogContent classes={{ root: classes.content }}>
 					<Decorated {...rest} />
 				</DialogContent>
 			</Dialog>
