@@ -22,7 +22,7 @@ import {
 	ExpandMore,
 	Close,
 	CheckCircleOutline,
-	CheckCircleTwoTone,
+	CheckCircle,
 } from '@material-ui/icons'
 import EmailEddie from 'resources/getting-started/GS-email-ic.png'
 import FundEddie from 'resources/getting-started/GS-fund-ic.png'
@@ -253,7 +253,7 @@ export default function GettingStarted(props) {
 
 							<Box display='flex' flexDirection='row' alignItems='center'>
 								{sideSteps.map(({ label, icon, check }, index) => {
-									const Icon = check ? CheckCircleTwoTone : CheckCircleOutline
+									const Icon = check ? CheckCircle : CheckCircleOutline
 									const color = check ? 'secondary' : 'inherit'
 
 									return (
