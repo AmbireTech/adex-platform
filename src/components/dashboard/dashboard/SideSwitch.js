@@ -39,6 +39,7 @@ const useTabStyles = makeStyles(theme => {
 			minWidth: 30,
 			'&$selected': {
 				color: theme.palette.common.white,
+				backgroundColor: activeColor,
 			},
 			'&:hover': {
 				backgroundColor: theme.palette.action.hover,
