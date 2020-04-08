@@ -68,7 +68,7 @@ const StyledTab = withStyles(theme => ({
 }))(props => <Tab {...props} />)
 
 function Campaign({ match }) {
-	const [tabIndex, setTabIndex] = useState(0)
+	const [tabIndex, setTabIndex] = useState(1)
 	const { item, ...hookProps } = useItem({
 		itemType: 'Campaign',
 		match,
@@ -107,21 +107,23 @@ function Campaign({ match }) {
 			<Box my={2}>
 				{tabIndex === 0 && <CampaignBasic item={item} {...hookProps} />}
 				{tabIndex === 1 && (
-					<Grid container spacing={2}>
-						<Box clone order={{ xs: 2, md: 2, lg: 1 }}>
-							<Grid item lg={8} md={12} xs={12}>
-								<CampaignStatsBreakdownTable campaignId={campaignId} />
-							</Grid>
+					<Box
+						display='flex'
+						flexDirection='row'
+						flexWrap='wrap'
+						flexGrow='1'
+						justifyContent='center'
+					>
+						<Box flexGrow='1' order={{ xs: 2, md: 2, lg: 1 }}>
+							<CampaignStatsBreakdownTable campaignId={campaignId} />
 						</Box>
-						<Box clone order={{ xs: 1, md: 1, lg: 2 }}>
-							<Grid item lg={4} md={12} xs={12}>
-								<CampaignStatsDoughnut campaignId={campaignId} />
-							</Grid>
+						<Box p={2} order={{ xs: 1, md: 1, lg: 2 }}>
+							<CampaignStatsDoughnut campaignId={campaignId} />
 						</Box>
-					</Grid>
+					</Box>
 				)}
 				{tabIndex === 2 && (
-					<Grid container spacing={2} alignItems='center'>
+					<Grid container spacing={2} alignItems='flex-start'>
 						<Grid item xs={12}>
 							<Paper>
 								<Box p={2}>
