@@ -9,14 +9,14 @@ import {
 } from 'components/common/dialog/content'
 import { makeStyles } from '@material-ui/core/styles'
 import { styles } from '../styles'
-import { t, selectNewAdSlot, selectAccountIdentityAddr } from 'selectors'
+import { t, selectNewAdUnit, selectAccountIdentityAddr } from 'selectors'
 
 const useStyles = makeStyles(styles)
 
 function AdUnitPreview() {
 	const classes = useStyles()
 	const { type, title, description, temp, targeting, targetUrl } = useSelector(
-		selectNewAdSlot
+		selectNewAdUnit
 	)
 	const identityAddr = useSelector(selectAccountIdentityAddr)
 
