@@ -1,5 +1,6 @@
 import MomentUtils from '@date-io/moment'
 import moment from 'moment'
+import 'moment/min/locales'
 
 // We can't use the new version of @date-io/moment or @date-io/date-fns
 // because the datepickers will crash, but we need some more functionality
@@ -45,12 +46,20 @@ export class DateUtils extends MomentUtils {
 	getUnix(date) {
 		return date.unix()
 	}
+	getLocaleDate(locale) {
+		return this.moment.localeData(locale)
+	}
+
+	updateLocale({ locale = 'en', dow, doy }) {
+		const defaultLocaleData = this.getLocaleDate(locale)
+		this.moment.updateLocale(locale, {
+			week: {
+				dow: dow || defaultLocaleData.firstDayOfWeek(),
+				doy: doy || defaultLocaleData.firstDayOfYear(),
+			},
+		})
+	}
 }
-
-const dateUtils = new DateUtils()
-
-export default dateUtils
-
 export function makeJSDateObject(date) {
 	if (moment.isMoment(date)) {
 		return date.clone()
@@ -62,3 +71,12 @@ export function makeJSDateObject(date) {
 
 	return date
 }
+
+const dateUtils = new DateUtils()
+dateUtils.updateLocale({
+	dow: dateUtils
+		.getLocaleDate(window.navigator.language.toLowerCase())
+		.firstDayOfWeek(),
+})
+
+export default dateUtils
