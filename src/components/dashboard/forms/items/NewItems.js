@@ -52,9 +52,9 @@ export const NewUnitSteps = props => (
 	<FormSteps
 		{...props}
 		cancelFunction={() => execute(resetNewItem('AdUnit'))}
-		validateIdBase={'new-AdUnit-'}
-		itemType={'AdUnit'}
-		stepsId={'new-adunit-'}
+		validateIdBase='new-AdUnit-'
+		itemType='AdUnit'
+		stepsId='new-adunit-'
 		steps={[
 			{
 				title: 'UNIT_BASIC_STEP',
@@ -74,6 +74,7 @@ export const NewUnitSteps = props => (
 					execute(
 						completeItem({
 							...props,
+							itemType: 'AdUnit',
 							competeAction: saveUnit,
 						})
 					),
@@ -109,9 +110,9 @@ export const NewCampaignSteps = props => (
 	<FormSteps
 		{...props}
 		cancelFunction={() => execute(resetNewItem('Campaign'))}
-		validateIdBase={'new-Campaign-'}
-		itemType={'Campaign'}
-		stepsId={'new-campaign-'}
+		validateIdBase='new-Campaign-'
+		itemType='Campaign'
+		stepsId='new-campaign-'
 		steps={[
 			{
 				title: 'CAMPAIGN_UNITS_STEP',
@@ -138,6 +139,7 @@ export const NewCampaignSteps = props => (
 					execute(
 						completeItem({
 							...props,
+							itemType: 'Campaign',
 							competeAction: openCampaign,
 						})
 					),
@@ -163,9 +165,9 @@ export const NewSlotSteps = props => (
 	<FormSteps
 		{...props}
 		cancelFunction={() => execute(resetNewItem('AdSlot'))}
-		validateIdBase={'new-AdUnit-'}
-		itemType={'AdSlot'}
-		stepsId={'new-slot-'}
+		validateIdBase='new-AdUnit-'
+		itemType='AdSlot'
+		stepsId='new-slot-'
 		steps={[
 			{
 				title: 'SLOT_BASIC_STEP',
@@ -193,6 +195,7 @@ export const NewSlotSteps = props => (
 					execute(
 						completeItem({
 							...props,
+							itemType: 'AdSlot',
 							competeAction: saveSlot,
 						})
 					),

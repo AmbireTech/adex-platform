@@ -134,5 +134,8 @@ export function completeItem({
 		await updateSpinner(validateId, false)(dispatch)
 
 		await handleAfterValidation({ isValid, onValid, onInvalid })
+		if (isValid) {
+			resetNewItem(itemType)(dispatch)
+		}
 	}
 }
