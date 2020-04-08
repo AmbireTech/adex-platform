@@ -40,6 +40,9 @@ const useTabStyles = makeStyles(theme => {
 			'&$selected': {
 				color: theme.palette.common.white,
 			},
+			'&:hover': {
+				backgroundColor: theme.palette.action.hover,
+			},
 		},
 		selected: {
 			color: theme.palette.common.white,
