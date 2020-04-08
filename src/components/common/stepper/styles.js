@@ -25,6 +25,7 @@ export const styles = theme => {
 			overflowY: 'auto',
 			overflowX: 'hidden',
 			height: 0,
+			padding: ds,
 		},
 		right: {
 			textAlign: 'right',
@@ -58,7 +59,7 @@ export const styles = theme => {
 			width: 'auto',
 		},
 		buttonProgressWrapper: {
-			margin: spacing,
+			marginLeft: spacing,
 			position: 'relative',
 		},
 		buttonProgress: {
