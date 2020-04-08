@@ -86,7 +86,7 @@ export function validateNewSlotBasics({
 
 			isValid = validations.every(v => v === true)
 
-			if (validations[4]) {
+			if (isValid && validations[4]) {
 				isValid = await validateSchemaProp({
 					validateId,
 					value: {
