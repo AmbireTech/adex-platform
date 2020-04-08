@@ -13,7 +13,7 @@ export const formatDateTime = (timestamp, format = DEFAULT_DATETIME_FORMAT) => {
 }
 
 export const formatTokenAmount = (
-	amountString,
+	amountString = '0',
 	decimals = 18,
 	pretty,
 	toFixed
