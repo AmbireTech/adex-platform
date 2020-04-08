@@ -95,7 +95,7 @@ function CampaignFinance({ validateId }) {
 				<FullContentSpinner />
 			) : (
 				<Grid container spacing={2}>
-					<Grid item sm={12} md={12}>
+					<Grid item xs={12} sm={12} md={12}>
 						<TextField
 							fullWidth
 							type='text'
@@ -116,7 +116,7 @@ function CampaignFinance({ validateId }) {
 						/>
 					</Grid>
 
-					<Grid item sm={12} md={6}>
+					<Grid item xs={12} sm={12} md={6}>
 						<FormControl fullWidth disabled>
 							<InputLabel htmlFor='leader-validator'>
 								{t('ADV_PLATFORM_VALIDATOR')}
@@ -126,7 +126,7 @@ function CampaignFinance({ validateId }) {
 						</FormControl>
 					</Grid>
 
-					<Grid item sm={12} md={6}>
+					<Grid item xs={12} sm={12} md={6}>
 						<FormControl fullWidth disabled>
 							<InputLabel htmlFor='follower-validator'>
 								{t('PUB_PLATFORM_VALIDATOR')}
@@ -135,7 +135,7 @@ function CampaignFinance({ validateId }) {
 							<FormHelperText>{follower.id}</FormHelperText>
 						</FormControl>
 					</Grid>
-					<Grid item sm={12} md={6}>
+					<Grid item xs={12} sm={12} md={6}>
 						<TextField
 							fullWidth
 							type='text'
@@ -164,7 +164,7 @@ function CampaignFinance({ validateId }) {
 							}
 						/>
 					</Grid>
-					<Grid item sm={12} md={6}>
+					<Grid item xs={12} sm={12} md={6}>
 						<TextField
 							fullWidth
 							type='text'
@@ -191,7 +191,7 @@ function CampaignFinance({ validateId }) {
 							}
 						/>
 					</Grid>
-					<Grid item sm={12} md={6}>
+					<Grid item xs={12} sm={12} md={6}>
 						<DateTimePicker
 							emptyLabel={t('SET_CAMPAIGN_START')}
 							disablePast
@@ -212,7 +212,7 @@ function CampaignFinance({ validateId }) {
 							}
 						/>
 					</Grid>
-					<Grid item sm={12} md={6}>
+					<Grid item xs={12} sm={12} md={6}>
 						<DateTimePicker
 							emptyLabel={t('SET_CAMPAIGN_END')}
 							disablePast
@@ -232,7 +232,7 @@ function CampaignFinance({ validateId }) {
 							}
 						/>
 					</Grid>
-					<Grid item sm={12} md={6}>
+					<Grid item xs={12} sm={12} md={6}>
 						<FormGroup row>
 							<FormControlLabel
 								control={

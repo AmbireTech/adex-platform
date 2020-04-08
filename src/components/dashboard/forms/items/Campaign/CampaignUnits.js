@@ -39,7 +39,7 @@ function CampaignUnits(props) {
 				direction={hasAdUnits ? null : 'column'}
 				alignItems={hasAdUnits ? null : 'center'}
 			>
-				<Grid item sm={12}>
+				<Grid item xs={12}>
 					<ContentBody>
 						{hasAdUnits ? (
 							<AdUnitsTable

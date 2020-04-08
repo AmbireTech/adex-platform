@@ -62,7 +62,7 @@ function AdUnitBasic({ validateId }) {
 	return (
 		<div>
 			<Grid container spacing={2}>
-				<Grid item sm={12}>
+				<Grid item xs={12}>
 					<TextField
 						fullWidth
 						type='text'
@@ -78,7 +78,7 @@ function AdUnitBasic({ validateId }) {
 						}
 					/>
 				</Grid>
-				<Grid item sm={12}>
+				<Grid item xs={12}>
 					<TextField
 						fullWidth
 						type='text'
@@ -125,7 +125,7 @@ function AdUnitBasic({ validateId }) {
 						{!autoUtmAdded ? t('ADD_UTM_LINK') : t('REMOVE_UTM_LINK')}
 					</Button>
 				</Grid>
-				<Grid item sm={12} md={12}>
+				<Grid item xs={12}>
 					<Dropdown
 						fullWidth
 						required
