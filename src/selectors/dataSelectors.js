@@ -3,6 +3,7 @@ import { t, selectDemandAnalytics, selectMainToken } from 'selectors'
 import { createSelector } from 'reselect'
 import { constants } from 'adex-models'
 import { WHERE_YOU_KNOW_US } from 'constants/misc'
+import moment from 'moment'
 
 export const selectSlotTypesSourceWithDemands = createSelector(
 	[selectDemandAnalytics, selectMainToken],
@@ -60,6 +61,39 @@ export const selectSlotTypesSourceWithDemands = createSelector(
 			)
 		return source
 	}
+)
+
+export const selectMonthsRange = createSelector(
+	[
+		(startDate, endDate) => ({
+			startDate,
+			endDate,
+		}),
+	],
+	({ startDate, endDate }) => {
+		const months = []
+		for (
+			var m = moment(startDate).startOf('month');
+			m.diff(moment(endDate).startOf('month')) <= 0;
+			m.add(1, 'month')
+		) {
+			months.push(+m)
+		}
+		return months
+	}
+)
+
+export const selectReceiptMonths = createSelector(
+	[selectMonthsRange, (_, __, monthsEnd) => monthsEnd],
+	(months, monthsEnd) =>
+		months.map(monthTimestamp => ({
+			value: monthTimestamp,
+			label: !!monthsEnd
+				? moment(monthTimestamp)
+						.endOf('month')
+						.format('Do MMMM, YYYY')
+				: moment(monthTimestamp).format('Do MMMM, YYYY'),
+		}))
 )
 
 export const selectFromSource = createSelector(

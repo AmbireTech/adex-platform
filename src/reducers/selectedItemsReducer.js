@@ -1,4 +1,7 @@
-import { UPDATE_SELECTED_ITEMS } from 'constants/actionTypes'
+import {
+	UPDATE_SELECTED_ITEMS,
+	RESET_SELECTED_ITEMS,
+} from 'constants/actionTypes'
 import initialState from 'store/initialState'
 
 export default function selectedItemsReducer(
@@ -11,6 +14,9 @@ export default function selectedItemsReducer(
 		case UPDATE_SELECTED_ITEMS:
 			newState = { ...state }
 			newState[action.collection] = action.selectedItems
+			return newState
+		case RESET_SELECTED_ITEMS:
+			newState = { ...initialState.selectedItems }
 			return newState
 		default:
 			return state
