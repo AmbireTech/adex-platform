@@ -84,7 +84,7 @@ const getOptions = ({ reloadData }) => ({
 	filterType: 'multiselect',
 	selectableRows: 'none',
 	customToolbar: () => <ReloadData handleReload={reloadData} />,
-	rowsPerPage: 20,
+	rowsPerPage: 25,
 })
 
 function CampaignStatsBreakdownTable({ campaignId }) {
