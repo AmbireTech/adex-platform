@@ -14,11 +14,11 @@ import { t, selectMainToken } from 'selectors'
 import { closeCampaign } from 'actions'
 
 export const CampaignBasic = ({ item, ...hookProps }) => {
-	const { title, mediaUrl, mediaMime, humanFriendlyName } = item
-
+	const { title, adUnits = [], humanFriendlyName } = item
 	const { decimals, symbol } = selectMainToken()
 	const { title: errTitle } = hookProps.validations
 
+	const { mediaUrl, mediaMime } = adUnits[0] || {}
 	const status = item.status || {}
 
 	return (
