@@ -270,10 +270,11 @@ export function validateNewCampaignAdUnits({
 		const campaign = selectNewCampaign(state)
 		const { adUnits } = campaign
 
-		const isValid = await validateCampaignUnits({ validateId, adUnits, dirty })
+		const isValid = await validateCampaignUnits({ validateId, adUnits, dirty })(
+			dispatch
+		)
 
 		await handleAfterValidation({ isValid, onValid, onInvalid })
-
 		await updateSpinner(validateId, false)(dispatch)
 	}
 }
