@@ -4,6 +4,7 @@ import { selectChannelsWithUserBalancesAll } from 'selectors'
 import { formatTokenAmount, formatDateTime } from 'helpers/formatters'
 import { selectWebsitesArray } from 'selectors'
 import dateUtils from 'helpers/dateUtils'
+import { DEFAULT_DATETIME_FORMAT } from 'helpers/formatters'
 
 export const selectAnalytics = state => state.persist.analytics
 
@@ -26,6 +27,13 @@ export const selectAnalyticsTimeframe = createSelector(
 	}
 )
 
+export const selectAnalyticsLastChecked = createSelector(
+	selectAnalytics,
+	({ lastChecked }) => {
+		return lastChecked || Date.now()
+	}
+)
+
 export const selectAnalyticsPeriod = createSelector(
 	selectAnalytics,
 	({ period }) => {
@@ -34,22 +42,22 @@ export const selectAnalyticsPeriod = createSelector(
 )
 
 export const selectAnalyticsLiveTimestamp = createSelector(
-	[selectAnalyticsTimeframe],
-	timeframe => {
+	[selectAnalyticsTimeframe, selectAnalyticsLastChecked],
+	(timeframe, lastChecked) => {
 		switch (timeframe) {
 			case 'hour':
-				return +dateUtils.date().startOf('hour')
+				return +dateUtils.date(lastChecked).startOf('hour')
 			case 'day':
-				return +dateUtils.date().startOf('day')
+				return +dateUtils.date(lastChecked).startOf('day')
 			case 'week':
 				return +dateUtils
-					.date()
+					.date(lastChecked)
 					.startOf('week')
 					.add(23, 'hours')
 					.utc()
 					.startOf('day')
 			default:
-				return +dateUtils.date().startOf('hour')
+				return +dateUtils.date(lastChecked).startOf('hour')
 		}
 	}
 )
@@ -459,4 +467,26 @@ export const selectPublisherReceipts = createSelector(
 export const selectPublisherReceiptsPresentMonths = createSelector(
 	[selectPublisherReceipts],
 	receipts => Object.keys(receipts).map(r => +r)
+)
+
+export const selectAnalyticsNowLabel = createSelector(
+	[selectAnalyticsTimeframe],
+	timeframe => {
+		switch (timeframe) {
+			case 'hour':
+				return dateUtils.format(dateUtils.date(), DEFAULT_DATETIME_FORMAT)
+			case 'day':
+				return dateUtils.format(
+					dateUtils.setMinutes(dateUtils.date(), 0),
+					DEFAULT_DATETIME_FORMAT
+				)
+			case 'week':
+				return dateUtils.format(
+					dateUtils.getNearestSixHoursUTC(6),
+					DEFAULT_DATETIME_FORMAT
+				)
+			default:
+				return dateUtils.format(dateUtils.date(), DEFAULT_DATETIME_FORMAT)
+		}
+	}
 )
