@@ -251,7 +251,7 @@ const getCols = ({
 								aria-label='receip'
 								disabled={!receiptReady}
 							>
-								<Receipt color={receiptReady ? 'primary' : 'grey'} />
+								<Receipt color={receiptReady ? 'primary' : 'disabled'} />
 							</RRIconButton>
 						</span>
 					</Tooltip>

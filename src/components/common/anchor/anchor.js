@@ -1,5 +1,5 @@
 import React from 'react'
-import Link from '@material-ui/core/Link'
+import { Link } from '@material-ui/core'
 import { OpenInNew } from '@material-ui/icons'
 
 const getUrl = url => {
@@ -19,6 +19,7 @@ const Anchor = ({
 	underline,
 	externalIcon,
 	color,
+	component,
 	...rest
 }) => {
 	const isExternal = target && target === '_blank'
@@ -32,17 +33,20 @@ const Anchor = ({
 		target,
 		href: url,
 		style: { wordBreak: 'break-all' }, // TODO: add it where needed only
+		...(component ? { component } : {}),
 		...rest,
 	}
 	return (
 		<Link {...linkProps}>
-			{children || label}{' '}
-			{externalIcon && <OpenInNew style={{ fontSize: 'small' }} />}
+			{!component && (children || label)}
+			{!component && externalIcon && (
+				<OpenInNew style={{ fontSize: 'small' }} />
+			)}
 		</Link>
 	)
 }
 
-export const ExternalAnchor = ({ href, children, style }) => (
+export const ExternalAnchor = ({ href, children, style, ...rest }) => (
 	<Anchor
 		style={{ fontWeight: 'bold' }}
 		underline='always'
@@ -50,6 +54,7 @@ export const ExternalAnchor = ({ href, children, style }) => (
 		color='primary'
 		externalIcon
 		href={href}
+		{...rest}
 	>
 		{children}
 	</Anchor>

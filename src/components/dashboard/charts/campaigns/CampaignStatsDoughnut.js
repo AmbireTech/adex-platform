@@ -20,11 +20,11 @@ function CampaignStatsDoughnut({
 
 	return (
 		<Doughnut
-			width={450}
-			height={450}
+			width={420}
+			height={420}
 			data={data}
 			options={{
-				// responsive: true,
+				responsive: true,
 				legend: {
 					position: 'bottom',
 				},

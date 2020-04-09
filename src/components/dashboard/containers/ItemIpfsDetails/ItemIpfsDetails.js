@@ -15,7 +15,7 @@ import {
 } from 'components/common/dialog/content'
 import Anchor from 'components/common/anchor/anchor'
 import { Item as ItemModel } from 'adex-models'
-import UnitTargets from 'components/dashboard/containers/UnitTargets'
+import TargetsList from 'components/dashboard/containers/TargetsList'
 
 const { AdSizesByValue, AdTypesByValue, ItemsTypes } = ItemsConstants
 
@@ -106,7 +106,7 @@ export class ItemIpfsDetails extends Component {
 				{!!details.type === ItemsTypes.AdUnit.id && details.targets && (
 					<PropRow
 						left={t('targets', { isProp: true })}
-						right={<UnitTargets targets={details.targets} t={t} />}
+						right={<TargetsList targets={details.targets} />}
 					/>
 				)}
 			</Grid>

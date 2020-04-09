@@ -1,89 +1,66 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import NewAdUnitHoc from './NewAdUnitHoc'
-import Translate from 'components/translate/Translate'
+import React from 'react'
+import { useSelector } from 'react-redux'
 import Img from 'components/common/img/Img'
-import UnitTargets from 'components/dashboard/containers/UnitTargets'
+import TargetsList from 'components/dashboard/containers/TargetsList'
 import {
 	PropRow,
 	ContentBox,
 	ContentBody,
 } from 'components/common/dialog/content'
-import { withStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 import { styles } from '../styles'
+import { t, selectNewAdUnit, selectAccountIdentityAddr } from 'selectors'
 
-class AdUnitFormPreview extends Component {
-	constructor(props) {
-		super(props)
-		this.save = props.save
-	}
+const useStyles = makeStyles(styles)
 
-	render() {
-		const { classes, account, ...rest } = this.props
-		const { newItem, t } = rest
-		const { type, title, description, temp, targeting } = newItem
+function AdUnitPreview() {
+	const classes = useStyles()
+	const { type, title, description, temp, targeting, targetUrl } = useSelector(
+		selectNewAdUnit
+	)
+	const identityAddr = useSelector(selectAccountIdentityAddr)
 
-		return (
-			<ContentBox>
-				<ContentBody>
+	return (
+		<ContentBox>
+			<ContentBody>
+				<PropRow left={t('owner', { isProp: true })} right={identityAddr} />
+				<PropRow left={t('type', { isProp: true })} right={type} />
+				<PropRow left={t('title', { isProp: true })} right={title} />
+				<PropRow
+					left={t('description', { isProp: true })}
+					right={description}
+				/>
+				<PropRow left={t('targetUrl', { isProp: true })} right={targetUrl} />
+
+				<PropRow
+					left={t('MEDIA')}
+					right={
+						<Img
+							allowFullscreen={true}
+							className={classes.imgPreview}
+							src={temp.tempUrl || ''}
+							alt={title}
+							mediaMime={temp.mime}
+							allowVideo
+						/>
+					}
+				/>
+				{targeting && (
 					<PropRow
-						left={t('owner', { isProp: true })}
-						right={account.wallet.address}
-					/>
-					<PropRow left={t('type', { isProp: true })} right={type} />
-					<PropRow left={t('title', { isProp: true })} right={title} />
-					<PropRow
-						left={t('description', { isProp: true })}
-						right={description}
-					/>
-					<PropRow
-						left={t('MEDIA')}
+						left={t('targeting', { isProp: true })}
 						right={
-							<Img
-								allowFullscreen={true}
-								className={classes.imgPreview}
-								src={temp.tempUrl || ''}
-								alt={title}
-								mediaMime={temp.mime}
-								allowVideo
+							<TargetsList
+								targets={targeting}
+								// subHeader={'TARGETING'}
 							/>
 						}
 					/>
-					{targeting && (
-						<PropRow
-							left={t('targeting', { isProp: true })}
-							right={
-								<UnitTargets
-									{...rest}
-									targets={targeting}
-									t={t}
-									// subHeader={'TARGETING'}
-								/>
-							}
-						/>
-					)}
-					{/* </Grid> */}
-					<br />
-				</ContentBody>
-			</ContentBox>
-		)
-	}
+				)}
+				{/* </Grid> */}
+				<br />
+			</ContentBody>
+		</ContentBox>
+	)
 }
 
-AdUnitFormPreview.propTypes = {
-	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired,
-	newItem: PropTypes.object.isRequired,
-	title: PropTypes.string,
-}
-
-function mapStateToProps(state) {
-	const { persist } = state
-	return {
-		account: persist.account,
-	}
-}
-
-const NewAdUnitFormPreview = NewAdUnitHoc(withStyles(styles)(AdUnitFormPreview))
-export default connect(mapStateToProps)(Translate(NewAdUnitFormPreview))
+export default AdUnitPreview

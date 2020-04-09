@@ -13,6 +13,7 @@ import {
 	selectAccountStatsFormatted,
 } from 'selectors'
 import { execute, updateNewTransaction } from 'actions'
+import { Alert } from '@material-ui/lab'
 
 const WithdrawFromIdentity = ({ stepsId, validateId } = {}) => {
 	const { symbol } = useSelector(selectMainToken)
@@ -26,14 +27,15 @@ const WithdrawFromIdentity = ({ stepsId, validateId } = {}) => {
 
 	const spinner = useSelector(state => selectSpinnerById(state, validateId))
 
-	const { amountToWithdraw: errAmount, withdrawTo: errAddr } = useSelector(
-		state => selectValidationsById(state, validateId) || {}
-	)
+	const {
+		amountToWithdraw: errAmount,
+		withdrawTo: errAddr,
+		fees: errFees,
+	} = useSelector(state => selectValidationsById(state, validateId) || {})
 
 	return (
 		<div>
 			<div>
-				{' '}
 				{t('EXCHANGE_CURRENT_MAIN_TOKEN_BALANCE_AVAILABLE_ON_IDENTITY', {
 					args: [max, symbol],
 				})}
@@ -46,7 +48,6 @@ const WithdrawFromIdentity = ({ stepsId, validateId } = {}) => {
 				label={t('WITHDRAW_TO')}
 				name='withdrawTo'
 				value={withdrawTo || ''}
-				// onChange={ev => handleChange('withdrawTo', ev.target.value)}
 				onChange={ev =>
 					execute(
 						updateNewTransaction({
@@ -61,10 +62,11 @@ const WithdrawFromIdentity = ({ stepsId, validateId } = {}) => {
 			/>
 			{spinner ? <InputLoading /> : null}
 			<TextField
+				disabled={spinner}
 				type='text'
 				fullWidth
 				required
-				label={t('TOKENS_TO_WITHDRAW')}
+				label={t('PROP_WITHDRAWAMOUNT')}
 				name='amountToWithdraw'
 				value={amountToWithdraw || ''}
 				onChange={ev =>
@@ -101,6 +103,11 @@ const WithdrawFromIdentity = ({ stepsId, validateId } = {}) => {
 					</span>
 				}
 			/>
+			{errFees && errFees.dirty && errFees.errMsg && (
+				<Alert variant='outlined' severity='error'>
+					{errFees.errMsg}
+				</Alert>
+			)}
 		</div>
 	)
 }

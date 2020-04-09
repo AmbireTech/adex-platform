@@ -1,97 +1,86 @@
 import React from 'react'
-import Button from '@material-ui/core/Button'
-import FormSteps from 'components/dashboard/forms/FormSteps'
+import FormSteps from 'components/common/stepper/FormSteps'
 import WithDialog from 'components/common/dialog/WithDialog'
 import { AdUnit, AdSlot, Campaign } from 'adex-models'
 import FileCopyIcon from '@material-ui/icons/FileCopy'
-import AddIcon from '@material-ui/icons/Add'
-import SaveIcon from '@material-ui/icons/Save'
-import NewAdUnitHoc from './AdUnit/NewAdUnitHoc'
 import AdUnitBasic from './AdUnit/AdUnitBasic'
 import AdUnitMedia from './AdUnit/AdUnitMedia'
-import AdUnitTargeting from './AdUnit/AdUnitTargeting'
 import AdUnitFormPreview from './AdUnit/AdUnitFormPreview'
-import NewCampaignHoc from './Campaign/NewCampaignHoc'
 import CampaignUnits from './Campaign/CampaignUnits'
-// import CampaignTargeting from './Campaign/CampaignTargeting'
 import CampaignFinance from './Campaign/CampaignFinance'
 import CampaignFormPreview from './Campaign/CampaignFormPreview'
-import NewAdSlotHoc from './AdSlot/NewAdSlotHoc'
 import AdSlotBasic from './AdSlot/AdSlotBasic'
 import AdSlotMedia from './AdSlot/AdSlotMedia'
-import AdSlotTargeting from './AdSlot/AdSlotTargeting'
+import NewItemTargeting from './NewItemTargeting'
 import AdSlotPreview from './AdSlot/AdSlotPreview'
-import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty'
 
 import {
 	execute,
+	validateNewUnitBasics,
 	validateNewCampaignFinance,
 	validateNewCampaignAdUnits,
 	validateNewSlotBasics,
+	validateNewSlotPassback,
+	validateNewUnitMedia,
+	completeItem,
+	resetNewItem,
+	saveUnit,
+	saveSlot,
+	openCampaign,
 } from 'actions'
 
-const SaveBtn = ({ newItem, t, save, ...rest }) => {
-	return (
-		<Button color='primary' onClick={save}>
-			{/*TODO: withStyles */}
-			<SaveIcon style={{ marginRight: 8 }} />
-			{t('SAVE')}
-		</Button>
-	)
-}
+import { slotSources, unitSources } from 'selectors'
 
-const SendBtn = ({ saveBtnLabel, saveBtnIcon, newItem, t, save, ...rest }) => {
-	return (
-		<Button
-			color='primary'
-			onClick={save}
-			disabled={newItem.temp.waitingAction}
-		>
-			{newItem.temp.waitingAction ? (
-				<HourglassEmptyIcon />
-			) : (
-				saveBtnIcon || <SaveIcon style={{ marginRight: 8 }} />
-			)}
-			{t(saveBtnLabel || 'OPEN_CAMPAIGN')}
-		</Button>
-	)
-}
+const AdSlotTargeting = props => (
+	<NewItemTargeting
+		{...props}
+		itemType='AdSlot'
+		sourcesSelector={slotSources}
+	/>
+)
 
-const SaveBtnWithAdUnit = NewAdUnitHoc(SaveBtn)
-const SaveBtnWithCampaign = NewCampaignHoc(SendBtn)
-const SaveBtnWithAdSlot = NewAdSlotHoc(SaveBtn)
-
-const CancelBtn = ({ ...props }) => {
-	return <Button onClick={props.cancel}>{props.t('CANCEL')}</Button>
-}
-
-const CancelBtnWithItem = NewAdUnitHoc(CancelBtn)
-const CancelBtnWithCampaign = NewCampaignHoc(CancelBtn)
-const CancelBtnWithAdSlot = NewAdSlotHoc(CancelBtn)
-
-const dialogCommon = {
-	darkerBackground: true,
-	icon: <AddIcon />,
-}
+const AdUnitTargeting = props => (
+	<NewItemTargeting
+		{...props}
+		itemType='AdUnit'
+		sourcesSelector={unitSources}
+	/>
+)
 
 // Ad unit
 export const NewUnitSteps = props => (
 	<FormSteps
 		{...props}
-		SaveBtn={SaveBtnWithAdUnit}
-		CancelBtn={CancelBtnWithItem}
-		validateIdBase={'new-AdUnit-'}
-		itemType={'AdUnit'}
-		stepsId={'new-adunit-'}
-		stepsPages={[
-			{ title: 'UNIT_BASIC_STEP', page: AdUnitBasic },
-			{ title: 'UNIT_MEDIA_STEP', page: AdUnitMedia },
-			{ title: 'UNIT_TARGETS_STEP', page: AdUnitTargeting },
+		cancelFunction={() => execute(resetNewItem('AdUnit'))}
+		validateIdBase='new-AdUnit-'
+		itemType='AdUnit'
+		stepsId='new-adunit-'
+		steps={[
+			{
+				title: 'UNIT_BASIC_STEP',
+				component: AdUnitBasic,
+				validationFn: props => execute(validateNewUnitBasics(props)),
+			},
+			{
+				title: 'UNIT_MEDIA_STEP',
+				component: AdUnitMedia,
+				validationFn: props => execute(validateNewUnitMedia(props)),
+			},
+			{ title: 'UNIT_TARGETS_STEP', component: AdUnitTargeting },
+			{
+				title: 'PREVIEW_AND_SAVE_ITEM',
+				completeBtnTitle: 'SAVE',
+				component: AdUnitFormPreview,
+				completeFn: props =>
+					execute(
+						completeItem({
+							...props,
+							itemType: 'AdUnit',
+							competeAction: saveUnit,
+						})
+					),
+			},
 		]}
-		stepsPreviewPage={{
-			title: 'PREVIEW_AND_SAVE_ITEM',
-			page: AdUnitFormPreview,
-		}}
 		imgLabel='UNIT_BANNER_IMG_LABEL'
 		noDefaultImg
 		itemModel={AdUnit}
@@ -103,7 +92,6 @@ const NewUnitStepsWithDialog = WithDialog(NewUnitSteps)
 export const NewUnitDialog = props => (
 	<NewUnitStepsWithDialog
 		{...props}
-		{...dialogCommon}
 		btnLabel='NEW_UNIT'
 		title='CREATE_NEW_UNIT'
 	/>
@@ -122,31 +110,20 @@ export const NewCloneUnitDialog = props => (
 export const NewCampaignSteps = props => (
 	<FormSteps
 		{...props}
-		SaveBtn={SaveBtnWithCampaign}
-		CancelBtn={CancelBtnWithCampaign}
-		validateIdBase={'new-Campaign-'}
-		itemType={'Campaign'}
-		stepsId={'new-campaign-'}
-		stepsPages={[
+		cancelFunction={() => execute(resetNewItem('Campaign'))}
+		validateIdBase='new-Campaign-'
+		itemType='Campaign'
+		stepsId='new-campaign-'
+		steps={[
 			{
 				title: 'CAMPAIGN_UNITS_STEP',
-				page: CampaignUnits,
-				pageValidation: ({ validateId, dirty, onValid, onInvalid }) =>
-					execute(
-						validateNewCampaignAdUnits({
-							validateId,
-							dirty,
-							onValid,
-							onInvalid,
-						})
-					),
+				component: CampaignUnits,
+				validationFn: props => execute(validateNewCampaignAdUnits(props)),
 			},
-			// NOTE: Only at ad units at the moment
-			// { title: 'CAMPAIGN_TARGETING_STEP', page: CampaignTargeting },
 			{
 				title: 'CAMPAIGN_FINANCE_STEP',
-				page: CampaignFinance,
-				pageValidation: ({ validateId, dirty, onValid, onInvalid }) =>
+				component: CampaignFinance,
+				validationFn: ({ validateId, dirty, onValid, onInvalid }) =>
 					execute(
 						validateNewCampaignFinance({
 							validateId,
@@ -156,11 +133,20 @@ export const NewCampaignSteps = props => (
 						})
 					),
 			},
+			{
+				title: 'PREVIEW_AND_SAVE_ITEM',
+				completeBtnTitle: 'SAVE',
+				component: CampaignFormPreview,
+				completeFn: props =>
+					execute(
+						completeItem({
+							...props,
+							itemType: 'Campaign',
+							competeAction: openCampaign,
+						})
+					),
+			},
 		]}
-		stepsPreviewPage={{
-			title: 'PREVIEW_AND_SAVE_ITEM',
-			page: CampaignFormPreview,
-		}}
 		itemModel={Campaign}
 		imgAdditionalInfo='CAMPAIGN_IMG_ADDITIONAL_INFO'
 	/>
@@ -171,7 +157,6 @@ const NewCampaignStepsWithDialog = WithDialog(NewCampaignSteps)
 export const NewCampaignDialog = props => (
 	<NewCampaignStepsWithDialog
 		{...props}
-		{...dialogCommon}
 		btnLabel='NEW_CAMPAIGN'
 		title='CREATE_NEW_CAMPAIGN'
 	/>
@@ -181,16 +166,15 @@ export const NewCampaignDialog = props => (
 export const NewSlotSteps = props => (
 	<FormSteps
 		{...props}
-		SaveBtn={SaveBtnWithAdSlot}
-		CancelBtn={CancelBtnWithAdSlot}
-		validateIdBase={'new-AdUnit-'}
-		itemType={'AdSlot'}
-		stepsId={'new-slot-'}
-		stepsPages={[
+		cancelFunction={() => execute(resetNewItem('AdSlot'))}
+		validateIdBase='new-AdUnit-'
+		itemType='AdSlot'
+		stepsId='new-slot-'
+		steps={[
 			{
 				title: 'SLOT_BASIC_STEP',
-				page: AdSlotBasic,
-				pageValidation: ({ validateId, dirty, onValid, onInvalid }) =>
+				component: AdSlotBasic,
+				validationFn: ({ validateId, dirty, onValid, onInvalid }) =>
 					execute(
 						validateNewSlotBasics({
 							validateId,
@@ -200,10 +184,26 @@ export const NewSlotSteps = props => (
 						})
 					),
 			},
-			{ title: 'SLOT_PASSBACK_STEP', page: AdSlotMedia },
-			{ title: 'SLOT_TAGS_STEP', page: AdSlotTargeting },
+			{
+				title: 'SLOT_PASSBACK_STEP',
+				component: AdSlotMedia,
+				validationFn: props => execute(validateNewSlotPassback(props)),
+			},
+			{ title: 'SLOT_TAGS_STEP', component: AdSlotTargeting },
+			{
+				title: 'PREVIEW_AND_SAVE_ITEM',
+				completeBtnTitle: 'OPEN_CAMPAIGN',
+				component: AdSlotPreview,
+				completeFn: props =>
+					execute(
+						completeItem({
+							...props,
+							itemType: 'AdSlot',
+							competeAction: saveSlot,
+						})
+					),
+			},
 		]}
-		stepsPreviewPage={{ title: 'PREVIEW_AND_SAVE_ITEM', page: AdSlotPreview }}
 		imgLabel='SLOT_AVATAR_IMG_LABEL'
 		imgAdditionalInfo='SLOT_AVATAR_IMG_INFO'
 		descriptionHelperTxt='SLOT_DESCRIPTION_HELPER'
@@ -216,7 +216,6 @@ const NewSlotStepsWithDialog = WithDialog(NewSlotSteps)
 export const NewSlotDialog = props => (
 	<NewSlotStepsWithDialog
 		{...props}
-		{...dialogCommon}
 		btnLabel='NEW_SLOT'
 		title='CREATE_NEW_SLOT'
 	/>

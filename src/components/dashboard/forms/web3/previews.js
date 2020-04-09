@@ -64,7 +64,7 @@ export const SetPrivilegePreview = ({
 
 export const SetENSPreview = ({
 	t,
-	setEns,
+	username,
 	address,
 	classes,
 	feesData,
@@ -77,8 +77,8 @@ export const SetENSPreview = ({
 			right={(address || '').toString()}
 		/>
 		<PropRow
-			key='setEns'
-			left={t('setEns', { isProp: true })}
+			key='username'
+			left={t('username', { isProp: true })}
 			right={
 				<ListItemText
 					className={classes.address}
@@ -86,10 +86,10 @@ export const SetENSPreview = ({
 						args: [
 							feesData.fees,
 							symbol,
-							`${setEns}.${process.env.REVERSE_REGISTRAR_PARENT}`,
+							`${username}.${process.env.REVERSE_REGISTRAR_PARENT}`,
 						],
 					})}
-					primary={`${setEns}.${process.env.REVERSE_REGISTRAR_PARENT}`}
+					primary={`${username}.${process.env.REVERSE_REGISTRAR_PARENT}`}
 				/>
 			}
 		/>

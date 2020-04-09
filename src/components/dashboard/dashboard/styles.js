@@ -1,5 +1,5 @@
 const drawerWidth = 250
-const lastRowRightReserved = 240
+const lastRowRightReserved = 169
 
 export const styles = theme => {
 	return {
@@ -75,6 +75,11 @@ export const styles = theme => {
 			overflow: 'auto',
 			[theme.breakpoints.up('md')]: {
 				marginLeft: drawerWidth,
+				padding: theme.spacing(2),
+				paddingTop: theme.spacing(4),
+			},
+			[theme.breakpoints.down('xs')]: {
+				padding: theme.spacing(1),
 			},
 		},
 		contentInner: {
