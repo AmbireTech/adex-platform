@@ -17,6 +17,15 @@ const analyticsLoop = new Loop({
 	stopOn: () => !selectAuth(getState()),
 })
 
+const analyticsLoopCustom = ({ timeout, syncAction, stopOn }) =>
+	new Loop({
+		timeout: timeout,
+		syncAction: async () => syncAction(),
+		// selectAuth(getState()) && (await execute(updateAccountAnalytics())),
+		loopName: '_ANALYTICS_CUSTOM',
+		stopOn: () => !selectAuth(getState()) || stopOn,
+	})
+
 const analyticsCampaignsLoop = new Loop({
 	timeout: LOOP_TIMEOUT,
 	syncAction: async () =>
@@ -26,4 +35,4 @@ const analyticsCampaignsLoop = new Loop({
 	stopOn: () => !selectAuth(getState()),
 })
 
-export { analyticsLoop, analyticsCampaignsLoop }
+export { analyticsLoop, analyticsCampaignsLoop, analyticsLoopCustom }
