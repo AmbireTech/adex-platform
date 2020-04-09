@@ -30,17 +30,18 @@ const getDirtyValidationErrors = (validations = {}) => {
 const useStyles = makeStyles(styles)
 
 // const MyStep = ({ page, active, index, children, theme, canAdvance, canFinish, canReverse, setPageIndex, canAdvanceToPage, currentPage, goToPage, ...other }) => {}
-const StepperNav = ({ pages, currentPage, classes, ...other }) => {
+const StepperNav = ({ steps, currentPage, classes, ...other }) => {
 	if (window.innerWidth <= 768) {
 		return (
 			<div>
 				<StepLabel className={classes.mobileStepLabel}>
-					({currentPage + 1}/{pages.length}) {pages[currentPage].title}
+					({currentPage + 1}/{steps.length || 1}){' '}
+					{(steps[currentPage] || {}).title}
 				</StepLabel>
 				<MobileStepper
 					activeStep={currentPage}
-					steps={pages.length}
-					position={'static'}
+					steps={steps.length}
+					position='static'
 					variant='progress'
 					className={classes.mobileStepper}
 				></MobileStepper>
@@ -49,7 +50,7 @@ const StepperNav = ({ pages, currentPage, classes, ...other }) => {
 	}
 	return (
 		<StepperMUI alternativeLabel activeStep={currentPage}>
-			{pages.map((page, i) => {
+			{steps.map((page, i) => {
 				return (
 					<Step key={page.title}>
 						<StepLabel>{page.title}</StepLabel>
@@ -63,19 +64,26 @@ const StepperNav = ({ pages, currentPage, classes, ...other }) => {
 const MaterialStepper = props => {
 	const {
 		initialPage = 0,
-		pages = [],
-		// ...props
+		steps = [],
+		closeDialog,
+		// ...rest
 	} = props
 	const classes = useStyles()
 
 	const [currentPage, setCurrentPage] = useState(+initialPage)
-	const canReverse = pages.length > currentPage && currentPage > 0
+	const canReverse = steps.length > currentPage && currentPage > 0
 
-	const page = pages[currentPage] || {}
+	const page = steps[currentPage] || {}
 	const pageProps = page.props || {}
 	const { validateId } = pageProps
 	const Comp = page.component || null
-	const { pageValidation = null, onValid, stepsId } = page
+	const {
+		validationFn,
+		onValid,
+		stepsId,
+		completeFn,
+		completeBtnTitle = '',
+	} = page
 
 	const validations = useSelector(state =>
 		selectValidationsById(state, validateId)
@@ -83,7 +91,13 @@ const MaterialStepper = props => {
 
 	const dirtyErrors = getDirtyValidationErrors(validations)
 
-	const spinner = useSelector(state => selectSpinnerById(state, validateId))
+	const validationSpinner = useSelector(state =>
+		selectSpinnerById(state, validateId)
+	)
+
+	const stepsSpinner = useSelector(state => selectSpinnerById(state, stepsId))
+
+	const spinner = validationSpinner || stepsSpinner
 
 	const isValidPage = useCallback(() => {
 		return !Object.keys(validations || {}).length
@@ -110,8 +124,8 @@ const MaterialStepper = props => {
 	}, [canReverse, currentPage, goToPage])
 
 	const goToNextPage = useCallback(async () => {
-		if (pageValidation) {
-			pageValidation({
+		if (validationFn) {
+			validationFn({
 				stepsId,
 				validateId,
 				dirty: true,
@@ -125,16 +139,24 @@ const MaterialStepper = props => {
 		goToPage,
 		isValidPage,
 		onValid,
-		pageValidation,
+		validationFn,
 		stepsId,
 		validateId,
 	])
 
+	const handleComplete = useCallback(async () => {
+		await completeFn({
+			stepsId,
+			validateId,
+			onValid: () => typeof closeDialog === 'function' && closeDialog(),
+		})
+	}, [closeDialog, completeFn, stepsId, validateId])
+
 	useEffect(() => {
-		if (pageValidation) {
-			pageValidation({ stepsId, validateId, dirty: false })
+		if (validationFn) {
+			validationFn({ stepsId, validateId, dirty: false })
 		}
-	}, [currentPage, pageValidation, stepsId, validateId])
+	}, [currentPage, validationFn, stepsId, validateId])
 
 	const onKeyPressed = useCallback(
 		async ev => {
@@ -147,100 +169,106 @@ const MaterialStepper = props => {
 	)
 
 	return (
-		<div className={classes.stepperWrapper} onKeyPress={onKeyPressed}>
-			<Paper
-				classes={{
-					root: classes.stepperNav,
-				}}
-			>
-				<StepperNav
-					{...props}
-					pages={pages}
-					classes={classes}
-					currentPage={currentPage}
-					goToPage={goToPage}
-				/>
-			</Paper>
-			<br />
+		<Box
+			className={classes.stepperWrapper}
+			onKeyPress={onKeyPressed}
+			display='flex'
+			flexDirection='column'
+			alignItems='space-between'
+		>
+			<Box mb={2}>
+				<Paper
+					classes={{
+						root: classes.stepperNav,
+					}}
+					elevation={0}
+				>
+					<StepperNav
+						{...props}
+						steps={steps}
+						classes={classes}
+						currentPage={currentPage}
+						goToPage={goToPage}
+					/>
+				</Paper>
+			</Box>
 
 			<Paper
 				classes={{
 					root: classes.pagePaper,
 				}}
+				elevation={0}
 			>
-				<div className={classes.pageContent}>
-					{!!Comp && <Comp {...pageProps} />}
+				{!!Comp && <Comp {...pageProps} />}
+			</Paper>
 
-					{!!dirtyErrors && (
-						<Box color='error.main'>
-							{dirtyErrors.map(err => (
-								<Chip
-									key={err.field}
-									classes={{ root: classes.errChip }}
-									icon={<ErrorIcon />}
-									variant='outlined'
-									size='small'
-									label={`${err.field}: ${err.msg}`}
-									color='default'
-								/>
-							))}
-						</Box>
+			{!!dirtyErrors.length && (
+				<Box color='error.main' mt={2}>
+					{dirtyErrors.map(err => (
+						<Chip
+							key={err.field}
+							classes={{ root: classes.errChip }}
+							icon={<ErrorIcon />}
+							variant='outlined'
+							size='small'
+							label={`${err.field}: ${err.msg}`}
+							color='default'
+						/>
+					))}
+				</Box>
+			)}
+
+			<Box mt={2}>
+				<div className={classes.left}>
+					{canReverse && (
+						<Button onClick={goToPreviousPage}>{t('BACK')}</Button>
 					)}
 				</div>
 
-				<div className={classes.controls}>
-					<div className={classes.left}>
-						{canReverse && !(page.disableBtnsIfValid && isValidPage()) ? (
-							<Button onClick={goToPreviousPage}>{t('BACK')}</Button>
+				<div className={classes.right}>
+					{typeof page.cancelFunction === 'function' && (
+						<Button
+							onClick={() => {
+								typeof closeDialog === 'function' && closeDialog()
+								page.cancelFunction(stepsId)
+							}}
+						>
+							{t('CANCEL')}
+						</Button>
+					)}
+
+					<span className={classes.buttonProgressWrapper}>
+						{typeof completeFn === 'function' ? (
+							<Button
+								disabled={spinner}
+								variant='contained'
+								color='primary'
+								onClick={handleComplete}
+							>
+								{t(completeBtnTitle || 'DO_IT_NOW')}
+							</Button>
 						) : (
-							''
+							<Button
+								disabled={spinner}
+								variant='contained'
+								color='primary'
+								onClick={goToNextPage}
+							>
+								{t('CONTINUE')}
+							</Button>
 						)}
-					</div>
-
-					<div className={classes.right}>
-						{/* <Button label='Cancel' onClick={this.cancel}/> */}
-						{page.cancelBtn && !(page.disableBtnsIfValid && isValidPage()) ? (
-							<page.cancelBtn />
-						) : null}
-
-						{typeof page.cancelFunction === 'function' &&
-						!(page.disableBtnsIfValid && isValidPage()) ? (
-							<Button onClick={page.cancelFunction}>{t('CANCEL')}</Button>
-						) : null}
-						{/* {ValidationBtn && <ValidationBtn {...page.props} />} */}
-
-						{!page.completeBtn || !!pageValidation ? (
-							<span className={classes.buttonProgressWrapper}>
-								<Button
-									disabled={spinner || (!isValidPage() && !pageValidation)}
-									variant='contained'
-									color='primary'
-									onClick={goToNextPage}
-								>
-									{t('CONTINUE')}
-								</Button>
-								{spinner && (
-									<CircularProgress
-										size={24}
-										className={classes.buttonProgress}
-									/>
-								)}
-							</span>
-						) : null}
-						{page.completeBtn && !pageValidation && isValidPage() ? (
-							<page.completeBtn />
-						) : (
-							''
+						{spinner && (
+							<CircularProgress size={24} className={classes.buttonProgress} />
 						)}
-					</div>
+					</span>
 				</div>
-			</Paper>
-		</div>
+			</Box>
+		</Box>
 	)
 }
 
 MaterialStepper.propTypes = {
-	pages: PropTypes.array.isRequired,
+	steps: PropTypes.array.isRequired,
 }
 
 export default MaterialStepper

@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react'
 import { Box } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
 import { ExternalAnchor } from 'components/common/anchor/anchor'
 import { Alert } from '@material-ui/lab'
 import { useSelector } from 'react-redux'
@@ -37,7 +38,14 @@ const getIssue = issue => {
 	}
 }
 
+const useStyles = makeStyles(theme => ({
+	message: {
+		display: 'block',
+	},
+}))
+
 export function WebsiteIssues({ issues, website }) {
+	const classes = useStyles()
 	const site = useSelector(state => selectWebsiteByWebsite(state, website))
 	const defaultIssues = !website ? ['SLOT_ISSUE_NO_WEBSITE'] : []
 	const data = issues || site.issues || defaultIssues
@@ -47,18 +55,13 @@ export function WebsiteIssues({ issues, website }) {
 			{data.map((x = {}, index) => {
 				const { label, args } = getIssue(x)
 				return (
-					<Box my={index !== 0 && index < data.length - 1 ? 2 : 0}>
-						<Alert
-							key={label}
-							severity='warning'
-							variant='outlined'
-							gutterBottom
-						>
+					<Box key={label} my={index !== 0 && index < data.length ? 1 : 0}>
+						<Alert severity='warning' variant='outlined' classes={classes}>
 							{t(label, {
 								args: args.map((a, index) =>
 									a.type === 'anchor' ? (
 										<ExternalAnchor key={index} href={a.href}>
-											{t(a.label)}
+											{` ${t(a.label)}`}
 										</ExternalAnchor>
 									) : (
 										t(a)

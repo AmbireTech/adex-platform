@@ -77,11 +77,11 @@ export const validEthAddress = async ({
 }) => {
 	let msg = ''
 	try {
-		const ethAddressZero = isEthAddressZero(addr)
-		const notEthAddress = !isEthAddress(addr)
+		const notEthAddress = !addr || !isEthAddress(addr)
 		if (notEthAddress) {
 			msg = 'ERR_INVALID_ETH_ADDRESS'
 		} else {
+			const ethAddressZero = isEthAddressZero(addr)
 			if (nonZeroAddr && ethAddressZero) {
 				msg = 'ERR_INVALID_ETH_ADDRESS_ZERO'
 			} else {
@@ -102,15 +102,15 @@ export const validEthAddress = async ({
 	return { msg }
 }
 
-export const freeAdExENS = async ({ ens = '', authType }) => {
+export const freeAdExENS = async ({ username = '', authType }) => {
 	let msg = ''
 	try {
-		if (ens === '') {
+		if (username === '') {
 			msg = 'ERR_ENS_REQUIRED'
 		} else {
 			const { provider } = await getEthers(authType)
 			const ensAddress = await provider.resolveName(
-				`${ens}.${process.env.REVERSE_REGISTRAR_PARENT}`
+				`${username}.${process.env.REVERSE_REGISTRAR_PARENT}`
 			)
 
 			if (ensAddress && !isEthAddressZero(ensAddress)) msg = 'ERR_ENS_NOT_FREE'

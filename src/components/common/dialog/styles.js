@@ -1,21 +1,18 @@
-import grey from '@material-ui/core/colors/grey'
-
 export const styles = theme => {
-	const spacing = theme.spacing(3)
+	const spacing = theme.spacing(2)
 	const fullHeight = Math.max(window.innerHeight - spacing, 400)
 	return {
 		dialog: {
 			minHeight: `${fullHeight}px`,
 			minWidth: 1024,
 			maxWidth: 1080,
-			backgroundColor: grey[200], // TODO: color,
-			// maxHeight: `${fullHeight}`,
+			backgroundColor: theme.palette.appBar.main,
 			'@media(max-width:1080px)': {
 				maxWidth: '100%',
-				minWidth: `calc(100vw - ${theme.spacing(2)}px)`,
+				minWidth: `calc(100vw - ${spacing}px)`,
 			},
 			'@media(max-height:823px)': {
-				minHeight: `calc(${fullHeight} - ${theme.spacing(2)}px)`,
+				minHeight: `calc(${fullHeight} - ${spacing}px)`,
 			},
 		},
 		dialogTitle: {
@@ -24,6 +21,9 @@ export const styles = theme => {
 			alignItems: 'center',
 			justifyContent: 'space-between',
 			wordWrap: 'break-word',
+			margin: spacing,
+			marginBottom: 0,
+			padding: 0,
 		},
 		content: {
 			display: 'flex',
@@ -31,19 +31,11 @@ export const styles = theme => {
 			flex: '1 1 auto',
 			position: 'relative',
 			padding: 0,
-			margin: `0 ${spacing}px ${spacing}px ${spacing}px`,
-			'&:first-child': {
-				paddingTop: spacing,
-			},
+			margin: spacing,
 			overflow: 'visible',
 			overflowY: 'auto',
 		},
 		contentBox: {
-			// position: 'absolute',
-			// top: 0,
-			// left: 0,
-			// bottom: 0,
-			// right: 0,
 			display: 'flex',
 			flexDirection: 'column',
 			flex: 1,
@@ -93,7 +85,7 @@ export const styles = theme => {
 		floating: {
 			position: 'fixed',
 			top: 86,
-			right: 40,
+			right: spacing,
 			zIndex: theme.zIndex.appBar,
 		},
 		breakLong: {

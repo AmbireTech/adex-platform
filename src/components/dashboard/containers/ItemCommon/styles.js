@@ -4,16 +4,11 @@ export const styles = theme => {
 
 	return {
 		card: {
-			marginRight: spacing,
-			marginBottom: spacing,
-			width: 320,
+			backgroundColor: theme.palette.grey.main,
+			width: '100%',
 			display: 'block',
 			position: 'relative',
 			maxWidth: '100%',
-			'@media(max-width:380px)': {
-				margin: 0,
-				marginBottom: spacing,
-			},
 		},
 		mediaRoot: {
 			height: 0,
@@ -51,11 +46,42 @@ export const styles = theme => {
 			marginBottom: spacing,
 			color: theme.palette.text.hint,
 		},
+
+		buttonLeft: {
+			marginRight: spacing,
+		},
+
+		textField: {
+			marginBottom: spacing,
+			marginRight: spacing,
+		},
+		top: {
+			display: 'flex',
+			flexDirection: 'column',
+			flexWrap: 'wrap',
+			maxWidth: '70%',
+		},
+		changesLine: {
+			display: 'flex',
+			flexDirection: 'row',
+			flexWrap: 'wrap',
+			alignItems: 'center',
+			color: theme.palette.secondary.main,
+			marginBottom: spacing,
+		},
+		changeChip: {
+			margin: spacing,
+			marginLeft: 0,
+		},
 		editIcon: {
 			position: 'absolute',
-			marginTop: `calc(56.25% - ${40 + spacing}px)`,
-			top: 0,
+			bottom: spacing,
 			right: spacing,
+		},
+		mediaPropChip: {
+			position: 'absolute',
+			top: spacing,
+			left: spacing,
 		},
 	}
 }

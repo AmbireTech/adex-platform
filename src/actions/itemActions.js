@@ -1,8 +1,6 @@
 import * as types from 'constants/actionTypes'
 import {
 	uploadImage,
-	postAdUnit,
-	postAdSlot,
 	updateAdSlot,
 	updateAdUnit,
 	updateCampaign,
@@ -11,20 +9,18 @@ import { Base, AdSlot, AdUnit, helpers, Campaign } from 'adex-models'
 import { addToast as AddToastUi, updateSpinner } from './uiActions'
 
 import { translate } from 'services/translations/translations'
-import { getAdUnits, getAdSlots } from 'services/adex-market/actions'
+import {
+	getAdUnits,
+	getAdSlots,
+	getAdUnitById,
+} from 'services/adex-market/actions'
 
 import initialState from 'store/initialState'
 import { getMediaSize } from 'helpers/mediaHelpers'
 import { getErrorMsg } from 'helpers/errors'
 import { numStringCPMtoImpression } from 'helpers/numbers'
 import { SOURCES } from 'constants/targeting'
-import {
-	selectRelayerConfig,
-	selectAuthSig,
-	selectMainToken,
-	selectAccount,
-	selectAuth,
-} from 'selectors'
+import { selectRelayerConfig, selectAccount, selectAuth } from 'selectors'
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
 	return AddToastUi({
@@ -35,7 +31,7 @@ const addToast = ({ type, toastStr, args, dispatch }) => {
 	})(dispatch)
 }
 
-const getImgsIpfsFromBlob = ({ tempUrl, authSig }) => {
+export const getImgsIpfsFromBlob = ({ tempUrl, authSig }) => {
 	return fetch(tempUrl)
 		.then(resp => {
 			return resp.blob()
@@ -50,155 +46,6 @@ const getImgsIpfsFromBlob = ({ tempUrl, authSig }) => {
 		})
 }
 
-export function updateNewItem(item, newValues, itemType, objModel) {
-	item = Base.updateObject({ item, newValues, objModel })
-	return function(dispatch) {
-		return dispatch({
-			type: types.UPDATE_NEW_ITEM,
-			item,
-			itemType,
-		})
-	}
-}
-
-export function resetNewItem(item) {
-	return function(dispatch) {
-		return dispatch({
-			type: types.RESET_NEW_ITEM,
-			item: item,
-		})
-	}
-}
-
-export function resetAllNewItems() {
-	return function(dispatch) {
-		return dispatch({
-			type: types.RESET_ALL_NEW_ITEMS,
-		})
-	}
-}
-
-// register item
-export function addUnit(item) {
-	const newItem = { ...item }
-	return async function(dispatch, getState) {
-		try {
-			const state = getState()
-			const authSig = selectAuthSig(state)
-			const imageIpfs = (await getImgsIpfsFromBlob({
-				tempUrl: newItem.temp.tempUrl,
-				authSig,
-			})).ipfs
-
-			newItem.mediaUrl = `ipfs://${imageIpfs}`
-			newItem.mediaMime = newItem.temp.mime
-			newItem.created = Date.now()
-
-			const resItem = await postAdUnit({
-				unit: new AdUnit(newItem).marketAdd,
-				authSig,
-			})
-
-			dispatch({
-				type: types.ADD_ITEM,
-				item: new AdUnit(resItem).plainObj(),
-				itemType: 'AdUnit',
-			})
-
-			addToast({
-				dispatch: dispatch,
-				type: 'accept',
-				toastStr: 'SUCCESS_CREATING_ITEM',
-				args: ['AdUnit', newItem.title],
-			})
-		} catch (err) {
-			console.error('ERR_CREATING_ITEM', err)
-			addToast({
-				dispatch: dispatch,
-				type: 'cancel',
-				toastStr: 'ERR_CREATING_ITEM',
-				args: ['AdUnit', err],
-			})
-		}
-	}
-}
-
-export function addSlot(item) {
-	const newItem = { ...item }
-	return async function(dispatch, getState) {
-		try {
-			const state = getState()
-			const authSig = selectAuthSig(state)
-			const mainToken = selectMainToken()
-			let fallbackUnit = null
-			if (newItem.temp.useFallback) {
-				const imageIpfs = (await getImgsIpfsFromBlob({
-					tempUrl: newItem.temp.tempUrl,
-					authSig,
-				})).ipfs
-
-				const unit = new AdUnit({
-					type: newItem.type,
-					mediaUrl: `ipfs://${imageIpfs}`,
-					targetUrl: newItem.targetUrl,
-					mediaMime: newItem.temp.mime,
-					created: Date.now(),
-					title: newItem.title,
-					description: newItem.description,
-					targeting: [],
-					tags: [],
-					passback: true,
-				})
-
-				const resUnit = await postAdUnit({
-					unit: unit.marketAdd,
-					authSig,
-				})
-
-				fallbackUnit = resUnit.ipfs
-			}
-
-			newItem.fallbackUnit = fallbackUnit
-			newItem.created = Date.now()
-
-			if (newItem.minPerImpression) {
-				newItem.minPerImpression = {
-					[mainToken.address]: numStringCPMtoImpression({
-						numStr: newItem.minPerImpression,
-						decimals: mainToken.decimals,
-					}),
-				}
-			}
-
-			const resItem = await postAdSlot({
-				slot: new AdSlot(newItem).marketAdd,
-				authSig,
-			})
-
-			dispatch({
-				type: types.ADD_ITEM,
-				item: new AdSlot(resItem).plainObj(),
-				itemType: 'AdSlot',
-			})
-
-			addToast({
-				dispatch: dispatch,
-				type: 'accept',
-				toastStr: 'SUCCESS_CREATING_ITEM',
-				args: ['AdSlot', newItem.title],
-			})
-		} catch (err) {
-			console.error('ERR_CREATING_ITEM', err)
-			addToast({
-				dispatch: dispatch,
-				type: 'cancel',
-				toastStr: 'ERR_CREATING_ITEM',
-				args: ['AdSlot', err],
-			})
-		}
-	}
-}
-
 export function getAllItems() {
 	return async function(dispatch, getState) {
 		try {
@@ -208,11 +55,32 @@ export function getAllItems() {
 			const slots = getAdSlots({ identity: address })
 
 			const [resUnits, resSlots] = await Promise.all([units, slots])
+			const userSlots = resSlots.slots || []
+			const userPassbackUnits = (resSlots.passbackUnits || []).reduce(
+				(passbacks, u) => {
+					const { id, mediaMime, mediaUrl, targetUrl } = u
+					passbacks[id] = { mediaMime, mediaUrl, targetUrl }
 
+					return passbacks
+				},
+				{}
+			)
+
+			const slotsWithUnits = userSlots.map(async s => ({
+				...s,
+				...(s.fallbackUnit ? userPassbackUnits[s.fallbackUnit] : {}),
+			}))
+
+			const slotWithUnitsRes = await Promise.all(slotsWithUnits)
 			if (selectAuth(getState())) {
 				updateItems({ items: resUnits, itemType: 'AdUnit' })(dispatch)
-				updateItems({ items: resSlots.slots, itemType: 'AdSlot' })(dispatch)
-				updateItems({ items: resSlots.websites, itemType: 'Website' })(dispatch)
+				updateItems({
+					items: slotWithUnitsRes,
+					itemType: 'AdSlot',
+				})(dispatch)
+				updateItems({ items: resSlots.websites || [], itemType: 'Website' })(
+					dispatch
+				)
 			}
 		} catch (err) {
 			console.error('ERR_GETTING_ITEMS', err)

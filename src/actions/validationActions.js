@@ -1,14 +1,20 @@
 import * as types from 'constants/actionTypes'
-import { updateSpinner } from './uiActions'
 import { validEthAddress, freeAdExENS } from '../helpers/validators'
 import { translate } from 'services/translations/translations'
-import { addToast } from './uiActions'
+import { addToast, updateSpinner } from './uiActions'
 import { bigNumberify, parseUnits } from 'ethers/utils'
 import { validations, Joi, schemas, constants } from 'adex-models'
 import { validPassword } from 'helpers/validators'
-import { t, selectAuthType } from 'selectors'
+import {
+	t,
+	selectAuthType,
+	selectAccountStatsRaw,
+	selectAccountStatsFormatted,
+	selectMainToken,
+} from 'selectors'
 import { getErrorMsg } from 'helpers/errors'
 import { getEmail } from 'services/adex-relayer/actions'
+import { formatTokenAmount } from 'helpers/formatters'
 const { IdentityPrivilegeLevel } = constants
 
 const { campaignPut, account } = schemas
@@ -84,6 +90,8 @@ export function validate(
 		} else {
 			resetValidationErrors(validateId, key)(dispatch)
 		}
+
+		return isValid
 	}
 }
 
@@ -135,7 +143,7 @@ export function validatePasswordCheck(
 	return async function(dispatch, getState) {
 		const isValid = !!passwordCheck && !!password && passwordCheck === password
 		validate(validateId, 'passwordCheck', {
-			isValid: isValid,
+			isValid,
 			err: { msg: 'ERR_PASSWORD_CHECK' },
 			dirty: dirty,
 		})(dispatch)
@@ -148,7 +156,7 @@ export function validateTOS(validateId, accepted, dirty) {
 	return async function(dispatch, getState) {
 		const isValid = !!accepted
 		validate(validateId, 'tosCheck', {
-			isValid: isValid,
+			isValid,
 			err: { msg: 'ERR_TOS_CHECK' },
 			dirty,
 		})(dispatch)
@@ -157,35 +165,27 @@ export function validateTOS(validateId, accepted, dirty) {
 	}
 }
 
-export function validateENS({ ens, dirty, validate, name }) {
-	return async function(dispatch, getState) {
-		const { authType } = getState().persist.account.wallet
-		try {
-			if (validate) validate(name, { isValid: false })
-			updateSpinner(name, dirty)(dispatch)
-			const { msg } = await freeAdExENS({
-				ens,
-				authType,
-			})
-			const isValid = !msg
-			updateSpinner(name, false)(dispatch)
-			if (validate)
-				validate(name, { isValid: isValid, err: { msg: msg }, dirty: dirty })
-		} catch (error) {
-			console.error('ERR_VALIDATING_ENS_ADDRESS', error)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_VALIDATING_ENS_ADDRESS', { args: [error] }),
-				timeout: 20000,
-			})(dispatch)
-		}
+export function validateENS({ username, dirty, validateId, authType }) {
+	return async function(dispatch) {
+		const { msg } = await freeAdExENS({
+			username,
+			authType,
+		})
+		const isValid = !msg
+		validate(validateId, 'username', {
+			isValid,
+			err: { msg },
+			dirty,
+		})(dispatch)
+
+		return isValid
 	}
 }
 export function validateWallet(validateId, wallet, dirty) {
 	return async function(dispatch, getState) {
 		const isValid = !!wallet && !!wallet.address
 		validate(validateId, 'wallet', {
-			isValid: isValid,
+			isValid,
 			err: { msg: 'ERR_NO_WALLET_SELECTED' },
 			dirty,
 		})(dispatch)
@@ -202,7 +202,7 @@ export function validateIdentityContractOwner(
 	return async function(dispatch, getState) {
 		const isValid = !!identityContractOwner
 		validate(validateId, 'identityContractOwner', {
-			isValid: isValid,
+			isValid,
 			err: { msg: 'ERR_NO_IDENTITY_CONTRACT_OWNER' },
 			dirty,
 		})(dispatch)
@@ -214,7 +214,7 @@ export function validateKnowFrom(validateId, knowFrom, dirty) {
 	return async function(dispatch, getState) {
 		const isValid = !!knowFrom
 		validate(validateId, 'knowFrom', {
-			isValid: isValid,
+			isValid,
 			err: { msg: 'ERR_WHERE_YOU_KNOW_US_DROPDOWN_CHECK' },
 			dirty,
 		})(dispatch)
@@ -228,7 +228,7 @@ export function validateMoreInfo(validateId, knowFrom, moreInfo, dirty) {
 		const isValid =
 			knowFrom === 'other' || knowFrom === 'event' ? !!moreInfo : true
 		validate(validateId, 'moreInfo', {
-			isValid: isValid,
+			isValid,
 			err: { msg: 'ERR_WHERE_YOU_KNOW_US_MOREINFO_CHECK' },
 			dirty,
 		})(dispatch)
@@ -241,7 +241,7 @@ export function validateAccessWarning(validateId, accepted, dirty) {
 	return async function(dispatch, getState) {
 		const isValid = !!accepted
 		validate(validateId, 'accessWarningCheck', {
-			isValid: isValid,
+			isValid,
 			err: { msg: 'ERR_ACCESS_WARNING_CHECK' },
 			dirty,
 		})(dispatch)
@@ -250,11 +250,11 @@ export function validateAccessWarning(validateId, accepted, dirty) {
 	}
 }
 
-export function validateCampaignUnits(validateId, adUnits, dirty) {
+export function validateCampaignUnits({ validateId, adUnits, dirty }) {
 	return async function(dispatch, getState) {
 		const isValid = !!adUnits && adUnits.length
 		validate(validateId, 'adUnits', {
-			isValid: isValid,
+			isValid,
 			err: { msg: 'ERR_ADUNITS_REQUIRED' },
 			dirty,
 		})(dispatch)
@@ -316,6 +316,58 @@ const validateAmounts = ({
 	return { error }
 }
 
+export function validateFees({
+	validateId,
+	feesAmountBN,
+	amountToSpendBN,
+	errorMsg = '',
+	dirty,
+}) {
+	return async function(dispatch, getState) {
+		let isValid = true
+		let msg = errorMsg
+		let args = []
+		const state = getState()
+
+		const {
+			availableIdentityBalanceMainToken: availableIdentityBalanceMainTokenRaw,
+		} = selectAccountStatsRaw(state)
+		const {
+			availableIdentityBalanceMainToken: availableIdentityBalanceMainTokenFormatted,
+		} = selectAccountStatsFormatted(state)
+		const amountNeeded = bigNumberify(feesAmountBN).add(
+			bigNumberify(amountToSpendBN)
+		)
+
+		const { symbol, decimals } = selectMainToken(state)
+
+		if (amountNeeded.gt(bigNumberify(availableIdentityBalanceMainTokenRaw))) {
+			const amountNeededFormatted = formatTokenAmount(
+				amountNeeded,
+				decimals,
+				null,
+				2
+			)
+			isValid = false
+			msg = 'ERR_TX_INSUFFICIENT_BALANCE'
+			args = [
+				amountNeededFormatted,
+				symbol,
+				availableIdentityBalanceMainTokenFormatted,
+				symbol,
+			]
+		}
+
+		await validate(validateId, 'fees', {
+			isValid,
+			err: { msg, args },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
 export function validateWithdrawAmount({
 	validateId,
 	amountToWithdraw,
@@ -323,19 +375,15 @@ export function validateWithdrawAmount({
 	availableIdentityBalanceMainTokenFormatted,
 	decimals,
 	symbol,
-	errorMsg,
 	dirty,
 }) {
-	return async function(dispatch, getState) {
+	return async function(dispatch) {
 		let isValid = isNumberString(amountToWithdraw)
 
-		let msg = errorMsg || 'ERR_INVALID_AMOUNT_VALUE'
+		let msg = 'ERR_INVALID_AMOUNT_VALUE'
 		let args = []
-		let amount = isValid ? parseUnits(amountToWithdraw, decimals) : null
-		if (errorMsg) {
-			isValid = false
-			msg = errorMsg
-		} else if (isValid && amount.isZero()) {
+		const amount = isValid ? parseUnits(amountToWithdraw, decimals) : null
+		if (isValid && amount.isZero()) {
 			isValid = false
 			msg = 'ERR_ZERO_WITHDRAW_AMOUNT'
 		} else if (
@@ -357,13 +405,28 @@ export function validateWithdrawAmount({
 	}
 }
 
-export function validateNumberString({ validateId, prop, value, dirty }) {
+export function validateNumberString({
+	validateId,
+	prop,
+	value,
+	dirty,
+	integerOnly,
+}) {
 	return async function(dispatch, getState) {
-		const isValid = isNumberString(value)
+		let isValid = isNumberString(value)
+		let msg = 'ERR_INVALID_AMOUNT'
+
+		if (isValid && integerOnly) {
+			const int = parseInt(value, 10)
+			if (int.toString() !== value.toString()) {
+				isValid = false
+				msg = 'ERR_INVALID_INTEGER_NUMBER'
+			}
+		}
 
 		validate(validateId, prop, {
 			isValid,
-			err: { msg: 'ERR_INVALID_AMOUNT' },
+			err: { msg },
 			dirty,
 		})(dispatch)
 
@@ -587,6 +650,7 @@ export function validatePrivLevel({ validateId, privLevel, dirty }) {
 		return isValid
 	}
 }
+
 export function validateSchemaProp({ validateId, value, prop, schema, dirty }) {
 	return async function(dispatch) {
 		const result = Joi.validate(value, schema)

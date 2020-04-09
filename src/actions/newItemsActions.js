@@ -1,114 +1,141 @@
 import {
-	updateSpinner,
-	updateNewItem,
-	handleAfterValidation,
-	validateSchemaProp,
-	validateNumberString,
-} from 'actions'
-import { numStringCPMtoImpression } from 'helpers/numbers'
-import { selectMainToken, selectNewAdSlot } from 'selectors'
-import { AdSlot, schemas } from 'adex-models'
-import { verifyWebsite } from 'services/adex-market/actions'
+	UPDATE_NEW_ITEM,
+	RESET_NEW_ITEM,
+	RESET_ALL_NEW_ITEMS,
+} from 'constants/actionTypes'
+import { selectNewItems } from 'selectors'
+import { Base, Models } from 'adex-models'
+import { updateSpinner, handleAfterValidation } from 'actions'
 
-const { adSlotPost } = schemas
+export function updateNewItem(item, newValues, itemType, objModel) {
+	item = Base.updateObject({ item, newValues, objModel })
+	return function(dispatch) {
+		return dispatch({
+			type: UPDATE_NEW_ITEM,
+			item,
+			itemType,
+		})
+	}
+}
 
-export function updateNewSlot(prop, value, newValues) {
+export function resetNewItem(item) {
+	return function(dispatch) {
+		return dispatch({
+			type: RESET_NEW_ITEM,
+			item: item,
+		})
+	}
+}
+
+export function resetAllNewItems() {
+	return function(dispatch) {
+		return dispatch({
+			type: RESET_ALL_NEW_ITEMS,
+		})
+	}
+}
+
+export function updateNewItemAction(type, prop, value, newValues) {
 	return async function(dispatch, getState) {
 		const state = getState()
-		const currentSlot = selectNewAdSlot(state)
+		const currentItem = selectNewItems(state)
 		await updateNewItem(
-			currentSlot,
+			currentItem[type],
 			newValues || { [prop]: value },
-			'AdSlot',
-			AdSlot
+			type,
+			Models.itemClassByName[type]
 		)(dispatch)
 	}
 }
 
-export function validateNewSlotBasics({
+export function updateNewSlot(prop, value, newValues) {
+	return async function(dispatch, getState) {
+		await updateNewItemAction('AdSlot', prop, value, newValues)(
+			dispatch,
+			getState
+		)
+	}
+}
+
+export function updateNewUnit(prop, value, newValues) {
+	return async function(dispatch, getState) {
+		await updateNewItemAction('AdUnit', prop, value, newValues)(
+			dispatch,
+			getState
+		)
+	}
+}
+
+export function updateNewCampaign(prop, value, newValues) {
+	return async function(dispatch, getState) {
+		await updateNewItemAction('Campaign', prop, value, newValues)(
+			dispatch,
+			getState
+		)
+	}
+}
+
+export function updateNewItemTargets({
+	collection,
+	itemType,
+	target = {},
+	index,
+	remove,
+}) {
+	return async function(dispatch, getState) {
+		const state = getState()
+		const { temp } = selectNewItems(state)[itemType]
+		// We are keeping the state in temp because it dirty with extra data
+		const targets = [...(temp.targets || [])]
+		const hasIndex = Number.isInteger(index)
+
+		if (hasIndex && !remove) {
+			// NOTE: when updated with index target has only { target: { tag, score }}
+			targets[index] = { ...(targets[index] || {}), ...target }
+		} else if (hasIndex && remove) {
+			targets.splice(index, 1)
+		} else {
+			// NOTE: when updated w/o index target has no key
+			targets.push({ ...target, key: targets.length })
+		}
+
+		// The actual targets added to the spec
+		const filtered = targets.filter(x => x.target.tag).map(x => x.target)
+
+		const newValues = {
+			[collection]: filtered,
+			temp: { ...temp, targets },
+		}
+
+		await updateNewItemAction(itemType, null, null, newValues)(
+			dispatch,
+			getState
+		)
+	}
+}
+
+export function completeItem({
+	itemType,
+	competeAction,
 	validateId,
-	dirty,
 	onValid,
 	onInvalid,
 }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
+		let isValid = false
 		try {
-			const mainToken = selectMainToken()
-			const state = getState()
-			const slot = selectNewAdSlot(state)
-			const {
-				title,
-				description,
-				type,
-				website,
-				minPerImpression = null,
-				temp,
-			} = slot
-
-			const validations = await Promise.all([
-				validateSchemaProp({
-					validateId,
-					value: title,
-					prop: 'title',
-					schema: adSlotPost.title,
-					dirty,
-				})(dispatch),
-				validateSchemaProp({
-					validateId,
-					value: description,
-					prop: 'description',
-					schema: adSlotPost.description,
-					dirty,
-				})(dispatch),
-				validateSchemaProp({
-					validateId,
-					value: type,
-					prop: 'type',
-					schema: adSlotPost.type,
-					dirty,
-				})(dispatch),
-				validateSchemaProp({
-					validateId,
-					value: website,
-					prop: 'website',
-					schema: adSlotPost.website,
-					dirty,
-				})(dispatch),
-				validateNumberString({
-					validateId,
-					prop: 'minPerImpression',
-					value: minPerImpression || '0',
-					dirty,
-				})(dispatch),
-			])
-
-			let isValid = validations.every(v => v === true)
-
-			if (isValid) {
-				isValid = await validateSchemaProp({
-					validateId,
-					value: {
-						[mainToken.address]: numStringCPMtoImpression({
-							numStr: minPerImpression,
-							decimals: mainToken.decimals,
-						}),
-					},
-					prop: 'minPerImpression',
-					schema: adSlotPost.minPerImpression,
-					dirty,
-				})(dispatch)
-			}
-
-			const { hostname, issues } = isValid
-				? await verifyWebsite({ websiteUrl: website })
-				: {}
-			const newTemp = { ...temp, hostname, issues }
-			updateNewSlot('temp', newTemp)(dispatch, getState)
-
-			await handleAfterValidation({ isValid, onValid, onInvalid })
-		} catch (err) {}
+			await competeAction()(dispatch, getState)
+			isValid = true
+		} catch (err) {
+			console.error('ERR_ITEM', err)
+		}
 
 		await updateSpinner(validateId, false)(dispatch)
+
+		await handleAfterValidation({ isValid, onValid, onInvalid })
+		if (isValid) {
+			resetNewItem(itemType)(dispatch)
+		}
 	}
 }

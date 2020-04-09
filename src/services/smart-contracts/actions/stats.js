@@ -184,7 +184,8 @@ export async function getAccountStats({
 	)
 
 	const identityBalanceMainToken =
-		identityWithdrawTokensBalancesBalances.totalBalanceInMainToken
+		identityWithdrawTokensBalancesBalances.totalBalanceInMainToken ||
+		bigNumberify(0)
 
 	// BigNumber values for balances
 	const raw = {

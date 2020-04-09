@@ -1,241 +1,88 @@
-import React, { Component } from 'react'
+import React, { Fragment, useState } from 'react'
 import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import actions from 'actions'
 import { AdSlot } from 'adex-models'
-import copy from 'copy-to-clipboard'
-import ItemHoc from 'components/dashboard/containers/ItemHoc'
-import { BasicProps } from 'components/dashboard/containers/ItemCommon'
-import CopyIcon from '@material-ui/icons/FileCopy'
-import { withStyles } from '@material-ui/core/styles'
-import { styles } from './styles'
-import { Tab, Tabs, AppBar, Paper, IconButton } from '@material-ui/core'
-import { WebsiteIssues } from 'components/dashboard/containers/Slot/WebsiteIssues'
+import { Tab, Tabs, AppBar, Box } from '@material-ui/core'
+import { makeStyles, withStyles } from '@material-ui/core/styles'
+import { useItem, SaveBtn } from 'components/dashboard/containers/ItemCommon/'
+import { SlotBasic } from './SlotBasic'
+import { IntegrationCode } from './IntegrationCode'
+import { validateAndUpdateSlot } from 'actions'
+import { t } from 'selectors'
 
-import { Alert, AlertTitle } from '@material-ui/lab'
-import url from 'url'
-import {
-	selectRoutineWithdrawTokensAddresses,
-	selectHasConfirmedEmail,
-} from 'selectors'
-
-const ADVIEW_URL = process.env.ADVIEW_URL
-const adviewUrl = url.parse(ADVIEW_URL)
-const origin = `${adviewUrl.protocol}//${adviewUrl.host}`
-
-const AUTO_HIDE_STRING = `window.addEventListener('message', function(ev) { 
-		if (ev.data.hasOwnProperty('adexHeight') && ('${origin}' === ev.origin)) {
-			for (let f of document.getElementsByTagName('iframe')) {	
-				if (f.contentWindow === ev.source) {
-					f.height = ev.data.adexHeight;
-				}
-			}	
-		}
-	}, false)`
-
-// const ADEX_MARKET_HOST = process.env.ADEX_MARKET_HOST
-
-const IntegrationCode = ({ t, account, slot = {}, classes, onCopy }) => {
-	const { id, type, tags, fallbackUnit } = slot
-	const identityAddr = account.identity.address
-
-	let sizes = type.split('_')[1].split('x')
-	sizes = {
-		width: sizes[0],
-		height: sizes[1],
+export const styles = theme => {
+	return {
+		appBar: {
+			zIndex: theme.zIndex.appBar - 1,
+			backgroundColor: theme.palette.accentTwo.main,
+		},
 	}
+}
 
-	const options = {
-		publisherAddr: identityAddr,
-		whitelistedTokens: selectRoutineWithdrawTokensAddresses(),
-		whitelistedType: type,
-		randomize: true,
-		targeting: tags || [],
-		// marketURL: ADEX_MARKET_HOST,
-		width: sizes.width,
-		height: sizes.height,
-		minPerImpression: '0',
-		minTargetingScore: '0',
-		fallbackUnit,
-		marketSlot: id,
-	}
+const useStyles = makeStyles(styles)
 
-	let query = encodeURIComponent(JSON.stringify({ options }))
+const StyledTabs = withStyles(theme => ({
+	indicator: {
+		backgroundColor: theme.palette.accentTwo.contrastText,
+	},
+}))(props => <Tabs {...props} />)
 
-	let src = ADVIEW_URL + query
+const StyledTab = withStyles(theme => ({
+	root: {
+		color: theme.palette.accentTwo.contrastText,
+		opacity: 0.69,
+		'&:hover': {
+			color: theme.palette.accentTwo.contrastText,
+			opacity: 1,
+		},
+		'&$selected': {
+			color: theme.palette.accentTwo.contrastText,
+			opacity: 1,
+		},
+		'&:focus': {
+			color: theme.palette.accentTwo.contrastText,
+			opacity: 1,
+		},
+	},
+	selected: {},
+}))(props => <Tab {...props} />)
 
-	let iframeStr =
-		`<iframe\n` +
-		`	src="${src}"\n` +
-		`	width="${sizes.width}"\n` +
-		`	height="${sizes.height}"\n` +
-		`	scrolling="no"\n` +
-		`	frameborder="0"\n` +
-		`	style="border: 0;"\n` +
-		`	onload="${AUTO_HIDE_STRING}"\n` +
-		`></iframe>`
+function Slot({ match }) {
+	const classes = useStyles()
+	const [tabIndex, setTabIndex] = useState(0)
+	const { item, ...hookProps } = useItem({
+		itemType: 'AdSlot',
+		match,
+		objModel: AdSlot,
+		validateAndUpdateFn: validateAndUpdateSlot,
+	})
 
-	// TODO: Add copy to clipboard and tooltip or description how to use it
 	return (
-		<div>
-			<div className={classes.integrationLabel}>
-				{t('INTEGRATION_CODE')}
-				<IconButton
-					color='default'
-					onClick={() => {
-						copy(iframeStr)
-						onCopy && onCopy()
-					}}
+		<Fragment>
+			<SaveBtn {...hookProps} />
+			<AppBar position='static' className={classes.appBar}>
+				<StyledTabs
+					value={tabIndex}
+					onChange={(ev, index) => setTabIndex(index)}
+					scrollButtons='auto'
+					indicatorColor='primary'
+					textColor='primary'
 				>
-					<CopyIcon />
-				</IconButton>
-			</div>
-			<Paper>
-				<pre className={classes.integrationCode}>{iframeStr}</pre>
-			</Paper>
-			{process.env.NODE_ENV !== 'production' && (
-				<div>
-					<br />
-					<div className={classes.integrationLabel}> {t('AD_PREVIEW')}</div>
-					<div dangerouslySetInnerHTML={{ __html: iframeStr }} />
-				</div>
-			)}
-		</div>
+					<StyledTab label={t('SLOT_MAIN')} />
+					<StyledTab label={t('INTEGRATION')} />
+					{/* There are no stats displayed currently so I will just comment this out */}
+					{/* <Tab label={t('STATISTICS')} /> */}
+				</StyledTabs>
+			</AppBar>
+			<Box my={2}>
+				{tabIndex === 0 && <SlotBasic item={item} {...hookProps} />}
+				{tabIndex === 1 && <IntegrationCode slot={item} />}
+			</Box>
+		</Fragment>
 	)
 }
 
-export class Slot extends Component {
-	constructor(props) {
-		super(props)
-		this.state = {
-			editFallbackImg: false,
-			tabIndex: 0,
-		}
-		this.tabsFocus = React.createRef()
-	}
-
-	handleFallbackImgUpdateToggle = () => {
-		const active = this.state.editFallbackImg
-		this.setState({ editFallbackImg: !active })
-	}
-
-	handleTabChange = (event, index) => {
-		this.setState({ tabIndex: index }, () => {
-			if (this.tabsFocus.current) {
-				this.tabsFocus.current.scrollIntoView({
-					behavior: 'smooth',
-					block: 'start',
-				})
-			}
-		})
-	}
-
-	render() {
-		const {
-			t,
-			classes,
-			isDemo,
-			item,
-			account,
-			itemType,
-			isEmailConfirmed,
-			...rest
-		} = this.props
-		const { tabIndex } = this.state
-
-		return (
-			<div>
-				<BasicProps
-					item={item}
-					itemType={itemType}
-					t={t}
-					url={item.adUrl}
-					canEditImg={!isDemo}
-					rightComponent={<WebsiteIssues website={item.website} />}
-					{...rest}
-				/>
-				<div>
-					<AppBar position='static' color='default'>
-						<Tabs
-							value={tabIndex}
-							onChange={this.handleTabChange.bind(this)}
-							ref={this.tabsFocus}
-							scrollButtons='auto'
-							indicatorColor='primary'
-							textColor='primary'
-						>
-							<Tab label={t('INTEGRATION')} />
-							{/* There are no stats displayed currently so I will just comment this out */}
-							{/* <Tab label={t('STATISTICS')} /> */}
-						</Tabs>
-					</AppBar>
-					<div style={{ marginTop: 10 }}>
-						{tabIndex === 0 &&
-							(isEmailConfirmed ? (
-								<IntegrationCode
-									classes={classes}
-									t={t}
-									account={account}
-									slot={item}
-									onCopy={() =>
-										this.props.actions.addToast({
-											type: 'accept',
-											label: t('COPIED_TO_CLIPBOARD'),
-											timeout: 5000,
-										})
-									}
-								/>
-							) : (
-								<Alert severity='warning' variant='outlined'>
-									<AlertTitle>
-										{t('EMAIL_NOT_CONFIRMED_WARNING_TITLE')}
-									</AlertTitle>
-									<div
-										dangerouslySetInnerHTML={{
-											__html: t('EMAIL_WARNING_SLOT_INTEGRATION'),
-										}}
-									/>
-								</Alert>
-							))}
-						{/* {tabIndex === 0 && null} */}
-					</div>
-				</div>
-			</div>
-		)
-	}
-}
-
 Slot.propTypes = {
-	actions: PropTypes.object.isRequired,
-	account: PropTypes.object.isRequired,
-	item: PropTypes.object.isRequired,
+	match: PropTypes.object.isRequired,
 }
 
-function mapStateToProps(state) {
-	const { persist } = state
-	// let memory = state.memory
-	return {
-		account: persist.account,
-		objModel: AdSlot,
-		itemType: 'AdSlot',
-		// NOTE: maybe not the best way but pass props to the HOC here
-		updateImgInfoLabel: 'SLOT_AVATAR_IMG_INFO',
-		updateImgLabel: 'SLOT_AVATAR_IMG_LABEL',
-		updateImgErrMsg: 'ERR_IMG_SIZE_MAX',
-		updateImgExact: true,
-		isEmailConfirmed: selectHasConfirmedEmail(state),
-	}
-}
-
-function mapDispatchToProps(dispatch) {
-	return {
-		actions: bindActionCreators(actions, dispatch),
-	}
-}
-
-const SlotItem = ItemHoc(withStyles(styles)(Slot))
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(SlotItem)
+export default Slot

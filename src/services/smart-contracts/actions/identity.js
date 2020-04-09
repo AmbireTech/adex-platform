@@ -169,6 +169,8 @@ export async function withdrawFromIdentity({
 	if (getFeesOnly) {
 		return {
 			fees: fees.total,
+			totalBN: fees.totalBN,
+			actualWithdrawAmount,
 			toGet: formatTokenAmount(actualWithdrawAmount, decimals),
 		}
 	}
@@ -220,8 +222,12 @@ export async function setIdentityPrivilege({
 	})
 
 	if (getFeesOnly) {
+		const { total, totalBN } = await getIdentityTxnsTotalFees({
+			txnsByFeeToken,
+		})
 		return {
-			fees: (await getIdentityTxnsTotalFees({ txnsByFeeToken })).total,
+			fees: total,
+			totalBN,
 		}
 	}
 
@@ -327,13 +333,14 @@ export async function addIdentityENS({ username = '', account, getFeesOnly }) {
 	})
 
 	const { mainToken } = selectRelayerConfig()
-	const { total } = await getIdentityTxnsTotalFees({
+	const { total, totalBN } = await getIdentityTxnsTotalFees({
 		txnsByFeeToken,
 		mainToken,
 	})
 	if (getFeesOnly) {
 		return {
 			fees: total,
+			totalBN,
 		}
 	}
 

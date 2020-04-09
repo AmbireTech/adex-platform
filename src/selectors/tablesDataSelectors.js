@@ -143,8 +143,8 @@ export const selectAdSlotsTableData = createSelector(
 			return {
 				media: {
 					id,
-					mediaUrl: item.fallbackUnit ? `ipfs://${item.fallbackUnit}` : '', //TODO: provide fallback image to slot
-					mediaMime: 'image/jpeg',
+					mediaUrl: item.mediaUrl,
+					mediaMime: item.mediaMime,
 					to,
 				},
 				title: item.title,

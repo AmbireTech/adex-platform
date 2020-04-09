@@ -36,22 +36,18 @@ function AdSlotBasic({ validateId }) {
 		selectSpinnerById(state, UPDATING_SLOTS_DEMAND)
 	)
 
-	const invalidFields = useSelector(
-		state => selectValidationsById(state, validateId) || {}
-	)
-
-	useEffect(() => {
-		execute(updateSlotsDemandThrottled())
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
-
 	const {
 		title: errTitle,
 		description: errDescription,
 		website: errWebsite,
 		type: errType,
 		minPerImpression: errMin,
-	} = invalidFields
+	} = useSelector(state => selectValidationsById(state, validateId) || {})
+
+	useEffect(() => {
+		execute(updateSlotsDemandThrottled())
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	const { symbol } = selectMainToken
 
@@ -61,7 +57,7 @@ function AdSlotBasic({ validateId }) {
 				<FullContentSpinner />
 			) : (
 				<Grid container spacing={2}>
-					<Grid item sm={12}>
+					<Grid item xs={12}>
 						<TextField
 							fullWidth
 							type='text'
@@ -79,7 +75,7 @@ function AdSlotBasic({ validateId }) {
 							}
 						/>
 					</Grid>
-					<Grid item sm={12}>
+					<Grid item xs={12}>
 						<TextField
 							fullWidth
 							type='text'
@@ -99,7 +95,7 @@ function AdSlotBasic({ validateId }) {
 							}
 						/>
 					</Grid>
-					<Grid item sm={12}>
+					<Grid item xs={12}>
 						<TextField
 							fullWidth
 							type='text'
@@ -125,7 +121,7 @@ function AdSlotBasic({ validateId }) {
 							}
 						/>
 					</Grid>
-					<Grid item sm={12} md={12}>
+					<Grid item xs={12}>
 						<Dropdown
 							fullWidth
 							required
@@ -144,7 +140,7 @@ function AdSlotBasic({ validateId }) {
 							}
 						/>
 					</Grid>
-					<Grid item sm={12} md={12}>
+					<Grid item xs={12}>
 						<TextField
 							fullWidth
 							type='text'

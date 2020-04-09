@@ -171,97 +171,6 @@ export function onUploadLocalWallet(event) {
 	}
 }
 
-export function setIdentityENS({ username }) {
-	return async function(dispatch, getState) {
-		try {
-			const account = selectAccount(getState())
-			await addIdentityENS({
-				username,
-				account,
-			})
-
-			addToast({
-				type: 'accept',
-				label: translate('ENS_SETUP_NOTIFICATION', { args: [username] }),
-				timeout: 20000,
-			})(dispatch)
-		} catch (err) {
-			console.error('ERR_SETTING_ENS', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_SETTING_ENS', {
-					args: [err],
-				}),
-				timeout: 20000,
-			})(dispatch)
-		}
-	}
-}
-
-export function identityWithdraw({ amountToWithdraw, withdrawTo }) {
-	return async function(dispatch, getState) {
-		try {
-			const account = selectAccount(getState())
-			const result = await withdrawFromIdentity({
-				account,
-				amountToWithdraw,
-				withdrawTo,
-			})
-			addToast({
-				type: 'accept',
-				label: translate('IDENTITY_WITHDRAW_NOTIFICATION', {
-					args: [result],
-				}),
-				timeout: 20000,
-			})(dispatch)
-		} catch (err) {
-			console.error('ERR_IDENTITY_WITHDRAW_NOTIFICATION', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_IDENTITY_WITHDRAW_NOTIFICATION', {
-					args: [getErrorMsg(err)],
-				}),
-				timeout: 20000,
-			})(dispatch)
-		}
-	}
-}
-
-export function identityWithdrawAny({
-	amountToWithdraw,
-	withdrawTo,
-	tokenAddress,
-	tokenDecimals,
-}) {
-	return async function(dispatch, getState) {
-		try {
-			const account = selectAccount(getState())
-			const result = await withdrawOtherTokensFromIdentity({
-				account,
-				amountToWithdraw,
-				withdrawTo,
-				tokenAddress,
-				tokenDecimals,
-			})
-
-			addToast({
-				type: 'accept',
-				label: translate('IDENTITY_WITHDRAW_NOTIFICATION', { args: [result] }),
-				timeout: 20000,
-			})(dispatch)
-		} catch (err) {
-			console.error('ERR_IDENTITY_WITHDRAW_NOTIFICATION', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_IDENTITY_WITHDRAW_NOTIFICATION', {
-					args: [getErrorMsg(err)],
-				}),
-				timeout: 20000,
-			})(dispatch)
-		}
-	}
-}
-
 export function ownerIdentities({ owner, authType }) {
 	return async function(dispatch, getState) {
 		updateSpinner(GETTING_OWNER_IDENTITIES, true)(dispatch)
@@ -297,35 +206,6 @@ export function ownerIdentities({ owner, authType }) {
 			})(dispatch)
 		}
 		updateSpinner(GETTING_OWNER_IDENTITIES, false)(dispatch)
-	}
-}
-
-export function addrIdentityPrivilege({ setAddr, privLevel }) {
-	return async function(dispatch, getState) {
-		try {
-			const account = selectAccount(getState())
-			const result = await setIdentityPrivilege({
-				account,
-				setAddr,
-				privLevel,
-			})
-			addToast({
-				type: 'accept',
-				label: translate('IDENTITY_SET_ADDR_PRIV_NOTIFICATION', {
-					args: [result],
-				}),
-				timeout: 20000,
-			})(dispatch)
-		} catch (err) {
-			console.error('ERR_IDENTITY_SET_ADDR_PRIV_NOTIFICATION', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_IDENTITY_SET_ADDR_PRIV_NOTIFICATION', {
-					args: [getErrorMsg(err)],
-				}),
-				timeout: 20000,
-			})(dispatch)
-		}
 	}
 }
 

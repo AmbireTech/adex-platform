@@ -1,8 +1,7 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux'
 import { makeStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
-import NewTransactionHoc from './TransactionHoc'
 import ErrorIcon from '@material-ui/icons/Error'
 import WarningIcon from '@material-ui/icons/Warning'
 import { WalletAction } from 'components/dashboard/forms/FormsCommon'
@@ -13,7 +12,6 @@ import {
 	ContentStickyTop,
 	FullContentSpinner,
 } from 'components/common/dialog/content'
-import Helper from 'helpers/miscHelpers'
 import { styles } from './styles'
 import {
 	IdentityWithdrawPreview,
@@ -29,67 +27,28 @@ import {
 	selectAccount,
 	selectNewTransactionById,
 } from 'selectors'
-import { execute, updateSpinner, checkNetworkCongestion } from 'actions'
 
 const useStyles = makeStyles(styles)
 
 function TransactionPreview(props) {
 	const classes = useStyles()
-	const {
-		getFeesFn,
-		handleChange,
-		identityAvailable,
-		previewWarnMsgs,
-		stepsId,
-	} = props
+	const { previewWarnMsgs, stepsId } = props
 	const txId = stepsId
 	const account = useSelector(selectAccount)
 	const { address } = account.identity
 	const { symbol } = useSelector(selectMainToken)
-	const transaction = useSelector(state =>
-		selectNewTransactionById(state, txId)
-	)
-	const spinner = useSelector(state => selectSpinnerById(state, txId))
-
-	useEffect(() => {
-		if (getFeesFn && Object.keys(transaction).length) {
-			execute(updateSpinner(txId, true))
-			getFeesFn({ account, transaction })
-				.then(feesData => {
-					handleChange('feesData', feesData)
-					// if (feesData.toGet) {
-					// 	handleChange('withdrawAmount', feesData.toGet)
-					// }
-					execute(updateSpinner(txId, false))
-
-					if (parseFloat(feesData.fees || 0) > parseFloat(identityAvailable)) {
-						handleChange('errors', [
-							t('INSUFFICIENT_BALANCE_FOR_FEES', {
-								args: [identityAvailable, symbol, feesData.fees, symbol],
-							}),
-						])
-					}
-				})
-				.catch(err => {
-					console.error(err)
-					execute(updateSpinner(txId, false))
-					handleChange('errors', [Helper.getErrMsg(err)])
-				})
-		}
-		execute(checkNetworkCongestion())
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
-
+	const spinner = useSelector(state => selectSpinnerById(state, stepsId))
 	const {
 		withdrawTo,
 		amountToWithdraw,
+		waitingForWalletAction,
 		setAddr,
-		setEns,
+		username,
 		privLevel,
 		tokenAddress,
 		feesData = {},
 		errors = [],
-	} = transaction
+	} = useSelector(state => selectNewTransactionById(state, txId))
 
 	return (
 		<div>
@@ -97,7 +56,7 @@ function TransactionPreview(props) {
 				<FullContentSpinner />
 			) : (
 				<ContentBox>
-					{transaction.waitingForWalletAction ? (
+					{waitingForWalletAction ? (
 						<ContentStickyTop>
 							<WalletAction t={t} authType={account.wallet.authType} />
 						</ContentStickyTop>
@@ -169,7 +128,7 @@ function TransactionPreview(props) {
 								feesData={feesData}
 								address={address}
 								symbol={symbol}
-								setEns={setEns}
+								username={username}
 							/>
 						)}
 					</ContentBody>
@@ -180,10 +139,8 @@ function TransactionPreview(props) {
 }
 
 TransactionPreview.propTypes = {
-	label: PropTypes.string,
 	stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 	previewMsgs: PropTypes.array,
 }
 
-const TransactionPreviewForm = NewTransactionHoc(TransactionPreview)
-export default TransactionPreviewForm
+export default TransactionPreview

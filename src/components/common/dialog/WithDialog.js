@@ -37,7 +37,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const useStyles = makeStyles(styles)
 
-export default function ItemHoc(Decorated) {
+export default function WithDialogHoc(Decorated) {
 	function WithDialog(props) {
 		const {
 			forwardedRef,
@@ -136,19 +136,17 @@ export default function ItemHoc(Decorated) {
 					// onEscKeyDown={handleToggle}
 					// onOverlayClick={handleToggle}
 				>
-					<DialogTitle disableTypography>
-						<Typography
-							variant='subtitle1'
-							classes={{
-								root: classnames(classes.dialogTitle, classes.breakLong),
-							}}
-						>
-							{t(title)}
-							<IconButton onClick={handleToggle}>
-								<CancelIcon />
-							</IconButton>
-						</Typography>
-					</DialogTitle>{' '}
+					<DialogTitle
+						disableTypography
+						classes={{
+							root: classnames(classes.dialogTitle, classes.breakLong),
+						}}
+					>
+						<Typography variant='subtitle1'>{t(title)}</Typography>
+						<IconButton onClick={handleToggle}>
+							<CancelIcon />
+						</IconButton>
+					</DialogTitle>
 					<DialogContent classes={{ root: classes.content }}>
 						<Decorated ref={forwardedRef} {...rest} closeDialog={closeDialog} />
 					</DialogContent>

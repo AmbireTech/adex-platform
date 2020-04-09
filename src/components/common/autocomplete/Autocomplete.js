@@ -31,7 +31,7 @@ function Autocomplete(props) {
 		validateCreation
 	)
 	useEffect(() => {
-		onInit()
+		typeof onInit === 'function' && onInit()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
