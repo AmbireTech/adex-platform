@@ -1,6 +1,36 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.10.45
+##### *2020-04-09*
+
+### Added
+- Export receipts for publishers #412
+- Analytics select time period for time frames #418
+- Analytics chart NOW annotation
+- Date utils for date operations
+- Week start aggregations with locale
+
+### Changed
+- Getting  started guide progress icons ans styles
+- Hide getting started for each side separately
+- Publisher/Advertiser color scheme
+- Analytics updated on 60 seconds instead 120 (will be optimized in next version)
+- Big code refactoring #417:
+  - Stepper accepts validation and complete functions instead passing components
+  - Stepper styles with `flex` - no more `absolute` inside
+  - Web3 transactions steps (Withdraw tokens, Set privileges, Set ENS), new items steps (Campaigns, Slot, Unit), Item details pages (Campaigns Slots, Unit) - now are w/o HOCs, using hooks only (except for Dialog Hoc), selectors and actions. Validations using actions for the whole step/details page.
+  - Updated details pages layout and styles
+- Layout and misc styles updated
+- Updated versions of material-ui packages
+- Code cleanup
+
+### Fixed
+- Ad units selector bug when loaded from old versions state
+- Passback/fallback wording fix #425
+
+
+
 ## 4.10.44
 ##### *2020-03-26*
 
