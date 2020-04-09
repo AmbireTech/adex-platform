@@ -3,6 +3,7 @@ import {
 	RESET_ANALYTICS,
 	UPDATE_ANALYTICS_TIMEFRAME,
 	UPDATE_ANALYTICS_PERIOD,
+	UPDATE_ANALYTICS_LAST_CHECKED,
 	UPDATE_PUBLISHER_RECEIPTS,
 	UPDATE_ADVANCED_ANALYTICS,
 	UPDATE_DEMAND_ANALYTICS,
@@ -19,6 +20,10 @@ export default function analyticsReducer(
 		case UPDATE_ANALYTICS_TIMEFRAME:
 			newState = { ...state }
 			newState.timeframe = action.value
+			return newState
+		case UPDATE_ANALYTICS_LAST_CHECKED:
+			newState = { ...state }
+			newState.lastChecked = action.value
 			return newState
 		case UPDATE_ANALYTICS:
 			newState = { ...state }
