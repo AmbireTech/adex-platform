@@ -60,8 +60,8 @@ export class DateUtils extends MomentUtils {
 		})
 	}
 
-	getNearestSixHoursUTC(hoursToRound) {
-		const now = dateUtils.date()
+	getNearestSixHoursUTC(hoursToRound, date) {
+		const now = dateUtils.date(date)
 		const hoursMulti = Math.floor(dateUtils.getHours(now) / hoursToRound)
 		const nearestSix = dateUtils.setHours(
 			now,
