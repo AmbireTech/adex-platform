@@ -470,19 +470,22 @@ export const selectPublisherReceiptsPresentMonths = createSelector(
 )
 
 export const selectAnalyticsNowLabel = createSelector(
-	[selectAnalyticsTimeframe],
-	timeframe => {
+	[selectAnalyticsTimeframe, selectAnalyticsLastChecked],
+	(timeframe, lastChecked) => {
 		switch (timeframe) {
 			case 'hour':
-				return dateUtils.format(dateUtils.date(), DEFAULT_DATETIME_FORMAT)
+				return dateUtils.format(
+					dateUtils.date(lastChecked),
+					DEFAULT_DATETIME_FORMAT
+				)
 			case 'day':
 				return dateUtils.format(
-					dateUtils.setMinutes(dateUtils.date(), 0),
+					dateUtils.setMinutes(dateUtils.date(lastChecked), 0),
 					DEFAULT_DATETIME_FORMAT
 				)
 			case 'week':
 				return dateUtils.format(
-					dateUtils.getNearestSixHoursUTC(6),
+					dateUtils.getNearestSixHoursUTC(6, lastChecked),
 					DEFAULT_DATETIME_FORMAT
 				)
 			default:
