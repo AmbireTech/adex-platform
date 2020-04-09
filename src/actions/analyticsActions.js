@@ -199,11 +199,12 @@ export const updateAccountAnalytics = throttle(
 
 			const params = analyticsParams(timeframe, side)
 			let accountChanged = false
+			const liveTimestamp = selectAnalyticsLiveTimestamp(state)
+			const timeframeIsLive = liveTimestamp === start
 			const allAnalytics = params.map(async opts => {
 				const { datasets, labels } = selectStatsChartData(state, {
 					...opts,
 				})
-				const liveTimestamp = selectAnalyticsLiveTimestamp(state)
 				//TODO: must check
 				const chartImpressions = selectChartDatapointsImpressions(state, {
 					side,
@@ -213,7 +214,7 @@ export const updateAccountAnalytics = throttle(
 				const nowImpressions =
 					chartImpressions.datasets[chartImpressions.labels.indexOf(nowLabel)]
 				if (
-					(liveTimestamp === start && nowImpressions === 0) ||
+					(timeframeIsLive && nowImpressions === 0) || //TODO: this should be reconsidered
 					datasets.length === 0 ||
 					labels.length === 0
 				) {
@@ -257,7 +258,7 @@ export const updateAccountAnalytics = throttle(
 						})
 				}
 			})
-
+			timeframeIsLive && updateAnalyticsLastChecked()(dispatch)
 			await Promise.all(allAnalytics)
 		} catch (err) {
 			console.error('ERR_ANALYTICS', err)
@@ -547,6 +548,15 @@ export function resetAnalytics() {
 	return async function(dispatch, getState) {
 		return dispatch({
 			type: types.RESET_ANALYTICS,
+		})
+	}
+}
+
+export function updateAnalyticsLastChecked() {
+	return async function(dispatch) {
+		return dispatch({
+			type: types.UPDATE_ANALYTICS_LAST_CHECKED,
+			value: Date.now(),
 		})
 	}
 }
