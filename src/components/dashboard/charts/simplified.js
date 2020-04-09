@@ -3,7 +3,11 @@ import { useSelector } from 'react-redux'
 import { Line, Chart } from 'react-chartjs-2'
 import { CHARTS_COLORS } from 'components/dashboard/charts/options'
 import Helper from 'helpers/miscHelpers'
-import { selectMainToken, selectAnalyticsTimeframe } from 'selectors'
+import {
+	selectMainToken,
+	selectAnalyticsTimeframe,
+	selectAnalyticsNowLabel,
+} from 'selectors'
 import { formatFloatNumberWithCommas } from 'helpers/formatters'
 import * as ChartAnnotation from 'chartjs-plugin-annotation'
 import dateUtils from 'helpers/dateUtils'
@@ -36,6 +40,7 @@ export const SimpleStatistics = ({
 }) => {
 	const { symbol } = useSelector(selectMainToken)
 	const timeframe = useSelector(selectAnalyticsTimeframe)
+	const nowLabel = useSelector(selectAnalyticsNowLabel)
 	// Vertical line / crosshair
 	useEffect(() => {
 		Chart.pluginService.register({
@@ -63,37 +68,37 @@ export const SimpleStatistics = ({
 		})
 	})
 
-	const getNearestSixHoursUTC = hoursToRound => {
-		const now = dateUtils.date()
-		const hoursMulti = Math.floor(dateUtils.getHours(now) / hoursToRound)
-		const nearestSix = dateUtils.setHours(
-			now,
-			hoursMulti * hoursToRound + dateUtils.getUTCOffset(now)
-		)
-		return dateUtils.setMinutes(dateUtils.setSeconds(nearestSix, 0), 0)
-	}
+	// const getNearestSixHoursUTC = hoursToRound => {
+	// 	const now = dateUtils.date()
+	// 	const hoursMulti = Math.floor(dateUtils.getHours(now) / hoursToRound)
+	// 	const nearestSix = dateUtils.setHours(
+	// 		now,
+	// 		hoursMulti * hoursToRound + dateUtils.getUTCOffset(now)
+	// 	)
+	// 	return dateUtils.setMinutes(dateUtils.setSeconds(nearestSix, 0), 0)
+	// }
 
-	const getLabelByTimeframe = timeframe => {
-		switch (timeframe) {
-			case 'hour':
-				return dateUtils.format(dateUtils.date(), 'YYYY-MM-DD HH:mm')
-			case 'day':
-				return dateUtils.format(
-					dateUtils.setMinutes(dateUtils.date(), 0),
-					'YYYY-MM-DD HH:mm'
-				)
-			case 'week':
-				return dateUtils.format(getNearestSixHoursUTC(6), 'YYYY-MM-DD HH:mm')
-			default:
-				return dateUtils.format(dateUtils.date(), 'YYYY-MM-DD HH:mm')
-		}
-	}
+	// const getLabelByTimeframe = timeframe => {
+	// 	switch (timeframe) {
+	// 		case 'hour':
+	// 			return dateUtils.format(dateUtils.date(), 'YYYY-MM-DD HH:mm')
+	// 		case 'day':
+	// 			return dateUtils.format(
+	// 				dateUtils.setMinutes(dateUtils.date(), 0),
+	// 				'YYYY-MM-DD HH:mm'
+	// 			)
+	// 		case 'week':
+	// 			return dateUtils.format(getNearestSixHoursUTC(6), 'YYYY-MM-DD HH:mm')
+	// 		default:
+	// 			return dateUtils.format(dateUtils.date(), 'YYYY-MM-DD HH:mm')
+	// 	}
+	// }
 
-	const labelFormating = (timeframe, date) => {
-		return timeframe === 'week'
-			? dateUtils.format(dateUtils.date(date), 'Do MMM, HH:mm')
-			: dateUtils.format(dateUtils.date(date), 'HH:mm')
-	}
+	// const labelFormating = (timeframe, date) => {
+	// 	return timeframe === 'week'
+	// 		? dateUtils.format(dateUtils.date(date), 'Do MMM, HH:mm')
+	// 		: dateUtils.format(dateUtils.date(date), 'HH:mm')
+	// }
 
 	const chartData = {
 		labels: payouts.labels,
@@ -143,7 +148,7 @@ export const SimpleStatistics = ({
 					type: 'line',
 					mode: 'vertical',
 					scaleID: 'x-axis-0',
-					value: getLabelByTimeframe(timeframe),
+					value: nowLabel,
 					borderColor: 'red',
 					borderWidth: 2,
 					borderDash: [2, 2],
