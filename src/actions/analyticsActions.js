@@ -29,6 +29,8 @@ import {
 	selectAnalyticsLiveTimestamp,
 	selectPublisherReceiptsPresentMonths,
 	selectMonthsRange,
+	selectAnalyticsNowLabel,
+	selectChartDatapointsImpressions,
 } from 'selectors'
 import { bigNumberify } from 'ethers/utils'
 import dateUtils from 'helpers/dateUtils'
@@ -161,8 +163,12 @@ function aggrByChannelsSegments({
 	return aggrWithNullValues
 }
 
-export function updateAccountAnalytics() {
-	return async function(dispatch, getState) {
+export const updateAccountAnalyticsThrottled = () => (dispatch, getState) => {
+	return updateAccountAnalytics(dispatch, getState)
+}
+
+export const updateAccountAnalytics = throttle(
+	async function(dispatch, getState) {
 		const state = getState()
 		const account = selectAccount(state)
 		const side = selectSide(state)
@@ -198,8 +204,16 @@ export function updateAccountAnalytics() {
 					...opts,
 				})
 				const liveTimestamp = selectAnalyticsLiveTimestamp(state)
+				//TODO: must check
+				const chartImpressions = selectChartDatapointsImpressions(state, {
+					side,
+					timeframe,
+				})
+				const nowLabel = selectAnalyticsNowLabel(state)
+				const nowImpressions =
+					chartImpressions.datasets[chartImpressions.labels.indexOf(nowLabel)]
 				if (
-					liveTimestamp === start ||
+					(liveTimestamp === start && nowImpressions === 0) ||
 					datasets.length === 0 ||
 					labels.length === 0
 				) {
@@ -253,8 +267,10 @@ export function updateAccountAnalytics() {
 				timeout: 20000,
 			})(dispatch)
 		}
-	}
-}
+	},
+	1000,
+	{ leading: false, trailing: true }
+)
 
 export function updateAccountCampaignsAnalytics() {
 	return async function(dispatch, getState) {
@@ -470,7 +486,7 @@ export function updateAnalyticsPeriod(start) {
 				type: types.UPDATE_ANALYTICS_PERIOD,
 				value: { start, end },
 			})
-			updateAccountAnalytics()(dispatch, getState)
+			updateAccountAnalyticsThrottled()(dispatch, getState)
 		} catch (err) {
 			console.error('ERR_ANALYTICS_START_DATE_END_DATE', err)
 			addToast({
