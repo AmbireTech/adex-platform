@@ -3,14 +3,9 @@ import { useSelector } from 'react-redux'
 import { Line, Chart } from 'react-chartjs-2'
 import { CHARTS_COLORS } from 'components/dashboard/charts/options'
 import Helper from 'helpers/miscHelpers'
-import {
-	selectMainToken,
-	selectAnalyticsTimeframe,
-	selectAnalyticsNowLabel,
-} from 'selectors'
+import { selectMainToken, selectAnalyticsNowLabel } from 'selectors'
 import { formatFloatNumberWithCommas } from 'helpers/formatters'
 import * as ChartAnnotation from 'chartjs-plugin-annotation'
-import dateUtils from 'helpers/dateUtils'
 import { formatAbbrNum } from 'helpers/formatters'
 
 const commonDsProps = {
@@ -39,7 +34,6 @@ export const SimpleStatistics = ({
 	y4Color = CHARTS_COLORS[4],
 }) => {
 	const { symbol } = useSelector(selectMainToken)
-	const timeframe = useSelector(selectAnalyticsTimeframe)
 	const nowLabel = useSelector(selectAnalyticsNowLabel)
 	// Vertical line / crosshair
 	useEffect(() => {
@@ -67,38 +61,6 @@ export const SimpleStatistics = ({
 			},
 		})
 	})
-
-	// const getNearestSixHoursUTC = hoursToRound => {
-	// 	const now = dateUtils.date()
-	// 	const hoursMulti = Math.floor(dateUtils.getHours(now) / hoursToRound)
-	// 	const nearestSix = dateUtils.setHours(
-	// 		now,
-	// 		hoursMulti * hoursToRound + dateUtils.getUTCOffset(now)
-	// 	)
-	// 	return dateUtils.setMinutes(dateUtils.setSeconds(nearestSix, 0), 0)
-	// }
-
-	// const getLabelByTimeframe = timeframe => {
-	// 	switch (timeframe) {
-	// 		case 'hour':
-	// 			return dateUtils.format(dateUtils.date(), 'YYYY-MM-DD HH:mm')
-	// 		case 'day':
-	// 			return dateUtils.format(
-	// 				dateUtils.setMinutes(dateUtils.date(), 0),
-	// 				'YYYY-MM-DD HH:mm'
-	// 			)
-	// 		case 'week':
-	// 			return dateUtils.format(getNearestSixHoursUTC(6), 'YYYY-MM-DD HH:mm')
-	// 		default:
-	// 			return dateUtils.format(dateUtils.date(), 'YYYY-MM-DD HH:mm')
-	// 	}
-	// }
-
-	// const labelFormating = (timeframe, date) => {
-	// 	return timeframe === 'week'
-	// 		? dateUtils.format(dateUtils.date(date), 'Do MMM, HH:mm')
-	// 		: dateUtils.format(dateUtils.date(date), 'HH:mm')
-	// }
 
 	const chartData = {
 		labels: payouts.labels,
