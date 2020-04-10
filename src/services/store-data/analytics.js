@@ -21,7 +21,6 @@ const analyticsLoopCustom = ({ timeout, syncAction, stopOn }) =>
 	new Loop({
 		timeout: timeout,
 		syncAction: async () => syncAction(),
-		// selectAuth(getState()) && (await execute(updateAccountAnalytics())),
 		loopName: '_ANALYTICS_CUSTOM',
 		stopOn: () => !selectAuth(getState()) || stopOn,
 	})
