@@ -167,6 +167,7 @@ export const updateAccountAnalyticsThrottled = () => (dispatch, getState) => {
 
 export const updateAccountAnalytics = throttle(
 	async function(dispatch, getState) {
+		updateAnalyticsLastChecked()(dispatch)
 		const state = getState()
 		const account = selectAccount(state)
 		const side = selectSide(state)
@@ -244,7 +245,6 @@ export const updateAccountAnalytics = throttle(
 						})
 				}
 			})
-			timeframeIsLive && updateAnalyticsLastChecked()(dispatch)
 			await Promise.all(allAnalytics)
 		} catch (err) {
 			console.error('ERR_ANALYTICS', err)
@@ -441,6 +441,7 @@ export function updateAnalyticsPeriod(start) {
 	return async function(dispatch, getState) {
 		try {
 			const timeframe = selectAnalyticsTimeframe(getState())
+			const period = selectAnalyticsPeriod(getState())
 			let end = null
 			const startCopy = start
 			const startOfWeek = dateUtils.date(startCopy).startOf('week')
@@ -473,7 +474,8 @@ export function updateAnalyticsPeriod(start) {
 				type: types.UPDATE_ANALYTICS_PERIOD,
 				value: { start, end },
 			})
-			updateAccountAnalyticsThrottled()(dispatch, getState)
+			if (period.start !== start && period.end !== end)
+				updateAccountAnalyticsThrottled()(dispatch, getState)
 		} catch (err) {
 			console.error('ERR_ANALYTICS_START_DATE_END_DATE', err)
 			addToast({
