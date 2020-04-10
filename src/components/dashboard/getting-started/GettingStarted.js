@@ -222,10 +222,11 @@ export default function GettingStarted(props) {
 		)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [indexOfFirstIncompleteStep])
+
 	// TODO: wait for the data to be loaded before displaying the getting started
 	return (
 		!isGettingStartedHidden &&
-		sideSteps.length && (
+		!!sideSteps.length && (
 			<Box mb={2}>
 				<ExpansionPanel
 					expanded={expanded}
