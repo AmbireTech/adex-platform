@@ -29,8 +29,6 @@ import {
 	selectAnalyticsLiveTimestamp,
 	selectPublisherReceiptsPresentMonths,
 	selectMonthsRange,
-	selectAnalyticsNowLabel,
-	selectChartDatapointsImpressions,
 } from 'selectors'
 import { bigNumberify } from 'ethers/utils'
 import dateUtils from 'helpers/dateUtils'
@@ -205,19 +203,7 @@ export const updateAccountAnalytics = throttle(
 				const { datasets, labels } = selectStatsChartData(state, {
 					...opts,
 				})
-				//TODO: must check
-				const chartImpressions = selectChartDatapointsImpressions(state, {
-					side,
-					timeframe,
-				})
-				const nowLabel = selectAnalyticsNowLabel(state)
-				const nowImpressions =
-					chartImpressions.datasets[chartImpressions.labels.indexOf(nowLabel)]
-				if (
-					(timeframeIsLive && nowImpressions === 0) || //TODO: this should be reconsidered
-					datasets.length === 0 ||
-					labels.length === 0
-				) {
+				if (timeframeIsLive || datasets.length === 0 || labels.length === 0) {
 					identityAnalytics({
 						...opts,
 						start,
