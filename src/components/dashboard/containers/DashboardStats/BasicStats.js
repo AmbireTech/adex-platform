@@ -218,6 +218,7 @@ export function BasicStats({ side }) {
 
 	useEffect(() => {
 		execute(updateAnalyticsPeriodPrevNextLive({ live: true }))
+		execute(updateAccountAnalyticsThrottled())
 	}, [side])
 
 	useEffect(() => {
@@ -236,7 +237,9 @@ export function BasicStats({ side }) {
 					setTimeout(
 						async () =>
 							isAuth && (await execute(updateAccountAnalyticsThrottled())),
-						timeoutMap[timeframe] - (Date.now() % timeoutMap[timeframe])
+						timeoutMap[timeframe] -
+							(Date.now() % timeoutMap[timeframe]) +
+							5 * 1000
 					)
 				},
 			})
