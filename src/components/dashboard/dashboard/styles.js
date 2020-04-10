@@ -83,7 +83,7 @@ export const styles = theme => {
 			},
 		},
 		contentInner: {
-			maxWidth: 1600,
+			maxWidth: 1420,
 			margin: 'auto',
 		},
 		breadcrumbElement: {
