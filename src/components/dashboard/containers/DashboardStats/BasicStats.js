@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import {
 	execute,
 	updateAnalyticsTimeframe,
 	updateAnalyticsPeriod,
 	updateAnalyticsPeriodPrevNextLive,
+	updateAccountAnalyticsThrottled,
 } from 'actions'
 import { SimpleStatistics } from 'components/dashboard/charts/simplified'
 import Dropdown from 'components/common/dropdown'
@@ -44,9 +45,11 @@ import {
 	selectChartDatapointsPayouts,
 	selectAnalyticsPeriod,
 	selectSide,
+	selectAuth,
 } from 'selectors'
 import dateUtils from 'helpers/dateUtils'
 import { useKeyPress } from 'hooks/useKeyPress'
+import { analyticsLoopCustom } from 'services/store-data/analytics'
 
 const timeFrames = VALIDATOR_ANALYTICS_TIMEFRAMES.map(tf => {
 	const translated = { ...tf }
@@ -141,6 +144,14 @@ const DatePickerSwitch = ({ timeframe, ...rest }) => {
 	}
 }
 
+const min = 60 * 1000
+
+const timeoutMap = {
+	hour: min,
+	day: 10 * min,
+	week: 30 * min,
+}
+
 export function BasicStats() {
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
@@ -148,9 +159,12 @@ export function BasicStats() {
 	const ARROW_LEFT = useKeyPress('ArrowLeft')
 	const ARROW_RIGHT = useKeyPress('ArrowRight')
 	const { symbol } = useSelector(selectMainToken)
+	const isAuth = useSelector(state => selectAuth(state))
 	const { start } = useSelector(selectAnalyticsPeriod)
 	const timeframe = useSelector(selectAnalyticsTimeframe)
 	const side = useSelector(selectSide)
+	const [loop, setLoop] = useState()
+
 	const totalImpressions = useSelector(state =>
 		selectTotalImpressions(state, {
 			side,
@@ -207,8 +221,37 @@ export function BasicStats() {
 	}, [ARROW_LEFT, ARROW_RIGHT, SPACE])
 
 	useEffect(() => {
-		side && execute(updateAnalyticsPeriodPrevNextLive({ live: true, side }))
+		if (side) {
+			execute(updateAnalyticsPeriodPrevNextLive({ live: true }))
+			execute(updateAccountAnalyticsThrottled())
+		}
 	}, [side])
+
+	useEffect(() => {
+		loop && loop.startLoop()
+		return () => {
+			loop && loop.stop()
+		}
+	}, [loop])
+
+	useEffect(() => {
+		loop && loop.stop()
+		setLoop(
+			analyticsLoopCustom({
+				timeout: timeoutMap[timeframe],
+				syncAction: async () => {
+					setTimeout(
+						async () =>
+							isAuth && (await execute(updateAccountAnalyticsThrottled())),
+						timeoutMap[timeframe] -
+							(Date.now() % timeoutMap[timeframe]) +
+							5 * 1000
+					)
+				},
+			})
+		)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [timeframe, isAuth])
 
 	const dataInSync =
 		(clicks.labels[clicks.labels.length - 1] ===

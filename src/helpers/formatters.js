@@ -1,9 +1,10 @@
 import { formatUnits, commify } from 'ethers/utils'
 import MomentUtils from '@date-io/moment'
 const moment = new MomentUtils()
+//TODO: use dateUtils
 
-const DEFAULT_DATETIME_FORMAT = 'YYYY-MM-DD HH:mm'
-const DEFAULT_DATE_FORMAT = 'YYYY-MM-DD'
+export const DEFAULT_DATETIME_FORMAT = 'YYYY-MM-DD HH:mm'
+export const DEFAULT_DATE_FORMAT = 'YYYY-MM-DD'
 
 export const formatDateTime = (timestamp, format = DEFAULT_DATETIME_FORMAT) => {
 	if (!timestamp) {

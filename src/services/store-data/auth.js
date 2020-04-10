@@ -23,7 +23,6 @@ import { push } from 'connected-react-router'
 
 export const logOut = skipRedirect => {
 	execute(resetAccount())
-	analyticsLoop.stop()
 	analyticsCampaignsLoop.stop()
 	campaignsLoop.stop()
 	statsLoop.stop()
