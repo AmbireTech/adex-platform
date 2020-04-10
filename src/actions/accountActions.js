@@ -532,7 +532,6 @@ export function loadAccountData() {
 			(await getAllItems()(dispatch, getState))
 
 		!isAccountChanged(getState, account) && (await statsLoop.start())
-		!isAccountChanged(getState, account) && (await analyticsLoop.start())
 		!isAccountChanged(getState, account) &&
 			(await analyticsCampaignsLoop.start())
 		!isAccountChanged(getState, account) && (await campaignsLoop.start())

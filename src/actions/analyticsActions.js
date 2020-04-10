@@ -161,8 +161,13 @@ function aggrByChannelsSegments({
 	return aggrWithNullValues
 }
 
-export function updateAccountAnalytics() {
-	return async function(dispatch, getState) {
+export const updateAccountAnalyticsThrottled = () => (dispatch, getState) => {
+	return updateAccountAnalytics(dispatch, getState)
+}
+
+export const updateAccountAnalytics = throttle(
+	async function(dispatch, getState) {
+		updateAnalyticsLastChecked()(dispatch)
 		const state = getState()
 		const account = selectAccount(state)
 		const side = selectSide(state)
@@ -193,16 +198,13 @@ export function updateAccountAnalytics() {
 
 			const params = analyticsParams(timeframe, side)
 			let accountChanged = false
+			const liveTimestamp = selectAnalyticsLiveTimestamp(state)
+			const timeframeIsLive = liveTimestamp === start
 			const allAnalytics = params.map(async opts => {
 				const { datasets, labels } = selectStatsChartData(state, {
 					...opts,
 				})
-				const liveTimestamp = selectAnalyticsLiveTimestamp(state)
-				if (
-					liveTimestamp === start ||
-					datasets.length === 0 ||
-					labels.length === 0
-				) {
+				if (timeframeIsLive || datasets.length === 0 || labels.length === 0) {
 					identityAnalytics({
 						...opts,
 						start,
@@ -243,7 +245,6 @@ export function updateAccountAnalytics() {
 						})
 				}
 			})
-
 			await Promise.all(allAnalytics)
 		} catch (err) {
 			console.error('ERR_ANALYTICS', err)
@@ -253,8 +254,10 @@ export function updateAccountAnalytics() {
 				timeout: 20000,
 			})(dispatch)
 		}
-	}
-}
+	},
+	1000,
+	{ leading: false, trailing: true }
+)
 
 export function updateAccountCampaignsAnalytics() {
 	return async function(dispatch, getState) {
@@ -438,6 +441,7 @@ export function updateAnalyticsPeriod(start) {
 	return async function(dispatch, getState) {
 		try {
 			const timeframe = selectAnalyticsTimeframe(getState())
+			const period = selectAnalyticsPeriod(getState())
 			let end = null
 			const startCopy = start
 			const startOfWeek = dateUtils.date(startCopy).startOf('week')
@@ -470,7 +474,8 @@ export function updateAnalyticsPeriod(start) {
 				type: types.UPDATE_ANALYTICS_PERIOD,
 				value: { start, end },
 			})
-			updateAccountAnalytics()(dispatch, getState)
+			if (period.start !== start && period.end !== end)
+				updateAccountAnalyticsThrottled()(dispatch, getState)
 		} catch (err) {
 			console.error('ERR_ANALYTICS_START_DATE_END_DATE', err)
 			addToast({
@@ -531,6 +536,15 @@ export function resetAnalytics() {
 	return async function(dispatch, getState) {
 		return dispatch({
 			type: types.RESET_ANALYTICS,
+		})
+	}
+}
+
+export function updateAnalyticsLastChecked() {
+	return async function(dispatch) {
+		return dispatch({
+			type: types.UPDATE_ANALYTICS_LAST_CHECKED,
+			value: Date.now(),
 		})
 	}
 }
