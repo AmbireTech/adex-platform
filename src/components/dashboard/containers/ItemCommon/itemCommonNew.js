@@ -204,12 +204,12 @@ const IconButtonWithRef = forwardRef((props, ref) => (
 	<OpenInNewIconBtn {...props} forwardedRef={ref} />
 ))
 
-export const ItemTargetURL = ({ targetUrl = '' }) => {
+export const ItemTargetURL = ({ targetUrl = '', label }) => {
 	return (
 		<TextField
 			fullWidth
 			id='item-targetUrl'
-			label={t('targetUrl', { isProp: true })}
+			label={t(label || 'PROP_TARGETURL')}
 			type='text'
 			name='targetUrl'
 			value={targetUrl}
@@ -236,7 +236,7 @@ export const ItemFallbackMediaURL = ({ targetUrl = '' }) => {
 		<TextField
 			fullWidth
 			id='item-targetUrl'
-			label={t('targetUrl', { isProp: true })}
+			label={t('PROP_FALLBACKADURL')}
 			type='text'
 			name='targetUrl'
 			value={targetUrl}
