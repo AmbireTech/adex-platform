@@ -34,3 +34,36 @@ export const PublisherAppBar = withStyles(theme => ({
 		backgroundColor: theme.palette.accentTwo.main,
 	},
 }))(props => <AppBar {...props} />)
+
+export const AdvertiserTabs = withStyles(theme => ({
+	indicator: {
+		backgroundColor: theme.palette.accentOne.contrastText,
+	},
+}))(props => <Tabs {...props} />)
+
+export const AdvertiserTab = withStyles(theme => ({
+	root: {
+		color: theme.palette.accentOne.contrastText,
+		opacity: 0.69,
+		'&:hover': {
+			color: theme.palette.accentOne.contrastText,
+			opacity: 1,
+		},
+		'&$selected': {
+			color: theme.palette.accentOne.contrastText,
+			opacity: 1,
+		},
+		'&:focus': {
+			color: theme.palette.accentOne.contrastText,
+			opacity: 1,
+		},
+	},
+	selected: {},
+}))(props => <Tab {...props} />)
+
+export const AdvertiserAppBar = withStyles(theme => ({
+	root: {
+		zIndex: theme.zIndex.appBar - 1,
+		backgroundColor: theme.palette.accentOne.main,
+	},
+}))(props => <AppBar {...props} />)
