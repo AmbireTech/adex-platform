@@ -228,13 +228,16 @@ export function BasicStats({ side }) {
 	}, [loop])
 
 	useEffect(() => {
-		//TODO: loop must be updated on round hour or minute!!!
 		loop && loop.stop()
 		setLoop(
 			analyticsLoopCustom({
 				timeout: timeoutMap[timeframe],
 				syncAction: async () => {
-					isAuth && (await execute(updateAccountAnalyticsThrottled()))
+					setTimeout(
+						async () =>
+							isAuth && (await execute(updateAccountAnalyticsThrottled())),
+						timeoutMap[timeframe] - (Date.now() % timeoutMap[timeframe])
+					)
 				},
 			})
 		)
