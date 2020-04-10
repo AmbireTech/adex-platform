@@ -143,10 +143,12 @@ const DatePickerSwitch = ({ timeframe, ...rest }) => {
 	}
 }
 
+const min = 60 * 1000
+
 const timeoutMap = {
-	hour: 60 * 1000,
-	day: 60 * 60 * 1000,
-	week: 60 * 60 * 1000,
+	hour: min,
+	day: 10 * min,
+	week: 30 * min,
 }
 
 export function BasicStats({ side }) {
@@ -245,7 +247,7 @@ export function BasicStats({ side }) {
 			})
 		)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [timeframe])
+	}, [timeframe, isAuth])
 
 	const dataInSync =
 		(clicks.labels[clicks.labels.length - 1] ===
