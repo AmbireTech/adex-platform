@@ -4,7 +4,10 @@ import TopBar from './TopBar'
 import { Route, Switch } from 'react-router'
 import Campaign from 'components/dashboard/containers/Campaign'
 import { Receipt } from 'components/dashboard/containers/Receipt'
-import DashboardStats from 'components/dashboard/containers/DashboardStats'
+import {
+	PublisherStats,
+	AdvertiserStats,
+} from 'components/dashboard/containers/DashboardStats'
 import Unit from 'components/dashboard/containers/Unit'
 import Slot from 'components/dashboard/containers/Slot'
 import Account from 'components/dashboard/account/AccountInfo'
@@ -268,7 +271,16 @@ function Dashboard(props) {
 								path={'/dashboard/:side/transactions'}
 								component={props => <Transactions {...props} />}
 							/> */}
-						<Route exact path='/dashboard/:side' component={DashboardStats} />
+						<Route
+							exact
+							path='/dashboard/advertiser'
+							component={AdvertiserStats}
+						/>
+						<Route
+							exact
+							path='/dashboard/publisher'
+							component={PublisherStats}
+						/>
 						<Route component={PageNotFound} />
 					</Switch>
 				</div>
