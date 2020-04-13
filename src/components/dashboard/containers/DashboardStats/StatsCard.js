@@ -19,6 +19,11 @@ const useStyles = makeStyles(theme => {
 				(theme.palette[bgColor] || {}).contrastText ||
 				theme.palette.text.primary,
 		},
+		cardContent: {
+			'&:last-child': {
+				paddingBottom: 16, // Hard coded as component implementation
+			},
+		},
 		infoCard: {
 			margin: theme.spacing(1),
 			flexGrow: 1,
@@ -58,14 +63,14 @@ const StatsCard = props => {
 			})}
 			onClick={onClick}
 		>
-			<CardContent>
+			<CardContent classes={{ root: classes.cardContent }}>
 				{title && (
 					<Typography variant='h5' noWrap>
 						{title}
 					</Typography>
 				)}
 				{subtitle && (
-					<Typography component='p' noWrap>
+					<Typography component='div' noWrap>
 						{subtitle}{' '}
 						{explain && (
 							<ArrowTooltip
