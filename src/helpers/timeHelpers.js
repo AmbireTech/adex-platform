@@ -4,8 +4,10 @@ export const fillEmptyTime = (
 	prevAggr,
 	timeframe,
 	defaultValue = 0,
+	fillAfterLast = 0,
 	period
 ) => {
+	const now = Date.now()
 	const time = {
 		interval: period,
 		step: { ammount: 1, unit: 'minute' },
@@ -33,18 +35,29 @@ export const fillEmptyTime = (
 		newAggr.push({ value: defaultValue, time: dateUtils.getUnix(m) * 1000 })
 	}
 
-	const prevAggrInInterval = prevAggr.filter(a => {
-		const m = dateUtils.date(a.time)
-		return (
-			dateUtils.getDiff(m, time.interval.start) >= 0 &&
-			dateUtils.getDiff(m, time.interval.end) <= 0
-		)
-	})
+	const prevAggrInInterval = prevAggr
+		.filter(a => {
+			const m = dateUtils.date(a.time)
+			return (
+				dateUtils.getDiff(m, time.interval.start) >= 0 &&
+				dateUtils.getDiff(m, time.interval.end) <= 0
+			)
+		})
+		.sort((a, b) => b.time - a.time)
+
+	const lastWithValueTime = (prevAggrInInterval[0] || {}).time || now
 
 	const data = [...prevAggrInInterval, ...newAggr].reduce((data, a) => {
 		const newData = { ...data }
-		const value = data[a.time] || a.value || defaultValue
-		newData[a.time] = value
+		const isNullValue = a.value === null || data[a.time] === null
+		const value =
+			a.time <= lastWithValueTime
+				? isNullValue
+					? null
+					: data[a.time] || a.value || defaultValue
+				: fillAfterLast
+
+		newData[a.time] = a.time <= now ? value : null
 
 		return newData
 	}, {})
