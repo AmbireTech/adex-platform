@@ -229,18 +229,19 @@ export const SimpleStatistics = ({
 				},
 				{
 					type: 'linear',
-					display: false,
+					display: true,
+					position: 'left',
 					gridLines: {
 						drawOnChartArea: false, // only want the grid lines for one axis to show up
 					},
 					scaleLabel: {
-						display: false,
+						display: true,
 						labelString: y4Label,
 					},
 					id: 'y-axis-4',
 					ticks: {
 						beginAtZero: true,
-						precision: 0,
+						// precision: 0.1,
 						callback: function(tick) {
 							return formatAbbrNum(tick, 2)
 						},
