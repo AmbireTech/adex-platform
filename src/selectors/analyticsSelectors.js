@@ -6,7 +6,7 @@ import { selectWebsitesArray } from 'selectors'
 import dateUtils from 'helpers/dateUtils'
 import { DEFAULT_DATETIME_FORMAT } from 'helpers/formatters'
 
-export const selectAnalytics = state => state.persist.analytics
+export const selectAnalytics = state => state.memory.analytics
 
 export const selectAnalyticsData = createSelector(
 	[selectAnalytics, (_, side) => side],
