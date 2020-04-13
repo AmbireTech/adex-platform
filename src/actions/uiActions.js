@@ -50,12 +50,16 @@ export function warnSafariUsers() {
 			const safariWarningConfirmed = selectSafariWarningConfirmation(getState())
 			if (isSafari && !safariWarningConfirmed) {
 				confirmAction(
-					() => updateUiByIdentity('safariWarningConfirmed', true),
+					() =>
+						updateUiByIdentity('safariWarningConfirmed', true)(
+							dispatch,
+							getState
+						),
 					null,
 					{
 						confirmLabel: t('OK'),
 						title: t('WARNING'),
-						text: t('TEST'),
+						text: t('WARNING_SAFARI_7_DAYS_LOCAL_STORAGE'),
 					}
 				)(dispatch)
 			}
