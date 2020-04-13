@@ -238,6 +238,14 @@ export const SimpleStatistics = ({
 						labelString: y4Label,
 					},
 					id: 'y-axis-4',
+					ticks: {
+						beginAtZero: true,
+						precision: 0,
+						callback: function(tick) {
+							return formatAbbrNum(tick, 2)
+						},
+					},
+					//
 				},
 			],
 		},
