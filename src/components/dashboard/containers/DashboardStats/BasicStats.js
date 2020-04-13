@@ -130,7 +130,7 @@ const DatePickerSwitch = ({ timeframe, ...rest }) => {
 					labelFunc={val =>
 						`${dateUtils.format(
 							dateUtils.date(val),
-							'MMM Do, YYYY - (HH:mm'
+							"MMM DD 'YY - (HH:mm"
 						)} - ${dateUtils.format(
 							dateUtils.setMinutes(dateUtils.date(val), 59),
 							'HH:mm)'
@@ -263,49 +263,55 @@ export function BasicStats() {
 				<Grid item xs={12}>
 					<div className={classes.infoStatsContainer}>
 						<StatsCard>
-							<Box mb={1}>
-								<Dropdown
-									fullWidth
-									label={t('SELECT_TIMEFRAME')}
-									// helperText={t(timeHints[timeframe])}
-									onChange={val => {
-										//TODO: fix change of timeframe, set default period as well
-										execute(updateAnalyticsTimeframe(val))
-									}}
-									source={timeFrames}
-									value={timeframe}
-									htmlId='timeframe-select'
-								/>
-							</Box>
-							<Box>
-								<DatePickerSwitch
-									timeframe={timeframe}
-									value={start}
-									minutesStep={60}
-									onChange={val => {
-										execute(updateAnalyticsPeriod(val))
-									}}
-									disableFuture
-									fullWidth
-									calendarIcon
-									label={t('ANALYTICS_PERIOD')}
-									max={Date.now()}
-									// Only when picking future hours as they can't be disabled
-									maxDateMessage={t('MAX_DATE_ERROR')}
-									strictCompareDates
-									onBackClick={e => {
-										e.stopPropagation()
-										execute(updateAnalyticsPeriodPrevNextLive({ next: false }))
-									}}
-									onLiveClick={e => {
-										e.stopPropagation()
-										execute(updateAnalyticsPeriodPrevNextLive({ live: true }))
-									}}
-									onNextClick={e => {
-										e.stopPropagation()
-										execute(updateAnalyticsPeriodPrevNextLive({ next: true }))
-									}}
-								/>
+							<Box display='flex' flexDirection='row' flexWrap='wrap'>
+								<Box m={1} flexGrow='1'>
+									<Dropdown
+										fullWidth
+										variant='outlined'
+										label={t('SELECT_TIMEFRAME')}
+										// helperText={t(timeHints[timeframe])}
+										onChange={val => {
+											//TODO: fix change of timeframe, set default period as well
+											execute(updateAnalyticsTimeframe(val))
+										}}
+										source={timeFrames}
+										value={timeframe}
+										htmlId='timeframe-select'
+									/>
+								</Box>
+								<Box m={1} flexGrow='1'>
+									<DatePickerSwitch
+										timeframe={timeframe}
+										value={start}
+										minutesStep={60}
+										onChange={val => {
+											execute(updateAnalyticsPeriod(val))
+										}}
+										disableFuture
+										inputVariant='outlined'
+										fullWidth
+										calendarIcon
+										label={t('ANALYTICS_PERIOD')}
+										max={Date.now()}
+										// Only when picking future hours as they can't be disabled
+										maxDateMessage={t('MAX_DATE_ERROR')}
+										strictCompareDates
+										onBackClick={e => {
+											e.stopPropagation()
+											execute(
+												updateAnalyticsPeriodPrevNextLive({ next: false })
+											)
+										}}
+										onLiveClick={e => {
+											e.stopPropagation()
+											execute(updateAnalyticsPeriodPrevNextLive({ live: true }))
+										}}
+										onNextClick={e => {
+											e.stopPropagation()
+											execute(updateAnalyticsPeriodPrevNextLive({ next: true }))
+										}}
+									/>
+								</Box>
 							</Box>
 						</StatsCard>
 						<StatsCard
