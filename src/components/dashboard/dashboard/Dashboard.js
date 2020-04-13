@@ -36,6 +36,7 @@ import {
 	loadAccountData,
 	stopAccountDataUpdate,
 	updateNav,
+	updateUiByIdentity,
 } from 'actions'
 import {
 	t,
@@ -43,6 +44,7 @@ import {
 	selectWalletPrivileges,
 	selectPrivilegesWarningAccepted,
 	selectPublisherRevenueNoticeActive,
+	selectInitialDataLoaded,
 } from 'selectors'
 import { useSelector } from 'react-redux'
 import GettingStarted from '../getting-started/GettingStarted'
@@ -94,7 +96,6 @@ const useStyles = makeStyles(styles)
 
 function Dashboard(props) {
 	const [mobileOpen, setMobileOpen] = useState(false)
-	const [dataLoaded, setDataLoaded] = useState(false)
 	const address = useSelector(selectAccountIdentityAddr)
 	const showPublisherRevenueNotice = useSelector(
 		selectPublisherRevenueNoticeActive
@@ -107,10 +108,12 @@ function Dashboard(props) {
 	const { side } = match.params
 	const classes = useStyles()
 
+	const dataLoaded = useSelector(selectInitialDataLoaded)
+
 	useEffect(() => {
+		execute(updateUiByIdentity('initialDataLoaded', false))
 		async function updateInitialData() {
-			await execute(loadAccountData())
-			setDataLoaded(true)
+			execute(loadAccountData())
 		}
 
 		updateInitialData()
