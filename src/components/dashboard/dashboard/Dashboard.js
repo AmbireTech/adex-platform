@@ -33,6 +33,7 @@ import {
 	loadAccountData,
 	stopAccountDataUpdate,
 	updateNav,
+	warnSafariUsers,
 } from 'actions'
 import {
 	t,
@@ -109,13 +110,16 @@ function Dashboard(props) {
 			await execute(loadAccountData())
 			setDataLoaded(true)
 		}
-
 		updateInitialData()
 
 		return () => {
 			execute(stopAccountDataUpdate())
 		}
 	}, [])
+
+	useEffect(() => {
+		execute(warnSafariUsers())
+	})
 
 	useEffect(() => {
 		execute(resolveEnsAddress({ address }))
