@@ -69,22 +69,24 @@ const StatsCard = props => {
 						{title}
 					</Typography>
 				)}
-				{subtitle && (
-					<Typography component='div' noWrap>
-						{subtitle}{' '}
-						{explain && (
-							<ArrowTooltip
-								title={
-									<Typography component='p' variant='caption'>
-										{explain}
-									</Typography>
-								}
-							>
-								<InfoIcon style={{ fontSize: 12 }}></InfoIcon>
-							</ArrowTooltip>
-						)}
-					</Typography>
-				)}
+				{subtitle &&
+					(explain ? (
+						<ArrowTooltip
+							title={
+								<Typography component='div' variant='caption'>
+									{explain}
+								</Typography>
+							}
+						>
+							<Typography component='div' noWrap>
+								{subtitle} <InfoIcon style={{ fontSize: 12 }}></InfoIcon>
+							</Typography>
+						</ArrowTooltip>
+					) : (
+						<Typography component='div' noWrap>
+							{subtitle}
+						</Typography>
+					))}
 				{children}
 			</CardContent>
 			{loading && <LinearProgress className={classes.progress} />}
