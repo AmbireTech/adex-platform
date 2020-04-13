@@ -73,3 +73,8 @@ export const selectLoginDirectSide = createSelector(
 	selectGlobalUi,
 	({ goToSide }) => goToSide || ''
 )
+
+export const selectInitialDataLoaded = createSelector(
+	selectIdentityUi,
+	({ initialDataLoaded }) => initialDataLoaded
+)

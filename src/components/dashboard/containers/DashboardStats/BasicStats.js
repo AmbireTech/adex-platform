@@ -46,6 +46,7 @@ import {
 	selectAnalyticsPeriod,
 	selectSide,
 	selectAuth,
+	selectInitialDataLoaded,
 } from 'selectors'
 import dateUtils from 'helpers/dateUtils'
 import { useKeyPress } from 'hooks/useKeyPress'
@@ -162,6 +163,7 @@ export function BasicStats() {
 	const timeframe = useSelector(selectAnalyticsTimeframe)
 	const side = useSelector(selectSide)
 	const [loop, setLoop] = useState()
+	const dataLoaded = useSelector(selectInitialDataLoaded)
 
 	const totalImpressions = useSelector(state =>
 		selectTotalImpressions(state, {
@@ -219,11 +221,11 @@ export function BasicStats() {
 	}, [ARROW_LEFT, ARROW_RIGHT, SPACE])
 
 	useEffect(() => {
-		if (side) {
+		if (dataLoaded && side) {
 			execute(updateAnalyticsPeriodPrevNextLive({ live: true }))
 			execute(updateAccountAnalyticsThrottled())
 		}
-	}, [side])
+	}, [dataLoaded, side])
 
 	useEffect(() => {
 		loop && loop.startLoop()
