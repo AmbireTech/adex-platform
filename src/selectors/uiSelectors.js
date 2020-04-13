@@ -52,6 +52,11 @@ export const selectSideSpecificUI = createSelector(
 	(ui, side) => ui[side] || {}
 )
 
+export const selectSafariWarningConfirmation = createSelector(
+	[selectIdentityUi],
+	({ safariWarningConfirmed }) => safariWarningConfirmed
+)
+
 export const selectHideGettingStarted = createSelector(
 	[selectSideSpecificUI],
 	({ hideGettingStarted }) => hideGettingStarted
