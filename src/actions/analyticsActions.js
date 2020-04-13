@@ -204,6 +204,7 @@ export const updateAccountAnalytics = throttle(
 				const { datasets, labels } = selectStatsChartData(state, {
 					...opts,
 				})
+
 				if (timeframeIsLive || datasets.length === 0 || labels.length === 0) {
 					identityAnalytics({
 						...opts,
@@ -214,6 +215,7 @@ export const updateAccountAnalytics = throttle(
 						.then(({ aggregates, metric }) => {
 							const aggrByChannelSegments =
 								side === 'publisher' && metric === 'eventPayouts'
+
 							let aggr = aggrByChannelSegments
 								? aggrByChannelsSegments({
 										aggr: aggregates.aggr,
@@ -222,12 +224,18 @@ export const updateAccountAnalytics = throttle(
 										withdrawTokens,
 								  })
 								: aggregates.aggr
-							const defaultValue = aggrByChannelSegments ? null : 0
+							const fillAfterLast = aggrByChannelSegments ? null : 0
 
-							aggregates.aggr = fillEmptyTime(aggr, timeframe, defaultValue, {
-								start,
-								end,
-							})
+							aggregates.aggr = fillEmptyTime(
+								aggr,
+								timeframe,
+								0,
+								fillAfterLast,
+								{
+									start,
+									end,
+								}
+							)
 							accountChanged =
 								accountChanged || isAccountChanged(getState, account)
 
