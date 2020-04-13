@@ -115,9 +115,7 @@ const DatePickerSwitch = ({ timeframe, ...rest }) => {
 		case 'day':
 			return (
 				<DatePicker
-					labelFunc={val =>
-						dateUtils.format(dateUtils.date(val), 'MMM Do, YYYY')
-					}
+					labelFunc={val => dateUtils.format(dateUtils.date(val), 'MMM DD "YY')}
 					{...rest}
 				/>
 			)
@@ -130,7 +128,7 @@ const DatePickerSwitch = ({ timeframe, ...rest }) => {
 					labelFunc={val =>
 						`${dateUtils.format(
 							dateUtils.date(val),
-							"MMM DD 'YY - (HH:mm"
+							'MMM DD "YY - (HH:mm'
 						)} - ${dateUtils.format(
 							dateUtils.setMinutes(dateUtils.date(val), 59),
 							'HH:mm)'
