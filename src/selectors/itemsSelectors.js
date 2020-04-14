@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect'
 import { selectCampaignEventsCount } from 'selectors'
 import url from 'url'
-export const selectItems = state => state.persist.items
+export const selectItems = state => state.memory.items
 
 export const selectItemsByType = createSelector(
 	[selectItems, (_, itemType) => itemType],

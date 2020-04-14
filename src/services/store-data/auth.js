@@ -10,18 +10,17 @@ import {
 	resetChannelsWithBalanceAll,
 	resetChannelsWithOutstandingBalance,
 	resetAllNewTransaction,
+	updateUiByIdentity,
 } from 'actions'
 
 import { campaignsLoop } from 'services/store-data/campaigns'
 import statsLoop from 'services/store-data/account'
-import {
-	analyticsLoop,
-	analyticsCampaignsLoop,
-} from 'services/store-data/analytics'
+import { analyticsCampaignsLoop } from 'services/store-data/analytics'
 
 import { push } from 'connected-react-router'
 
 export const logOut = skipRedirect => {
+	execute(updateUiByIdentity('initialDataLoaded', false))
 	execute(resetAccount())
 	analyticsCampaignsLoop.stop()
 	campaignsLoop.stop()

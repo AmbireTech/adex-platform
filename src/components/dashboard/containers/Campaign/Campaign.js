@@ -4,9 +4,6 @@ import {
 	Grid,
 	Box,
 	Paper,
-	Tabs,
-	Tab,
-	AppBar,
 	List,
 	ListItem,
 	ListItemText,
@@ -14,8 +11,12 @@ import {
 } from '@material-ui/core'
 import { AdUnitsTable } from 'components/dashboard/containers/Tables'
 import { Campaign as CampaignModel } from 'adex-models'
-import { makeStyles, withStyles } from '@material-ui/core/styles'
 import Anchor from 'components/common/anchor/anchor'
+import {
+	AdvertiserTab,
+	AdvertiserTabs,
+	AdvertiserAppBar,
+} from 'components/styled'
 import CampaignStatsDoughnut from 'components/dashboard/charts/campaigns/CampaignStatsDoughnut'
 import CampaignStatsBreakdownTable from 'components/dashboard/containers/Tables/CampaignStatsBreakdownTable'
 import { Receipt } from 'components/dashboard/containers/Receipt'
@@ -30,43 +31,6 @@ import { CampaignBasic } from './CampaignBasic'
 import { validateAndUpdateCampaign } from 'actions'
 import { useItem, SaveBtn } from 'components/dashboard/containers/ItemCommon/'
 
-export const styles = theme => {
-	return {
-		appBar: {
-			zIndex: theme.zIndex.appBar - 1,
-			backgroundColor: theme.palette.accentOne.main,
-		},
-	}
-}
-
-const useStyles = makeStyles(styles)
-
-const StyledTabs = withStyles(theme => ({
-	indicator: {
-		backgroundColor: theme.palette.accentOne.contrastText,
-	},
-}))(props => <Tabs {...props} />)
-
-const StyledTab = withStyles(theme => ({
-	root: {
-		color: theme.palette.accentOne.contrastText,
-		opacity: 0.69,
-		'&:hover': {
-			color: theme.palette.accentOne.contrastText,
-			opacity: 1,
-		},
-		'&$selected': {
-			color: theme.palette.accentOne.contrastText,
-			opacity: 1,
-		},
-		'&:focus': {
-			color: theme.palette.accentOne.contrastText,
-			opacity: 1,
-		},
-	},
-	selected: {},
-}))(props => <Tab {...props} />)
-
 function Campaign({ match }) {
 	const [tabIndex, setTabIndex] = useState(1)
 	const { item, ...hookProps } = useItem({
@@ -76,8 +40,6 @@ function Campaign({ match }) {
 		validateAndUpdateFn: validateAndUpdateCampaign,
 	})
 
-	const classes = useStyles()
-
 	const campaign = new CampaignModel(item)
 	const { humanFriendlyName } = campaign.status || {}
 	const leader = campaign.spec.validators[0]
@@ -86,24 +48,23 @@ function Campaign({ match }) {
 	return (
 		<Fragment>
 			<SaveBtn {...hookProps} />
-			<AppBar position='static' color='primary' className={classes.appBar}>
-				<StyledTabs
+			<AdvertiserAppBar position='static'>
+				<AdvertiserTabs
 					value={tabIndex}
 					onChange={(ev, index) => setTabIndex(index)}
+					variant='scrollable'
 					scrollButtons='auto'
-					indicatorColor='primary'
-					textColor='primary'
 				>
-					<StyledTab label={t('CAMPAIGN_MAIN')} />
-					<StyledTab label={t('STATISTICS')} />
-					<StyledTab label={t('COUNTRY_STATS')} />
-					<StyledTab label={t('CAMPAIGN_UNITS')} />
-					<StyledTab label={t('VALIDATORS')} />
+					<AdvertiserTab label={t('CAMPAIGN_MAIN')} />
+					<AdvertiserTab label={t('STATISTICS')} />
+					<AdvertiserTab label={t('COUNTRY_STATS')} />
+					<AdvertiserTab label={t('CAMPAIGN_UNITS')} />
+					<AdvertiserTab label={t('VALIDATORS')} />
 					{['Closed', 'Completed'].includes(humanFriendlyName) && (
-						<StyledTab label={t('RECEIPT')} />
+						<AdvertiserTab label={t('RECEIPT')} />
 					)}
-				</StyledTabs>
-			</AppBar>
+				</AdvertiserTabs>
+			</AdvertiserAppBar>
 			<Box my={2}>
 				{tabIndex === 0 && <CampaignBasic item={item} {...hookProps} />}
 				{tabIndex === 1 && (

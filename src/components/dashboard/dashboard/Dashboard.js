@@ -4,7 +4,10 @@ import TopBar from './TopBar'
 import { Route, Switch } from 'react-router'
 import Campaign from 'components/dashboard/containers/Campaign'
 import { Receipt } from 'components/dashboard/containers/Receipt'
-import DashboardStats from 'components/dashboard/containers/DashboardStats'
+import {
+	PublisherStats,
+	AdvertiserStats,
+} from 'components/dashboard/containers/DashboardStats'
 import Unit from 'components/dashboard/containers/Unit'
 import Slot from 'components/dashboard/containers/Slot'
 import Account from 'components/dashboard/account/AccountInfo'
@@ -33,6 +36,7 @@ import {
 	loadAccountData,
 	stopAccountDataUpdate,
 	updateNav,
+	updateUiByIdentity,
 } from 'actions'
 import {
 	t,
@@ -40,6 +44,7 @@ import {
 	selectWalletPrivileges,
 	selectPrivilegesWarningAccepted,
 	selectPublisherRevenueNoticeActive,
+	selectInitialDataLoaded,
 } from 'selectors'
 import { useSelector } from 'react-redux'
 import GettingStarted from '../getting-started/GettingStarted'
@@ -91,7 +96,6 @@ const useStyles = makeStyles(styles)
 
 function Dashboard(props) {
 	const [mobileOpen, setMobileOpen] = useState(false)
-	const [dataLoaded, setDataLoaded] = useState(false)
 	const address = useSelector(selectAccountIdentityAddr)
 	const showPublisherRevenueNotice = useSelector(
 		selectPublisherRevenueNoticeActive
@@ -104,10 +108,12 @@ function Dashboard(props) {
 	const { side } = match.params
 	const classes = useStyles()
 
+	const dataLoaded = useSelector(selectInitialDataLoaded)
+
 	useEffect(() => {
+		execute(updateUiByIdentity('initialDataLoaded', false))
 		async function updateInitialData() {
-			await execute(loadAccountData())
-			setDataLoaded(true)
+			execute(loadAccountData())
 		}
 
 		updateInitialData()
@@ -268,7 +274,16 @@ function Dashboard(props) {
 								path={'/dashboard/:side/transactions'}
 								component={props => <Transactions {...props} />}
 							/> */}
-						<Route exact path='/dashboard/:side' component={DashboardStats} />
+						<Route
+							exact
+							path='/dashboard/advertiser'
+							component={AdvertiserStats}
+						/>
+						<Route
+							exact
+							path='/dashboard/publisher'
+							component={PublisherStats}
+						/>
 						<Route component={PageNotFound} />
 					</Switch>
 				</div>

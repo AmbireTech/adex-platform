@@ -26,19 +26,19 @@ import * as types from 'constants/actionTypes'
 
 export const persistReducers = {
 	account,
-	items: filterActions(items, action => action.type.match(/_ITEM/)),
 	ui, //: filterActions(ui, [types.UPDATE_UI]),
 	language,
 	web3Transactions,
 	tags,
 	ethNetwork,
 	config,
-	analytics,
-	channels,
 	ensAddresses,
 }
 
 export const memoryReducers = {
+	items: filterActions(items, action => action.type.match(/_ITEM/)),
+	channels,
+	analytics,
 	signin,
 	identity,
 	wallet,

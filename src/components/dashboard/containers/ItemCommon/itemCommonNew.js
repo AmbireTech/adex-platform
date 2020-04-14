@@ -83,7 +83,7 @@ export const ItemTitle = ({
 	activeFields = {},
 }) => {
 	const active = !!activeFields.title
-	const showError = !!errTitle && !!errTitle.errMsg && errTitle.dirty
+	const showError = !!errTitle && errTitle.dirty
 	return (
 		<TextField
 			fullWidth
@@ -91,14 +91,14 @@ export const ItemTitle = ({
 			label={t('title', { isProp: true })}
 			type='text'
 			name='title'
-			value={title || ' '}
+			value={title || ''}
 			onChange={ev => {
 				updateField('title', ev.target.value)
 			}}
 			disabled={!active}
 			error={showError}
 			helperText={
-				showError ? t(errTitle.errMsg, { args: errTitle.errMsgArgs }) : ' '
+				showError ? t(errTitle.errMsg, { args: errTitle.errMsgArgs }) : ''
 			}
 			variant='outlined'
 			InputProps={{
@@ -131,8 +131,7 @@ export const ItemDescription = ({
 	activeFields = {},
 }) => {
 	const active = !!activeFields.description
-	const showError =
-		!!errDescription && !!errDescription.errMsg && errDescription.dirty
+	const showError = !!errDescription && errDescription.dirty
 	return (
 		<TextField
 			fullWidth
@@ -140,7 +139,7 @@ export const ItemDescription = ({
 			label={t('description', { isProp: true })}
 			type='text'
 			name='description'
-			value={description || ' '}
+			value={description || ''}
 			onChange={ev => {
 				updateField('description', ev.target.value)
 			}}
@@ -154,7 +153,7 @@ export const ItemDescription = ({
 					? t(errDescription.errMsg, {
 							args: errDescription.errMsgArgs,
 					  })
-					: ' '
+					: ''
 			}
 			variant='outlined'
 			InputProps={{
@@ -186,7 +185,7 @@ export const ItemAdType = ({ type }) => {
 			label={t('type', { isProp: true })}
 			type='text'
 			name='type'
-			value={type || ' '}
+			value={type || ''}
 			disabled={true}
 			variant='outlined'
 		/>
@@ -205,12 +204,12 @@ const IconButtonWithRef = forwardRef((props, ref) => (
 	<OpenInNewIconBtn {...props} forwardedRef={ref} />
 ))
 
-export const ItemTargetURL = ({ targetUrl = '' }) => {
+export const ItemTargetURL = ({ targetUrl = '', label }) => {
 	return (
 		<TextField
 			fullWidth
 			id='item-targetUrl'
-			label={t('targetUrl', { isProp: true })}
+			label={t(label || 'PROP_TARGETURL')}
 			type='text'
 			name='targetUrl'
 			value={targetUrl}
@@ -237,7 +236,7 @@ export const ItemFallbackMediaURL = ({ targetUrl = '' }) => {
 		<TextField
 			fullWidth
 			id='item-targetUrl'
-			label={t('targetUrl', { isProp: true })}
+			label={t('PROP_FALLBACKADURL')}
 			type='text'
 			name='targetUrl'
 			value={targetUrl}
@@ -291,7 +290,7 @@ export const ItemMinPerImpression = ({
 	const { minPerImpression } = item
 	const active = !!activeFields.minPerImpression
 	const { minPerImpression: error } = validations
-	const showError = !!error && !!error.errMsg && error.dirty
+	const showError = !!error && error.dirty
 	const minCPM =
 		typeof minPerImpression === 'object'
 			? formatTokenAmount(
@@ -308,9 +307,9 @@ export const ItemMinPerImpression = ({
 			label={t('MIN_CPM_SLOT_LABEL', { args: [symbol] })}
 			type='text'
 			name='minPerImpression'
-			value={minCPM || ' '}
+			value={minCPM || ''}
 			onChange={ev => {
-				updateField('minPerImpression', ev.target.value)
+				updateField('minPerImpression', ev.target.value.trim())
 			}}
 			disabled={!active}
 			error={showError}
@@ -348,7 +347,7 @@ export const ItemWebsite = ({
 	const { website } = item
 	const active = !!activeFields.website
 	const { website: error } = validations
-	const showError = !!error && !!error.errMsg && error.dirty
+	const showError = !!error && error.dirty
 
 	return (
 		<TextField
@@ -364,7 +363,7 @@ export const ItemWebsite = ({
 			disabled={!active}
 			error={showError}
 			helperText={
-				error && !!error.errMsg && activeFields.website ? (
+				showError && activeFields.website ? (
 					t(error.errMsg, { args: error.errMsgArgs })
 				) : (
 					<Fragment>

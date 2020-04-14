@@ -75,6 +75,7 @@ const getCols = ({ showEarnings, symbol }) => [
 const getOptions = ({ reloadData, selected }) => ({
 	filterType: 'multiselect',
 	rowsSelected: selected,
+	rowsPerPage: 10,
 	customToolbar: () => <ReloadData handleReload={reloadData} />,
 })
 

@@ -2,8 +2,9 @@ export const styles = theme => ({
 	cellImg: {
 		width: 'auto',
 		height: 'auto',
-		maxHeight: 60,
-		maxWidth: 180,
+		maxHeight: 46,
+		maxWidth: 69,
 		cursor: 'pointer',
+		display: 'flex',
 	},
 })

@@ -86,12 +86,12 @@ export function validateNewSlotBasics({
 
 			isValid = validations.every(v => v === true)
 
-			if (isValid && validations[4]) {
+			if (isValid && minPerImpression) {
 				isValid = await validateSchemaProp({
 					validateId,
 					value: {
 						[mainToken.address]: numStringCPMtoImpression({
-							numStr: minPerImpression,
+							numStr: minPerImpression || null,
 							decimals: mainToken.decimals,
 						}),
 					},
@@ -270,17 +270,7 @@ export function validateAndUpdateSlot({ validateId, dirty, item, update }) {
 			const { id, title, description, minPerImpression, website } = item
 
 			const newSlot = new AdSlot(item)
-
-			if (typeof minPerImpression === 'string') {
-				newSlot.minPerImpression = {
-					[mainToken.address]: numStringCPMtoImpression({
-						numStr: minPerImpression,
-						decimals: mainToken.decimals,
-					}),
-				}
-			}
-
-			const slot = newSlot.marketUpdate
+			const checkMinPerImpression = typeof minPerImpression === 'string'
 
 			const validations = await Promise.all([
 				validateSchemaProp({
@@ -304,23 +294,49 @@ export function validateAndUpdateSlot({ validateId, dirty, item, update }) {
 					schema: adSlotPut.website,
 					dirty,
 				})(dispatch),
-				validateSchemaProp({
-					validateId,
-					value: slot.description,
-					prop: 'minPerImpression',
-					schema: adSlotPut.minPerImpression,
-					dirty,
-				})(dispatch),
-				validateSchemaProp({
-					validateId,
-					value: slot,
-					prop: 'slot',
-					schema: adSlotPut,
-					dirty,
-				})(dispatch),
+				checkMinPerImpression
+					? validateNumberString({
+							validateId,
+							prop: 'minPerImpression',
+							value: minPerImpression,
+							dirty,
+					  })(dispatch)
+					: true,
 			])
 
-			const isValid = validations.every(v => v === true)
+			let isValid = validations.every(v => v === true)
+
+			if (isValid && checkMinPerImpression) {
+				newSlot.minPerImpression = {
+					[mainToken.address]: numStringCPMtoImpression({
+						numStr: minPerImpression || null,
+						decimals: mainToken.decimals,
+					}),
+				}
+			}
+
+			const slot = newSlot.marketUpdate
+
+			if (isValid) {
+				const finalValidations = await Promise.all([
+					validateSchemaProp({
+						validateId,
+						value: newSlot.minPerImpression,
+						prop: 'minPerImpression',
+						schema: adSlotPut.minPerImpression,
+						dirty,
+					})(dispatch),
+					validateSchemaProp({
+						validateId,
+						value: slot,
+						prop: 'slot',
+						schema: adSlotPut,
+						dirty,
+					})(dispatch),
+				])
+
+				isValid = finalValidations.every(v => v === true)
+			}
 
 			if (isValid && update) {
 				const updatedSlot = (await updateAdSlot({ slot, id })).unit
