@@ -73,3 +73,58 @@ export const fillEmptyTime = (
 }
 
 export const DATETIME_EXPORT_FORMAT = 'YYYY-MM-DD HH:mm:ss'
+
+export const getTimePeriods = ({ timeframe, start }) => {
+	let end = null
+	const startCopy = start
+	const startOfWeek = dateUtils.date(startCopy).startOf('week')
+	const endOfWeek = dateUtils.date(startCopy).endOf('week')
+	switch (timeframe) {
+		case 'hour':
+			start = +dateUtils.date(startCopy).startOf('hour')
+			end = +dateUtils.date(startCopy).endOf('hour')
+			break
+		case 'day':
+			start = +dateUtils.date(startCopy).startOf('day')
+			end = +dateUtils.date(startCopy).endOf('day')
+			break
+		case 'week':
+			start = +dateUtils.addHours(
+				startOfWeek,
+				dateUtils.getUTCOffset(startOfWeek)
+			)
+			end = +dateUtils.addHours(endOfWeek, dateUtils.getUTCOffset(endOfWeek))
+			break
+		default:
+			break
+	}
+
+	start = +start
+
+	return { start, end }
+}
+
+export const getBorderPeriodStart = ({ timeframe, start, next = false }) => {
+	const startCopy = start
+	const direction = next ? 1 : -1
+
+	switch (timeframe) {
+		case 'hour':
+			start = +dateUtils.addHours(dateUtils.date(start), direction)
+			break
+		case 'day':
+			start = +dateUtils.addDays(dateUtils.date(start), direction)
+			break
+		case 'week':
+			start = +dateUtils.addWeeks(dateUtils.date(start), direction)
+			break
+		default:
+			start = +dateUtils.addDays(dateUtils.date(start), direction)
+			break
+	}
+	if (dateUtils.isAfter(dateUtils.date(start), dateUtils.date())) {
+		start = startCopy
+	}
+
+	return start
+}
