@@ -221,7 +221,7 @@ export default function GettingStarted(props) {
 				: sideSteps.length - 1
 		)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [indexOfFirstIncompleteStep])
+	}, [steps, indexOfFirstIncompleteStep])
 	// TODO: wait for the data to be loaded before displaying the getting started
 	return (
 		!isGettingStartedHidden &&
