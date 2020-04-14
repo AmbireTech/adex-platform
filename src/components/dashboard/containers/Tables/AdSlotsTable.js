@@ -45,7 +45,7 @@ const getCols = ({ classes }) => [
 	},
 	{
 		name: 'title',
-		label: t('PROP_STATUS'),
+		label: t('PROP_TITLE'),
 		options: {
 			filter: false,
 			sort: true,

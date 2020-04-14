@@ -426,7 +426,7 @@ export function validateNumberString({
 
 		validate(validateId, prop, {
 			isValid,
-			err: { msg },
+			err: { msg, args: [value] },
 			dirty,
 		})(dispatch)
 
@@ -655,6 +655,8 @@ export function validateSchemaProp({ validateId, value, prop, schema, dirty }) {
 	return async function(dispatch) {
 		const result = Joi.validate(value, schema)
 		const isValid = !result.error
+
+		console.log('result', result)
 
 		await validate(validateId, prop, {
 			isValid,

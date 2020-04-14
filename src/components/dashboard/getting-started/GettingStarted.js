@@ -225,7 +225,7 @@ export default function GettingStarted(props) {
 	// TODO: wait for the data to be loaded before displaying the getting started
 	return (
 		!isGettingStartedHidden &&
-		sideSteps.length && (
+		!!sideSteps.length && (
 			<Box mb={2}>
 				<ExpansionPanel
 					expanded={expanded}
