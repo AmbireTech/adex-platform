@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import {
 	execute,
-	updateAnalyticsTimeframe,
-	updateAnalyticsPeriod,
+	updateIdSideAnalyticsChartTimeframe,
+	updateIdSideAnalyticsChartPeriod,
 	updateAnalyticsPeriodPrevNextLive,
 	updateAccountAnalyticsThrottled,
 } from 'actions'
@@ -37,13 +37,13 @@ import {
 	selectTotalMoney,
 	selectAverageCPM,
 	selectMainToken,
-	selectAnalyticsTimeframe,
+	selectIdentitySideAnalyticsTimeframe,
+	selectIdentitySideAnalyticsPeriod,
 	selectTotalClicks,
 	selectChartDatapointsCPM,
 	selectChartDatapointsImpressions,
 	selectChartDatapointsClicks,
 	selectChartDatapointsPayouts,
-	selectAnalyticsPeriod,
 	selectSide,
 	selectAuth,
 	selectInitialDataLoaded,
@@ -159,8 +159,8 @@ export function BasicStats() {
 	const ARROW_RIGHT = useKeyPress('ArrowRight')
 	const { symbol } = useSelector(selectMainToken)
 	const isAuth = useSelector(state => selectAuth(state))
-	const { start } = useSelector(selectAnalyticsPeriod)
-	const timeframe = useSelector(selectAnalyticsTimeframe)
+	const { start } = useSelector(selectIdentitySideAnalyticsPeriod)
+	const timeframe = useSelector(selectIdentitySideAnalyticsTimeframe)
 	const side = useSelector(selectSide)
 	const [loop, setLoop] = useState()
 	const dataLoaded = useSelector(selectInitialDataLoaded)
@@ -214,16 +214,33 @@ export function BasicStats() {
 		selectChartDatapointsCPM(state, { side, timeframe })
 	)
 
+	const goNext = () => {
+		execute(updateAnalyticsPeriodPrevNextLive({ next: true }))
+	}
+
+	const goPrev = () => {
+		execute(updateAnalyticsPeriodPrevNextLive({ next: false }))
+	}
+
+	const goLive = () => {
+		execute(updateAnalyticsPeriodPrevNextLive({ live: true }))
+	}
+
 	useEffect(() => {
-		SPACE && execute(updateAnalyticsPeriodPrevNextLive({ live: true }))
-		ARROW_RIGHT && execute(updateAnalyticsPeriodPrevNextLive({ next: true }))
-		ARROW_LEFT && execute(updateAnalyticsPeriodPrevNextLive({ next: false }))
+		SPACE && goLive()
+		ARROW_RIGHT && goNext()
+		ARROW_LEFT && goPrev()
 	}, [ARROW_LEFT, ARROW_RIGHT, SPACE])
 
 	useEffect(() => {
-		if (dataLoaded && side) {
-			execute(updateAnalyticsPeriodPrevNextLive({ live: true }))
+		if ((dataLoaded && side, timeframe, start)) {
 			execute(updateAccountAnalyticsThrottled())
+		}
+	}, [dataLoaded, side, timeframe, start])
+
+	useEffect(() => {
+		if (dataLoaded && side) {
+			goLive()
 		}
 	}, [dataLoaded, side])
 
@@ -272,7 +289,7 @@ export function BasicStats() {
 										// helperText={t(timeHints[timeframe])}
 										onChange={val => {
 											//TODO: fix change of timeframe, set default period as well
-											execute(updateAnalyticsTimeframe(val))
+											execute(updateIdSideAnalyticsChartTimeframe(val))
 										}}
 										source={timeFrames}
 										value={timeframe}
@@ -285,7 +302,7 @@ export function BasicStats() {
 										value={start}
 										minutesStep={60}
 										onChange={val => {
-											execute(updateAnalyticsPeriod(val))
+											execute(updateIdSideAnalyticsChartPeriod(val))
 										}}
 										disableFuture
 										inputVariant='outlined'
@@ -298,17 +315,15 @@ export function BasicStats() {
 										strictCompareDates
 										onBackClick={e => {
 											e.stopPropagation()
-											execute(
-												updateAnalyticsPeriodPrevNextLive({ next: false })
-											)
+											goPrev()
 										}}
 										onLiveClick={e => {
 											e.stopPropagation()
-											execute(updateAnalyticsPeriodPrevNextLive({ live: true }))
+											goLive()
 										}}
 										onNextClick={e => {
 											e.stopPropagation()
-											execute(updateAnalyticsPeriodPrevNextLive({ next: true }))
+											goNext()
 										}}
 									/>
 								</Box>
