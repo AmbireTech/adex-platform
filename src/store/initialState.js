@@ -1,5 +1,4 @@
 import { AdUnit, AdSlot, Campaign, Account } from 'adex-models'
-import dateUtils from 'helpers/dateUtils'
 
 let initialState = {
 	account: new Account(),
@@ -60,13 +59,7 @@ let initialState = {
 		market: {},
 		validators: {},
 	},
-	analytics: {
-		timeframe: 'day',
-		period: {
-			start: +dateUtils.startOfDay(dateUtils.date()),
-			end: +dateUtils.endOfDay(dateUtils.date()),
-		},
-	},
+	analytics: {},
 	channels: {
 		withBalanceAll: {},
 		withOutstandingBalance: [],
