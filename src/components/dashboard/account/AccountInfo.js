@@ -39,11 +39,35 @@ import {
 import { execute, addToast } from 'actions'
 import { formatAddress } from 'helpers/formatters'
 // const RRButton = withReactRouterLink(Button)
+import Modal from '@material-ui/core/Modal'
 
 const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 const VALIDATOR_FOLLOWER_URL = process.env.VALIDATOR_FOLLOWER_URL
 const VALIDATOR_FOLLOWER_ID = process.env.VALIDATOR_FOLLOWER_ID
+
+const Test = ({ open, handleClose }) => {
+	return (
+		<Modal
+			open={open}
+			onClose={handleClose}
+			aria-labelledby='simple-modal-title'
+			aria-describedby='simple-modal-description'
+		>
+			<div class='developer-modal-content'>
+				<iframe
+					title='test'
+					src='https://app.paytrie.com/?'
+					width='50%'
+					height='560'
+					frameborder='0'
+					allowfullscreen=''
+					scrolling='no'
+				></iframe>
+			</div>
+		</Modal>
+	)
+}
 
 const AccountItem = props => (
 	<ListItem>
@@ -78,6 +102,7 @@ function AccountInfo() {
 	const { authType = '' } = useSelector(selectWallet)
 	const identityAddress = useSelector(selectAccountIdentityAddr)
 	const privileges = useSelector(selectWalletPrivileges)
+	const [wyreWidgetOpen, setWyreWidgetOpen] = useState(false)
 	const canMakeTx = privileges > 1
 	const { symbol } = useSelector(selectMainToken)
 	const {
@@ -115,6 +140,10 @@ function AccountInfo() {
 	return (
 		<div>
 			<List className={classes.root}>
+				<Test
+					open={wyreWidgetOpen}
+					handleClose={() => setWyreWidgetOpen(false)}
+				/>
 				<ListSubheader>{t('ADEX_ACCOUNT')}</ListSubheader>
 				<AccountItem
 					left={
@@ -190,6 +219,17 @@ function AccountInfo() {
 								>
 									<CreditCardIcon className={classes.iconBtnLeft} />
 									{t('TOP_UP_IDENTITY_GBP')}
+								</Button>
+								<Button
+									fullWidth
+									variant='contained'
+									color='secondary'
+									aria-label='delete'
+									onClick={() => setWyreWidgetOpen(true)}
+									size='small'
+								>
+									<CreditCardIcon className={classes.iconBtnLeft} />
+									{t('WYRE')}
 								</Button>
 							</Box>
 							<Box py={1}>
