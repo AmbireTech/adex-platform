@@ -8,7 +8,7 @@ import {
 	selectSafariWarningConfirmation,
 	t,
 } from 'selectors'
-import { isSafari } from 'react-device-detect'
+import { isSafari } from 'helpers/browserHelpers'
 
 export function updateSpinner(item, value) {
 	return function(dispatch) {
