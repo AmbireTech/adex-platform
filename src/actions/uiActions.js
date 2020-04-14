@@ -2,7 +2,11 @@ import React from 'react'
 import Button from '@material-ui/core/Button'
 import * as types from 'constants/actionTypes'
 import Helper from 'helpers/miscHelpers'
-import { selectCompanyData, selectAccountIdentityAddr } from 'selectors'
+import {
+	selectCompanyData,
+	selectAccountIdentityAddr,
+	selectSide,
+} from 'selectors'
 import { translate } from 'services/translations/translations'
 
 export function updateSpinner(item, value) {
@@ -29,12 +33,28 @@ export function updateGlobalUi(item, value, category) {
 export function updateUiByIdentity(item, value, category) {
 	return function(dispatch, getState) {
 		const identity = selectAccountIdentityAddr(getState())
+
 		return dispatch({
 			type: types.UPDATE_UI_BY_IDENTITY,
 			identity,
 			item: item,
 			value: value,
 			category: category,
+		})
+	}
+}
+
+export function updateUiByIdentityAndSide(item, value, category) {
+	return function(dispatch, getState) {
+		const state = getState()
+		const identity = selectAccountIdentityAddr(state)
+		const side = selectSide(state)
+		return dispatch({
+			type: types.UPDATE_UI_BY_IDENTITY_AND_SIDE,
+			identity,
+			item,
+			value,
+			side,
 		})
 	}
 }
