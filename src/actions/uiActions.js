@@ -8,8 +8,8 @@ import {
 	selectIdentitySideAnalyticsTimeframe,
 	selectIdentitySideAnalyticsPeriod,
 	selectSide,
+	t,
 } from 'selectors'
-import { translate } from 'services/translations/translations'
 import { getTimePeriods, getBorderPeriodStart } from 'helpers/timeHelpers'
 import dateUtils from 'helpers/dateUtils'
 import { getErrorMsg } from 'helpers/errors'
@@ -175,7 +175,7 @@ export function updateCompanyData(newData) {
 			console.error('ERR_UPDATING_COMPANY_DATA', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_UPDATING_COMPANY_DATA'),
+				label: t('ERR_UPDATING_COMPANY_DATA'),
 				timeout: 20000,
 			})(dispatch)
 		}
@@ -227,10 +227,10 @@ export function refreshCacheAndReload({ version }) {
 							window.location.reload(true)
 						}}
 					>
-						{translate('REFRESH')}
+						{t('REFRESH')}
 					</Button>
 				),
-				label: translate('SUCCESS_UPDATING_NEW_APP_VERSION', {
+				label: t('SUCCESS_UPDATING_NEW_APP_VERSION', {
 					args: [version],
 				}),
 				timeout: 5000,
@@ -239,7 +239,7 @@ export function refreshCacheAndReload({ version }) {
 			console.error('ERR_UPDATING_APP', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_UPDATING_APP'),
+				label: t('ERR_UPDATING_APP'),
 				timeout: 20000,
 			})(dispatch)
 		}
@@ -263,11 +263,11 @@ export function notifyNewTOS() {
 							window.location.reload(true)
 						}}
 					>
-						{translate('TOS_CHECK')}
+						{t('TOS_CHECK')}
 					</Button>
 				),
-				label: translate('NOTIFICATION_NEW_TOS', {
-					args: [translate('TOS_CHECK')],
+				label: t('NOTIFICATION_NEW_TOS', {
+					args: [t('TOS_CHECK')],
 				}),
 				timeout: 5000,
 			})(dispatch)
@@ -275,7 +275,7 @@ export function notifyNewTOS() {
 			console.error('ERR_UPDATING_APP', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_UPDATING_APP'),
+				label: t('ERR_UPDATING_APP'),
 				timeout: 20000,
 			})(dispatch)
 		}
@@ -294,7 +294,7 @@ export function handleRedirectParams(search) {
 		if (email && identity && !grant) {
 			addToast({
 				type: 'accept',
-				label: translate('CONFIRM_IDENTITY_EMAIL', {
+				label: t('CONFIRM_IDENTITY_EMAIL', {
 					args: [email, identity],
 				}),
 				timeout: 20000,
@@ -302,7 +302,7 @@ export function handleRedirectParams(search) {
 		} else if (email && identity && grant) {
 			addToast({
 				type: 'accept',
-				label: translate('CONFIRM_IDENTITY_EMAIL_GRANT', {
+				label: t('CONFIRM_IDENTITY_EMAIL_GRANT', {
 					args: [email, identity, grant],
 				}),
 				timeout: 20000,
@@ -381,7 +381,7 @@ export function updateAnalyticsPeriodPrevNextLive({
 			console.error('ERR_ANALYTICS_PREV_PERIOD', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_ANALYTICS_PREV_PERIOD', {
+				label: t('ERR_ANALYTICS_PREV_PERIOD', {
 					args: [getErrorMsg(err)],
 				}),
 				timeout: 20000,
