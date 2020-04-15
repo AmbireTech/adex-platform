@@ -1,8 +1,5 @@
 import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles'
-import lime from '@material-ui/core/colors/lime'
-import deepOrange from '@material-ui/core/colors/deepOrange'
-import amber from '@material-ui/core/colors/amber'
-import grey from '@material-ui/core/colors/grey'
+import { lime, pink, amber, grey } from '@material-ui/core/colors'
 
 const WHITE = '#fff'
 export const PRIMARY = '#1B75BC'
@@ -32,7 +29,7 @@ export const palette = {
 	accentTwo: { main: ACCENT_TWO, light: ACCENT_TWO_LIGHT, contrastText: WHITE },
 	grey: { main: ALEX_GREY, contrastText: WHITE },
 	appBar: { main: grey[200], contrastText: grey[900] },
-	error: deepOrange,
+	error: pink,
 	warning: amber,
 	first: lime,
 	contrastThreshold: 3,
