@@ -7,7 +7,6 @@ import Helper from 'helpers/miscHelpers'
 import { selectMainToken, selectAnalyticsNowLabel } from 'selectors'
 import { formatFloatNumberWithCommas } from 'helpers/formatters'
 import * as ChartAnnotation from 'chartjs-plugin-annotation'
-import { formatAbbrNum } from 'helpers/formatters'
 
 const commonDsProps = {
 	fill: false,
@@ -123,7 +122,7 @@ export const SimpleStatistics = ({
 						enabled: true,
 						position: 'top',
 						cornerRadius: 0,
-						backgroundColor: pink[800],
+						backgroundColor: pink[700],
 						fontSize: DEFAULT_FONT_SIZE,
 						fontFamily: FONT,
 					},
@@ -158,7 +157,6 @@ export const SimpleStatistics = ({
 			cornerRadius: 0,
 			bodySpacing: 4,
 			caretSize: 8,
-			borderColor: 'yellow',
 			displayColors: true,
 			callbacks: {
 				label: function(t, d) {
@@ -181,7 +179,9 @@ export const SimpleStatistics = ({
 				{
 					display: true,
 					gridLines: {
-						display: false,
+						display: true,
+						drawBorder: false,
+						drawTicks: false,
 					},
 					scaleLabel: {
 						display: true,
@@ -189,12 +189,11 @@ export const SimpleStatistics = ({
 						fontSize: DEFAULT_FONT_SIZE,
 						fontFamily: FONT,
 					},
-					offset: false,
 					ticks: {
 						autoSkip: true,
 						maxTicksLimit: 2,
 						maxRotation: 0,
-						padding: 8,
+						padding: 16,
 						fontSize: DEFAULT_FONT_SIZE,
 						fontFamily: FONT,
 					},
@@ -204,68 +203,48 @@ export const SimpleStatistics = ({
 				{
 					gridLines: {
 						display: true,
+						drawBorder: false,
+						drawTicks: false,
 					},
 					ticks: {
 						beginAtZero: true,
+						maxTicksLimit: 8,
+						stepSize: 1,
+						min: 0,
+						max: 7,
+						callback: () => '',
 					},
 					scaleLabel: {
-						display: true,
-						labelString: y1Label,
+						display: false,
 					},
 					type: 'linear',
-					display: false,
 					id: 'y-axis-1',
 				},
 				{
-					type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+					type: 'linear',
 					display: false,
-					position: 'right',
 					id: 'y-axis-2',
 					ticks: {
 						beginAtZero: true,
-						precision: 0,
-						callback: function(tick) {
-							return formatAbbrNum(tick, 2)
-						},
-					},
-					// grid line settings
-					gridLines: {
-						drawOnChartArea: false, // only want the grid lines for one axis to show up
-					},
-				},
-				{
-					type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
-					display: false,
-					position: 'right',
-					id: 'y-axis-3',
-					ticks: {
-						beginAtZero: true,
-						precision: 0,
-						callback: function(tick) {
-							return formatAbbrNum(tick, 2)
-						},
-					},
-					// grid line settings
-					gridLines: {
-						drawOnChartArea: false, // only want the grid lines for one axis to show up
 					},
 				},
 				{
 					type: 'linear',
 					display: false,
-					gridLines: {
-						drawOnChartArea: false, // only want the grid lines for one axis to show up
-					},
-
-					id: 'y-axis-4',
+					id: 'y-axis-3',
 					ticks: {
 						beginAtZero: true,
-						// precision: 0.1,
-						callback: function(tick) {
-							return formatAbbrNum(tick, 2)
-						},
 					},
-					//
+				},
+				{
+					type: 'linear',
+					display: false,
+					id: 'y-axis-4',
+					ticks: {
+						precision: 0.1,
+						suggestedMax: 1,
+						beginAtZero: true,
+					},
 				},
 			],
 		},
