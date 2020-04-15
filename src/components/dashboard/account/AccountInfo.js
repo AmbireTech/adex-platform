@@ -40,6 +40,7 @@ import { execute, addToast } from 'actions'
 import { formatAddress } from 'helpers/formatters'
 // const RRButton = withReactRouterLink(Button)
 import Modal from '@material-ui/core/Modal'
+import { openWyre, openPayTrie } from 'services/onramp'
 
 const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
@@ -57,7 +58,9 @@ const Test = ({ open, handleClose }) => {
 			<div class='developer-modal-content'>
 				<iframe
 					title='test'
-					src='https://app.paytrie.com/?'
+					src={
+						'https://pay.testwyre.com/purchase?dest=ethereum%3A0x98B031783d0efb1E65C4072C6576BaCa0736A912&destCurrency=ETH&sourceAmount=10'
+					}
 					width='50%'
 					height='560'
 					frameborder='0'
@@ -225,7 +228,7 @@ function AccountInfo() {
 									variant='contained'
 									color='secondary'
 									aria-label='delete'
-									onClick={() => setWyreWidgetOpen(true)}
+									onClick={() => openPayTrie()}
 									size='small'
 								>
 									<CreditCardIcon className={classes.iconBtnLeft} />
