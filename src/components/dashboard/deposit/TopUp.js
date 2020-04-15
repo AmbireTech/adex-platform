@@ -7,7 +7,7 @@ import {
 	CardActions,
 	Button,
 } from '@material-ui/core'
-import { FileCopy } from '@material-ui/icons'
+import { CreditCard } from '@material-ui/icons'
 import { t, selectAccountIdentityAddr, selectAuthType } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
 import Img from 'components/common/img/Img'
@@ -40,12 +40,16 @@ const useStyles = makeStyles({
 		transform: 'scale(0.8)',
 	},
 	authImg: {
-		width: '30px',
-		height: '30px',
+		width: '1em',
+		height: '1em',
 		display: 'flex',
 	},
 	title: {
 		fontSize: '2rem',
+		textAlign: 'center',
+	},
+	subtitle: {
+		fontSize: '1rem',
 		textAlign: 'center',
 	},
 	pos: {
@@ -74,8 +78,9 @@ export default function TopUp() {
 				<Card>
 					<Box p={2} className={classes.root}>
 						<CardContent className={classes.content}>
-							<Typography className={classes.title} gutterBottom>
-								{t('DAI DEPOSIT')}
+							<Typography className={classes.title}>{t('DAI')}</Typography>
+							<Typography className={classes.subtitle} gutterBottom>
+								{t('DIRECT DEPOSIT')}
 							</Typography>
 							<Button
 								className={classes.copyBtn}
@@ -112,29 +117,21 @@ export default function TopUp() {
 				<Card>
 					<Box p={2} className={classes.root}>
 						<CardContent className={classes.content}>
-							<Typography className={classes.title} gutterBottom>
-								{t('DAI')}
+							<Typography className={classes.title}>{t('FIAT')}</Typography>
+							<Typography className={classes.subtitle} gutterBottom>
+								{t('CREDIT CARD')}
 							</Typography>
-							<Button
-								className={classes.copyBtn}
-								size='large'
-								color='default'
-								variant='contained'
-								disableElevation
-								fullWidth
-							>
-								{formatAddress(accountId)}
-							</Button>
 							<Box p={2}>
 								<Typography align='center' component='p' color='textSecondary'>
 									{/* {t('DIRECT_DEPOSIT_EXPLAIN')} */}
-									{`The ETH address (Identity address) of the account labelled "DAI deposit address"`}
+									{`Deposit with credit card to you account directly using one of our onramp partners`}
 								</Typography>
 							</Box>
 						</CardContent>
 						<CardActions className={classes.actions}>
 							<Button
 								size='large'
+								startIcon={<CreditCard />}
 								color='primary'
 								variant='contained'
 								fullWidth
@@ -155,7 +152,7 @@ export default function TopUp() {
 							<Box p={2}>
 								<Typography align='center' component='p' color='textSecondary'>
 									{/* {t('DIRECT_DEPOSIT_EXPLAIN')} */}
-									{`The ETH address (Identity address) of the account labelled "DAI deposit address"`}
+									{`In the future you are going to be able to deposit with BTC as well`}
 								</Typography>
 							</Box>
 						</CardContent>
