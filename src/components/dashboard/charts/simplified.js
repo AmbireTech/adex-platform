@@ -11,13 +11,15 @@ import * as ChartAnnotation from 'chartjs-plugin-annotation'
 const commonDsProps = {
 	fill: false,
 	lineTension: 0,
-	borderWidth: 0,
-	pointRadius: 4.2,
-	pointHitRadius: 14.2,
+	borderWidth: 3,
+	pointRadius: 3,
+	pointHitRadius: 13,
 }
 
 const DEFAULT_FONT_SIZE = 16.9
 const FONT = 'Roboto'
+const DASH_SIZE = 4.2
+const DASH_WIDTH = 3
 
 export const SimpleStatistics = ({
 	payouts,
@@ -54,9 +56,9 @@ export const SimpleStatistics = ({
 						ctx.beginPath()
 						ctx.moveTo(x, topY)
 						ctx.lineTo(x, bottomY)
-						ctx.lineWidth = 1 // line width
-						ctx.setLineDash([1, 5])
-						ctx.strokeStyle = '#C0C0C0' // color of the vertical line
+						ctx.lineWidth = DASH_WIDTH
+						ctx.setLineDash([DASH_SIZE, DASH_SIZE])
+						ctx.strokeStyle = '#AAA' // color of the vertical line
 						ctx.stroke()
 						ctx.restore()
 					}
@@ -113,10 +115,11 @@ export const SimpleStatistics = ({
 					type: 'line',
 					mode: 'vertical',
 					scaleID: 'x-axis-0',
+
 					value: nowLabel,
-					borderColor: pink[800],
-					borderWidth: 2,
-					borderDash: [2, 2],
+					borderColor: pink[700],
+					borderWidth: DASH_WIDTH,
+					borderDash: [DASH_SIZE, DASH_SIZE],
 					label: {
 						content: t('NOW'),
 						enabled: true,
@@ -180,7 +183,7 @@ export const SimpleStatistics = ({
 					display: true,
 					gridLines: {
 						display: true,
-						drawBorder: false,
+						drawBorder: true,
 						drawTicks: false,
 					},
 					scaleLabel: {
@@ -201,6 +204,8 @@ export const SimpleStatistics = ({
 			],
 			yAxes: [
 				{
+					// NOTE: this one is just to show constant size grid lines
+					display: true,
 					gridLines: {
 						display: true,
 						drawBorder: false,
@@ -208,14 +213,22 @@ export const SimpleStatistics = ({
 					},
 					ticks: {
 						beginAtZero: true,
-						maxTicksLimit: 8,
+						maxTicksLimit: 11,
 						stepSize: 1,
 						min: 0,
-						max: 7,
+						max: 10,
 						callback: () => '',
 					},
 					scaleLabel: {
 						display: false,
+					},
+					type: 'linear',
+					id: 'y-axis-dummy-grid-lines',
+				},
+				{
+					display: false,
+					ticks: {
+						beginAtZero: true,
 					},
 					type: 'linear',
 					id: 'y-axis-1',
