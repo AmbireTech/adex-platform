@@ -218,8 +218,11 @@ export function closeCampaign({ campaign }) {
 				item: newCampaign,
 				itemType: 'Campaign',
 			})
-			updateValidatorAuthTokens({ newAuth: authTokens })(dispatch, getState)
-			updateUserCampaigns(dispatch, getState)
+			await updateValidatorAuthTokens({ newAuth: authTokens })(
+				dispatch,
+				getState
+			)
+			await updateUserCampaigns(dispatch, getState)
 			execute(push('/dashboard/advertiser/campaigns'))
 			addToast({
 				type: 'accept',
