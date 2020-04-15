@@ -86,10 +86,6 @@ const useStyles = makeStyles(theme => {
 			borderTopColor: theme.palette.divider,
 			borderTopStyle: 'solid',
 		},
-		important: {
-			color: activeColor,
-			backgroundColor: activeBgColor,
-		},
 		active: {
 			color: activeColor,
 			backgroundColor: activeBgColor,
@@ -249,6 +245,7 @@ function SideNav(props) {
 					)}
 				</div>
 				<div>
+					<ListDivider />
 					<RRListItem
 						button
 						to={{ pathname: '/dashboard/' + side + '/deposit' }}
@@ -257,10 +254,11 @@ function SideNav(props) {
 						})}
 					>
 						<ListItemIcon>
-							<MonetizationOnIcon />
+							<MonetizationOnIcon color='secondary' />
 						</ListItemIcon>
 						<ListItemText primary={t('TOP_UP')} />
 					</RRListItem>
+					<ListDivider />
 					<Anchor target='_blank' href={`${process.env.ADEX_HELP_URL}`}>
 						<ListItem button>
 							<ListItemIcon>
