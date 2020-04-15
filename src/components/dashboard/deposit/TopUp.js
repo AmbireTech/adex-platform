@@ -15,6 +15,7 @@ import { useSelector } from 'react-redux'
 import copy from 'copy-to-clipboard'
 import { formatAddress } from 'helpers/formatters'
 import { getAuthLogo } from 'helpers/logosHelpers'
+import { openWyre, openPayTrie } from 'services/onramp/index'
 
 const useStyles = makeStyles({
 	root: {
@@ -133,10 +134,11 @@ export default function TopUp() {
 								size='large'
 								startIcon={<CreditCard />}
 								color='primary'
+								onClick={() => openWyre({ dest: accountId })}
 								variant='contained'
 								fullWidth
 							>
-								{t('DEPOSIT_WITH_METAMASK')}
+								{t('CREDIT_CARD_DEPOSIT')}
 							</Button>
 						</CardActions>
 					</Box>
