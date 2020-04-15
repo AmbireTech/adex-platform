@@ -2,7 +2,7 @@ import { createSelector } from 'reselect'
 import { createDeepEqualSelector } from 'selectors'
 
 export const selectAccount = state => state.persist.account || {}
-export const selectChannels = state => state.persist.channels
+export const selectChannels = state => state.memory.channels
 
 export const selectAuth = createSelector(
 	selectAccount,

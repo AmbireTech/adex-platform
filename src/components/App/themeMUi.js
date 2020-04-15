@@ -44,6 +44,8 @@ export const palette = {
 	},
 }
 
+const defaultTheme = createMuiTheme()
+
 export const theme = createMuiTheme({
 	typography: {
 		fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
@@ -137,7 +139,11 @@ export const theme = createMuiTheme({
 		},
 		MUIDataTableBodyCell: {
 			stackedCommon: {
-				height: '80px !important',
+				[defaultTheme.breakpoints.down('sm')]: {
+					display: 'inline-flex',
+					height: 'auto',
+					borderBottom: 'none',
+				},
 			},
 		},
 	},

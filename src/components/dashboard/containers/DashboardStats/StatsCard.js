@@ -19,6 +19,11 @@ const useStyles = makeStyles(theme => {
 				(theme.palette[bgColor] || {}).contrastText ||
 				theme.palette.text.primary,
 		},
+		cardContent: {
+			'&:last-child': {
+				paddingBottom: 16, // Hard coded as component implementation
+			},
+		},
 		infoCard: {
 			margin: theme.spacing(1),
 			flexGrow: 1,
@@ -58,28 +63,30 @@ const StatsCard = props => {
 			})}
 			onClick={onClick}
 		>
-			<CardContent>
+			<CardContent classes={{ root: classes.cardContent }}>
 				{title && (
 					<Typography variant='h5' noWrap>
 						{title}
 					</Typography>
 				)}
-				{subtitle && (
-					<Typography component='p' noWrap>
-						{subtitle}{' '}
-						{explain && (
-							<ArrowTooltip
-								title={
-									<Typography component='p' variant='caption'>
-										{explain}
-									</Typography>
-								}
-							>
-								<InfoIcon style={{ fontSize: 12 }}></InfoIcon>
-							</ArrowTooltip>
-						)}
-					</Typography>
-				)}
+				{subtitle &&
+					(explain ? (
+						<ArrowTooltip
+							title={
+								<Typography component='div' variant='caption'>
+									{explain}
+								</Typography>
+							}
+						>
+							<Typography component='div' noWrap>
+								{subtitle} <InfoIcon style={{ fontSize: 12 }}></InfoIcon>
+							</Typography>
+						</ArrowTooltip>
+					) : (
+						<Typography component='div' noWrap>
+							{subtitle}
+						</Typography>
+					))}
 				{children}
 			</CardContent>
 			{loading && <LinearProgress className={classes.progress} />}

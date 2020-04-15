@@ -20,7 +20,7 @@ import { commify } from 'ethers/utils'
 import { execute, handlePrintSelectedReceiptsAdvertiser } from 'actions'
 import { useSelector } from 'react-redux'
 import { styles } from './styles'
-import { formatDateTime, truncateString } from 'helpers/formatters'
+import { formatDateTime, truncateString, formatDate } from 'helpers/formatters'
 import { sliderFilterOptions } from './commonFilters'
 import { useTableData } from './tableHooks'
 import { ReloadData, PrintAllReceipts } from './toolbars'
@@ -190,7 +190,7 @@ const getCols = ({
 			filter: false,
 			sort: true,
 			sortDirection: 'desc',
-			customBodyRender: created => formatDateTime(created),
+			customBodyRender: created => formatDate(created),
 		},
 	},
 	{

@@ -1,4 +1,8 @@
-import { UPDATE_GLOBAL_UI, UPDATE_UI_BY_IDENTITY } from 'constants/actionTypes'
+import {
+	UPDATE_GLOBAL_UI,
+	UPDATE_UI_BY_IDENTITY,
+	UPDATE_UI_BY_IDENTITY_AND_SIDE,
+} from 'constants/actionTypes'
 import initialState from 'store/initialState'
 
 export default function uiReducer(state = initialState.ui, action) {
@@ -19,6 +23,20 @@ export default function uiReducer(state = initialState.ui, action) {
 			} else {
 				newState.byIdentity[action.identity][action.item] = action.value
 			}
+			return newState
+
+		case UPDATE_UI_BY_IDENTITY_AND_SIDE:
+			newState = { ...state }
+			newState.byIdentity = { ...(newState.byIdentity || {}) }
+			newState.byIdentity[action.identity] = {
+				...(newState.byIdentity[action.identity] || {}),
+			}
+			newState.byIdentity[action.identity][action.side] = {
+				...(newState.byIdentity[action.identity][action.side] || {}),
+			}
+			newState.byIdentity[action.identity][action.side][action.item] =
+				action.value
+
 			return newState
 		case UPDATE_GLOBAL_UI:
 			newState = { ...state }

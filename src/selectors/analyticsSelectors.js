@@ -1,12 +1,18 @@
 import { getState } from 'store'
 import { createSelector } from 'reselect'
-import { selectChannelsWithUserBalancesAll } from 'selectors'
+import {
+	selectChannelsWithUserBalancesAll,
+	selectIdentitySideAnalyticsTimeframe,
+} from 'selectors'
 import { formatTokenAmount, formatDateTime } from 'helpers/formatters'
-import { selectWebsitesArray } from 'selectors'
+import {
+	selectWebsitesArray,
+	selectIdentitySideAnalyticsPeriod,
+} from 'selectors'
 import dateUtils from 'helpers/dateUtils'
 import { DEFAULT_DATETIME_FORMAT } from 'helpers/formatters'
 
-export const selectAnalytics = state => state.persist.analytics
+export const selectAnalytics = state => state.memory.analytics
 
 export const selectAnalyticsData = createSelector(
 	[selectAnalytics, (_, side) => side],
@@ -20,13 +26,6 @@ export const selectAdvancedAnalytics = createSelector(
 	analytics => analytics.advanced || {}
 )
 
-export const selectAnalyticsTimeframe = createSelector(
-	selectAnalytics,
-	({ timeframe }) => {
-		return timeframe
-	}
-)
-
 export const selectAnalyticsLastChecked = createSelector(
 	selectAnalytics,
 	({ lastChecked }) => {
@@ -34,15 +33,8 @@ export const selectAnalyticsLastChecked = createSelector(
 	}
 )
 
-export const selectAnalyticsPeriod = createSelector(
-	selectAnalytics,
-	({ period }) => {
-		return period || {}
-	}
-)
-
 export const selectAnalyticsLiveTimestamp = createSelector(
-	[selectAnalyticsTimeframe, selectAnalyticsLastChecked],
+	[selectIdentitySideAnalyticsTimeframe, selectAnalyticsLastChecked],
 	(timeframe, lastChecked) => {
 		switch (timeframe) {
 			case 'hour':
@@ -230,7 +222,7 @@ export const selectMaxAdUnitStatByChannel = createSelector(
 export const selectAnalyticsDataAggr = createSelector(
 	[
 		selectAnalytics,
-		selectAnalyticsPeriod,
+		selectIdentitySideAnalyticsPeriod,
 		(_, opts = {}) => opts,
 		selectAnalyticsLiveTimestamp,
 	],
@@ -470,7 +462,7 @@ export const selectPublisherReceiptsPresentMonths = createSelector(
 )
 
 export const selectAnalyticsNowLabel = createSelector(
-	[selectAnalyticsTimeframe, selectAnalyticsLastChecked],
+	[selectIdentitySideAnalyticsTimeframe, selectAnalyticsLastChecked],
 	(timeframe, lastChecked) => {
 		switch (timeframe) {
 			case 'hour':
