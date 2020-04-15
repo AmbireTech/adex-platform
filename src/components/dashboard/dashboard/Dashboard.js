@@ -120,6 +120,7 @@ function Dashboard(props) {
 
 		return () => {
 			execute(stopAccountDataUpdate())
+			execute(updateUiByIdentity('initialDataLoaded', false))
 		}
 	}, [])
 
