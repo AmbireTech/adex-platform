@@ -110,9 +110,9 @@ function WeekSelectDatePicker({ classes, ...rest }) {
 		let dateClone = makeJSDateObject(date)
 
 		return dateClone && utils.isValid(dateClone)
-			? `${utils.format(dateClone, 'MMM Do, YYYY')} - ${utils.format(
+			? `${utils.format(dateClone, 'MMM DD "YY')} - ${utils.format(
 					utils.addDays(dateClone, 6),
-					'MMM Do, YYYY'
+					'MMM DD "YY'
 			  )}`
 			: invalidLabel
 	}

@@ -1,4 +1,6 @@
 import { createSelector } from 'reselect'
+import dateUtils from 'helpers/dateUtils'
+
 import { selectAccountIdentityAddr } from './accountSelectors'
 
 const REGISTRATION_OPEN = process.env.REGISTRATION_OPEN === 'true'
@@ -15,6 +17,11 @@ export const selectSpinners = state => state.memory.spinners
 export const selectIdentityUi = createSelector(
 	[selectAccountIdentityAddr, selectIdentitiesUi],
 	(identityAddr, identitiesUi) => identitiesUi[identityAddr] || {}
+)
+
+export const selectIdentitySideUi = createSelector(
+	[selectIdentityUi, selectSide],
+	(identityUi, side) => identityUi[side] || {}
 )
 
 export const selectCompanyData = createSelector(
@@ -72,4 +79,24 @@ export const selectSelectedCampaigns = createSelector(
 export const selectLoginDirectSide = createSelector(
 	selectGlobalUi,
 	({ goToSide }) => goToSide || ''
+)
+
+export const selectInitialDataLoaded = createSelector(
+	selectIdentityUi,
+	({ initialDataLoaded }) => initialDataLoaded
+)
+
+export const selectIdentitySideAnalyticsTimeframe = createSelector(
+	[selectIdentitySideUi],
+	({ sideAnalyticsTimeframe = 'day' } = {}) => sideAnalyticsTimeframe
+)
+
+export const selectIdentitySideAnalyticsPeriod = createSelector(
+	[selectIdentitySideUi],
+	({
+		sideAnalyticsPeriod = {
+			start: +dateUtils.startOfDay(dateUtils.date()),
+			end: +dateUtils.endOfDay(dateUtils.date()),
+		},
+	} = {}) => sideAnalyticsPeriod
 )

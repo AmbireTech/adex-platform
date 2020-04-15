@@ -2,7 +2,17 @@ import React from 'react'
 import Button from '@material-ui/core/Button'
 import * as types from 'constants/actionTypes'
 import Helper from 'helpers/miscHelpers'
-import { selectCompanyData, selectAccountIdentityAddr, t } from 'selectors'
+import {
+	selectCompanyData,
+	selectAccountIdentityAddr,
+	selectIdentitySideAnalyticsTimeframe,
+	selectIdentitySideAnalyticsPeriod,
+	selectSide,
+	t,
+} from 'selectors'
+import { getTimePeriods, getBorderPeriodStart } from 'helpers/timeHelpers'
+import dateUtils from 'helpers/dateUtils'
+import { getErrorMsg } from 'helpers/errors'
 
 export function updateSpinner(item, value) {
 	return function(dispatch) {
@@ -28,12 +38,28 @@ export function updateGlobalUi(item, value, category) {
 export function updateUiByIdentity(item, value, category) {
 	return function(dispatch, getState) {
 		const identity = selectAccountIdentityAddr(getState())
+
 		return dispatch({
 			type: types.UPDATE_UI_BY_IDENTITY,
 			identity,
 			item: item,
 			value: value,
 			category: category,
+		})
+	}
+}
+
+export function updateIdentitySideUi(item, value) {
+	return function(dispatch, getState) {
+		const state = getState()
+		const identity = selectAccountIdentityAddr(state)
+		const side = selectSide(state)
+		return dispatch({
+			type: types.UPDATE_UI_BY_IDENTITY_AND_SIDE,
+			identity,
+			item,
+			value,
+			side,
 		})
 	}
 }
@@ -320,5 +346,56 @@ export function hideGettingStarted(side) {
 export function setGettingStartedExpanded(expanded) {
 	return function(dispatch, getState) {
 		updateUiByIdentity('gettingStartedExpanded', expanded)(dispatch, getState)
+	}
+}
+
+export function updateIdSideAnalyticsChartPeriod(periodStart) {
+	return function(dispatch, getState) {
+		const state = getState()
+		const timeframe = selectIdentitySideAnalyticsTimeframe(state)
+		const { start, end } = getTimePeriods({ timeframe, start: periodStart })
+		updateIdentitySideUi('sideAnalyticsPeriod', { start, end })(
+			dispatch,
+			getState
+		)
+	}
+}
+
+export function updateAnalyticsPeriodPrevNextLive({
+	next = false,
+	live = false,
+}) {
+	return async function(dispatch, getState) {
+		try {
+			const timeframe = selectIdentitySideAnalyticsTimeframe(getState())
+			let { start } = selectIdentitySideAnalyticsPeriod(getState())
+
+			if (live) {
+				start = +dateUtils.date()
+			} else {
+				start = getBorderPeriodStart({ timeframe, start, next })
+			}
+
+			updateIdSideAnalyticsChartPeriod(start)(dispatch, getState)
+		} catch (err) {
+			console.error('ERR_ANALYTICS_PREV_PERIOD', err)
+			addToast({
+				type: 'cancel',
+				label: t('ERR_ANALYTICS_PREV_PERIOD', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+	}
+}
+
+export function updateIdSideAnalyticsChartTimeframe(timeframe) {
+	return function(dispatch, getState) {
+		updateIdentitySideUi('sideAnalyticsTimeframe', timeframe)(
+			dispatch,
+			getState
+		)
+		updateAnalyticsPeriodPrevNextLive({ live: true })(dispatch, getState)
 	}
 }

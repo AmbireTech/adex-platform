@@ -80,6 +80,7 @@ export default function MUIDataTableEnhanced(props) {
 					print: !props.noPrint,
 					selectableRows: props.rowSelectable ? 'multiple' : 'none',
 					disableToolbarSelect: props.toolbarEnabled ? false : true,
+					responsive: 'stacked',
 				}}
 			/>
 			{loading && <LinearProgress className={classes.progress} />}

@@ -1,6 +1,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.10.46
+##### *2020-04-14*
+
+### Added
+- Analytics timeframe and period selectors by side
+
+### Changed
+- Analytics optimized #428 and #436
+- Styles:
+  - Smaller max content width
+  - Smaller table images
+- Items, analytics and channel store moved to memory store
+
+### Fixed
+- Analytics misc bugs
+- Tables and other misc styles
+
 ## 4.10.45
 ##### *2020-04-09*
 
