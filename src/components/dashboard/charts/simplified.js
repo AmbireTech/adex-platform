@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { Line, Chart } from 'react-chartjs-2'
 import { CHARTS_COLORS } from 'components/dashboard/charts/options'
+import { pink } from '@material-ui/core/colors'
 import Helper from 'helpers/miscHelpers'
 import { selectMainToken, selectAnalyticsNowLabel } from 'selectors'
 import { formatFloatNumberWithCommas } from 'helpers/formatters'
@@ -10,11 +11,14 @@ import { formatAbbrNum } from 'helpers/formatters'
 
 const commonDsProps = {
 	fill: false,
-	lineTension: 0.1,
+	lineTension: 0,
 	borderWidth: 0,
-	pointRadius: 3,
-	pointHitRadius: 10,
+	pointRadius: 4.2,
+	pointHitRadius: 14.2,
 }
+
+const DEFAULT_FONT_SIZE = 16.9
+const FONT = 'Roboto'
 
 export const SimpleStatistics = ({
 	payouts,
@@ -111,14 +115,17 @@ export const SimpleStatistics = ({
 					mode: 'vertical',
 					scaleID: 'x-axis-0',
 					value: nowLabel,
-					borderColor: 'red',
+					borderColor: pink[800],
 					borderWidth: 2,
 					borderDash: [2, 2],
 					label: {
 						content: t('NOW'),
 						enabled: true,
-						position: 'bottom',
+						position: 'top',
 						cornerRadius: 0,
+						backgroundColor: pink[800],
+						fontSize: DEFAULT_FONT_SIZE,
+						fontFamily: FONT,
 					},
 				},
 			],
@@ -129,10 +136,30 @@ export const SimpleStatistics = ({
 			display: false,
 			text: options.title,
 		},
+		legend: {
+			position: 'top',
+			fullWidth: true,
+			labels: {
+				fontSize: DEFAULT_FONT_SIZE,
+				fontFamily: FONT,
+				boxWidth: 69,
+			},
+		},
 		tooltips: {
 			backgroundColor: 'black',
 			mode: 'index',
 			intersect: false,
+			titleFontSize: DEFAULT_FONT_SIZE,
+			bodyFontSize: DEFAULT_FONT_SIZE,
+			bodyFontFamily: FONT,
+			titleFontFamily: FONT,
+			xPadding: 8,
+			yPadding: 8,
+			cornerRadius: 0,
+			bodySpacing: 4,
+			caretSize: 8,
+			borderColor: 'yellow',
+			displayColors: true,
 			callbacks: {
 				label: function(t, d) {
 					// This adds currency MainToken (DAI) to y1Label in the tooltips
@@ -159,15 +186,17 @@ export const SimpleStatistics = ({
 					scaleLabel: {
 						display: true,
 						labelString: t(xLabel || 'TIMEFRAME'),
+						fontSize: DEFAULT_FONT_SIZE,
+						fontFamily: FONT,
 					},
+					offset: false,
 					ticks: {
-						autoSkip: false,
+						autoSkip: true,
+						maxTicksLimit: 2,
 						maxRotation: 0,
-						minRotation: 0,
-						callback: function(tick, index, array) {
-							return index === 0 || index === array.length - 1 ? tick : ''
-							// return index % Math.floor(array.length / 12) ? '' : tick
-						},
+						padding: 8,
+						fontSize: DEFAULT_FONT_SIZE,
+						fontFamily: FONT,
 					},
 				},
 			],
@@ -183,16 +212,14 @@ export const SimpleStatistics = ({
 						display: true,
 						labelString: y1Label,
 					},
+					type: 'linear',
+					display: false,
 					id: 'y-axis-1',
 				},
 				{
 					type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
-					display: true,
+					display: false,
 					position: 'right',
-					scaleLabel: {
-						display: true,
-						labelString: y2Label,
-					},
 					id: 'y-axis-2',
 					ticks: {
 						beginAtZero: true,
@@ -208,12 +235,8 @@ export const SimpleStatistics = ({
 				},
 				{
 					type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
-					display: true,
+					display: false,
 					position: 'right',
-					scaleLabel: {
-						display: true,
-						labelString: y3Label,
-					},
 					id: 'y-axis-3',
 					ticks: {
 						beginAtZero: true,
@@ -229,15 +252,11 @@ export const SimpleStatistics = ({
 				},
 				{
 					type: 'linear',
-					display: true,
-					position: 'left',
+					display: false,
 					gridLines: {
 						drawOnChartArea: false, // only want the grid lines for one axis to show up
 					},
-					scaleLabel: {
-						display: true,
-						labelString: y4Label,
-					},
+
 					id: 'y-axis-4',
 					ticks: {
 						beginAtZero: true,
