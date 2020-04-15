@@ -7,6 +7,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListDivider from '@material-ui/core/Divider'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import CampaignIcon from 'components/common/icons/CampaignIcon'
+import MonetizationOnIcon from '@material-ui/icons/MonetizationOn'
 import classnames from 'classnames'
 import packageJson from './../../../../package.json'
 import Anchor from 'components/common/anchor/anchor'
@@ -84,6 +85,10 @@ const useStyles = makeStyles(theme => {
 			borderTopWidth: 1,
 			borderTopColor: theme.palette.divider,
 			borderTopStyle: 'solid',
+		},
+		important: {
+			color: activeColor,
+			backgroundColor: activeBgColor,
 		},
 		active: {
 			color: activeColor,
@@ -244,6 +249,18 @@ function SideNav(props) {
 					)}
 				</div>
 				<div>
+					<RRListItem
+						button
+						to={{ pathname: '/dashboard/' + side + '/deposit' }}
+						className={classnames({
+							[classes.active]: location === 'deposit',
+						})}
+					>
+						<ListItemIcon>
+							<MonetizationOnIcon />
+						</ListItemIcon>
+						<ListItemText primary={t('TOP_UP')} />
+					</RRListItem>
 					<Anchor target='_blank' href={`${process.env.ADEX_HELP_URL}`}>
 						<ListItem button>
 							<ListItemIcon>
