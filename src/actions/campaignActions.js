@@ -13,6 +13,7 @@ import {
 	validateCampaignDates,
 	validateCampaignUnits,
 	validateSchemaProp,
+	validateCampaignMinTargetingScore,
 	confirmAction,
 	updateSelectedItems,
 } from 'actions'
@@ -301,6 +302,8 @@ export function validateNewCampaignFinance({
 				activeFrom,
 				withdrawPeriodStart,
 				created,
+				minTargetingScore,
+				adUnits,
 				temp = {},
 			} = campaign
 
@@ -361,6 +364,12 @@ export function validateNewCampaignFinance({
 					activeFrom,
 					withdrawPeriodStart,
 					created,
+				})(dispatch),
+				validateCampaignMinTargetingScore({
+					validateId,
+					minTargetingScore,
+					adUnits,
+					dirty,
 				})(dispatch),
 			])
 
