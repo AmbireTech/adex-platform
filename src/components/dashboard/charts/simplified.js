@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { Line, Chart } from 'react-chartjs-2'
 import { CHARTS_COLORS } from 'components/dashboard/charts/options'
 import { pink } from '@material-ui/core/colors'
+import { Box, Typography } from '@material-ui/core'
 import Helper from 'helpers/miscHelpers'
 import { selectMainToken, selectAnalyticsNowLabel } from 'selectors'
 import { formatFloatNumberWithCommas } from 'helpers/formatters'
@@ -186,10 +187,10 @@ export const SimpleStatistics = ({
 					gridLines: {
 						display: true,
 						drawBorder: true,
-						drawTicks: false,
+						drawTicks: true,
 					},
 					scaleLabel: {
-						display: true,
+						display: false,
 						labelString: t(xLabel || 'TIMEFRAME'),
 						fontSize: DEFAULT_FONT_SIZE,
 						fontFamily: FONT,
@@ -198,9 +199,10 @@ export const SimpleStatistics = ({
 						autoSkip: true,
 						maxTicksLimit: 2,
 						maxRotation: 0,
-						padding: 16,
+						padding: -24,
 						fontSize: DEFAULT_FONT_SIZE,
 						fontFamily: FONT,
+						callback: () => '',
 					},
 				},
 			],
@@ -264,11 +266,32 @@ export const SimpleStatistics = ({
 	}
 
 	return (
-		<Line
-			height={420}
-			data={chartData}
-			options={linesOptions}
-			plugins={[ChartAnnotation]}
-		/>
+		<Box>
+			<Box>
+				<Line
+					height={420}
+					data={chartData}
+					options={linesOptions}
+					plugins={[ChartAnnotation]}
+				/>
+			</Box>
+			<Box
+				display='flex'
+				flexDirection='row'
+				justifyContent='space-between'
+				alignItems='center'
+				px={1}
+			>
+				<Typography component='div' align='left'>
+					{defaultLabels[0]}
+				</Typography>
+				<Typography component='div' align='center'>
+					{t(xLabel || 'TIMEFRAME')}
+				</Typography>
+				<Typography component='div' align='right'>
+					{defaultLabels[1]}
+				</Typography>
+			</Box>
+		</Box>
 	)
 }
