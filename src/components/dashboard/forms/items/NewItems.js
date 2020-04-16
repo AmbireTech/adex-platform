@@ -197,7 +197,7 @@ export const NewSlotSteps = props => (
 			{ title: 'SLOT_TAGS_STEP', component: AdSlotTargeting },
 			{
 				title: 'PREVIEW_AND_SAVE_ITEM',
-				completeBtnTitle: 'OPEN_CAMPAIGN',
+				completeBtnTitle: 'SAVE',
 				component: AdSlotPreview,
 				completeFn: props =>
 					execute(
