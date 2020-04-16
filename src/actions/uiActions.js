@@ -347,6 +347,15 @@ export function updatePrivilegesWarningAccepted(accepted) {
 	}
 }
 
+export function updateMissingRevenueDataPointAccepted(accepted) {
+	return function(dispatch, getState) {
+		updateUiByIdentity('missingRevenueDataPointsAccepted', accepted)(
+			dispatch,
+			getState
+		)
+	}
+}
+
 export function hideGettingStarted(side) {
 	return function(dispatch, getState) {
 		updateUiByIdentity('hideGettingStarted', true, side)(dispatch, getState)

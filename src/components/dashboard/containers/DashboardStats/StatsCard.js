@@ -25,7 +25,6 @@ const useStyles = makeStyles(theme => {
 			},
 		},
 		infoCard: {
-			margin: theme.spacing(1),
 			flexGrow: 1,
 		},
 		linkCard: {
