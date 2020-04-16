@@ -1,6 +1,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.10.47
+##### *2020-04-16*
+
+### Added
+- Validation for ad units targeting
+- Validation on campaign with "Only show ad if targeting matches" checked
+- Display message for impressions but no revenue
+
+### Changed
+- Preview props styled as outlined input
+- Improved chart styles and usability on mobile
+
+### Fixed
+- Campaign close
+- Targeting input styles and responsiveness
+- Fixed analytics data loading
+
 ## 4.10.46
 ##### *2020-04-14*
 
