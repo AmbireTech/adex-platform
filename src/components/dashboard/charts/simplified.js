@@ -46,7 +46,7 @@ export const SimpleStatistics = ({
 	// Vertical line / crosshair
 	useEffect(() => {
 		Chart.pluginService.register({
-			afterDraw: function(chart) {
+			beforeDraw: function(chart) {
 				const ctx = chart.ctx
 				if (chart.tooltip._active && chart.tooltip._active.length) {
 					const activePoint = chart.controller.tooltip._active[0]

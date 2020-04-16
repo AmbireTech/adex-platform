@@ -65,6 +65,7 @@ function AdUnitBasic({ validateId }) {
 				<Grid item xs={12}>
 					<TextField
 						fullWidth
+						variant='outlined'
 						type='text'
 						required
 						label={t('title', { isProp: true })}
@@ -81,6 +82,7 @@ function AdUnitBasic({ validateId }) {
 				<Grid item xs={12}>
 					<TextField
 						fullWidth
+						variant='outlined'
 						type='text'
 						multiline
 						rows={3}
@@ -101,6 +103,7 @@ function AdUnitBasic({ validateId }) {
 				<Grid item xs={12}>
 					<TextField
 						fullWidth
+						variant='outlined'
 						type='text'
 						required
 						label={t('targetUrl', { isProp: true })}
@@ -118,6 +121,7 @@ function AdUnitBasic({ validateId }) {
 				</Grid>
 				<Grid item xs={12}>
 					<Button
+						fullWidth
 						onClick={handleUtmButton}
 						color={!autoUtmAdded ? 'primary' : 'secondary'}
 						variant='contained'
@@ -128,6 +132,7 @@ function AdUnitBasic({ validateId }) {
 				<Grid item xs={12}>
 					<Dropdown
 						fullWidth
+						variant='outlined'
 						required
 						onChange={value => execute(updateNewUnit('type', value))}
 						source={AdTypes}
