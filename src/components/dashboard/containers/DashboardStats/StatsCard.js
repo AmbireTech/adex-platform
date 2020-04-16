@@ -56,7 +56,8 @@ const StatsCard = props => {
 
 	return (
 		<Card
-			// raised
+			variant='outlined'
+			elevation={0}
 			className={classnames(classes.root, classes.infoCard, {
 				[classes.linkCard]: !!linkCard,
 			})}
