@@ -163,7 +163,7 @@ export function BasicStats() {
 	const timeframe = useSelector(selectIdentitySideAnalyticsTimeframe)
 	const side = useSelector(selectSide)
 	const [loop, setLoop] = useState()
-	const dataLoaded = useSelector(selectInitialDataLoaded)
+	const initialDataLoaded = useSelector(selectInitialDataLoaded)
 
 	const totalImpressions = useSelector(state =>
 		selectTotalImpressions(state, {
@@ -192,11 +192,6 @@ export function BasicStats() {
 			timeframe,
 		})
 	)
-
-	const loadingImpressions = totalImpressions === null
-	const loadingMoney = totalMoney === null
-	const loadingCPM = averageCPM === null
-	const loadingClicks = totalClicks === null
 
 	const payouts = useSelector(state =>
 		selectChartDatapointsPayouts(state, { side, timeframe })
@@ -233,16 +228,16 @@ export function BasicStats() {
 	}, [ARROW_LEFT, ARROW_RIGHT, SPACE])
 
 	useEffect(() => {
-		if ((dataLoaded && side, timeframe, start)) {
+		if (initialDataLoaded && side && timeframe && start) {
 			execute(updateAccountAnalyticsThrottled())
 		}
-	}, [dataLoaded, side, timeframe, start])
+	}, [initialDataLoaded, side, timeframe, start])
 
 	useEffect(() => {
-		if (dataLoaded && side) {
+		if (initialDataLoaded && side) {
 			goLive()
 		}
-	}, [dataLoaded, side])
+	}, [initialDataLoaded, side])
 
 	useEffect(() => {
 		loop && loop.startLoop()
@@ -270,10 +265,16 @@ export function BasicStats() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [timeframe, isAuth])
 
-	const dataInSync =
-		(clicks.labels[clicks.labels.length - 1] ===
-			impressions[impressions.labels.length - 1]) ===
-		payouts[payouts.labels.length - 1]
+	const dataSynced =
+		!!initialDataLoaded &&
+		[
+			impressions.labels[impressions.labels.length - 1],
+			payouts.labels[payouts.labels.length - 1],
+		].every(x => !!x && x === clicks.labels[clicks.labels.length - 1]) &&
+		[totalImpressions, totalMoney, averageCPM, totalClicks].every(
+			x => x !== null
+		)
+
 	return (
 		side && (
 			<Grid container spacing={2}>
@@ -332,7 +333,7 @@ export function BasicStats() {
 						<StatsCard
 							bgColor='primary'
 							subtitle={t('LABEL_TOTAL_IMPRESSIONS')}
-							loading={loadingImpressions && !dataInSync}
+							loading={!dataSynced}
 							title={`${formatNumberWithCommas(totalImpressions || 0)}`}
 							explain={t('EXPLAIN_TOTAL_IMPRESSIONS')}
 						>
@@ -342,12 +343,7 @@ export function BasicStats() {
 							bgColor='secondary'
 							subtitle={t('LABEL_TOTAL_CLICKS')}
 							explain={t('EXPLAIN_TOTAL_CLICKS')}
-							loading={
-								loadingClicks &&
-								loadingImpressions &&
-								!dataInSync &&
-								totalClicks / totalImpressions !== Infinity
-							}
+							loading={!dataSynced}
 							title={`${formatNumberWithCommas(totalClicks || 0)} (${parseFloat(
 								(totalClicks / totalImpressions) * 100 || 0
 							).toFixed(2)} % ${t('LABEL_CTR')})`}
@@ -362,7 +358,7 @@ export function BasicStats() {
 								title={`~ ${formatNumberWithCommas(
 									parseFloat(totalMoney || 0).toFixed(2)
 								)} ${symbol}`}
-								loading={loadingMoney && !dataInSync}
+								loading={!dataSynced}
 							>
 								<MonetizationOn className={classes.cardIcon} />
 							</StatsCard>
@@ -376,7 +372,7 @@ export function BasicStats() {
 								title={`~ ${formatNumberWithCommas(
 									parseFloat(totalMoney || 0).toFixed(2)
 								)} ${symbol}`}
-								loading={loadingMoney && !dataInSync}
+								loading={!dataSynced}
 							>
 								<MonetizationOn className={classes.cardIcon} />
 							</StatsCard>
@@ -385,7 +381,7 @@ export function BasicStats() {
 							bgColor='grey'
 							subtitle={t('LABEL_AVG_CPM')}
 							explain={t('EXPLAIN_AVG_CPM')}
-							loading={loadingCPM && !dataInSync}
+							loading={!dataSynced}
 							title={`~ ${formatNumberWithCommas(
 								parseFloat(averageCPM || 0).toFixed(2)
 							)} ${symbol} / CPM`}
