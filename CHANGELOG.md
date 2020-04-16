@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.10.48
+##### *2020-04-17*
+
+### Changed
+- Steps inputs styles - outlined (items, transactions, login)
+- Steps previews - more compact with grids, better order of props
+
+### Fixed
+- Typos
+- Styles
+- Code clenaup
+
 ## 4.10.47
 ##### *2020-04-16*
 
