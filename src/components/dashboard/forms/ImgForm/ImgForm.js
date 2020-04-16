@@ -5,7 +5,7 @@ import Img from 'components/common/img/Img'
 import Dropzone from 'react-dropzone'
 import Translate from 'components/translate/Translate'
 import Button from '@material-ui/core/Button'
-import AppBar from '@material-ui/core/AppBar'
+import { Box } from '@material-ui/core'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import ReactCrop from 'react-image-crop'
@@ -18,6 +18,7 @@ import Grid from '@material-ui/core/Grid'
 import { isVideoMedia } from 'helpers/mediaHelpers.js'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
+import { Paper } from '@material-ui/core'
 
 class ImgForm extends Component {
 	constructor(props) {
@@ -153,14 +154,8 @@ class ImgForm extends Component {
 		const videoSrc = isVideoMedia(mime)
 		return (
 			<div className={classes.imgForm}>
-				<AppBar
-					position='static'
-					color='default'
-					classes={{
-						root: classes.header,
-					}}
-				>
-					<Toolbar>
+				<Paper variant='outlined'>
+					<Box p={2}>
 						{imgSrc && imgName ? (
 							<span>
 								{label || 'Image'}: {imgName}
@@ -168,8 +163,8 @@ class ImgForm extends Component {
 						) : (
 							<span> {label || 'Upload image'} </span>
 						)}
-					</Toolbar>
-				</AppBar>
+					</Box>
+				</Paper>
 				<div>
 					{cropMode ? (
 						<div className={classes.dropzone} onClick={this.preventBubbling}>
