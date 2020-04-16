@@ -56,6 +56,7 @@ export const ItemSpecProp = ({
 	value = '',
 	helperText,
 	InputProps,
+	...rest
 }) => {
 	return (
 		<TextField
@@ -66,10 +67,12 @@ export const ItemSpecProp = ({
 			margin='dense'
 			name={prop}
 			value={value || ''}
-			disabled
+			// disabled
+			readOnly
 			helperText={helperText}
 			variant='outlined'
 			InputProps={InputProps}
+			{...rest}
 		/>
 	)
 }
