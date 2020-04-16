@@ -1,3 +1,4 @@
+import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
 import { popupCenter } from 'helpers/popupHelper'
 import url from 'url'
 import { t } from 'selectors'
@@ -35,4 +36,16 @@ export const openPayTrie = ({ addr, email, ...rest }) => {
 		w: 400,
 		h: 700,
 	})
+}
+
+export const openOnRampNetwork = ({ symbol, accountId }) => {
+	const widget = new RampInstantSDK({
+		hostAppName: 'AdExNetwork',
+		hostLogoUrl: 'https://www.adex.network/img/Adex-logo@2x.png',
+		variant: 'auto',
+		swapAsset: symbol,
+		userAddress: accountId,
+	})
+	widget.domNodes.overlay.style.zIndex = 1000
+	widget.show()
 }
