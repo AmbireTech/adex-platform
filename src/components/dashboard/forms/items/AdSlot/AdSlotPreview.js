@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import { useSelector } from 'react-redux'
 import { makeStyles } from '@material-ui/core/styles'
-import { Typography } from '@material-ui/core'
+import { Typography, Grid } from '@material-ui/core'
 import Img from 'components/common/img/Img'
 import TargetsList from 'components/dashboard/containers/TargetsList'
 import Anchor from 'components/common/anchor/anchor'
@@ -24,7 +24,15 @@ const useStyles = makeStyles(styles)
 const SlotFallback = ({ img, targetUrl }) => {
 	const classes = useStyles()
 	return (
-		<div>
+		<Fragment>
+			<PropRow
+				left={t('fallbackAdUrl', { isProp: true })}
+				right={
+					<Anchor href={targetUrl} target='_blank'>
+						{targetUrl}
+					</Anchor>
+				}
+			/>
 			<PropRow
 				left={t('SLOT_FALLBACK_IMG_LABEL')}
 				right={
@@ -41,15 +49,7 @@ const SlotFallback = ({ img, targetUrl }) => {
 					/>
 				}
 			/>
-			<PropRow
-				left={t('fallbackAdUrl', { isProp: true })}
-				right={
-					<Anchor href={targetUrl} target='_blank'>
-						{targetUrl}
-					</Anchor>
-				}
-			/>
-		</div>
+		</Fragment>
 	)
 }
 
@@ -71,51 +71,80 @@ const AdSlotPreview = () => {
 	return (
 		<ContentBox>
 			<ContentBody>
-				<PropRow left={t('owner', { isProp: true })} right={identityAddr} />
-				<PropRow left={t('type', { isProp: true })} right={type} />
-				<PropRow left={t('title', { isProp: true })} right={title} />
-				<PropRow
-					left={t('description', { isProp: true })}
-					right={description}
-				/>
-				<PropRow left={t('website', { isProp: true })} right={website} />
-				<PropRow
-					right={
-						<Fragment>
-							<Typography component='div' color='primary' gutterBottom>
-								<div
-									dangerouslySetInnerHTML={{
-										__html: t('SLOT_WEBSITE_WARNING'),
-									}}
-								/>
-							</Typography>
-							<Typography component='div' color='primary' gutterBottom>
-								<div
-									dangerouslySetInnerHTML={{
-										__html: t('SLOT_WEBSITE_CODE_WARNING'),
-									}}
-								/>
-							</Typography>
-						</Fragment>
-					}
-				/>
-				{temp.hostname && temp.issues && temp.issues.length && (
-					<PropRow right={<WebsiteIssues issues={temp.issues} />} />
-				)}
+				<Grid container>
+					<Grid item xs={12} md={6}>
+						<PropRow left={t('title', { isProp: true })} right={title} />
+					</Grid>
 
-				<PropRow
-					left={t('MIN_CPM_SLOT_LABEL')}
-					right={`${minPerImpression} ${symbol}`}
-				/>
-				{temp.useFallback && <SlotFallback img={temp} targetUrl={targetUrl} />}
-				{/* </Grid> */}
-				<br />
-				{tags && (
-					<PropRow
-						left={t('tags', { isProp: true })}
-						right={<TargetsList targets={tags} />}
-					/>
-				)}
+					<Grid item xs={12} md={6}>
+						<PropRow left={t('type', { isProp: true })} right={type} />
+					</Grid>
+
+					<Grid item xs={12} md={6}>
+						<PropRow
+							left={t('MIN_CPM_SLOT_LABEL')}
+							right={`${minPerImpression || 0} ${symbol}`}
+						/>
+					</Grid>
+
+					<Grid item xs={12} md={6}>
+						<PropRow left={t('website', { isProp: true })} right={website} />
+					</Grid>
+
+					<Grid item xs={12} md={6}>
+						<PropRow left={t('owner', { isProp: true })} right={identityAddr} />
+					</Grid>
+
+					<Grid item xs={12} md={6}>
+						<PropRow
+							left={t('description', { isProp: true })}
+							right={description}
+						/>
+					</Grid>
+
+					<Grid item xs={12}>
+						<PropRow
+							right={
+								<Fragment>
+									<Typography component='div' color='primary' gutterBottom>
+										<div
+											dangerouslySetInnerHTML={{
+												__html: t('SLOT_WEBSITE_WARNING'),
+											}}
+										/>
+									</Typography>
+									<Typography component='div' color='primary' gutterBottom>
+										<div
+											dangerouslySetInnerHTML={{
+												__html: t('SLOT_WEBSITE_CODE_WARNING'),
+											}}
+										/>
+									</Typography>
+								</Fragment>
+							}
+						/>
+					</Grid>
+
+					{temp.hostname && temp.issues && temp.issues.length && (
+						<Grid item xs={12}>
+							<PropRow right={<WebsiteIssues issues={temp.issues} />} />
+						</Grid>
+					)}
+					<Grid item xs={12} md={6}>
+						{temp.useFallback ? (
+							<SlotFallback img={temp} targetUrl={targetUrl} />
+						) : (
+							<PropRow left={t('FALLBACK_DATA')} right={t('NO')} />
+						)}
+					</Grid>
+
+					<Grid item xs={12} md={6}>
+						<PropRow
+							left={t('tags', { isProp: true })}
+							right={<TargetsList targets={tags} />}
+						/>
+					</Grid>
+				</Grid>
 			</ContentBody>
 		</ContentBox>
 	)

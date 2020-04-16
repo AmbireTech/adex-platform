@@ -24,7 +24,7 @@ function AdUnitPreview() {
 	return (
 		<ContentBox>
 			<ContentBody>
-				<Grid container spacing={1}>
+				<Grid container>
 					<Grid item xs={12} md={6}>
 						<PropRow left={t('title', { isProp: true })} right={title} />
 					</Grid>
