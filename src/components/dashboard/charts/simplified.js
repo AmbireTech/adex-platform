@@ -256,8 +256,6 @@ export const SimpleStatistics = ({
 					display: false,
 					id: 'y-axis-4',
 					ticks: {
-						precision: 0.1,
-						suggestedMax: 1,
 						beginAtZero: true,
 					},
 				},
