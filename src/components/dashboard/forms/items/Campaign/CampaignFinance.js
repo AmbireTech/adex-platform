@@ -7,8 +7,6 @@ import {
 	FormControlLabel,
 	FormControl,
 	FormHelperText,
-	Input,
-	InputLabel,
 	Checkbox,
 	TextField,
 } from '@material-ui/core'
@@ -17,6 +15,7 @@ import DateTimePicker from 'components/common/DateTimePicker'
 import { FullContentSpinner } from 'components/common/dialog/content'
 import { utils } from 'ethers'
 import MomentUtils from '@date-io/moment'
+import { ItemSpecProp } from 'components/dashboard/containers/ItemCommon/'
 import {
 	selectSpinnerById,
 	selectMainToken,
@@ -105,6 +104,7 @@ function CampaignFinance({ validateId }) {
 						<TextField
 							fullWidth
 							type='text'
+							variant='outlined'
 							required
 							label={t('title', { isProp: true })}
 							name='title'
@@ -123,27 +123,29 @@ function CampaignFinance({ validateId }) {
 					</Grid>
 
 					<Grid item xs={12} sm={12} md={6}>
-						<FormControl fullWidth disabled>
-							<InputLabel htmlFor='leader-validator'>
-								{t('ADV_PLATFORM_VALIDATOR')}
-							</InputLabel>
-							<Input id='leader-validator' value={leader.url || ''} />
-							<FormHelperText>{leader.id}</FormHelperText>
-						</FormControl>
+						<ItemSpecProp
+							label={t('ADV_PLATFORM_VALIDATOR')}
+							prop='leader-validator'
+							value={leader.url || ''}
+							helperText={leader.id}
+							disabled
+						/>
 					</Grid>
 
 					<Grid item xs={12} sm={12} md={6}>
-						<FormControl fullWidth disabled>
-							<InputLabel htmlFor='follower-validator'>
-								{t('PUB_PLATFORM_VALIDATOR')}
-							</InputLabel>
-							<Input id='follower-validator' value={follower.url || ''} />
-							<FormHelperText>{follower.id}</FormHelperText>
-						</FormControl>
+						<ItemSpecProp
+							label={t('PUB_PLATFORM_VALIDATOR')}
+							prop='follower-validator'
+							value={follower.url || ''}
+							helperText={follower.id}
+							disabled
+						/>
 					</Grid>
+
 					<Grid item xs={12} sm={12} md={6}>
 						<TextField
 							fullWidth
+							variant='outlined'
 							type='text'
 							required
 							label={t('DEPOSIT_AMOUNT_LABEL', {
@@ -173,6 +175,7 @@ function CampaignFinance({ validateId }) {
 					<Grid item xs={12} sm={12} md={6}>
 						<TextField
 							fullWidth
+							variant='outlined'
 							type='text'
 							required
 							label={t('CPM_LABEL', { args: [impressions] })}
@@ -200,6 +203,7 @@ function CampaignFinance({ validateId }) {
 					<Grid item xs={12} sm={12} md={6}>
 						<DateTimePicker
 							emptyLabel={t('SET_CAMPAIGN_START')}
+							inputVariant='outlined'
 							disablePast
 							fullWidth
 							calendarIcon
@@ -221,6 +225,7 @@ function CampaignFinance({ validateId }) {
 					<Grid item xs={12} sm={12} md={6}>
 						<DateTimePicker
 							emptyLabel={t('SET_CAMPAIGN_END')}
+							inputVariant='outlined'
 							disablePast
 							fullWidth
 							calendarIcon

@@ -51,6 +51,7 @@ function AdSlotMedia({ validateId }) {
 						<Grid item xs={12}>
 							<TextField
 								fullWidth
+								variant='outlined'
 								type='text'
 								required
 								label={t('targetUrl', { isProp: true })}

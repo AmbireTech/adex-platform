@@ -65,6 +65,7 @@ const QuickInfo = props => {
 							<TextField
 								fullWidth
 								type='text'
+								variant='outlined'
 								required
 								label={t('email', { isProp: true })}
 								name='email'
@@ -83,6 +84,7 @@ const QuickInfo = props => {
 							<TextField
 								fullWidth
 								type='text'
+								variant='outlined'
 								required
 								label={t('emailCheck', { isProp: true })}
 								name='emailCheck'
@@ -102,6 +104,7 @@ const QuickInfo = props => {
 						<Grid item xs={12}>
 							<TextField
 								fullWidth
+								variant='outlined'
 								type='password'
 								required
 								label={t('password', { isProp: true })}
@@ -122,6 +125,7 @@ const QuickInfo = props => {
 						<Grid item xs={12}>
 							<TextField
 								fullWidth
+								variant='outlined'
 								type='password'
 								required
 								label={t('passwordCheck', { isProp: true })}
@@ -143,6 +147,7 @@ const QuickInfo = props => {
 							<Dropdown
 								required
 								fullWidth
+								variant='outlined'
 								name='knowFrom'
 								label={t('knowFrom', { isProp: true })}
 								onChange={val => execute(updateIdentity('knowFrom', val))}
@@ -162,6 +167,7 @@ const QuickInfo = props => {
 							<Grid item xs={12}>
 								<TextField
 									fullWidth
+									variant='outlined'
 									required
 									label={t('moreInfo', { isProp: true })}
 									name='moreInfo'

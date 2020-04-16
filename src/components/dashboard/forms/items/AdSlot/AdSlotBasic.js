@@ -60,6 +60,7 @@ function AdSlotBasic({ validateId }) {
 					<Grid item xs={12}>
 						<TextField
 							fullWidth
+							variant='outlined'
 							type='text'
 							required
 							label={'Ad Slot ' + t('title', { isProp: true })}
@@ -78,6 +79,7 @@ function AdSlotBasic({ validateId }) {
 					<Grid item xs={12}>
 						<TextField
 							fullWidth
+							variant='outlined'
 							type='text'
 							multiline
 							rows={3}
@@ -98,6 +100,7 @@ function AdSlotBasic({ validateId }) {
 					<Grid item xs={12}>
 						<TextField
 							fullWidth
+							variant='outlined'
 							type='text'
 							required
 							label={t('SLOT_WEBSITE')}
@@ -124,6 +127,7 @@ function AdSlotBasic({ validateId }) {
 					<Grid item xs={12}>
 						<Dropdown
 							fullWidth
+							variant='outlined'
 							required
 							onChange={value => execute(updateNewSlot('type', value))}
 							source={adTypesSource}
@@ -143,6 +147,7 @@ function AdSlotBasic({ validateId }) {
 					<Grid item xs={12}>
 						<TextField
 							fullWidth
+							variant='outlined'
 							type='text'
 							required
 							label={t('MIN_CPM_SLOT_LABEL', { args: [symbol] })}
