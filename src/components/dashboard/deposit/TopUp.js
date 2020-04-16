@@ -6,8 +6,11 @@ import {
 	Typography,
 	CardActions,
 	Button,
+	List,
+	ListItem,
+	Grid,
 } from '@material-ui/core'
-import { CreditCard } from '@material-ui/icons'
+import { FileCopy } from '@material-ui/icons'
 import { t, selectAccountIdentityAddr, selectAuthType } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
 import Img from 'components/common/img/Img'
@@ -15,52 +18,44 @@ import { useSelector } from 'react-redux'
 import copy from 'copy-to-clipboard'
 import { formatAddress } from 'helpers/formatters'
 import { getAuthLogo } from 'helpers/logosHelpers'
-import { openWyre, openPayTrie } from 'services/onramp/index'
+import { openWyre, openPayTrie, openOnRampNetwork } from 'services/onramp'
+import RAMP_LOGO from 'resources/ramp.svg'
+import WYRE_LOGO from 'resources/wyre.svg'
+import PAYTRIE_LOGO from 'resources/paytrie.svg'
+import { styles } from './styles'
 
-const useStyles = makeStyles({
-	root: {
-		maxWidth: 350,
-		// minHeight: 300,
-		height: '100%',
-		flexGrow: 1,
-		display: 'flex',
-		flex: 1,
-		flexDirection: 'column',
-		justifyContent: 'space-between',
+const useStyles = makeStyles(styles)
+const onRampProvidersDetails = [
+	{
+		title: 'Credit Card',
+		onClick: ({ accountId }) => openWyre({ dest: accountId }),
+		imgSrc: WYRE_LOGO,
+		imgAlt: 'Wyre',
+		feeInfo: 'Fees: 1.5% + 30¢',
+		limitInfo: 'Limits: $250/day',
+		currencies: 'Currencies: USD',
 	},
-	badgeFull: {
-		width: '100%',
+	{
+		title: 'Bank Transfer',
+		onClick: ({ symbol, accountId }) =>
+			openOnRampNetwork({ symbol, accountId }),
+		imgSrc: RAMP_LOGO,
+		imgAlt: 'Ramp Network',
+		feeInfo: 'Fees: 0% - 2.5%',
+		limitInfo: 'Limits: 10,000EUR/m',
+		currencies: 'Currencies: GBP,EUR',
 	},
-	copyBtn: {
-		backgroundColor: '#E2EAED',
-		borderRadius: '3px',
+	{
+		title: 'Bank Transfer',
+		onClick: ({ accountId, email }) =>
+			openPayTrie({ addr: accountId, email: email }),
+		imgSrc: PAYTRIE_LOGO,
+		imgAlt: 'PayTrie',
+		feeInfo: 'Fees: 1% (min. $2 CAD)',
+		limitInfo: 'Limits: $2,000CAD/day',
+		currencies: 'Currencies: CAD',
 	},
-	bullet: {
-		display: 'inline-block',
-		margin: '0 2px',
-		transform: 'scale(0.8)',
-	},
-	authImg: {
-		width: '1em',
-		height: '1em',
-		display: 'flex',
-	},
-	title: {
-		fontSize: '2rem',
-		textAlign: 'center',
-	},
-	subtitle: {
-		fontSize: '1rem',
-		textAlign: 'center',
-	},
-	pos: {
-		marginBottom: 12,
-	},
-	actions: {
-		display: 'flex',
-		justifyContent: 'space-between',
-	},
-})
+]
 
 export default function TopUp() {
 	const classes = useStyles()
@@ -90,6 +85,7 @@ export default function TopUp() {
 								variant='contained'
 								disableElevation
 								fullWidth
+								endIcon={<FileCopy fontSize='small' color='disabled' />}
 							>
 								{formatAddress(accountId)}
 							</Button>
@@ -106,6 +102,7 @@ export default function TopUp() {
 								size='large'
 								color='primary'
 								variant='contained'
+								disableElevation
 								fullWidth
 							>
 								{t('DEPOSIT_WITH_AUTH_METHOD')}
@@ -118,9 +115,11 @@ export default function TopUp() {
 				<Card>
 					<Box p={2} className={classes.root}>
 						<CardContent className={classes.content}>
-							<Typography className={classes.title}>{t('FIAT')}</Typography>
+							<Typography className={classes.title}>
+								{t('FIAT CURRENCY')}
+							</Typography>
 							<Typography className={classes.subtitle} gutterBottom>
-								{t('CREDIT CARD')}
+								{t('CREDIT CARD & BANK TRANSFER')}
 							</Typography>
 							<Box p={2}>
 								<Typography align='center' component='p' color='textSecondary'>
@@ -130,16 +129,20 @@ export default function TopUp() {
 							</Box>
 						</CardContent>
 						<CardActions className={classes.actions}>
-							<Button
-								size='large'
-								startIcon={<CreditCard />}
-								color='primary'
-								onClick={() => openWyre({ dest: accountId })}
-								variant='contained'
-								fullWidth
-							>
-								{t('CREDIT_CARD_DEPOSIT')}
-							</Button>
+							<List className={classes.listItem}>
+								{onRampProvidersDetails.map(item => (
+									<ListItem onClick={() => item.onClick({ accountId })}>
+										<OnRampListItem
+											title={item.title}
+											imgSrc={item.imgSrc}
+											imgAlt={item.imgAlt}
+											feeInfo={item.feeInfo}
+											limitInfo={item.limitInfo}
+											currencies={item.currencies}
+										/>
+									</ListItem>
+								))}
+							</List>
 						</CardActions>
 					</Box>
 				</Card>
@@ -149,7 +152,10 @@ export default function TopUp() {
 					<Box p={2} className={classes.root}>
 						<CardContent className={classes.content}>
 							<Typography className={classes.title} gutterBottom>
-								{t('BTC DEPOSIT')}
+								{t('BTC')}
+							</Typography>
+							<Typography className={classes.subtitle} gutterBottom>
+								{t('DIRECT DEPOSIT')}
 							</Typography>
 							<Box p={2}>
 								<Typography align='center' component='p' color='textSecondary'>
@@ -173,5 +179,44 @@ export default function TopUp() {
 				</Card>
 			</Box>
 		</Box>
+	)
+}
+
+const OnRampListItem = ({
+	imgSrc,
+	imgAlt,
+	title,
+	feeInfo,
+	limitInfo,
+	currencies,
+}) => {
+	const classes = useStyles()
+	return (
+		<Button size='large' fullWidth disableElevation className={classes.copyBtn}>
+			<Box p={1} maxWidth={'100%'}>
+				<Grid
+					container
+					direction='row'
+					justify='space-between'
+					alignItems='center'
+				>
+					<Grid item xs={12} sm={6} lg={6}>
+						<Img className={classes.img} alt={imgAlt} src={imgSrc} />
+					</Grid>
+					<Grid item xs={12} sm={6} lg={6} className={classes.infoGrid}>
+						<Typography className={classes.infoTitle}>{title}</Typography>
+						{[feeInfo, limitInfo, currencies].map(item => (
+							<Typography
+								className={classes.info}
+								component='p'
+								color='textSecondary'
+							>
+								{item}
+							</Typography>
+						))}
+					</Grid>
+				</Grid>
+			</Box>
+		</Button>
 	)
 }
