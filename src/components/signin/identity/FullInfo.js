@@ -66,6 +66,7 @@ const FulInfo = props => {
 						<Grid item xs={12}>
 							<TextField
 								fullWidth
+								variant='outlined'
 								type='text'
 								required
 								label={t('email', { isProp: true })}
@@ -84,6 +85,7 @@ const FulInfo = props => {
 						<Grid item xs={12}>
 							<TextField
 								fullWidth
+								variant='outlined'
 								type='text'
 								required
 								label={t('emailCheck', { isProp: true })}
@@ -105,6 +107,7 @@ const FulInfo = props => {
 							<Dropdown
 								required
 								fullWidth
+								variant='outlined'
 								name='knowFrom'
 								label={t('knowFrom', { isProp: true })}
 								onChange={val => execute(updateIdentity('knowFrom', val))}
@@ -125,6 +128,7 @@ const FulInfo = props => {
 								<TextField
 									fullWidth
 									required
+									variant='outlined'
 									label={t('moreInfo', { isProp: true })}
 									name='moreInfo'
 									value={identity.moreInfo || ''}
