@@ -228,7 +228,7 @@ function AccountInfo() {
 									variant='contained'
 									color='secondary'
 									aria-label='delete'
-									onClick={() => openPayTrie()}
+									onClick={() => openWyre({ dest: walletAddress })}
 									size='small'
 								>
 									<CreditCardIcon className={classes.iconBtnLeft} />
