@@ -1,13 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
-import Box from '@material-ui/core/Box'
-import TextField from '@material-ui/core/TextField'
+import {
+	Box,
+	TextField,
+	FormControlLabel,
+	FormControl,
+	Checkbox,
+	Typography,
+} from '@material-ui/core'
 import Dropdown from 'components/common/dropdown'
-import Typography from '@material-ui/core/Typography'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import FormControl from '@material-ui/core/FormControl'
-import Checkbox from '@material-ui/core/Checkbox'
 import { constants } from 'adex-models'
 import { t, selectValidationsById, selectNewTransactionById } from 'selectors'
 import { execute, updateNewTransaction } from 'actions'
@@ -37,12 +39,12 @@ function SeAddressPrivilege({ stepsId, validateId } = {}) {
 
 	return (
 		<div>
-			<Box my={2}>
-				<Typography variant='subtitle1' display='block' gutterBottom>
+			<Box mb={2}>
+				<Typography variant='subtitle1' display='block'>
 					{t('SET_IDENTITY_PRIVILEGE_MAIN_INFO')}:
 				</Typography>
 			</Box>
-			<Box my={2}>
+			<Box mb={2}>
 				<TextField
 					type='text'
 					variant='outlined'
@@ -64,7 +66,7 @@ function SeAddressPrivilege({ stepsId, validateId } = {}) {
 					helperText={errAddr && !!errAddr.dirty ? errAddr.errMsg : ''}
 				/>
 			</Box>
-			<Box my={2}>
+			<Box mb={2}>
 				<Dropdown
 					required
 					variant='outlined'
@@ -91,7 +93,7 @@ function SeAddressPrivilege({ stepsId, validateId } = {}) {
 					}
 				/>
 			</Box>
-			<Box my={2}>
+			<Box mb={2}>
 				<Typography variant='caption' display='block' gutterBottom>
 					{t('PRIV_LEVEL_INFO_LABEL')}:
 				</Typography>
@@ -110,7 +112,7 @@ function SeAddressPrivilege({ stepsId, validateId } = {}) {
 				</Typography>
 			</Box>
 			{(warning || warningAccepted || warningMsg) && (
-				<Box my={2}>
+				<Box mb={2}>
 					<FormControl error={warning && warning.dirty} component='fieldset'>
 						<FormControlLabel
 							control={
