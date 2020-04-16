@@ -35,6 +35,16 @@ export function updateGlobalUi(item, value, category) {
 	}
 }
 
+export function updateMemoryUi(item, value) {
+	return function(dispatch) {
+		return dispatch({
+			type: types.UPDATE_MEMORY_UI,
+			item: item,
+			value: value,
+		})
+	}
+}
+
 export function updateUiByIdentity(item, value, category) {
 	return function(dispatch, getState) {
 		const identity = selectAccountIdentityAddr(getState())

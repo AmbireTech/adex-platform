@@ -7,6 +7,7 @@ const REGISTRATION_OPEN = process.env.REGISTRATION_OPEN === 'true'
 
 export const selectNavTitle = state => state.memory.nav.navTitle
 export const selectSide = state => state.memory.nav.side
+export const selectMemoryUi = state => state.memory.uiMemory
 export const selectGlobalUi = state => state.persist.ui.global
 export const selectIdentitiesUi = state => state.persist.ui.byIdentity
 export const selectSelectedItems = state => state.memory.selectedItems
@@ -82,8 +83,8 @@ export const selectLoginDirectSide = createSelector(
 )
 
 export const selectInitialDataLoaded = createSelector(
-	selectIdentityUi,
-	({ initialDataLoaded }) => initialDataLoaded
+	selectMemoryUi,
+	({ initialDataLoaded = false }) => initialDataLoaded
 )
 
 export const selectIdentitySideAnalyticsTimeframe = createSelector(

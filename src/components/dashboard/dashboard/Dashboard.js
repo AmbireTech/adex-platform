@@ -36,7 +36,7 @@ import {
 	loadAccountData,
 	stopAccountDataUpdate,
 	updateNav,
-	updateUiByIdentity,
+	updateMemoryUi,
 } from 'actions'
 import {
 	t,
@@ -111,7 +111,7 @@ function Dashboard(props) {
 	const dataLoaded = useSelector(selectInitialDataLoaded)
 
 	useEffect(() => {
-		execute(updateUiByIdentity('initialDataLoaded', false))
+		execute(updateMemoryUi('initialDataLoaded', false))
 		async function updateInitialData() {
 			execute(loadAccountData())
 		}
@@ -120,7 +120,7 @@ function Dashboard(props) {
 
 		return () => {
 			execute(stopAccountDataUpdate())
-			execute(updateUiByIdentity('initialDataLoaded', false))
+			execute(updateMemoryUi('initialDataLoaded', false))
 		}
 	}, [])
 
