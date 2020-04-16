@@ -55,6 +55,11 @@ export const selectPrivilegesWarningAccepted = createSelector(
 	({ privilegesWarningAccepted }) => !!privilegesWarningAccepted
 )
 
+export const selectMissingRevenueDataPointsAccepted = createSelector(
+	selectIdentityUi,
+	({ missingRevenueDataPointsAccepted }) => !!missingRevenueDataPointsAccepted
+)
+
 export const selectSideSpecificUI = createSelector(
 	[selectIdentityUi, selectSide],
 	(ui, side) => ui[side] || {}

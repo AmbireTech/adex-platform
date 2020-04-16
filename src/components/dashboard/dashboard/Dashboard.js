@@ -21,10 +21,8 @@ import {
 	AdSlotsTable,
 	AdUnitsTable,
 } from 'components/dashboard/containers/Tables'
-import Drawer from '@material-ui/core/Drawer'
-import Box from '@material-ui/core/Box'
-import Alert from '@material-ui/lab/Alert'
-import Hidden from '@material-ui/core/Hidden'
+import { Drawer, Box, Hidden } from '@material-ui/core'
+import { Alert } from '@material-ui/lab'
 import PageNotFound from 'components/page_not_found/PageNotFound'
 import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
