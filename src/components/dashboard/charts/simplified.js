@@ -7,6 +7,7 @@ import Helper from 'helpers/miscHelpers'
 import { selectMainToken, selectAnalyticsNowLabel } from 'selectors'
 import { formatFloatNumberWithCommas } from 'helpers/formatters'
 import * as ChartAnnotation from 'chartjs-plugin-annotation'
+import { t } from 'selectors'
 
 const commonDsProps = {
 	fill: false,
@@ -22,12 +23,13 @@ const DASH_SIZE = 4.2
 const DASH_WIDTH = 3
 
 export const SimpleStatistics = ({
-	payouts,
-	impressions,
-	clicks,
-	cpm,
+	data1,
+	data2,
+	data3,
+	data4,
+	dataSynced,
+	defaultLabels = [],
 	options = {},
-	t,
 	xLabel = 'TIMEFRAME',
 	y1Label = 'DATA1',
 	y2Label = 'DATA2',
@@ -68,14 +70,14 @@ export const SimpleStatistics = ({
 	})
 
 	const chartData = {
-		labels: payouts.labels,
+		labels: dataSynced ? data1.labels : defaultLabels,
 		datasets: [
 			{
 				...commonDsProps,
 				backgroundColor: Helper.hexToRgbaColorString(y1Color, 1),
 				borderColor: Helper.hexToRgbaColorString(y1Color, 1),
 				label: y1Label,
-				data: payouts.datasets,
+				data: dataSynced ? data1.datasets : [],
 				yAxisID: 'y-axis-1',
 			},
 			{
@@ -83,7 +85,7 @@ export const SimpleStatistics = ({
 				backgroundColor: Helper.hexToRgbaColorString(y2Color, 1),
 				borderColor: Helper.hexToRgbaColorString(y2Color, 1),
 				label: y2Label,
-				data: impressions.datasets,
+				data: dataSynced ? data2.datasets : [],
 				yAxisID: 'y-axis-2',
 			},
 			{
@@ -91,7 +93,7 @@ export const SimpleStatistics = ({
 				backgroundColor: Helper.hexToRgbaColorString(y3Color, 1),
 				borderColor: Helper.hexToRgbaColorString(y3Color, 1),
 				label: y3Label,
-				data: clicks.datasets,
+				data: dataSynced ? data3.datasets : [],
 				yAxisID: 'y-axis-3',
 			},
 			{
@@ -100,7 +102,7 @@ export const SimpleStatistics = ({
 				borderColor: Helper.hexToRgbaColorString(y4Color, 1),
 				pointBackgroundColor: y4Color,
 				label: y4Label,
-				data: cpm.datasets,
+				data: dataSynced ? data4.datasets : [],
 				yAxisID: 'y-axis-4',
 			},
 		],
