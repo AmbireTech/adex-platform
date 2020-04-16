@@ -4,21 +4,19 @@ import Img from 'components/common/img/Img'
 // import debounce from 'debounce'
 import Dropzone from 'react-dropzone'
 import Translate from 'components/translate/Translate'
-import Button from '@material-ui/core/Button'
-import { Box } from '@material-ui/core'
-import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
+import { Button, Typography, Grid } from '@material-ui/core'
 import ReactCrop from 'react-image-crop'
 import { getCroppedImgUrl } from 'services/images/crop'
-import CropIcon from '@material-ui/icons/Crop'
-import ClearIcon from '@material-ui/icons/Clear'
-import SaveIcon from '@material-ui/icons/Save'
-import FileUploadIcon from '@material-ui/icons/CloudUpload'
-import Grid from '@material-ui/core/Grid'
+import {
+	Crop as CropIcon,
+	Clear as ClearIcon,
+	Save as SaveIcon,
+	CloudUpload as FileUploadIcon,
+} from '@material-ui/icons'
 import { isVideoMedia } from 'helpers/mediaHelpers.js'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import { Paper } from '@material-ui/core'
+import { PropRow } from 'components/common/dialog/content'
 
 class ImgForm extends Component {
 	constructor(props) {
@@ -154,100 +152,103 @@ class ImgForm extends Component {
 		const videoSrc = isVideoMedia(mime)
 		return (
 			<div className={classes.imgForm}>
-				<Paper variant='outlined'>
-					<Box p={2}>
-						{imgSrc && imgName ? (
-							<span>
-								{label || 'Image'}: {imgName}
-							</span>
-						) : (
-							<span> {label || 'Upload image'} </span>
-						)}
-					</Box>
-				</Paper>
-				<div>
-					{cropMode ? (
-						<div className={classes.dropzone} onClick={this.preventBubbling}>
-							<Grid
-								container
-								spacing={2}
-								alignContent='center'
-								alignItems='center'
-							>
-								<Grid item sm={12} md={8}>
-									<ReactCrop
-										style={{ maxWidth: '100%', maxHeight: 320 }}
-										imageStyle={{
-											maxWidth: '100%',
-											maxHeight: '320px',
-											width: 'auto',
-											height: 'auto',
-										}}
-										className={classes.imgDropzonePreview}
-										crop={crop}
-										src={imgSrc || ''}
-										onChange={this.onCropChange}
-									/>
-								</Grid>
+				<PropRow
+					left={
+						imgSrc && imgName
+							? `${label || 'Image'}: ${imgName}`
+							: label || 'Upload image'
+					}
+					right={
+						<div>
+							<div>
+								{cropMode ? (
+									<div
+										className={classes.dropzone}
+										onClick={this.preventBubbling}
+									>
+										<Grid
+											container
+											spacing={2}
+											alignContent='center'
+											alignItems='center'
+										>
+											<Grid item sm={12} md={8}>
+												<ReactCrop
+													style={{ maxWidth: '100%', maxHeight: 320 }}
+													imageStyle={{
+														maxWidth: '100%',
+														maxHeight: '320px',
+														width: 'auto',
+														height: 'auto',
+													}}
+													className={classes.imgDropzonePreview}
+													crop={crop}
+													src={imgSrc || ''}
+													onChange={this.onCropChange}
+												/>
+											</Grid>
 
-								<Grid item sm={12} md={4}>
-									<Typography color='primary' gutterBottom>
-										{t('CROP_MODE_MSG')}
-									</Typography>
-									<Button
-										variant='contained'
-										color='primary'
-										onClick={this.saveCropped}
-										disabled={!crop.width || !crop.height}
-										className={classes.dropzoneBtn}
+											<Grid item sm={12} md={4}>
+												<Typography color='primary' gutterBottom>
+													{t('CROP_MODE_MSG')}
+												</Typography>
+												<Button
+													variant='contained'
+													color='primary'
+													onClick={this.saveCropped}
+													disabled={!crop.width || !crop.height}
+													className={classes.dropzoneBtn}
+												>
+													<SaveIcon className={classes.leftIcon} />
+													{t('IMG_FORM_SAVE_CROP')}
+												</Button>
+												<Button
+													variant='contained'
+													onClick={() => this.setState({ cropMode: false })}
+													className={classes.dropzoneBtn}
+												>
+													<ClearIcon className={classes.leftIcon} />
+													{t('IMG_FORM_CANCEL_CROP')}
+												</Button>
+											</Grid>
+										</Grid>
+									</div>
+								) : (
+									<Dropzone
+										accept='.jpeg,.jpg,.png,.mp4'
+										onDrop={this.onDrop}
+										className={classes.dropzone}
 									>
-										<SaveIcon className={classes.leftIcon} />
-										{t('IMG_FORM_SAVE_CROP')}
-									</Button>
-									<Button
-										variant='contained'
-										onClick={() => this.setState({ cropMode: false })}
-										className={classes.dropzoneBtn}
-									>
-										<ClearIcon className={classes.leftIcon} />
-										{t('IMG_FORM_CANCEL_CROP')}
-									</Button>
-								</Grid>
-							</Grid>
+										<Grid
+											container
+											spacing={2}
+											alignContent='center'
+											alignItems='center'
+										>
+											<Grid item sm={12} md={8}>
+												{videoSrc ? (
+													<video controls src={imgSrc} type='video/mp4'></video>
+												) : (
+													<Img
+														src={imgSrc}
+														alt={'name'}
+														className={classes.imgDropzonePreview}
+													/>
+												)}
+											</Grid>
+											<Grid item sm={12} md={4}>
+												<this.UploadInfo />
+											</Grid>
+										</Grid>
+									</Dropzone>
+								)}
+							</div>
+							<div>
+								<small> {additionalInfo} </small>
+							</div>
 						</div>
-					) : (
-						<Dropzone
-							accept='.jpeg,.jpg,.png,.mp4'
-							onDrop={this.onDrop}
-							className={classes.dropzone}
-						>
-							<Grid
-								container
-								spacing={2}
-								alignContent='center'
-								alignItems='center'
-							>
-								<Grid item sm={12} md={8}>
-									{videoSrc ? (
-										<video controls src={imgSrc} type='video/mp4'></video>
-									) : (
-										<Img
-											src={imgSrc}
-											alt={'name'}
-											className={classes.imgDropzonePreview}
-										/>
-									)}
-								</Grid>
-								<Grid item sm={12} md={4}>
-									<this.UploadInfo />
-								</Grid>
-							</Grid>
-						</Dropzone>
-					)}
-				</div>
-				<div>
-					<small> {additionalInfo} </small>
-				</div>
+					}
+				/>
 			</div>
 		)
 	}
