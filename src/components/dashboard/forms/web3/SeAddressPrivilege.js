@@ -37,51 +37,61 @@ function SeAddressPrivilege({ stepsId, validateId } = {}) {
 
 	return (
 		<div>
-			<div> {t('SET_IDENTITY_PRIVILEGE_MAIN_INFO')}</div>
-			<TextField
-				type='text'
-				required
-				fullWidth
-				label={t('ADDR_TO_SET_PRIV_LEVEL')}
-				name='setAddr'
-				value={setAddr || ''}
-				onChange={ev =>
-					execute(
-						updateNewTransaction({
-							tx: stepsId,
-							key: 'setAddr',
-							value: ev.target.value,
-						})
-					)
-				}
-				error={errAddr && !!errAddr.dirty}
-				helperText={errAddr && !!errAddr.dirty ? errAddr.errMsg : ''}
-			/>
-			<Dropdown
-				required
-				label={t('SELECT_PRIV_LEVEL')}
-				// helperText={t('SELECT_PRIV_LEVEL_HELPER_TXT')}
-				onChange={val =>
-					execute(
-						updateNewTransaction({
-							tx: stepsId,
-							key: 'privLevel',
-							value: val,
-						})
-					)
-				}
-				source={PRIV_LEVELS_SRC}
-				value={typeof privLevel === 'number' ? privLevel : ''}
-				htmlId='label-privLevel'
-				fullWidth
-				error={errPrivLvl && !!errPrivLvl.dirty}
-				helperText={
-					errPrivLvl && !!errPrivLvl.dirty
-						? errPrivLvl.errMsg
-						: t('SELECT_PRIV_LEVEL_HELPER_TXT')
-				}
-			/>
-			<Box m={2}>
+			<Box my={2}>
+				<Typography variant='subtitle1' display='block' gutterBottom>
+					{t('SET_IDENTITY_PRIVILEGE_MAIN_INFO')}:
+				</Typography>
+			</Box>
+			<Box my={2}>
+				<TextField
+					type='text'
+					variant='outlined'
+					required
+					fullWidth
+					label={t('ADDR_TO_SET_PRIV_LEVEL')}
+					name='setAddr'
+					value={setAddr || ''}
+					onChange={ev =>
+						execute(
+							updateNewTransaction({
+								tx: stepsId,
+								key: 'setAddr',
+								value: ev.target.value,
+							})
+						)
+					}
+					error={errAddr && !!errAddr.dirty}
+					helperText={errAddr && !!errAddr.dirty ? errAddr.errMsg : ''}
+				/>
+			</Box>
+			<Box my={2}>
+				<Dropdown
+					required
+					variant='outlined'
+					label={t('SELECT_PRIV_LEVEL')}
+					// helperText={t('SELECT_PRIV_LEVEL_HELPER_TXT')}
+					onChange={val =>
+						execute(
+							updateNewTransaction({
+								tx: stepsId,
+								key: 'privLevel',
+								value: val,
+							})
+						)
+					}
+					source={PRIV_LEVELS_SRC}
+					value={typeof privLevel === 'number' ? privLevel : ''}
+					htmlId='label-privLevel'
+					fullWidth
+					error={errPrivLvl && !!errPrivLvl.dirty}
+					helperText={
+						errPrivLvl && !!errPrivLvl.dirty
+							? errPrivLvl.errMsg
+							: t('SELECT_PRIV_LEVEL_HELPER_TXT')
+					}
+				/>
+			</Box>
+			<Box my={2}>
 				<Typography variant='caption' display='block' gutterBottom>
 					{t('PRIV_LEVEL_INFO_LABEL')}:
 				</Typography>
@@ -100,7 +110,7 @@ function SeAddressPrivilege({ stepsId, validateId } = {}) {
 				</Typography>
 			</Box>
 			{(warning || warningAccepted || warningMsg) && (
-				<Box m={2}>
+				<Box my={2}>
 					<FormControl error={warning && warning.dirty} component='fieldset'>
 						<FormControlLabel
 							control={
