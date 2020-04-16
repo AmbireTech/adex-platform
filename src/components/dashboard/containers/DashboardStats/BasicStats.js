@@ -30,7 +30,7 @@ import {
 	ALEX_GREY,
 } from 'components/App/themeMUi'
 import { styles } from './styles'
-import { formatNumberWithCommas } from 'helpers/formatters'
+import { formatNumberWithCommas, formatDateTime } from 'helpers/formatters'
 import {
 	t,
 	selectTotalImpressions,
@@ -103,11 +103,10 @@ const metrics = {
 	],
 }
 
-const timeHints = {
-	hour: 'SHOWING_LAST_HOUR',
-	day: 'SHOWING_LAST_24_HOURS',
-	week: 'SHOWING_LAST_7_DAYS',
-}
+const getDefaultLabels = ({ start, end }) => [
+	formatDateTime(start),
+	formatDateTime(end),
+]
 
 const DatePickerSwitch = ({ timeframe, ...rest }) => {
 	switch (timeframe) {
@@ -159,11 +158,13 @@ export function BasicStats() {
 	const ARROW_RIGHT = useKeyPress('ArrowRight')
 	const { symbol } = useSelector(selectMainToken)
 	const isAuth = useSelector(state => selectAuth(state))
-	const { start } = useSelector(selectIdentitySideAnalyticsPeriod)
+	const { start, end } = useSelector(selectIdentitySideAnalyticsPeriod)
 	const timeframe = useSelector(selectIdentitySideAnalyticsTimeframe)
 	const side = useSelector(selectSide)
 	const [loop, setLoop] = useState()
 	const initialDataLoaded = useSelector(selectInitialDataLoaded)
+
+	const defaultLabels = getDefaultLabels({ start, end })
 
 	const totalImpressions = useSelector(state =>
 		selectTotalImpressions(state, {
@@ -393,15 +394,19 @@ export function BasicStats() {
 				<Grid item xs={12}>
 					<SimpleStatistics
 						side={side}
+						start={start}
+						end={end}
 						timeframe={timeframe}
 						options={{
 							title:
 								(timeFrames.find(a => a.value === timeframe) || {}).label || '',
 						}}
-						payouts={payouts}
-						impressions={impressions}
-						clicks={clicks}
-						cpm={cpm}
+						defaultLabels={defaultLabels}
+						data1={payouts}
+						data2={impressions}
+						data3={clicks}
+						data4={cpm}
+						dataSynced={dataSynced}
 						y1Label={metrics[side][0].label}
 						y1Color={metrics[side][0].color}
 						y2Label={metrics[side][1].label}
@@ -410,7 +415,6 @@ export function BasicStats() {
 						y3Color={metrics[side][2].color}
 						y4Label={metrics[side][3].label}
 						y4Color={metrics[side][3].color}
-						t={t}
 					/>
 				</Grid>
 			</Grid>
