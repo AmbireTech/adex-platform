@@ -313,11 +313,10 @@ export function BasicStats() {
 		)
 
 	const showRevenueInfo =
-		true ||
-		(!missingRevenuePointsAccepted &&
-			side === 'publisher' &&
-			dataSynced &&
-			!!totalImpressions)
+		!missingRevenuePointsAccepted &&
+		side === 'publisher' &&
+		dataSynced &&
+		!!totalImpressions
 	return (
 		side && (
 			<Box>
