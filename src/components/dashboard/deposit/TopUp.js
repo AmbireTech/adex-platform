@@ -11,7 +11,13 @@ import {
 	Grid,
 } from '@material-ui/core'
 import { FileCopy } from '@material-ui/icons'
-import { t, selectAccountIdentityAddr, selectAuthType } from 'selectors'
+import {
+	t,
+	selectAccountIdentityAddr,
+	selectAuthType,
+	selectMainToken,
+	selectEmail,
+} from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
 import Img from 'components/common/img/Img'
 import { useSelector } from 'react-redux'
@@ -28,7 +34,7 @@ const useStyles = makeStyles(styles)
 const onRampProvidersDetails = [
 	{
 		title: 'Credit Card',
-		onClick: ({ accountId }) => openWyre({ dest: accountId }),
+		onClick: props => openWyre(props),
 		imgSrc: WYRE_LOGO,
 		imgAlt: 'Wyre',
 		feeInfo: 'Fees: 1.5% + 30¢',
@@ -37,8 +43,7 @@ const onRampProvidersDetails = [
 	},
 	{
 		title: 'Bank Transfer',
-		onClick: ({ symbol, accountId }) =>
-			openOnRampNetwork({ symbol, accountId }),
+		onClick: props => openOnRampNetwork(props),
 		imgSrc: RAMP_LOGO,
 		imgAlt: 'Ramp Network',
 		feeInfo: 'Fees: 0% - 2.5%',
@@ -47,8 +52,7 @@ const onRampProvidersDetails = [
 	},
 	{
 		title: 'Bank Transfer',
-		onClick: ({ accountId, email }) =>
-			openPayTrie({ addr: accountId, email: email }),
+		onClick: props => openPayTrie(props),
 		imgSrc: PAYTRIE_LOGO,
 		imgAlt: 'PayTrie',
 		feeInfo: 'Fees: 1% (min. $2 CAD)',
@@ -60,6 +64,8 @@ const onRampProvidersDetails = [
 export default function TopUp() {
 	const classes = useStyles()
 	const accountId = useSelector(selectAccountIdentityAddr)
+	const { symbol } = useSelector(selectMainToken)
+	const email = useSelector(selectEmail)
 	const authType = useSelector(selectAuthType)
 	const imgSrc = getAuthLogo(authType)
 	return (
@@ -131,7 +137,9 @@ export default function TopUp() {
 						<CardActions className={classes.actions}>
 							<List className={classes.listItem}>
 								{onRampProvidersDetails.map(item => (
-									<ListItem onClick={() => item.onClick({ accountId })}>
+									<ListItem
+										onClick={() => item.onClick({ accountId, symbol, email })}
+									>
 										<OnRampListItem
 											title={item.title}
 											imgSrc={item.imgSrc}
