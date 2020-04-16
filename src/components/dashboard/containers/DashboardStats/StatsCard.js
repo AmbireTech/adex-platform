@@ -25,7 +25,6 @@ const useStyles = makeStyles(theme => {
 			},
 		},
 		infoCard: {
-			margin: theme.spacing(1),
 			flexGrow: 1,
 		},
 		linkCard: {
@@ -65,7 +64,7 @@ const StatsCard = props => {
 		>
 			<CardContent classes={{ root: classes.cardContent }}>
 				{title && (
-					<Typography variant='h5' noWrap>
+					<Typography variant='h6' noWrap>
 						{title}
 					</Typography>
 				)}

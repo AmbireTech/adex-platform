@@ -22,6 +22,7 @@ import {
 	validateNewSlotBasics,
 	validateNewSlotPassback,
 	validateNewUnitMedia,
+	validateNewUnitTargeting,
 	completeItem,
 	resetNewItem,
 	saveUnit,
@@ -66,7 +67,11 @@ export const NewUnitSteps = props => (
 				component: AdUnitMedia,
 				validationFn: props => execute(validateNewUnitMedia(props)),
 			},
-			{ title: 'UNIT_TARGETS_STEP', component: AdUnitTargeting },
+			{
+				title: 'UNIT_TARGETS_STEP',
+				component: AdUnitTargeting,
+				validationFn: props => execute(validateNewUnitTargeting(props)),
+			},
 			{
 				title: 'PREVIEW_AND_SAVE_ITEM',
 				completeBtnTitle: 'SAVE',
