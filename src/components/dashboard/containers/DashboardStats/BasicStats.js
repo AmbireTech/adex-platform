@@ -320,7 +320,7 @@ export function BasicStats() {
 	return (
 		side && (
 			<Box>
-				<Box display='flex' flexDirection='row' flexWrap='wrap' m={2}>
+				<Box display='flex' flexDirection='row' flexWrap='wrap' m={1}>
 					<StatsCard>
 						<Box display='flex' flexDirection='row' flexWrap='wrap'>
 							<Box m={1} flexGrow='1'>
@@ -432,11 +432,11 @@ export function BasicStats() {
 				</Box>
 
 				{showRevenueInfo && (
-					<Box m={2}>
+					<Box m={1}>
 						<ImpressionsAlert impressions={totalImpressions} />
 					</Box>
 				)}
-				<Box m={2}>
+				<Box m={1}>
 					<SimpleStatistics
 						side={side}
 						start={start}
