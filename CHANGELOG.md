@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.10.49
+##### *2020-04-17*
+
+### Changed
+- Items data moved to persist again
+
 ## 4.10.48
 ##### *2020-04-17*
 
