@@ -140,7 +140,7 @@ export const NewCampaignSteps = props => (
 			},
 			{
 				title: 'PREVIEW_AND_SAVE_ITEM',
-				completeBtnTitle: 'SAVE',
+				completeBtnTitle: 'OPEN_CAMPAIGN',
 				component: CampaignFormPreview,
 				completeFn: props =>
 					execute(
