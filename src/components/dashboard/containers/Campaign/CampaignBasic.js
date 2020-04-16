@@ -11,7 +11,7 @@ import {
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
 import { t, selectMainToken } from 'selectors'
-import { closeCampaign } from 'actions'
+import { execute, closeCampaign } from 'actions'
 
 export const CampaignBasic = ({ item, ...hookProps }) => {
 	const { title, adUnits = [], humanFriendlyName } = item
@@ -40,7 +40,7 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 										color='secondary'
 										size='large'
 										onClick={() => {
-											closeCampaign({ campaign: item })
+											execute(closeCampaign({ campaign: item }))
 										}}
 										disabled={humanFriendlyName === 'Closed'}
 									>

@@ -32,7 +32,7 @@ import { validateAndUpdateCampaign } from 'actions'
 import { useItem, SaveBtn } from 'components/dashboard/containers/ItemCommon/'
 
 function Campaign({ match }) {
-	const [tabIndex, setTabIndex] = useState(1)
+	const [tabIndex, setTabIndex] = useState(0)
 	const { item, ...hookProps } = useItem({
 		itemType: 'Campaign',
 		match,

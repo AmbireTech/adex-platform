@@ -7,6 +7,7 @@ import newItem from './newItemsReducer'
 // import currentItem from './currentItemsReducer'
 import spinners from './spinnersReducer'
 import ui from './uiReducer'
+import uiMemory from './uiMemoryReducer'
 import toasts from './toastsReducer'
 import confirm from './confirmReducer'
 import nav from './navReducer'
@@ -36,6 +37,7 @@ export const persistReducers = {
 }
 
 export const memoryReducers = {
+	uiMemory,
 	items: filterActions(items, action => action.type.match(/_ITEM/)),
 	channels,
 	analytics,
