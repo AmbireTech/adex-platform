@@ -22,7 +22,7 @@ import {
 	getOutstandingBalance,
 } from 'services/smart-contracts/actions/stats'
 import { getChannelsWithOutstanding } from 'services/smart-contracts/actions/core'
-import { addToast, confirmAction, updateUiByIdentity } from './uiActions'
+import { addToast, confirmAction, updateMemoryUi } from './uiActions'
 import { getAllItems } from './itemActions'
 import { updateSlotsDemandThrottled } from './analyticsActions'
 import {
@@ -345,7 +345,7 @@ export function createSession({
 			}
 
 			const side = selectLoginDirectSide(getState())
-			updateUiByIdentity('initialDataLoaded', false)(dispatch, getState)
+			updateMemoryUi('initialDataLoaded', false)(dispatch, getState)
 
 			if (['advertiser', 'publisher'].includes(side)) {
 				dispatch(push(`/dashboard/${side}`))
@@ -537,7 +537,7 @@ export function loadAccountData() {
 			(await analyticsCampaignsLoop.start())
 		!isAccountChanged(getState, account) && (await campaignsLoop.start())
 		updateSlotsDemandThrottled()(dispatch, getState)
-		updateUiByIdentity('initialDataLoaded', true)(dispatch, getState)
+		updateMemoryUi('initialDataLoaded', true)(dispatch, getState)
 	}
 }
 
