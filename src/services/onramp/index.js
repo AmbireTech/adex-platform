@@ -7,13 +7,17 @@ const PAYTRIE_PARTNER_URL = 'https://partner.paytrie.com/?app=876454'
 //TODO: Change testwyre to production
 const WYRE_URL = 'https://pay.testwyre.com/purchase?'
 
-export const openWyre = ({ dest, ...rest }) => {
+export const openWyre = ({ accountId, symbol, ...rest }) => {
 	const URL = url.parse(WYRE_URL, true)
 	URL.search = null
-	if (dest) {
-		dest = `ethereum:${dest}`
-		const referenceId = dest
-		URL.query = { ...URL.query, dest, referenceId, ...rest }
+	if (accountId) {
+		URL.query = {
+			...URL.query,
+			dest: accountId ? `ethereum:${accountId}` : null,
+			referenceId: accountId,
+			destCurrency: symbol,
+			...rest,
+		}
 		popupCenter({
 			url: url.format(URL),
 			title: t('WYRE_DEPOSIT'),
@@ -25,10 +29,16 @@ export const openWyre = ({ dest, ...rest }) => {
 	}
 }
 
-export const openPayTrie = ({ addr, email, ...rest }) => {
+export const openPayTrie = ({ accountId, email, symbol, ...rest }) => {
 	const URL = url.parse(PAYTRIE_PARTNER_URL, true)
 	URL.search = null
-	URL.query = { ...URL.query, addr, email, ...rest }
+	URL.query = {
+		...URL.query,
+		addr: accountId,
+		email,
+		rightSideLabel: symbol,
+		...rest,
+	}
 	popupCenter({
 		//TODO: Change testwyre to production
 		url: url.format(URL),
@@ -38,7 +48,7 @@ export const openPayTrie = ({ addr, email, ...rest }) => {
 	})
 }
 
-export const openOnRampNetwork = ({ symbol, accountId }) => {
+export const openOnRampNetwork = ({ accountId, symbol }) => {
 	const widget = new RampInstantSDK({
 		hostAppName: 'AdExNetwork',
 		hostLogoUrl: 'https://www.adex.network/img/Adex-logo@2x.png',
