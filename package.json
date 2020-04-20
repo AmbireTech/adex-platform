@@ -1,6 +1,6 @@
 {
   "name": "adex-dapp",
-  "version": "4.10.49",
+  "version": "4.20.0",
   "tosVersion": "1.0.0",
   "private": true,
   "dependencies": {
@@ -121,7 +121,7 @@
     "generate-build-version": "node scripts/generate-build-version.js",
     "prebuild": "npm run generate-build-version",
     "build": "node scripts/build.js",
-    "build-staging": "npm run prebuild && BUILD_TYPE=staging node scripts/build.js",
+    "build-staging": "npm run prebuild && set BUILD_TYPE=staging && node scripts/build.js",
     "build-dev": "npm run prebuild && NODE_ENV=development node scripts/build.js",
     "serve": "serve build -p 3333",
     "deploy": "npm run build && cp ./domains/platform/CNAME ./build && gh-pages -d build",

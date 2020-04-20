@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.0
+##### *2020-04-20*
+
+### Added
+- v4.20.0
+
+### Changed
+- Perception
+
+### Fixed
+- Nothing
+
 ## 4.10.49
 ##### *2020-04-17*
 
