@@ -2,11 +2,17 @@ import React from 'react'
 import classnames from 'classnames'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
+import { commify } from 'ethers/utils'
 import { Visibility } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
-import { t, selectSide, selectAdSlotsTableData } from 'selectors'
+import {
+	t,
+	selectSide,
+	selectAdSlotsTableData,
+	selectMainToken,
+} from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
 import { useSelector } from 'react-redux'
 import { styles } from './styles'
@@ -19,7 +25,7 @@ const RRImg = withReactRouterLink(Img)
 
 const useStyles = makeStyles(styles)
 
-const getCols = ({ classes }) => [
+const getCols = ({ classes, symbol }) => [
 	{
 		name: 'media',
 		label: t('PROP_MEDIA'),
@@ -70,6 +76,42 @@ const getCols = ({ classes }) => [
 		},
 	},
 	{
+		name: 'impressions',
+		label: t('LABEL_IMPRESSIONS'),
+		options: {
+			filter: false,
+			sort: true,
+			customBodyRender: impressions => commify(impressions || 0),
+		},
+	},
+	{
+		name: 'clicks',
+		label: t('LABEL_CLICKS'),
+		options: {
+			filter: false,
+			sort: true,
+			customBodyRender: clicks => commify(clicks || 0),
+		},
+	},
+	{
+		name: 'ctr',
+		label: t('LABEL_CTR'),
+		options: {
+			filter: false,
+			sort: true,
+			customBodyRender: ctr => `${ctr.toFixed(4)} %`,
+		},
+	},
+	{
+		name: 'earnings',
+		label: t('LABEL_EARNINGS'),
+		options: {
+			filter: false,
+			sort: true,
+			customBodyRender: earnings => `${earnings.toFixed(2)} ${symbol}`,
+		},
+	},
+	{
 		name: 'actions',
 		label: t('ACTIONS'),
 		options: {
@@ -117,6 +159,7 @@ const getOptions = ({ reloadData }) => ({
 function AdSlotsTable(props) {
 	const classes = useStyles()
 	const side = useSelector(selectSide)
+	const { symbol } = useSelector(selectMainToken)
 
 	const { data, columns, reloadData } = useTableData({
 		selector: selectAdSlotsTableData,
@@ -124,6 +167,7 @@ function AdSlotsTable(props) {
 		getColumns: () =>
 			getCols({
 				classes,
+				symbol,
 			}),
 	})
 
