@@ -28,7 +28,7 @@ export const styles = theme => {
 			bottom: '-33px',
 			right: '-33px',
 			fontSize: '120px',
-			opacity: '0.23',
+			opacity: '0.13',
 			transform: 'rotate(-45deg)',
 		},
 	}

@@ -34,6 +34,7 @@ let initialState = {
 		global: {},
 		byIdentity: {},
 	},
+	uiMemory: {},
 	toasts: [],
 	confirm: {
 		data: {},

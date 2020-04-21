@@ -2,27 +2,35 @@ import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { Line, Chart } from 'react-chartjs-2'
 import { CHARTS_COLORS } from 'components/dashboard/charts/options'
+import { pink } from '@material-ui/core/colors'
+import { Box, Typography } from '@material-ui/core'
 import Helper from 'helpers/miscHelpers'
 import { selectMainToken, selectAnalyticsNowLabel } from 'selectors'
 import { formatFloatNumberWithCommas } from 'helpers/formatters'
 import * as ChartAnnotation from 'chartjs-plugin-annotation'
-import { formatAbbrNum } from 'helpers/formatters'
+import { t } from 'selectors'
 
 const commonDsProps = {
 	fill: false,
-	lineTension: 0.1,
-	borderWidth: 0,
+	lineTension: 0,
+	borderWidth: 3,
 	pointRadius: 3,
-	pointHitRadius: 10,
+	pointHitRadius: 13,
 }
 
+const DEFAULT_FONT_SIZE = 16.9
+const FONT = 'Roboto'
+const DASH_SIZE = 4.2
+const DASH_WIDTH = 3
+
 export const SimpleStatistics = ({
-	payouts,
-	impressions,
-	clicks,
-	cpm,
+	data1,
+	data2,
+	data3,
+	data4,
+	dataSynced,
+	defaultLabels = [],
 	options = {},
-	t,
 	xLabel = 'TIMEFRAME',
 	y1Label = 'DATA1',
 	y2Label = 'DATA2',
@@ -38,7 +46,7 @@ export const SimpleStatistics = ({
 	// Vertical line / crosshair
 	useEffect(() => {
 		Chart.pluginService.register({
-			afterDraw: function(chart) {
+			beforeDraw: function(chart) {
 				const ctx = chart.ctx
 				if (chart.tooltip._active && chart.tooltip._active.length) {
 					const activePoint = chart.controller.tooltip._active[0]
@@ -51,9 +59,9 @@ export const SimpleStatistics = ({
 						ctx.beginPath()
 						ctx.moveTo(x, topY)
 						ctx.lineTo(x, bottomY)
-						ctx.lineWidth = 1 // line width
-						ctx.setLineDash([1, 5])
-						ctx.strokeStyle = '#C0C0C0' // color of the vertical line
+						ctx.lineWidth = DASH_WIDTH
+						ctx.setLineDash([DASH_SIZE, DASH_SIZE])
+						ctx.strokeStyle = '#AAA' // color of the vertical line
 						ctx.stroke()
 						ctx.restore()
 					}
@@ -63,14 +71,14 @@ export const SimpleStatistics = ({
 	})
 
 	const chartData = {
-		labels: payouts.labels,
+		labels: dataSynced ? data1.labels : defaultLabels,
 		datasets: [
 			{
 				...commonDsProps,
 				backgroundColor: Helper.hexToRgbaColorString(y1Color, 1),
 				borderColor: Helper.hexToRgbaColorString(y1Color, 1),
 				label: y1Label,
-				data: payouts.datasets,
+				data: dataSynced ? data1.datasets : [],
 				yAxisID: 'y-axis-1',
 			},
 			{
@@ -78,7 +86,7 @@ export const SimpleStatistics = ({
 				backgroundColor: Helper.hexToRgbaColorString(y2Color, 1),
 				borderColor: Helper.hexToRgbaColorString(y2Color, 1),
 				label: y2Label,
-				data: impressions.datasets,
+				data: dataSynced ? data2.datasets : [],
 				yAxisID: 'y-axis-2',
 			},
 			{
@@ -86,7 +94,7 @@ export const SimpleStatistics = ({
 				backgroundColor: Helper.hexToRgbaColorString(y3Color, 1),
 				borderColor: Helper.hexToRgbaColorString(y3Color, 1),
 				label: y3Label,
-				data: clicks.datasets,
+				data: dataSynced ? data3.datasets : [],
 				yAxisID: 'y-axis-3',
 			},
 			{
@@ -95,7 +103,7 @@ export const SimpleStatistics = ({
 				borderColor: Helper.hexToRgbaColorString(y4Color, 1),
 				pointBackgroundColor: y4Color,
 				label: y4Label,
-				data: cpm.datasets,
+				data: dataSynced ? data4.datasets : [],
 				yAxisID: 'y-axis-4',
 			},
 		],
@@ -110,15 +118,19 @@ export const SimpleStatistics = ({
 					type: 'line',
 					mode: 'vertical',
 					scaleID: 'x-axis-0',
+
 					value: nowLabel,
-					borderColor: 'red',
-					borderWidth: 2,
-					borderDash: [2, 2],
+					borderColor: pink[700],
+					borderWidth: DASH_WIDTH,
+					borderDash: [DASH_SIZE, DASH_SIZE],
 					label: {
 						content: t('NOW'),
 						enabled: true,
-						position: 'bottom',
+						position: 'top',
 						cornerRadius: 0,
+						backgroundColor: pink[700],
+						fontSize: DEFAULT_FONT_SIZE,
+						fontFamily: FONT,
 					},
 				},
 			],
@@ -129,10 +141,29 @@ export const SimpleStatistics = ({
 			display: false,
 			text: options.title,
 		},
+		legend: {
+			position: 'top',
+			fullWidth: true,
+			labels: {
+				fontSize: DEFAULT_FONT_SIZE,
+				fontFamily: FONT,
+				boxWidth: 69,
+			},
+		},
 		tooltips: {
 			backgroundColor: 'black',
 			mode: 'index',
 			intersect: false,
+			titleFontSize: DEFAULT_FONT_SIZE,
+			bodyFontSize: DEFAULT_FONT_SIZE,
+			bodyFontFamily: FONT,
+			titleFontFamily: FONT,
+			xPadding: 8,
+			yPadding: 8,
+			cornerRadius: 0,
+			bodySpacing: 4,
+			caretSize: 8,
+			displayColors: true,
 			callbacks: {
 				label: function(t, d) {
 					// This adds currency MainToken (DAI) to y1Label in the tooltips
@@ -154,110 +185,113 @@ export const SimpleStatistics = ({
 				{
 					display: true,
 					gridLines: {
-						display: false,
+						display: true,
+						drawBorder: true,
+						drawTicks: true,
 					},
 					scaleLabel: {
-						display: true,
+						display: false,
 						labelString: t(xLabel || 'TIMEFRAME'),
+						fontSize: DEFAULT_FONT_SIZE,
+						fontFamily: FONT,
 					},
 					ticks: {
-						autoSkip: false,
+						autoSkip: true,
+						maxTicksLimit: 2,
 						maxRotation: 0,
-						minRotation: 0,
-						callback: function(tick, index, array) {
-							return index === 0 || index === array.length - 1 ? tick : ''
-							// return index % Math.floor(array.length / 12) ? '' : tick
-						},
+						padding: -24,
+						fontSize: DEFAULT_FONT_SIZE,
+						fontFamily: FONT,
+						callback: () => '',
 					},
 				},
 			],
 			yAxes: [
 				{
+					// NOTE: this one is just to show constant size grid lines
+					display: true,
 					gridLines: {
 						display: true,
+						drawBorder: false,
+						drawTicks: false,
 					},
 					ticks: {
 						beginAtZero: true,
+						maxTicksLimit: 11,
+						stepSize: 1,
+						min: 0,
+						max: 10,
+						callback: () => '',
 					},
 					scaleLabel: {
-						display: true,
-						labelString: y1Label,
+						display: false,
 					},
+					type: 'linear',
+					id: 'y-axis-dummy-grid-lines',
+				},
+				{
+					display: false,
+					ticks: {
+						beginAtZero: true,
+					},
+					type: 'linear',
 					id: 'y-axis-1',
 				},
 				{
-					type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
-					display: true,
-					position: 'right',
-					scaleLabel: {
-						display: true,
-						labelString: y2Label,
-					},
+					type: 'linear',
+					display: false,
 					id: 'y-axis-2',
 					ticks: {
 						beginAtZero: true,
-						precision: 0,
-						callback: function(tick) {
-							return formatAbbrNum(tick, 2)
-						},
-					},
-					// grid line settings
-					gridLines: {
-						drawOnChartArea: false, // only want the grid lines for one axis to show up
-					},
-				},
-				{
-					type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
-					display: true,
-					position: 'right',
-					scaleLabel: {
-						display: true,
-						labelString: y3Label,
-					},
-					id: 'y-axis-3',
-					ticks: {
-						beginAtZero: true,
-						precision: 0,
-						callback: function(tick) {
-							return formatAbbrNum(tick, 2)
-						},
-					},
-					// grid line settings
-					gridLines: {
-						drawOnChartArea: false, // only want the grid lines for one axis to show up
 					},
 				},
 				{
 					type: 'linear',
-					display: true,
-					position: 'left',
-					gridLines: {
-						drawOnChartArea: false, // only want the grid lines for one axis to show up
+					display: false,
+					id: 'y-axis-3',
+					ticks: {
+						beginAtZero: true,
 					},
-					scaleLabel: {
-						display: true,
-						labelString: y4Label,
-					},
+				},
+				{
+					type: 'linear',
+					display: false,
 					id: 'y-axis-4',
 					ticks: {
 						beginAtZero: true,
-						// precision: 0.1,
-						callback: function(tick) {
-							return formatAbbrNum(tick, 2)
-						},
 					},
-					//
 				},
 			],
 		},
 	}
 
 	return (
-		<Line
-			height={420}
-			data={chartData}
-			options={linesOptions}
-			plugins={[ChartAnnotation]}
-		/>
+		<Box>
+			<Box>
+				<Line
+					height={420}
+					data={chartData}
+					options={linesOptions}
+					plugins={[ChartAnnotation]}
+				/>
+			</Box>
+			<Box
+				display='flex'
+				flexDirection='row'
+				justifyContent='space-between'
+				alignItems='center'
+				px={1}
+			>
+				<Typography component='div' align='left'>
+					{defaultLabels[0]}
+				</Typography>
+				<Typography component='div' align='center'>
+					{t(xLabel || 'TIMEFRAME')}
+				</Typography>
+				<Typography component='div' align='right'>
+					{defaultLabels[1]}
+				</Typography>
+			</Box>
+		</Box>
 	)
 }
