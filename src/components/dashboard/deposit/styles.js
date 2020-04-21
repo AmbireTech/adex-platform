@@ -15,7 +15,8 @@ export const styles = theme => {
 		},
 		copyBtn: {
 			backgroundColor: '#E2EAED',
-			// borderRadius: '3px',
+			overflowWrap: 'anywhere',
+			userSelect: 'text',
 		},
 		bullet: {
 			display: 'inline-block',
