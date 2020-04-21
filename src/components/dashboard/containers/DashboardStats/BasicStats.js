@@ -48,6 +48,7 @@ import {
 	selectChartDatapointsClicks,
 	selectChartDatapointsPayouts,
 	selectSide,
+	selectAnalyticsDataSide,
 	selectAuth,
 	selectInitialDataLoaded,
 	selectMissingRevenueDataPointsAccepted,
@@ -62,16 +63,6 @@ const timeoutMap = {
 	hour: min,
 	day: 10 * min,
 	week: 30 * min,
-}
-
-const getAnalyticsSide = ({ uiSide, campaignId }) => {
-	if (campaignId) {
-		return campaignId
-	}
-
-	if (uiSide) {
-		return `for-${uiSide}`
-	}
 }
 
 const timeFrames = VALIDATOR_ANALYTICS_TIMEFRAMES.map(tf => {
@@ -193,7 +184,7 @@ const ImpressionsAlert = ({ impressions = 0 }) => (
 	</Alert>
 )
 
-export function BasicStats({ campaignId }) {
+export function BasicStats() {
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
 	const SPACE = useKeyPress(' ')
@@ -204,13 +195,12 @@ export function BasicStats({ campaignId }) {
 	const { start, end } = useSelector(selectIdentitySideAnalyticsPeriod)
 	const timeframe = useSelector(selectIdentitySideAnalyticsTimeframe)
 	const uiSide = useSelector(selectSide)
+	const side = useSelector(selectAnalyticsDataSide)
 	const [loop, setLoop] = useState()
 	const initialDataLoaded = useSelector(selectInitialDataLoaded)
 	const missingRevenuePointsAccepted = useSelector(
 		selectMissingRevenueDataPointsAccepted
 	)
-
-	const side = getAnalyticsSide({ uiSide, campaignId })
 
 	const defaultLabels = getDefaultLabels({ start, end })
 
@@ -329,6 +319,7 @@ export function BasicStats({ campaignId }) {
 		uiSide === 'publisher' &&
 		dataSynced &&
 		!!totalImpressions
+
 	return (
 		uiSide && (
 			<Box>
