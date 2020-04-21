@@ -248,9 +248,9 @@ function SideNav(props) {
 					<ListDivider />
 					<RRListItem
 						button
-						to={{ pathname: '/dashboard/' + side + '/deposit' }}
+						to={{ pathname: '/dashboard/' + side + '/topup' }}
 						className={classnames({
-							[classes.active]: location === 'deposit',
+							[classes.active]: location === 'topup',
 						})}
 					>
 						<ListItemIcon>

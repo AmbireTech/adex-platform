@@ -268,7 +268,7 @@ function Dashboard(props) {
 							path={'/dashboard/:side/account'}
 							component={Account}
 						/>
-						<Route exact path={'/dashboard/:side/deposit'} component={TopUp} />
+						<Route exact path={'/dashboard/:side/topup'} component={TopUp} />
 						{/* <Route
 								auth={this.props.auth}
 								exact
