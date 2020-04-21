@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
 	Box,
 	Card,
@@ -9,6 +9,7 @@ import {
 	List,
 	ListItem,
 	Grid,
+	OutlinedInput,
 } from '@material-ui/core'
 import { FileCopy } from '@material-ui/icons'
 import {
@@ -17,6 +18,7 @@ import {
 	selectAuthType,
 	selectMainToken,
 	selectEmail,
+	selectWallet,
 } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
 import Img from 'components/common/img/Img'
@@ -29,6 +31,10 @@ import RAMP_LOGO from 'resources/ramp.svg'
 import WYRE_LOGO from 'resources/wyre.svg'
 import PAYTRIE_LOGO from 'resources/paytrie.svg'
 import { styles } from './styles'
+import { execute, addToast } from 'actions'
+import { getEthers } from 'services/smart-contracts/ethers'
+import { AUTH_TYPES } from 'constants/misc'
+import { utils, bigNumberify } from 'ethers'
 
 const useStyles = makeStyles(styles)
 const onRampProvidersDetails = [
@@ -64,10 +70,25 @@ const onRampProvidersDetails = [
 export default function TopUp() {
 	const classes = useStyles()
 	const accountId = useSelector(selectAccountIdentityAddr)
-	const { symbol } = useSelector(selectMainToken)
+	const [ammount, setAmmount] = useState(25)
+	const { symbol, decimals } = useSelector(selectMainToken)
 	const email = useSelector(selectEmail)
 	const authType = useSelector(selectAuthType)
 	const imgSrc = getAuthLogo(authType)
+	const sendTransaction = async () => {
+		const { provider, MainToken } = await getEthers(authType)
+		provider.getSigner().sendTransaction({
+			to: MainToken.address,
+			gasLimit: 750000, // needs gas limit
+			data: MainToken.interface.functions.transfer.encode([
+				accountId,
+				new utils.BigNumber(10)
+					.pow(decimals)
+					.mul(ammount)
+					.toString(),
+			]),
+		})
+	}
 	return (
 		<Box
 			display='flex'
@@ -85,6 +106,16 @@ export default function TopUp() {
 								{t('DIRECT DEPOSIT')}
 							</Typography>
 							<Button
+								onClick={() => {
+									copy(accountId)
+									execute(
+										addToast({
+											type: 'accept',
+											label: t('COPIED_TO_CLIPBOARD'),
+											timeout: 5000,
+										})
+									)
+								}}
 								className={classes.copyBtn}
 								size='large'
 								color='default'
@@ -103,7 +134,15 @@ export default function TopUp() {
 							</Box>
 						</CardContent>
 						<CardActions className={classes.actions}>
+							<OutlinedInput
+								fullWidth
+								// value={ammount}
+								onChange={ev => console.log(ev.target.value)}
+							/>
 							<Button
+								onClick={async () => {
+									await sendTransaction()
+								}}
 								startIcon={<Img className={classes.authImg} src={imgSrc} />}
 								size='large'
 								color='primary'
@@ -136,11 +175,13 @@ export default function TopUp() {
 						</CardContent>
 						<CardActions className={classes.actions}>
 							<List className={classes.listItem}>
-								{onRampProvidersDetails.map(item => (
+								{onRampProvidersDetails.map((item, key) => (
 									<ListItem
+										key={key}
 										onClick={() => item.onClick({ accountId, symbol, email })}
 									>
 										<OnRampListItem
+											key={key}
 											title={item.title}
 											imgSrc={item.imgSrc}
 											imgAlt={item.imgAlt}
@@ -213,8 +254,9 @@ const OnRampListItem = ({
 					</Grid>
 					<Grid item xs={12} sm={6} lg={6} className={classes.infoGrid}>
 						<Typography className={classes.infoTitle}>{title}</Typography>
-						{[feeInfo, limitInfo, currencies].map(item => (
+						{[feeInfo, limitInfo, currencies].map((item, key) => (
 							<Typography
+								key={`info-${key}`}
 								className={classes.info}
 								component='p'
 								color='textSecondary'
