@@ -66,9 +66,9 @@ function Campaign({ match }) {
 					scrollButtons='auto'
 				>
 					<AdvertiserTab label={t('CAMPAIGN_MAIN')} />
-					<AdvertiserTab label={t('WEBSITE_STAT')} />
+					<AdvertiserTab label={t('WEBSITE_STATS')} />
 					<AdvertiserTab label={t('COUNTRY_STATS')} />
-					<AdvertiserTab label={t('TIMEFRAME_STAT')} />
+					<AdvertiserTab label={t('TIMEFRAME_STATS')} />
 					<AdvertiserTab label={t('CAMPAIGN_UNITS')} />
 					<AdvertiserTab label={t('VALIDATORS')} />
 					{['Closed', 'Completed'].includes(humanFriendlyName) && (
