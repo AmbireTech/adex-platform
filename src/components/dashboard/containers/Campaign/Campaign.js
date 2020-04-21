@@ -30,7 +30,7 @@ import MapChart from 'components/dashboard/charts/map/MapChart'
 import { CampaignBasic } from './CampaignBasic'
 import { validateAndUpdateCampaign, updateMemoryUi, execute } from 'actions'
 import { useItem, SaveBtn } from 'components/dashboard/containers/ItemCommon/'
-import { BasicStats } from 'components/dashboard/containers/DashboardStats/BasicStats'
+import { CampaignStatsByTimeframe } from './CampaignStatsByTimeframe'
 
 function Campaign({ match }) {
 	const [tabIndex, setTabIndex] = useState(0)
@@ -68,12 +68,12 @@ function Campaign({ match }) {
 					<AdvertiserTab label={t('CAMPAIGN_MAIN')} />
 					<AdvertiserTab label={t('WEBSITE_STAT')} />
 					<AdvertiserTab label={t('COUNTRY_STATS')} />
+					<AdvertiserTab label={t('TIMEFRAME_STAT')} />
 					<AdvertiserTab label={t('CAMPAIGN_UNITS')} />
 					<AdvertiserTab label={t('VALIDATORS')} />
 					{['Closed', 'Completed'].includes(humanFriendlyName) && (
 						<AdvertiserTab label={t('RECEIPT')} />
 					)}
-					<AdvertiserTab label={t('TIMEFRAME_STAT')} />
 				</AdvertiserTabs>
 			</AdvertiserAppBar>
 			<Box my={2}>
@@ -126,8 +126,10 @@ function Campaign({ match }) {
 						</Grid>
 					</Grid>
 				)}
-				{tabIndex === 3 && <AdUnitsTable campaignId={campaignId} noClone />}
-				{tabIndex === 4 && (
+
+				{tabIndex === 3 && <CampaignStatsByTimeframe item={item} />}
+				{tabIndex === 4 && <AdUnitsTable campaignId={campaignId} noClone />}
+				{tabIndex === 5 && (
 					<List>
 						<Anchor
 							target='_blank'
@@ -163,8 +165,7 @@ function Campaign({ match }) {
 						</Anchor>
 					</List>
 				)}
-				{tabIndex === 5 && <Receipt itemId={campaignId} />}
-				{tabIndex === 6 && <BasicStats campaignId={campaignId} />}
+				{tabIndex === 6 && <Receipt itemId={campaignId} />}
 			</Box>
 		</Fragment>
 	)
