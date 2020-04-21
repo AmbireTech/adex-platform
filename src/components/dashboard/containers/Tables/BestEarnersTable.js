@@ -5,11 +5,12 @@ import Img from 'components/common/img/Img'
 import { useSelector } from 'react-redux'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { t, selectBestEarnersTableData, selectMainToken } from 'selectors'
+import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-
 import { useTableData } from './tableHooks'
 import { ReloadData } from './toolbars'
+const RRImg = withReactRouterLink(Img)
 
 const useStyles = makeStyles(styles)
 
@@ -21,16 +22,18 @@ const getCols = ({ classes, symbol }) => [
 			filter: false,
 			sort: false,
 			download: true,
-			customBodyRender: ({ id, mediaUrl, mediaMime }) => {
+			customBodyRender: ({ id, mediaUrl, mediaMime, to }) => {
+				const ImgComponent = to ? RRImg : Img
+				const imgProps = to ? { to } : { fullScreenOnClick: true }
 				return (
-					<Img
+					<ImgComponent
 						key={id}
-						fullScreenOnClick={true}
 						className={classnames(classes.cellImg)}
 						src={mediaUrl}
 						alt={id}
 						mediaMime={mediaMime}
 						allowVideo
+						{...imgProps}
 					/>
 				)
 			},
@@ -99,16 +102,23 @@ const getOptions = ({ onRowsSelect, reloadData, selected }) => ({
 	onDownload: (buildHead, buildBody, columns, data) =>
 		onDownload(buildHead, buildBody, columns, data),
 	onRowsSelect,
-	rowsPerPage: 10,
+	rowsPerPage: 5,
 })
 
 function BestEarnersTable(props) {
-	const { noActions, noClone, handleSelect, selected = [] } = props
+	const {
+		noActions,
+		noClone,
+		handleSelect,
+		selected = [],
+		selector = selectBestEarnersTableData,
+		title = '',
+	} = props
 	const classes = useStyles()
 	const { symbol } = useSelector(selectMainToken)
 
 	const { data, columns, reloadData } = useTableData({
-		selector: selectBestEarnersTableData,
+		selector,
 		getColumns: () =>
 			getCols({
 				classes,
@@ -131,7 +141,7 @@ function BestEarnersTable(props) {
 	const options = getOptions({ onRowsSelect, selected, reloadData })
 	return (
 		<MUIDataTableEnhanced
-			title={t('TABLE_BEST_EARNERS_TITLE')}
+			title={t(title)}
 			data={data}
 			columns={columns}
 			options={options}
@@ -139,7 +149,6 @@ function BestEarnersTable(props) {
 			noDownload
 			noPrint
 			noViewColumns
-			{...props}
 		/>
 	)
 }
