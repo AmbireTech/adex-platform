@@ -31,31 +31,31 @@ import { execute, addToast } from 'actions'
 const useStyles = makeStyles(styles)
 const onRampProvidersDetails = [
 	{
-		title: 'Credit Card',
+		title: t('CREDIT_CARD'),
 		onClick: props => openWyre(props),
 		imgSrc: WYRE_LOGO,
-		imgAlt: 'Wyre',
-		feeInfo: 'Fees: 1.5% + 30¢',
-		limitInfo: 'Limits: $250/day',
-		currencies: 'Currencies: USD',
+		imgAlt: t('WYRE'),
+		feeInfo: t('WYRE_FEES'),
+		limitInfo: t('WYRE_LIMITS'),
+		currencies: t('WYRE_CURRENCIES'),
 	},
 	{
-		title: 'Bank Transfer',
+		title: t('BANK_TRANSFER'),
 		onClick: props => openOnRampNetwork(props),
 		imgSrc: RAMP_LOGO,
-		imgAlt: 'Ramp Network',
-		feeInfo: 'Fees: 0% - 2.5%',
-		limitInfo: 'Limits: 10,000EUR/m',
-		currencies: 'Currencies: GBP,EUR',
+		imgAlt: t('RAMP'),
+		feeInfo: t('RAMP_FEES'),
+		limitInfo: t('RAMP_LIMITS'),
+		currencies: t('RAMP_CURRENCIES'),
 	},
 	{
-		title: 'Bank Transfer',
+		title: t('BANK_TRANSFER'),
 		onClick: props => openPayTrie(props),
 		imgSrc: PAYTRIE_LOGO,
-		imgAlt: 'PayTrie',
-		feeInfo: 'Fees: 1% (min. $2 CAD)',
-		limitInfo: 'Limits: $2,000CAD/day',
-		currencies: 'Currencies: CAD',
+		imgAlt: t('PAYTRIE'),
+		feeInfo: t('PAYTRIE_FEES'),
+		limitInfo: t('PAYTRIE_LIMITS'),
+		currencies: t('PAYTRIE_CURRENCIES'),
 	},
 ]
 
@@ -79,7 +79,7 @@ export default function TopUp() {
 						<CardContent className={classes.content}>
 							<Typography className={classes.title}>{t('DAI')}</Typography>
 							<Typography className={classes.subtitle} gutterBottom>
-								{t('DIRECT DEPOSIT')}
+								{t('DIRECT_DEPOSIT')}
 							</Typography>
 							<Button
 								onClick={() => {
@@ -104,8 +104,7 @@ export default function TopUp() {
 							</Button>
 							<Box p={2}>
 								<Typography align='center' component='p' color='textSecondary'>
-									{/* {t('DIRECT_DEPOSIT_EXPLAIN')} */}
-									{`Send DAI to this address in order to fund your account directly.`}
+									{t('DAI_DIRECT_DEPOSIT_INFO')}
 								</Typography>
 							</Box>
 						</CardContent>
@@ -117,15 +116,14 @@ export default function TopUp() {
 					<Box p={2} className={classes.root}>
 						<CardContent className={classes.content}>
 							<Typography className={classes.title}>
-								{t('FIAT CURRENCY')}
+								{t('FIAT_CURRENCY')}
 							</Typography>
 							<Typography className={classes.subtitle} gutterBottom>
-								{t('CREDIT CARD & BANK TRANSFER')}
+								{t('CREDIT_CARD_BANK_TRANSFER')}
 							</Typography>
 							<Box p={2}>
 								<Typography align='center' component='p' color='textSecondary'>
-									{/* {t('DIRECT_DEPOSIT_EXPLAIN')} */}
-									{`Deposit with credit card to you account directly using one of our onramp partners`}
+									{t('ONRAMP_INFO')}
 								</Typography>
 							</Box>
 						</CardContent>
@@ -158,12 +156,11 @@ export default function TopUp() {
 						<CardContent className={classes.content}>
 							<Typography className={classes.title}>{t('BTC')}</Typography>
 							<Typography className={classes.subtitle} gutterBottom>
-								{t('DIRECT DEPOSIT')}
+								{t('DIRECT_DEPOSIT')}
 							</Typography>
 							<Box p={2}>
 								<Typography align='center' component='p' color='textSecondary'>
-									{/* {t('DIRECT_DEPOSIT_EXPLAIN')} */}
-									{`In the future you are going to be able to deposit with BTC as well`}
+									{t('BTC_INFO')}
 								</Typography>
 							</Box>
 						</CardContent>
@@ -175,7 +172,7 @@ export default function TopUp() {
 								fullWidth
 								disabled
 							>
-								{t('COMMING SOONER OR LATER')}
+								{t('COMMING_SOON')}
 							</Button>
 						</CardActions>
 					</Box>
