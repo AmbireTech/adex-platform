@@ -4,9 +4,9 @@ import url from 'url'
 import { t } from 'selectors'
 
 const PAYTRIE_PARTNER_URL = 'https://partner.paytrie.com/?app=876454'
-//TODO: Change testwyre to production
-const WYRE_URL = 'https://pay.testwyre.com/purchase?'
+const WYRE_URL = 'https://pay.sendwyre.com/purchase?'
 
+//https://docs.sendwyre.com/docs/wyre-widget-v2
 export const openWyre = ({ accountId, symbol, ...rest }) => {
 	const URL = url.parse(WYRE_URL, true)
 	URL.search = null
@@ -21,7 +21,7 @@ export const openWyre = ({ accountId, symbol, ...rest }) => {
 		popupCenter({
 			url: url.format(URL),
 			title: t('WYRE_DEPOSIT'),
-			w: 400,
+			w: 450,
 			h: 700,
 		})
 	} else {
@@ -29,6 +29,7 @@ export const openWyre = ({ accountId, symbol, ...rest }) => {
 	}
 }
 
+//https://paytrie.com/developer
 export const openPayTrie = ({ accountId, email, symbol, ...rest }) => {
 	const URL = url.parse(PAYTRIE_PARTNER_URL, true)
 	URL.search = null
@@ -43,7 +44,7 @@ export const openPayTrie = ({ accountId, email, symbol, ...rest }) => {
 		//TODO: Change testwyre to production
 		url: url.format(URL),
 		title: t('PAYTRIE_DEPOSIT'),
-		w: 400,
+		w: 450,
 		h: 700,
 	})
 }
