@@ -29,6 +29,7 @@ import {
 	selectIdentitySideAnalyticsTimeframe,
 	selectIdentitySideAnalyticsPeriod,
 	selectMonthsRange,
+	selectCampaignInDetails,
 } from 'selectors'
 import { bigNumberify } from 'ethers/utils'
 import moment from 'moment'
@@ -36,7 +37,7 @@ import { FETCHING_PUBLISHER_RECEIPTS } from 'constants/spinners'
 
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
-const analyticsParams = (timeframe, side) => {
+const analyticsParams = ({ timeframe, side, campaignId }) => {
 	const callsParams = []
 
 	VALIDATOR_ANALYTICS_EVENT_TYPES.forEach(eventType =>
@@ -44,7 +45,7 @@ const analyticsParams = (timeframe, side) => {
 			callsParams.push({
 				metric,
 				timeframe,
-				side,
+				side: campaignId ? campaignId : `for-${side}`,
 				eventType,
 				...(side === 'publisher' &&
 					metric === 'eventPayouts' && { segmentByChannel: true }),
@@ -170,6 +171,7 @@ export const updateAccountAnalytics = throttle(
 		const state = getState()
 		const account = selectAccount(state)
 		const side = selectSide(state)
+		const campaignId = selectCampaignInDetails(state)
 		const timeframe = selectIdentitySideAnalyticsTimeframe(state)
 		const allChannels = selectChannelsWithUserBalancesAll(state)
 		const { start, end } = selectIdentitySideAnalyticsPeriod(state)
@@ -195,7 +197,7 @@ export const updateAccountAnalytics = throttle(
 				newAuth: { [VALIDATOR_LEADER_ID]: leaderAuth },
 			})(dispatch, getState)
 
-			const params = analyticsParams(timeframe, side)
+			const params = analyticsParams({ timeframe, side, campaignId })
 			let accountChanged = false
 			const liveTimestamp = selectAnalyticsLiveTimestamp(state)
 			const timeframeIsLive = liveTimestamp === start

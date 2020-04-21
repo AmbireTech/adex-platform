@@ -92,6 +92,11 @@ export const selectInitialDataLoaded = createSelector(
 	({ initialDataLoaded = false }) => initialDataLoaded
 )
 
+export const selectCampaignInDetails = createSelector(
+	selectMemoryUi,
+	({ campaignId }) => campaignId
+)
+
 export const selectIdentitySideAnalyticsTimeframe = createSelector(
 	[selectIdentitySideUi],
 	({ sideAnalyticsTimeframe = 'day' } = {}) => sideAnalyticsTimeframe
