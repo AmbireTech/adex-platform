@@ -31,10 +31,12 @@ export const styles = theme => {
 		title: {
 			fontSize: '2rem',
 			textAlign: 'center',
+			textTransform: 'uppercase',
 		},
 		subtitle: {
 			fontSize: '1rem',
 			textAlign: 'center',
+			textTransform: 'uppercase',
 		},
 		pos: {
 			marginBottom: 12,
