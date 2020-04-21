@@ -21,7 +21,7 @@ import {
 	selectChannelsWithUserBalancesAll,
 	selectFeeTokenWhitelist,
 	selectRoutineWithdrawTokens,
-	selectSide,
+	selectAnalyticsDataSide,
 	selectAccount,
 	selectStatsChartData,
 	selectAnalyticsLiveTimestamp,
@@ -29,7 +29,6 @@ import {
 	selectIdentitySideAnalyticsTimeframe,
 	selectIdentitySideAnalyticsPeriod,
 	selectMonthsRange,
-	selectCampaignInDetails,
 } from 'selectors'
 import { bigNumberify } from 'ethers/utils'
 import moment from 'moment'
@@ -37,7 +36,7 @@ import { FETCHING_PUBLISHER_RECEIPTS } from 'constants/spinners'
 
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
-const analyticsParams = ({ timeframe, side, campaignId }) => {
+const analyticsParams = ({ timeframe, side }) => {
 	const callsParams = []
 
 	VALIDATOR_ANALYTICS_EVENT_TYPES.forEach(eventType =>
@@ -45,7 +44,7 @@ const analyticsParams = ({ timeframe, side, campaignId }) => {
 			callsParams.push({
 				metric,
 				timeframe,
-				side: campaignId ? campaignId : `for-${side}`,
+				side,
 				eventType,
 				...(side === 'publisher' &&
 					metric === 'eventPayouts' && { segmentByChannel: true }),
@@ -170,8 +169,7 @@ export const updateAccountAnalytics = throttle(
 		updateAnalyticsLastChecked()(dispatch)
 		const state = getState()
 		const account = selectAccount(state)
-		const side = selectSide(state)
-		const campaignId = selectCampaignInDetails(state)
+		const side = selectAnalyticsDataSide(state)
 		const timeframe = selectIdentitySideAnalyticsTimeframe(state)
 		const allChannels = selectChannelsWithUserBalancesAll(state)
 		const { start, end } = selectIdentitySideAnalyticsPeriod(state)
@@ -197,7 +195,7 @@ export const updateAccountAnalytics = throttle(
 				newAuth: { [VALIDATOR_LEADER_ID]: leaderAuth },
 			})(dispatch, getState)
 
-			const params = analyticsParams({ timeframe, side, campaignId })
+			const params = analyticsParams({ timeframe, side })
 			let accountChanged = false
 			const liveTimestamp = selectAnalyticsLiveTimestamp(state)
 			const timeframeIsLive = liveTimestamp === start
@@ -215,7 +213,7 @@ export const updateAccountAnalytics = throttle(
 					})
 						.then(({ aggregates, metric }) => {
 							const aggrByChannelSegments =
-								side === 'publisher' && metric === 'eventPayouts'
+								side === 'for-publisher' && metric === 'eventPayouts'
 
 							let aggr = aggrByChannelSegments
 								? aggrByChannelsSegments({

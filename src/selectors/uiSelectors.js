@@ -97,6 +97,11 @@ export const selectCampaignInDetails = createSelector(
 	({ campaignId }) => campaignId
 )
 
+export const selectAnalyticsDataSide = createSelector(
+	[selectSide, selectCampaignInDetails],
+	(side, campaignId) => (campaignId ? campaignId : side ? `for-${side}` : '')
+)
+
 export const selectIdentitySideAnalyticsTimeframe = createSelector(
 	[selectIdentitySideUi],
 	({ sideAnalyticsTimeframe = 'day' } = {}) => sideAnalyticsTimeframe
