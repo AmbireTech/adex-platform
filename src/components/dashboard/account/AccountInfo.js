@@ -22,9 +22,9 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { styles } from './styles.js'
 import { LoadingSection } from 'components/common/spinners'
 import CreditCardIcon from '@material-ui/icons/CreditCard'
-import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
 import CopyIcon from '@material-ui/icons/FileCopy'
 import IconButton from '@material-ui/core/IconButton'
+import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import copy from 'copy-to-clipboard'
 import {
 	t,
@@ -35,42 +35,16 @@ import {
 	selectMainToken,
 	selectEasterEggsAllowed,
 	selectEnsAddressByAddr,
+	selectSide,
 } from 'selectors'
 import { execute, addToast } from 'actions'
 import { formatAddress } from 'helpers/formatters'
-// const RRButton = withReactRouterLink(Button)
-import Modal from '@material-ui/core/Modal'
-import { openWyre, openPayTrie } from 'services/onramp'
+const RRButton = withReactRouterLink(Button)
 
 const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 const VALIDATOR_FOLLOWER_URL = process.env.VALIDATOR_FOLLOWER_URL
 const VALIDATOR_FOLLOWER_ID = process.env.VALIDATOR_FOLLOWER_ID
-
-const Test = ({ open, handleClose }) => {
-	return (
-		<Modal
-			open={open}
-			onClose={handleClose}
-			aria-labelledby='simple-modal-title'
-			aria-describedby='simple-modal-description'
-		>
-			<div class='developer-modal-content'>
-				<iframe
-					title='test'
-					src={
-						'https://pay.testwyre.com/purchase?dest=ethereum%3A0x98B031783d0efb1E65C4072C6576BaCa0736A912&destCurrency=ETH&sourceAmount=10'
-					}
-					width='50%'
-					height='560'
-					frameborder='0'
-					allowfullscreen=''
-					scrolling='no'
-				></iframe>
-			</div>
-		</Modal>
-	)
-}
 
 const AccountItem = props => (
 	<ListItem>
@@ -105,7 +79,7 @@ function AccountInfo() {
 	const { authType = '' } = useSelector(selectWallet)
 	const identityAddress = useSelector(selectAccountIdentityAddr)
 	const privileges = useSelector(selectWalletPrivileges)
-	const [wyreWidgetOpen, setWyreWidgetOpen] = useState(false)
+	const side = useSelector(selectSide)
 	const canMakeTx = privileges > 1
 	const { symbol } = useSelector(selectMainToken)
 	const {
@@ -124,18 +98,6 @@ function AccountInfo() {
 
 	const classes = useStyles()
 
-	const displayRampWidget = () => {
-		const widget = new RampInstantSDK({
-			hostAppName: 'AdExNetwork',
-			hostLogoUrl: 'https://www.adex.network/img/Adex-logo@2x.png',
-			variant: 'auto',
-			swapAsset: symbol,
-			userAddress: identityAddress,
-		})
-		widget.domNodes.overlay.style.zIndex = 1000
-		widget.show()
-	}
-
 	const handleExpandChange = () => {
 		setExpanded(!expanded)
 	}
@@ -143,10 +105,6 @@ function AccountInfo() {
 	return (
 		<div>
 			<List className={classes.root}>
-				<Test
-					open={wyreWidgetOpen}
-					handleClose={() => setWyreWidgetOpen(false)}
-				/>
 				<ListSubheader>{t('ADEX_ACCOUNT')}</ListSubheader>
 				<AccountItem
 					left={
@@ -212,28 +170,17 @@ function AccountInfo() {
 					right={
 						<Fragment>
 							<Box py={1}>
-								<Button
+								<RRButton
+									to={`/dashboard/${side}/topup`}
 									fullWidth
 									variant='contained'
 									color='secondary'
 									aria-label='delete'
-									onClick={() => displayRampWidget()}
 									size='small'
 								>
 									<CreditCardIcon className={classes.iconBtnLeft} />
-									{t('TOP_UP_IDENTITY_GBP')}
-								</Button>
-								<Button
-									fullWidth
-									variant='contained'
-									color='secondary'
-									aria-label='delete'
-									onClick={() => openWyre({ dest: walletAddress })}
-									size='small'
-								>
-									<CreditCardIcon className={classes.iconBtnLeft} />
-									{t('WYRE')}
-								</Button>
+									{t('TOP_UP')}
+								</RRButton>
 							</Box>
 							<Box py={1}>
 								<WithdrawTokenFromIdentity
