@@ -403,7 +403,7 @@ export function BasicStats({ campaignId }) {
 					>
 						<Mouse className={classes.cardIcon} />
 					</StatsCard>
-					{side === 'advertiser' && (
+					{uiSide === 'advertiser' && (
 						<StatsCard
 							bgColor='accentOne'
 							subtitle={t('LABEL_TOTAL_SPENT')}
@@ -417,7 +417,7 @@ export function BasicStats({ campaignId }) {
 						</StatsCard>
 					)}
 
-					{side === 'publisher' && (
+					{uiSide === 'publisher' && (
 						<StatsCard
 							bgColor='accentTwo'
 							subtitle={t('LABEL_TOTAL_REVENUE')}
