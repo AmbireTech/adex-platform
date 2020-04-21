@@ -105,6 +105,16 @@ export const selectPublisherStatsAdUnitPay = createSelector(
 	({ reportPublisherToAdUnitPay }) => reportPublisherToAdUnitPay || {}
 )
 
+export const selectPublisherStatsAdSlot = createSelector(
+	(state, type) => selectPublisherStatsByType(state, type),
+	({ reportPublisherToAdSlot }) => reportPublisherToAdSlot || {}
+)
+
+export const selectPublisherStatsAdSlotPay = createSelector(
+	(state, type) => selectPublisherStatsByType(state, type),
+	({ reportPublisherToAdSlotPay }) => reportPublisherToAdSlotPay || {}
+)
+
 export const selectPublisherAggrStatsByCountry = createSelector(
 	(state, type) => selectPublisherStatsByCountry(state, type),
 	(byCountry = {}) => ({
@@ -154,6 +164,26 @@ export const selectPublisherAdvanceStatsToAdUnit = createSelector(
 				impressionsPay: Number(impressionsPayByAdUnit[item.id] || 0),
 				clicksPay: Number(clicksPayByAdUnit[item.id] || 0),
 			}))
+)
+
+export const selectPublisherAdvanceStatsToAdSlot = createSelector(
+	state => [
+		selectPublisherStatsAdSlot(state, 'IMPRESSION'),
+		selectPublisherStatsAdSlot(state, 'CLICK'),
+		selectPublisherStatsAdSlotPay(state, 'IMPRESSION'),
+		selectPublisherStatsAdSlotPay(state, 'CLICK'),
+	],
+	([
+		impressionsByAdSlot,
+		clicksByAdSlot,
+		impressionsPayByAdSlot,
+		clicksPayByAdSlot,
+	]) => ({
+		impressionsByAdSlot,
+		clicksByAdSlot,
+		impressionsPayByAdSlot,
+		clicksPayByAdSlot,
+	})
 )
 
 export const selectPublisherTotalImpressions = createSelector(
