@@ -136,7 +136,7 @@ export const identityAnalytics = async ({
 
 	const aggregates = await requester
 		.fetch({
-			route: `/analytics/for-${side}`,
+			route: `/analytics/${side}`,
 			method: 'GET',
 			queryParams: {
 				metric,

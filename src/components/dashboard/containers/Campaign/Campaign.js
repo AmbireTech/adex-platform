@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react'
+import React, { useState, Fragment, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import {
 	Grid,
@@ -28,8 +28,9 @@ import {
 import StatsByCountryTable from 'components/dashboard/containers/Tables/StatsByCountryTable'
 import MapChart from 'components/dashboard/charts/map/MapChart'
 import { CampaignBasic } from './CampaignBasic'
-import { validateAndUpdateCampaign } from 'actions'
+import { validateAndUpdateCampaign, updateMemoryUi, execute } from 'actions'
 import { useItem, SaveBtn } from 'components/dashboard/containers/ItemCommon/'
+import { BasicStats } from 'components/dashboard/containers/DashboardStats/BasicStats'
 
 function Campaign({ match }) {
 	const [tabIndex, setTabIndex] = useState(0)
@@ -45,6 +46,15 @@ function Campaign({ match }) {
 	const leader = campaign.spec.validators[0]
 	const follower = campaign.spec.validators[1]
 	const campaignId = campaign.id
+
+	useEffect(() => {
+		execute(updateMemoryUi('campaignId', campaignId))
+
+		return () => {
+			execute(updateMemoryUi('campaignId', undefined))
+		}
+	}, [campaignId])
+
 	return (
 		<Fragment>
 			<SaveBtn {...hookProps} />
@@ -56,13 +66,14 @@ function Campaign({ match }) {
 					scrollButtons='auto'
 				>
 					<AdvertiserTab label={t('CAMPAIGN_MAIN')} />
-					<AdvertiserTab label={t('STATISTICS')} />
+					<AdvertiserTab label={t('WEBSITE_STAT')} />
 					<AdvertiserTab label={t('COUNTRY_STATS')} />
 					<AdvertiserTab label={t('CAMPAIGN_UNITS')} />
 					<AdvertiserTab label={t('VALIDATORS')} />
 					{['Closed', 'Completed'].includes(humanFriendlyName) && (
 						<AdvertiserTab label={t('RECEIPT')} />
 					)}
+					<AdvertiserTab label={t('TIMEFRAME_STAT')} />
 				</AdvertiserTabs>
 			</AdvertiserAppBar>
 			<Box my={2}>
@@ -153,6 +164,7 @@ function Campaign({ match }) {
 					</List>
 				)}
 				{tabIndex === 5 && <Receipt itemId={campaignId} />}
+				{tabIndex === 6 && <BasicStats campaignId={campaignId} />}
 			</Box>
 		</Fragment>
 	)
