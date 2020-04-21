@@ -40,6 +40,7 @@ export const styles = theme => {
 		},
 		actions: {
 			display: 'flex',
+			flexDirection: 'column',
 			justifyContent: 'space-between',
 		},
 		onRampLogo: {
