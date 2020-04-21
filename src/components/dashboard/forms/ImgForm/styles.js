@@ -1,16 +1,14 @@
 export const styles = theme => {
 	const spacing = theme.spacing(1)
 	return {
-		header: {
-			marginBottom: spacing,
-		},
 		dropzone: {
+			marginBottom: spacing,
 			display: 'flex',
 			flexDirection: 'column',
 			flex: '1 1',
 			height: 'auto',
 			width: 'auto',
-			border: `2px dashed ${theme.palette.grey[500]}`,
+			border: `1px dashed ${theme.palette.grey[500]}`,
 			background: theme.palette.background.default,
 			padding: 10,
 			cursor: 'pointer',

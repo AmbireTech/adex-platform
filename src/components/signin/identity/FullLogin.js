@@ -97,6 +97,7 @@ function FullLogin(props) {
 								</Grid>
 								<Grid item xs={12}>
 									<Dropdown
+										variant='outlined'
 										label={t('SELECT_IDENTITY')}
 										helperText={t('SELECT_IDENTITY_INFO')}
 										onChange={val =>

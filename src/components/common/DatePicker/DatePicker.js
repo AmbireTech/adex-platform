@@ -21,16 +21,16 @@ const CalendarIconAdor = ({
 	onLiveClick,
 }) => (
 	<InputAdornment position='end'>
-		<IconButton color={iconColor} onClick={onIconClick}>
+		<IconButton color={iconColor} onClick={onIconClick} size='small'>
 			{icon}
 		</IconButton>
 		{onLiveClick && (
-			<IconButton color={iconColor} onClick={onLiveClick}>
+			<IconButton color={iconColor} onClick={onLiveClick} size='small'>
 				<Update />
 			</IconButton>
 		)}
 		{onNextClick && (
-			<IconButton color={iconColor} onClick={onNextClick}>
+			<IconButton color={iconColor} onClick={onNextClick} size='small'>
 				<NavigateNextRounded />
 			</IconButton>
 		)}
@@ -64,7 +64,7 @@ export class DatePicker extends Component {
 					) : null,
 					startAdornment: onBackClick ? (
 						<InputAdornment position='start'>
-							<IconButton color={iconColor} onClick={onBackClick}>
+							<IconButton color={iconColor} onClick={onBackClick} size='small'>
 								<NavigateBeforeRounded />
 							</IconButton>
 						</InputAdornment>

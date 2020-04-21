@@ -1,19 +1,21 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
-import Grid from '@material-ui/core/Grid'
-import FormGroup from '@material-ui/core/FormGroup'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import FormControl from '@material-ui/core/FormControl'
-import FormHelperText from '@material-ui/core/FormHelperText'
-import Input from '@material-ui/core/Input'
-import InputLabel from '@material-ui/core/InputLabel'
-import Checkbox from '@material-ui/core/Checkbox'
-import TextField from '@material-ui/core/TextField'
+import {
+	Grid,
+	FormGroup,
+	FormControlLabel,
+	FormControl,
+	FormHelperText,
+	Checkbox,
+	TextField,
+} from '@material-ui/core'
+import { Alert } from '@material-ui/lab'
 import DateTimePicker from 'components/common/DateTimePicker'
 import { FullContentSpinner } from 'components/common/dialog/content'
 import { utils } from 'ethers'
 import MomentUtils from '@date-io/moment'
+import { ItemSpecProp } from 'components/dashboard/containers/ItemCommon/'
 import {
 	selectSpinnerById,
 	selectMainToken,
@@ -75,11 +77,14 @@ function CampaignFinance({ validateId }) {
 	const to = withdrawPeriodStart || undefined
 	const now = moment.date().valueOf()
 
-	const errTitle = invalidFields['title']
-	const errDepAmnt = invalidFields['depositAmount']
-	const errMin = invalidFields['minPerImpression']
-	const errFrom = invalidFields['activeFrom']
-	const errTo = invalidFields['withdrawPeriodStart']
+	const {
+		title: errTitle,
+		depositAmount: errDepAmnt,
+		minPerImpression: errMin,
+		activeFrom: errFrom,
+		withdrawPeriodStart: errTo,
+		minTargetingScore: errUnitsTargeting,
+	} = invalidFields
 
 	const impressions = getTotalImpressions({
 		depositAmount,
@@ -99,6 +104,7 @@ function CampaignFinance({ validateId }) {
 						<TextField
 							fullWidth
 							type='text'
+							variant='outlined'
 							required
 							label={t('title', { isProp: true })}
 							name='title'
@@ -117,27 +123,29 @@ function CampaignFinance({ validateId }) {
 					</Grid>
 
 					<Grid item xs={12} sm={12} md={6}>
-						<FormControl fullWidth disabled>
-							<InputLabel htmlFor='leader-validator'>
-								{t('ADV_PLATFORM_VALIDATOR')}
-							</InputLabel>
-							<Input id='leader-validator' value={leader.url || ''} />
-							<FormHelperText>{leader.id}</FormHelperText>
-						</FormControl>
+						<ItemSpecProp
+							label={t('ADV_PLATFORM_VALIDATOR')}
+							prop='leader-validator'
+							value={leader.url || ''}
+							helperText={leader.id}
+							disabled
+						/>
 					</Grid>
 
 					<Grid item xs={12} sm={12} md={6}>
-						<FormControl fullWidth disabled>
-							<InputLabel htmlFor='follower-validator'>
-								{t('PUB_PLATFORM_VALIDATOR')}
-							</InputLabel>
-							<Input id='follower-validator' value={follower.url || ''} />
-							<FormHelperText>{follower.id}</FormHelperText>
-						</FormControl>
+						<ItemSpecProp
+							label={t('PUB_PLATFORM_VALIDATOR')}
+							prop='follower-validator'
+							value={follower.url || ''}
+							helperText={follower.id}
+							disabled
+						/>
 					</Grid>
+
 					<Grid item xs={12} sm={12} md={6}>
 						<TextField
 							fullWidth
+							variant='outlined'
 							type='text'
 							required
 							label={t('DEPOSIT_AMOUNT_LABEL', {
@@ -167,6 +175,7 @@ function CampaignFinance({ validateId }) {
 					<Grid item xs={12} sm={12} md={6}>
 						<TextField
 							fullWidth
+							variant='outlined'
 							type='text'
 							required
 							label={t('CPM_LABEL', { args: [impressions] })}
@@ -194,6 +203,7 @@ function CampaignFinance({ validateId }) {
 					<Grid item xs={12} sm={12} md={6}>
 						<DateTimePicker
 							emptyLabel={t('SET_CAMPAIGN_START')}
+							inputVariant='outlined'
 							disablePast
 							fullWidth
 							calendarIcon
@@ -215,6 +225,7 @@ function CampaignFinance({ validateId }) {
 					<Grid item xs={12} sm={12} md={6}>
 						<DateTimePicker
 							emptyLabel={t('SET_CAMPAIGN_END')}
+							inputVariant='outlined'
 							disablePast
 							fullWidth
 							calendarIcon
@@ -233,25 +244,36 @@ function CampaignFinance({ validateId }) {
 						/>
 					</Grid>
 					<Grid item xs={12} sm={12} md={6}>
-						<FormGroup row>
-							<FormControlLabel
-								control={
-									<Checkbox
-										checked={!!minTargetingScore}
-										onChange={ev =>
-											execute(
-												updateNewCampaign(
-													'minTargetingScore',
-													ev.target.checked ? 1 : null
+						<FormControl error={errUnitsTargeting && errUnitsTargeting.dirty}>
+							<FormGroup row>
+								<FormControlLabel
+									control={
+										<Checkbox
+											checked={!!minTargetingScore}
+											onChange={ev =>
+												execute(
+													updateNewCampaign(
+														'minTargetingScore',
+														ev.target.checked ? 1 : null
+													)
 												)
-											)
-										}
-										value='minTargetingScore'
-									/>
-								}
-								label={t('CAMPAIGN_MIN_TARGETING')}
-							/>
-						</FormGroup>
+											}
+											value='minTargetingScore'
+										/>
+									}
+									label={t('minTargetingScore', { isProp: true })}
+								/>
+							</FormGroup>
+							<FormHelperText>
+								{errUnitsTargeting && !!errUnitsTargeting.dirty ? (
+									<Alert severity='error' variant='outlined'>
+										{t('ERR_MIN_TARGETING_SCORE_ALERT')}
+									</Alert>
+								) : (
+									''
+								)}
+							</FormHelperText>
+						</FormControl>
 					</Grid>
 				</Grid>
 			)}

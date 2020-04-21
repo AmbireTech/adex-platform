@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { makeStyles } from '@material-ui/core/styles'
-import Input from '@material-ui/core/Input'
+import { TextField } from '@material-ui/core'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import ListSubheader from '@material-ui/core/ListSubheader'
@@ -27,7 +27,6 @@ function Dropdown(props) {
 		disabled = false,
 		error = false,
 		helperText,
-		// margin = '',
 		fullWidth = false,
 		className,
 		required,
@@ -37,60 +36,60 @@ function Dropdown(props) {
 		IconComponent,
 	} = props
 
-	const inputLabel = React.useRef(null)
-	const [labelWidth, setLabelWidth] = React.useState(0)
-	React.useEffect(() => {
-		setLabelWidth(inputLabel.current.offsetWidth)
-	}, [])
-
 	const handleChange = event => {
 		onChange(event.target.value)
 	}
 
 	// TODO: add native renderer for mobile devices when supported
 	return (
-		<FormControl
-			className={classnames(className, classes.formControl)}
-			disabled={disabled}
-			error={error}
-			fullWidth={fullWidth}
-			variant={variant}
-		>
-			<InputLabel ref={inputLabel} htmlFor={htmlId} required={required}>
-				{label}
-			</InputLabel>
+		<Fragment>
 			{!!source.length && !loading ? (
-				<Select
-					value={value.id || value}
-					onChange={handleChange}
-					labelWidth={labelWidth}
-					IconComponent={IconComponent}
+				<FormControl
+					className={classnames(className, classes.formControl)}
+					disabled={disabled}
+					error={error}
+					fullWidth={fullWidth}
+					variant={variant}
 				>
-					{[...source].map(src => {
-						return src.group ? (
-							<ListSubheader key={src.group.name || src.group}>
-								{src.group.name || src.group}
-							</ListSubheader>
-						) : (
-							<MenuItem
-								key={src.value.key || src.value.id || src.value}
-								value={src.value.id || src.value}
-							>
-								{src.label}
-							</MenuItem>
-						)
-					})}
-				</Select>
-			) : !loading ? (
-				<Input disabled value={noSrcLabel} />
+					<InputLabel htmlFor={htmlId} required={required}>
+						{label}
+					</InputLabel>
+					<Select
+						label={label}
+						value={value.id || value}
+						onChange={handleChange}
+						IconComponent={IconComponent}
+					>
+						{[...source].map(src => {
+							return src.group ? (
+								<ListSubheader key={src.group.name || src.group}>
+									{src.group.name || src.group}
+								</ListSubheader>
+							) : (
+								<MenuItem
+									key={src.value.key || src.value.id || src.value}
+									value={src.value.id || src.value}
+								>
+									{src.label}
+								</MenuItem>
+							)
+						})}
+					</Select>
+				</FormControl>
 			) : (
 				<>
-					<Input disabled value={t('LOADING_DATA')} />
-					<InputLoading />
+					<TextField
+						fullWidth={fullWidth}
+						type='text'
+						variant={variant}
+						disabled
+						value={loading ? t('LOADING_DATA') : noSrcLabel}
+					/>
+					{!!loading && <InputLoading />}
 				</>
-			)}{' '}
+			)}
 			{helperText && <FormHelperText>{helperText}</FormHelperText>}
-		</FormControl>
+		</Fragment>
 	)
 }
 

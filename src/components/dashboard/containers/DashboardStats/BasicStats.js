@@ -1,27 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import {
-	execute,
-	updateIdSideAnalyticsChartTimeframe,
-	updateIdSideAnalyticsChartPeriod,
-	updateAnalyticsPeriodPrevNextLive,
-	updateAccountAnalyticsThrottled,
-} from 'actions'
-import { SimpleStatistics } from 'components/dashboard/charts/simplified'
-import Dropdown from 'components/common/dropdown'
-import Grid from '@material-ui/core/Grid'
-import { VALIDATOR_ANALYTICS_TIMEFRAMES } from 'constants/misc'
-import StatsCard from './StatsCard'
-import { makeStyles } from '@material-ui/core/styles'
-import DateTimePicker from 'components/common/DateTimePicker'
-import { WeeklyDatePicker, DatePicker } from 'components/common/DatePicker'
-import {
 	Visibility,
 	MonetizationOn,
 	Mouse,
 	Equalizer,
 } from '@material-ui/icons'
 import { Box } from '@material-ui/core'
+import { Alert } from '@material-ui/lab'
+import { SimpleStatistics } from 'components/dashboard/charts/simplified'
+import Dropdown from 'components/common/dropdown'
+import { VALIDATOR_ANALYTICS_TIMEFRAMES } from 'constants/misc'
+import StatsCard from './StatsCard'
+import { makeStyles } from '@material-ui/core/styles'
+import DateTimePicker from 'components/common/DateTimePicker'
+import { WeeklyDatePicker, DatePicker } from 'components/common/DatePicker'
+import Anchor from 'components/common/anchor/anchor'
+
 import {
 	PRIMARY,
 	SECONDARY,
@@ -30,7 +25,15 @@ import {
 	ALEX_GREY,
 } from 'components/App/themeMUi'
 import { styles } from './styles'
-import { formatNumberWithCommas } from 'helpers/formatters'
+import { formatNumberWithCommas, formatDateTime } from 'helpers/formatters'
+import {
+	execute,
+	updateIdSideAnalyticsChartTimeframe,
+	updateIdSideAnalyticsChartPeriod,
+	updateAnalyticsPeriodPrevNextLive,
+	updateAccountAnalyticsThrottled,
+	updateMissingRevenueDataPointAccepted,
+} from 'actions'
 import {
 	t,
 	selectTotalImpressions,
@@ -47,10 +50,19 @@ import {
 	selectSide,
 	selectAuth,
 	selectInitialDataLoaded,
+	selectMissingRevenueDataPointsAccepted,
 } from 'selectors'
 import dateUtils from 'helpers/dateUtils'
 import { useKeyPress } from 'hooks/useKeyPress'
 import { analyticsLoopCustom } from 'services/store-data/analytics'
+
+const min = 60 * 1000
+
+const timeoutMap = {
+	hour: min,
+	day: 10 * min,
+	week: 30 * min,
+}
 
 const timeFrames = VALIDATOR_ANALYTICS_TIMEFRAMES.map(tf => {
 	const translated = { ...tf }
@@ -103,11 +115,10 @@ const metrics = {
 	],
 }
 
-const timeHints = {
-	hour: 'SHOWING_LAST_HOUR',
-	day: 'SHOWING_LAST_24_HOURS',
-	week: 'SHOWING_LAST_7_DAYS',
-}
+const getDefaultLabels = ({ start, end }) => [
+	formatDateTime(start),
+	formatDateTime(end),
+]
 
 const DatePickerSwitch = ({ timeframe, ...rest }) => {
 	switch (timeframe) {
@@ -143,13 +154,34 @@ const DatePickerSwitch = ({ timeframe, ...rest }) => {
 	}
 }
 
-const min = 60 * 1000
-
-const timeoutMap = {
-	hour: min,
-	day: 10 * min,
-	week: 30 * min,
-}
+const ImpressionsAlert = ({ impressions = 0 }) => (
+	<Alert
+		variant='outlined'
+		severity='info'
+		onClose={() => {
+			execute(updateMissingRevenueDataPointAccepted(true))
+		}}
+	>
+		<div>
+			{t('IMPRESSIONS_AND_REVINUE_INFO', {
+				args: [
+					impressions,
+					<Anchor
+						key='publisher-revenue-notice'
+						color='primary'
+						underline='always'
+						target='_blank'
+						href={
+							'https://help.adex.network/hc/en-us/articles/360012130399-Why-are-there-impressions-but-no-revenue-'
+						}
+					>
+						{<strong>{t('LEARN_MORE')}</strong>}
+					</Anchor>,
+				],
+			})}
+		</div>
+	</Alert>
+)
 
 export function BasicStats() {
 	const useStyles = makeStyles(styles)
@@ -159,11 +191,16 @@ export function BasicStats() {
 	const ARROW_RIGHT = useKeyPress('ArrowRight')
 	const { symbol } = useSelector(selectMainToken)
 	const isAuth = useSelector(state => selectAuth(state))
-	const { start } = useSelector(selectIdentitySideAnalyticsPeriod)
+	const { start, end } = useSelector(selectIdentitySideAnalyticsPeriod)
 	const timeframe = useSelector(selectIdentitySideAnalyticsTimeframe)
 	const side = useSelector(selectSide)
 	const [loop, setLoop] = useState()
-	const dataLoaded = useSelector(selectInitialDataLoaded)
+	const initialDataLoaded = useSelector(selectInitialDataLoaded)
+	const missingRevenuePointsAccepted = useSelector(
+		selectMissingRevenueDataPointsAccepted
+	)
+
+	const defaultLabels = getDefaultLabels({ start, end })
 
 	const totalImpressions = useSelector(state =>
 		selectTotalImpressions(state, {
@@ -192,11 +229,6 @@ export function BasicStats() {
 			timeframe,
 		})
 	)
-
-	const loadingImpressions = totalImpressions === null
-	const loadingMoney = totalMoney === null
-	const loadingCPM = averageCPM === null
-	const loadingClicks = totalClicks === null
 
 	const payouts = useSelector(state =>
 		selectChartDatapointsPayouts(state, { side, timeframe })
@@ -233,16 +265,16 @@ export function BasicStats() {
 	}, [ARROW_LEFT, ARROW_RIGHT, SPACE])
 
 	useEffect(() => {
-		if ((dataLoaded && side, timeframe, start)) {
+		if (initialDataLoaded && side && timeframe && start) {
 			execute(updateAccountAnalyticsThrottled())
 		}
-	}, [dataLoaded, side, timeframe, start])
+	}, [initialDataLoaded, side, timeframe, start])
 
 	useEffect(() => {
-		if (dataLoaded && side) {
+		if (initialDataLoaded && side) {
 			goLive()
 		}
-	}, [dataLoaded, side])
+	}, [initialDataLoaded, side])
 
 	useEffect(() => {
 		loop && loop.startLoop()
@@ -270,142 +302,156 @@ export function BasicStats() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [timeframe, isAuth])
 
-	const dataInSync =
-		(clicks.labels[clicks.labels.length - 1] ===
-			impressions[impressions.labels.length - 1]) ===
-		payouts[payouts.labels.length - 1]
+	const dataSynced =
+		!!initialDataLoaded &&
+		[
+			impressions.labels[impressions.labels.length - 1],
+			payouts.labels[payouts.labels.length - 1],
+		].every(x => !!x && x === clicks.labels[clicks.labels.length - 1]) &&
+		[totalImpressions, totalMoney, averageCPM, totalClicks].every(
+			x => x !== null
+		)
+
+	const showRevenueInfo =
+		!missingRevenuePointsAccepted &&
+		side === 'publisher' &&
+		dataSynced &&
+		!!totalImpressions
 	return (
 		side && (
-			<Grid container spacing={2}>
-				<Grid item xs={12}>
-					<div className={classes.infoStatsContainer}>
-						<StatsCard>
-							<Box display='flex' flexDirection='row' flexWrap='wrap'>
-								<Box m={1} flexGrow='1'>
-									<Dropdown
-										fullWidth
-										variant='outlined'
-										label={t('SELECT_TIMEFRAME')}
-										// helperText={t(timeHints[timeframe])}
-										onChange={val => {
-											//TODO: fix change of timeframe, set default period as well
-											execute(updateIdSideAnalyticsChartTimeframe(val))
-										}}
-										source={timeFrames}
-										value={timeframe}
-										htmlId='timeframe-select'
-									/>
-								</Box>
-								<Box m={1} flexGrow='1'>
-									<DatePickerSwitch
-										timeframe={timeframe}
-										value={start}
-										minutesStep={60}
-										onChange={val => {
-											execute(updateIdSideAnalyticsChartPeriod(val))
-										}}
-										disableFuture
-										inputVariant='outlined'
-										fullWidth
-										calendarIcon
-										label={t('ANALYTICS_PERIOD')}
-										max={Date.now()}
-										// Only when picking future hours as they can't be disabled
-										maxDateMessage={t('MAX_DATE_ERROR')}
-										strictCompareDates
-										onBackClick={e => {
-											e.stopPropagation()
-											goPrev()
-										}}
-										onLiveClick={e => {
-											e.stopPropagation()
-											goLive()
-										}}
-										onNextClick={e => {
-											e.stopPropagation()
-											goNext()
-										}}
-									/>
-								</Box>
+			<Box>
+				<Box display='flex' flexDirection='row' flexWrap='wrap' m={1}>
+					<StatsCard>
+						<Box display='flex' flexDirection='row' flexWrap='wrap'>
+							<Box m={1} flexGrow='1'>
+								<Dropdown
+									fullWidth
+									variant='outlined'
+									label={t('SELECT_TIMEFRAME')}
+									// helperText={t(timeHints[timeframe])}
+									onChange={val => {
+										//TODO: fix change of timeframe, set default period as well
+										execute(updateIdSideAnalyticsChartTimeframe(val))
+									}}
+									source={timeFrames}
+									value={timeframe}
+									htmlId='timeframe-select'
+								/>
 							</Box>
-						</StatsCard>
+							<Box m={1} flexGrow='1'>
+								<DatePickerSwitch
+									timeframe={timeframe}
+									value={start}
+									minutesStep={60}
+									onChange={val => {
+										execute(updateIdSideAnalyticsChartPeriod(val))
+									}}
+									disableFuture
+									inputVariant='outlined'
+									fullWidth
+									calendarIcon
+									label={t('ANALYTICS_PERIOD')}
+									max={Date.now()}
+									// Only when picking future hours as they can't be disabled
+									maxDateMessage={t('MAX_DATE_ERROR')}
+									strictCompareDates
+									onBackClick={e => {
+										e.stopPropagation()
+										goPrev()
+									}}
+									onLiveClick={e => {
+										e.stopPropagation()
+										goLive()
+									}}
+									onNextClick={e => {
+										e.stopPropagation()
+										goNext()
+									}}
+								/>
+							</Box>
+						</Box>
+					</StatsCard>
+					<StatsCard
+						bgColor='primary'
+						subtitle={t('LABEL_TOTAL_IMPRESSIONS')}
+						loading={!dataSynced}
+						title={`${formatNumberWithCommas(totalImpressions || 0)}`}
+						explain={t('EXPLAIN_TOTAL_IMPRESSIONS')}
+					>
+						<Visibility className={classes.cardIcon} />
+					</StatsCard>
+					<StatsCard
+						bgColor='secondary'
+						subtitle={t('LABEL_TOTAL_CLICKS')}
+						explain={t('EXPLAIN_TOTAL_CLICKS')}
+						loading={!dataSynced}
+						title={`${formatNumberWithCommas(totalClicks || 0)} (${parseFloat(
+							(totalClicks / totalImpressions) * 100 || 0
+						).toFixed(2)} % ${t('LABEL_CTR')})`}
+					>
+						<Mouse className={classes.cardIcon} />
+					</StatsCard>
+					{side === 'advertiser' && (
 						<StatsCard
-							bgColor='primary'
-							subtitle={t('LABEL_TOTAL_IMPRESSIONS')}
-							loading={loadingImpressions && !dataInSync}
-							title={`${formatNumberWithCommas(totalImpressions || 0)}`}
-							explain={t('EXPLAIN_TOTAL_IMPRESSIONS')}
-						>
-							<Visibility className={classes.cardIcon} />
-						</StatsCard>
-						<StatsCard
-							bgColor='secondary'
-							subtitle={t('LABEL_TOTAL_CLICKS')}
-							explain={t('EXPLAIN_TOTAL_CLICKS')}
-							loading={
-								loadingClicks &&
-								loadingImpressions &&
-								!dataInSync &&
-								totalClicks / totalImpressions !== Infinity
-							}
-							title={`${formatNumberWithCommas(totalClicks || 0)} (${parseFloat(
-								(totalClicks / totalImpressions) * 100 || 0
-							).toFixed(2)} % ${t('LABEL_CTR')})`}
-						>
-							<Mouse className={classes.cardIcon} />
-						</StatsCard>
-						{side === 'advertiser' && (
-							<StatsCard
-								bgColor='accentOne'
-								subtitle={t('LABEL_TOTAL_SPENT')}
-								explain={t('EXPLAIN_TOTAL_SPENT', { args: [symbol] })}
-								title={`~ ${formatNumberWithCommas(
-									parseFloat(totalMoney || 0).toFixed(2)
-								)} ${symbol}`}
-								loading={loadingMoney && !dataInSync}
-							>
-								<MonetizationOn className={classes.cardIcon} />
-							</StatsCard>
-						)}
-
-						{side === 'publisher' && (
-							<StatsCard
-								bgColor='accentTwo'
-								subtitle={t('LABEL_TOTAL_REVENUE')}
-								explain={t('EXPLAIN_TOTAL_REVENUE')}
-								title={`~ ${formatNumberWithCommas(
-									parseFloat(totalMoney || 0).toFixed(2)
-								)} ${symbol}`}
-								loading={loadingMoney && !dataInSync}
-							>
-								<MonetizationOn className={classes.cardIcon} />
-							</StatsCard>
-						)}
-						<StatsCard
-							bgColor='grey'
-							subtitle={t('LABEL_AVG_CPM')}
-							explain={t('EXPLAIN_AVG_CPM')}
-							loading={loadingCPM && !dataInSync}
+							bgColor='accentOne'
+							subtitle={t('LABEL_TOTAL_SPENT')}
+							explain={t('EXPLAIN_TOTAL_SPENT', { args: [symbol] })}
 							title={`~ ${formatNumberWithCommas(
-								parseFloat(averageCPM || 0).toFixed(2)
-							)} ${symbol} / CPM`}
+								parseFloat(totalMoney || 0).toFixed(2)
+							)} ${symbol}`}
+							loading={!dataSynced}
 						>
-							<Equalizer className={classes.cardIcon} />
+							<MonetizationOn className={classes.cardIcon} />
 						</StatsCard>
-					</div>
-				</Grid>
-				<Grid item xs={12}>
+					)}
+
+					{side === 'publisher' && (
+						<StatsCard
+							bgColor='accentTwo'
+							subtitle={t('LABEL_TOTAL_REVENUE')}
+							explain={t('EXPLAIN_TOTAL_REVENUE')}
+							title={`~ ${formatNumberWithCommas(
+								parseFloat(totalMoney || 0).toFixed(2)
+							)} ${symbol}`}
+							loading={!dataSynced}
+						>
+							<MonetizationOn className={classes.cardIcon} />
+						</StatsCard>
+					)}
+					<StatsCard
+						bgColor='grey'
+						subtitle={t('LABEL_AVG_CPM')}
+						explain={t('EXPLAIN_AVG_CPM')}
+						loading={!dataSynced}
+						title={`~ ${formatNumberWithCommas(
+							parseFloat(averageCPM || 0).toFixed(2)
+						)} ${symbol} / CPM`}
+					>
+						<Equalizer className={classes.cardIcon} />
+					</StatsCard>
+				</Box>
+
+				{showRevenueInfo && (
+					<Box m={1}>
+						<ImpressionsAlert impressions={totalImpressions} />
+					</Box>
+				)}
+				<Box m={1}>
 					<SimpleStatistics
 						side={side}
+						start={start}
+						end={end}
 						timeframe={timeframe}
 						options={{
 							title:
 								(timeFrames.find(a => a.value === timeframe) || {}).label || '',
 						}}
-						payouts={payouts}
-						impressions={impressions}
-						clicks={clicks}
-						cpm={cpm}
+						defaultLabels={defaultLabels}
+						data1={payouts}
+						data2={impressions}
+						data3={clicks}
+						data4={cpm}
+						dataSynced={dataSynced}
 						y1Label={metrics[side][0].label}
 						y1Color={metrics[side][0].color}
 						y2Label={metrics[side][1].label}
@@ -414,10 +460,9 @@ export function BasicStats() {
 						y3Color={metrics[side][2].color}
 						y4Label={metrics[side][3].label}
 						y4Color={metrics[side][3].color}
-						t={t}
 					/>
-				</Grid>
-			</Grid>
+				</Box>
+			</Box>
 		)
 	)
 }

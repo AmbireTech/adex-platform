@@ -22,6 +22,7 @@ import {
 	validateNewSlotBasics,
 	validateNewSlotPassback,
 	validateNewUnitMedia,
+	validateNewUnitTargeting,
 	completeItem,
 	resetNewItem,
 	saveUnit,
@@ -66,7 +67,11 @@ export const NewUnitSteps = props => (
 				component: AdUnitMedia,
 				validationFn: props => execute(validateNewUnitMedia(props)),
 			},
-			{ title: 'UNIT_TARGETS_STEP', component: AdUnitTargeting },
+			{
+				title: 'UNIT_TARGETS_STEP',
+				component: AdUnitTargeting,
+				validationFn: props => execute(validateNewUnitTargeting(props)),
+			},
 			{
 				title: 'PREVIEW_AND_SAVE_ITEM',
 				completeBtnTitle: 'SAVE',
@@ -135,7 +140,7 @@ export const NewCampaignSteps = props => (
 			},
 			{
 				title: 'PREVIEW_AND_SAVE_ITEM',
-				completeBtnTitle: 'SAVE',
+				completeBtnTitle: 'OPEN_CAMPAIGN',
 				component: CampaignFormPreview,
 				completeFn: props =>
 					execute(
@@ -192,7 +197,7 @@ export const NewSlotSteps = props => (
 			{ title: 'SLOT_TAGS_STEP', component: AdSlotTargeting },
 			{
 				title: 'PREVIEW_AND_SAVE_ITEM',
-				completeBtnTitle: 'OPEN_CAMPAIGN',
+				completeBtnTitle: 'SAVE',
 				component: AdSlotPreview,
 				completeFn: props =>
 					execute(

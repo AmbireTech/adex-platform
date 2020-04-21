@@ -7,6 +7,7 @@ import newItem from './newItemsReducer'
 // import currentItem from './currentItemsReducer'
 import spinners from './spinnersReducer'
 import ui from './uiReducer'
+import uiMemory from './uiMemoryReducer'
 import toasts from './toastsReducer'
 import confirm from './confirmReducer'
 import nav from './navReducer'
@@ -27,6 +28,7 @@ import * as types from 'constants/actionTypes'
 export const persistReducers = {
 	account,
 	ui, //: filterActions(ui, [types.UPDATE_UI]),
+	items: filterActions(items, action => action.type.match(/_ITEM/)),
 	language,
 	web3Transactions,
 	tags,
@@ -36,7 +38,7 @@ export const persistReducers = {
 }
 
 export const memoryReducers = {
-	items: filterActions(items, action => action.type.match(/_ITEM/)),
+	uiMemory,
 	channels,
 	analytics,
 	signin,

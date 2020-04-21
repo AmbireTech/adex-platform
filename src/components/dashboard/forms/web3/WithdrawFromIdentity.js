@@ -1,8 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
-import TextField from '@material-ui/core/TextField'
-import Button from '@material-ui/core/Button'
+import { TextField, Button, Box, Typography } from '@material-ui/core'
 import { InputLoading } from 'components/common/spinners/'
 import {
 	t,
@@ -35,74 +34,82 @@ const WithdrawFromIdentity = ({ stepsId, validateId } = {}) => {
 
 	return (
 		<div>
-			<div>
-				{t('EXCHANGE_CURRENT_MAIN_TOKEN_BALANCE_AVAILABLE_ON_IDENTITY', {
-					args: [max, symbol],
-				})}
-			</div>
-			<TextField
-				disabled={spinner}
-				type='text'
-				required
-				fullWidth
-				label={t('WITHDRAW_TO')}
-				name='withdrawTo'
-				value={withdrawTo || ''}
-				onChange={ev =>
-					execute(
-						updateNewTransaction({
-							tx: stepsId,
-							key: 'withdrawTo',
-							value: ev.target.value,
-						})
-					)
-				}
-				error={errAddr && !!errAddr.dirty}
-				helperText={errAddr && !!errAddr.dirty ? errAddr.errMsg : ''}
-			/>
-			{spinner ? <InputLoading /> : null}
-			<TextField
-				disabled={spinner}
-				type='text'
-				fullWidth
-				required
-				label={t('PROP_WITHDRAWAMOUNT')}
-				name='amountToWithdraw'
-				value={amountToWithdraw || ''}
-				onChange={ev =>
-					execute(
-						updateNewTransaction({
-							tx: stepsId,
-							key: 'amountToWithdraw',
-							value: ev.target.value,
-						})
-					)
-				}
-				error={errAmount && !!errAmount.dirty}
-				helperText={
-					<span>
-						<Button
-							size='small'
-							onClick={() => {
-								execute(
-									updateNewTransaction({
-										tx: stepsId,
-										key: 'amountToWithdraw',
-										value: max,
-									})
-								)
-							}}
-						>
-							{t('MAX_AMOUNT_TO_WITHDRAW', {
-								args: [max, symbol],
-							})}
-						</Button>
+			<Box mb={2}>
+				<Typography variant='subtitle1' display='block'>
+					{t('EXCHANGE_CURRENT_MAIN_TOKEN_BALANCE_AVAILABLE_ON_IDENTITY', {
+						args: [max, symbol],
+					})}
+				</Typography>
+			</Box>
+			<Box mb={2}>
+				<TextField
+					disabled={spinner}
+					type='text'
+					variant='outlined'
+					required
+					fullWidth
+					label={t('WITHDRAW_TO')}
+					name='withdrawTo'
+					value={withdrawTo || ''}
+					onChange={ev =>
+						execute(
+							updateNewTransaction({
+								tx: stepsId,
+								key: 'withdrawTo',
+								value: ev.target.value,
+							})
+						)
+					}
+					error={errAddr && !!errAddr.dirty}
+					helperText={errAddr && !!errAddr.dirty ? errAddr.errMsg : ''}
+				/>
+				{spinner ? <InputLoading /> : null}
+			</Box>
+			<Box mb={2}>
+				<TextField
+					disabled={spinner}
+					type='text'
+					variant='outlined'
+					fullWidth
+					required
+					label={t('PROP_WITHDRAWAMOUNT')}
+					name='amountToWithdraw'
+					value={amountToWithdraw || ''}
+					onChange={ev =>
+						execute(
+							updateNewTransaction({
+								tx: stepsId,
+								key: 'amountToWithdraw',
+								value: ev.target.value,
+							})
+						)
+					}
+					error={errAmount && !!errAmount.dirty}
+					helperText={
 						<span>
-							{errAmount && !!errAmount.dirty ? errAmount.errMsg : ''}
+							<Button
+								size='small'
+								onClick={() => {
+									execute(
+										updateNewTransaction({
+											tx: stepsId,
+											key: 'amountToWithdraw',
+											value: max,
+										})
+									)
+								}}
+							>
+								{t('MAX_AMOUNT_TO_WITHDRAW', {
+									args: [max, symbol],
+								})}
+							</Button>
+							<span>
+								{errAmount && !!errAmount.dirty ? errAmount.errMsg : ''}
+							</span>
 						</span>
-					</span>
-				}
-			/>
+					}
+				/>
+			</Box>
 			{errFees && errFees.dirty && errFees.errMsg && (
 				<Alert variant='outlined' severity='error'>
 					{errFees.errMsg}

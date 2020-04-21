@@ -1,13 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
-import Box from '@material-ui/core/Box'
-import TextField from '@material-ui/core/TextField'
+import {
+	Box,
+	TextField,
+	FormControlLabel,
+	FormControl,
+	Checkbox,
+	Typography,
+} from '@material-ui/core'
 import Dropdown from 'components/common/dropdown'
-import Typography from '@material-ui/core/Typography'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import FormControl from '@material-ui/core/FormControl'
-import Checkbox from '@material-ui/core/Checkbox'
 import { constants } from 'adex-models'
 import { t, selectValidationsById, selectNewTransactionById } from 'selectors'
 import { execute, updateNewTransaction } from 'actions'
@@ -37,51 +39,61 @@ function SeAddressPrivilege({ stepsId, validateId } = {}) {
 
 	return (
 		<div>
-			<div> {t('SET_IDENTITY_PRIVILEGE_MAIN_INFO')}</div>
-			<TextField
-				type='text'
-				required
-				fullWidth
-				label={t('ADDR_TO_SET_PRIV_LEVEL')}
-				name='setAddr'
-				value={setAddr || ''}
-				onChange={ev =>
-					execute(
-						updateNewTransaction({
-							tx: stepsId,
-							key: 'setAddr',
-							value: ev.target.value,
-						})
-					)
-				}
-				error={errAddr && !!errAddr.dirty}
-				helperText={errAddr && !!errAddr.dirty ? errAddr.errMsg : ''}
-			/>
-			<Dropdown
-				required
-				label={t('SELECT_PRIV_LEVEL')}
-				// helperText={t('SELECT_PRIV_LEVEL_HELPER_TXT')}
-				onChange={val =>
-					execute(
-						updateNewTransaction({
-							tx: stepsId,
-							key: 'privLevel',
-							value: val,
-						})
-					)
-				}
-				source={PRIV_LEVELS_SRC}
-				value={typeof privLevel === 'number' ? privLevel : ''}
-				htmlId='label-privLevel'
-				fullWidth
-				error={errPrivLvl && !!errPrivLvl.dirty}
-				helperText={
-					errPrivLvl && !!errPrivLvl.dirty
-						? errPrivLvl.errMsg
-						: t('SELECT_PRIV_LEVEL_HELPER_TXT')
-				}
-			/>
-			<Box m={2}>
+			<Box mb={2}>
+				<Typography variant='subtitle1' display='block'>
+					{t('SET_IDENTITY_PRIVILEGE_MAIN_INFO')}:
+				</Typography>
+			</Box>
+			<Box mb={2}>
+				<TextField
+					type='text'
+					variant='outlined'
+					required
+					fullWidth
+					label={t('ADDR_TO_SET_PRIV_LEVEL')}
+					name='setAddr'
+					value={setAddr || ''}
+					onChange={ev =>
+						execute(
+							updateNewTransaction({
+								tx: stepsId,
+								key: 'setAddr',
+								value: ev.target.value,
+							})
+						)
+					}
+					error={errAddr && !!errAddr.dirty}
+					helperText={errAddr && !!errAddr.dirty ? errAddr.errMsg : ''}
+				/>
+			</Box>
+			<Box mb={2}>
+				<Dropdown
+					required
+					variant='outlined'
+					label={t('SELECT_PRIV_LEVEL')}
+					// helperText={t('SELECT_PRIV_LEVEL_HELPER_TXT')}
+					onChange={val =>
+						execute(
+							updateNewTransaction({
+								tx: stepsId,
+								key: 'privLevel',
+								value: val,
+							})
+						)
+					}
+					source={PRIV_LEVELS_SRC}
+					value={typeof privLevel === 'number' ? privLevel : ''}
+					htmlId='label-privLevel'
+					fullWidth
+					error={errPrivLvl && !!errPrivLvl.dirty}
+					helperText={
+						errPrivLvl && !!errPrivLvl.dirty
+							? errPrivLvl.errMsg
+							: t('SELECT_PRIV_LEVEL_HELPER_TXT')
+					}
+				/>
+			</Box>
+			<Box mb={2}>
 				<Typography variant='caption' display='block' gutterBottom>
 					{t('PRIV_LEVEL_INFO_LABEL')}:
 				</Typography>
@@ -100,7 +112,7 @@ function SeAddressPrivilege({ stepsId, validateId } = {}) {
 				</Typography>
 			</Box>
 			{(warning || warningAccepted || warningMsg) && (
-				<Box m={2}>
+				<Box mb={2}>
 					<FormControl error={warning && warning.dirty} component='fieldset'>
 						<FormControlLabel
 							control={

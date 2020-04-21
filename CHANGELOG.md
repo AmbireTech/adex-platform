@@ -1,6 +1,53 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.0
+##### *2020-04-20*
+
+### Added
+- v4.20.0
+
+### Changed
+- Perception
+
+### Fixed
+- Nothing
+
+## 4.10.49
+##### *2020-04-17*
+
+### Changed
+- Items data moved to persist again
+
+## 4.10.48
+##### *2020-04-17*
+
+### Changed
+- Steps inputs styles - outlined (items, transactions, login)
+- Steps previews - more compact with grids, better order of props
+
+### Fixed
+- Typos
+- Styles
+- Code clenaup
+
+## 4.10.47
+##### *2020-04-16*
+
+### Added
+- Validation for ad units targeting
+- Validation on campaign with "Only show ad if targeting matches" checked
+- Display message for impressions but no revenue
+
+### Changed
+- Preview props styled as outlined input
+- Improved chart styles and usability on mobile
+
+### Fixed
+- Campaign close
+- Targeting input styles and responsiveness
+- Fixed analytics data loading
+
 ## 4.10.46
 ##### *2020-04-14*
 

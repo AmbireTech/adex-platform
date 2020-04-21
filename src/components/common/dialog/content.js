@@ -1,54 +1,43 @@
 import React from 'react'
-import Grid from '@material-ui/core/Grid'
-import Box from '@material-ui/core/Box'
-import Typography from '@material-ui/core/Typography'
-import { CircularProgress } from '@material-ui/core'
+
+import {
+	CircularProgress,
+	OutlinedInput,
+	InputLabel,
+	FormControl,
+	Typography,
+	Box,
+} from '@material-ui/core'
 import { styles } from './styles.js'
 import classnames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
 import { t } from 'selectors'
 
-// TODO: fix responsive styles
-const propRow = ({
-	classes,
-	left,
-	right,
-	className,
-	classNameLeft,
-	classNameRight,
-	style = {},
-}) => (
-	<Grid
-		item
-		container
-		spacing={2}
-		xs={12}
-		className={classnames(className)}
-		style={style}
-	>
-		<Grid
-			item
-			xs={12}
-			sm={4}
-			lg={3}
-			className={classnames(classes.leftCol, classes.uppercase, classNameLeft)}
-		>
-			{left}
-		</Grid>
-		<Grid
-			item
-			xs={12}
-			sm={8}
-			lg={9}
-			className={classnames(
-				classes.rightCol,
-				classes.breakLong,
-				classNameRight
-			)}
-		>
-			{right}
-		</Grid>
-	</Grid>
+const PropBaseComponent = ({ value, inputRef, ...rest }) => (
+	<Box {...rest}>{value}</Box>
+)
+
+// TODO: Make it common named PropView
+// TODO: Use it with Grid in previews - we can have more than one in row
+export const PropRow = ({ left, right }) => (
+	<Box p={1}>
+		<FormControl variant='outlined' fullWidth>
+			<InputLabel shrink disableAnimation>
+				{left}
+			</InputLabel>
+
+			<OutlinedInput
+				fullWidth
+				notched
+				readOnly
+				name={left}
+				label={left}
+				inputComponent={PropBaseComponent}
+				inputProps={{ style: { height: 'auto', wordWrap: 'break-word' } }}
+				value={right}
+			/>
+		</FormControl>
+	</Box>
 )
 
 const contentBox = ({ classes, children, className }) => (
@@ -133,7 +122,6 @@ const fullContentMessage = ({
 	</Box>
 )
 
-export const PropRow = withStyles(styles)(propRow)
 export const ContentBox = withStyles(styles)(contentBox)
 export const ContentBody = withStyles(styles)(contentBody)
 export const ContentStickyTop = withStyles(styles)(contentStickyTop)

@@ -64,6 +64,7 @@ const QuickLogin = props => {
 									<TextField
 										disabled={!!identity.authType}
 										fullWidth
+										variant='outlined'
 										type='text'
 										required
 										label={t('email', { isProp: true })}
@@ -78,6 +79,7 @@ const QuickLogin = props => {
 								<Grid item xs={12}>
 									<TextField
 										fullWidth
+										variant='outlined'
 										type='password'
 										required
 										label={t('password', { isProp: true })}
