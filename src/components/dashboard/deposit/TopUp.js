@@ -2,9 +2,7 @@ import React from 'react'
 import {
 	Box,
 	Paper,
-	CardContent,
 	Typography,
-	CardActions,
 	Button,
 	List,
 	ListItem,
@@ -76,7 +74,7 @@ export default function TopUp() {
 						justifyContent='space-between'
 						height={1}
 					>
-						<CardContent>
+						<Box mb={1}>
 							<Typography className={classes.title}>{t('DAI')}</Typography>
 							<Typography className={classes.subtitle} gutterBottom>
 								{t('DIRECT_DEPOSIT')}
@@ -107,7 +105,7 @@ export default function TopUp() {
 									{t('DAI_DIRECT_DEPOSIT_INFO')}
 								</Typography>
 							</Box>
-						</CardContent>
+						</Box>
 					</Box>
 				</Paper>
 			</Grid>
@@ -120,7 +118,7 @@ export default function TopUp() {
 						justifyContent='space-between'
 						height={1}
 					>
-						<CardContent>
+						<Box mb={1}>
 							<Typography className={classes.title}>
 								{t('FIAT_CURRENCY')}
 							</Typography>
@@ -132,8 +130,8 @@ export default function TopUp() {
 									{t('ONRAMP_INFO')}
 								</Typography>
 							</Box>
-						</CardContent>
-						<CardActions>
+						</Box>
+						<Box>
 							<List>
 								{onRampProvidersDetails.map((item, key) => (
 									<ListItem
@@ -152,7 +150,7 @@ export default function TopUp() {
 									</ListItem>
 								))}
 							</List>
-						</CardActions>
+						</Box>
 					</Box>
 				</Paper>
 			</Grid>
@@ -165,7 +163,7 @@ export default function TopUp() {
 						justifyContent='space-between'
 						height={1}
 					>
-						<CardContent>
+						<Box mb={1}>
 							<Typography className={classes.title}>{t('BTC')}</Typography>
 							<Typography className={classes.subtitle} gutterBottom>
 								{t('DIRECT_DEPOSIT')}
@@ -175,8 +173,8 @@ export default function TopUp() {
 									{t('BTC_INFO')}
 								</Typography>
 							</Box>
-						</CardContent>
-						<CardActions>
+						</Box>
+						<Box>
 							<Button
 								size='large'
 								color='primary'
@@ -186,7 +184,7 @@ export default function TopUp() {
 							>
 								{t('COMMING_SOON')}
 							</Button>
-						</CardActions>
+						</Box>
 					</Box>
 				</Paper>
 			</Grid>
