@@ -21,8 +21,8 @@ import {
 	selectPublisherAggrStatsByCountry,
 	selectCampaignAggrStatsByCountry,
 	selectPublisherPayStatsByCountry,
+	selectPublisherAdvanceStatsToAdSlot,
 } from 'selectors'
-import moment from 'moment'
 import { formatUnits } from 'ethers/utils'
 import chartCountriesData from 'world-atlas/countries-50m.json'
 import { scaleLinear } from 'd3-scale'
@@ -135,11 +135,23 @@ export const selectCampaignsMaxDeposit = createSelector(
 )
 
 export const selectAdSlotsTableData = createSelector(
-	[selectAdSlotsArray, (_, side) => side],
-	(slots, side) =>
+	[selectAdSlotsArray, selectPublisherAdvanceStatsToAdSlot, (_, side) => side],
+	(
+		slots,
+		{
+			impressionsByAdSlot,
+			clicksByAdSlot,
+			impressionsPayByAdSlot,
+			clicksPayByAdSlot,
+		},
+		side
+	) =>
 		slots.map(item => {
 			const id = item.id || item.ipfs
 			const to = `/dashboard/${side}/slots/${id}`
+
+			const clicks = clicksByAdSlot[id]
+			const impressions = impressionsByAdSlot[id]
 			return {
 				media: {
 					id,
@@ -150,6 +162,12 @@ export const selectAdSlotsTableData = createSelector(
 				title: item.title,
 				type: item.type.replace('legacy_', ''),
 				created: item.created,
+				impressions,
+				clicks,
+				ctr: ((clicks || 0) / (impressions || 1)) * 100,
+				earnings:
+					Number(impressionsPayByAdSlot[id] || 0) +
+					Number(clicksPayByAdSlot[id] || 0),
 				actions: {
 					to,
 					item,

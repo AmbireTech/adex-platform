@@ -9,6 +9,7 @@ import {
 	t,
 	selectPublisherStatsByCountryTableData,
 	selectPublisherStatsByCountryMapChartData,
+	selectBestEarnersTableData,
 } from 'selectors'
 
 export function PublisherStats() {
@@ -25,7 +26,7 @@ export function PublisherStats() {
 				>
 					<PublisherTab label={t('CHARTS')} />
 					<PublisherTab label={t('COUNTRY_DATA')} />
-					<PublisherTab label={t('TABLE_BEST_EARNERS_TITLE')} />
+					<PublisherTab label={t('TABLE_BEST_EARNERS_UNITS_TITLE')} />
 				</PublisherTabs>
 			</PublisherAppBar>
 			<Box my={2}>
@@ -65,7 +66,12 @@ export function PublisherStats() {
 						</Grid>
 					</Grid>
 				)}
-				{tabIndex === 2 && <BestEarnersTable />}
+				{tabIndex === 2 && (
+					<BestEarnersTable
+						selector={selectBestEarnersTableData}
+						title='TABLE_BEST_EARNERS_UNITS_TITLE'
+					/>
+				)}
 			</Box>
 		</Fragment>
 	)

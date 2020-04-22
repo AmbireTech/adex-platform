@@ -61,10 +61,8 @@ const getCols = ({
 			download: false,
 			customBodyRender: ({ side, id, mediaUrl, mediaMime, to }) => {
 				return (
-					// TODO: Images issue some stop displaying
 					<RRImg
 						key={id}
-						fullScreenOnClick={true}
 						className={classnames(classes.cellImg)}
 						src={mediaUrl}
 						alt={id}

@@ -48,6 +48,7 @@ import {
 	selectChartDatapointsClicks,
 	selectChartDatapointsPayouts,
 	selectSide,
+	selectAnalyticsDataSide,
 	selectAuth,
 	selectInitialDataLoaded,
 	selectMissingRevenueDataPointsAccepted,
@@ -193,7 +194,8 @@ export function BasicStats() {
 	const isAuth = useSelector(state => selectAuth(state))
 	const { start, end } = useSelector(selectIdentitySideAnalyticsPeriod)
 	const timeframe = useSelector(selectIdentitySideAnalyticsTimeframe)
-	const side = useSelector(selectSide)
+	const uiSide = useSelector(selectSide)
+	const side = useSelector(selectAnalyticsDataSide)
 	const [loop, setLoop] = useState()
 	const initialDataLoaded = useSelector(selectInitialDataLoaded)
 	const missingRevenuePointsAccepted = useSelector(
@@ -314,11 +316,12 @@ export function BasicStats() {
 
 	const showRevenueInfo =
 		!missingRevenuePointsAccepted &&
-		side === 'publisher' &&
+		uiSide === 'publisher' &&
 		dataSynced &&
 		!!totalImpressions
+
 	return (
-		side && (
+		uiSide && (
 			<Box>
 				<Box display='flex' flexDirection='row' flexWrap='wrap' m={1}>
 					<StatsCard>
@@ -391,7 +394,7 @@ export function BasicStats() {
 					>
 						<Mouse className={classes.cardIcon} />
 					</StatsCard>
-					{side === 'advertiser' && (
+					{uiSide === 'advertiser' && (
 						<StatsCard
 							bgColor='accentOne'
 							subtitle={t('LABEL_TOTAL_SPENT')}
@@ -405,7 +408,7 @@ export function BasicStats() {
 						</StatsCard>
 					)}
 
-					{side === 'publisher' && (
+					{uiSide === 'publisher' && (
 						<StatsCard
 							bgColor='accentTwo'
 							subtitle={t('LABEL_TOTAL_REVENUE')}
@@ -438,7 +441,6 @@ export function BasicStats() {
 				)}
 				<Box m={1}>
 					<SimpleStatistics
-						side={side}
 						start={start}
 						end={end}
 						timeframe={timeframe}
@@ -452,14 +454,14 @@ export function BasicStats() {
 						data3={clicks}
 						data4={cpm}
 						dataSynced={dataSynced}
-						y1Label={metrics[side][0].label}
-						y1Color={metrics[side][0].color}
-						y2Label={metrics[side][1].label}
-						y2Color={metrics[side][1].color}
-						y3Label={metrics[side][2].label}
-						y3Color={metrics[side][2].color}
-						y4Label={metrics[side][3].label}
-						y4Color={metrics[side][3].color}
+						y1Label={metrics[uiSide][0].label}
+						y1Color={metrics[uiSide][0].color}
+						y2Label={metrics[uiSide][1].label}
+						y2Color={metrics[uiSide][1].color}
+						y3Label={metrics[uiSide][2].label}
+						y3Color={metrics[uiSide][2].color}
+						y4Label={metrics[uiSide][3].label}
+						y4Color={metrics[uiSide][3].color}
 					/>
 				</Box>
 			</Box>

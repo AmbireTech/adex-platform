@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react'
+import React, { useState, Fragment, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import {
 	Grid,
@@ -28,8 +28,9 @@ import {
 import StatsByCountryTable from 'components/dashboard/containers/Tables/StatsByCountryTable'
 import MapChart from 'components/dashboard/charts/map/MapChart'
 import { CampaignBasic } from './CampaignBasic'
-import { validateAndUpdateCampaign } from 'actions'
+import { validateAndUpdateCampaign, updateMemoryUi, execute } from 'actions'
 import { useItem, SaveBtn } from 'components/dashboard/containers/ItemCommon/'
+import { CampaignStatsByTimeframe } from './CampaignStatsByTimeframe'
 
 function Campaign({ match }) {
 	const [tabIndex, setTabIndex] = useState(0)
@@ -45,6 +46,15 @@ function Campaign({ match }) {
 	const leader = campaign.spec.validators[0]
 	const follower = campaign.spec.validators[1]
 	const campaignId = campaign.id
+
+	useEffect(() => {
+		execute(updateMemoryUi('campaignId', campaignId))
+
+		return () => {
+			execute(updateMemoryUi('campaignId', undefined))
+		}
+	}, [campaignId])
+
 	return (
 		<Fragment>
 			<SaveBtn {...hookProps} />
@@ -56,8 +66,9 @@ function Campaign({ match }) {
 					scrollButtons='auto'
 				>
 					<AdvertiserTab label={t('CAMPAIGN_MAIN')} />
-					<AdvertiserTab label={t('STATISTICS')} />
+					<AdvertiserTab label={t('WEBSITE_STATS')} />
 					<AdvertiserTab label={t('COUNTRY_STATS')} />
+					<AdvertiserTab label={t('TIMEFRAME_STATS')} />
 					<AdvertiserTab label={t('CAMPAIGN_UNITS')} />
 					<AdvertiserTab label={t('VALIDATORS')} />
 					{['Closed', 'Completed'].includes(humanFriendlyName) && (
@@ -115,8 +126,10 @@ function Campaign({ match }) {
 						</Grid>
 					</Grid>
 				)}
-				{tabIndex === 3 && <AdUnitsTable campaignId={campaignId} noClone />}
-				{tabIndex === 4 && (
+
+				{tabIndex === 3 && <CampaignStatsByTimeframe item={item} />}
+				{tabIndex === 4 && <AdUnitsTable campaignId={campaignId} noClone />}
+				{tabIndex === 5 && (
 					<List>
 						<Anchor
 							target='_blank'
@@ -152,7 +165,7 @@ function Campaign({ match }) {
 						</Anchor>
 					</List>
 				)}
-				{tabIndex === 5 && <Receipt itemId={campaignId} />}
+				{tabIndex === 6 && <Receipt itemId={campaignId} />}
 			</Box>
 		</Fragment>
 	)
