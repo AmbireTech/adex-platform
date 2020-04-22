@@ -6,9 +6,7 @@ import {
 	regAccount,
 	getIdentityData,
 } from 'services/adex-relayer/actions'
-import { translate } from 'services/translations/translations'
 import { createSession } from './accountActions'
-
 import { getIdentityDeployData } from 'services/smart-contracts/actions/identity'
 import {
 	addDataToWallet,
@@ -120,13 +118,13 @@ export function onUploadLocalWallet(event) {
 					!obj.wallet.identity ||
 					!obj.wallet.privileges
 				) {
-					throw new Error(translate('INVALID_JSON_DATA'))
+					throw new Error(t('INVALID_JSON_DATA'))
 				} else {
 					saveToLocalStorage(obj.wallet, obj.key)
 					updateIdentity('uploadedLocalWallet', obj.key)(dispatch)
 					addToast({
 						type: 'accept',
-						label: translate('SUCCESS_UPLOADING_ACCOUNT_DATA'),
+						label: t('SUCCESS_UPLOADING_ACCOUNT_DATA'),
 						timeout: 5000,
 					})(dispatch)
 				}
@@ -134,7 +132,7 @@ export function onUploadLocalWallet(event) {
 				console.error('Error uploading account json data: ', err)
 				addToast({
 					type: 'cancel',
-					label: translate('ERR_UPLOADING_ACCOUNT_DATA', {
+					label: t('ERR_UPLOADING_ACCOUNT_DATA', {
 						args: [err.message],
 					}),
 					timeout: 5000,
@@ -147,7 +145,7 @@ export function onUploadLocalWallet(event) {
 			console.error('Error uploading account data.', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_UPLOADING_ACCOUNT_DATA', {
+				label: t('ERR_UPLOADING_ACCOUNT_DATA', {
 					args: [getErrorMsg(err)],
 				}),
 				timeout: 5000,
@@ -155,13 +153,13 @@ export function onUploadLocalWallet(event) {
 			updateSpinner(UPLOADING_ACCOUNT_DATA, false)(dispatch)
 		}
 
-		reader.onerror = ev => {
+		reader.onerror = err => {
 			reader.abort()
-			onError(translate())
+			onError(err)
 		}
 
 		reader.onabort = ev => {
-			onError(translate('ABORTING_DATA_UPLOAD'))
+			onError(t('ABORTING_DATA_UPLOAD'))
 		}
 
 		reader.readAsText(file)
@@ -196,7 +194,7 @@ export function ownerIdentities({ owner, authType }) {
 			console.error('ERR_GETTING_OWNER_IDENTITIES', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_GETTING_OWNER_IDENTITIES', {
+				label: t('ERR_GETTING_OWNER_IDENTITIES', {
 					args: [getErrorMsg(err)],
 				}),
 				timeout: 20000,
@@ -253,7 +251,7 @@ export function login() {
 			console.error('ERR_LOGIN', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_LOGIN', { args: [getErrorMsg(err)] }),
+				label: t('ERR_LOGIN', { args: [getErrorMsg(err)] }),
 				timeout: 20000,
 			})(dispatch)
 		}
@@ -383,7 +381,7 @@ export function validateStandardLogin({ validateId, dirty }) {
 			console.error('ERR_VALIDATING_STANDARD_LOGIN', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_VALIDATING_STANDARD_LOGIN', {
+				label: t('ERR_VALIDATING_STANDARD_LOGIN', {
 					args: [getErrorMsg(err)],
 				}),
 				timeout: 20000,
@@ -434,7 +432,7 @@ export function validateFullDeploy({ validateId, dirty, skipSpinnerUpdate }) {
 			console.error('ERR_VALIDATING_FULL_DEPLOY', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_VALIDATING_FULL_DEPLOY', {
+				label: t('ERR_VALIDATING_FULL_DEPLOY', {
 					args: [getErrorMsg(err)],
 				}),
 				timeout: 20000,
@@ -514,7 +512,7 @@ export function validateQuickDeploy({ validateId, dirty }) {
 			console.error('ERR_VALIDATING_QUICK_DEPLOY', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_VALIDATING_QUICK_DEPLOY', {
+				label: t('ERR_VALIDATING_QUICK_DEPLOY', {
 					args: [getErrorMsg(err)],
 				}),
 				timeout: 20000,
@@ -696,7 +694,7 @@ export function resolveEnsAddress({ address }) {
 			console.error('ERR_RESOLVING_ENS_ADDRESS', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_RESOLVING_ENS_ADDRESS', {
+				label: t('ERR_RESOLVING_ENS_ADDRESS', {
 					args: [getErrorMsg(err)],
 				}),
 				timeout: 20000,
