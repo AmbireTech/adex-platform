@@ -1,7 +1,7 @@
 import React from 'react'
 import {
 	Box,
-	Card,
+	Paper,
 	CardContent,
 	Typography,
 	CardActions,
@@ -66,17 +66,17 @@ export default function TopUp() {
 	const email = useSelector(selectEmail)
 
 	return (
-		<Box
-			display='flex'
-			flexWrap='wrap'
-			flex='1'
-			flexDirection='row'
-			justifyContent='center'
-		>
-			<Box m={1} display='flex'>
-				<Card>
-					<Box p={2} className={classes.root}>
-						<CardContent className={classes.content}>
+		<Grid container spacing={2}>
+			<Grid item lg={4} md={6} sm={12}>
+				<Paper variant='outlined' className={classes.paper}>
+					<Box
+						p={2}
+						display='flex'
+						flexDirection='column'
+						justifyContent='space-between'
+						height='100%'
+					>
+						<CardContent>
 							<Typography className={classes.title}>{t('DAI')}</Typography>
 							<Typography className={classes.subtitle} gutterBottom>
 								{t('DIRECT_DEPOSIT')}
@@ -109,12 +109,18 @@ export default function TopUp() {
 							</Box>
 						</CardContent>
 					</Box>
-				</Card>
-			</Box>
-			<Box m={1} display='flex'>
-				<Card>
-					<Box p={2} className={classes.root}>
-						<CardContent className={classes.content}>
+				</Paper>
+			</Grid>
+			<Grid item lg={4} md={6} sm={12} direction='row' alignItems='stretch'>
+				<Paper variant='outlined' className={classes.paper}>
+					<Box
+						p={2}
+						display='flex'
+						flexDirection='column'
+						justifyContent='space-between'
+						height='100%'
+					>
+						<CardContent>
 							<Typography className={classes.title}>
 								{t('FIAT_CURRENCY')}
 							</Typography>
@@ -127,8 +133,8 @@ export default function TopUp() {
 								</Typography>
 							</Box>
 						</CardContent>
-						<CardActions className={classes.actions}>
-							<List className={classes.listItem}>
+						<CardActions>
+							<List>
 								{onRampProvidersDetails.map((item, key) => (
 									<ListItem
 										key={key}
@@ -148,12 +154,18 @@ export default function TopUp() {
 							</List>
 						</CardActions>
 					</Box>
-				</Card>
-			</Box>
-			<Box m={1} display='flex'>
-				<Card>
-					<Box p={2} className={classes.root}>
-						<CardContent className={classes.content}>
+				</Paper>
+			</Grid>
+			<Grid item lg={4} md={6} sm={12} alignItems='stretch'>
+				<Paper variant='outlined' className={classes.paper}>
+					<Box
+						p={2}
+						display='flex'
+						flexDirection='column'
+						justifyContent='space-between'
+						height='100%'
+					>
+						<CardContent>
 							<Typography className={classes.title}>{t('BTC')}</Typography>
 							<Typography className={classes.subtitle} gutterBottom>
 								{t('DIRECT_DEPOSIT')}
@@ -164,7 +176,7 @@ export default function TopUp() {
 								</Typography>
 							</Box>
 						</CardContent>
-						<CardActions className={classes.actions}>
+						<CardActions>
 							<Button
 								size='large'
 								color='primary'
@@ -176,9 +188,9 @@ export default function TopUp() {
 							</Button>
 						</CardActions>
 					</Box>
-				</Card>
-			</Box>
-		</Box>
+				</Paper>
+			</Grid>
+		</Grid>
 	)
 }
 
@@ -193,17 +205,17 @@ const OnRampListItem = ({
 	const classes = useStyles()
 	return (
 		<Button size='large' fullWidth disableElevation className={classes.copyBtn}>
-			<Box p={1} maxWidth={'100%'}>
+			<Box p={1} width='100%'>
 				<Grid
 					container
 					direction='row'
 					justify='space-between'
 					alignItems='center'
 				>
-					<Grid item xs={12} sm={6} lg={6}>
+					<Grid item xs={12} sm={4} md={4}>
 						<Img className={classes.img} alt={imgAlt} src={imgSrc} />
 					</Grid>
-					<Grid item xs={12} sm={6} lg={6} className={classes.infoGrid}>
+					<Grid item xs={12} sm={8} md={8} className={classes.infoGrid}>
 						<Typography className={classes.infoTitle}>{title}</Typography>
 						{[feeInfo, limitInfo, currencies].map((item, key) => (
 							<Typography
