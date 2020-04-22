@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => {
 	}
 })
 
-function AuthMethod() {
+function AuthMethod(props) {
 	const classes = useStyles()
 	const query = useSelector(selectLocationQuery)
 	const method = query['external']
@@ -29,9 +29,9 @@ function AuthMethod() {
 	return (
 		<Grid container spacing={2} direction='row' alignContent='flex-start'>
 			<Grid item xs={12} className={classes.tabsContainer}>
-				{method === 'metamask' && <AuthMetamask />}
-				{method === 'trezor' && <AuthTrezor />}
-				{method === 'ledger' && <AuthLedger />}
+				{method === 'metamask' && <AuthMetamask {...props} />}
+				{method === 'trezor' && <AuthTrezor {...props} />}
+				{method === 'ledger' && <AuthLedger {...props} />}
 			</Grid>
 		</Grid>
 	)
