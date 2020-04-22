@@ -38,6 +38,8 @@ import {
 	GETTING_OWNER_IDENTITIES,
 	UPLOADING_ACCOUNT_DATA,
 	CHECKING_METAMASK_AUTH,
+	AUTH_WAITING_TREZOR_ACTION,
+	AUTH_WAITING_ADDRESS_DATA,
 } from 'constants/spinners'
 import { getEthers } from 'services/smart-contracts/ethers'
 import { getSigner } from 'services/smart-contracts/actions/ethers'
@@ -741,5 +743,75 @@ export function checkAuthMetamask() {
 			})(dispatch)
 		}
 		updateSpinner(CHECKING_METAMASK_AUTH, false)(dispatch)
+	}
+}
+
+export function connectTrezor() {
+	return async function(dispatch, getState) {
+		updateSpinner(AUTH_WAITING_TREZOR_ACTION, true)(dispatch)
+		try {
+			const { provider } = await getEthers(AUTH_TYPES.TREZOR.name)
+
+			const wallet = {
+				authType: AUTH_TYPES.TREZOR.name,
+			}
+
+			const trezorSigner = await getSigner({ provider, wallet })
+
+			const { payload, success } = await trezorSigner.getAddresses({
+				from: 0,
+				to: 19,
+			})
+
+			if (success && !payload.error) {
+				updateSpinner(AUTH_WAITING_ADDRESS_DATA, false)(dispatch)
+
+				const allAddressesData = payload.map(address =>
+					getAddressBalances({ address, authType: AUTH_TYPES.TREZOR.name })
+				)
+
+				const results = await Promise.all(allAddressesData)
+
+				updateIdentity('addresses', results)(dispatch, getState)
+				updateIdentity('hdWalletAddrPath', trezorSigner.path)(
+					dispatch,
+					getState
+				)
+			} else throw new Error(payload.error || 'TREZOR_ERR')
+
+			updateSpinner('AUTH_WAITING_ADDRESS_DATA', false)(dispatch)
+		} catch (err) {
+			console.error('ERR_AUTH_TREZOR', err)
+			addToast({
+				type: 'cancel',
+				label: t('ERR_AUTH_TREZOR', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+		updateSpinner(AUTH_WAITING_ADDRESS_DATA, false)(dispatch)
+		updateSpinner(AUTH_WAITING_TREZOR_ACTION, false)(dispatch)
+	}
+}
+
+export function selectWalletAddress({
+	addrData,
+	hdWalletAddrIdx,
+	hdWalletAddrPath,
+	signType,
+	authType,
+}) {
+	return async function(dispatch, getState) {
+		const { address, path } = addrData
+
+		updateIdentityWallet({
+			address,
+			authType,
+			signType,
+			path,
+			hdWalletAddrPath,
+			hdWalletAddrIdx,
+		})(dispatch, getState)
 	}
 }
