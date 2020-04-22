@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux'
 import { selectLocationQuery } from 'selectors'
 import AuthMetamask from './AuthMetamask'
 import AuthTrezor from './AuthTrezor'
-import AuthLedger from './AuthLedger'
 
 const useStyles = makeStyles(theme => {
 	const spacing = theme.spacing(1)
@@ -31,7 +30,6 @@ function AuthMethod(props) {
 			<Grid item xs={12} className={classes.tabsContainer}>
 				{method === 'metamask' && <AuthMetamask {...props} />}
 				{method === 'trezor' && <AuthTrezor {...props} />}
-				{method === 'ledger' && <AuthLedger {...props} />}
 			</Grid>
 		</Grid>
 	)
