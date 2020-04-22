@@ -18,7 +18,6 @@ import { styles } from './styles'
 import Box from '@material-ui/core/Box'
 import { checkAuthMetamask, execute } from 'actions'
 import { getEthereumProvider } from 'services/smart-contracts/ethers'
-
 import { t, selectIdentity, selectSpinnerById } from 'selectors'
 import { CHECKING_METAMASK_AUTH } from 'constants/spinners'
 
