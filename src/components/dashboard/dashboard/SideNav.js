@@ -7,6 +7,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListDivider from '@material-ui/core/Divider'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import CampaignIcon from 'components/common/icons/CampaignIcon'
+import MonetizationOnIcon from '@material-ui/icons/MonetizationOn'
 import classnames from 'classnames'
 import packageJson from './../../../../package.json'
 import Anchor from 'components/common/anchor/anchor'
@@ -244,6 +245,20 @@ function SideNav(props) {
 					)}
 				</div>
 				<div>
+					<ListDivider />
+					<RRListItem
+						button
+						to={{ pathname: '/dashboard/' + side + '/topup' }}
+						className={classnames({
+							[classes.active]: location === 'topup',
+						})}
+					>
+						<ListItemIcon>
+							<MonetizationOnIcon color='secondary' />
+						</ListItemIcon>
+						<ListItemText primary={t('TOP_UP')} />
+					</RRListItem>
+					<ListDivider />
 					<Anchor target='_blank' href={`${process.env.ADEX_HELP_URL}`}>
 						<ListItem button>
 							<ListItemIcon>
