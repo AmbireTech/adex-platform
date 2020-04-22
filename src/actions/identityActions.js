@@ -9,13 +9,7 @@ import {
 import { translate } from 'services/translations/translations'
 import { createSession } from './accountActions'
 
-import {
-	getIdentityDeployData,
-	withdrawFromIdentity,
-	addIdentityENS,
-	setIdentityPrivilege,
-	withdrawOtherTokensFromIdentity,
-} from 'services/smart-contracts/actions/identity'
+import { getIdentityDeployData } from 'services/smart-contracts/actions/identity'
 import {
 	addDataToWallet,
 	getWalletHash,
@@ -26,7 +20,7 @@ import {
 	generateSalt,
 } from 'services/wallet/wallet'
 import { saveToLocalStorage } from 'helpers/localStorageHelpers'
-import { selectAccount, selectIdentity, selectAuthType } from 'selectors'
+import { selectIdentity, selectAuthType, t } from 'selectors'
 import { AUTH_TYPES } from 'constants/misc'
 import {
 	validate,
@@ -45,8 +39,11 @@ import { getErrorMsg } from 'helpers/errors'
 import {
 	GETTING_OWNER_IDENTITIES,
 	UPLOADING_ACCOUNT_DATA,
+	CHECKING_METAMASK_AUTH,
 } from 'constants/spinners'
 import { getEthers } from 'services/smart-contracts/ethers'
+import { getSigner } from 'services/smart-contracts/actions/ethers'
+import { getAddressBalances } from 'services/smart-contracts/actions/stats'
 
 // MEMORY STORAGE
 export function updateIdentity(prop, value) {
@@ -706,5 +703,45 @@ export function resolveEnsAddress({ address }) {
 			})(dispatch)
 		}
 		updateSpinner(`ens-${address}`, false)(dispatch)
+	}
+}
+
+export function checkAuthMetamask() {
+	return async function(dispatch, getState) {
+		updateSpinner(CHECKING_METAMASK_AUTH, true)(dispatch)
+
+		try {
+			const authType = AUTH_TYPES.METAMASK.name
+			const { provider } = await getEthers(authType)
+			const wallet = {
+				authType: authType,
+			}
+
+			const metamaskSigner = await getSigner({ wallet, provider })
+			const address = await metamaskSigner.getAddress()
+			const stats = await getAddressBalances({
+				address: { address },
+				authType,
+				getFullBalances: true,
+			})
+
+			updateIdentity('stats', stats)(dispatch, getState)
+
+			updateIdentityWallet({
+				address,
+				authType: AUTH_TYPES.METAMASK.name,
+				signType: AUTH_TYPES.METAMASK.signType,
+			})(dispatch, getState)
+		} catch (err) {
+			console.error('ERR_AUTH_METAMASK', err)
+			addToast({
+				type: 'cancel',
+				label: t('ERR_AUTH_METAMASK', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+		updateSpinner(CHECKING_METAMASK_AUTH, false)(dispatch)
 	}
 }
