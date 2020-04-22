@@ -74,7 +74,7 @@ export default function TopUp() {
 						justifyContent='space-between'
 						height={1}
 					>
-						<Box mb={1}>
+						<Box mb={2}>
 							<Typography className={classes.title}>{t('DAI')}</Typography>
 							<Typography className={classes.subtitle} gutterBottom>
 								{t('DIRECT_DEPOSIT')}
@@ -100,7 +100,7 @@ export default function TopUp() {
 							>
 								{accountId}
 							</Button>
-							<Box p={2}>
+							<Box mt={2}>
 								<Typography align='center' component='p' color='textSecondary'>
 									{t('DAI_DIRECT_DEPOSIT_INFO')}
 								</Typography>
@@ -113,28 +113,30 @@ export default function TopUp() {
 				<Paper variant='outlined' className={classes.paper}>
 					<Box
 						p={2}
+						pb={1}
 						display='flex'
 						flexDirection='column'
 						justifyContent='space-between'
 						height={1}
 					>
-						<Box mb={1}>
+						<Box mb={2}>
 							<Typography className={classes.title}>
 								{t('FIAT_CURRENCY')}
 							</Typography>
 							<Typography className={classes.subtitle} gutterBottom>
 								{t('CREDIT_CARD_BANK_TRANSFER')}
 							</Typography>
-							<Box p={2}>
+							<Box mt={2}>
 								<Typography align='center' component='p' color='textSecondary'>
 									{t('ONRAMP_INFO')}
 								</Typography>
 							</Box>
 						</Box>
 						<Box>
-							<List>
+							<List disablePadding>
 								{onRampProvidersDetails.map((item, key) => (
 									<ListItem
+										disableGutters
 										key={key}
 										onClick={() => item.onClick({ accountId, symbol, email })}
 									>
@@ -163,12 +165,12 @@ export default function TopUp() {
 						justifyContent='space-between'
 						height={1}
 					>
-						<Box mb={1}>
+						<Box mb={2}>
 							<Typography className={classes.title}>{t('BTC')}</Typography>
 							<Typography className={classes.subtitle} gutterBottom>
 								{t('DIRECT_DEPOSIT')}
 							</Typography>
-							<Box p={2}>
+							<Box mt={2}>
 								<Typography align='center' component='p' color='textSecondary'>
 									{t('BTC_INFO')}
 								</Typography>
