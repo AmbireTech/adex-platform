@@ -17,7 +17,6 @@ export const styles = theme => {
 		},
 		paper: {
 			height: '100%',
-			width: '100%',
 		},
 		info: {
 			fontSize: '10px',
