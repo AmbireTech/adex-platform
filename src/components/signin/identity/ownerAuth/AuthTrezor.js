@@ -1,218 +1,123 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import Translate from 'components/translate/Translate'
+import React from 'react'
+import { useSelector } from 'react-redux'
 import Anchor from 'components/common/anchor/anchor'
 import Img from 'components/common/img/Img'
 import Button from '@material-ui/core/Button'
 import Box from '@material-ui/core/Box'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
 import Typography from '@material-ui/core/Typography'
-import AuthHoc from './AuthHoc'
-import { AUTH_TYPES } from 'constants/misc'
-import { AddrItem } from './AuthCommon'
+import { AddressSelect } from './AuthCommon'
 import {
 	ContentBox,
 	ContentBody,
 	ContentStickyTop,
 	TopLoading,
 } from 'components/common/dialog/content'
-import Helper from 'helpers/miscHelpers'
-import { withStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import TREZOR_DL_IMG from 'resources/trezor-logo-h.png'
-import { getEthers } from 'services/smart-contracts/ethers'
-import { getSigner } from 'services/smart-contracts/actions/ethers'
-import { getAddressBalances } from 'services/smart-contracts/actions/stats'
+import {
+	AUTH_WAITING_ADDRESS_DATA,
+	AUTH_WAITING_TREZOR_ACTION,
+} from 'constants/spinners'
+import { AUTH_TYPES } from 'constants/misc'
+import { t, selectIdentity, selectSpinnerById } from 'selectors'
+import { connectTrezor, execute } from 'actions'
 
-class AuthTrezor extends Component {
-	constructor(props) {
-		super(props)
-		this.state = {
-			method: '',
-			sideSelect: false,
-			addresses: [],
-			waitingTrezorAction: false,
-			waitingAddrsData: false,
-			selectedAddress: null,
-			hdPath: '',
-		}
-	}
+const useStyles = makeStyles(styles)
 
-	connectTrezor = async () => {
-		this.setState({ waitingTrezorAction: true }, async () => {
-			try {
-				const { provider } = await getEthers(AUTH_TYPES.TREZOR.name)
+function AuthTrezor() {
+	const classes = useStyles()
+	const { wallet = {}, addresses = [], hdWalletAddrPath } = useSelector(
+		selectIdentity
+	)
+	const { address } = wallet
 
-				const wallet = {
-					authType: AUTH_TYPES.TREZOR.name,
-				}
+	const waitingTrezorAction = useSelector(state =>
+		selectSpinnerById(state, AUTH_WAITING_TREZOR_ACTION)
+	)
 
-				const trezorSigner = await getSigner({ provider, wallet })
+	const waitingAddrsData = useSelector(state =>
+		selectSpinnerById(state, AUTH_WAITING_ADDRESS_DATA)
+	)
 
-				const addresses = await trezorSigner.getAddresses({ from: 0, to: 19 })
-
-				const allAddressesData = addresses.payload.map(address =>
-					getAddressBalances({ address, authType: AUTH_TYPES.TREZOR.name })
-				)
-
-				this.setState({ waitingAddrsData: true }, async () => {
-					const results = await Promise.all(allAddressesData)
-
-					console.log('result', results)
-					this.setState({
-						hdPath: trezorSigner.path,
-						addresses: results,
-						waitingAddrsData: false,
-						waitingTrezorAction: false,
-					})
-				})
-			} catch (err) {
-				console.error('Error: catch', err)
-				this.setState({ waitingTrezorAction: false, waitingAddrsData: false })
-				this.props.actions.addToast({
-					type: 'cancel',
-					label: this.props.t('ERR_AUTH_TREZOR', {
-						args: [Helper.getErrMsg(err)],
-					}),
-					timeout: 5000,
-				})
-			}
-		})
-	}
-
-	AddressSelect = ({ addresses, waitingTrezorAction, t, classes, ...rest }) => {
-		return (
-			<ContentBox className={classes.tabBox}>
+	return addresses.length ? (
+		<AddressSelect
+			waitingAction={waitingTrezorAction}
+			actionWaitingLabel={t('TREZOR_WAITING_ACTION')}
+			selectLabel={t('SELECT_ADDR_TREZOR')}
+			address={address}
+			addresses={addresses}
+			signType={AUTH_TYPES.TREZOR.signType}
+			authType={AUTH_TYPES.TREZOR.name}
+			hdWalletAddrPath={hdWalletAddrPath}
+			classes={classes}
+		/>
+	) : (
+		<ContentBox className={classes.tabBox}>
+			{waitingAddrsData ? (
 				<ContentStickyTop>
-					{waitingTrezorAction ? (
-						<TopLoading msg={t('TREZOR_WAITING_ACTION')} />
-					) : (
-						t('SELECT_ADDR_TREZOR')
-					)}
+					<TopLoading msg={t('TREZOR_WAITING_ADDRS_INFO')} />
 				</ContentStickyTop>
-				<ContentBody>
-					<List>
-						{addresses.map((res, index) => (
-							<ListItem
-								classes={{ root: classes.addrListItem }}
-								key={res.address}
-								onClick={() => this.onAddrSelect(res, index)}
-								selected={this.state.selectedAddress === res.address}
-							>
-								<AddrItem stats={res} t={t} address={res.address} />
-							</ListItem>
-						))}
-					</List>
-				</ContentBody>
-			</ContentBox>
-		)
-	}
+			) : waitingTrezorAction ? (
+				<ContentStickyTop>
+					<TopLoading msg={t('TREZOR_WAITING_ACTION')} />
+				</ContentStickyTop>
+			) : null}
 
-	onAddrSelect = (addrData, hdWalletAddrIdx) => {
-		const { address, path } = addrData
-		this.props.updateWallet({
-			address,
-			authType: AUTH_TYPES.TREZOR.name,
-			path,
-			hdWalletAddrPath: this.state.hdPath,
-			hdWalletAddrIdx,
-			signType: AUTH_TYPES.TREZOR.signType,
-		})
+			<ContentBody>
+				<Box
+					display='flex'
+					flexDirection='column'
+					alignItems='center'
+					justifyContent='center'
+					width={1}
+				>
+					<Typography variant='subtitle1' gutterBottom>
+						{t('TREZOR_INFO')}
+					</Typography>
 
-		this.setState({ selectedAddress: address })
-	}
-
-	render() {
-		let { t, classes } = this.props
-
-		return (
-			<div>
-				{this.state.addresses.length ? (
-					<this.AddressSelect
-						waitingTrezorAction={this.state.waitingTrezorAction}
-						addresses={this.state.addresses}
-						t={t}
-						classes={classes}
-					/>
-				) : (
-					<ContentBox className={classes.tabBox}>
-						{this.state.waitingAddrsData ? (
-							<ContentStickyTop>
-								<TopLoading msg={t('TREZOR_WAITING_ADDRS_INFO')} />
-							</ContentStickyTop>
-						) : this.state.waitingTrezorAction ? (
-							<ContentStickyTop>
-								<TopLoading msg={t('TREZOR_WAITING_ACTION')} />
-							</ContentStickyTop>
-						) : null}
-
-						<ContentBody>
-							<Box
-								display='flex'
-								flexDirection='column'
-								alignItems='center'
-								justifyContent='center'
-								width={1}
-							>
-								<Typography variant='subtitle1' gutterBottom>
-									{t('TREZOR_INFO')}
-								</Typography>
-
-								<Typography gutterBottom>
-									{t('TREZOR_BASIC_USAGE_INFO', {
-										args: [
-											<Anchor
-												key='trezor-wallet'
-												href='https://trezor.io/'
-												target='_blank'
-											>
-												TREZOR Wallet
-											</Anchor>,
-											<Anchor
-												key='trezor-bridge'
-												href='https://wallet.trezor.io/#/bridge'
-												target='_blank'
-											>
-												TREZOR Bridge
-											</Anchor>,
-										],
-									})}
-									}
-								</Typography>
-								<Box mb={2}>
-									<Anchor href='https://trezor.io' target='_blank'>
-										<Img
-											src={TREZOR_DL_IMG}
-											alt={'https://trezor.io'}
-											className={classes.dlBtnImg}
-										/>
-									</Anchor>
-								</Box>
-								{!this.state.waitingAddrsData &&
-									!this.state.waitingTrezorAction && (
-										<Button
-											onClick={this.connectTrezor}
-											variant='contained'
-											color='primary'
-										>
-											{t('CONNECT_WITH_TREZOR')}
-										</Button>
-									)}
-							</Box>
-						</ContentBody>
-					</ContentBox>
-				)}
-			</div>
-		)
-	}
+					<Typography gutterBottom>
+						{t('TREZOR_BASIC_USAGE_INFO', {
+							args: [
+								<Anchor
+									key='trezor-wallet'
+									href='https://trezor.io/'
+									target='_blank'
+								>
+									TREZOR Wallet
+								</Anchor>,
+								<Anchor
+									key='trezor-bridge'
+									href='https://wallet.trezor.io/#/bridge'
+									target='_blank'
+								>
+									TREZOR Bridge
+								</Anchor>,
+							],
+						})}
+					</Typography>
+					<Box mb={2}>
+						<Anchor href='https://trezor.io' target='_blank'>
+							<Img
+								src={TREZOR_DL_IMG}
+								alt={'https://trezor.io'}
+								className={classes.dlBtnImg}
+							/>
+						</Anchor>
+					</Box>
+					{!waitingAddrsData && !waitingTrezorAction && (
+						<Button
+							onClick={() => execute(connectTrezor())}
+							variant='contained'
+							color='primary'
+						>
+							{t('CONNECT_WITH_TREZOR')}
+						</Button>
+					)}
+				</Box>
+			</ContentBody>
+		</ContentBox>
+	)
 }
 
-AuthTrezor.propTypes = {
-	actions: PropTypes.object.isRequired,
-	updateWallet: PropTypes.func.isRequired,
-	t: PropTypes.func.isRequired,
-	classes: PropTypes.object.isRequired,
-}
-
-export default Translate(AuthHoc(withStyles(styles)(AuthTrezor)))
+export default AuthTrezor

@@ -9,11 +9,7 @@ import { Base, AdSlot, AdUnit, helpers, Campaign } from 'adex-models'
 import { addToast as AddToastUi, updateSpinner } from './uiActions'
 
 import { translate } from 'services/translations/translations'
-import {
-	getAdUnits,
-	getAdSlots,
-	getAdUnitById,
-} from 'services/adex-market/actions'
+import { getAdUnits, getAdSlots } from 'services/adex-market/actions'
 
 import initialState from 'store/initialState'
 import { getMediaSize } from 'helpers/mediaHelpers'

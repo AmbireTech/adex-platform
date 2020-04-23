@@ -53,7 +53,6 @@ export const FILTER_PROPERTIES_ITEMS = {
 export const AUTH_TYPES = {
 	METAMASK: { name: 'metamask', signType: SignatureModes.GETH, limit: 0 },
 	TREZOR: { name: 'trezor', signType: SignatureModes.GETH, limit: 0 },
-	LEDGER: { name: 'ledger', signType: SignatureModes.GETH, limit: 0 },
 	DEMO: { name: 'demo', signType: SignatureModes.GETH, limit: 0 },
 	GRANT: { name: 'grant', signType: SignatureModes.GETH, limit: 50 },
 	QUICK: { name: 'quick', signType: SignatureModes.GETH, limit: 50 },
@@ -149,7 +148,6 @@ export const WALLET_ACTIONS_MSGS = {
 		{ message: 'METAMASK_WAITING_ACTION_INFO', strong: true },
 	],
 	[AUTH_TYPES.TREZOR.name]: [{ message: 'TREZOR_WAITING_ACTION' }],
-	[AUTH_TYPES.LEDGER.name]: [{ message: 'LEDGER_WAITING_ACTION' }],
 	[AUTH_TYPES.QUICK.name]: [
 		{ message: 'QUICK_WAITING_MSG' },
 		{ message: 'QUICK_WAITING_MSG_INFO' },

@@ -6,16 +6,8 @@ import {
 	regAccount,
 	getIdentityData,
 } from 'services/adex-relayer/actions'
-import { translate } from 'services/translations/translations'
 import { createSession } from './accountActions'
-
-import {
-	getIdentityDeployData,
-	withdrawFromIdentity,
-	addIdentityENS,
-	setIdentityPrivilege,
-	withdrawOtherTokensFromIdentity,
-} from 'services/smart-contracts/actions/identity'
+import { getIdentityDeployData } from 'services/smart-contracts/actions/identity'
 import {
 	addDataToWallet,
 	getWalletHash,
@@ -26,7 +18,7 @@ import {
 	generateSalt,
 } from 'services/wallet/wallet'
 import { saveToLocalStorage } from 'helpers/localStorageHelpers'
-import { selectAccount, selectIdentity, selectAuthType } from 'selectors'
+import { selectIdentity, selectAuthType, t } from 'selectors'
 import { AUTH_TYPES } from 'constants/misc'
 import {
 	validate,
@@ -45,8 +37,13 @@ import { getErrorMsg } from 'helpers/errors'
 import {
 	GETTING_OWNER_IDENTITIES,
 	UPLOADING_ACCOUNT_DATA,
+	CHECKING_METAMASK_AUTH,
+	AUTH_WAITING_TREZOR_ACTION,
+	AUTH_WAITING_ADDRESS_DATA,
 } from 'constants/spinners'
 import { getEthers } from 'services/smart-contracts/ethers'
+import { getSigner } from 'services/smart-contracts/actions/ethers'
+import { getAddressBalances } from 'services/smart-contracts/actions/stats'
 
 // MEMORY STORAGE
 export function updateIdentity(prop, value) {
@@ -123,13 +120,13 @@ export function onUploadLocalWallet(event) {
 					!obj.wallet.identity ||
 					!obj.wallet.privileges
 				) {
-					throw new Error(translate('INVALID_JSON_DATA'))
+					throw new Error(t('INVALID_JSON_DATA'))
 				} else {
 					saveToLocalStorage(obj.wallet, obj.key)
 					updateIdentity('uploadedLocalWallet', obj.key)(dispatch)
 					addToast({
 						type: 'accept',
-						label: translate('SUCCESS_UPLOADING_ACCOUNT_DATA'),
+						label: t('SUCCESS_UPLOADING_ACCOUNT_DATA'),
 						timeout: 5000,
 					})(dispatch)
 				}
@@ -137,7 +134,7 @@ export function onUploadLocalWallet(event) {
 				console.error('Error uploading account json data: ', err)
 				addToast({
 					type: 'cancel',
-					label: translate('ERR_UPLOADING_ACCOUNT_DATA', {
+					label: t('ERR_UPLOADING_ACCOUNT_DATA', {
 						args: [err.message],
 					}),
 					timeout: 5000,
@@ -150,7 +147,7 @@ export function onUploadLocalWallet(event) {
 			console.error('Error uploading account data.', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_UPLOADING_ACCOUNT_DATA', {
+				label: t('ERR_UPLOADING_ACCOUNT_DATA', {
 					args: [getErrorMsg(err)],
 				}),
 				timeout: 5000,
@@ -158,13 +155,13 @@ export function onUploadLocalWallet(event) {
 			updateSpinner(UPLOADING_ACCOUNT_DATA, false)(dispatch)
 		}
 
-		reader.onerror = ev => {
+		reader.onerror = err => {
 			reader.abort()
-			onError(translate())
+			onError(err)
 		}
 
 		reader.onabort = ev => {
-			onError(translate('ABORTING_DATA_UPLOAD'))
+			onError(t('ABORTING_DATA_UPLOAD'))
 		}
 
 		reader.readAsText(file)
@@ -199,7 +196,7 @@ export function ownerIdentities({ owner, authType }) {
 			console.error('ERR_GETTING_OWNER_IDENTITIES', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_GETTING_OWNER_IDENTITIES', {
+				label: t('ERR_GETTING_OWNER_IDENTITIES', {
 					args: [getErrorMsg(err)],
 				}),
 				timeout: 20000,
@@ -256,7 +253,7 @@ export function login() {
 			console.error('ERR_LOGIN', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_LOGIN', { args: [getErrorMsg(err)] }),
+				label: t('ERR_LOGIN', { args: [getErrorMsg(err)] }),
 				timeout: 20000,
 			})(dispatch)
 		}
@@ -386,7 +383,7 @@ export function validateStandardLogin({ validateId, dirty }) {
 			console.error('ERR_VALIDATING_STANDARD_LOGIN', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_VALIDATING_STANDARD_LOGIN', {
+				label: t('ERR_VALIDATING_STANDARD_LOGIN', {
 					args: [getErrorMsg(err)],
 				}),
 				timeout: 20000,
@@ -437,7 +434,7 @@ export function validateFullDeploy({ validateId, dirty, skipSpinnerUpdate }) {
 			console.error('ERR_VALIDATING_FULL_DEPLOY', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_VALIDATING_FULL_DEPLOY', {
+				label: t('ERR_VALIDATING_FULL_DEPLOY', {
 					args: [getErrorMsg(err)],
 				}),
 				timeout: 20000,
@@ -517,7 +514,7 @@ export function validateQuickDeploy({ validateId, dirty }) {
 			console.error('ERR_VALIDATING_QUICK_DEPLOY', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_VALIDATING_QUICK_DEPLOY', {
+				label: t('ERR_VALIDATING_QUICK_DEPLOY', {
 					args: [getErrorMsg(err)],
 				}),
 				timeout: 20000,
@@ -699,12 +696,122 @@ export function resolveEnsAddress({ address }) {
 			console.error('ERR_RESOLVING_ENS_ADDRESS', err)
 			addToast({
 				type: 'cancel',
-				label: translate('ERR_RESOLVING_ENS_ADDRESS', {
+				label: t('ERR_RESOLVING_ENS_ADDRESS', {
 					args: [getErrorMsg(err)],
 				}),
 				timeout: 20000,
 			})(dispatch)
 		}
 		updateSpinner(`ens-${address}`, false)(dispatch)
+	}
+}
+
+export function checkAuthMetamask() {
+	return async function(dispatch, getState) {
+		updateSpinner(CHECKING_METAMASK_AUTH, true)(dispatch)
+
+		try {
+			const authType = AUTH_TYPES.METAMASK.name
+			const { provider } = await getEthers(authType)
+			const wallet = {
+				authType: authType,
+			}
+
+			const metamaskSigner = await getSigner({ wallet, provider })
+			const address = await metamaskSigner.getAddress()
+			const stats = await getAddressBalances({
+				address: { address },
+				authType,
+				getFullBalances: true,
+			})
+
+			updateIdentity('stats', stats)(dispatch, getState)
+
+			updateIdentityWallet({
+				address,
+				authType: AUTH_TYPES.METAMASK.name,
+				signType: AUTH_TYPES.METAMASK.signType,
+			})(dispatch, getState)
+		} catch (err) {
+			console.error('ERR_AUTH_METAMASK', err)
+			addToast({
+				type: 'cancel',
+				label: t('ERR_AUTH_METAMASK', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+		updateSpinner(CHECKING_METAMASK_AUTH, false)(dispatch)
+	}
+}
+
+export function connectTrezor() {
+	return async function(dispatch, getState) {
+		updateSpinner(AUTH_WAITING_TREZOR_ACTION, true)(dispatch)
+		try {
+			const { provider } = await getEthers(AUTH_TYPES.TREZOR.name)
+
+			const wallet = {
+				authType: AUTH_TYPES.TREZOR.name,
+			}
+
+			const trezorSigner = await getSigner({ provider, wallet })
+
+			const { payload, success } = await trezorSigner.getAddresses({
+				from: 0,
+				to: 19,
+			})
+
+			if (success && !payload.error) {
+				updateSpinner(AUTH_WAITING_ADDRESS_DATA, false)(dispatch)
+
+				const allAddressesData = payload.map(address =>
+					getAddressBalances({ address, authType: AUTH_TYPES.TREZOR.name })
+				)
+
+				const results = await Promise.all(allAddressesData)
+
+				updateIdentity('addresses', results)(dispatch, getState)
+				updateIdentity('hdWalletAddrPath', trezorSigner.path)(
+					dispatch,
+					getState
+				)
+			} else throw new Error(payload.error || 'TREZOR_ERR')
+
+			updateSpinner('AUTH_WAITING_ADDRESS_DATA', false)(dispatch)
+		} catch (err) {
+			console.error('ERR_AUTH_TREZOR', err)
+			addToast({
+				type: 'cancel',
+				label: t('ERR_AUTH_TREZOR', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+		updateSpinner(AUTH_WAITING_ADDRESS_DATA, false)(dispatch)
+		updateSpinner(AUTH_WAITING_TREZOR_ACTION, false)(dispatch)
+	}
+}
+
+export function selectWalletAddress({
+	addrData,
+	hdWalletAddrIdx,
+	hdWalletAddrPath,
+	signType,
+	authType,
+}) {
+	return async function(dispatch, getState) {
+		const { address, path } = addrData
+
+		updateIdentityWallet({
+			address,
+			authType,
+			signType,
+			path,
+			hdWalletAddrPath,
+			hdWalletAddrIdx,
+		})(dispatch, getState)
 	}
 }
