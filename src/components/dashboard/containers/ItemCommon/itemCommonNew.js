@@ -7,13 +7,11 @@ import {
 	IconButton,
 	Card,
 	CardMedia,
-	CardContent,
 	TextField,
-	Button,
 } from '@material-ui/core'
 import { Info, Edit, UndoOutlined, OpenInNew } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
-import Anchor, { ExternalAnchor } from 'components/common/anchor/anchor'
+import { ExternalAnchor } from 'components/common/anchor/anchor'
 import { formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
 import { t, selectMainToken } from 'selectors'

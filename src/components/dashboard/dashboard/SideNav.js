@@ -47,11 +47,6 @@ const useStyles = makeStyles(theme => {
 			? theme.palette.accentOne.main
 			: theme.palette.accentTwo.main
 
-	const hoverActiveBgColor = ({ side }) =>
-		side === 'advertiser'
-			? theme.palette.accentOne.light
-			: theme.palette.accentTwo.light
-
 	return {
 		navigation: {
 			backgroundColor: theme.palette.background.paper,
