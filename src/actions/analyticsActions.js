@@ -46,7 +46,7 @@ const analyticsParams = ({ timeframe, side }) => {
 				timeframe,
 				side,
 				eventType,
-				...(side === 'publisher' &&
+				...(side === 'for-publisher' &&
 					metric === 'eventPayouts' && { segmentByChannel: true }),
 			})
 		)
