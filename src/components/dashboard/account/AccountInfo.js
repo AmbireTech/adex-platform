@@ -22,9 +22,9 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { styles } from './styles.js'
 import { LoadingSection } from 'components/common/spinners'
 import CreditCardIcon from '@material-ui/icons/CreditCard'
-import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
 import CopyIcon from '@material-ui/icons/FileCopy'
 import IconButton from '@material-ui/core/IconButton'
+import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import copy from 'copy-to-clipboard'
 import {
 	t,
@@ -35,10 +35,11 @@ import {
 	selectMainToken,
 	selectEasterEggsAllowed,
 	selectEnsAddressByAddr,
+	selectSide,
 } from 'selectors'
 import { execute, addToast } from 'actions'
 import { formatAddress } from 'helpers/formatters'
-// const RRButton = withReactRouterLink(Button)
+const RRButton = withReactRouterLink(Button)
 
 const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
@@ -78,6 +79,7 @@ function AccountInfo() {
 	const { authType = '' } = useSelector(selectWallet)
 	const identityAddress = useSelector(selectAccountIdentityAddr)
 	const privileges = useSelector(selectWalletPrivileges)
+	const side = useSelector(selectSide)
 	const canMakeTx = privileges > 1
 	const { symbol } = useSelector(selectMainToken)
 	const {
@@ -95,18 +97,6 @@ function AccountInfo() {
 	const [expanded, setExpanded] = useState(false)
 
 	const classes = useStyles()
-
-	const displayRampWidget = () => {
-		const widget = new RampInstantSDK({
-			hostAppName: 'AdExNetwork',
-			hostLogoUrl: 'https://www.adex.network/img/Adex-logo@2x.png',
-			variant: 'auto',
-			swapAsset: symbol,
-			userAddress: identityAddress,
-		})
-		widget.domNodes.overlay.style.zIndex = 1000
-		widget.show()
-	}
 
 	const handleExpandChange = () => {
 		setExpanded(!expanded)
@@ -180,17 +170,17 @@ function AccountInfo() {
 					right={
 						<Fragment>
 							<Box py={1}>
-								<Button
+								<RRButton
+									to={`/dashboard/${side}/topup`}
 									fullWidth
 									variant='contained'
 									color='secondary'
 									aria-label='delete'
-									onClick={() => displayRampWidget()}
 									size='small'
 								>
 									<CreditCardIcon className={classes.iconBtnLeft} />
-									{t('TOP_UP_IDENTITY_GBP')}
-								</Button>
+									{t('TOP_UP')}
+								</RRButton>
 							</Box>
 							<Box py={1}>
 								<WithdrawTokenFromIdentity
