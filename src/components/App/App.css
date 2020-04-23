@@ -16,3 +16,30 @@ a, img {
   size: auto;
   margin: 20mm;
 }
+
+@font-face {
+  font-family: 'Roboto';
+  font-weight: 300;
+  src: local('Roboto'), url(../../fonts/Roboto-Light.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-weight: 400;
+  src: local('Roboto'), url(../../fonts/Roboto-Regular.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-weight: 500;
+  src: local('Roboto'), url(../../fonts/Roboto-Medium.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-weight: 700;
+  src: local('Roboto'), url(../../fonts/Roboto-Bold.ttf) format('truetype');
+}
+
+
+

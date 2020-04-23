@@ -1,8 +1,5 @@
-import React, { Component, useState, useContext, PureComponent } from 'react'
-import {
-	DateTimePicker as MuiDateTimePicker,
-	DatePicker as MuiDatePicker,
-} from '@material-ui/pickers'
+import React from 'react'
+import { DateTimePicker as MuiDateTimePicker } from '@material-ui/pickers'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import IconButton from '@material-ui/core/IconButton'
@@ -13,10 +10,7 @@ import {
 	Update,
 } from '@material-ui/icons'
 import InputAdornment from '@material-ui/core/InputAdornment'
-import utils, { makeJSDateObject } from 'helpers/dateUtils'
-import clsx from 'clsx'
-// EXTRACT
-// this guy required only on the docs site to work with dynamic date library
+import utils from 'helpers/dateUtils'
 
 const CalendarIconAdor = ({
 	icon = <DateRange />,
