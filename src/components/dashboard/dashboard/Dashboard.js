@@ -11,6 +11,7 @@ import {
 import Unit from 'components/dashboard/containers/Unit'
 import Slot from 'components/dashboard/containers/Slot'
 import Account from 'components/dashboard/account/AccountInfo'
+import TopUp from 'components/dashboard/deposit/TopUp'
 import {
 	NewUnitDialog,
 	NewCampaignDialog,
@@ -267,6 +268,7 @@ function Dashboard(props) {
 							path={'/dashboard/:side/account'}
 							component={Account}
 						/>
+						<Route exact path={'/dashboard/:side/topup'} component={TopUp} />
 						{/* <Route
 								auth={this.props.auth}
 								exact
