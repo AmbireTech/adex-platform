@@ -1,6 +1,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.1
+##### *2020-04-23*
+
+### Added
+- Campaigns chart analytics by time frame
+- Added statistics to slots table
+- Top uo page
+- 'Wyre' integration
+- 'PayTrie' integrations
+
+### Changed
+- Removed Ledger
+- All login components with hooks
+- Embedded 'Roboto' font
+
+### Fixed
+- Tables update
+- Misc small bugs
+- Code and warnings cleanup
+
 ## 4.20.0
 ##### *2020-04-20*
 
@@ -29,7 +49,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Typos
 - Styles
-- Code clenaup
+- Code cleanup
 
 ## 4.10.47
 ##### *2020-04-16*
