@@ -18,14 +18,14 @@ export function Confirm({ children }) {
 		onConfirm,
 		onCancel,
 		active,
-		// calledOn,
+		calledOn,
 		noActionBtns,
 		data: { title = '', text = '', confirmLabel, cancelLabel },
 	} = useSelector(selectConfirm)
 
 	useEffect(() => {
 		setOpen(!!active)
-	}, [active])
+	}, [active, calledOn])
 
 	const confirm = () => {
 		if (typeof onConfirm === 'function') {
