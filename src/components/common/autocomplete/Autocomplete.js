@@ -1,35 +1,21 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, Fragment } from 'react'
 import PropTypes from 'prop-types'
-import { withStyles } from '@material-ui/core/styles'
-import { styles } from './styles'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import TextField from '@material-ui/core/TextField'
 import { Autocomplete as AutocompleteMUI } from '@material-ui/lab'
-import { getSuggestions } from './common'
 
 function Autocomplete(props) {
 	const {
-		classes,
 		source,
 		multiple,
 		label,
 		variant,
-		allowCreate,
-		validateCreation,
 		error,
 		errorText,
 		onInit,
 		onChange,
-		defaultValue,
 	} = props
-	const [inputValue, setInputValue] = useState('')
 
-	const suggestions = getSuggestions(
-		inputValue,
-		source,
-		allowCreate,
-		validateCreation
-	)
 	useEffect(() => {
 		typeof onInit === 'function' && onInit()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -41,40 +27,42 @@ function Autocomplete(props) {
 	}
 
 	return (
-		<div>
-			<div className={classes.container}>
-				<AutocompleteMUI
-					multiple={multiple}
-					options={suggestions}
-					getOptionLabel={option => option.label}
-					onChange={(_, newValue) => handleChange(newValue)}
-					onInputChange={(_, newValue) => setInputValue(newValue)}
-					defaultValue={defaultValue}
-					renderInput={params => {
-						if (defaultValue) params.inputProps.value = defaultValue
-						return (
-							<TextField
-								{...params}
-								label={label}
-								variant={variant}
-								fullWidth
-								error={error}
-							/>
-						)
-					}}
-				/>
-				{error && (
-					<FormHelperText error id='component-error-text'>
-						{errorText}
-					</FormHelperText>
-				)}
-			</div>
-		</div>
+		<Fragment>
+			<AutocompleteMUI
+				multiple={multiple}
+				options={source}
+				getOptionLabel={option => option.label}
+				getOptionSelected={(a, b) => {
+					return JSON.stringify(a) === JSON.stringify(b)
+				}}
+				onChange={(_, newValue) => handleChange(newValue)}
+				renderInput={params => {
+					return (
+						<TextField
+							{...params}
+							label={label}
+							variant={variant}
+							fullWidth
+							error={error}
+						/>
+					)
+				}}
+			/>
+			{error && (
+				<FormHelperText error id='component-error-text'>
+					{errorText}
+				</FormHelperText>
+			)}
+		</Fragment>
 	)
 }
 
 Autocomplete.propTypes = {
-	classes: PropTypes.object.isRequired,
+	source: PropTypes.array.isRequired,
+	label: PropTypes.string.isRequired,
+	onChange: PropTypes.func.isRequired,
+	multiple: PropTypes.bool,
+	variant: PropTypes.string,
 }
 
-export default withStyles(styles)(Autocomplete)
+export default Autocomplete
