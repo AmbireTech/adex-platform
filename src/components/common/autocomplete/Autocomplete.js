@@ -4,18 +4,17 @@ import FormHelperText from '@material-ui/core/FormHelperText'
 import TextField from '@material-ui/core/TextField'
 import { Autocomplete as AutocompleteMUI } from '@material-ui/lab'
 
-function Autocomplete(props) {
-	const {
-		source,
-		multiple,
-		label,
-		variant,
-		error,
-		errorText,
-		onInit,
-		onChange,
-	} = props
-
+function Autocomplete({
+	source,
+	multiple,
+	label,
+	variant,
+	error,
+	errorText,
+	onInit,
+	onChange,
+	fullWidth,
+}) {
 	useEffect(() => {
 		typeof onInit === 'function' && onInit()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -42,7 +41,7 @@ function Autocomplete(props) {
 							{...params}
 							label={label}
 							variant={variant}
-							fullWidth
+							fullWidth={fullWidth}
 							error={error}
 						/>
 					)

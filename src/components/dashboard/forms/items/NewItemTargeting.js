@@ -2,14 +2,20 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
 import { makeStyles } from '@material-ui/core/styles'
-import { Grid, Slider, IconButton, Box } from '@material-ui/core'
+import {
+	Grid,
+	Slider,
+	IconButton,
+	Box,
+	Typography,
+	TextField,
+} from '@material-ui/core'
 import { Cancel as CancelIcon, Add as AddIcon } from '@material-ui/icons'
 import Autocomplete from 'components/common/autocomplete'
-import Typography from '@material-ui/core/Typography'
 import Dropdown from 'components/common/dropdown'
 
 import { t, selectTargetingSources, selectNewItemByTypeAndId } from 'selectors'
-import { execute, updateNewItemTargets } from 'actions'
+import { execute, updateNewItemTarget } from 'actions'
 
 const useStyles = makeStyles(theme => ({
 	slider: {
@@ -42,8 +48,8 @@ const Targets = ({
 	label,
 	index,
 	target,
-	classes,
-	invalidFields,
+	// classes,
+	// invalidFields,
 	itemId,
 	itemType,
 }) => {
@@ -51,37 +57,61 @@ const Targets = ({
 	return (
 		<Grid container spacing={2} alignItems='center'>
 			<Grid item xs={12} md={6}>
-				<Autocomplete
-					id={id}
-					direction='auto'
-					openOnClick
-					required={true}
-					// error={invalidFields[id] && invalidFields[id].dirty}
-					// errorText={
-					// 	invalidFields[id] && !!invalidFields[id].dirty
-					// 		? invalidFields[id].errMsg
-					// 		: null
-					// }
-					onChange={tag => {
-						execute(
-							updateNewItemTargets({
-								index,
-								itemType,
-								itemId,
-								target: { target: { ...target, tag } },
-								collection,
-							})
-						)
-					}}
-					label={label}
-					placeholder={placeholder}
-					source={source}
-					value={target.tag}
-					suggestionMatch='anywhere'
-					showSuggestionsWhenValueIsSet={true}
-					allowCreate={!source.length}
-					variant='outlined'
-				/>
+				{source.length ? (
+					<Autocomplete
+						id={id}
+						fullWidth
+						direction='auto'
+						openOnClick
+						required={true}
+						// error={invalidFields[id] && invalidFields[id].dirty}
+						// errorText={
+						// 	invalidFields[id] && !!invalidFields[id].dirty
+						// 		? invalidFields[id].errMsg
+						// 		: null
+						// }
+						onChange={tag => {
+							execute(
+								updateNewItemTarget({
+									index,
+									itemType,
+									itemId,
+									target: { target: { ...target, tag } },
+									collection,
+								})
+							)
+						}}
+						label={label}
+						placeholder={placeholder}
+						source={source}
+						suggestionMatch='anywhere'
+						showSuggestionsWhenValueIsSet={true}
+						allowCreate={!source.length}
+						variant='outlined'
+					/>
+				) : (
+					<TextField
+						fullWidth
+						variant='outlined'
+						type='text'
+						required
+						name='name'
+						value={target.tag}
+						label={label}
+						onChange={ev =>
+							execute(
+								updateNewItemTarget({
+									index,
+									itemType,
+									itemId,
+									target: { target: { ...target, tag: ev.target.value } },
+									collection,
+								})
+							)
+						}
+						maxLength={120}
+					/>
+				)}
 			</Grid>
 			<Grid item xs={12} md={6}>
 				<Box
@@ -109,7 +139,7 @@ const Targets = ({
 							marks={marks}
 							onChange={(ev, score) =>
 								execute(
-									updateNewItemTargets({
+									updateNewItemTarget({
 										index,
 										itemType,
 										itemId,
@@ -124,7 +154,7 @@ const Targets = ({
 						<IconButton
 							onClick={() =>
 								execute(
-									updateNewItemTargets({
+									updateNewItemTarget({
 										index,
 										itemType,
 										itemId,
@@ -183,7 +213,7 @@ const NewItemTargeting = ({ itemType, itemId, sourcesSelector }) => {
 					fullWidth
 					onChange={target => {
 						execute(
-							updateNewItemTargets({
+							updateNewItemTarget({
 								itemType,
 								itemId,
 								target,
