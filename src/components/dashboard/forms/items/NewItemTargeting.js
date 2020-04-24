@@ -84,6 +84,7 @@ const Targets = ({
 						label={label}
 						placeholder={placeholder}
 						source={source}
+						value={target.tag}
 						suggestionMatch='anywhere'
 						showSuggestionsWhenValueIsSet={true}
 						allowCreate={!source.length}
@@ -120,7 +121,7 @@ const Targets = ({
 					flexWrap='wrap'
 					alignItems='center'
 				>
-					<Box flexGrow={1} p={1}>
+					<Box flexGrow={1}>
 						<Typography id={`target-score-${index}`}>
 							{/*TODO: Translate target name*/}
 							{t('TARGET_SCORE_LABEL', {
