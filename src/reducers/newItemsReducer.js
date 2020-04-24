@@ -13,14 +13,22 @@ export default function newItemsReducer(state = initialState.newItem, action) {
 		case UPDATE_NEW_ITEM:
 			newState = { ...state }
 			newItem = { ...action.item }
-			newState[action.itemType] = newItem
+			if (action.itemId) {
+				newState[action.itemId] = newItem
+			} else {
+				newState[action.itemType] = newItem
+			}
 
 			return newState
 
 		case RESET_NEW_ITEM:
 			newState = { ...state }
-			newItem = { ...initialState.newItem[action.item] }
-			newState[action.item] = newItem
+			newItem = { ...initialState.newItem[action.itemType] }
+			if (action.itemId) {
+				newState[action.itemId] = newItem
+			} else {
+				newState[action.itemType] = newItem
+			}
 
 			return newState
 
