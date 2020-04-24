@@ -3,7 +3,7 @@ import {
 	RESET_NEW_ITEM,
 	RESET_ALL_NEW_ITEMS,
 } from 'constants/actionTypes'
-import { selectNewItems, selectNewItemByTypeAndId } from 'selectors'
+import { selectNewItemByTypeAndId } from 'selectors'
 import { Base, Models } from 'adex-models'
 import { updateSpinner, handleAfterValidation } from 'actions'
 
@@ -39,9 +39,9 @@ export function resetAllNewItems() {
 export function updateNewItemAction(type, prop, value, newValues, itemId) {
 	return async function(dispatch, getState) {
 		const state = getState()
-		const currentItem = selectNewItems(state)
+		const currentItem = selectNewItemByTypeAndId(state, type, itemId)
 		await updateNewItem(
-			currentItem[type],
+			currentItem,
 			newValues || { [prop]: value },
 			type,
 			Models.itemClassByName[type],
@@ -50,9 +50,9 @@ export function updateNewItemAction(type, prop, value, newValues, itemId) {
 	}
 }
 
-export function updateNewSlot(prop, value, newValues) {
+export function updateNewSlot(prop, value, newValues, itemId) {
 	return async function(dispatch, getState) {
-		await updateNewItemAction('AdSlot', prop, value, newValues)(
+		await updateNewItemAction('AdSlot', prop, value, newValues, itemId)(
 			dispatch,
 			getState
 		)
@@ -77,7 +77,7 @@ export function updateNewCampaign(prop, value, newValues) {
 	}
 }
 
-export function updateNewItemTargets({
+export function updateNewItemTarget({
 	collection,
 	itemType,
 	itemId,
