@@ -10,7 +10,13 @@ import {
 	getImgsIpfsFromBlob,
 } from 'actions'
 import { numStringCPMtoImpression } from 'helpers/numbers'
-import { selectMainToken, selectNewAdSlot, selectAuthSig, t } from 'selectors'
+import {
+	selectMainToken,
+	selectNewAdSlot,
+	selectAuthSig,
+	t,
+	selectNewItemByTypeAndId,
+} from 'selectors'
 import { schemas, AdSlot, AdUnit } from 'adex-models'
 import {
 	verifyWebsite,
@@ -259,6 +265,14 @@ export function saveSlot() {
 			})(dispatch)
 			throw new Error('ERR_CREATING_ITEM', err)
 		}
+	}
+}
+
+export function updateSlotTargeting({ updateField, itemId }) {
+	return async function(dispatch, getState) {
+		const state = getState()
+		const { tags } = selectNewItemByTypeAndId(state, 'AdSlot', itemId)
+		updateField('tags', tags)
 	}
 }
 
