@@ -8,7 +8,7 @@ import Autocomplete from 'components/common/autocomplete'
 import Typography from '@material-ui/core/Typography'
 import Dropdown from 'components/common/dropdown'
 
-import { t, selectTargetingSources, selectNewItemByType } from 'selectors'
+import { t, selectTargetingSources, selectNewItemByTypeAndId } from 'selectors'
 import { execute, updateNewItemTargets } from 'actions'
 
 const useStyles = makeStyles(theme => ({
@@ -44,6 +44,7 @@ const Targets = ({
 	target,
 	classes,
 	invalidFields,
+	itemId,
 	itemType,
 }) => {
 	const id = `target-${index}`
@@ -66,6 +67,7 @@ const Targets = ({
 							updateNewItemTargets({
 								index,
 								itemType,
+								itemId,
 								target: { target: { ...target, tag } },
 								collection,
 							})
@@ -110,6 +112,7 @@ const Targets = ({
 									updateNewItemTargets({
 										index,
 										itemType,
+										itemId,
 										target: { target: { ...target, score } },
 										collection,
 									})
@@ -124,6 +127,7 @@ const Targets = ({
 									updateNewItemTargets({
 										index,
 										itemType,
+										itemId,
 										target,
 										collection,
 										remove: true,
@@ -140,61 +144,62 @@ const Targets = ({
 	)
 }
 
-const NewItemTargeting = ({ itemType, sourcesSelector }) => {
+const NewItemTargeting = ({ itemType, itemId, sourcesSelector }) => {
 	const SOURCES = useSelector(sourcesSelector)
 	const SourcesSelect = useSelector(() => selectTargetingSources(SOURCES))
 	const classes = useStyles()
 
-	const { temp } = useSelector(state => selectNewItemByType(state, itemType))
+	const { temp } = useSelector(state =>
+		selectNewItemByTypeAndId(state, itemType, itemId)
+	)
 	const { targets = [] } = temp
 
 	return (
-		<div>
-			<Grid container spacing={1}>
-				<Grid item xs={12}>
-					{[...targets].map(
-						(
-							{ source = '', collection, label, placeholder, target = {} } = {},
-							index
-						) => (
-							<Targets
-								key={`${collection}-${index}`}
-								label={t(label)}
-								placeholder={t(placeholder)}
-								index={index}
-								source={(SOURCES[source] || {}).src || []}
-								collection={collection}
-								target={target}
-								itemType={itemType}
-								t={t}
-								classes={classes}
-							/>
-						)
-					)}
-				</Grid>
-				<Grid item xs={12}>
-					<Dropdown
-						variant='outlined'
-						fullWidth
-						onChange={target => {
-							execute(
-								updateNewItemTargets({
-									itemType,
-									target,
-									collection: target.collection,
-								})
-							)
-						}}
-						source={[...SourcesSelect]}
-						value={''}
-						label={t('NEW_TARGET')}
-						htmlId='ad-type-dd'
-						name='adType'
-						IconComponent={AddIcon}
-					/>
-				</Grid>
+		<Grid container spacing={1}>
+			<Grid item xs={12}>
+				{[...targets].map(
+					(
+						{ source = '', collection, label, placeholder, target = {} } = {},
+						index
+					) => (
+						<Targets
+							key={`${collection}-${index}`}
+							label={t(label)}
+							placeholder={t(placeholder)}
+							index={index}
+							source={(SOURCES[source] || {}).src || []}
+							itemId={itemId}
+							collection={collection}
+							target={target}
+							itemType={itemType}
+							classes={classes}
+						/>
+					)
+				)}
 			</Grid>
-		</div>
+			<Grid item xs={12}>
+				<Dropdown
+					variant='outlined'
+					fullWidth
+					onChange={target => {
+						execute(
+							updateNewItemTargets({
+								itemType,
+								itemId,
+								target,
+								collection: target.collection,
+							})
+						)
+					}}
+					source={[...SourcesSelect]}
+					value={''}
+					label={t('NEW_TARGET')}
+					htmlId='ad-type-dd'
+					name='adType'
+					IconComponent={AddIcon}
+				/>
+			</Grid>
+		</Grid>
 	)
 }
 
