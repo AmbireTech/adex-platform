@@ -12,6 +12,7 @@ function Autocomplete({
 	error,
 	errorText,
 	onInit,
+	value,
 	onChange,
 	fullWidth,
 }) {
@@ -30,9 +31,10 @@ function Autocomplete({
 			<AutocompleteMUI
 				multiple={multiple}
 				options={source}
-				getOptionLabel={option => option.label}
-				getOptionSelected={(a, b) => {
-					return JSON.stringify(a) === JSON.stringify(b)
+				value={value || null}
+				getOptionLabel={option => option.label || option}
+				getOptionSelected={(a, b = '') => {
+					return [JSON.stringify(b), b, b.value].includes(a.value)
 				}}
 				onChange={(_, newValue) => handleChange(newValue)}
 				renderInput={params => {
