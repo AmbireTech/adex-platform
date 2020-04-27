@@ -6,7 +6,8 @@ import WithDialog from 'components/common/dialog/WithDialog'
 import FormSteps from 'components/common/stepper/FormSteps'
 import { AdSlotTargeting } from 'components/dashboard/forms/items/NewItems'
 import AdSlotMedia from 'components/dashboard/forms/items/AdSlot/AdSlotMedia'
-
+import { getImgObjectUrlFromExternalUrl } from 'services/images/blob'
+import { ipfsSrc } from 'helpers/ipfsHelpers'
 import { t, selectNewItemByTypeAndId } from 'selectors'
 import {
 	execute,
@@ -64,7 +65,7 @@ const getInitialTargeting = (
 	return { temp: newTemp }
 }
 
-const updatePassbackEdit = ({ item, newItem, hookProps }) => {
+const updatePassbackEdit = async ({ item, newItem, hookProps }) => {
 	const { dirtyProps } = hookProps
 
 	const isDirty = ['mediaUrl', 'mediaMime', 'targetUrl'].some(prop =>
@@ -79,9 +80,13 @@ const updatePassbackEdit = ({ item, newItem, hookProps }) => {
 		}
 		newValues.targetUrl = newItem.targetUrl
 	} else {
+		const tempUrl = mediaUrl
+			? await getImgObjectUrlFromExternalUrl(ipfsSrc(mediaUrl))
+			: mediaUrl
+
 		newValues.temp = {
 			...item.temp,
-			tempUrl: mediaUrl,
+			tempUrl,
 			mime: mediaMime,
 			useFallback: !!(mediaUrl || mediaMime || targetUrl),
 		}
