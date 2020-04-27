@@ -268,11 +268,12 @@ export function saveSlot() {
 	}
 }
 
-export function updateSlotTargeting({ updateField, itemId }) {
+export function updateSlotTargeting({ updateField, itemId, onValid }) {
 	return async function(dispatch, getState) {
 		const state = getState()
 		const { tags } = selectNewItemByTypeAndId(state, 'AdSlot', itemId)
 		updateField('tags', tags)
+		onValid()
 	}
 }
 
