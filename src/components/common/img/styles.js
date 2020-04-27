@@ -59,7 +59,7 @@ export const styles = theme => ({
 		height: 'auto',
 	},
 	wrapper: {
-		height: 'max-content',
-		width: 'max-content',
+		height: 'fit-content',
+		width: 'fit-content',
 	},
 })
