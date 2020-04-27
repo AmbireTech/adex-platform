@@ -14,8 +14,8 @@ import DialogActions from '@material-ui/core/DialogActions'
 import Button from '@material-ui/core/Button'
 import Fab from '@material-ui/core/Fab'
 import Translate from 'components/translate/Translate'
-import { validations, helpers } from 'adex-models'
-import { isVideoMedia } from 'helpers/mediaHelpers.js'
+import { ipfsSrc } from 'helpers/ipfsHelpers'
+import { isVideoMedia } from 'helpers/mediaHelpers'
 
 const MAX_IMG_LOAD_TIME = 7000
 class Img extends Component {
@@ -30,14 +30,6 @@ class Img extends Component {
 		this.setDisplayImage = this.setDisplayImage.bind(this)
 		this.setDisplayVideo = this.setDisplayVideo.bind(this)
 		this.loadTimeout = null
-	}
-
-	ipfsSrc = src => {
-		if (!!src && validations.Regexes.ipfsRegex.test(src)) {
-			return helpers.getMediaUrlWithProvider(src, process.env.IPFS_GATEWAY)
-		}
-
-		return src
 	}
 
 	handleToggle = ev => {
@@ -60,22 +52,22 @@ class Img extends Component {
 		if (isVideo) {
 			this.displayVideo = document.createElement('video')
 			this.setDisplayVideo({
-				image: this.ipfsSrc(src),
-				fallback: this.ipfsSrc(fallbackSrc) || NO_IMAGE,
+				image: ipfsSrc(src),
+				fallback: ipfsSrc(fallbackSrc) || NO_IMAGE,
 			})
 		} else {
 			this.displayImage = new Image()
 			this.setDisplayImage({
-				image: this.ipfsSrc(src),
-				fallback: this.ipfsSrc(fallbackSrc) || NO_IMAGE,
+				image: ipfsSrc(src),
+				fallback: ipfsSrc(fallbackSrc) || NO_IMAGE,
 			})
 		}
 	}
 
 	componentWillReceiveProps = nextProps => {
-		const nextSrc = this.ipfsSrc(nextProps.src)
-		const thisSrc = this.ipfsSrc(this.props.src)
-		const nextFallback = this.ipfsSrc(nextProps.fallbackSrc)
+		const nextSrc = ipfsSrc(nextProps.src)
+		const thisSrc = ipfsSrc(this.props.src)
+		const nextFallback = ipfsSrc(nextProps.fallbackSrc)
 		const { mediaMime } = nextProps
 
 		if (nextSrc !== thisSrc) {
@@ -84,14 +76,14 @@ class Img extends Component {
 			if (isVideo) {
 				this.displayVideo = this.displayVideo || document.createElement('video')
 				this.setDisplayVideo({
-					image: this.ipfsSrc(nextSrc),
-					fallback: this.ipfsSrc(nextFallback) || NO_IMAGE,
+					image: ipfsSrc(nextSrc),
+					fallback: ipfsSrc(nextFallback) || NO_IMAGE,
 				})
 			} else {
 				this.displayImage = this.displayImage || new Image()
 				this.setDisplayImage({
-					image: this.ipfsSrc(nextSrc),
-					fallback: this.ipfsSrc(nextFallback) || NO_IMAGE,
+					image: ipfsSrc(nextSrc),
+					fallback: ipfsSrc(nextFallback) || NO_IMAGE,
 				})
 			}
 		}
