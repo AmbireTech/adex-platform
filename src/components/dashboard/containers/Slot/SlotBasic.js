@@ -17,32 +17,37 @@ import {
 	ItemWebsite,
 } from 'components/dashboard/containers/ItemCommon/'
 import { t, selectNewItemByTypeAndId } from 'selectors'
-import { execute, updateNewItem, updateSlotTargeting } from 'actions'
+import {
+	execute,
+	updateNewItem,
+	resetNewItem,
+	updateSlotTargeting,
+} from 'actions'
 import { AdSlot } from 'adex-models'
 
-// Ad slot
-export const TargetingSteps = ({ updateField, itemId, ...props }) => (
-	<FormSteps
-		{...props}
-		// cancelFunction={() => execute()}
-		itemId={itemId}
-		validateIdBase='new-AdUnit-'
-		itemType='AdSlot'
-		stepsId='new-slot-'
-		steps={[
-			{
-				title: 'SLOT_TAGS_STEP',
-				component: AdSlotTargeting,
-				completeBtnTitle: 'OK',
-				completeFn: props =>
-					execute(updateSlotTargeting({ updateField, itemId })),
-			},
-		]}
-		btnLabel='NEW_SLOT'
-		title='CREATE_NEW_SLOT'
-		itemModel={AdSlot}
-	/>
-)
+// TODO: Targeting will be changed, but this will be used for campaigns targeting update
+export const TargetingSteps = ({ updateField, itemId, ...props }) => {
+	return (
+		<FormSteps
+			{...props}
+			cancelFunction={() => execute(resetNewItem('AdSlot', itemId))}
+			itemId={itemId}
+			validateIdBase='new-AdUnit-'
+			itemType='AdSlot'
+			stepsId='new-slot-'
+			steps={[
+				{
+					title: 'SLOT_TAGS_STEP',
+					component: AdSlotTargeting,
+					completeBtnTitle: 'OK',
+					completeFn: props =>
+						execute(updateSlotTargeting({ updateField, itemId, ...props })),
+				},
+			]}
+			itemModel={AdSlot}
+		/>
+	)
+}
 
 const TargetEdit = WithDialog(TargetingSteps)
 
@@ -109,8 +114,8 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 							</Box>
 							<Box py={1}>
 								<TargetEdit
-									btnLabel='NEW_UNIT'
-									title='CREATE_NEW_UNIT'
+									btnLabel='UPDATE_TAGS'
+									title='UPDATE_SLOT_TAGS'
 									itemId={item.id}
 									disableBackdropClick
 									updateField={hookProps.updateField}
