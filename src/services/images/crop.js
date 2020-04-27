@@ -24,27 +24,30 @@ export const getCroppedImgUrl = (image, crop, fileName, size) => {
 		crop.height
 	)
 
-	const scaleCanvas = document.createElement('canvas')
+	let finalCanvas = canvas
 
-	scaleCanvas.width = size.width
-	scaleCanvas.height = size.height
+	if (size && size.width && size.height) {
+		const finalCanvas = document.createElement('canvas')
+		finalCanvas.width = size.width
+		finalCanvas.height = size.height
 
-	const sctx = scaleCanvas.getContext('2d')
+		const sctx = finalCanvas.getContext('2d')
 
-	sctx.drawImage(
-		canvas,
-		0,
-		0,
-		crop.width,
-		crop.height,
-		0,
-		0,
-		size.width,
-		size.height
-	)
+		sctx.drawImage(
+			canvas,
+			0,
+			0,
+			crop.width,
+			crop.height,
+			0,
+			0,
+			size.width,
+			size.height
+		)
+	}
 
 	return new Promise((resolve, reject) => {
-		scaleCanvas.toBlob(
+		finalCanvas.toBlob(
 			file => {
 				if (!file) {
 					reject('Error cropping file')
