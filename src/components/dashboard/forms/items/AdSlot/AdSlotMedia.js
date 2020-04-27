@@ -11,11 +11,13 @@ import {
 	Switch,
 } from '@material-ui/core'
 import { getWidAndHightFromType } from 'helpers/itemsHelpers'
-import { t, selectNewAdSlot, selectValidationsById } from 'selectors'
+import { t, selectNewItemByTypeAndId, selectValidationsById } from 'selectors'
 import { updateNewSlot, execute } from 'actions'
 
-function AdSlotMedia({ validateId }) {
-	const { type, targetUrl, temp } = useSelector(selectNewAdSlot)
+function AdSlotMedia({ validateId, itemId }) {
+	const { type, targetUrl, temp } = useSelector(state =>
+		selectNewItemByTypeAndId(state, 'AdSlot', itemId)
+	)
 
 	const { useFallback = false, tempUrl, mime } = temp
 
@@ -34,10 +36,15 @@ function AdSlotMedia({ validateId }) {
 								checked={useFallback}
 								onChange={ev =>
 									execute(
-										updateNewSlot('temp', {
-											...temp,
-											useFallback: ev.target.checked,
-										})
+										updateNewSlot(
+											'temp',
+											{
+												...temp,
+												useFallback: ev.target.checked,
+											},
+											null,
+											itemId
+										)
 									)
 								}
 							/>
@@ -57,7 +64,9 @@ function AdSlotMedia({ validateId }) {
 								label={t('targetUrl', { isProp: true })}
 								value={targetUrl}
 								onChange={ev =>
-									execute(updateNewSlot('targetUrl', ev.target.value))
+									execute(
+										updateNewSlot('targetUrl', ev.target.value, null, itemId)
+									)
 								}
 								error={errFallbackUrl && !!errFallbackUrl.dirty}
 								helperText={
@@ -74,10 +83,15 @@ function AdSlotMedia({ validateId }) {
 								mime={mime || ''}
 								onChange={mediaProps =>
 									execute(
-										updateNewSlot('temp', {
-											...temp,
-											...mediaProps,
-										})
+										updateNewSlot(
+											'temp',
+											{
+												...temp,
+												...mediaProps,
+											},
+											null,
+											itemId
+										)
 									)
 								}
 								additionalInfo={t('SLOT_FALLBACK_MEDIA_INFO', {
@@ -85,8 +99,8 @@ function AdSlotMedia({ validateId }) {
 								})}
 								errMsg={errImg && errImg.dirty ? errImg.errMsg : ''}
 								size={{
-									width: width,
-									height: height,
+									width,
+									height,
 								}}
 							/>
 						</Grid>

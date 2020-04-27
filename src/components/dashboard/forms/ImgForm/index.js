@@ -1,1 +1,1 @@
-export { default } from './ImgForm'
+export { default } from './ImgForm2'
