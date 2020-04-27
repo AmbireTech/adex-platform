@@ -45,7 +45,7 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 								<ItemFallbackMediaURL targetUrl={targetUrl} />
 							</Box>
 							<Box py={1}>
-								<SlotEdits item={item} hookProps={hookProps} />
+								<SlotEdits item={item} {...hookProps} />
 							</Box>
 							<Box py={1}>
 								<TargetsList targets={item.tags} subHeader={'PROP_TAGS'} />

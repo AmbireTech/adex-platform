@@ -13,6 +13,7 @@ import {
 	updateNewItem,
 	resetNewItem,
 	updateSlotTargeting,
+	updateSlotPasback,
 } from 'actions'
 import { AdSlot } from 'adex-models'
 
@@ -42,7 +43,11 @@ export const TargetingSteps = ({ updateField, itemId, ...props }) => {
 
 const TargetEdit = WithDialog(TargetingSteps)
 
-const getInitialTemp = ({ temp, tags = [] }, currentTags, dirtyProps = []) => {
+const getInitialTargeting = (
+	{ temp, tags = [] },
+	currentTags,
+	dirtyProps = []
+) => {
 	const targets = dirtyProps.includes('tags')
 		? currentTags
 		: [...tags].map((tag, key) => ({
@@ -57,6 +62,33 @@ const getInitialTemp = ({ temp, tags = [] }, currentTags, dirtyProps = []) => {
 	const newTemp = { ...temp, targets }
 
 	return { temp: newTemp }
+}
+
+const updatePassbackEdit = ({ item, newItem, hookProps }) => {
+	const { dirtyProps } = hookProps
+
+	const isDirty = ['mediaUrl', 'mediaMime', 'targetUrl'].some(prop =>
+		dirtyProps.includes(prop)
+	)
+
+	const { mediaUrl, mediaMime, targetUrl } = item
+	const newValues = {}
+	if (isDirty) {
+		newValues.temp = {
+			...newItem.temp,
+		}
+		newValues.targetUrl = newItem.targetUrl
+	} else {
+		newValues.temp = {
+			...item.temp,
+			tempUrl: mediaUrl,
+			mime: mediaMime,
+			useFallback: !!(mediaUrl || mediaMime || targetUrl),
+		}
+		newValues.targetUrl = targetUrl
+	}
+
+	execute(updateNewItem(item, newValues, 'AdSlot', AdSlot, item.id))
 }
 
 export const PassbackSteps = ({ updateField, itemId, ...props }) => {
@@ -74,7 +106,7 @@ export const PassbackSteps = ({ updateField, itemId, ...props }) => {
 					component: AdSlotMedia,
 					completeBtnTitle: 'OK',
 					completeFn: props =>
-						execute(updateSlotTargeting({ updateField, itemId, ...props })),
+						execute(updateSlotPasback({ updateField, itemId, ...props })),
 				},
 			]}
 			itemModel={AdSlot}
@@ -93,13 +125,20 @@ export const SlotEdits = ({ item, ...hookProps }) => {
 		execute(
 			updateNewItem(
 				item,
-				getInitialTemp(item, temp.targets, hookProps.dirtyProps),
+				getInitialTargeting(item, temp.targets, hookProps.dirtyProps),
 				'AdSlot',
 				AdSlot,
 				item.id
 			)
 		)
 	}
+
+	const onPassbackClick = () =>
+		updatePassbackEdit({
+			item,
+			newItemTemp: temp,
+			hookProps,
+		})
 
 	return (
 		<Box display='flex' flexDirection='row' flexWrap='wrap'>
@@ -118,7 +157,7 @@ export const SlotEdits = ({ item, ...hookProps }) => {
 				itemId={item.id}
 				disableBackdropClick
 				updateField={hookProps.updateField}
-				// onClick={onTargetingClick}
+				onClick={onPassbackClick}
 			/>
 		</Box>
 	)
