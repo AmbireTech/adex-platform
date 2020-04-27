@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import Img from 'components/common/img/Img'
 // import debounce from 'debounce'
@@ -25,6 +25,7 @@ function ImgForm(props) {
 	const { size, onChange, label, additionalInfo, errMsg } = props
 	const aspect = size ? size.width / size.height : undefined
 
+	const [imgRef, setImgRef] = useState(null)
 	const [crop, setCrop] = useState({ aspect })
 	const [cropMode, setCropMode] = useState(false)
 	const [imgName, setImgName] = useState('')
@@ -39,6 +40,10 @@ function ImgForm(props) {
 		setMime(props.mime)
 		setImgSrc(props.imgSrc)
 	}, [props.mime, props.imgSrc])
+
+	const onLoad = useCallback(img => {
+		setImgRef(img)
+	}, [])
 
 	const onDrop = (acceptedFiles, rejectedFiles) => {
 		const file = acceptedFiles[0]
@@ -75,17 +80,14 @@ function ImgForm(props) {
 		}
 	}
 
-	const onCropChange = crop => {
-		setCrop(crop)
-	}
-
-	const saveCropped = () => {
-		getCroppedImgUrl({
-			objUrl: imgSrc,
-			pixelCrop: crop,
-			fileName: `cropped-${imgName}`,
-			size,
-		}).then(croppedBlob => {
+	const saveCropped = async () => {
+		if (imgRef && crop.width && crop.height) {
+			const croppedBlob = await getCroppedImgUrl(
+				imgRef,
+				crop,
+				`cropped-${imgName}`,
+				size
+			)
 			URL.revokeObjectURL(imgSrc)
 			setImgSrc(croppedBlob)
 			setCropMode(false)
@@ -93,7 +95,9 @@ function ImgForm(props) {
 				tempUrl: croppedBlob,
 				mime,
 			})
-		})
+		} else {
+			// TODO: Error
+		}
 	}
 
 	const UploadInfo = () => {
@@ -173,10 +177,11 @@ function ImgForm(props) {
 													width: 'auto',
 													height: 'auto',
 												}}
+												onImageLoaded={onLoad}
 												className={classes.imgDropzonePreview}
 												crop={crop}
 												src={imgSrc || ''}
-												onChange={onCropChange}
+												onChange={c => setCrop(c)}
 											/>
 										</Grid>
 
@@ -246,7 +251,6 @@ function ImgForm(props) {
 }
 
 ImgForm.propTypes = {
-	imgSrc: PropTypes.string,
 	label: PropTypes.string,
 	size: PropTypes.object,
 }
