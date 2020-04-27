@@ -19,11 +19,12 @@ export function updateNewItem(item, newValues, itemType, objModel, itemId) {
 	}
 }
 
-export function resetNewItem(itemType) {
+export function resetNewItem(itemType, itemId) {
 	return function(dispatch) {
 		return dispatch({
 			type: RESET_NEW_ITEM,
 			itemType,
+			itemId,
 		})
 	}
 }
