@@ -40,17 +40,24 @@ export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 	)
 
 	const validate = useCallback(
-		dirty => execute(validateAndUpdateFn({ item, validateId, dirty })),
-		[item, validateAndUpdateFn, validateId]
+		dirty =>
+			execute(validateAndUpdateFn({ item, validateId, dirty, dirtyProps })),
+		[dirtyProps, item, validateAndUpdateFn, validateId]
 	)
 
 	const save = useCallback(() => {
 		execute(
-			validateAndUpdateFn({ item, validateId, dirty: true, update: true })
+			validateAndUpdateFn({
+				item,
+				validateId,
+				dirty: true,
+				update: true,
+				dirtyProps,
+			})
 		)
 		setDirtyProps([])
 		setFields({})
-	}, [item, validateAndUpdateFn, validateId])
+	}, [dirtyProps, item, validateAndUpdateFn, validateId])
 
 	const returnPropToInitialState = useCallback(
 		propName => {
