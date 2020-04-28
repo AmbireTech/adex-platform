@@ -27,7 +27,7 @@ export const getCroppedImgUrl = (image, crop, fileName, size) => {
 	let finalCanvas = canvas
 
 	if (size && size.width && size.height) {
-		const finalCanvas = document.createElement('canvas')
+		finalCanvas = document.createElement('canvas')
 		finalCanvas.width = size.width
 		finalCanvas.height = size.height
 
