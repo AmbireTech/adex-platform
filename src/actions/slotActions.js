@@ -132,6 +132,7 @@ export function validateNewSlotPassback({
 	dirty,
 	onValid,
 	onInvalid,
+	itemId,
 }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
@@ -141,7 +142,7 @@ export function validateNewSlotPassback({
 			type,
 			targetUrl,
 			temp: { useFallback, tempUrl, mime },
-		} = selectNewAdSlot(state)
+		} = selectNewItemByTypeAndId(state, 'AdSlot', itemId)
 
 		const { width, height } = getWidAndHightFromType(type)
 
@@ -346,7 +347,12 @@ export function mapCurrentToNewPassback({ itemId, dirtyProps }) {
 	}
 }
 
-export function updateSlotPasback({ updateMultipleFields, itemId, onValid }) {
+export function updateSlotPasback({
+	updateMultipleFields,
+	itemId,
+	onValid: onValidProp,
+	validateId,
+}) {
 	return async function(dispatch, getState) {
 		const state = getState()
 		const { temp, targetUrl } = selectNewItemByTypeAndId(
@@ -362,8 +368,17 @@ export function updateSlotPasback({ updateMultipleFields, itemId, onValid }) {
 			mediaMime: useFallback ? mime : '',
 		}
 
-		updateMultipleFields(newValues, ['targetUrl', 'mediaUrl'])
-		onValid()
+		const onValid = () => {
+			updateMultipleFields(newValues, ['targetUrl', 'mediaUrl'])
+			onValidProp()
+		}
+
+		validateNewSlotPassback({
+			validateId,
+			dirty: true,
+			onValid,
+			itemId,
+		})(dispatch, getState)
 	}
 }
 
