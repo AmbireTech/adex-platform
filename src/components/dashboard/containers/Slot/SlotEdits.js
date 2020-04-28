@@ -40,7 +40,7 @@ export const TargetingSteps = ({ updateField, itemId, ...props }) => {
 
 const TargetEdit = WithDialog(TargetingSteps)
 
-export const PassbackSteps = ({ updateField, itemId, ...props }) => {
+export const PassbackSteps = ({ updateMultipleFields, itemId, ...props }) => {
 	return (
 		<FormSteps
 			{...props}
@@ -55,7 +55,9 @@ export const PassbackSteps = ({ updateField, itemId, ...props }) => {
 					component: AdSlotMedia,
 					completeBtnTitle: 'OK',
 					completeFn: props =>
-						execute(updateSlotPasback({ updateField, itemId, ...props })),
+						execute(
+							updateSlotPasback({ updateMultipleFields, itemId, ...props })
+						),
 				},
 			]}
 			itemModel={AdSlot}
@@ -88,7 +90,7 @@ export const SlotEdits = ({ item, ...hookProps }) => {
 				title='UPDATE_SLOT_PASSBACK'
 				itemId={item.id}
 				disableBackdropClick
-				updateField={hookProps.updateField}
+				updateMultipleFields={hookProps.updateMultipleFields}
 				onClick={() =>
 					execute(
 						mapCurrentToNewPassback({
