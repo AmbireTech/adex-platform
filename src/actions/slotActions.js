@@ -476,13 +476,17 @@ export function validateAndUpdateSlot({
 				dirtyProps.includes(prop)
 			)
 
-			let fallbackUnit = null
+			const fallbackData = {
+				mediaMime,
+				mediaUrl,
+				targetUrl,
+			}
 
-			if (isPassbackUpdated) {
+			let newUnit = null
+			if (isPassbackUpdated && update) {
 				if (mediaUrl && mediaMime && targetUrl) {
 					const authSig = selectAuthSig(state)
-
-					fallbackUnit = await getFallbackUnit({
+					newUnit = await getFallbackUnit({
 						mediaMime,
 						tempUrl: mediaUrl,
 						targetUrl,
@@ -492,7 +496,15 @@ export function validateAndUpdateSlot({
 						description,
 					})
 
-					newSlot.fallbackUnit = fallbackUnit.ipfs
+					newSlot.fallbackUnit = newUnit.ipfs
+					fallbackData.mediaMime = newUnit.mediaMime
+					fallbackData.mediaUrl = newUnit.mediaUrl
+					fallbackData.targetUrl = newUnit.targetUrl
+				} else {
+					newSlot.fallbackUnit = null
+					fallbackData.mediaMime = ''
+					fallbackData.mediaUrl = ''
+					fallbackData.targetUrl = ''
 				}
 			}
 
@@ -522,21 +534,17 @@ export function validateAndUpdateSlot({
 			if (isValid && update) {
 				const updatedSlot = (await updateAdSlot({ slot, id })).slot
 
-				if (fallbackUnit) {
+				if (newUnit) {
 					dispatch({
 						type: ADD_ITEM,
-						item: new AdUnit(fallbackUnit).plainObj(),
+						item: new AdUnit(newUnit).plainObj(),
 						itemType: 'AdUnit',
 					})
-
-					updatedSlot.mediaMime = fallbackUnit.mediaMime
-					updatedSlot.mediaUrl = fallbackUnit.mediaUrl
-					updatedSlot.targetUrl = fallbackUnit.targetUrl
 				}
 
 				dispatch({
 					type: UPDATE_ITEM,
-					item: new AdSlot(updatedSlot).plainObj(),
+					item: new AdSlot({ ...updatedSlot, ...fallbackData }).plainObj(),
 					itemType: 'AdSlot',
 				})
 			}
