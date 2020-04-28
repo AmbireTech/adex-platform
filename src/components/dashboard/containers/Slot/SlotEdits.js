@@ -1,21 +1,16 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
 import { Box } from '@material-ui/core'
-
 import WithDialog from 'components/common/dialog/WithDialog'
 import FormSteps from 'components/common/stepper/FormSteps'
 import { AdSlotTargeting } from 'components/dashboard/forms/items/NewItems'
 import AdSlotMedia from 'components/dashboard/forms/items/AdSlot/AdSlotMedia'
-import { getImgObjectUrlFromExternalUrl } from 'services/images/blob'
-import { ipfsSrc } from 'helpers/ipfsHelpers'
-import { t, selectNewItemByTypeAndId } from 'selectors'
 import {
 	execute,
-	updateNewItem,
 	resetNewItem,
 	updateSlotTargeting,
 	updateSlotPasback,
 	mapCurrentToNewTargeting,
+	mapCurrentToNewPassback,
 } from 'actions'
 import { AdSlot } from 'adex-models'
 
@@ -45,37 +40,6 @@ export const TargetingSteps = ({ updateField, itemId, ...props }) => {
 
 const TargetEdit = WithDialog(TargetingSteps)
 
-const updatePassbackEdit = async ({ item, newItem, hookProps }) => {
-	const { dirtyProps } = hookProps
-
-	const isDirty = ['mediaUrl', 'mediaMime', 'targetUrl'].some(prop =>
-		dirtyProps.includes(prop)
-	)
-
-	const { mediaUrl, mediaMime, targetUrl } = item
-	const newValues = {}
-	if (isDirty) {
-		newValues.temp = {
-			...newItem.temp,
-		}
-		newValues.targetUrl = newItem.targetUrl
-	} else {
-		const tempUrl = mediaUrl
-			? await getImgObjectUrlFromExternalUrl(ipfsSrc(mediaUrl))
-			: mediaUrl
-
-		newValues.temp = {
-			...item.temp,
-			tempUrl,
-			mime: mediaMime,
-			useFallback: !!(mediaUrl || mediaMime || targetUrl),
-		}
-		newValues.targetUrl = targetUrl
-	}
-
-	execute(updateNewItem(item, newValues, 'AdSlot', AdSlot, item.id))
-}
-
 export const PassbackSteps = ({ updateField, itemId, ...props }) => {
 	return (
 		<FormSteps
@@ -102,17 +66,6 @@ export const PassbackSteps = ({ updateField, itemId, ...props }) => {
 const PassbackEdit = WithDialog(PassbackSteps)
 
 export const SlotEdits = ({ item, ...hookProps }) => {
-	const { temp = {} } = useSelector(state =>
-		selectNewItemByTypeAndId(state, 'AdSlot', item.id)
-	)
-
-	const onPassbackClick = () =>
-		updatePassbackEdit({
-			item,
-			newItemTemp: temp,
-			hookProps,
-		})
-
 	return (
 		<Box display='flex' flexDirection='row' flexWrap='wrap'>
 			<TargetEdit
@@ -130,14 +83,20 @@ export const SlotEdits = ({ item, ...hookProps }) => {
 					)
 				}
 			/>
-
 			<PassbackEdit
 				btnLabel='UPDATE_PASSBACK'
 				title='UPDATE_SLOT_PASSBACK'
 				itemId={item.id}
 				disableBackdropClick
 				updateField={hookProps.updateField}
-				onClick={onPassbackClick}
+				onClick={() =>
+					execute(
+						mapCurrentToNewPassback({
+							itemId: item.id,
+							dirtyProps: hookProps.dirtyProps,
+						})
+					)
+				}
 			/>
 		</Box>
 	)

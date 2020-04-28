@@ -30,6 +30,8 @@ import { getWidAndHightFromType } from 'helpers/itemsHelpers'
 
 import { ADD_ITEM, UPDATE_ITEM } from 'constants/actionTypes'
 import Helper from 'helpers/miscHelpers'
+import { ipfsSrc } from 'helpers/ipfsHelpers'
+import { getImgObjectUrlFromExternalUrl } from 'services/images/blob'
 
 const { adSlotPost, adUnitPost, adSlotPut } = schemas
 
@@ -303,6 +305,44 @@ export function updateSlotTargeting({ updateField, itemId, onValid }) {
 		const { tags } = selectNewItemByTypeAndId(state, 'AdSlot', itemId)
 		updateField('tags', tags)
 		onValid()
+	}
+}
+
+export function mapCurrentToNewPassback({ itemId, dirtyProps }) {
+	return async function(dispatch, getState) {
+		const state = getState()
+		const item = selectAdSlotById(state, itemId)
+		const newItem = selectNewItemByTypeAndId(state, 'AdSlot', itemId)
+
+		const isDirty = ['mediaUrl', 'mediaMime', 'targetUrl'].some(prop =>
+			dirtyProps.includes(prop)
+		)
+
+		const { mediaUrl, mediaMime, targetUrl } = item
+		const newValues = {}
+		if (isDirty) {
+			newValues.temp = {
+				...newItem.temp,
+			}
+			newValues.targetUrl = newItem.targetUrl
+		} else {
+			const tempUrl = mediaUrl
+				? await getImgObjectUrlFromExternalUrl(ipfsSrc(mediaUrl))
+				: mediaUrl
+
+			newValues.temp = {
+				...item.temp,
+				tempUrl,
+				mime: mediaMime,
+				useFallback: !!(mediaUrl || mediaMime || targetUrl),
+			}
+			newValues.targetUrl = targetUrl
+		}
+
+		updateNewItem(item, newValues, 'AdSlot', AdSlot, item.id)(
+			dispatch,
+			getState
+		)
 	}
 }
 
