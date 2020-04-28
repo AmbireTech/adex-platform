@@ -6,6 +6,7 @@ import {
 	selectSpinnerById,
 } from 'selectors'
 import { execute } from 'actions'
+import { Base } from 'adex-models'
 
 export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 	const [item, setItem] = useState({})
@@ -69,16 +70,35 @@ export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 	)
 
 	const updateField = useCallback(
-		(field, value) => {
+		(field, value, skipDp) => {
 			const newItem = new objModel(item)
 			newItem[field] = value
 
-			const dp = dirtyProps.slice(0)
-
-			if (!dp.includes(field)) {
-				dp.push(field)
-			}
 			setItem(newItem)
+			if (!skipDp) {
+				const dp = dirtyProps.slice(0)
+
+				if (!dp.includes(field)) {
+					dp.push(field)
+				}
+				setDirtyProps(dp)
+			}
+		},
+		[dirtyProps, item, objModel]
+	)
+
+	const updateMultipleFields = useCallback(
+		(newValues, dirtyFields = []) => {
+			const updated = Base.updateObject({ item, newValues, objModel })
+
+			setItem(new objModel(updated))
+
+			const dp = dirtyProps.slice(0)
+			dirtyFields.forEach(field => {
+				if (!dp.includes(field)) {
+					dp.push(field)
+				}
+			})
 			setDirtyProps(dp)
 		},
 		[dirtyProps, item, objModel]
@@ -94,6 +114,7 @@ export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 		validateId,
 		validations,
 		updateField,
+		updateMultipleFields,
 		spinner,
 		save,
 	}
