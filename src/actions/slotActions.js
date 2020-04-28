@@ -35,6 +35,41 @@ import { getImgObjectUrlFromExternalUrl } from 'services/images/blob'
 
 const { adSlotPost, adUnitPost, adSlotPut } = schemas
 
+async function getFallbackUnit({
+	mediaMime,
+	tempUrl,
+	targetUrl,
+	type,
+	authSig,
+	title,
+	description,
+}) {
+	const imageIpfs = (await getImgsIpfsFromBlob({
+		tempUrl,
+		authSig,
+	})).ipfs
+
+	const unit = new AdUnit({
+		type,
+		mediaUrl: `ipfs://${imageIpfs}`,
+		targetUrl,
+		mediaMime,
+		created: Date.now(),
+		title,
+		description,
+		targeting: [],
+		tags: [],
+		passback: true,
+	})
+
+	const resUnit = await postAdUnit({
+		unit: unit.marketAdd,
+		authSig,
+	})
+
+	return resUnit
+}
+
 export function validateNewSlotBasics({
 	validateId,
 	dirty,
@@ -205,30 +240,15 @@ export function saveSlot() {
 			const mainToken = selectMainToken()
 			let fallbackUnit = null
 			if (newItem.temp.useFallback) {
-				const imageIpfs = (await getImgsIpfsFromBlob({
-					tempUrl: newItem.temp.tempUrl,
-					authSig,
-				})).ipfs
-
-				const unit = new AdUnit({
-					type: newItem.type,
-					mediaUrl: `ipfs://${imageIpfs}`,
-					targetUrl: newItem.targetUrl,
+				fallbackUnit = (await getFallbackUnit({
 					mediaMime: newItem.temp.mime,
-					created: Date.now(),
+					tempUrl: newItem.temp.tempUrl,
+					targetUrl: newItem.targetUrl,
+					type: newItem.type,
+					authSig,
 					title: newItem.title,
 					description: newItem.description,
-					targeting: [],
-					tags: [],
-					passback: true,
-				})
-
-				const resUnit = await postAdUnit({
-					unit: unit.marketAdd,
-					authSig,
-				})
-
-				fallbackUnit = resUnit.ipfs
+				})).ipfs
 			}
 
 			newItem.fallbackUnit = fallbackUnit
@@ -373,7 +393,7 @@ export function updateSlotPasback({
 			onValidProp()
 		}
 
-		validateNewSlotPassback({
+		await validateNewSlotPassback({
 			validateId,
 			dirty: true,
 			onValid,
@@ -382,12 +402,29 @@ export function updateSlotPasback({
 	}
 }
 
-export function validateAndUpdateSlot({ validateId, dirty, item, update }) {
+export function validateAndUpdateSlot({
+	validateId,
+	dirty,
+	item,
+	update,
+	dirtyProps,
+}) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
 		try {
+			const state = getState()
 			const mainToken = selectMainToken()
-			const { id, title, description, minPerImpression, website } = item
+			const {
+				id,
+				type,
+				title,
+				description,
+				minPerImpression,
+				website,
+				mediaUrl,
+				mediaMime,
+				targetUrl,
+			} = item
 
 			const newSlot = new AdSlot(item)
 			const checkMinPerImpression = typeof minPerImpression === 'string'
@@ -435,6 +472,30 @@ export function validateAndUpdateSlot({ validateId, dirty, item, update }) {
 				}
 			}
 
+			const isPassbackUpdated = ['mediaUrl', 'targetUrl'].some(prop =>
+				dirtyProps.includes(prop)
+			)
+
+			let fallbackUnit = null
+
+			if (isPassbackUpdated) {
+				if (mediaUrl && mediaMime && targetUrl) {
+					const authSig = selectAuthSig(state)
+
+					fallbackUnit = await getFallbackUnit({
+						mediaMime,
+						tempUrl: mediaUrl,
+						targetUrl,
+						type,
+						authSig,
+						title,
+						description,
+					})
+
+					newSlot.fallbackUnit = fallbackUnit.ipfs
+				}
+			}
+
 			const slot = newSlot.marketUpdate
 
 			if (isValid) {
@@ -459,7 +520,20 @@ export function validateAndUpdateSlot({ validateId, dirty, item, update }) {
 			}
 
 			if (isValid && update) {
-				const updatedSlot = (await updateAdSlot({ slot, id })).unit
+				const updatedSlot = (await updateAdSlot({ slot, id })).slot
+
+				if (fallbackUnit) {
+					dispatch({
+						type: ADD_ITEM,
+						item: new AdUnit(fallbackUnit).plainObj(),
+						itemType: 'AdUnit',
+					})
+
+					updatedSlot.mediaMime = fallbackUnit.mediaMime
+					updatedSlot.mediaUrl = fallbackUnit.mediaUrl
+					updatedSlot.targetUrl = fallbackUnit.targetUrl
+				}
+
 				dispatch({
 					type: UPDATE_ITEM,
 					item: new AdSlot(updatedSlot).plainObj(),
