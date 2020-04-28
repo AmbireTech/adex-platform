@@ -346,11 +346,23 @@ export function mapCurrentToNewPassback({ itemId, dirtyProps }) {
 	}
 }
 
-export function updateSlotPasback({ updateField, itemId, onValid }) {
+export function updateSlotPasback({ updateMultipleFields, itemId, onValid }) {
 	return async function(dispatch, getState) {
 		const state = getState()
-		const { tags } = selectNewItemByTypeAndId(state, 'AdSlot', itemId)
-		updateField('tags', tags)
+		const { temp, targetUrl } = selectNewItemByTypeAndId(
+			state,
+			'AdSlot',
+			itemId
+		)
+		const { tempUrl, mime, useFallback } = temp
+
+		const newValues = {
+			targetUrl: useFallback ? targetUrl : '',
+			mediaUrl: useFallback ? tempUrl : '',
+			mediaMime: useFallback ? mime : '',
+		}
+
+		updateMultipleFields(newValues, ['targetUrl', 'mediaUrl'])
 		onValid()
 	}
 }
