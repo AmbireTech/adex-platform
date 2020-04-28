@@ -15,6 +15,7 @@ import {
 	resetNewItem,
 	updateSlotTargeting,
 	updateSlotPasback,
+	mapCurrentToNewTargeting,
 } from 'actions'
 import { AdSlot } from 'adex-models'
 
@@ -43,27 +44,6 @@ export const TargetingSteps = ({ updateField, itemId, ...props }) => {
 }
 
 const TargetEdit = WithDialog(TargetingSteps)
-
-const getInitialTargeting = (
-	{ temp, tags = [] },
-	currentTags,
-	dirtyProps = []
-) => {
-	const targets = dirtyProps.includes('tags')
-		? currentTags
-		: [...tags].map((tag, key) => ({
-				key,
-				collection: 'tags',
-				source: 'custom',
-				label: t(`TARGET_LABEL_TAGS`),
-				placeholder: t(`TARGET_LABEL_TAGS`),
-				target: { ...tag },
-		  }))
-
-	const newTemp = { ...temp, targets }
-
-	return { temp: newTemp }
-}
 
 const updatePassbackEdit = async ({ item, newItem, hookProps }) => {
 	const { dirtyProps } = hookProps
@@ -126,18 +106,6 @@ export const SlotEdits = ({ item, ...hookProps }) => {
 		selectNewItemByTypeAndId(state, 'AdSlot', item.id)
 	)
 
-	const onTargetingClick = () => {
-		execute(
-			updateNewItem(
-				item,
-				getInitialTargeting(item, temp.targets, hookProps.dirtyProps),
-				'AdSlot',
-				AdSlot,
-				item.id
-			)
-		)
-	}
-
 	const onPassbackClick = () =>
 		updatePassbackEdit({
 			item,
@@ -153,7 +121,14 @@ export const SlotEdits = ({ item, ...hookProps }) => {
 				itemId={item.id}
 				disableBackdropClick
 				updateField={hookProps.updateField}
-				onClick={onTargetingClick}
+				onClick={() =>
+					execute(
+						mapCurrentToNewTargeting({
+							itemId: item.id,
+							dirtyProps: hookProps.dirtyProps,
+						})
+					)
+				}
 			/>
 
 			<PassbackEdit

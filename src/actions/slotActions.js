@@ -8,6 +8,7 @@ import {
 	addToast,
 	validate,
 	getImgsIpfsFromBlob,
+	updateNewItem,
 } from 'actions'
 import { numStringCPMtoImpression } from 'helpers/numbers'
 import {
@@ -16,6 +17,7 @@ import {
 	selectAuthSig,
 	t,
 	selectNewItemByTypeAndId,
+	selectAdSlotById,
 } from 'selectors'
 import { schemas, AdSlot, AdUnit } from 'adex-models'
 import {
@@ -268,7 +270,43 @@ export function saveSlot() {
 	}
 }
 
+export function mapCurrentToNewTargeting({ itemId, dirtyProps }) {
+	return async function(dispatch, getState) {
+		const state = getState()
+		const item = selectAdSlotById(state, itemId)
+		const { temp } = selectNewItemByTypeAndId(state, 'AdSlot', itemId)
+
+		const targets = dirtyProps.includes('tags')
+			? temp.targets
+			: [...item.tags].map((tag, key) => ({
+					key,
+					collection: 'tags',
+					source: 'custom',
+					label: t(`TARGET_LABEL_TAGS`),
+					placeholder: t(`TARGET_LABEL_TAGS`),
+					target: { ...tag },
+			  }))
+
+		updateNewItem(
+			item,
+			{ temp: { ...temp, targets } },
+			'AdSlot',
+			AdSlot,
+			item.id
+		)(dispatch, getState)
+	}
+}
+
 export function updateSlotTargeting({ updateField, itemId, onValid }) {
+	return async function(dispatch, getState) {
+		const state = getState()
+		const { tags } = selectNewItemByTypeAndId(state, 'AdSlot', itemId)
+		updateField('tags', tags)
+		onValid()
+	}
+}
+
+export function updateSlotPasback({ updateField, itemId, onValid }) {
 	return async function(dispatch, getState) {
 		const state = getState()
 		const { tags } = selectNewItemByTypeAndId(state, 'AdSlot', itemId)
