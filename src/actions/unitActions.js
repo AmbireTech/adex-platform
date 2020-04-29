@@ -7,14 +7,23 @@ import {
 	addToast,
 	getImgsIpfsFromBlob,
 } from 'actions'
-import { selectNewAdUnit, selectAuthSig, t } from 'selectors'
+import {
+	selectNewAdUnit,
+	selectAuthSig,
+	t,
+	selectNewItemByTypeAndId,
+} from 'selectors'
 import { schemas, AdUnit } from 'adex-models'
 import { getWidAndHightFromType } from 'helpers/itemsHelpers'
 
 import { ADD_ITEM, UPDATE_ITEM } from 'constants/actionTypes'
 import Helper from 'helpers/miscHelpers'
 
-import { postAdUnit, updateAdUnit } from 'services/adex-market/actions'
+import {
+	postAdUnit,
+	updateAdUnit,
+	getCategories,
+} from 'services/adex-market/actions'
 
 const { adUnitPost, adUnitPut } = schemas
 
@@ -239,5 +248,71 @@ export function validateAndUpdateUnit({ validateId, dirty, item, update }) {
 		}
 
 		await updateSpinner(validateId, false)(dispatch)
+	}
+}
+
+// Used bot for AdUnit and AdSlot
+export function getCategorySuggestions({ itemType, itemId }) {
+	return async function(dispatch, getState) {
+		updateSpinner('targeting-suggestions', true)(dispatch)
+		const newItem = selectNewItemByTypeAndId(getState(), itemType, itemId)
+		const { temp, targetUrl } = newItem
+		const { tempUrl, destinationUrl } = temp
+		try {
+			const response = destinationUrl
+				? await getCategories({ tempUrl: null, targetUrl: destinationUrl })
+				: await getCategories({ tempUrl, targetUrl })
+			console.log('RESPONSE', response)
+			if (response) {
+				const newTargets = response.categories
+					.map(i => ({
+						tag: i.name,
+						score: Math.round(i.confidence * 100),
+					}))
+					.map(t => {
+						return {
+							collection: 'targeting',
+							source: 'googleCategories',
+							label: t(`TARGET_LABEL_GOOGLECATEGORIES`),
+							placeholder: t(`TARGET_LABEL_GOOGLECATEGORIES`),
+							target: { ...t },
+						}
+					})
+				const targets = getState().memory.newItem[itemType].temp.targets || []
+				const uniqueTargets = [...targets, ...newTargets].filter(
+					(value, index, self) => {
+						return (
+							self.findIndex(v => v.target.tag === value.target.tag) === index
+						)
+					}
+				)
+				const newTargetCount = uniqueTargets.length - targets.length
+				newTargetCount > 0
+					? addToast({
+							dispatch: dispatch,
+							type: 'accept',
+							toastStr: 'ADDED_CATEGORY_SUGGESTIONS_IF_MISSING',
+							args: [newTargets.length],
+					  })
+					: addToast({
+							dispatch: dispatch,
+							type: 'warning',
+							toastStr: 'NO_CATEGORY_SUGGESTIONS_FOUND',
+							args: [newTargets.length],
+					  })
+				updateSpinner('targeting-suggestions', false)(dispatch)
+				return uniqueTargets
+			}
+		} catch (err) {
+			console.error('ERR_GETTING_CATEGORY_SUGGESTIONS', err)
+			addToast({
+				dispatch,
+				type: 'cancel',
+				toastStr: 'ERR_GETTING_CATEGORY_SUGGESTIONS',
+				args: [err],
+			})
+			return []
+		}
+		updateSpinner('targeting-suggestions', false)(dispatch)
 	}
 }
