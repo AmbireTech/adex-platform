@@ -44,7 +44,7 @@ export class Toast extends Component {
 
 	close = id => {
 		this.setState({ active: false })
-		this.props.actions.removeToast(id)
+		setTimeout(() => this.props.actions.removeToast(id), 100)
 	}
 
 	render() {
@@ -77,7 +77,7 @@ export class Toast extends Component {
 							{toast.action && toast.action}
 							{!toast.unclosable && (
 								<IconButton
-									key='close'
+									key={`close-${toast.id}`}
 									aria-label='Close'
 									color='inherit'
 									size='small'
