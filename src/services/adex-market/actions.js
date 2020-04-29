@@ -145,6 +145,25 @@ export const postAdSlot = ({ slot, authSig }) => {
 		.then(processResponse)
 }
 
+export const getCategories = ({ tempUrl, targetUrl }) => {
+	return fetch(tempUrl)
+		.then(resp => {
+			return resp.blob()
+		})
+		.then(imageBlob => {
+			const formData = new FormData()
+			tempUrl && formData.append('media', imageBlob, 'image.jpeg')
+			formData.append('targetUrl', targetUrl)
+			return requester
+				.fetch({
+					route: 'tags/getCategories',
+					method: 'POST',
+					body: formData,
+				})
+				.then(processResponse)
+		})
+}
+
 export const updateAdSlot = ({ slot, id, authSig }) => {
 	return requester
 		.fetch({
