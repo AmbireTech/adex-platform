@@ -389,7 +389,12 @@ export function updateSlotPasback({
 		}
 
 		const onValid = () => {
-			updateMultipleFields(newValues, ['targetUrl', 'mediaUrl'])
+			updateMultipleFields(newValues, [
+				{
+					name: 'passbackData',
+					fields: ['targetUrl', 'mediaUrl', 'mediaMime'],
+				},
+			])
 			onValidProp()
 		}
 
