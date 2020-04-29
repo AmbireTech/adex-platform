@@ -247,9 +247,9 @@ export default function GettingStarted(props) {
 							justifyContent='space-between'
 						>
 							<Typography variant={'h6'}>
-								{`${t('GETTING_STARTED_HEADING')} ${
+								{`${t('GETTING_STARTED_HEADING')} (${
 									side === 'publisher' ? t('PUBLISHER') : t('ADVERTISER')
-								}`}
+								})`}
 							</Typography>
 
 							<Box display='flex' flexDirection='row' alignItems='center'>
