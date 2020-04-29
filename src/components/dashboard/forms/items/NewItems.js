@@ -32,7 +32,7 @@ import {
 
 import { slotSources, unitSources } from 'selectors'
 
-const AdSlotTargeting = props => (
+export const AdSlotTargeting = props => (
 	<NewItemTargeting
 		{...props}
 		itemType='AdSlot'

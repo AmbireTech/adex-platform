@@ -2,14 +2,20 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
 import { makeStyles } from '@material-ui/core/styles'
-import { Grid, Slider, IconButton, Box } from '@material-ui/core'
+import {
+	Grid,
+	Slider,
+	IconButton,
+	Box,
+	Typography,
+	TextField,
+} from '@material-ui/core'
 import { Cancel as CancelIcon, Add as AddIcon } from '@material-ui/icons'
 import Autocomplete from 'components/common/autocomplete'
-import Typography from '@material-ui/core/Typography'
 import Dropdown from 'components/common/dropdown'
 
-import { t, selectTargetingSources, selectNewItemByType } from 'selectors'
-import { execute, updateNewItemTargets } from 'actions'
+import { t, selectTargetingSources, selectNewItemByTypeAndId } from 'selectors'
+import { execute, updateNewItemTarget } from 'actions'
 
 const useStyles = makeStyles(theme => ({
 	slider: {
@@ -42,44 +48,71 @@ const Targets = ({
 	label,
 	index,
 	target,
-	classes,
-	invalidFields,
+	// classes,
+	// invalidFields,
+	itemId,
 	itemType,
 }) => {
 	const id = `target-${index}`
 	return (
 		<Grid container spacing={2} alignItems='center'>
 			<Grid item xs={12} md={6}>
-				<Autocomplete
-					id={id}
-					direction='auto'
-					openOnClick
-					required={true}
-					// error={invalidFields[id] && invalidFields[id].dirty}
-					// errorText={
-					// 	invalidFields[id] && !!invalidFields[id].dirty
-					// 		? invalidFields[id].errMsg
-					// 		: null
-					// }
-					onChange={tag => {
-						execute(
-							updateNewItemTargets({
-								index,
-								itemType,
-								target: { target: { ...target, tag } },
-								collection,
-							})
-						)
-					}}
-					label={label}
-					placeholder={placeholder}
-					source={source}
-					value={target.tag}
-					suggestionMatch='anywhere'
-					showSuggestionsWhenValueIsSet={true}
-					allowCreate={!source.length}
-					variant='outlined'
-				/>
+				{source.length ? (
+					<Autocomplete
+						id={id}
+						fullWidth
+						direction='auto'
+						openOnClick
+						required={true}
+						// error={invalidFields[id] && invalidFields[id].dirty}
+						// errorText={
+						// 	invalidFields[id] && !!invalidFields[id].dirty
+						// 		? invalidFields[id].errMsg
+						// 		: null
+						// }
+						onChange={tag => {
+							execute(
+								updateNewItemTarget({
+									index,
+									itemType,
+									itemId,
+									target: { target: { ...target, tag } },
+									collection,
+								})
+							)
+						}}
+						label={label}
+						placeholder={placeholder}
+						source={source}
+						value={target.tag}
+						suggestionMatch='anywhere'
+						showSuggestionsWhenValueIsSet={true}
+						allowCreate={!source.length}
+						variant='outlined'
+					/>
+				) : (
+					<TextField
+						fullWidth
+						variant='outlined'
+						type='text'
+						required
+						name='name'
+						value={target.tag}
+						label={label}
+						onChange={ev =>
+							execute(
+								updateNewItemTarget({
+									index,
+									itemType,
+									itemId,
+									target: { target: { ...target, tag: ev.target.value } },
+									collection,
+								})
+							)
+						}
+						maxLength={120}
+					/>
+				)}
 			</Grid>
 			<Grid item xs={12} md={6}>
 				<Box
@@ -88,7 +121,7 @@ const Targets = ({
 					flexWrap='wrap'
 					alignItems='center'
 				>
-					<Box flexGrow={1} p={1}>
+					<Box flexGrow={1}>
 						<Typography id={`target-score-${index}`}>
 							{/*TODO: Translate target name*/}
 							{t('TARGET_SCORE_LABEL', {
@@ -107,9 +140,10 @@ const Targets = ({
 							marks={marks}
 							onChange={(ev, score) =>
 								execute(
-									updateNewItemTargets({
+									updateNewItemTarget({
 										index,
 										itemType,
+										itemId,
 										target: { target: { ...target, score } },
 										collection,
 									})
@@ -121,9 +155,10 @@ const Targets = ({
 						<IconButton
 							onClick={() =>
 								execute(
-									updateNewItemTargets({
+									updateNewItemTarget({
 										index,
 										itemType,
+										itemId,
 										target,
 										collection,
 										remove: true,
@@ -140,61 +175,62 @@ const Targets = ({
 	)
 }
 
-const NewItemTargeting = ({ itemType, sourcesSelector }) => {
+const NewItemTargeting = ({ itemType, itemId, sourcesSelector }) => {
 	const SOURCES = useSelector(sourcesSelector)
 	const SourcesSelect = useSelector(() => selectTargetingSources(SOURCES))
 	const classes = useStyles()
 
-	const { temp } = useSelector(state => selectNewItemByType(state, itemType))
+	const { temp } = useSelector(state =>
+		selectNewItemByTypeAndId(state, itemType, itemId)
+	)
 	const { targets = [] } = temp
 
 	return (
-		<div>
-			<Grid container spacing={1}>
-				<Grid item xs={12}>
-					{[...targets].map(
-						(
-							{ source = '', collection, label, placeholder, target = {} } = {},
-							index
-						) => (
-							<Targets
-								key={`${collection}-${index}`}
-								label={t(label)}
-								placeholder={t(placeholder)}
-								index={index}
-								source={(SOURCES[source] || {}).src || []}
-								collection={collection}
-								target={target}
-								itemType={itemType}
-								t={t}
-								classes={classes}
-							/>
-						)
-					)}
-				</Grid>
-				<Grid item xs={12}>
-					<Dropdown
-						variant='outlined'
-						fullWidth
-						onChange={target => {
-							execute(
-								updateNewItemTargets({
-									itemType,
-									target,
-									collection: target.collection,
-								})
-							)
-						}}
-						source={[...SourcesSelect]}
-						value={''}
-						label={t('NEW_TARGET')}
-						htmlId='ad-type-dd'
-						name='adType'
-						IconComponent={AddIcon}
-					/>
-				</Grid>
+		<Grid container spacing={1}>
+			<Grid item xs={12}>
+				{[...targets].map(
+					(
+						{ source = '', collection, label, placeholder, target = {} } = {},
+						index
+					) => (
+						<Targets
+							key={`${collection}-${index}`}
+							label={t(label)}
+							placeholder={t(placeholder)}
+							index={index}
+							source={(SOURCES[source] || {}).src || []}
+							itemId={itemId}
+							collection={collection}
+							target={target}
+							itemType={itemType}
+							classes={classes}
+						/>
+					)
+				)}
 			</Grid>
-		</div>
+			<Grid item xs={12}>
+				<Dropdown
+					variant='outlined'
+					fullWidth
+					onChange={target => {
+						execute(
+							updateNewItemTarget({
+								itemType,
+								itemId,
+								target,
+								collection: target.collection,
+							})
+						)
+					}}
+					source={[...SourcesSelect]}
+					value={''}
+					label={t('NEW_TARGET')}
+					htmlId='ad-type-dd'
+					name='adType'
+					IconComponent={AddIcon}
+				/>
+			</Grid>
+		</Grid>
 	)
 }
 

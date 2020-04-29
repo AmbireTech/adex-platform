@@ -676,8 +676,6 @@ export function validateSchemaProp({ validateId, value, prop, schema, dirty }) {
 		const result = Joi.validate(value, schema)
 		const isValid = !result.error
 
-		console.log('result', result)
-
 		await validate(validateId, prop, {
 			isValid,
 			err: { msg: result.error ? result.error.message : '' },
