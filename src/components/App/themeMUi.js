@@ -57,6 +57,21 @@ export const theme = createMuiTheme({
 			outlined: {
 				borderRadius: 0,
 			},
+			contained: {
+				boxShadow: 0,
+				'&:hover': {
+					boxShadow: 0,
+					'@media (hover: none)': {
+						boxShadow: 0,
+					},
+				},
+				'&$focusVisible': {
+					boxShadow: 0,
+				},
+				'&:active': {
+					boxShadow: 0,
+				},
+			},
 		},
 		MuiTableCell: {
 			head: {
