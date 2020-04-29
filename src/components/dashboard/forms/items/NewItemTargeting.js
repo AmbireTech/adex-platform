@@ -9,13 +9,14 @@ import {
 	Box,
 	Typography,
 	TextField,
+	Button,
 } from '@material-ui/core'
 import { Cancel as CancelIcon, Add as AddIcon } from '@material-ui/icons'
 import Autocomplete from 'components/common/autocomplete'
 import Dropdown from 'components/common/dropdown'
 
 import { t, selectTargetingSources, selectNewItemByTypeAndId } from 'selectors'
-import { execute, updateNewItemTarget } from 'actions'
+import { execute, updateNewItemTarget, getCategorySuggestions } from 'actions'
 
 const useStyles = makeStyles(theme => ({
 	slider: {
@@ -187,6 +188,20 @@ const NewItemTargeting = ({ itemType, itemId, sourcesSelector }) => {
 
 	return (
 		<Grid container spacing={1}>
+			<Grid item xs={12}>
+				<Button
+					variant='contained'
+					color='primary'
+					size='large'
+					onClick={async () => {
+						execute(getCategorySuggestions({ itemType, itemId }))
+					}}
+					fullWidth
+					disableElevation
+				>
+					TEST
+				</Button>
+			</Grid>
 			<Grid item xs={12}>
 				{[...targets].map(
 					(
