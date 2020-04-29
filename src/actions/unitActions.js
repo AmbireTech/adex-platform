@@ -256,12 +256,13 @@ export function getCategorySuggestions({ itemType, itemId }) {
 	return async function(dispatch, getState) {
 		updateSpinner('targeting-suggestions', true)(dispatch)
 		const newItem = selectNewItemByTypeAndId(getState(), itemType, itemId)
-		const { temp, targetUrl } = newItem
-		const { tempUrl, destinationUrl } = temp
+		const { temp, targetUrl, website } = newItem
+		const { tempUrl } = temp
 		try {
-			const response = destinationUrl
-				? await getCategories({ tempUrl: null, targetUrl: destinationUrl })
-				: await getCategories({ tempUrl, targetUrl })
+			const response = await getCategories({
+				tempUrl,
+				targetUrl: targetUrl || website,
+			})
 			console.log('RESPONSE', response)
 			if (response) {
 				const newTargets = response.categories
@@ -269,13 +270,13 @@ export function getCategorySuggestions({ itemType, itemId }) {
 						tag: i.name,
 						score: Math.round(i.confidence * 100),
 					}))
-					.map(t => {
+					.map(target => {
 						return {
 							collection: 'targeting',
 							source: 'googleCategories',
 							label: t(`TARGET_LABEL_GOOGLECATEGORIES`),
 							placeholder: t(`TARGET_LABEL_GOOGLECATEGORIES`),
-							target: { ...t },
+							target: { ...target },
 						}
 					})
 				const targets = getState().memory.newItem[itemType].temp.targets || []
@@ -289,28 +290,29 @@ export function getCategorySuggestions({ itemType, itemId }) {
 				const newTargetCount = uniqueTargets.length - targets.length
 				newTargetCount > 0
 					? addToast({
-							dispatch: dispatch,
 							type: 'accept',
-							toastStr: 'ADDED_CATEGORY_SUGGESTIONS_IF_MISSING',
-							args: [newTargets.length],
-					  })
+							label: t('ADDED_CATEGORY_SUGGESTIONS_IF_MISSING', {
+								args: [newTargets.length],
+							}),
+							timeout: 20000,
+					  })(dispatch)
 					: addToast({
-							dispatch: dispatch,
 							type: 'warning',
-							toastStr: 'NO_CATEGORY_SUGGESTIONS_FOUND',
-							args: [newTargets.length],
-					  })
-				updateSpinner('targeting-suggestions', false)(dispatch)
-				return uniqueTargets
+							label: t('NO_CATEGORY_SUGGESTIONS_FOUND', {
+								args: [newTargets.length],
+							}),
+							timeout: 20000,
+					  })(dispatch)
+				// updateSpinner('targeting-suggestions', false)(dispatch)
+				// return uniqueTargets
 			}
 		} catch (err) {
 			console.error('ERR_GETTING_CATEGORY_SUGGESTIONS', err)
 			addToast({
-				dispatch,
 				type: 'cancel',
 				toastStr: 'ERR_GETTING_CATEGORY_SUGGESTIONS',
 				args: [err],
-			})
+			})(dispatch)
 			return []
 		}
 		updateSpinner('targeting-suggestions', false)(dispatch)
