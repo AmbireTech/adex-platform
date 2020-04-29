@@ -81,7 +81,7 @@ function ImgForm(props) {
 	}
 
 	const saveCropped = async () => {
-		if (imgRef && crop.width && crop.height) {
+		if (imgRef && crop.width > 1 && crop.height > 1) {
 			const croppedBlob = await getCroppedImgUrl(
 				imgRef,
 				crop,
