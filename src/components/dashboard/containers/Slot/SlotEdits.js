@@ -70,22 +70,10 @@ const PassbackEdit = WithDialog(PassbackSteps)
 export const SlotEdits = ({ item, ...hookProps }) => {
 	return (
 		<Box display='flex' flexDirection='row' flexWrap='wrap'>
-			<TargetEdit
-				btnLabel='UPDATE_TAGS'
-				title='UPDATE_SLOT_TAGS'
-				itemId={item.id}
-				disableBackdropClick
-				updateField={hookProps.updateField}
-				onClick={() =>
-					execute(
-						mapCurrentToNewTargeting({
-							itemId: item.id,
-							dirtyProps: hookProps.dirtyProps,
-						})
-					)
-				}
-			/>
 			<PassbackEdit
+				fullWidth
+				variant='contained'
+				color='secondary'
 				btnLabel='UPDATE_PASSBACK'
 				title='UPDATE_SLOT_PASSBACK'
 				itemId={item.id}
@@ -100,6 +88,22 @@ export const SlotEdits = ({ item, ...hookProps }) => {
 					)
 				}
 			/>
+			{/* // TODO: Will use it for campaign targeting editing */}
+			{/* <TargetEdit
+				btnLabel='UPDATE_TAGS'
+				title='UPDATE_SLOT_TAGS'
+				itemId={item.id}
+				disableBackdropClick
+				updateField={hookProps.updateField}
+				onClick={() =>
+					execute(
+						mapCurrentToNewTargeting({
+							itemId: item.id,
+							dirtyProps: hookProps.dirtyProps,
+						})
+					)
+				} 
+			 /> */}
 		</Box>
 	)
 }
