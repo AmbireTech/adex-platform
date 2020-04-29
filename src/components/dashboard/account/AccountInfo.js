@@ -126,7 +126,7 @@ function AccountInfo() {
 									copy(identityAddress)
 									execute(
 										addToast({
-											type: 'accept',
+											type: 'info',
 											label: t('COPIED_TO_CLIPBOARD'),
 											timeout: 5000,
 										})
@@ -145,7 +145,7 @@ function AccountInfo() {
 								variant='contained'
 								color='primary'
 								token='DAI'
-								size='small'
+								size='large'
 								identityAvailable={availableIdentityBalanceMainToken}
 							/>
 						)
@@ -176,7 +176,7 @@ function AccountInfo() {
 									variant='contained'
 									color='secondary'
 									aria-label='delete'
-									size='small'
+									size='large'
 								>
 									<CreditCardIcon className={classes.iconBtnLeft} />
 									{t('TOP_UP')}
@@ -191,7 +191,7 @@ function AccountInfo() {
 									identityAvailable={availableIdentityBalanceMainToken}
 									identityAvailableRaw={availableIdentityBalanceMainToken}
 									token={symbol}
-									size='small'
+									size='large'
 								/>
 							</Box>
 						</Fragment>
@@ -244,7 +244,7 @@ function AccountInfo() {
 										fullWidth
 										variant='contained'
 										color='secondary'
-										size='small'
+										size='large'
 										identityAvailable={availableIdentityBalanceMainToken}
 									/>
 								}
@@ -288,7 +288,7 @@ function AccountInfo() {
 													fullWidth
 													variant='contained'
 													color='primary'
-													size='small'
+													size='large'
 												/>
 											</Box>
 										</Box>
