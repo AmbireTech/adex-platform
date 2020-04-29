@@ -7,15 +7,15 @@ export const PRIMARY_LIGHT = '#5fa3ef'
 export const PRIMARY_LIGHTEST = '#96d4ff'
 export const PRIMARY_DARK = '#004a8b'
 export const PRIMARY_DARKEST = '#00235d'
-export const SECONDARY = '#FFAC00'
-export const SECONDARY_LIGHT = '#ffde4b'
-export const SECONDARY_DARK = '#c67d00'
+export const SECONDARY = '#1BC69F'
+export const SECONDARY_LIGHT = '#65fad0'
+export const SECONDARY_DARK = '#009471'
 
-export const ALEX_GREY = '#3f3e3e'
-export const ACCENT_ONE = '#57467B'
-export const ACCENT_ONE_LIGHT = '#dedded'
-export const ACCENT_TWO = '#006969'
-export const ACCENT_TWO_LIGHT = '#69dead'
+export const ALEX_GREY = '#3C3C3C'
+export const ACCENT_ONE = '#FF6942'
+export const ACCENT_ONE_LIGHT = '#FF9B6F'
+export const ACCENT_TWO = '#FFAC00'
+export const ACCENT_TWO_LIGHT = '#FFDE4B'
 
 export const palette = {
 	primary: {
