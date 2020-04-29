@@ -35,7 +35,7 @@ export const DirtyProps = ({ dirtyProps = [], returnPropToInitialState }) => {
 								size='small'
 								className={classes.changeChip}
 								key={p}
-								label={t(p, { isProp: true })}
+								label={t(p.name || p, { isProp: true })}
 								onDelete={() => {
 									returnPropToInitialState(p)
 								}}
@@ -261,7 +261,7 @@ export const ItemFallbackMediaURL = ({ targetUrl = '' }) => {
 export const MediaCard = ({ mediaUrl = '', mediaMime = '', label = '' }) => {
 	const classes = useStyles()
 	return (
-		<Card className={classes.card} raised={false}>
+		<Card className={classes.card} raised={false} variant='outlined'>
 			<CardMedia classes={{ root: classes.mediaRoot }}>
 				<Img
 					allowFullscreen={true}

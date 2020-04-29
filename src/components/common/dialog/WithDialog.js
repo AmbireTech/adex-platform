@@ -40,6 +40,7 @@ const useStyles = makeStyles(styles)
 export default function WithDialogHoc(Decorated) {
 	function WithDialog(props) {
 		const {
+			disableBackdropClick = false,
 			forwardedRef,
 			iconButton,
 			textButton,
@@ -125,7 +126,7 @@ export default function WithDialogHoc(Decorated) {
 					{!iconButton && btnLabelTranslated}
 				</ButtonComponent>
 				<Dialog
-					// disableBackdropClick
+					disableBackdropClick={disableBackdropClick}
 					// disableEscapeKeyDown
 					// maxWidth="xs"
 					// fullScreen

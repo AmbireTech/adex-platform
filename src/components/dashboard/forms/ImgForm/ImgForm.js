@@ -1,9 +1,8 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import Img from 'components/common/img/Img'
 // import debounce from 'debounce'
 import Dropzone from 'react-dropzone'
-import Translate from 'components/translate/Translate'
 import { Button, Typography, Grid } from '@material-ui/core'
 import ReactCrop from 'react-image-crop'
 import { getCroppedImgUrl } from 'services/images/crop'
@@ -14,78 +13,54 @@ import {
 	CloudUpload as FileUploadIcon,
 } from '@material-ui/icons'
 import { isVideoMedia } from 'helpers/mediaHelpers.js'
-import { withStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { PropRow } from 'components/common/dialog/content'
+import { t } from 'selectors'
 
-class ImgForm extends Component {
-	constructor(props) {
-		super(props)
-		const { size, imgSrc, mime } = props
-		const aspect = size ? size.width / size.height : undefined
+const useStyles = makeStyles(styles)
 
-		this.state = {
-			imgSrc: imgSrc || '',
-			mime: mime || '',
-			imgName: '',
-			cropMode: false,
-			crop: { aspect: aspect },
-		}
-	}
+function ImgForm(props) {
+	const classes = useStyles()
+	const { size, onChange, label, additionalInfo, errMsg } = props
+	const aspect = size ? size.width / size.height : undefined
 
-	onDrop = (acceptedFiles, rejectedFiles) => {
-		const that = this
+	const [imgRef, setImgRef] = useState(null)
+	const [crop, setCrop] = useState({ aspect })
+	const [cropMode, setCropMode] = useState(false)
+	const [imgName, setImgName] = useState('')
+	const [mime, setMime] = useState(props.mime)
+	const [imgSrc, setImgSrc] = useState(props.imgSrc)
+
+	useEffect(() => {
+		setCrop({ aspect })
+	}, [aspect])
+
+	useEffect(() => {
+		setMime(props.mime)
+		setImgSrc(props.imgSrc)
+	}, [props.mime, props.imgSrc])
+
+	const onLoad = useCallback(img => {
+		setImgRef(img)
+	}, [])
+
+	const onDrop = (acceptedFiles, rejectedFiles) => {
 		const file = acceptedFiles[0]
 		if (!file) return
 		const objectUrl = URL.createObjectURL(file)
+		setImgSrc(objectUrl)
+		setImgName(file.name)
+		setMime(file.type)
 
-		that.setState({
-			imgSrc: objectUrl,
-			imgName: file.name,
-			mime: file.type,
-		})
 		// TODO: Maybe get width and height here instead on ing validation hoc
-		this.props.onChange({
+		onChange({
 			tempUrl: objectUrl,
 			mime: file.type,
 		})
 	}
 
-	onRemove = e => {
-		this.preventBubbling(e)
-
-		const { imgSrc } = this.state
-
-		if (imgSrc) {
-			URL.revokeObjectURL(imgSrc)
-			this.setState({ imgSrc: '', imgName: '' })
-			this.props.onChange({ tempUrl: null, mime: null })
-		}
-	}
-
-	onCropChange = crop => {
-		this.setState({ crop })
-	}
-
-	saveCropped = () => {
-		const { imgSrc, crop, mime, imgName } = this.state
-		const { onChange, size } = this.props
-		getCroppedImgUrl({
-			objUrl: imgSrc,
-			pixelCrop: crop,
-			fileName: `cropped-${imgName}`,
-			size,
-		}).then(croppedBlob => {
-			URL.revokeObjectURL(imgSrc)
-			this.setState({ imgSrc: croppedBlob, cropMode: false })
-			onChange({
-				tempUrl: croppedBlob,
-				mime,
-			})
-		})
-	}
-
-	preventBubbling = e => {
+	const preventBubbling = e => {
 		if (e.stopPropagation) {
 			e.stopPropagation()
 		}
@@ -94,9 +69,38 @@ class ImgForm extends Component {
 		}
 	}
 
-	UploadInfo = () => {
-		const { t, classes, size, errMsg } = this.props
-		const { imgSrc, mime } = this.state
+	const onRemove = e => {
+		preventBubbling(e)
+
+		if (imgSrc) {
+			URL.revokeObjectURL(imgSrc)
+			setImgSrc('')
+			setImgName('')
+			onChange({ tempUrl: null, mime: null })
+		}
+	}
+
+	const saveCropped = async () => {
+		if (imgRef && crop.width > 1 && crop.height > 1) {
+			const croppedBlob = await getCroppedImgUrl(
+				imgRef,
+				crop,
+				`cropped-${imgName}`,
+				size
+			)
+			URL.revokeObjectURL(imgSrc)
+			setImgSrc(croppedBlob)
+			setCropMode(false)
+			onChange({
+				tempUrl: croppedBlob,
+				mime,
+			})
+		} else {
+			// TODO: Error
+		}
+	}
+
+	const UploadInfo = () => {
 		return (
 			<div className={classes.uploadInfo}>
 				{imgSrc && !isVideoMedia(mime) ? (
@@ -107,8 +111,8 @@ class ImgForm extends Component {
 								variant='contained'
 								color='primary'
 								onClick={e => {
-									this.preventBubbling(e)
-									this.setState({ cropMode: true })
+									preventBubbling(e)
+									setCropMode(true)
 								}}
 								className={classes.dropzoneBtn}
 							>
@@ -119,7 +123,7 @@ class ImgForm extends Component {
 						&nbsp;
 						<Button
 							variant='contained'
-							onClick={this.onRemove}
+							onClick={onRemove}
 							className={classes.dropzoneBtn}
 						>
 							<ClearIcon className={classes.leftIcon} />
@@ -144,120 +148,111 @@ class ImgForm extends Component {
 		)
 	}
 
-	// TODO: CLEAR IMG BLOB!!!!
-	render() {
-		const { t, classes, label, additionalInfo } = this.props
-		const { crop, cropMode, imgName, imgSrc, mime } = this.state
-
-		const videoSrc = isVideoMedia(mime)
-		return (
-			<div className={classes.imgForm}>
-				<PropRow
-					left={
-						imgSrc && imgName
-							? `${label || 'Image'}: ${imgName}`
-							: label || 'Upload image'
-					}
-					right={
+	const videoSrc = isVideoMedia(mime)
+	return (
+		<div className={classes.imgForm}>
+			<PropRow
+				left={
+					imgSrc && imgName
+						? `${label || 'Image'}: ${imgName}`
+						: label || 'Upload image'
+				}
+				right={
+					<div>
 						<div>
-							<div>
-								{cropMode ? (
-									<div
-										className={classes.dropzone}
-										onClick={this.preventBubbling}
+							{cropMode ? (
+								<div className={classes.dropzone} onClick={preventBubbling}>
+									<Grid
+										container
+										spacing={2}
+										alignContent='center'
+										alignItems='center'
 									>
-										<Grid
-											container
-											spacing={2}
-											alignContent='center'
-											alignItems='center'
-										>
-											<Grid item sm={12} md={8}>
-												<ReactCrop
-													style={{ maxWidth: '100%', maxHeight: 320 }}
-													imageStyle={{
-														maxWidth: '100%',
-														maxHeight: '320px',
-														width: 'auto',
-														height: 'auto',
-													}}
-													className={classes.imgDropzonePreview}
-													crop={crop}
-													src={imgSrc || ''}
-													onChange={this.onCropChange}
-												/>
-											</Grid>
+										<Grid item sm={12} md={8}>
+											<ReactCrop
+												style={{ maxWidth: '100%', maxHeight: 320 }}
+												imageStyle={{
+													maxWidth: '100%',
+													maxHeight: '320px',
+													width: 'auto',
+													height: 'auto',
+												}}
+												onImageLoaded={onLoad}
+												className={classes.imgDropzonePreview}
+												crop={crop}
+												src={imgSrc || ''}
+												onChange={c => setCrop(c)}
+											/>
+										</Grid>
 
-											<Grid item sm={12} md={4}>
-												<Typography color='primary' gutterBottom>
-													{t('CROP_MODE_MSG')}
-												</Typography>
-												<Button
-													variant='contained'
-													color='primary'
-													onClick={this.saveCropped}
-													disabled={!crop.width || !crop.height}
-													className={classes.dropzoneBtn}
-												>
-													<SaveIcon className={classes.leftIcon} />
-													{t('IMG_FORM_SAVE_CROP')}
-												</Button>
-												<Button
-													variant='contained'
-													onClick={() => this.setState({ cropMode: false })}
-													className={classes.dropzoneBtn}
-												>
-													<ClearIcon className={classes.leftIcon} />
-													{t('IMG_FORM_CANCEL_CROP')}
-												</Button>
-											</Grid>
+										<Grid item sm={12} md={4}>
+											<Typography color='primary' gutterBottom>
+												{t('CROP_MODE_MSG')}
+											</Typography>
+											<Button
+												variant='contained'
+												color='primary'
+												onClick={saveCropped}
+												disabled={!crop.width || !crop.height}
+												className={classes.dropzoneBtn}
+											>
+												<SaveIcon className={classes.leftIcon} />
+												{t('IMG_FORM_SAVE_CROP')}
+											</Button>
+											<Button
+												variant='contained'
+												onClick={() => setCropMode(false)}
+												className={classes.dropzoneBtn}
+											>
+												<ClearIcon className={classes.leftIcon} />
+												{t('IMG_FORM_CANCEL_CROP')}
+											</Button>
 										</Grid>
-									</div>
-								) : (
-									<Dropzone
-										accept='.jpeg,.jpg,.png,.mp4'
-										onDrop={this.onDrop}
-										className={classes.dropzone}
+									</Grid>
+								</div>
+							) : (
+								<Dropzone
+									accept='.jpeg,.jpg,.png,.mp4'
+									onDrop={onDrop}
+									className={classes.dropzone}
+								>
+									<Grid
+										container
+										spacing={2}
+										alignContent='center'
+										alignItems='center'
 									>
-										<Grid
-											container
-											spacing={2}
-											alignContent='center'
-											alignItems='center'
-										>
-											<Grid item sm={12} md={8}>
-												{videoSrc ? (
-													<video controls src={imgSrc} type='video/mp4'></video>
-												) : (
-													<Img
-														src={imgSrc}
-														alt={'name'}
-														className={classes.imgDropzonePreview}
-													/>
-												)}
-											</Grid>
-											<Grid item sm={12} md={4}>
-												<this.UploadInfo />
-											</Grid>
+										<Grid item sm={12} md={8}>
+											{videoSrc ? (
+												<video controls src={imgSrc} type='video/mp4'></video>
+											) : (
+												<Img
+													src={imgSrc}
+													alt={'name'}
+													className={classes.imgDropzonePreview}
+												/>
+											)}
 										</Grid>
-									</Dropzone>
-								)}
-							</div>
-							<div>
-								<small> {additionalInfo} </small>
-							</div>
+										<Grid item sm={12} md={4}>
+											<UploadInfo />
+										</Grid>
+									</Grid>
+								</Dropzone>
+							)}
 						</div>
-					}
-				/>
-			</div>
-		)
-	}
+						<div>
+							<small> {additionalInfo} </small>
+						</div>
+					</div>
+				}
+			/>
+		</div>
+	)
 }
 
 ImgForm.propTypes = {
-	imgSrc: PropTypes.string,
 	label: PropTypes.string,
 	size: PropTypes.object,
 }
 
-export default Translate(withStyles(styles)(ImgForm))
+export default ImgForm

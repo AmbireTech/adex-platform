@@ -3,26 +3,28 @@ import {
 	RESET_NEW_ITEM,
 	RESET_ALL_NEW_ITEMS,
 } from 'constants/actionTypes'
-import { selectNewItems } from 'selectors'
+import { selectNewItemByTypeAndId } from 'selectors'
 import { Base, Models } from 'adex-models'
 import { updateSpinner, handleAfterValidation } from 'actions'
 
-export function updateNewItem(item, newValues, itemType, objModel) {
+export function updateNewItem(item, newValues, itemType, objModel, itemId) {
 	item = Base.updateObject({ item, newValues, objModel })
 	return function(dispatch) {
 		return dispatch({
 			type: UPDATE_NEW_ITEM,
 			item,
 			itemType,
+			itemId,
 		})
 	}
 }
 
-export function resetNewItem(item) {
+export function resetNewItem(itemType, itemId) {
 	return function(dispatch) {
 		return dispatch({
 			type: RESET_NEW_ITEM,
-			item: item,
+			itemType,
+			itemId,
 		})
 	}
 }
@@ -35,22 +37,23 @@ export function resetAllNewItems() {
 	}
 }
 
-export function updateNewItemAction(type, prop, value, newValues) {
+export function updateNewItemAction(type, prop, value, newValues, itemId) {
 	return async function(dispatch, getState) {
 		const state = getState()
-		const currentItem = selectNewItems(state)
+		const currentItem = selectNewItemByTypeAndId(state, type, itemId)
 		await updateNewItem(
-			currentItem[type],
+			currentItem,
 			newValues || { [prop]: value },
 			type,
-			Models.itemClassByName[type]
+			Models.itemClassByName[type],
+			itemId
 		)(dispatch)
 	}
 }
 
-export function updateNewSlot(prop, value, newValues) {
+export function updateNewSlot(prop, value, newValues, itemId) {
 	return async function(dispatch, getState) {
-		await updateNewItemAction('AdSlot', prop, value, newValues)(
+		await updateNewItemAction('AdSlot', prop, value, newValues, itemId)(
 			dispatch,
 			getState
 		)
@@ -75,16 +78,17 @@ export function updateNewCampaign(prop, value, newValues) {
 	}
 }
 
-export function updateNewItemTargets({
+export function updateNewItemTarget({
 	collection,
 	itemType,
+	itemId,
 	target = {},
 	index,
 	remove,
 }) {
 	return async function(dispatch, getState) {
 		const state = getState()
-		const { temp } = selectNewItems(state)[itemType]
+		const { temp } = selectNewItemByTypeAndId(state, itemType, itemId)
 		// We are keeping the state in temp because it dirty with extra data
 		const targets = [...(temp.targets || [])]
 		const hasIndex = Number.isInteger(index)
@@ -107,7 +111,7 @@ export function updateNewItemTargets({
 			temp: { ...temp, targets },
 		}
 
-		await updateNewItemAction(itemType, null, null, newValues)(
+		await updateNewItemAction(itemType, null, null, newValues, itemId)(
 			dispatch,
 			getState
 		)
