@@ -60,36 +60,47 @@ export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 	}, [dirtyProps, item, validateAndUpdateFn, validateId])
 
 	const returnPropToInitialState = useCallback(
-		propName => {
+		prop => {
 			const newItem = new objModel(item)
-			newItem[propName] = initialItemState[propName]
+			const dirtyIndex = dirtyProps.findIndex(
+				p => (p.name || p) === (prop.name || prop)
+			)
 
-			const dp = dirtyProps.filter(dp => {
-				return dp !== propName
-			})
+			if (dirtyIndex < -1) {
+				const newDirtyProps = [...dirtyProps]
+				const dpValue = newDirtyProps[dirtyIndex]
+				newDirtyProps.splice(dirtyIndex, 1)
 
-			setItem(newItem)
-			setDirtyProps(dp)
-			setActiveFields(propName, false)
-			validate(false)
+				if (dpValue.fields) {
+					dpValue.fields.forEach(
+						prop => (newItem[prop] = initialItemState[prop])
+					)
+				} else {
+					newItem[dpValue] = initialItemState[prop]
+				}
+
+				setItem(newItem)
+				setDirtyProps(newDirtyProps)
+				setActiveFields(prop.name || prop, false)
+				validate(false)
+			}
 		},
 		[dirtyProps, initialItemState, item, objModel, setActiveFields, validate]
 	)
 
 	const updateField = useCallback(
-		(field, value, skipDp) => {
+		(field, value, dpValue) => {
 			const newItem = new objModel(item)
 			newItem[field] = value
 
 			setItem(newItem)
-			if (!skipDp) {
-				const dp = dirtyProps.slice(0)
 
-				if (!dp.includes(field)) {
-					dp.push(field)
-				}
-				setDirtyProps(dp)
+			const dp = dirtyProps.slice(0)
+
+			if (!dp.some(p => (p.name || p) === (dpValue ? dpValue.name : field))) {
+				dp.push(field)
 			}
+			setDirtyProps(dp)
 		},
 		[dirtyProps, item, objModel]
 	)
@@ -102,7 +113,7 @@ export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 
 			const dp = dirtyProps.slice(0)
 			dirtyFields.forEach(field => {
-				if (!dp.includes(field)) {
+				if (!dp.some(p => (p.name || p) === (field.name || field))) {
 					dp.push(field)
 				}
 			})
