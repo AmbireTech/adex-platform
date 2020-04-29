@@ -1,27 +1,19 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import Snackbar from '@material-ui/core/Snackbar'
-import CheckCircleIcon from '@material-ui/icons/CheckCircle'
-import ErrorIcon from '@material-ui/icons/Error'
-import WarningIcon from '@material-ui/icons/Warning'
-import InfoIcon from '@material-ui/icons/Info'
-import CloseIcon from '@material-ui/icons/Close'
-import IconButton from '@material-ui/core/IconButton'
-import SnackbarContent from '@material-ui/core/SnackbarContent'
-import classnames from 'classnames'
-import { withStyles } from '@material-ui/core/styles'
-import { styles } from './styles'
+import { Snackbar, IconButton } from '@material-ui/core'
+import { Close } from '@material-ui/icons'
 
-const variantIcon = {
-	accept: CheckCircleIcon,
-	success: CheckCircleIcon,
-	warning: WarningIcon,
-	cancel: ErrorIcon,
-	error: ErrorIcon,
-	info: InfoIcon,
+import { Alert } from '@material-ui/lab'
+const typeToSeverity = {
+	accept: 'success',
+	success: 'success',
+	warning: 'warning',
+	info: 'info',
+	cancel: 'error',
+	error: 'error',
 }
 
 export class Toast extends Component {
@@ -57,10 +49,8 @@ export class Toast extends Component {
 
 	render() {
 		const { toast } = this.state
-		const { classes } = this.props
-		const Icon = variantIcon[toast.type]
 
-		if (!toast || !Icon) return null
+		if (!toast) return null
 
 		const anchorOrigin = toast.anchorOrigin || {
 			vertical: 'bottom',
@@ -79,35 +69,28 @@ export class Toast extends Component {
 				onClose={() => !toast.unclosable && this.close(toast.id)}
 				anchorOrigin={anchorOrigin}
 			>
-				<SnackbarContent
-					aria-describedby='client-snackbar'
-					message={
-						<span id='client-snackbar' className={classes.message}>
-							<Icon className={classnames(classes.icon, classes.iconVariant)} />
-							{(toast.label || '').toString()}
-						</span>
-					}
+				<Alert
+					severity={typeToSeverity[toast.type]}
+					variant='outlined'
 					action={[
-						toast.action && toast.action,
-						!toast.unclosable && (
-							<IconButton
-								key='close'
-								aria-label='Close'
-								color='inherit'
-								className={classes.close}
-								onClick={() => !toast.unclosable && this.close(toast.id)}
-							>
-								<CloseIcon className={classes.icon} />
-							</IconButton>
-						),
+						<Fragment>
+							{toast.action && toast.action}
+							{!toast.unclosable && (
+								<IconButton
+									key='close'
+									aria-label='Close'
+									color='inherit'
+									size='small'
+									onClick={() => !toast.unclosable && this.close(toast.id)}
+								>
+									<Close />
+								</IconButton>
+							)}
+						</Fragment>,
 					]}
-					className={classnames(classes.snackbar, {
-						[classes.top]: !!toast.top,
-						[classes.accept]: toast.type === 'accept',
-						[classes.cancel]: toast.type === 'cancel',
-						[classes.warning]: toast.type === 'warning',
-					})}
-				/>
+				>
+					{(toast.label || '').toString()}
+				</Alert>
 			</Snackbar>
 		)
 	}
@@ -135,4 +118,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(withStyles(styles)(Toast))
+)(Toast)
