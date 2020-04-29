@@ -184,7 +184,7 @@ export default function TopUp() {
 								fullWidth
 								disabled
 							>
-								{t('COMMING_SOON')}
+								{t('COMING_SOON')}
 							</Button>
 						</Box>
 					</Box>
