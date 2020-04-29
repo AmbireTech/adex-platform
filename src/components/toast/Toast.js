@@ -71,8 +71,8 @@ export class Toast extends Component {
 			>
 				<Alert
 					severity={typeToSeverity[toast.type]}
-					variant='outlined'
-					action={[
+					variant='filled'
+					action={
 						<Fragment>
 							{toast.action && toast.action}
 							{!toast.unclosable && (
@@ -86,8 +86,8 @@ export class Toast extends Component {
 									<Close />
 								</IconButton>
 							)}
-						</Fragment>,
-					]}
+						</Fragment>
+					}
 				>
 					{(toast.label || '').toString()}
 				</Alert>
