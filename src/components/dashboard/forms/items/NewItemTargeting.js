@@ -11,7 +11,11 @@ import {
 	TextField,
 	Button,
 } from '@material-ui/core'
-import { Cancel as CancelIcon, Add as AddIcon } from '@material-ui/icons'
+import {
+	Cancel as CancelIcon,
+	Add as AddIcon,
+	EmojiObjects,
+} from '@material-ui/icons'
 import Autocomplete from 'components/common/autocomplete'
 import Dropdown from 'components/common/dropdown'
 
@@ -198,8 +202,9 @@ const NewItemTargeting = ({ itemType, itemId, sourcesSelector }) => {
 					}}
 					fullWidth
 					disableElevation
+					startIcon={<EmojiObjects />}
 				>
-					TEST
+					{t('GET_CATEGORY_SUGGESTIONS')}
 				</Button>
 			</Grid>
 			<Grid item xs={12}>
