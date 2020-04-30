@@ -143,6 +143,13 @@ const autocompleteGendersSingleSelect = () => {
 	}))
 }
 
+const autocompleteGoogleVisionSingleSelect = () => {
+	return constants.GoogleVisionCategories.map(({ _id }) => ({
+		label: t(_id),
+		value: _id,
+	}))
+}
+
 const autocompleteTagsSingleSelect = () => {
 	return constants.PredefinedTags.map(({ _id }) => ({
 		label: t(_id),
@@ -152,12 +159,20 @@ const autocompleteTagsSingleSelect = () => {
 
 export const slotSources = () => ({
 	tags: { src: autocompleteTagsSingleSelect(), collection: 'tags' },
+	categories: {
+		src: autocompleteGoogleVisionSingleSelect(),
+		collection: 'targeting',
+	},
 	custom: { src: [], collection: 'tags' },
 })
 
 export const unitSources = () => ({
 	locations: {
 		src: autocompleteLocationsSingleSelect(),
+		collection: 'targeting',
+	},
+	categories: {
+		src: autocompleteGoogleVisionSingleSelect(),
 		collection: 'targeting',
 	},
 	genders: { src: autocompleteGendersSingleSelect(), collection: 'targeting' },
