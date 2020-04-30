@@ -6,6 +6,7 @@ import {
 	validate,
 	addToast,
 	getImgsIpfsFromBlob,
+	updateNewItemTarget,
 } from 'actions'
 import {
 	selectNewAdUnit,
@@ -263,23 +264,15 @@ export function getCategorySuggestions({ itemType, itemId }) {
 				tempUrl,
 				targetUrl: targetUrl || website,
 			})
-			console.log('RESPONSE', response)
 			if (response) {
-				const newTargets = response.categories
-					.map(i => ({
-						tag: i.name,
-						score: Math.round(i.confidence * 100),
-					}))
-					.map(target => {
-						return {
-							collection: 'targeting',
-							source: 'googleCategories',
-							label: t(`TARGET_LABEL_GOOGLECATEGORIES`),
-							placeholder: t(`TARGET_LABEL_GOOGLECATEGORIES`),
-							target: { ...target },
-						}
-					})
-				const targets = getState().memory.newItem[itemType].temp.targets || []
+				const newTargets = response.categories.map(i => ({
+					collection: 'targeting',
+					source: 'categories',
+					label: t(`TARGET_LABEL_GOOGLECATEGORIES`),
+					placeholder: t(`TARGET_LABEL_GOOGLECATEGORIES`),
+					target: { tag: i.name, score: Math.round(i.confidence * 100) },
+				}))
+				const { targets } = temp
 				const uniqueTargets = [...targets, ...newTargets].filter(
 					(value, index, self) => {
 						return (
@@ -287,33 +280,30 @@ export function getCategorySuggestions({ itemType, itemId }) {
 						)
 					}
 				)
-				const newTargetCount = uniqueTargets.length - targets.length
-				newTargetCount > 0
-					? addToast({
-							type: 'accept',
-							label: t('ADDED_CATEGORY_SUGGESTIONS_IF_MISSING', {
-								args: [newTargets.length],
-							}),
-							timeout: 20000,
-					  })(dispatch)
-					: addToast({
-							type: 'warning',
-							label: t('NO_CATEGORY_SUGGESTIONS_FOUND', {
-								args: [newTargets.length],
-							}),
-							timeout: 20000,
-					  })(dispatch)
-				// updateSpinner('targeting-suggestions', false)(dispatch)
-				// return uniqueTargets
+				uniqueTargets.map((target, index) => {
+					updateNewItemTarget({
+						index,
+						itemType,
+						itemId,
+						target,
+						collection: target.collection,
+					})(dispatch, getState)
+					return target
+				})
+				addToast({
+					type: 'accept',
+					label: t('ADDED_CATEGORY_SUGGESTIONS_IF_MISSING', {
+						args: [newTargets.length],
+					}),
+					timeout: 20000,
+				})(dispatch)
 			}
 		} catch (err) {
-			console.error('ERR_GETTING_CATEGORY_SUGGESTIONS', err)
 			addToast({
 				type: 'cancel',
 				toastStr: 'ERR_GETTING_CATEGORY_SUGGESTIONS',
 				args: [err],
 			})(dispatch)
-			return []
 		}
 		updateSpinner('targeting-suggestions', false)(dispatch)
 	}
