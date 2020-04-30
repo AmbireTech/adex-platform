@@ -6,7 +6,7 @@ import {
 	Mouse,
 	Equalizer,
 } from '@material-ui/icons'
-import { Box } from '@material-ui/core'
+import { Box, Button } from '@material-ui/core'
 import { Alert } from '@material-ui/lab'
 import { SimpleStatistics } from 'components/dashboard/charts/simplified'
 import Dropdown from 'components/common/dropdown'
@@ -74,11 +74,6 @@ const timeFrames = VALIDATOR_ANALYTICS_TIMEFRAMES.map(tf => {
 const metrics = {
 	publisher: [
 		{
-			label: t('LABEL_REVENUE'),
-			value: 'eventPayouts',
-			color: ACCENT_TWO,
-		},
-		{
 			label: t('LABEL_IMPRESSIONS'),
 			value: 'eventCounts',
 			color: PRIMARY,
@@ -87,6 +82,11 @@ const metrics = {
 			label: t('LABEL_CLICKS'),
 			value: 'eventCounts',
 			color: SECONDARY,
+		},
+		{
+			label: t('LABEL_REVENUE'),
+			value: 'eventPayouts',
+			color: ACCENT_TWO,
 		},
 		{
 			label: t('PROP_CPM'),
@@ -95,11 +95,6 @@ const metrics = {
 	],
 	advertiser: [
 		{
-			label: t('LABEL_SPEND'),
-			value: 'eventPayouts',
-			color: ACCENT_ONE,
-		},
-		{
 			label: t('LABEL_IMPRESSIONS'),
 			value: 'eventCounts',
 			color: PRIMARY,
@@ -108,6 +103,11 @@ const metrics = {
 			label: t('LABEL_CLICKS'),
 			value: 'eventCounts',
 			color: SECONDARY,
+		},
+		{
+			label: t('LABEL_SPEND'),
+			value: 'eventPayouts',
+			color: ACCENT_ONE,
 		},
 		{
 			label: t('PROP_CPM'),
@@ -201,6 +201,10 @@ export function BasicStats() {
 	const missingRevenuePointsAccepted = useSelector(
 		selectMissingRevenueDataPointsAccepted
 	)
+	const [data1Active, setData1Active] = useState(true)
+	const [data2Active, setData2Active] = useState(true)
+	const [data3Active, setData3Active] = useState(true)
+	const [data4Active, setData4Active] = useState(true)
 
 	const defaultLabels = getDefaultLabels({ start, end })
 
@@ -380,6 +384,7 @@ export function BasicStats() {
 						loading={!dataSynced}
 						title={`${formatNumberWithCommas(totalImpressions || 0)}`}
 						explain={t('EXPLAIN_TOTAL_IMPRESSIONS')}
+						onClick={() => setData1Active(!data1Active)}
 					>
 						<Visibility className={classes.cardIcon} />
 					</StatsCard>
@@ -391,6 +396,7 @@ export function BasicStats() {
 						title={`${formatNumberWithCommas(totalClicks || 0)} (${parseFloat(
 							(totalClicks / totalImpressions) * 100 || 0
 						).toFixed(2)} % ${t('LABEL_CTR')})`}
+						onClick={() => setData2Active(!data2Active)}
 					>
 						<Mouse className={classes.cardIcon} />
 					</StatsCard>
@@ -403,6 +409,7 @@ export function BasicStats() {
 								parseFloat(totalMoney || 0).toFixed(2)
 							)} ${symbol}`}
 							loading={!dataSynced}
+							onClick={() => setData3Active(!data3Active)}
 						>
 							<MonetizationOn className={classes.cardIcon} />
 						</StatsCard>
@@ -417,6 +424,7 @@ export function BasicStats() {
 								parseFloat(totalMoney || 0).toFixed(2)
 							)} ${symbol}`}
 							loading={!dataSynced}
+							onClick={() => setData3Active(!data4Active)}
 						>
 							<MonetizationOn className={classes.cardIcon} />
 						</StatsCard>
@@ -429,6 +437,7 @@ export function BasicStats() {
 						title={`~ ${formatNumberWithCommas(
 							parseFloat(averageCPM || 0).toFixed(2)
 						)} ${symbol} / CPM`}
+						onClick={() => setData4Active(!data4Active)}
 					>
 						<Equalizer className={classes.cardIcon} />
 					</StatsCard>
@@ -449,10 +458,14 @@ export function BasicStats() {
 								(timeFrames.find(a => a.value === timeframe) || {}).label || '',
 						}}
 						defaultLabels={defaultLabels}
-						data1={payouts}
-						data2={impressions}
-						data3={clicks}
+						data1={impressions}
+						data2={clicks}
+						data3={payouts}
 						data4={cpm}
+						data1Active={data1Active}
+						data2Active={data2Active}
+						data3Active={data3Active}
+						data4Active={data4Active}
 						dataSynced={dataSynced}
 						y1Label={metrics[uiSide][0].label}
 						y1Color={metrics[uiSide][0].color}
