@@ -1,28 +1,23 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { makeStyles } from '@material-ui/core/styles'
-import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent'
-import Typography from '@material-ui/core/Typography'
+import { Box, Typography } from '@material-ui/core'
 import classnames from 'classnames'
-import InfoIcon from '@material-ui/icons/Info'
 import { ArrowTooltip } from 'components/common/tooltips'
 import LinearProgress from '@material-ui/core/LinearProgress'
+import { Info, Visibility, VisibilityOff } from '@material-ui/icons'
 
 const useStyles = makeStyles(theme => {
 	return {
 		root: {
+			cursor: 'pointer',
 			position: 'relative',
 			backgroundColor: ({ bgColor = '' }) =>
 				(theme.palette[bgColor] || {}).main || theme.palette.background.default,
 			color: ({ bgColor = '' }) =>
 				(theme.palette[bgColor] || {}).contrastText ||
 				theme.palette.text.primary,
-		},
-		cardContent: {
-			'&:last-child': {
-				paddingBottom: 16, // Hard coded as component implementation
-			},
+			opacity: ({ dataVisible = true }) => (dataVisible ? 1 : 0.8),
 		},
 		infoCard: {
 			flexGrow: 1,
@@ -34,8 +29,16 @@ const useStyles = makeStyles(theme => {
 		},
 		progress: {
 			bottom: 0,
+			left: 0,
 			position: 'absolute',
 			width: '100%',
+		},
+		visibilityIcon: {
+			color: theme.palette.common.white,
+			position: 'absolute',
+			top: theme.spacing(1),
+			right: theme.spacing(1),
+			pointerEvents: 'none',
 		},
 	}
 })
@@ -50,24 +53,40 @@ const StatsCard = props => {
 		bgColor,
 		loading,
 		explain,
+		dataVisible,
 	} = props
 
-	const classes = useStyles({ bgColor })
+	const classes = useStyles({ bgColor, dataVisible })
+
+	const VIcon = dataVisible ? Visibility : VisibilityOff
 
 	return (
-		<Card
+		<Box
+			p={1}
 			variant='outlined'
-			elevation={0}
-			className={classnames(classes.root, classes.infoCard, {
+			className={classnames(classes.root, {
 				[classes.linkCard]: !!linkCard,
 			})}
 			onClick={onClick}
+			display='flex'
+			flexDirection='column'
+			justifyContent='center'
+			alignContent='stretch'
+			flexWrap='wrap'
+			flexGrow={1}
 		>
-			<CardContent classes={{ root: classes.cardContent }}>
+			<Box>
 				{title && (
-					<Typography variant='h6' noWrap>
-						{title}
-					</Typography>
+					<Box
+						display='flex'
+						flexDirection='row'
+						justifyContent='space-between'
+						alignItems='center'
+					>
+						<Typography variant='h6' noWrap>
+							{title}
+						</Typography>
+					</Box>
 				)}
 				{subtitle &&
 					(explain ? (
@@ -79,7 +98,7 @@ const StatsCard = props => {
 							}
 						>
 							<Typography component='div' noWrap>
-								{subtitle} <InfoIcon style={{ fontSize: 12 }}></InfoIcon>
+								{subtitle} <Info style={{ fontSize: 12 }} />
 							</Typography>
 						</ArrowTooltip>
 					) : (
@@ -88,9 +107,10 @@ const StatsCard = props => {
 						</Typography>
 					))}
 				{children}
-			</CardContent>
+			</Box>
+			{onClick && <VIcon className={classes.visibilityIcon} />}
 			{loading && <LinearProgress className={classes.progress} />}
-		</Card>
+		</Box>
 	)
 }
 

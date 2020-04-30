@@ -6,7 +6,7 @@ import {
 	Mouse,
 	Equalizer,
 } from '@material-ui/icons'
-import { Box, Button } from '@material-ui/core'
+import { Box } from '@material-ui/core'
 import { Alert } from '@material-ui/lab'
 import { SimpleStatistics } from 'components/dashboard/charts/simplified'
 import Dropdown from 'components/common/dropdown'
@@ -385,6 +385,7 @@ export function BasicStats() {
 						title={`${formatNumberWithCommas(totalImpressions || 0)}`}
 						explain={t('EXPLAIN_TOTAL_IMPRESSIONS')}
 						onClick={() => setData1Active(!data1Active)}
+						dataVisible={data1Active}
 					>
 						<Visibility className={classes.cardIcon} />
 					</StatsCard>
@@ -397,6 +398,7 @@ export function BasicStats() {
 							(totalClicks / totalImpressions) * 100 || 0
 						).toFixed(2)} % ${t('LABEL_CTR')})`}
 						onClick={() => setData2Active(!data2Active)}
+						dataVisible={data2Active}
 					>
 						<Mouse className={classes.cardIcon} />
 					</StatsCard>
@@ -410,6 +412,7 @@ export function BasicStats() {
 							)} ${symbol}`}
 							loading={!dataSynced}
 							onClick={() => setData3Active(!data3Active)}
+							dataVisible={data3Active}
 						>
 							<MonetizationOn className={classes.cardIcon} />
 						</StatsCard>
@@ -424,7 +427,8 @@ export function BasicStats() {
 								parseFloat(totalMoney || 0).toFixed(2)
 							)} ${symbol}`}
 							loading={!dataSynced}
-							onClick={() => setData3Active(!data4Active)}
+							onClick={() => setData3Active(!data3Active)}
+							dataVisible={data3Active}
 						>
 							<MonetizationOn className={classes.cardIcon} />
 						</StatsCard>
@@ -438,6 +442,7 @@ export function BasicStats() {
 							parseFloat(averageCPM || 0).toFixed(2)
 						)} ${symbol} / CPM`}
 						onClick={() => setData4Active(!data4Active)}
+						dataVisible={data4Active}
 					>
 						<Equalizer className={classes.cardIcon} />
 					</StatsCard>
