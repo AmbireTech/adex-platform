@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { Line, Chart } from 'react-chartjs-2'
 import { CHARTS_COLORS } from 'components/dashboard/charts/options'
-import { pink } from '@material-ui/core/colors'
+import { GANDALF_GREY, ALEX_GREY } from 'components/App/themeMUi'
 import { Box, Typography } from '@material-ui/core'
 import Helper from 'helpers/miscHelpers'
 import { selectMainToken, selectAnalyticsNowLabel } from 'selectors'
@@ -20,14 +20,18 @@ const commonDsProps = {
 
 const DEFAULT_FONT_SIZE = 16.9
 const FONT = 'Roboto'
-const DASH_SIZE = 4.2
-const DASH_WIDTH = 3
+const DASH_SIZE = 4
+const DASH_WIDTH = 2
 
 export const SimpleStatistics = ({
 	data1,
 	data2,
 	data3,
 	data4,
+	data1Active = true,
+	data2Active = true,
+	data3Active = true,
+	data4Active = true,
 	dataSynced,
 	defaultLabels = [],
 	options = {},
@@ -61,7 +65,7 @@ export const SimpleStatistics = ({
 						ctx.lineTo(x, bottomY)
 						ctx.lineWidth = DASH_WIDTH
 						ctx.setLineDash([DASH_SIZE, DASH_SIZE])
-						ctx.strokeStyle = '#AAA' // color of the vertical line
+						ctx.strokeStyle = GANDALF_GREY // color of the vertical line
 						ctx.stroke()
 						ctx.restore()
 					}
@@ -80,6 +84,7 @@ export const SimpleStatistics = ({
 				label: y1Label,
 				data: dataSynced ? data1.datasets : [],
 				yAxisID: 'y-axis-1',
+				hidden: !data1Active,
 			},
 			{
 				...commonDsProps,
@@ -88,6 +93,7 @@ export const SimpleStatistics = ({
 				label: y2Label,
 				data: dataSynced ? data2.datasets : [],
 				yAxisID: 'y-axis-2',
+				hidden: !data2Active,
 			},
 			{
 				...commonDsProps,
@@ -96,6 +102,7 @@ export const SimpleStatistics = ({
 				label: y3Label,
 				data: dataSynced ? data3.datasets : [],
 				yAxisID: 'y-axis-3',
+				hidden: !data3Active,
 			},
 			{
 				...commonDsProps,
@@ -105,6 +112,7 @@ export const SimpleStatistics = ({
 				label: y4Label,
 				data: dataSynced ? data4.datasets : [],
 				yAxisID: 'y-axis-4',
+				hidden: !data4Active,
 			},
 		],
 	}
@@ -112,6 +120,11 @@ export const SimpleStatistics = ({
 	const linesOptions = {
 		animation: false,
 		responsive: true,
+		layout: {
+			padding: {
+				top: 16,
+			},
+		},
 		annotation: {
 			annotations: [
 				{
@@ -120,15 +133,15 @@ export const SimpleStatistics = ({
 					scaleID: 'x-axis-0',
 
 					value: nowLabel,
-					borderColor: pink[700],
+					borderColor: ALEX_GREY,
 					borderWidth: DASH_WIDTH,
 					borderDash: [DASH_SIZE, DASH_SIZE],
 					label: {
 						content: t('NOW'),
 						enabled: true,
-						position: 'top',
+						position: 'center',
 						cornerRadius: 0,
-						backgroundColor: pink[700],
+						backgroundColor: ALEX_GREY,
 						fontSize: DEFAULT_FONT_SIZE,
 						fontFamily: FONT,
 					},
@@ -142,13 +155,7 @@ export const SimpleStatistics = ({
 			text: options.title,
 		},
 		legend: {
-			position: 'top',
-			fullWidth: true,
-			labels: {
-				fontSize: DEFAULT_FONT_SIZE,
-				fontFamily: FONT,
-				boxWidth: 69,
-			},
+			display: false,
 		},
 		tooltips: {
 			backgroundColor: 'black',
@@ -180,6 +187,7 @@ export const SimpleStatistics = ({
 			mode: 'index',
 			intersect: false,
 		},
+
 		scales: {
 			xAxes: [
 				{
@@ -251,6 +259,10 @@ export const SimpleStatistics = ({
 					id: 'y-axis-3',
 					ticks: {
 						beginAtZero: true,
+						// Hax - force to shift the data veridically
+						// because chance for overlapping with -1 is very big
+						// At same CPM impressions are the same curve as the sped one
+						maxTicksLimit: 3,
 					},
 				},
 				{
