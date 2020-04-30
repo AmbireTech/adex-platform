@@ -259,20 +259,21 @@ export function getCategorySuggestions({ itemType, itemId }) {
 		const newItem = selectNewItemByTypeAndId(getState(), itemType, itemId)
 		const { temp, targetUrl, website } = newItem
 		const { tempUrl } = temp
+		let newTargets = []
 		try {
 			const response = await getCategories({
 				tempUrl,
 				targetUrl: targetUrl || website,
 			})
 			if (response) {
-				const newTargets = response.categories.map(i => ({
+				newTargets = response.categories.map(i => ({
 					collection: 'targeting',
 					source: 'categories',
 					label: t(`TARGET_LABEL_GOOGLECATEGORIES`),
 					placeholder: t(`TARGET_LABEL_GOOGLECATEGORIES`),
 					target: { tag: i.name, score: Math.round(i.confidence * 100) },
 				}))
-				const { targets } = temp
+				const targets = temp.targets || []
 				const uniqueTargets = [...targets, ...newTargets].filter(
 					(value, index, self) => {
 						return (
@@ -299,10 +300,13 @@ export function getCategorySuggestions({ itemType, itemId }) {
 				})(dispatch)
 			}
 		} catch (err) {
+			console.log(err)
 			addToast({
 				type: 'cancel',
-				toastStr: 'ERR_GETTING_CATEGORY_SUGGESTIONS',
-				args: [err],
+				label: t('ERR_GETTING_CATEGORY_SUGGESTIONS', {
+					args: [newTargets.length],
+				}),
+				timeout: 20000,
 			})(dispatch)
 		}
 		updateSpinner('targeting-suggestions', false)(dispatch)
