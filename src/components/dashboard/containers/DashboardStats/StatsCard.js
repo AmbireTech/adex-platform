@@ -35,10 +35,6 @@ const useStyles = makeStyles(theme => {
 		},
 		visibilityIcon: {
 			color: theme.palette.common.white,
-			position: 'absolute',
-			top: theme.spacing(1),
-			right: theme.spacing(1),
-			pointerEvents: 'none',
 		},
 	}
 })
@@ -62,6 +58,7 @@ const StatsCard = props => {
 
 	return (
 		<Box
+			overflow='hidden'
 			p={1}
 			variant='outlined'
 			className={classnames(classes.root, {
@@ -76,18 +73,21 @@ const StatsCard = props => {
 			flexGrow={1}
 		>
 			<Box>
-				{title && (
-					<Box
-						display='flex'
-						flexDirection='row'
-						justifyContent='space-between'
-						alignItems='center'
-					>
+				<Box
+					display='flex'
+					flexDirection='row'
+					justifyContent='space-between'
+					flexWrap='wrap'
+					alignItems='center'
+				>
+					{title && (
 						<Typography variant='h6' noWrap>
 							{title}
 						</Typography>
-					</Box>
-				)}
+					)}
+					{onClick && <VIcon className={classes.visibilityIcon} />}
+				</Box>
+
 				{subtitle &&
 					(explain ? (
 						<ArrowTooltip
@@ -108,7 +108,7 @@ const StatsCard = props => {
 					))}
 				{children}
 			</Box>
-			{onClick && <VIcon className={classes.visibilityIcon} />}
+
 			{loading && <LinearProgress className={classes.progress} />}
 		</Box>
 	)
