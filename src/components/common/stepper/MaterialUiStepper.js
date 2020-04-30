@@ -225,7 +225,7 @@ const MaterialStepper = props => {
 					)}
 				</div>
 
-				<div className={classes.right}>
+				<Box display='flex' justifyContent='space-between'>
 					{typeof page.cancelFunction === 'function' && (
 						<Button
 							onClick={() => {
@@ -261,7 +261,7 @@ const MaterialStepper = props => {
 							<CircularProgress size={24} className={classes.buttonProgress} />
 						)}
 					</span>
-				</div>
+				</Box>
 			</Box>
 		</Box>
 	)
