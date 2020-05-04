@@ -8,6 +8,7 @@ import {
 	selectIdentitySideAnalyticsTimeframe,
 	selectIdentitySideAnalyticsPeriod,
 	selectSide,
+	selectMemoryUi,
 	t,
 } from 'selectors'
 import { getTimePeriods, getBorderPeriodStart } from 'helpers/timeHelpers'
@@ -41,6 +42,19 @@ export function updateMemoryUi(item, value) {
 			type: types.UPDATE_MEMORY_UI,
 			item: item,
 			value: value,
+		})
+	}
+}
+
+export function updateInitialDataLoaded(dataType, loaded) {
+	return function(dispatch, getState) {
+		const { initialDataLoaded } = selectMemoryUi(getState())
+		const newData = { ...(initialDataLoaded || {}) }
+		newData[dataType] = loaded
+		return dispatch({
+			type: types.UPDATE_MEMORY_UI,
+			item: 'initialDataLoaded',
+			value: newData,
 		})
 	}
 }
