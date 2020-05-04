@@ -19,12 +19,12 @@ import { getWidAndHightFromType } from 'helpers/itemsHelpers'
 
 import { ADD_ITEM, UPDATE_ITEM } from 'constants/actionTypes'
 import Helper from 'helpers/miscHelpers'
-
 import {
 	postAdUnit,
 	updateAdUnit,
 	getCategories,
 } from 'services/adex-market/actions'
+import { GV_TARGETING_SUGGESTIONS } from 'constants/spinners'
 
 const { adUnitPost, adUnitPut } = schemas
 
@@ -253,9 +253,20 @@ export function validateAndUpdateUnit({ validateId, dirty, item, update }) {
 }
 
 // Used bot for AdUnit and AdSlot
-export function getCategorySuggestions({ itemType, itemId }) {
+export function getCategorySuggestions({
+	itemType,
+	itemId,
+	collection,
+	validateId,
+}) {
 	return async function(dispatch, getState) {
-		updateSpinner('targeting-suggestions', true)(dispatch)
+		await updateSpinner(validateId, true)(dispatch)
+		await updateSpinner(GV_TARGETING_SUGGESTIONS, true)(dispatch)
+		addToast({
+			type: 'accept',
+			label: t('ANALYZING_AD_UNIT_TARGETING'),
+			timeout: 20000,
+		})(dispatch)
 		const newItem = selectNewItemByTypeAndId(getState(), itemType, itemId)
 		const { temp, targetUrl, website } = newItem
 		const { tempUrl } = temp
@@ -267,11 +278,15 @@ export function getCategorySuggestions({ itemType, itemId }) {
 			})
 			if (response) {
 				newTargets = response.categories.map(i => ({
-					collection: 'targeting',
+					auto: true,
+					collection,
 					source: 'categories',
 					label: t(`TARGET_LABEL_GOOGLECATEGORIES`),
 					placeholder: t(`TARGET_LABEL_GOOGLECATEGORIES`),
-					target: { tag: i.name, score: Math.round(i.confidence * 100) },
+					target: {
+						tag: i.name,
+						score: Math.round(i.confidence * 100),
+					},
 				}))
 				const targets = temp.targets || []
 				const uniqueTargets = [...targets, ...newTargets].filter(
@@ -309,6 +324,7 @@ export function getCategorySuggestions({ itemType, itemId }) {
 				timeout: 20000,
 			})(dispatch)
 		}
-		updateSpinner('targeting-suggestions', false)(dispatch)
+		await updateSpinner(validateId, false)(dispatch)
+		await updateSpinner(GV_TARGETING_SUGGESTIONS, false)(dispatch)
 	}
 }
