@@ -293,6 +293,7 @@ export const SimpleStatistics = ({
 				justifyContent='space-between'
 				alignItems='center'
 				px={1}
+				flexWrap='wrap'
 			>
 				<Typography component='div' align='left'>
 					{defaultLabels[0]}
