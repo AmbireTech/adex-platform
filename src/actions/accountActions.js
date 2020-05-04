@@ -533,9 +533,9 @@ export function loadAccountData() {
 			(await getAllItems()(dispatch, getState))
 
 		!isAccountChanged(getState, account) && (await statsLoop.start())
+		!isAccountChanged(getState, account) && (await campaignsLoop.start())
 		!isAccountChanged(getState, account) &&
 			(await analyticsCampaignsLoop.start())
-		!isAccountChanged(getState, account) && (await campaignsLoop.start())
 		updateSlotsDemandThrottled()(dispatch, getState)
 		updateMemoryUi('initialDataLoaded', true)(dispatch, getState)
 	}
