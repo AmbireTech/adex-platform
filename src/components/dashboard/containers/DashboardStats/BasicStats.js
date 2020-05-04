@@ -50,7 +50,7 @@ import {
 	selectSide,
 	selectAnalyticsDataSide,
 	selectAuth,
-	selectInitialDataLoaded,
+	selectInitialDataLoadedByData,
 	selectMissingRevenueDataPointsAccepted,
 } from 'selectors'
 import dateUtils from 'helpers/dateUtils'
@@ -197,7 +197,17 @@ export function BasicStats() {
 	const uiSide = useSelector(selectSide)
 	const side = useSelector(selectAnalyticsDataSide)
 	const [loop, setLoop] = useState()
-	const initialDataLoaded = useSelector(selectInitialDataLoaded)
+	const allChannelsLoaded = useSelector(state =>
+		selectInitialDataLoadedByData(state, 'allChannels')
+	)
+	const advAnalyticsLoaded = useSelector(state =>
+		selectInitialDataLoadedByData(state, 'advancedAnalytics')
+	)
+	const itemsLoaded = useSelector(state =>
+		selectInitialDataLoadedByData(state, 'allItems')
+	)
+	const initialDataLoaded =
+		allChannelsLoaded && advAnalyticsLoaded && itemsLoaded
 	const missingRevenuePointsAccepted = useSelector(
 		selectMissingRevenueDataPointsAccepted
 	)
@@ -283,11 +293,11 @@ export function BasicStats() {
 	}, [initialDataLoaded, side])
 
 	useEffect(() => {
-		loop && loop.startLoop()
+		initialDataLoaded && loop && loop.start()
 		return () => {
 			loop && loop.stop()
 		}
-	}, [loop])
+	}, [initialDataLoaded, loop])
 
 	useEffect(() => {
 		loop && loop.stop()

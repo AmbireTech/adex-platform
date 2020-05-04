@@ -181,6 +181,11 @@ export function updateAccountStats() {
 				wallet,
 			})
 
+			if (!isAccountChanged(getState, account)) {
+				updateChannelsWithBalanceAll(all)(dispatch)
+				updateInitialDataLoaded('allChannels', true)(dispatch, getState)
+			}
+
 			const outstandingBalanceMainToken = await getOutstandingBalance({
 				wallet,
 				address,
@@ -196,7 +201,6 @@ export function updateAccountStats() {
 			})
 
 			if (!isAccountChanged(getState, account)) {
-				await updateChannelsWithBalanceAll(all)(dispatch)
 				await updateChannelsWithOutstandingBalance(withOutstandingBalance)(
 					dispatch
 				)
@@ -540,24 +544,26 @@ export function loadAccountData() {
 			(await updateAccountIdentityData(() =>
 				updateInitialDataLoaded('accountIdentityData', true)(dispatch, getState)
 			)(dispatch, getState))
-		!isAccountChanged(getState, account) &&
-			getAllItems(() =>
-				updateInitialDataLoaded('allItems', true)(dispatch, getState)
-			)(dispatch, getState)
 
-		!isAccountChanged(getState, account) &&
-			statsLoop.start(() =>
-				updateInitialDataLoaded('stats', true)(dispatch, getState)
-			)
-		!isAccountChanged(getState, account) &&
-			campaignsLoop.start(
-				updateInitialDataLoaded('campaigns', true)(dispatch, getState)
-			)
-		!isAccountChanged(getState, account) &&
-			advancedAnalyticsLoop.start(
-				updateInitialDataLoaded('advancedAnalytics', true)(dispatch, getState)
-			)
-		updateSlotsDemandThrottled()(dispatch, getState)
+		const items = getAllItems(() =>
+			updateInitialDataLoaded('allItems', true)(dispatch, getState)
+		)(dispatch, getState)
+
+		const advancedAnalytics = advancedAnalyticsLoop.start(() =>
+			updateInitialDataLoaded('advancedAnalytics', true)(dispatch, getState)
+		)
+		const campaigns = campaignsLoop.start(() =>
+			updateInitialDataLoaded('campaigns', true)(dispatch, getState)
+		)
+		const demand = updateSlotsDemandThrottled()(dispatch, getState)
+
+		await Promise.all[(items, advancedAnalytics, campaigns, demand)]
+
+		await statsLoop.start(() =>
+			updateInitialDataLoaded('stats', true)(dispatch, getState)
+		)
+
+		updateMemoryUi('initialDataLoaded', true)(dispatch, getState)
 	}
 }
 

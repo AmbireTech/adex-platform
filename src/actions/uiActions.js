@@ -49,13 +49,15 @@ export function updateMemoryUi(item, value) {
 export function updateInitialDataLoaded(dataType, loaded) {
 	return function(dispatch, getState) {
 		const { initialDataLoaded } = selectMemoryUi(getState())
-		const newData = { ...(initialDataLoaded || {}) }
-		newData[dataType] = loaded
-		return dispatch({
-			type: types.UPDATE_MEMORY_UI,
-			item: 'initialDataLoaded',
-			value: newData,
-		})
+		if (initialDataLoaded !== true) {
+			const newData = { ...(initialDataLoaded || {}) }
+			newData[dataType] = loaded
+			return dispatch({
+				type: types.UPDATE_MEMORY_UI,
+				item: 'initialDataLoaded',
+				value: newData,
+			})
+		}
 	}
 }
 
