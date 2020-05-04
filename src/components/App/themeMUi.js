@@ -13,6 +13,7 @@ export const SECONDARY_LIGHT = '#65fad0'
 export const SECONDARY_DARK = '#009471'
 
 export const ALEX_GREY = '#3C3C3C'
+export const GANDALF_GREY = '#C4C4C4'
 
 export const ACCENT_ONE = '#FF6942'
 export const ACCENT_ONE_LIGHT = '#FF9B6F'
@@ -46,7 +47,7 @@ export const palette = {
 	secondary,
 	accentOne: { main: ACCENT_ONE, light: ACCENT_ONE_LIGHT, contrastText: WHITE },
 	accentTwo: { main: ACCENT_TWO, light: ACCENT_TWO_LIGHT, contrastText: WHITE },
-	grey: { main: ALEX_GREY, contrastText: WHITE },
+	grey: { main: ALEX_GREY, contrastText: WHITE, light: GANDALF_GREY },
 	appBar: { main: grey[200], contrastText: grey[900] },
 	error: {
 		main: ERROR_COLOR,
@@ -199,6 +200,17 @@ export const theme = createMuiTheme({
 					height: 'auto',
 					borderBottom: 'none',
 				},
+			},
+		},
+		MUIDataTable: {
+			root: {
+				border: '1px solid black',
+			},
+		},
+		MUIDataTableBody: {
+			emptyTitle: {
+				padding: defaultTheme.spacing(2),
+				width: '100%',
 			},
 		},
 	},
