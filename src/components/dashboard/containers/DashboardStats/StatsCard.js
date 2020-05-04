@@ -17,7 +17,6 @@ const useStyles = makeStyles(theme => {
 			color: ({ bgColor = '' }) =>
 				(theme.palette[bgColor] || {}).contrastText ||
 				theme.palette.text.primary,
-			opacity: ({ dataVisible = true }) => (dataVisible ? 1 : 0.8),
 		},
 		infoCard: {
 			flexGrow: 1,
@@ -35,6 +34,10 @@ const useStyles = makeStyles(theme => {
 		},
 		visibilityIcon: {
 			color: theme.palette.common.white,
+			position: 'absolute',
+			top: theme.spacing(0.3),
+			right: theme.spacing(0.5),
+			opacity: 0.69,
 		},
 	}
 })
@@ -76,16 +79,17 @@ const StatsCard = props => {
 				<Box
 					display='flex'
 					flexDirection='row'
-					justifyContent='space-between'
+					justifyContent='flex-start'
 					flexWrap='wrap'
 					alignItems='center'
+					pr={3}
 				>
+					{onClick && <VIcon className={classes.visibilityIcon} size='large' />}
 					{title && (
 						<Typography variant='h6' noWrap>
 							{title}
 						</Typography>
 					)}
-					{onClick && <VIcon className={classes.visibilityIcon} />}
 				</Box>
 
 				{subtitle &&
@@ -97,14 +101,12 @@ const StatsCard = props => {
 								</Typography>
 							}
 						>
-							<Typography component='div' noWrap>
+							<Typography component='div'>
 								{subtitle} <Info style={{ fontSize: 12 }} />
 							</Typography>
 						</ArrowTooltip>
 					) : (
-						<Typography component='div' noWrap>
-							{subtitle}
-						</Typography>
+						<Typography component='div'>{subtitle}</Typography>
 					))}
 				{children}
 			</Box>
