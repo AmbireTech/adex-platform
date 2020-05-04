@@ -9,18 +9,50 @@ import {
 } from 'components/common/dialog/content'
 import { Grid } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import { execute, getCategorySuggestions } from 'actions'
 import { styles } from '../styles'
-import { t, selectNewAdUnit, selectAccountIdentityAddr } from 'selectors'
+import {
+	t,
+	selectNewAdUnit,
+	selectAccountIdentityAddr,
+	selectSpinnerById,
+} from 'selectors'
 
 const useStyles = makeStyles(styles)
 
-function AdUnitPreview() {
+function AdUnitPreview(props) {
 	const classes = useStyles()
 	const { type, title, description, temp, targeting, targetUrl } = useSelector(
 		selectNewAdUnit
 	)
-	const identityAddr = useSelector(selectAccountIdentityAddr)
+	const autoTargetingSpinner = useSelector(state =>
+		selectSpinnerById(state, props.validateId)
+	)
+	const autoTargets = (temp.targets || [])
+		.filter(i => i.auto)
+		.reduce((aggr, curr) => {
+			aggr.push(curr.target)
+			return aggr
+		}, [])
 
+	const manualTargets = (temp.targets || [])
+		.filter(i => !i.auto)
+		.reduce((aggr, curr) => {
+			aggr.push(curr.target)
+			return aggr
+		}, [])
+
+	React.useEffect(() => {
+		execute(
+			getCategorySuggestions({
+				itemType: 'AdUnit',
+				collection: 'targeting',
+				validateId: props.validateId,
+			})
+		)
+	}, [props.validateId])
+
+	const identityAddr = useSelector(selectAccountIdentityAddr)
 	return (
 		<ContentBox>
 			<ContentBody>
@@ -72,9 +104,22 @@ function AdUnitPreview() {
 							left={t('targeting', { isProp: true })}
 							right={
 								<TargetsList
-									targets={targeting}
+									targets={manualTargets}
 									// subHeader={'TARGETING'}
 								/>
+							}
+						/>
+						<PropRow
+							left={t('AUTO_TARGETING')}
+							right={
+								autoTargetingSpinner ? (
+									t(`ANALYZING_AUTO_TARGETING`)
+								) : (
+									<TargetsList
+										targets={autoTargets}
+										// subHeader={'TARGETING'}
+									/>
+								)
 							}
 						/>
 					</Grid>
