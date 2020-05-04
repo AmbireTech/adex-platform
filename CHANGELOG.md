@@ -1,6 +1,29 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.2
+##### *2020-05-04*
+
+### Added
+- Slot passback data edit
+- Progress on items tables loading
+
+### Changed
+- Theme colors
+- Misc styles
+- Toasts styles and colors
+- Chart stats - removed legend, hide data with click on cards
+- Initial data loading
+- Removed publisher verification message
+
+
+### Fixed
+- Image component bugs and styles
+- Image crop
+- Bug with targeting input
+- Misc small bugs
+
+
 ## 4.20.1
 ##### *2020-04-23*
 
