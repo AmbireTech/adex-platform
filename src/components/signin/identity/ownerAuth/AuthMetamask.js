@@ -5,7 +5,6 @@ import Typography from '@material-ui/core/Typography'
 import METAMASK_DL_IMG from 'resources/download-metamask.png'
 import METAMASK_IMG from 'resources/metamask.png'
 import Anchor from 'components/common/anchor/anchor'
-import Img from 'components/common/img/Img'
 import { AUTH_TYPES } from 'constants/misc'
 import { AddrItem } from './AuthCommon'
 import {
@@ -105,7 +104,7 @@ function AuthMetamask() {
 									target='_blank'
 									onClick={() => setInstallingMetamask(true)}
 								>
-									<Img
+									<img
 										src={METAMASK_DL_IMG}
 										alt={'Downlad metamask'}
 										className={classes.dlBtnImg}
@@ -115,7 +114,7 @@ function AuthMetamask() {
 						</Box>
 					) : (
 						<Box mb={2}>
-							<Img
+							<img
 								src={METAMASK_IMG}
 								alt={'metamask logo'}
 								className={classes.dlBtnImg}
