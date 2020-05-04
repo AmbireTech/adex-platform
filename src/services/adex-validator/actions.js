@@ -156,7 +156,7 @@ export const identityAnalytics = async ({
 	return { aggregates, metric }
 }
 
-export const identityCampaignsAnalytics = async ({ leaderAuth, eventType }) => {
+export const identityAdvancedAnalytics = async ({ leaderAuth, eventType }) => {
 	const baseUrl = ANALYTICS_DATA_VALIDATOR_URL
 	const requester = getValidatorRequester({ baseUrl })
 
