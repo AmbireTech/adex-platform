@@ -42,7 +42,7 @@ export const getImgsIpfsFromBlob = ({ tempUrl, authSig }) => {
 		})
 }
 
-export function getAllItems() {
+export function getAllItems(onDataUpdated) {
 	return async function(dispatch, getState) {
 		try {
 			const account = selectAccount(getState())
@@ -77,6 +77,9 @@ export function getAllItems() {
 				updateItems({ items: resSlots.websites || [], itemType: 'Website' })(
 					dispatch
 				)
+				if (typeof onDataUpdated === 'function') {
+					onDataUpdated()
+				}
 			}
 		} catch (err) {
 			console.error('ERR_GETTING_ITEMS', err)

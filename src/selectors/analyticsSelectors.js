@@ -473,14 +473,6 @@ export const selectChartDatapointsCPM = createSelector(
 	}
 )
 
-export const selectPublisherRevenueNoticeActive = createSelector(
-	[selectPublisherTotalImpressions, selectWebsitesArray],
-	(totalImpressions, websites) =>
-		!websites.length ||
-		websites.some(w => w.issues.length > 0) ||
-		!totalImpressions
-)
-
 export const selectPublisherReceipts = createSelector(
 	[selectAnalytics],
 	({ receipts }) => receipts || {}

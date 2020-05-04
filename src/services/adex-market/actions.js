@@ -157,7 +157,7 @@ export const updateAdSlot = ({ slot, id, authSig }) => {
 		.then(processResponse)
 }
 
-export const getCampaigns = ({ authSig, creator }) => {
+export const getUserCampaigns = ({ authSig }) => {
 	return requester
 		.fetch({
 			route: 'campaigns/by-owner',
@@ -179,11 +179,19 @@ export const closeCampaignMarket = ({ campaign, authSig }) => {
 		.then(processResponse)
 }
 
-export const getAllCampaigns = ({ all, statuses, byEarner } = {}) => {
+export const getCampaigns = ({
+	all,
+	statuses,
+	byEarner,
+	byCreator,
+	cacheBrake,
+} = {}) => {
 	const queryParams = {
 		...(all && { all: true }),
 		...(statuses && { status: statuses.join(',') }),
 		byEarner,
+		byCreator,
+		...(cacheBrake && { cacheBrake: Date.now() }),
 	}
 
 	return requester

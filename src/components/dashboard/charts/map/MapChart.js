@@ -64,11 +64,13 @@ const MapChart = ({ selector }) => {
 				</ZoomableGroup>
 			</ComposableMap>
 			{/* TODO: use material-ui tooltip ot popover */}
-			<ReactTooltip border={false} backgroundColor={ALEX_GREY}>
-				{Array.isArray(content)
-					? content.map((x, i) => <div key={i}>{x}</div>)
-					: content}
-			</ReactTooltip>
+			{!!content && (
+				<ReactTooltip border={false} backgroundColor={ALEX_GREY}>
+					{Array.isArray(content)
+						? content.map((x, i) => <div key={i}>{x}</div>)
+						: content}
+				</ReactTooltip>
+			)}
 		</Paper>
 	)
 }

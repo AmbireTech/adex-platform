@@ -22,7 +22,12 @@ import {
 	getOutstandingBalance,
 } from 'services/smart-contracts/actions/stats'
 import { getChannelsWithOutstanding } from 'services/smart-contracts/actions/core'
-import { addToast, confirmAction, updateMemoryUi } from './uiActions'
+import {
+	addToast,
+	confirmAction,
+	updateMemoryUi,
+	updateInitialDataLoaded,
+} from './uiActions'
 import { getAllItems } from './itemActions'
 import { updateSlotsDemandThrottled } from './analyticsActions'
 import {
@@ -53,7 +58,7 @@ import { campaignsLoop } from 'services/store-data/campaigns'
 import statsLoop from 'services/store-data/account'
 import {
 	analyticsLoop,
-	analyticsCampaignsLoop,
+	advancedAnalyticsLoop,
 } from 'services/store-data/analytics'
 
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
@@ -176,6 +181,11 @@ export function updateAccountStats() {
 				wallet,
 			})
 
+			if (!isAccountChanged(getState, account)) {
+				updateChannelsWithBalanceAll(all)(dispatch)
+				updateInitialDataLoaded('allChannels', true)(dispatch, getState)
+			}
+
 			const outstandingBalanceMainToken = await getOutstandingBalance({
 				wallet,
 				address,
@@ -191,7 +201,6 @@ export function updateAccountStats() {
 			})
 
 			if (!isAccountChanged(getState, account)) {
-				await updateChannelsWithBalanceAll(all)(dispatch)
 				await updateChannelsWithOutstandingBalance(withOutstandingBalance)(
 					dispatch
 				)
@@ -210,7 +219,7 @@ export function updateAccountStats() {
 	}
 }
 
-export function updateAccountIdentityData() {
+export function updateAccountIdentityData(onDataUpdated) {
 	return async function(dispatch, getState) {
 		updateSpinner(UPDATING_ACCOUNT_IDENTITY, true)(dispatch)
 		const identity = selectAccountIdentity(getState())
@@ -230,6 +239,9 @@ export function updateAccountIdentityData() {
 			updateAccount({
 				newValues: { identity: updatedIdentity },
 			})(dispatch)
+			if (typeof onDataUpdated === 'function') {
+				onDataUpdated()
+			}
 		} catch (err) {
 			addToast({
 				type: 'cancel',
@@ -526,25 +538,40 @@ export function ensureQuickWalletBackup() {
 
 export function loadAccountData() {
 	return async function(dispatch, getState) {
+		updateMemoryUi('initialDataLoaded', false)(dispatch, getState)
 		const account = selectAccount(getState())
 		!isAccountChanged(getState, account) &&
-			(await updateAccountIdentityData()(dispatch, getState))
-		!isAccountChanged(getState, account) &&
-			(await getAllItems()(dispatch, getState))
+			(await updateAccountIdentityData(() =>
+				updateInitialDataLoaded('accountIdentityData', true)(dispatch, getState)
+			)(dispatch, getState))
 
-		!isAccountChanged(getState, account) && (await statsLoop.start())
-		!isAccountChanged(getState, account) &&
-			(await analyticsCampaignsLoop.start())
-		!isAccountChanged(getState, account) && (await campaignsLoop.start())
-		updateSlotsDemandThrottled()(dispatch, getState)
+		const items = getAllItems(() =>
+			updateInitialDataLoaded('allItems', true)(dispatch, getState)
+		)(dispatch, getState)
+
+		const advancedAnalytics = advancedAnalyticsLoop.start(() =>
+			updateInitialDataLoaded('advancedAnalytics', true)(dispatch, getState)
+		)
+		const campaigns = campaignsLoop.start(() =>
+			updateInitialDataLoaded('campaigns', true)(dispatch, getState)
+		)
+		const demand = updateSlotsDemandThrottled()(dispatch, getState)
+
+		await Promise.all[(items, advancedAnalytics, campaigns, demand)]
+
+		await statsLoop.start(() =>
+			updateInitialDataLoaded('stats', true)(dispatch, getState)
+		)
+
 		updateMemoryUi('initialDataLoaded', true)(dispatch, getState)
 	}
 }
 
 export function stopAccountDataUpdate() {
 	return async function(dispatch, getState) {
+		updateMemoryUi('initialDataLoaded', false)(dispatch, getState)
 		analyticsLoop.stop()
-		analyticsCampaignsLoop.stop()
+		advancedAnalyticsLoop.stop()
 		campaignsLoop.stop()
 		statsLoop.stop()
 	}

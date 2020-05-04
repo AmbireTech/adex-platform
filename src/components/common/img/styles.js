@@ -7,14 +7,6 @@ export const styles = theme => ({
 		position: 'relative',
 		display: 'inline-block',
 	},
-	imgParent: {
-		top: 0,
-		left: 0,
-		width: 'auto',
-		height: 'max-content',
-		position: 'relative',
-		display: 'inline-block',
-	},
 	circular: {
 		position: 'relative',
 		top: 'calc(50% - 20px)', //UGLY but works best - DEFAULT circular size is 40px
@@ -55,11 +47,12 @@ export const styles = theme => ({
 		maxWidth: '80vw',
 	},
 	img: {
-		width: 'auto',
-		height: 'auto',
+		width: '100%',
+		height: '100%',
+		objectFit: 'contain',
 	},
 	wrapper: {
-		height: 'fit-content',
-		width: 'fit-content',
+		height: '100%',
+		width: '100%',
 	},
 })

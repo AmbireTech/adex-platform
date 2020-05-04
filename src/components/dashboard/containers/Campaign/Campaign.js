@@ -8,15 +8,12 @@ import {
 	ListItem,
 	ListItemText,
 	Typography,
+	Tabs,
+	Tab,
 } from '@material-ui/core'
 import { AdUnitsTable } from 'components/dashboard/containers/Tables'
 import { Campaign as CampaignModel } from 'adex-models'
 import Anchor from 'components/common/anchor/anchor'
-import {
-	AdvertiserTab,
-	AdvertiserTabs,
-	AdvertiserAppBar,
-} from 'components/styled'
 import CampaignStatsDoughnut from 'components/dashboard/charts/campaigns/CampaignStatsDoughnut'
 import CampaignStatsBreakdownTable from 'components/dashboard/containers/Tables/CampaignStatsBreakdownTable'
 import { Receipt } from 'components/dashboard/containers/Receipt'
@@ -58,24 +55,26 @@ function Campaign({ match }) {
 	return (
 		<Fragment>
 			<SaveBtn {...hookProps} />
-			<AdvertiserAppBar position='static'>
-				<AdvertiserTabs
+			<Paper variant='outlined'>
+				<Tabs
 					value={tabIndex}
 					onChange={(ev, index) => setTabIndex(index)}
 					variant='scrollable'
 					scrollButtons='auto'
+					indicatorColor='primary'
+					textColor='primary'
 				>
-					<AdvertiserTab label={t('CAMPAIGN_MAIN')} />
-					<AdvertiserTab label={t('WEBSITE_STATS')} />
-					<AdvertiserTab label={t('COUNTRY_STATS')} />
-					<AdvertiserTab label={t('TIMEFRAME_STATS')} />
-					<AdvertiserTab label={t('CAMPAIGN_UNITS')} />
-					<AdvertiserTab label={t('VALIDATORS')} />
+					<Tab label={t('CAMPAIGN_MAIN')} />
+					<Tab label={t('WEBSITE_STATS')} />
+					<Tab label={t('COUNTRY_STATS')} />
+					<Tab label={t('TIMEFRAME_STATS')} />
+					<Tab label={t('CAMPAIGN_UNITS')} />
+					<Tab label={t('VALIDATORS')} />
 					{['Closed', 'Completed'].includes(humanFriendlyName) && (
-						<AdvertiserTab label={t('RECEIPT')} />
+						<Tab label={t('RECEIPT')} />
 					)}
-				</AdvertiserTabs>
-			</AdvertiserAppBar>
+				</Tabs>
+			</Paper>
 			<Box my={2}>
 				{tabIndex === 0 && <CampaignBasic item={item} {...hookProps} />}
 				{tabIndex === 1 && (

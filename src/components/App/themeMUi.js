@@ -1,5 +1,5 @@
 import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles'
-import { lime, pink, amber, grey } from '@material-ui/core/colors'
+import { lime, grey } from '@material-ui/core/colors'
 
 const WHITE = '#fff'
 export const PRIMARY = '#1B75BC'
@@ -7,30 +7,62 @@ export const PRIMARY_LIGHT = '#5fa3ef'
 export const PRIMARY_LIGHTEST = '#96d4ff'
 export const PRIMARY_DARK = '#004a8b'
 export const PRIMARY_DARKEST = '#00235d'
-export const SECONDARY = '#FFAC00'
-export const SECONDARY_LIGHT = '#ffde4b'
-export const SECONDARY_DARK = '#c67d00'
 
-export const ALEX_GREY = '#3f3e3e'
-export const ACCENT_ONE = '#57467B'
-export const ACCENT_ONE_LIGHT = '#dedded'
-export const ACCENT_TWO = '#006969'
-export const ACCENT_TWO_LIGHT = '#69dead'
+export const SECONDARY = '#1BC69F'
+export const SECONDARY_LIGHT = '#65fad0'
+export const SECONDARY_DARK = '#009471'
+
+export const ALEX_GREY = '#3C3C3C'
+export const GANDALF_GREY = '#C4C4C4'
+
+export const ACCENT_ONE = '#FF6942'
+export const ACCENT_ONE_LIGHT = '#FF9B6F'
+export const ACCENT_ONE_DARK = '#c53616'
+
+export const ACCENT_TWO = '#FFAC00'
+export const ACCENT_TWO_LIGHT = '#ffde4b'
+export const ACCENT_TWO_DARK = '#c67d00'
+
+export const ERROR_COLOR = '#FF4269'
+export const ERROR_LIGHT = '#ff7a97'
+export const ERROR_DARK = '#c6003f'
+
+const primary = {
+	main: PRIMARY,
+	dark: PRIMARY_DARK,
+	light: PRIMARY_LIGHT,
+	lightest: PRIMARY_LIGHTEST,
+	contrastText: WHITE,
+}
+
+const secondary = {
+	main: SECONDARY,
+	dark: SECONDARY_DARK,
+	light: SECONDARY_LIGHT,
+	contrastText: WHITE,
+}
 
 export const palette = {
-	primary: {
-		main: PRIMARY,
-		contrastText: WHITE,
-		light: PRIMARY_LIGHT,
-		lightest: PRIMARY_LIGHTEST,
-	},
-	secondary: { main: SECONDARY, contrastText: WHITE },
+	primary,
+	secondary,
 	accentOne: { main: ACCENT_ONE, light: ACCENT_ONE_LIGHT, contrastText: WHITE },
 	accentTwo: { main: ACCENT_TWO, light: ACCENT_TWO_LIGHT, contrastText: WHITE },
-	grey: { main: ALEX_GREY, contrastText: WHITE },
+	grey: { main: ALEX_GREY, contrastText: WHITE, light: GANDALF_GREY },
 	appBar: { main: grey[200], contrastText: grey[900] },
-	error: pink,
-	warning: amber,
+	error: {
+		main: ERROR_COLOR,
+		light: ACCENT_TWO_LIGHT,
+		dark: ACCENT_TWO_DARK,
+		contrastText: WHITE,
+	},
+	warning: {
+		main: ACCENT_TWO,
+		light: ERROR_LIGHT,
+		dark: ERROR_DARK,
+		contrastText: WHITE,
+	},
+	info: primary,
+	success: secondary,
 	first: lime,
 	contrastThreshold: 3,
 	tonalOffset: 0.2,
@@ -56,6 +88,21 @@ export const theme = createMuiTheme({
 			},
 			outlined: {
 				borderRadius: 0,
+			},
+			contained: {
+				boxShadow: 0,
+				'&:hover': {
+					boxShadow: 0,
+					'@media (hover: none)': {
+						boxShadow: 0,
+					},
+				},
+				'&$focusVisible': {
+					boxShadow: 0,
+				},
+				'&:active': {
+					boxShadow: 0,
+				},
 			},
 		},
 		MuiTableCell: {
@@ -92,6 +139,18 @@ export const theme = createMuiTheme({
 		MuiAlert: {
 			root: {
 				borderRadius: 0,
+			},
+			outlinedSuccess: {
+				backgroundColor: WHITE,
+			},
+			outlinedInfo: {
+				backgroundColor: WHITE,
+			},
+			outlinedWarning: {
+				backgroundColor: WHITE,
+			},
+			outlinedError: {
+				backgroundColor: WHITE,
 			},
 		},
 		// MuiStepIcon: {
@@ -141,6 +200,17 @@ export const theme = createMuiTheme({
 					height: 'auto',
 					borderBottom: 'none',
 				},
+			},
+		},
+		MUIDataTable: {
+			root: {
+				border: '1px solid black',
+			},
+		},
+		MUIDataTableBody: {
+			emptyTitle: {
+				padding: defaultTheme.spacing(2),
+				width: '100%',
 			},
 		},
 	},

@@ -12,6 +12,7 @@ import {
 	selectAdUnitsTableData,
 	selectSide,
 	selectAdUnitsStatsMaxValues,
+	selectInitialDataLoadedByData,
 } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
 import { useSelector } from 'react-redux'
@@ -207,6 +208,9 @@ function AdUnitsTable(props) {
 	const { maxClicks, maxImpressions, maxCTR } = useSelector(state =>
 		selectAdUnitsStatsMaxValues(state, { side, campaignId })
 	)
+	const itemsLoaded = useSelector(state =>
+		selectInitialDataLoadedByData(state, 'allItems')
+	)
 
 	const [selectorArgs, setSelectorArgs] = useState({})
 
@@ -250,6 +254,7 @@ function AdUnitsTable(props) {
 			data={data}
 			columns={columns}
 			options={options}
+			loading={!itemsLoaded}
 			{...props}
 		/>
 	)

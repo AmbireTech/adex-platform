@@ -1,10 +1,5 @@
 import React, { Fragment, useState } from 'react'
-import { Box, Paper } from '@material-ui/core'
-import {
-	AdvertiserTab,
-	AdvertiserTabs,
-	AdvertiserAppBar,
-} from 'components/styled'
+import { Box, Paper, Tabs, Tab } from '@material-ui/core'
 import { BasicStats } from './BasicStats'
 import { t } from 'selectors'
 
@@ -13,24 +8,24 @@ export function AdvertiserStats() {
 
 	return (
 		<Fragment>
-			<AdvertiserAppBar position='static'>
-				<AdvertiserTabs
+			<Paper variant='outlined'>
+				<Tabs
 					value={tabIndex}
 					onChange={(ev, index) => setTabIndex(index)}
 					variant='scrollable'
 					scrollButtons='auto'
+					indicatorColor='primary'
+					textColor='primary'
 				>
-					<AdvertiserTab label={t('CHARTS')} />
-				</AdvertiserTabs>
-			</AdvertiserAppBar>
+					<Tab label={t('CHARTS')} />
+				</Tabs>
+			</Paper>
 			<Box my={2}>
 				{tabIndex === 0 && (
-					<Paper>
-						<Paper elevation={2}>
-							<Box p={1}>
-								<BasicStats side='advertiser' />
-							</Box>
-						</Paper>
+					<Paper variant='outlined'>
+						<Box p={1}>
+							<BasicStats side='advertiser' />
+						</Box>
 					</Paper>
 				)}
 			</Box>

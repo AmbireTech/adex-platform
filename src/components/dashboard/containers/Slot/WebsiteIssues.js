@@ -17,7 +17,7 @@ const getIssue = issue => {
 				{
 					type: 'anchor',
 					href:
-						'https://help.adex.network/hc/en-us/articles/360012022820-How-to-implement-an-ad-slot-to-your-website',
+						'https://help.adex.network/hc/en-us/articles/360013352340-How-to-verify-your-publisher-website',
 					label: 'HERE',
 				},
 			]

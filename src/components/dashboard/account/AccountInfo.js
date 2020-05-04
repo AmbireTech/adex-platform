@@ -121,12 +121,12 @@ function AccountInfo() {
 								})}
 							/>
 							<IconButton
-								color='primary'
+								color='default'
 								onClick={() => {
 									copy(identityAddress)
 									execute(
 										addToast({
-											type: 'accept',
+											type: 'info',
 											label: t('COPIED_TO_CLIPBOARD'),
 											timeout: 5000,
 										})
@@ -143,9 +143,9 @@ function AccountInfo() {
 								disabled={!canMakeTx}
 								fullWidth
 								variant='contained'
-								color='primary'
+								color='default'
 								token='DAI'
-								size='small'
+								size='large'
 								identityAvailable={availableIdentityBalanceMainToken}
 							/>
 						)
@@ -176,7 +176,7 @@ function AccountInfo() {
 									variant='contained'
 									color='secondary'
 									aria-label='delete'
-									size='small'
+									size='large'
 								>
 									<CreditCardIcon className={classes.iconBtnLeft} />
 									{t('TOP_UP')}
@@ -187,11 +187,11 @@ function AccountInfo() {
 									disabled={!canMakeTx}
 									fullWidth
 									variant='contained'
-									color='primary'
+									color='default'
 									identityAvailable={availableIdentityBalanceMainToken}
 									identityAvailableRaw={availableIdentityBalanceMainToken}
 									token={symbol}
-									size='small'
+									size='large'
 								/>
 							</Box>
 						</Fragment>
@@ -243,8 +243,8 @@ function AccountInfo() {
 										disabled={!canMakeTx}
 										fullWidth
 										variant='contained'
-										color='secondary'
-										size='small'
+										color='default'
+										size='large'
 										identityAvailable={availableIdentityBalanceMainToken}
 									/>
 								}
@@ -287,8 +287,8 @@ function AccountInfo() {
 												<WithdrawAnyTokenFromIdentity
 													fullWidth
 													variant='contained'
-													color='primary'
-													size='small'
+													color='default'
+													size='large'
 												/>
 											</Box>
 										</Box>
