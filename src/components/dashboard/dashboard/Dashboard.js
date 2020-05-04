@@ -106,7 +106,6 @@ function Dashboard(props) {
 	const dataLoaded = useSelector(selectInitialDataLoaded)
 
 	useEffect(() => {
-		execute(updateMemoryUi('initialDataLoaded', false))
 		async function updateInitialData() {
 			execute(loadAccountData())
 		}
@@ -115,7 +114,6 @@ function Dashboard(props) {
 
 		return () => {
 			execute(stopAccountDataUpdate())
-			execute(updateMemoryUi('initialDataLoaded', false))
 		}
 	}, [])
 
