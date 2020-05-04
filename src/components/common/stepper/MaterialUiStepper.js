@@ -220,12 +220,6 @@ const MaterialStepper = props => {
 
 			<Box mt={2}>
 				<div className={classes.left}>
-					{canReverse && (
-						<Button onClick={goToPreviousPage}>{t('BACK')}</Button>
-					)}
-				</div>
-
-				<Box display='flex' justifyContent='space-between'>
 					{typeof page.cancelFunction === 'function' && (
 						<Button
 							onClick={() => {
@@ -236,7 +230,12 @@ const MaterialStepper = props => {
 							{t('CANCEL')}
 						</Button>
 					)}
+				</div>
 
+				<div className={classes.right}>
+					{canReverse && (
+						<Button onClick={goToPreviousPage}>{t('BACK')}</Button>
+					)}
 					<span className={classes.buttonProgressWrapper}>
 						{typeof completeFn === 'function' ? (
 							<Button
@@ -261,7 +260,7 @@ const MaterialStepper = props => {
 							<CircularProgress size={24} className={classes.buttonProgress} />
 						)}
 					</span>
-				</Box>
+				</div>
 			</Box>
 		</Box>
 	)
