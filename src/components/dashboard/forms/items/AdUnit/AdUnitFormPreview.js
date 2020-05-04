@@ -17,6 +17,7 @@ import {
 	selectAccountIdentityAddr,
 	selectSpinnerById,
 } from 'selectors'
+import { GV_TARGETING_SUGGESTIONS } from 'constants/spinners'
 
 const useStyles = makeStyles(styles)
 
@@ -26,7 +27,7 @@ function AdUnitPreview(props) {
 		selectNewAdUnit
 	)
 	const autoTargetingSpinner = useSelector(state =>
-		selectSpinnerById(state, props.validateId)
+		selectSpinnerById(state, GV_TARGETING_SUGGESTIONS)
 	)
 	const autoTargets = (temp.targets || [])
 		.filter(i => i.auto)
