@@ -12,12 +12,15 @@ import {
 	ContentBody,
 } from 'components/common/dialog/content'
 import { styles } from '../styles'
+import { execute, getCategorySuggestions } from 'actions'
 import {
 	t,
 	selectMainToken,
 	selectNewAdSlot,
 	selectAccountIdentityAddr,
+	selectSpinnerById,
 } from 'selectors'
+import { GV_TARGETING_SUGGESTIONS } from 'constants/spinners'
 
 const useStyles = makeStyles(styles)
 
@@ -53,7 +56,7 @@ const SlotFallback = ({ img, targetUrl }) => {
 	)
 }
 
-const AdSlotPreview = () => {
+const AdSlotPreview = props => {
 	const {
 		type,
 		title,
@@ -64,6 +67,34 @@ const AdSlotPreview = () => {
 		targetUrl,
 		minPerImpression,
 	} = useSelector(selectNewAdSlot)
+
+	const autoTargetingSpinner = useSelector(state =>
+		selectSpinnerById(state, GV_TARGETING_SUGGESTIONS)
+	)
+	const autoTargets = (temp.targets || [])
+		.filter(i => i.auto)
+		.reduce((aggr, curr) => {
+			aggr.push(curr.target)
+			return aggr
+		}, [])
+
+	const manualTargets = (temp.targets || [])
+		.filter(i => !i.auto)
+		.reduce((aggr, curr) => {
+			aggr.push(curr.target)
+			return aggr
+		}, [])
+
+	React.useEffect(() => {
+		execute(
+			getCategorySuggestions({
+				itemType: 'AdSlot',
+				collection: 'tags',
+				validateId: props.validateId,
+			})
+		)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	const identityAddr = useSelector(selectAccountIdentityAddr)
 	const { symbol } = useSelector(selectMainToken)
@@ -139,9 +170,31 @@ const AdSlotPreview = () => {
 					</Grid>
 
 					<Grid item xs={12} md={6}>
+						{/* <PropRow
+							left={t('targeting', { isProp: true })}
+							right={
+								<Fragment>
+									<TargetsList
+										targets={manualTargets}
+										// subHeader={'TARGETING'}
+									/>
+								</Fragment>
+							}
+						/> */}
 						<PropRow
-							left={t('tags', { isProp: true })}
-							right={<TargetsList targets={tags} />}
+							left={t('AUTO_TARGETING')}
+							right={
+								<Fragment>
+									{autoTargetingSpinner ? (
+										t(`ANALYZING_AUTO_TARGETING`)
+									) : (
+										<TargetsList
+											targets={autoTargets}
+											// subHeader={'TARGETING'}
+										/>
+									)}
+								</Fragment>
+							}
 						/>
 					</Grid>
 				</Grid>
