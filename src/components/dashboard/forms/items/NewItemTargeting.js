@@ -9,18 +9,13 @@ import {
 	Box,
 	Typography,
 	TextField,
-	Button,
 } from '@material-ui/core'
-import {
-	Cancel as CancelIcon,
-	Add as AddIcon,
-	EmojiObjects,
-} from '@material-ui/icons'
+import { Cancel as CancelIcon, Add as AddIcon } from '@material-ui/icons'
 import Autocomplete from 'components/common/autocomplete'
 import Dropdown from 'components/common/dropdown'
 
 import { t, selectTargetingSources, selectNewItemByTypeAndId } from 'selectors'
-import { execute, updateNewItemTarget, getCategorySuggestions } from 'actions'
+import { execute, updateNewItemTarget } from 'actions'
 
 const useStyles = makeStyles(theme => ({
 	slider: {
@@ -188,45 +183,33 @@ const NewItemTargeting = ({ itemType, itemId, sourcesSelector }) => {
 	const { temp } = useSelector(state =>
 		selectNewItemByTypeAndId(state, itemType, itemId)
 	)
+
 	const { targets = [] } = temp
 
 	return (
 		<Grid container spacing={1}>
 			<Grid item xs={12}>
-				<Button
-					variant='contained'
-					color='primary'
-					size='large'
-					onClick={async () => {
-						execute(getCategorySuggestions({ itemType, itemId }))
-					}}
-					fullWidth
-					disableElevation
-					startIcon={<EmojiObjects />}
-				>
-					{t('GET_CATEGORY_SUGGESTIONS')}
-				</Button>
-			</Grid>
-			<Grid item xs={12}>
-				{[...targets].map(
-					(
-						{ source = '', collection, label, placeholder, target = {} } = {},
-						index
-					) => (
-						<Targets
-							key={`${collection}-${index}`}
-							label={t(label)}
-							placeholder={t(placeholder)}
-							index={index}
-							source={(SOURCES[source] || {}).src || []}
-							itemId={itemId}
-							collection={collection}
-							target={target}
-							itemType={itemType}
-							classes={classes}
-						/>
-					)
-				)}
+				{[...targets]
+					.filter(i => !i.auto)
+					.map(
+						(
+							{ source = '', collection, label, placeholder, target = {} } = {},
+							index
+						) => (
+							<Targets
+								key={`${collection}-${index}`}
+								label={t(label)}
+								placeholder={t(placeholder)}
+								index={index}
+								source={(SOURCES[source] || {}).src || []}
+								itemId={itemId}
+								collection={collection}
+								target={target}
+								itemType={itemType}
+								classes={classes}
+							/>
+						)
+					)}
 			</Grid>
 			<Grid item xs={12}>
 				<Dropdown
