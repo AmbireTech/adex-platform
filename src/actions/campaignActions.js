@@ -160,13 +160,15 @@ export function updateUserCampaigns() {
 	return async function(dispatch, getState) {
 		const state = getState()
 		const hasAuth = selectAuth(state)
-		const { wallet, identity } = selectAccount(state)
-		const { authSig } = wallet
+		const { identity } = selectAccount(state)
 		const { address } = identity
 
-		if (hasAuth && authSig && address) {
+		if (hasAuth && address) {
 			try {
-				const campaigns = await getCampaigns({ authSig, creator: address })
+				const campaigns = await getCampaigns({
+					byCreator: address,
+					cacheBrake: true,
+				})
 				let campaignsMapped = campaigns
 					.filter(
 						c => c.creator && c.creator.toLowerCase() === address.toLowerCase()

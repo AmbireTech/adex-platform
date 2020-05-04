@@ -11,7 +11,7 @@ import {
 import { contracts } from '../contractsCfg'
 import { closeCampaign } from 'services/adex-validator/actions'
 import { Campaign, AdUnit } from 'adex-models'
-import { getAllCampaigns } from 'services/adex-market/actions'
+import { getCampaigns } from 'services/adex-market/actions'
 import {
 	bigNumberify,
 	randomBytes,
@@ -158,7 +158,7 @@ const getWithdrawnPerUserOutstanding = async ({
 
 export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 	const { authType } = wallet
-	const channels = await getAllCampaigns({ all: true, byEarner: identityAddr })
+	const channels = await getCampaigns({ all: true, byEarner: identityAddr })
 	const { AdExCore } = await getEthers(authType)
 	const feeTokenWhitelist = selectFeeTokenWhitelist()
 	const routineWithdrawTokens = selectRoutineWithdrawTokens()
