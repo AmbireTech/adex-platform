@@ -138,6 +138,7 @@ class Img extends Component {
 			this.clearLoadTimeout()
 			this.setState({
 				imgSrc: image,
+				videoSrc: null,
 			})
 		}
 
@@ -156,6 +157,7 @@ class Img extends Component {
 			this.clearLoadTimeout()
 			this.setState({
 				videoSrc: image,
+				imgSrc: null,
 			})
 		}
 	}
