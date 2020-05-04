@@ -12,6 +12,7 @@ import {
 	selectSide,
 	selectAdSlotsTableData,
 	selectMainToken,
+	selectInitialDataLoadedByData,
 } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
 import { useSelector } from 'react-redux'
@@ -160,6 +161,9 @@ function AdSlotsTable(props) {
 	const classes = useStyles()
 	const side = useSelector(selectSide)
 	const { symbol } = useSelector(selectMainToken)
+	const itemsLoaded = useSelector(state =>
+		selectInitialDataLoadedByData(state, 'allItems')
+	)
 
 	const { data, columns, reloadData } = useTableData({
 		selector: selectAdSlotsTableData,
@@ -179,6 +183,7 @@ function AdSlotsTable(props) {
 			data={data}
 			columns={columns}
 			options={options}
+			loading={!itemsLoaded}
 			{...props}
 		/>
 	)

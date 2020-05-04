@@ -87,9 +87,24 @@ export const selectLoginDirectSide = createSelector(
 	({ goToSide }) => goToSide || ''
 )
 
+export const selectInitialDataLoadedByData = createSelector(
+	[selectMemoryUi, (_, dataType) => dataType],
+	({ initialDataLoaded }, dataType) =>
+		initialDataLoaded === true ||
+		(typeof initialDataLoaded === 'object' && initialDataLoaded[dataType])
+)
 export const selectInitialDataLoaded = createSelector(
 	selectMemoryUi,
-	({ initialDataLoaded = false }) => initialDataLoaded
+	({ initialDataLoaded = false }) =>
+		initialDataLoaded === true ||
+		(typeof initialDataLoaded === 'object' &&
+			[
+				'accountIdentityData',
+				'allItems',
+				'stats',
+				'campaigns',
+				'advancedAnalytics',
+			].every(type => !!initialDataLoaded[type]))
 )
 
 export const selectCampaignInDetails = createSelector(

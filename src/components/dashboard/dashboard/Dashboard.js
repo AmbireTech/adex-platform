@@ -42,7 +42,6 @@ import {
 	selectAccountIdentityAddr,
 	selectWalletPrivileges,
 	selectPrivilegesWarningAccepted,
-	selectPublisherRevenueNoticeActive,
 	selectInitialDataLoaded,
 } from 'selectors'
 import { useSelector } from 'react-redux'
@@ -96,9 +95,6 @@ const useStyles = makeStyles(styles)
 function Dashboard(props) {
 	const [mobileOpen, setMobileOpen] = useState(false)
 	const address = useSelector(selectAccountIdentityAddr)
-	const showPublisherRevenueNotice = useSelector(
-		selectPublisherRevenueNoticeActive
-	)
 	const privileges = useSelector(selectWalletPrivileges)
 	const privilegesWarningAccepted = useSelector(selectPrivilegesWarningAccepted)
 	const showTxPrivLevelWarning = privileges <= 1 && !privilegesWarningAccepted
@@ -110,7 +106,6 @@ function Dashboard(props) {
 	const dataLoaded = useSelector(selectInitialDataLoaded)
 
 	useEffect(() => {
-		execute(updateMemoryUi('initialDataLoaded', false))
 		async function updateInitialData() {
 			execute(loadAccountData())
 		}
@@ -119,7 +114,6 @@ function Dashboard(props) {
 
 		return () => {
 			execute(stopAccountDataUpdate())
-			execute(updateMemoryUi('initialDataLoaded', false))
 		}
 	}, [])
 
@@ -187,30 +181,6 @@ function Dashboard(props) {
 								{t('PRIVILEGES_LEVEL_WARNING_MSG', {
 									args: [`PRIV_${privileges}_LABEL`],
 								})}
-							</Alert>
-						</Box>
-					)}
-
-					{side === 'publisher' && showPublisherRevenueNotice && (
-						<Box mb={2}>
-							<Alert variant='outlined' severity='warning'>
-								<div>
-									{t('PUBLISHER_REVENUE_NOTICE', {
-										args: [
-											<Anchor
-												key='publisher-revenue-notice'
-												color='primary'
-												underline='always'
-												target='_blank'
-												href={
-													'https://help.adex.network/hc/en-us/articles/360012285459-Mandatory-verification-for-publishers'
-												}
-											>
-												{<strong>{t('HERE')}</strong>}
-											</Anchor>,
-										],
-									})}
-								</div>
 							</Alert>
 						</Box>
 					)}

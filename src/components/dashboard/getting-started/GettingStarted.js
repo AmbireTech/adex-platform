@@ -50,8 +50,8 @@ import {
 const useStyles = makeStyles(theme => {
 	const stepperBackgroundColor = ({ side }) =>
 		side === 'advertiser'
-			? theme.palette.accentOne.main
-			: theme.palette.accentTwo.main
+			? theme.palette.background.paper
+			: theme.palette.background.paper
 
 	return {
 		mobile: {
@@ -69,10 +69,10 @@ const useStyles = makeStyles(theme => {
 			marginBottom: theme.spacing(1),
 		},
 		expansionPanel: {
-			color: theme.palette.common.white,
+			color: theme.palette.primary.main,
 			backgroundColor: stepperBackgroundColor,
 			'& .MuiExpansionPanelSummary-expandIcon': {
-				color: theme.palette.common.white,
+				color: theme.palette.primary.main,
 			},
 		},
 	}
@@ -231,6 +231,7 @@ export default function GettingStarted(props) {
 					expanded={expanded}
 					onChange={() => execute(setGettingStartedExpanded(!expanded))}
 					square={true}
+					variant='outlined'
 				>
 					<ExpansionPanelSummary
 						expandIcon={<ExpandMore />}
@@ -246,9 +247,9 @@ export default function GettingStarted(props) {
 							justifyContent='space-between'
 						>
 							<Typography variant={'h6'}>
-								{`${t('GETTING_STARTED_HEADING')} ${
+								{`${t('GETTING_STARTED_HEADING')} (${
 									side === 'publisher' ? t('PUBLISHER') : t('ADVERTISER')
-								}`}
+								})`}
 							</Typography>
 
 							<Box display='flex' flexDirection='row' alignItems='center'>

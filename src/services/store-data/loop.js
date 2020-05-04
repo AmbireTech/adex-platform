@@ -50,10 +50,13 @@ export default class Looper {
 		}
 	}
 
-	start = async () => {
+	start = async onSync => {
 		this.clearLoopTimeout()
 		await this.startLoop()
 		this.makeStopCheck()
+		if (typeof onSync === 'function') {
+			onSync()
+		}
 	}
 
 	stop = () => {

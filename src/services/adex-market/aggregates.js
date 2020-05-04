@@ -3,12 +3,12 @@ import { selectRoutineWithdrawTokens, selectMainToken } from 'selectors'
 import { tokenInMainTokenValue } from 'services/smart-contracts/actions/stats'
 import { formatTokenAmount } from 'helpers/formatters'
 
-import { getAllCampaigns } from './actions'
+import { getCampaigns } from './actions'
 
 export async function getUnitsStatsByType() {
 	const { decimals } = selectMainToken()
 	const withdrawTokens = selectRoutineWithdrawTokens()
-	const allChannels = await getAllCampaigns()
+	const allChannels = await getCampaigns()
 
 	const channels = allChannels.filter(
 		channel => !!withdrawTokens[channel.depositAsset]

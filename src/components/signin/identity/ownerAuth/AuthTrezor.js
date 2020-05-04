@@ -1,7 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import Anchor from 'components/common/anchor/anchor'
-import Img from 'components/common/img/Img'
 import Button from '@material-ui/core/Button'
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
@@ -98,7 +97,7 @@ function AuthTrezor() {
 					</Typography>
 					<Box mb={2}>
 						<Anchor href='https://trezor.io' target='_blank'>
-							<Img
+							<img
 								src={TREZOR_DL_IMG}
 								alt={'https://trezor.io'}
 								className={classes.dlBtnImg}

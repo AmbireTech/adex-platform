@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import Img from 'components/common/img/Img'
 // import debounce from 'debounce'
 import Dropzone from 'react-dropzone'
-import { Button, Typography, Grid } from '@material-ui/core'
+import { Button, Typography, Grid, Box } from '@material-ui/core'
 import ReactCrop from 'react-image-crop'
 import { getCroppedImgUrl } from 'services/images/crop'
 import {
@@ -169,20 +169,18 @@ function ImgForm(props) {
 										alignItems='center'
 									>
 										<Grid item sm={12} md={8}>
-											<ReactCrop
-												style={{ maxWidth: '100%', maxHeight: 320 }}
-												imageStyle={{
-													maxWidth: '100%',
-													maxHeight: '320px',
-													width: 'auto',
-													height: 'auto',
-												}}
-												onImageLoaded={onLoad}
-												className={classes.imgDropzonePreview}
-												crop={crop}
-												src={imgSrc || ''}
-												onChange={c => setCrop(c)}
-											/>
+											<Box className={classes.imgDropzonePreview}>
+												<ReactCrop
+													imageStyle={{
+														maxWidth: '100%',
+														maxHeight: '30vh',
+													}}
+													onImageLoaded={onLoad}
+													crop={crop}
+													src={imgSrc || ''}
+													onChange={c => setCrop(c)}
+												/>
+											</Box>
 										</Grid>
 
 										<Grid item sm={12} md={4}>
@@ -223,15 +221,13 @@ function ImgForm(props) {
 										alignItems='center'
 									>
 										<Grid item sm={12} md={8}>
-											{videoSrc ? (
-												<video controls src={imgSrc} type='video/mp4'></video>
-											) : (
-												<Img
-													src={imgSrc}
-													alt={'name'}
-													className={classes.imgDropzonePreview}
-												/>
-											)}
+											<Box className={classes.imgDropzonePreview}>
+												{videoSrc ? (
+													<video controls src={imgSrc} type='video/mp4'></video>
+												) : (
+													<Img src={imgSrc} alt={'name'} />
+												)}
+											</Box>
 										</Grid>
 										<Grid item sm={12} md={4}>
 											<UploadInfo />

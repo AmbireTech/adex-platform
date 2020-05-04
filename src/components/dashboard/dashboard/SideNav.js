@@ -39,13 +39,13 @@ const { ETH_SCAN_ADDR_HOST } = process.env
 const useStyles = makeStyles(theme => {
 	const activeColor = ({ side }) =>
 		side === 'advertiser'
-			? theme.palette.accentOne.contrastText
-			: theme.palette.accentTwo.contrastText
+			? theme.palette.primary.contrastText
+			: theme.palette.primary.contrastText
 
 	const activeBgColor = ({ side }) =>
 		side === 'advertiser'
-			? theme.palette.accentOne.main
-			: theme.palette.accentTwo.main
+			? theme.palette.primary.main
+			: theme.palette.primary.main
 
 	return {
 		navigation: {

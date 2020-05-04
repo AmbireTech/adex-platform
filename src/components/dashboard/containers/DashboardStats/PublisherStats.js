@@ -1,6 +1,5 @@
 import React, { Fragment, useState } from 'react'
-import { Box, Grid, Paper, Typography } from '@material-ui/core'
-import { PublisherTab, PublisherTabs, PublisherAppBar } from 'components/styled'
+import { Box, Grid, Paper, Typography, Tab, Tabs } from '@material-ui/core'
 import BestEarnersTable from 'components/dashboard/containers/Tables/BestEarnersTable'
 import StatsByCountryTable from 'components/dashboard/containers/Tables/StatsByCountryTable'
 import MapChart from 'components/dashboard/charts/map/MapChart'
@@ -17,26 +16,26 @@ export function PublisherStats() {
 
 	return (
 		<Fragment>
-			<PublisherAppBar position='static'>
-				<PublisherTabs
+			<Paper position='static' variant='outlined'>
+				<Tabs
 					value={tabIndex}
 					onChange={(ev, index) => setTabIndex(index)}
 					variant='scrollable'
 					scrollButtons='auto'
+					indicatorColor='primary'
+					textColor='primary'
 				>
-					<PublisherTab label={t('CHARTS')} />
-					<PublisherTab label={t('COUNTRY_DATA')} />
-					<PublisherTab label={t('TABLE_BEST_EARNERS_UNITS_TITLE')} />
-				</PublisherTabs>
-			</PublisherAppBar>
+					<Tab label={t('CHARTS')} />
+					<Tab label={t('COUNTRY_DATA')} />
+					<Tab label={t('TABLE_BEST_EARNERS_UNITS_TITLE')} />
+				</Tabs>
+			</Paper>
 			<Box my={2}>
 				{tabIndex === 0 && (
-					<Paper>
-						<Paper elevation={2}>
-							<Box p={1}>
-								<BasicStats side='publisher' />
-							</Box>
-						</Paper>
+					<Paper variant='outlined'>
+						<Box p={1}>
+							<BasicStats side='publisher' />
+						</Box>
 					</Paper>
 				)}
 				{tabIndex === 1 && (
