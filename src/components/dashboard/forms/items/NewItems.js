@@ -23,6 +23,7 @@ import {
 	validateNewSlotPassback,
 	validateNewUnitMedia,
 	validateNewUnitTargeting,
+	getCategorySuggestions,
 	completeItem,
 	resetNewItem,
 	saveUnit,
@@ -31,6 +32,7 @@ import {
 } from 'actions'
 
 import { slotSources, unitSources } from 'selectors'
+import { GV_TARGETING_SUGGESTIONS } from 'constants/spinners'
 
 export const AdSlotTargeting = props => (
 	<NewItemTargeting
@@ -75,7 +77,7 @@ export const NewUnitSteps = props => (
 			{
 				title: 'PREVIEW_AND_SAVE_ITEM',
 				completeBtnTitle: 'SAVE',
-				component: AdUnitFormPreview,
+				component: ({ validateId }) => AdUnitFormPreview({ validateId }),
 				completeFn: props =>
 					execute(
 						completeItem({
@@ -194,11 +196,11 @@ export const NewSlotSteps = props => (
 				component: AdSlotMedia,
 				validationFn: props => execute(validateNewSlotPassback(props)),
 			},
-			{ title: 'SLOT_TAGS_STEP', component: AdSlotTargeting },
+			// { title: 'SLOT_TAGS_STEP', component: AdSlotTargeting },
 			{
 				title: 'PREVIEW_AND_SAVE_ITEM',
 				completeBtnTitle: 'SAVE',
-				component: AdSlotPreview,
+				component: ({ validateId }) => AdSlotPreview({ validateId }),
 				completeFn: props =>
 					execute(
 						completeItem({
