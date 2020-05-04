@@ -166,6 +166,7 @@ export function updateUserCampaigns() {
 		if (hasAuth && address) {
 			try {
 				const campaigns = await getCampaigns({
+					all: true,
 					byCreator: address,
 					cacheBrake: true,
 				})
