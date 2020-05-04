@@ -121,7 +121,7 @@ function AccountInfo() {
 								})}
 							/>
 							<IconButton
-								color='primary'
+								color='default'
 								onClick={() => {
 									copy(identityAddress)
 									execute(
@@ -143,7 +143,7 @@ function AccountInfo() {
 								disabled={!canMakeTx}
 								fullWidth
 								variant='contained'
-								color='primary'
+								color='default'
 								token='DAI'
 								size='large'
 								identityAvailable={availableIdentityBalanceMainToken}
@@ -187,7 +187,7 @@ function AccountInfo() {
 									disabled={!canMakeTx}
 									fullWidth
 									variant='contained'
-									color='primary'
+									color='default'
 									identityAvailable={availableIdentityBalanceMainToken}
 									identityAvailableRaw={availableIdentityBalanceMainToken}
 									token={symbol}
@@ -243,7 +243,7 @@ function AccountInfo() {
 										disabled={!canMakeTx}
 										fullWidth
 										variant='contained'
-										color='secondary'
+										color='default'
 										size='large'
 										identityAvailable={availableIdentityBalanceMainToken}
 									/>
@@ -287,7 +287,7 @@ function AccountInfo() {
 												<WithdrawAnyTokenFromIdentity
 													fullWidth
 													variant='contained'
-													color='primary'
+													color='default'
 													size='large'
 												/>
 											</Box>
