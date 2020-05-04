@@ -5,7 +5,7 @@ import { translate } from 'services/translations/translations'
 import {
 	getValidatorAuthToken,
 	identityAnalytics,
-	identityCampaignsAnalytics,
+	identityAdvancedAnalytics,
 	timeBasedAnalytics,
 } from 'services/adex-validator/actions'
 import { updateValidatorAuthTokens } from './accountActions'
@@ -266,7 +266,7 @@ export const updateAccountAnalytics = throttle(
 	{ leading: false, trailing: true }
 )
 
-export function updateAccountCampaignsAnalytics() {
+export function updateAccountAdvancedAnalytics() {
 	return async function(dispatch, getState) {
 		const { account } = getState().persist
 		try {
@@ -293,7 +293,7 @@ export function updateAccountCampaignsAnalytics() {
 			let accountChanged = false
 			const allAnalytics = params.map(async opts => {
 				try {
-					const value = await identityCampaignsAnalytics({
+					const value = await identityAdvancedAnalytics({
 						...opts,
 						leaderAuth,
 					})

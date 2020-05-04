@@ -2,7 +2,7 @@ import Loop from './loop'
 import {
 	execute,
 	updateAccountAnalytics,
-	updateAccountCampaignsAnalytics,
+	updateAccountAdvancedAnalytics,
 } from 'actions'
 import { getState } from 'store'
 import { selectAuth } from 'selectors'
@@ -25,13 +25,12 @@ const analyticsLoopCustom = ({ timeout, syncAction, stopOn }) =>
 		stopOn: () => !selectAuth(getState()) || stopOn,
 	})
 
-const analyticsCampaignsLoop = new Loop({
+const advancedAnalyticsLoop = new Loop({
 	timeout: LOOP_TIMEOUT,
 	syncAction: async () =>
-		selectAuth(getState()) &&
-		(await execute(updateAccountCampaignsAnalytics())),
+		selectAuth(getState()) && (await execute(updateAccountAdvancedAnalytics())),
 	loopName: '_ANALYTICS_CAMPAIGNS_ADVANCED',
 	stopOn: () => !selectAuth(getState()),
 })
 
-export { analyticsLoop, analyticsCampaignsLoop, analyticsLoopCustom }
+export { analyticsLoop, advancedAnalyticsLoop, analyticsLoopCustom }
