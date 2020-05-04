@@ -150,9 +150,12 @@ export const getCategories = ({ tempUrl, targetUrl }) => {
 		.then(resp => {
 			return resp.blob()
 		})
-		.then(imageBlob => {
+		.then(blob => {
 			const formData = new FormData()
-			tempUrl && formData.append('media', imageBlob, 'image.jpeg')
+			//TODO: extract best thumbnail img from mp4
+			if (tempUrl && blob.type !== 'video/mp4') {
+				formData.append('media', blob, 'image.jpeg')
+			}
 			formData.append('targetUrl', targetUrl)
 			return requester
 				.fetch({
