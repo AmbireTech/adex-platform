@@ -4,7 +4,7 @@ import clsx from 'clsx'
 import { makeStyles, withStyles } from '@material-ui/core/styles'
 import { Box } from '@material-ui/core'
 import { CheckCircle } from '@material-ui/icons'
-import { PRIMARY, SECONDARY } from 'components/App/themeMUi'
+import { PRIMARY, ACCENT_TWO } from 'components/App/themeMUi'
 import StepConnector from '@material-ui/core/StepConnector'
 
 const LINES_WIDTH = 3
@@ -31,11 +31,12 @@ const useColorlibStepIconStyles = makeStyles(theme => ({
 		border: `${LINES_WIDTH}px solid ${PRIMARY} !important`,
 	},
 	completed: {
-		border: `${LINES_WIDTH}px solid ${SECONDARY}`,
+		border: `${LINES_WIDTH}px solid ${ACCENT_TWO}`,
 	},
 	star: {
 		position: 'relative',
 		backgroundColor: theme.palette.common.white,
+		color: ACCENT_TWO,
 		top: '-40%',
 		right: '-32%',
 		borderRadius: '50%',
@@ -54,7 +55,7 @@ export const ColorlibConnector = withStyles(theme => ({
 		background: `linear-gradient(to right, transparent 50%, #fff 50%), ${
 			theme.palette.text[500]
 		}`,
-		backgroundSize: `${LINES_WIDTH * 6}px`,
+		backgroundSize: `${LINES_WIDTH * 5}px`,
 	},
 }))(StepConnector)
 
@@ -73,9 +74,7 @@ export function ColorlibStepIcon(props) {
 				backgroundSize: 'cover',
 			}}
 		>
-			{completed && (
-				<CheckCircle className={clsx(classes.star)} color='secondary' />
-			)}
+			{completed && <CheckCircle className={clsx(classes.star)} />}
 		</Box>
 	)
 }
