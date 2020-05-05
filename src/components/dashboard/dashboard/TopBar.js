@@ -19,6 +19,8 @@ import {
 	ListItemText,
 	Link,
 	MenuItem,
+	Box,
+	Hidden,
 } from '@material-ui/core'
 
 import classnames from 'classnames'
@@ -50,22 +52,48 @@ function TopNav({ handleDrawerToggle, side, t }) {
 	return (
 		<AppBar className={classes.appBar} color='default' position='sticky'>
 			<Toolbar className={classes.toolbar}>
-				<div className={classes.flexRow}>
-					<IconButton
-						color='inherit'
-						aria-label='open drawer'
-						onClick={handleDrawerToggle}
-						className={classnames(classes.navIconHide)}
-					>
-						<MenuIcon />
-					</IconButton>
+				<Box
+					display='flex'
+					flexDirection='row'
+					flexGrow='1'
+					alignItems='center'
+					justifyContent='flex-end'
+					px={2}
+				>
+					<Hidden mdUp>
+						<IconButton
+							color='inherit'
+							aria-label='open drawer'
+							onClick={handleDrawerToggle}
+							// className={classnames(classes.navIconHide)}
+						>
+							<MenuIcon />
+						</IconButton>
+					</Hidden>
 
-					{/* <AdexIconTxt
-					className={classes.icon}
-					/> */}
-					<div className={classnames(classes.flex, classes.toolbarControls)}>
-						{/* <Navigation type='horizontal' className={theme.rightNavigation}> */}
-						{/* At the moment we use translations only for proper items properties display names */}
+					{/* <Hidden smDown>
+						<Breadcrumbs aria-label='breadcrumb'>
+							{breadcrumbs.map(({ to, label }, index) =>
+								to && index < breadcrumbs.length - 1 ? (
+									<RRLink key={`${index}-${to}`} to={to}>
+										{label}
+									</RRLink>
+								) : (
+									<Typography
+										classes={{ root: classes.breadcrumbElement }}
+										noWrap
+										component='div'
+										key={`${index}-${label}`}
+										color='textPrimary'
+									>
+										{label}
+									</Typography>
+								)
+							)}
+						</Breadcrumbs>
+					</Hidden> */}
+
+					<Box display='flex' flexDirection='row' alignItems='center'>
 						{/* <ChangeLang /> */}
 						<Jazzicon
 							diameter={30}
@@ -106,31 +134,8 @@ function TopNav({ handleDrawerToggle, side, t }) {
 								/>
 							</MenuItem>
 						</ButtonMenu>
-					</div>
-				</div>
-				<div className={classes.flexRow}>
-					<div className={classnames(classes.flex, classes.toolbarTitle)}>
-						<Breadcrumbs aria-label='breadcrumb'>
-							{breadcrumbs.map(({ to, label }, index) =>
-								to && index < breadcrumbs.length - 1 ? (
-									<RRLink key={`${index}-${to}`} to={to}>
-										{label}
-									</RRLink>
-								) : (
-									<Typography
-										classes={{ root: classes.breadcrumbElement }}
-										noWrap
-										component='div'
-										key={`${index}-${label}`}
-										color='textPrimary'
-									>
-										{label}
-									</Typography>
-								)
-							)}
-						</Breadcrumbs>
-					</div>
-				</div>
+					</Box>
+				</Box>
 			</Toolbar>
 		</AppBar>
 	)

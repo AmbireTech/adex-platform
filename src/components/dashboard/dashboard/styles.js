@@ -56,7 +56,7 @@ export const styles = theme => {
 		},
 		toolbar: {
 			flexFlow: 'wrap',
-			height: 114,
+			height: 69,
 			paddingRight: 0,
 			paddingLeft: 0,
 		},
@@ -70,19 +70,20 @@ export const styles = theme => {
 		content: {
 			flexGrow: 1,
 			backgroundColor: theme.palette.background.default,
-			padding: theme.spacing(2),
-			paddingTop: theme.spacing(4),
+			padding: theme.spacing(1),
+			paddingTop: theme.spacing(1),
 			overflow: 'auto',
 			[theme.breakpoints.up('md')]: {
 				marginLeft: drawerWidth,
-				padding: theme.spacing(2),
-				paddingTop: theme.spacing(4),
+				padding: theme.spacing(1),
+				paddingTop: theme.spacing(1),
 			},
 			[theme.breakpoints.down('xs')]: {
-				padding: theme.spacing(1),
+				padding: theme.spacing(0),
 			},
 		},
 		contentInner: {
+			paddingTop: 24 - theme.spacing(1),
 			maxWidth: 1420,
 			margin: 'auto',
 		},

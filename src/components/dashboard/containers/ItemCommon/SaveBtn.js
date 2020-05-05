@@ -36,8 +36,8 @@ export const styles = theme => ({
 	},
 	position: {
 		position: 'fixed',
-		top: 86,
-		right: theme.spacing(2),
+		top: 41,
+		left: 250 + theme.spacing(2),
 		zIndex: theme.zIndex.appBar + 1,
 	},
 })
@@ -57,6 +57,7 @@ export const SaveBtn = ({
 			<div className={classes.wrapper}>
 				<Fab
 					color='primary'
+					// size='small'
 					onClick={save}
 					disabled={disabled || spinner || !dirtyProps.length}
 				>
