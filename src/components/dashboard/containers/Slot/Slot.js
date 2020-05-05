@@ -33,7 +33,7 @@ function Slot({ match }) {
 					{/* <Tab label={t('STATISTICS')} /> */}
 				</Tabs>
 			</Paper>
-			<Box my={2}>
+			<Box my={1}>
 				{tabIndex === 0 && <SlotBasic item={item} {...hookProps} />}
 				{tabIndex === 1 && <IntegrationCode slot={item} />}
 			</Box>

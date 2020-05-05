@@ -74,7 +74,7 @@ function Campaign({ match }) {
 					)}
 				</Tabs>
 			</Paper>
-			<Box my={2}>
+			<Box my={1}>
 				{tabIndex === 0 && <CampaignBasic item={item} {...hookProps} />}
 				{tabIndex === 1 && (
 					<Box

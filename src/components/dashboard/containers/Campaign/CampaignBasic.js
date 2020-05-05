@@ -30,7 +30,7 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 					flexDirection='row'
 					alignItems='center'
 					justifyContent='space-between'
-					my={2}
+					my={1}
 				>
 					<DirtyProps {...hookProps} />
 					<SaveBtn {...hookProps} />
