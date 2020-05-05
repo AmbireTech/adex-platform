@@ -118,6 +118,22 @@ export function updateNewItemTarget({
 	}
 }
 
+export function resetTargeting(itemType, collection, itemId) {
+	return async function(dispatch, getState) {
+		const state = getState()
+		const { temp } = selectNewItemByTypeAndId(state, itemType, itemId)
+		const targets = []
+		const newValues = {
+			[collection]: [],
+			temp: { ...temp, targets },
+		}
+		await updateNewItemAction(itemType, null, null, newValues, itemId)(
+			dispatch,
+			getState
+		)
+	}
+}
+
 export function completeItem({
 	itemType,
 	competeAction,
