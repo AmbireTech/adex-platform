@@ -197,11 +197,11 @@ function AccountInfo() {
 						</Fragment>
 					}
 				/>
-				<ListDivider />
 				<ExpansionPanel
 					expanded={expanded}
 					onChange={handleExpandChange}
 					square={true}
+					variant='outlined'
 				>
 					<ExpansionPanelSummary
 						expandIcon={<ExpandMoreIcon />}

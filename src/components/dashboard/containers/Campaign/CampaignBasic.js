@@ -7,6 +7,7 @@ import {
 	ItemTitle,
 	MediaCard,
 	ItemSpecProp,
+	SaveBtn,
 } from 'components/dashboard/containers/ItemCommon/'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
@@ -23,8 +24,19 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 
 	return (
 		<Fragment>
-			<DirtyProps {...hookProps} />
-			<Paper elevation={2}>
+			{!!hookProps.dirtyProps.length && (
+				<Box
+					display='flex'
+					flexDirection='row'
+					alignItems='center'
+					justifyContent='space-between'
+					my={1}
+				>
+					<DirtyProps {...hookProps} />
+					<SaveBtn {...hookProps} />
+				</Box>
+			)}
+			<Paper variant='outlined'>
 				<Box p={2}>
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={12} md={6} lg={5}>

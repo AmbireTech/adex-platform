@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { useSelector } from 'react-redux'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -16,6 +16,7 @@ import SideSwitch from './SideSwitch'
 import AdexIconTxt from 'components/common/icons/AdexIconTxt'
 import DashboardIcon from '@material-ui/icons/Dashboard'
 import SwapHorizontalIcon from '@material-ui/icons/SwapHoriz'
+import { ChevronRight } from '@material-ui/icons'
 import { Receipt } from '@material-ui/icons'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
@@ -31,6 +32,7 @@ import {
 	selectAccountIdentityAddr,
 	selectAccountStatsFormatted,
 	selectMainToken,
+	selectDashboardBreadcrumbs,
 } from 'selectors'
 
 const RRListItem = withReactRouterLink(ListItem)
@@ -123,7 +125,6 @@ function SideNav(props) {
 	const side = useSelector(selectSide)
 	const identity = useSelector(selectAccountIdentityAddr)
 	const classes = useStyles({ side })
-	const commonClasses = useCommonStyles()
 	const routerLocation = useSelector(selectLocation)
 	const { symbol } = useSelector(selectMainToken)
 
@@ -148,10 +149,7 @@ function SideNav(props) {
 				<div>
 					<Box
 						bgcolor='background.paper'
-						className={classnames(
-							commonClasses.toolbar,
-							classes.sideNavToolbar
-						)}
+						className={classnames(classes.sideNavToolbar)}
 					>
 						<ListItem>
 							<AdexIconTxt className={classes.icon} />
@@ -179,7 +177,6 @@ function SideNav(props) {
 							</LoadingSection>
 						</ListItem>
 					</Box>
-					<ListDivider />
 					<SideSwitch className={classes.sideSwitch} side={side} t={t} />
 					<ListDivider />
 					<RRListItem
@@ -196,7 +193,9 @@ function SideNav(props) {
 					<RRListItem
 						button
 						to={{ pathname: '/dashboard/' + side + '/' + items }}
-						className={classnames({ [classes.active]: location === items })}
+						className={classnames({
+							[classes.active]: location === items,
+						})}
 					>
 						<ListItemIcon>
 							<ListIcon />

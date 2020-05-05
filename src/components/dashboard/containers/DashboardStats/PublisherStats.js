@@ -41,15 +41,15 @@ export function PublisherStats() {
 				{tabIndex === 1 && (
 					<Grid container spacing={2}>
 						<Grid item xs={12} md={12} lg={6}>
-							<Paper>
-								<Box p={2} mb={2}>
+							<Paper variant='outlined'>
+								<Box p={2}>
 									<Typography variant='button' align='center'>
 										{t('COUNTRY_STATS_PERIOD', { args: ['30', 'DAYS'] })}
 									</Typography>
 								</Box>
 							</Paper>
 
-							<Box>
+							<Box mt={2}>
 								<MapChart
 									selector={selectPublisherStatsByCountryMapChartData}
 								/>

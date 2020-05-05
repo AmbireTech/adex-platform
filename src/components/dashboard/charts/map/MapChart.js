@@ -16,7 +16,7 @@ const MapChart = ({ selector }) => {
 	const [content, setContent] = useState('')
 
 	return (
-		<Paper elevation={2} square>
+		<Paper elevation={2} variant='outlined' square>
 			<ComposableMap
 				data-tip='chart-map'
 				projection='geoMercator'

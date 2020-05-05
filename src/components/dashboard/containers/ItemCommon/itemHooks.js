@@ -66,7 +66,7 @@ export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 				p => (p.name || p) === (prop.name || prop)
 			)
 
-			if (dirtyIndex < -1) {
+			if (dirtyIndex > -1) {
 				const newDirtyProps = [...dirtyProps]
 				const dpValue = newDirtyProps[dirtyIndex]
 				newDirtyProps.splice(dirtyIndex, 1)

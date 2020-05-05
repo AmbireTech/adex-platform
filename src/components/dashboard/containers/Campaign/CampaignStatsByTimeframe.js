@@ -9,7 +9,7 @@ import { t } from 'selectors'
 export const CampaignStatsByTimeframe = ({ item }) => {
 	return (
 		<Fragment>
-			<Paper elevation={2}>
+			<Paper elevation={2} variant='outlined'>
 				<Box p={1}>
 					<Grid container spacing={0}>
 						<Grid item xs={12} sm={4} md={4} lg={4}>

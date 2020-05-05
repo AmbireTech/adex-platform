@@ -4,12 +4,13 @@ const lastRowRightReserved = 169
 export const styles = theme => {
 	return {
 		root: {
+			marginTop: 69,
 			flexGrow: 1,
 			zIndex: 1,
 			overflow: 'hidden',
 			position: 'relative',
 			display: 'flex',
-			minHeight: '100vh',
+			height: 'calc(100vh - 69px)',
 			width: '100%',
 		},
 		appBar: {
@@ -56,7 +57,7 @@ export const styles = theme => {
 		},
 		toolbar: {
 			flexFlow: 'wrap',
-			height: 114,
+			height: 69,
 			paddingRight: 0,
 			paddingLeft: 0,
 		},
@@ -71,12 +72,12 @@ export const styles = theme => {
 			flexGrow: 1,
 			backgroundColor: theme.palette.background.default,
 			padding: theme.spacing(2),
-			paddingTop: theme.spacing(4),
+			paddingTop: theme.spacing(2),
 			overflow: 'auto',
 			[theme.breakpoints.up('md')]: {
 				marginLeft: drawerWidth,
 				padding: theme.spacing(2),
-				paddingTop: theme.spacing(4),
+				paddingTop: theme.spacing(2),
 			},
 			[theme.breakpoints.down('xs')]: {
 				padding: theme.spacing(1),
