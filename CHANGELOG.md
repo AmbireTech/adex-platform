@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.3
+##### *2020-05-05*
+
+### Changed
+- Layout
+- FAB buttons are now sticky 
+- Styles
+
+### Fixed
+- Translations
+- Misc small bugs
+
 ## 4.20.2
 ##### *2020-05-04*
 
