@@ -26,7 +26,7 @@ import StatsByCountryTable from 'components/dashboard/containers/Tables/StatsByC
 import MapChart from 'components/dashboard/charts/map/MapChart'
 import { CampaignBasic } from './CampaignBasic'
 import { validateAndUpdateCampaign, updateMemoryUi, execute } from 'actions'
-import { useItem, SaveBtn } from 'components/dashboard/containers/ItemCommon/'
+import { useItem } from 'components/dashboard/containers/ItemCommon/'
 import { CampaignStatsByTimeframe } from './CampaignStatsByTimeframe'
 
 function Campaign({ match }) {
@@ -54,7 +54,6 @@ function Campaign({ match }) {
 
 	return (
 		<Fragment>
-			<SaveBtn {...hookProps} />
 			<Paper variant='outlined'>
 				<Tabs
 					value={tabIndex}
@@ -75,7 +74,7 @@ function Campaign({ match }) {
 					)}
 				</Tabs>
 			</Paper>
-			<Box my={2}>
+			<Box my={1}>
 				{tabIndex === 0 && <CampaignBasic item={item} {...hookProps} />}
 				{tabIndex === 1 && (
 					<Box
@@ -96,7 +95,7 @@ function Campaign({ match }) {
 				{tabIndex === 2 && (
 					<Grid container spacing={2} alignItems='flex-start'>
 						<Grid item xs={12}>
-							<Paper>
+							<Paper variant='outlined'>
 								<Box p={2}>
 									<Typography variant='button' align='center'>
 										{t('COUNTRY_STATS_PERIOD', { args: ['30', 'DAYS'] })}

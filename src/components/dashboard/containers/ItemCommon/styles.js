@@ -67,7 +67,6 @@ export const styles = theme => {
 			flexWrap: 'wrap',
 			alignItems: 'center',
 			color: theme.palette.secondary.main,
-			marginBottom: spacing,
 		},
 		changeChip: {
 			margin: spacing,

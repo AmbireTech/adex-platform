@@ -22,10 +22,11 @@ import {
 	AdSlotsTable,
 	AdUnitsTable,
 } from 'components/dashboard/containers/Tables'
-import { Drawer, Box, Hidden } from '@material-ui/core'
+import { Drawer, Box, Hidden, Paper } from '@material-ui/core'
 import { Alert } from '@material-ui/lab'
 import PageNotFound from 'components/page_not_found/PageNotFound'
 import { makeStyles } from '@material-ui/core/styles'
+import { Add } from '@material-ui/icons'
 import { styles } from './styles'
 import Anchor from 'components/common/anchor/anchor'
 import {
@@ -51,43 +52,48 @@ const Campaigns = () => {
 	const privileges = useSelector(selectWalletPrivileges)
 	const disabled = privileges <= 1
 	return (
-		<Fragment>
+		<Box>
 			<NewCampaignDialog
 				disabled={disabled}
 				fabButton
 				variant='extended'
-				accent
 				color='secondary'
 				btnLabel='NEW_CAMPAIGN'
+				size='medium'
+				icon={<Add />}
 			/>
+
 			<CampaignsTable />
-		</Fragment>
+		</Box>
 	)
 }
 
 const AdUnits = () => (
-	<>
+	<Box>
 		<NewUnitDialog
 			fabButton
 			variant='extended'
 			color='secondary'
 			btnLabel='NEW_UNIT'
+			size='medium'
+			icon={<Add />}
 		/>
 		<AdUnitsTable />
-	</>
+	</Box>
 )
 
 const AdSlots = () => (
-	<>
+	<Box>
 		<NewSlotDialog
 			fabButton
 			variant='extended'
-			accent
 			color='secondary'
 			btnLabel='NEW_SLOT'
+			size='medium'
+			icon={<Add />}
 		/>
 		<AdSlotsTable />
-	</>
+	</Box>
 )
 
 const useStyles = makeStyles(styles)
@@ -168,95 +174,95 @@ function Dashboard(props) {
 
 			<main className={classes.content}>
 				<div className={classes.contentInner}>
-					<div className={classes.toolbar} />
-					{showTxPrivLevelWarning && (
-						<Box mb={2}>
-							<Alert
-								variant='outlined'
-								severity='info'
-								onClose={() => {
-									execute(updatePrivilegesWarningAccepted(true))
-								}}
-							>
-								{t('PRIVILEGES_LEVEL_WARNING_MSG', {
-									args: [`PRIV_${privileges}_LABEL`],
-								})}
-							</Alert>
-						</Box>
-					)}
+					<Box>
+						{showTxPrivLevelWarning && (
+							<Box mb={2}>
+								<Alert
+									variant='outlined'
+									severity='info'
+									onClose={() => {
+										execute(updatePrivilegesWarningAccepted(true))
+									}}
+								>
+									{t('PRIVILEGES_LEVEL_WARNING_MSG', {
+										args: [`PRIV_${privileges}_LABEL`],
+									})}
+								</Alert>
+							</Box>
+						)}
 
-					{dataLoaded && <GettingStarted side={side} />}
-
-					<Switch>
-						<Route
-							exact
-							path='/dashboard/advertiser/campaigns'
-							component={Campaigns}
-						/>
-						<Route
-							exact
-							path='/dashboard/advertiser/units'
-							component={AdUnits}
-						/>
-						<Route
-							exact
-							path='/dashboard/advertiser/campaigns/:itemId'
-							component={Campaign}
-						/>
-						<Route
-							exact
-							path='/dashboard/advertiser/receipts'
-							component={Receipt}
-						/>
-						<Route
-							exact
-							path='/dashboard/advertiser/receipt/:itemId'
-							component={Receipt}
-						/>
-						<Route
-							exact
-							path='/dashboard/advertiser/units/:itemId'
-							component={Unit}
-						/>
-						<Route
-							exact
-							path='/dashboard/publisher/slots'
-							component={AdSlots}
-						/>
-						<Route
-							exact
-							path='/dashboard/publisher/slots/:itemId'
-							component={Slot}
-						/>
-						<Route
-							exact
-							path='/dashboard/publisher/receipts'
-							component={Receipt}
-						/>
-						<Route
-							exact
-							path={'/dashboard/:side/account'}
-							component={Account}
-						/>
-						<Route exact path={'/dashboard/:side/topup'} component={TopUp} />
-						{/* <Route
+						{dataLoaded && <GettingStarted side={side} />}
+						<Switch>
+							<Route
+								exact
+								path='/dashboard/advertiser/campaigns'
+								component={Campaigns}
+							/>
+							<Route
+								exact
+								path='/dashboard/advertiser/units'
+								component={AdUnits}
+							/>
+							<Route
+								exact
+								path='/dashboard/advertiser/campaigns/:itemId'
+								component={Campaign}
+							/>
+							<Route
+								exact
+								path='/dashboard/advertiser/receipts'
+								component={Receipt}
+							/>
+							<Route
+								exact
+								path='/dashboard/advertiser/receipt/:itemId'
+								component={Receipt}
+							/>
+							<Route
+								exact
+								path='/dashboard/advertiser/units/:itemId'
+								component={Unit}
+							/>
+							<Route
+								exact
+								path='/dashboard/publisher/slots'
+								component={AdSlots}
+							/>
+							<Route
+								exact
+								path='/dashboard/publisher/slots/:itemId'
+								component={Slot}
+							/>
+							<Route
+								exact
+								path='/dashboard/publisher/receipts'
+								component={Receipt}
+							/>
+							<Route
+								exact
+								path={'/dashboard/:side/account'}
+								component={Account}
+							/>
+							<Route exact path={'/dashboard/:side/topup'} component={TopUp} />
+							{/* <Route
 								auth={this.props.auth}
 								exact
 								path={'/dashboard/:side/transactions'}
 								component={props => <Transactions {...props} />}
 							/> */}
-						<Route
-							exact
-							path='/dashboard/advertiser'
-							component={AdvertiserStats}
-						/>
-						<Route
-							exact
-							path='/dashboard/publisher'
-							component={PublisherStats}
-						/>
-						<Route component={PageNotFound} />
-					</Switch>
+							<Route
+								exact
+								path='/dashboard/advertiser'
+								component={AdvertiserStats}
+							/>
+							<Route
+								exact
+								path='/dashboard/publisher'
+								component={PublisherStats}
+							/>
+							<Route component={PageNotFound} />
+						</Switch>
+					</Box>
 				</div>
 			</main>
 		</div>

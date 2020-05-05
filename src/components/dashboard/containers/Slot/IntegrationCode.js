@@ -115,7 +115,7 @@ export const IntegrationCode = ({ slot = {} }) => {
 					<CopyIcon />
 				</IconButton>
 			</div>
-			<Paper>
+			<Paper variant='outlined'>
 				<pre className={classes.integrationCode}>{iframeStr}</pre>
 			</Paper>
 			{process.env.NODE_ENV !== 'production' && (

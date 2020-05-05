@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { ACCENT_TWO } from 'components/App/themeMUi'
 import { makeStyles } from '@material-ui/core/styles'
 import {
 	Box,
@@ -74,6 +75,9 @@ const useStyles = makeStyles(theme => {
 			'& .MuiExpansionPanelSummary-expandIcon': {
 				color: theme.palette.primary.main,
 			},
+		},
+		checkmark: {
+			color: ACCENT_TWO,
 		},
 	}
 })
@@ -255,11 +259,11 @@ export default function GettingStarted(props) {
 							<Box display='flex' flexDirection='row' alignItems='center'>
 								{sideSteps.map(({ label, icon, check }, index) => {
 									const Icon = check ? CheckCircle : CheckCircleOutline
-									const color = check ? 'secondary' : 'inherit'
+									const color = ACCENT_TWO
 
 									return (
 										<Tooltip title={label} key={index}>
-											<Icon color={color} />
+											<Icon className={classes.checkmark} />
 										</Tooltip>
 									)
 								})}
