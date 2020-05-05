@@ -1,6 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { CircularProgress, Fab } from '@material-ui/core'
+import { CircularProgress, Fab, Button } from '@material-ui/core'
 import { Check, Save } from '@material-ui/icons'
 
 import color from '@material-ui/core/colors/purple'
@@ -34,12 +34,6 @@ export const styles = theme => ({
 		marginTop: -12,
 		marginLeft: -12,
 	},
-	position: {
-		position: 'fixed',
-		top: 41,
-		left: 250 + theme.spacing(2),
-		zIndex: theme.zIndex.appBar + 1,
-	},
 })
 
 const useStyles = makeStyles(styles)
@@ -53,11 +47,10 @@ export const SaveBtn = ({
 }) => {
 	const classes = useStyles()
 	return (
-		<div className={classes.position}>
+		!!dirtyProps.length && (
 			<div className={classes.wrapper}>
 				<Fab
 					color='primary'
-					// size='small'
 					onClick={save}
 					disabled={disabled || spinner || !dirtyProps.length}
 				>
@@ -68,6 +61,6 @@ export const SaveBtn = ({
 					<CircularProgress size={68} className={classes.fabProgress} />
 				)}
 			</div>
-		</div>
+		)
 	)
 }
