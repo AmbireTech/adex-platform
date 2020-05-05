@@ -52,45 +52,48 @@ const Campaigns = () => {
 	const privileges = useSelector(selectWalletPrivileges)
 	const disabled = privileges <= 1
 	return (
-		<Fragment>
+		<Box>
 			<NewCampaignDialog
 				disabled={disabled}
 				fabButton
 				variant='extended'
 				color='secondary'
 				btnLabel='NEW_CAMPAIGN'
-				// size='small'
+				size='medium'
 				icon={<Add />}
 			/>
+
 			<CampaignsTable />
-		</Fragment>
+		</Box>
 	)
 }
 
 const AdUnits = () => (
-	<>
+	<Box>
 		<NewUnitDialog
 			fabButton
 			variant='extended'
 			color='secondary'
 			btnLabel='NEW_UNIT'
-			size='small'
+			size='medium'
+			icon={<Add />}
 		/>
 		<AdUnitsTable />
-	</>
+	</Box>
 )
 
 const AdSlots = () => (
-	<>
+	<Box>
 		<NewSlotDialog
 			fabButton
 			variant='extended'
 			color='secondary'
 			btnLabel='NEW_SLOT'
-			size='small'
+			size='medium'
+			icon={<Add />}
 		/>
 		<AdSlotsTable />
-	</>
+	</Box>
 )
 
 const useStyles = makeStyles(styles)
@@ -171,9 +174,7 @@ function Dashboard(props) {
 
 			<main className={classes.content}>
 				<div className={classes.contentInner}>
-					<div className={classes.toolbar} />
-
-					<Box p={1}>
+					<Box>
 						{showTxPrivLevelWarning && (
 							<Box mb={2}>
 								<Alert
