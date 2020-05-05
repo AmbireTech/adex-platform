@@ -32,8 +32,8 @@ const useTabsStyles = makeStyles(theme => {
 const useTabStyles = makeStyles(theme => {
 	const activeColor = ({ side }) =>
 		side === 'advertiser'
-			? theme.palette.accentOne.main
-			: theme.palette.accentTwo.main
+			? theme.palette.primary.main
+			: theme.palette.primary.main
 	return {
 		root: {
 			minWidth: 30,

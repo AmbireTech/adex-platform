@@ -15,14 +15,14 @@ import {
 
 import { campaignsLoop } from 'services/store-data/campaigns'
 import statsLoop from 'services/store-data/account'
-import { analyticsCampaignsLoop } from 'services/store-data/analytics'
+import { advancedAnalyticsLoop } from 'services/store-data/analytics'
 
 import { push } from 'connected-react-router'
 
 export const logOut = skipRedirect => {
 	execute(updateMemoryUi('initialDataLoaded', false))
 	execute(resetAccount())
-	analyticsCampaignsLoop.stop()
+	advancedAnalyticsLoop.stop()
 	campaignsLoop.stop()
 	statsLoop.stop()
 	if (!skipRedirect) {

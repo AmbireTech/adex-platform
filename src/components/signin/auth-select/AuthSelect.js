@@ -151,7 +151,7 @@ const AuthSelect = () => {
 					className={classnames(classes.metamaskBtn, classes.limitedWidthBtn)}
 					onClick={() => goTo('/login/full?external=metamask', true)}
 				>
-					<Img
+					<img
 						src={getAuthLogo('metamask')}
 						alt={t('AUTH_WITH_METAMASK')}
 						className={classes.btnLogo}
@@ -168,7 +168,7 @@ const AuthSelect = () => {
 					className={classes.trezorBtn}
 					onClick={() => goTo('/login/full?external=trezor', true)}
 				>
-					<Img
+					<img
 						src={getAuthLogo('trezor')}
 						alt={t('AUTH_WITH_TREZOR')}
 						className={classnames(

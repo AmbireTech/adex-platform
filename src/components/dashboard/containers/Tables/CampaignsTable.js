@@ -14,6 +14,7 @@ import {
 	selectCampaignsMaxImpressions,
 	selectCampaignsMaxClicks,
 	selectCampaignsMaxDeposit,
+	selectInitialDataLoadedByData,
 } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
 import { commify } from 'ethers/utils'
@@ -309,6 +310,9 @@ function CampaignsTable(props) {
 	const maxClicks = useSelector(selectCampaignsMaxClicks)
 	const maxDeposit = useSelector(selectCampaignsMaxDeposit)
 	const { symbol, decimals } = useSelector(selectMainToken)
+	const campaignsLoaded = useSelector(state =>
+		selectInitialDataLoadedByData(state, 'campaigns')
+	)
 
 	const { data, columns, reloadData } = useTableData({
 		selector: selectCampaignsTableData,
@@ -334,6 +338,7 @@ function CampaignsTable(props) {
 			options={options}
 			rowSelectable
 			toolbarEnabled
+			loading={!campaignsLoaded}
 			{...props}
 		/>
 	)

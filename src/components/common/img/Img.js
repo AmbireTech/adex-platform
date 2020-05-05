@@ -138,6 +138,7 @@ class Img extends Component {
 			this.clearLoadTimeout()
 			this.setState({
 				imgSrc: image,
+				videoSrc: null,
 			})
 		}
 
@@ -156,6 +157,7 @@ class Img extends Component {
 			this.clearLoadTimeout()
 			this.setState({
 				videoSrc: image,
+				imgSrc: null,
 			})
 		}
 	}
@@ -225,28 +227,31 @@ class Img extends Component {
 			alt,
 			allowFullscreen,
 			className,
+			classNameImg,
 			classes,
 			fullScreenOnClick,
 			onClick,
 		} = this.props
 		const { imgSrc, videoSrc } = this.state
 		return imgSrc || videoSrc ? (
-			<div
-				className={classnames(classes.imgParent, className, classes.wrapper)}
-			>
+			<div className={classnames(className, classes.wrapper)}>
 				{!!imgSrc ? (
 					<img
 						alt={alt}
 						src={this.state.imgSrc}
 						draggable='false'
-						className={classnames(classes.imgLoading, className, classes.img)}
+						className={classnames(
+							classes.imgLoading,
+							classes.img,
+							classNameImg
+						)}
 						onDragStart={event => event.preventDefault() /*Firefox*/}
 						onClick={onClick || (fullScreenOnClick && this.handleToggle)}
 					/>
 				) : (
 					<video
 						src={videoSrc}
-						className={classnames(classes.imgLoading, className, classes.img)}
+						className={classnames(classes.imgLoading, classes.img)}
 						autoPlay
 						muted
 						loop

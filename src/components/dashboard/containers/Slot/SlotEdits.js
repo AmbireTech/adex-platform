@@ -72,6 +72,7 @@ export const SlotEdits = ({ item, ...hookProps }) => {
 		<Box display='flex' flexDirection='row' flexWrap='wrap'>
 			<PassbackEdit
 				fullWidth
+				size='large'
 				variant='contained'
 				color='secondary'
 				btnLabel='UPDATE_PASSBACK'
