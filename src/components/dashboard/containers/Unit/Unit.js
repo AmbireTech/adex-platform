@@ -37,7 +37,7 @@ function Unit({ match }) {
 					flexDirection='row'
 					alignItems='center'
 					justifyContent='space-between'
-					my={2}
+					mb={1}
 				>
 					<DirtyProps {...hookProps} />
 					<SaveBtn {...hookProps} />
