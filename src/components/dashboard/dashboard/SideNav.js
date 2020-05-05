@@ -125,9 +125,7 @@ function SideNav(props) {
 	const side = useSelector(selectSide)
 	const identity = useSelector(selectAccountIdentityAddr)
 	const classes = useStyles({ side })
-	const commonClasses = useCommonStyles()
 	const routerLocation = useSelector(selectLocation)
-	const breadcrumbs = useSelector(selectDashboardBreadcrumbs)
 	const { symbol } = useSelector(selectMainToken)
 
 	// TODO: test location
@@ -151,11 +149,7 @@ function SideNav(props) {
 				<div>
 					<Box
 						bgcolor='background.paper'
-						className={classnames(
-							// commonClasses.toolbar,
-							classes.sideNavToolbar
-						)}
-						// mb={6}
+						className={classnames(classes.sideNavToolbar)}
 					>
 						<ListItem>
 							<AdexIconTxt className={classes.icon} />
@@ -200,7 +194,7 @@ function SideNav(props) {
 						button
 						to={{ pathname: '/dashboard/' + side + '/' + items }}
 						className={classnames({
-							[classes.active]: location === items && breadcrumbs.length === 2,
+							[classes.active]: location === items,
 						})}
 					>
 						<ListItemIcon>
@@ -208,22 +202,6 @@ function SideNav(props) {
 						</ListItemIcon>
 						<ListItemText primary={t(items.toUpperCase())} />
 					</RRListItem>
-					{breadcrumbs.length === 3 && (
-						<Fragment>
-							<ListDivider />
-							<ListItem
-								className={classnames({
-									[classes.active]: true,
-								})}
-							>
-								<ListItemIcon>
-									<ChevronRight />
-								</ListItemIcon>
-								<ListItemText primary={breadcrumbs[2].label} />
-							</ListItem>
-						</Fragment>
-					)}
-
 					<ListDivider />
 					{side === 'advertiser' && (
 						<>
