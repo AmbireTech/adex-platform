@@ -2,7 +2,7 @@ import React, { Fragment, useState } from 'react'
 import PropTypes from 'prop-types'
 import { AdSlot } from 'adex-models'
 import { Box, Tabs, Tab, Paper } from '@material-ui/core'
-import { useItem, SaveBtn } from 'components/dashboard/containers/ItemCommon/'
+import { useItem } from 'components/dashboard/containers/ItemCommon/'
 import { SlotBasic } from './SlotBasic'
 import { IntegrationCode } from './IntegrationCode'
 import { validateAndUpdateSlot } from 'actions'
@@ -19,7 +19,6 @@ function Slot({ match }) {
 
 	return (
 		<Fragment>
-			<SaveBtn {...hookProps} />
 			<Paper variant='outlined'>
 				<Tabs
 					value={tabIndex}

@@ -31,9 +31,19 @@ function Unit({ match }) {
 
 	return (
 		<Fragment>
-			<SaveBtn validations={validations} {...hookProps} />
-			<DirtyProps {...hookProps} />
-			<Paper elevation={2} variant='outlined'>
+			{!!hookProps.dirtyProps.length && (
+				<Box
+					display='flex'
+					flexDirection='row'
+					alignItems='center'
+					justifyContent='space-between'
+					my={2}
+				>
+					<DirtyProps {...hookProps} />
+					<SaveBtn {...hookProps} />
+				</Box>
+			)}
+			<Paper variant='outlined'>
 				<Box p={2}>
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={12} md={6} lg={5}>
