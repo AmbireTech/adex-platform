@@ -93,7 +93,6 @@ export const styles = theme => {
 			},
 			[theme.breakpoints.down('xs')]: {
 				marginBottom: theme.spacing(1),
-				left: theme.spacing(1),
 			},
 		},
 		breakLong: {
