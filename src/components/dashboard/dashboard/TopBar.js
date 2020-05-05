@@ -57,43 +57,46 @@ function TopNav({ handleDrawerToggle, side, t }) {
 					flexDirection='row'
 					flexGrow='1'
 					alignItems='center'
-					justifyContent='flex-end'
-					px={2}
+					justifyContent='space-between'
 				>
 					<Hidden mdUp>
-						<IconButton
-							color='inherit'
-							aria-label='open drawer'
-							onClick={handleDrawerToggle}
-							// className={classnames(classes.navIconHide)}
-						>
-							<MenuIcon />
-						</IconButton>
+						<Box pl={1}>
+							<IconButton
+								color='inherit'
+								aria-label='open drawer'
+								onClick={handleDrawerToggle}
+								// className={classnames(classes.navIconHide)}
+							>
+								<MenuIcon />
+							</IconButton>
+						</Box>
 					</Hidden>
 
-					{/* <Hidden smDown>
-						<Breadcrumbs aria-label='breadcrumb'>
-							{breadcrumbs.map(({ to, label }, index) =>
-								to && index < breadcrumbs.length - 1 ? (
-									<RRLink key={`${index}-${to}`} to={to}>
-										{label}
-									</RRLink>
-								) : (
-									<Typography
-										classes={{ root: classes.breadcrumbElement }}
-										noWrap
-										component='div'
-										key={`${index}-${label}`}
-										color='textPrimary'
-									>
-										{label}
-									</Typography>
-								)
-							)}
-						</Breadcrumbs>
-					</Hidden> */}
+					<Hidden smDown>
+						<Box flex flexGrow='1' pl={2}>
+							<Breadcrumbs aria-label='breadcrumb'>
+								{breadcrumbs.map(({ to, label }, index) =>
+									to && index < breadcrumbs.length - 1 ? (
+										<RRLink key={`${index}-${to}`} to={to}>
+											{label}
+										</RRLink>
+									) : (
+										<Typography
+											classes={{ root: classes.breadcrumbElement }}
+											noWrap
+											component='div'
+											key={`${index}-${label}`}
+											color='textPrimary'
+										>
+											{label}
+										</Typography>
+									)
+								)}
+							</Breadcrumbs>
+						</Box>
+					</Hidden>
 
-					<Box display='flex' flexDirection='row' alignItems='center'>
+					<Box display='flex' flexDirection='row' alignItems='center' pr={1}>
 						{/* <ChangeLang /> */}
 						<Jazzicon
 							diameter={30}
