@@ -80,8 +80,7 @@ export const styles = theme => {
 				paddingTop: theme.spacing(2),
 			},
 			[theme.breakpoints.down('xs')]: {
-				padding: theme.spacing(0),
-				paddingTop: theme.spacing(1),
+				padding: theme.spacing(1),
 			},
 		},
 		contentInner: {
