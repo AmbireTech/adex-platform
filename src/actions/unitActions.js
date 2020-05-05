@@ -265,7 +265,7 @@ export function getCategorySuggestions({
 		addToast({
 			type: 'accept',
 			label: t('ANALYZING_AD_UNIT_TARGETING'),
-			timeout: 20000,
+			timeout: 5000,
 		})(dispatch)
 		const newItem = selectNewItemByTypeAndId(getState(), itemType, itemId)
 		const { temp, targetUrl, website } = newItem
@@ -311,7 +311,7 @@ export function getCategorySuggestions({
 					label: t('ADDED_CATEGORY_SUGGESTIONS_IF_MISSING', {
 						args: [newTargets.length],
 					}),
-					timeout: 20000,
+					timeout: 5000,
 				})(dispatch)
 			}
 		} catch (err) {
