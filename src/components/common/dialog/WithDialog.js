@@ -83,7 +83,7 @@ export default function WithDialogHoc(Decorated) {
 			ev && ev.stopPropagation && ev.stopPropagation()
 			ev && ev.preventDefault && ev.preventDefault()
 			await handleToggle()
-			if (onClick) onClick()
+			if (onClick) await onClick()
 		}
 
 		const closeDialog = () => {

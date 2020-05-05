@@ -83,10 +83,18 @@ export const styles = theme => {
 			top: 'calc(50% - 30px)',
 		},
 		floating: {
-			position: 'fixed',
-			top: 86,
-			right: spacing,
+			position: 'sticky',
+			top: 0,
+			left: 0,
+			marginBottom: theme.spacing(2),
 			zIndex: theme.zIndex.appBar,
+			'& svg': {
+				marginRight: theme.spacing(1),
+			},
+			[theme.breakpoints.down('xs')]: {
+				marginBottom: theme.spacing(1),
+				left: theme.spacing(1),
+			},
 		},
 		breakLong: {
 			wordBreak: 'break-word',
