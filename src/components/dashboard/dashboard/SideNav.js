@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { useSelector } from 'react-redux'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -16,6 +16,7 @@ import SideSwitch from './SideSwitch'
 import AdexIconTxt from 'components/common/icons/AdexIconTxt'
 import DashboardIcon from '@material-ui/icons/Dashboard'
 import SwapHorizontalIcon from '@material-ui/icons/SwapHoriz'
+import { ChevronRight } from '@material-ui/icons'
 import { Receipt } from '@material-ui/icons'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
@@ -31,6 +32,7 @@ import {
 	selectAccountIdentityAddr,
 	selectAccountStatsFormatted,
 	selectMainToken,
+	selectDashboardBreadcrumbs,
 } from 'selectors'
 
 const RRListItem = withReactRouterLink(ListItem)
@@ -125,6 +127,7 @@ function SideNav(props) {
 	const classes = useStyles({ side })
 	const commonClasses = useCommonStyles()
 	const routerLocation = useSelector(selectLocation)
+	const breadcrumbs = useSelector(selectDashboardBreadcrumbs)
 	const { symbol } = useSelector(selectMainToken)
 
 	// TODO: test location
@@ -149,9 +152,10 @@ function SideNav(props) {
 					<Box
 						bgcolor='background.paper'
 						className={classnames(
-							commonClasses.toolbar,
+							// commonClasses.toolbar,
 							classes.sideNavToolbar
 						)}
+						// mb={6}
 					>
 						<ListItem>
 							<AdexIconTxt className={classes.icon} />
@@ -179,7 +183,6 @@ function SideNav(props) {
 							</LoadingSection>
 						</ListItem>
 					</Box>
-					<ListDivider />
 					<SideSwitch className={classes.sideSwitch} side={side} t={t} />
 					<ListDivider />
 					<RRListItem
@@ -196,13 +199,31 @@ function SideNav(props) {
 					<RRListItem
 						button
 						to={{ pathname: '/dashboard/' + side + '/' + items }}
-						className={classnames({ [classes.active]: location === items })}
+						className={classnames({
+							[classes.active]: location === items && breadcrumbs.length === 2,
+						})}
 					>
 						<ListItemIcon>
 							<ListIcon />
 						</ListItemIcon>
 						<ListItemText primary={t(items.toUpperCase())} />
 					</RRListItem>
+					{breadcrumbs.length === 3 && (
+						<Fragment>
+							<ListDivider />
+							<ListItem
+								className={classnames({
+									[classes.active]: true,
+								})}
+							>
+								<ListItemIcon>
+									<ChevronRight />
+								</ListItemIcon>
+								<ListItemText primary={breadcrumbs[2].label} />
+							</ListItem>
+						</Fragment>
+					)}
+
 					<ListDivider />
 					{side === 'advertiser' && (
 						<>

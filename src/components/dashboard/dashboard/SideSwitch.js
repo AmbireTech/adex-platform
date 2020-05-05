@@ -1,11 +1,10 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import Box from '@material-ui/core/Box'
-import Tabs from '@material-ui/core/Tabs'
-import Tab from '@material-ui/core/Tab'
+import { Box, Tabs, Tab, Divider } from '@material-ui/core'
 import { push } from 'connected-react-router'
 import { execute } from 'actions'
 import { t } from 'selectors'
+import { Paper } from '@material-ui/core'
 
 const sideIndex = {
 	advertiser: 0,
@@ -57,7 +56,8 @@ const SideSwitch = ({ side, className }) => {
 	const tabClasses = useTabStyles({ side })
 	return (
 		<div className={className}>
-			<Box bgcolor='background.paper' boxShadow={2}>
+			<Box bgcolor='background.paper'>
+				<Divider />
 				<Tabs
 					classes={tabsClasses}
 					value={sideIndex[side]}
@@ -69,6 +69,7 @@ const SideSwitch = ({ side, className }) => {
 					<Tab classes={tabClasses} label={t('ADVERTISER')} />
 					<Tab classes={tabClasses} label={t('PUBLISHER')} />
 				</Tabs>
+				<Divider />
 			</Box>
 		</div>
 	)
