@@ -18,6 +18,7 @@ import {
 	updateSlotsDemandThrottled,
 	validateNumberString,
 	updateNewSlot,
+	resetTargeting,
 	execute,
 } from 'actions'
 
@@ -106,9 +107,10 @@ function AdSlotBasic({ validateId }) {
 							label={t('SLOT_WEBSITE')}
 							name='website'
 							value={website}
-							onChange={ev =>
+							onChange={ev => {
 								execute(updateNewSlot('website', ev.target.value))
-							}
+								execute(resetTargeting('AdSlot', 'tags'))
+							}}
 							error={errWebsite && !!errWebsite.dirty}
 							maxLength={120}
 							helperText={
