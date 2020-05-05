@@ -96,7 +96,7 @@ function Campaign({ match }) {
 				{tabIndex === 2 && (
 					<Grid container spacing={2} alignItems='flex-start'>
 						<Grid item xs={12}>
-							<Paper>
+							<Paper variant='outlined'>
 								<Box p={2}>
 									<Typography variant='button' align='center'>
 										{t('COUNTRY_STATS_PERIOD', { args: ['30', 'DAYS'] })}

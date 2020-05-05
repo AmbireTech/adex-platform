@@ -24,7 +24,7 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 	return (
 		<Fragment>
 			<DirtyProps {...hookProps} />
-			<Paper elevation={2}>
+			<Paper elevation={2} variant='outlined'>
 				<Box p={2}>
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={12} md={6} lg={5}>
