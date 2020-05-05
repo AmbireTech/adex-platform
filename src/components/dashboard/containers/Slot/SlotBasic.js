@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react'
 import { Paper, Grid, Box } from '@material-ui/core'
 import { WebsiteIssues } from 'components/dashboard/containers/Slot/WebsiteIssues'
+import { SaveBtn } from 'components/dashboard/containers/ItemCommon/'
 import TargetsList from 'components/dashboard/containers/TargetsList'
 import { SlotEdits } from './SlotEdits'
 import {
@@ -29,7 +30,18 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 
 	return (
 		<Fragment>
-			<DirtyProps {...hookProps} />
+			{!!hookProps.dirtyProps.length && (
+				<Box
+					display='flex'
+					flexDirection='row'
+					alignItems='center'
+					justifyContent='space-between'
+					my={2}
+				>
+					<DirtyProps {...hookProps} />
+					<SaveBtn {...hookProps} />
+				</Box>
+			)}
 			<Paper elevation={2} variant='outlined'>
 				<Box p={2}>
 					<Grid container spacing={2}>

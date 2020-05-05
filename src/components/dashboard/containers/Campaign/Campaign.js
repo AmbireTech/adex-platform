@@ -26,7 +26,7 @@ import StatsByCountryTable from 'components/dashboard/containers/Tables/StatsByC
 import MapChart from 'components/dashboard/charts/map/MapChart'
 import { CampaignBasic } from './CampaignBasic'
 import { validateAndUpdateCampaign, updateMemoryUi, execute } from 'actions'
-import { useItem, SaveBtn } from 'components/dashboard/containers/ItemCommon/'
+import { useItem } from 'components/dashboard/containers/ItemCommon/'
 import { CampaignStatsByTimeframe } from './CampaignStatsByTimeframe'
 
 function Campaign({ match }) {
@@ -54,7 +54,6 @@ function Campaign({ match }) {
 
 	return (
 		<Fragment>
-			<SaveBtn {...hookProps} />
 			<Paper variant='outlined'>
 				<Tabs
 					value={tabIndex}
