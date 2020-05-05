@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import ImgForm from 'components/dashboard/forms/ImgForm'
 import { Grid } from '@material-ui/core'
 import { getWidAndHightFromType } from 'helpers/itemsHelpers'
-import { updateNewUnit, execute } from 'actions'
+import { updateNewUnit, execute, resetTargeting } from 'actions'
 import { t, selectNewAdUnit, selectValidationsById } from 'selectors'
 
 function AdUnitMedia({ validateId }) {
@@ -23,14 +23,15 @@ function AdUnitMedia({ validateId }) {
 						label={t('UNIT_BANNER_IMG_LABEL')}
 						imgSrc={tempUrl || ''}
 						mime={mime || ''}
-						onChange={mediaProps =>
+						onChange={mediaProps => {
 							execute(
 								updateNewUnit('temp', {
 									...temp,
 									...mediaProps,
 								})
 							)
-						}
+							execute(resetTargeting('AdUnit', 'targeting'))
+						}}
 						additionalInfo={t('UNIT_BANNER_IMG_INFO', {
 							args: [width, height, 'px'],
 						})}
