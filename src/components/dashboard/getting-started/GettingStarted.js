@@ -230,7 +230,7 @@ export default function GettingStarted(props) {
 	return (
 		!isGettingStartedHidden &&
 		!!sideSteps.length && (
-			<Box mb={2}>
+			<Box mb={1}>
 				<ExpansionPanel
 					expanded={expanded}
 					onChange={() => execute(setGettingStartedExpanded(!expanded))}
