@@ -14,7 +14,7 @@ function CompanyDetails(props) {
 			<Box mb={1}>
 				<Typography variant='h4'>{'Company Details'}</Typography>
 			</Box>
-			<Card>
+			<Card variant='outlined'>
 				<Box p={3}>
 					<TextField
 						label={t('COMPANY_NAME')}

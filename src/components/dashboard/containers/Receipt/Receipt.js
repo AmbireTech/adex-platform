@@ -112,7 +112,7 @@ function Receipt(props) {
 					</Box>
 				</CompanyDetails>
 				{side === 'publisher' && (
-					<Paper>
+					<Paper variant='outlined'>
 						<Box
 							p={3}
 							display='flex'
@@ -177,7 +177,7 @@ function Receipt(props) {
 						)}
 					</Paper>
 				)}
-				<Card>
+				<Card variant='outlined'>
 					<Box className={classnames(classes.hideOnDesktop)}>
 						<Box
 							p={5}
