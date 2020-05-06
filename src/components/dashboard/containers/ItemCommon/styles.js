@@ -66,7 +66,6 @@ export const styles = theme => {
 			flexDirection: 'row',
 			flexWrap: 'wrap',
 			alignItems: 'center',
-			color: theme.palette.secondary.main,
 		},
 		changeChip: {
 			marginRight: spacing,
@@ -101,6 +100,9 @@ export const styles = theme => {
 				bottom: theme.spacing(1),
 				right: theme.spacing(1),
 			},
+		},
+		changeControlsPaper: {
+			borderColor: theme.palette.secondary.main,
 		},
 	}
 }

@@ -10,6 +10,7 @@ import {
 	TextField,
 	Box,
 	Paper,
+	Collapse,
 } from '@material-ui/core'
 import { Info, Edit, UndoOutlined, OpenInNew } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
@@ -29,24 +30,33 @@ export const DirtyProps = ({ dirtyProps = [], returnPropToInitialState }) => {
 		<Fragment>
 			<Prompt when={!!dirtyProps.length} message={t('UNSAVED_CHANGES_ALERT')} />
 			{!!dirtyProps.length && (
-				<Box flex flexGrow={1}>
-					<div className={classes.changesLine}>
-						<Info className={classes.buttonLeft} />
-						<span className={classes.buttonLeft}>{t('UNSAVED_CHANGES')}:</span>
-						{dirtyProps.map(p => {
-							return (
-								<Chip
-									size='small'
-									className={classes.changeChip}
-									key={p}
-									label={t(p.name || p, { isProp: true })}
-									onDelete={() => {
-										returnPropToInitialState(p)
-									}}
-								/>
-							)
-						})}
-					</div>
+				<Box
+					display='flex'
+					flexGrow={1}
+					flexDirection='row'
+					alignItems='center'
+					justifyContent='flex-start'
+					flexWrap='wrap'
+					mr={1}
+				>
+					<Info color='secondary' className={classes.changeChip} />
+					<span className={classes.changeChip}>{t('UNSAVED_CHANGES')}:</span>
+					{dirtyProps.map(p => {
+						return (
+							<Chip
+								variant='outlined'
+								size='small'
+								color='secondary'
+								className={classes.changeChip}
+								key={p}
+								label={t(p.name || p, { isProp: true })}
+								onDelete={() => {
+									returnPropToInitialState(p)
+								}}
+								deleteIcon={<UndoOutlined />}
+							/>
+						)
+					})}
 				</Box>
 			)}
 		</Fragment>
@@ -57,20 +67,22 @@ export const ChangeControls = hookProps => {
 	const classes = useStyles()
 
 	return (
-		!!hookProps.dirtyProps.length && (
-			<Paper className={classes.changeControls} variant='outlined'>
-				<Box
-					display='flex'
-					flexDirection='row'
-					alignItems='center'
-					justifyContent='space-between'
-					p={1}
-				>
-					<DirtyProps {...hookProps} />
-					<SaveBtn {...hookProps} />
-				</Box>
-			</Paper>
-		)
+		<div className={classes.changeControls}>
+			<Collapse timeout={69} in={!!hookProps.dirtyProps.length}>
+				<Paper variant='outlined' className={classes.changeControlsPaper}>
+					<Box
+						display='flex'
+						flexDirection='row'
+						alignItems='center'
+						justifyContent='space-between'
+						p={1}
+					>
+						<DirtyProps {...hookProps} />
+						<SaveBtn {...hookProps} />
+					</Box>
+				</Paper>
+			</Collapse>
+		</div>
 	)
 }
 
