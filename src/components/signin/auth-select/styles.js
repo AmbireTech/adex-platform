@@ -15,11 +15,12 @@ export const styles = theme => {
 			marginRight: 0,
 		},
 		metamaskBtn: {
-			backgroundColor: theme.palette.grey[800],
-			color: theme.palette.common.white,
+			backgroundColor: theme.palette.common.white,
+			color: theme.palette.common.black,
 		},
 		trezorBtn: {
 			backgroundColor: theme.palette.common.white,
+			color: theme.palette.common.black,
 		},
 	}
 }

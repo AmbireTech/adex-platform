@@ -3,13 +3,12 @@ import PropTypes from 'prop-types'
 import { Grid, Paper, Box } from '@material-ui/core'
 import {
 	useItem,
-	DirtyProps,
+	ChangeControls,
 	ItemTitle,
 	ItemDescription,
 	ItemAdType,
 	ItemTargetURL,
 	MediaCard,
-	SaveBtn,
 } from 'components/dashboard/containers/ItemCommon/'
 import { AdUnit } from 'adex-models'
 import TargetsList from 'components/dashboard/containers/TargetsList'
@@ -31,18 +30,7 @@ function Unit({ match }) {
 
 	return (
 		<Fragment>
-			{!!hookProps.dirtyProps.length && (
-				<Box
-					display='flex'
-					flexDirection='row'
-					alignItems='center'
-					justifyContent='space-between'
-					mb={1}
-				>
-					<DirtyProps {...hookProps} />
-					<SaveBtn {...hookProps} />
-				</Box>
-			)}
+			<ChangeControls {...hookProps} />
 			<Paper variant='outlined'>
 				<Box p={2}>
 					<Grid container spacing={2}>

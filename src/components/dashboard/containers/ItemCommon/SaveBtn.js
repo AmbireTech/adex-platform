@@ -1,6 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { CircularProgress, Fab, Button } from '@material-ui/core'
+import { CircularProgress, Fab } from '@material-ui/core'
 import { Check, Save } from '@material-ui/icons'
 
 import color from '@material-ui/core/colors/purple'

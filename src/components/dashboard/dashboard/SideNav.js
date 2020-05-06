@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -11,12 +11,10 @@ import MonetizationOnIcon from '@material-ui/icons/MonetizationOn'
 import classnames from 'classnames'
 import packageJson from './../../../../package.json'
 import Anchor from 'components/common/anchor/anchor'
-import { styles } from './styles'
 import SideSwitch from './SideSwitch'
 import AdexIconTxt from 'components/common/icons/AdexIconTxt'
 import DashboardIcon from '@material-ui/icons/Dashboard'
 import SwapHorizontalIcon from '@material-ui/icons/SwapHoriz'
-import { ChevronRight } from '@material-ui/icons'
 import { Receipt } from '@material-ui/icons'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
@@ -32,7 +30,6 @@ import {
 	selectAccountIdentityAddr,
 	selectAccountStatsFormatted,
 	selectMainToken,
-	selectDashboardBreadcrumbs,
 } from 'selectors'
 
 const RRListItem = withReactRouterLink(ListItem)
@@ -119,8 +116,6 @@ const useStyles = makeStyles(theme => {
 	}
 })
 
-const useCommonStyles = makeStyles(styles)
-
 function SideNav(props) {
 	const side = useSelector(selectSide)
 	const identity = useSelector(selectAccountIdentityAddr)
@@ -151,9 +146,12 @@ function SideNav(props) {
 						bgcolor='background.paper'
 						className={classnames(classes.sideNavToolbar)}
 					>
-						<ListItem>
+						<RRListItem
+							// @cryptofan
+							to={{ pathname: '/dashboard/' + side }}
+						>
 							<AdexIconTxt className={classes.icon} />
-						</ListItem>
+						</RRListItem>
 						<ListItem>
 							<LoadingSection
 								loading={

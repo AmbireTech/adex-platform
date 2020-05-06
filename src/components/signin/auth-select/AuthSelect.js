@@ -144,7 +144,7 @@ const AuthSelect = () => {
 
 			<Box m={1}>
 				<Button
-					variant='contained'
+					variant='outlined'
 					size='large'
 					color='default'
 					fullWidth
@@ -161,7 +161,7 @@ const AuthSelect = () => {
 			</Box>
 			<Box m={1}>
 				<Button
-					variant='contained'
+					variant='outlined'
 					size='large'
 					color='default'
 					fullWidth
