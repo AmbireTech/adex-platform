@@ -89,7 +89,7 @@ export const styles = theme => {
 			margin: 'auto',
 			// Because of the floating button and table paging
 			[theme.breakpoints.down('sm')]: {
-				paddingBottom: 40 + theme.spacing(4),
+				paddingBottom: 146 + theme.spacing(2),
 			},
 		},
 		breadcrumbElement: {

@@ -3,11 +3,10 @@ import { Paper, Grid, Box, InputAdornment, Button } from '@material-ui/core'
 
 import { bigNumberify } from 'ethers/utils'
 import {
-	DirtyProps,
 	ItemTitle,
 	MediaCard,
 	ItemSpecProp,
-	SaveBtn,
+	ChangeControls,
 } from 'components/dashboard/containers/ItemCommon/'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
@@ -24,18 +23,7 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 
 	return (
 		<Fragment>
-			{!!hookProps.dirtyProps.length && (
-				<Box
-					display='flex'
-					flexDirection='row'
-					alignItems='center'
-					justifyContent='space-between'
-					my={1}
-				>
-					<DirtyProps {...hookProps} />
-					<SaveBtn {...hookProps} />
-				</Box>
-			)}
+			<ChangeControls {...hookProps} />
 			<Paper variant='outlined'>
 				<Box p={2}>
 					<Grid container spacing={2}>
