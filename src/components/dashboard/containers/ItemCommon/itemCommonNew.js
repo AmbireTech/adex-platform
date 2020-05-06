@@ -8,6 +8,8 @@ import {
 	Card,
 	CardMedia,
 	TextField,
+	Box,
+	Paper,
 } from '@material-ui/core'
 import { Info, Edit, UndoOutlined, OpenInNew } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
@@ -16,6 +18,7 @@ import { formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
 import { t, selectMainToken } from 'selectors'
 import { styles } from './styles'
+import { SaveBtn } from './SaveBtn'
 
 const useStyles = makeStyles(styles)
 
@@ -26,25 +29,48 @@ export const DirtyProps = ({ dirtyProps = [], returnPropToInitialState }) => {
 		<Fragment>
 			<Prompt when={!!dirtyProps.length} message={t('UNSAVED_CHANGES_ALERT')} />
 			{!!dirtyProps.length && (
-				<div className={classes.changesLine}>
-					<Info className={classes.buttonLeft} />
-					<span className={classes.buttonLeft}>{t('UNSAVED_CHANGES')}:</span>
-					{dirtyProps.map(p => {
-						return (
-							<Chip
-								size='small'
-								className={classes.changeChip}
-								key={p}
-								label={t(p.name || p, { isProp: true })}
-								onDelete={() => {
-									returnPropToInitialState(p)
-								}}
-							/>
-						)
-					})}
-				</div>
+				<Box flex flexGrow={1}>
+					<div className={classes.changesLine}>
+						<Info className={classes.buttonLeft} />
+						<span className={classes.buttonLeft}>{t('UNSAVED_CHANGES')}:</span>
+						{dirtyProps.map(p => {
+							return (
+								<Chip
+									size='small'
+									className={classes.changeChip}
+									key={p}
+									label={t(p.name || p, { isProp: true })}
+									onDelete={() => {
+										returnPropToInitialState(p)
+									}}
+								/>
+							)
+						})}
+					</div>
+				</Box>
 			)}
 		</Fragment>
+	)
+}
+
+export const ChangeControls = hookProps => {
+	const classes = useStyles()
+
+	return (
+		!!hookProps.dirtyProps.length && (
+			<Paper className={classes.changeControls} variant='outlined'>
+				<Box
+					display='flex'
+					flexDirection='row'
+					alignItems='center'
+					justifyContent='space-between'
+					p={1}
+				>
+					<DirtyProps {...hookProps} />
+					<SaveBtn {...hookProps} />
+				</Box>
+			</Paper>
+		)
 	)
 }
 

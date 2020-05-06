@@ -69,8 +69,9 @@ export const styles = theme => {
 			color: theme.palette.secondary.main,
 		},
 		changeChip: {
-			margin: spacing,
-			marginLeft: 0,
+			marginRight: spacing,
+			marginBottom: spacing / 2,
+			marginTop: spacing / 2,
 		},
 		editIcon: {
 			position: 'absolute',
@@ -81,6 +82,25 @@ export const styles = theme => {
 			position: 'absolute',
 			top: spacing,
 			left: spacing,
+		},
+		changeControls: {
+			position: 'sticky',
+			top: 0,
+			zIndex: theme.zIndex.appBar,
+			marginBottom: spacing,
+			[theme.breakpoints.down('sm')]: {
+				marginBottom: 0,
+				position: 'fixed',
+				top: 'auto',
+				left: theme.spacing(2),
+				bottom: theme.spacing(2),
+				right: theme.spacing(2),
+			},
+			[theme.breakpoints.down('xs')]: {
+				left: theme.spacing(1),
+				bottom: theme.spacing(1),
+				right: theme.spacing(1),
+			},
 		},
 	}
 }
