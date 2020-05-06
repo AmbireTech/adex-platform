@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.4
+##### *2020-05-06*
+
+### Changed
+- Layout and floating buttons
+- Default buttons
+- Misc styles
+- Mobile stepper
+
+### Fixed
+- Misc bugs and styles
+
 ## 4.20.3
 ##### *2020-05-05*
 
