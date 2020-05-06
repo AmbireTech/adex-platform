@@ -11,7 +11,7 @@ export const styles = theme => {
 			position: 'relative',
 			display: 'flex',
 			height: 'calc(100vh - 69px)',
-			width: '100%',
+			width: '100vw',
 		},
 		appBar: {
 			top: 0,
@@ -79,6 +79,7 @@ export const styles = theme => {
 				padding: theme.spacing(2),
 				paddingTop: theme.spacing(2),
 			},
+
 			[theme.breakpoints.down('xs')]: {
 				padding: theme.spacing(1),
 			},
@@ -86,6 +87,10 @@ export const styles = theme => {
 		contentInner: {
 			maxWidth: 1420,
 			margin: 'auto',
+			// Because of the floating button and table paging
+			[theme.breakpoints.down('sm')]: {
+				paddingBottom: 40 + theme.spacing(4),
+			},
 		},
 		breadcrumbElement: {
 			maxWidth: `calc(100vw - ${theme.spacing(5)}px)`,
