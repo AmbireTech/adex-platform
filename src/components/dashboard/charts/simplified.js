@@ -173,10 +173,10 @@ export const SimpleStatistics = ({
 			displayColors: true,
 			callbacks: {
 				label: function(t, d) {
-					// This adds currency MainToken (DAI) to y1Label in the tooltips
+					// This adds currency MainToken (DAI) to y3Label in the tooltips
 					var xLabel = d.datasets[t.datasetIndex].label
 					var yLabel =
-						xLabel === y1Label
+						xLabel === y3Label
 							? `${formatFloatNumberWithCommas(t.yLabel)} ${symbol}`
 							: formatFloatNumberWithCommas(t.yLabel)
 					return `${xLabel}: ${yLabel}`

@@ -2,17 +2,20 @@ import React, { useEffect, useState, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import { makeStyles } from '@material-ui/core/styles'
-import StepperMUI from '@material-ui/core/Stepper'
-import MobileStepper from '@material-ui/core/MobileStepper'
-import Step from '@material-ui/core/Step'
-import StepLabel from '@material-ui/core/StepLabel'
-import Button from '@material-ui/core/Button'
+import {
+	Stepper as StepperMUI,
+	MobileStepper,
+	Step,
+	StepLabel,
+	Button,
+	Paper,
+	Box,
+	Chip,
+	CircularProgress,
+	Typography,
+} from '@material-ui/core'
 import { styles } from './styles'
-import Paper from '@material-ui/core/Paper'
-import Box from '@material-ui/core/Box'
-import Chip from '@material-ui/core/Chip'
 import ErrorIcon from '@material-ui/icons/Error'
-import CircularProgress from '@material-ui/core/CircularProgress'
 import { t, selectValidationsById, selectSpinnerById } from 'selectors'
 
 const getDirtyValidationErrors = (validations = {}) => {
@@ -33,19 +36,29 @@ const useStyles = makeStyles(styles)
 const StepperNav = ({ steps, currentPage, classes, ...other }) => {
 	if (window.innerWidth <= 768) {
 		return (
-			<div>
-				<StepLabel className={classes.mobileStepLabel}>
-					({currentPage + 1}/{steps.length || 1}){' '}
-					{(steps[currentPage] || {}).title}
-				</StepLabel>
-				<MobileStepper
-					activeStep={currentPage}
-					steps={steps.length}
-					position='static'
-					variant='progress'
-					className={classes.mobileStepper}
-				></MobileStepper>
-			</div>
+			<Box
+				flex
+				flexDirection='column'
+				alignItems='center'
+				justifyContent='center'
+			>
+				<Paper variant='outlined'>
+					<Box p={1}>
+						<Typography align='center'>
+							{(steps[currentPage] || {}).title}
+						</Typography>
+					</Box>
+
+					<MobileStepper
+						activeStep={currentPage}
+						steps={steps.length}
+						position='static'
+						variant='text'
+						align='center'
+						className={classes.mobileStepper}
+					></MobileStepper>
+				</Paper>
+			</Box>
 		)
 	}
 	return (

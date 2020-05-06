@@ -8,6 +8,9 @@ import {
 	Card,
 	CardMedia,
 	TextField,
+	Box,
+	Paper,
+	Collapse,
 } from '@material-ui/core'
 import { Info, Edit, UndoOutlined, OpenInNew } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
@@ -16,6 +19,7 @@ import { formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
 import { t, selectMainToken } from 'selectors'
 import { styles } from './styles'
+import { SaveBtn } from './SaveBtn'
 
 const useStyles = makeStyles(styles)
 
@@ -26,25 +30,59 @@ export const DirtyProps = ({ dirtyProps = [], returnPropToInitialState }) => {
 		<Fragment>
 			<Prompt when={!!dirtyProps.length} message={t('UNSAVED_CHANGES_ALERT')} />
 			{!!dirtyProps.length && (
-				<div className={classes.changesLine}>
-					<Info className={classes.buttonLeft} />
-					<span className={classes.buttonLeft}>{t('UNSAVED_CHANGES')}:</span>
+				<Box
+					display='flex'
+					flexGrow={1}
+					flexDirection='row'
+					alignItems='center'
+					justifyContent='flex-start'
+					flexWrap='wrap'
+					mr={1}
+				>
+					<Info color='secondary' className={classes.changeChip} />
+					<span className={classes.changeChip}>{t('UNSAVED_CHANGES')}:</span>
 					{dirtyProps.map(p => {
 						return (
 							<Chip
+								variant='outlined'
 								size='small'
+								color='secondary'
 								className={classes.changeChip}
 								key={p}
 								label={t(p.name || p, { isProp: true })}
 								onDelete={() => {
 									returnPropToInitialState(p)
 								}}
+								deleteIcon={<UndoOutlined />}
 							/>
 						)
 					})}
-				</div>
+				</Box>
 			)}
 		</Fragment>
+	)
+}
+
+export const ChangeControls = hookProps => {
+	const classes = useStyles()
+
+	return (
+		<div className={classes.changeControls}>
+			<Collapse timeout={69} in={!!hookProps.dirtyProps.length}>
+				<Paper variant='outlined' className={classes.changeControlsPaper}>
+					<Box
+						display='flex'
+						flexDirection='row'
+						alignItems='center'
+						justifyContent='space-between'
+						p={1}
+					>
+						<DirtyProps {...hookProps} />
+						<SaveBtn {...hookProps} />
+					</Box>
+				</Paper>
+			</Collapse>
+		</div>
 	)
 }
 

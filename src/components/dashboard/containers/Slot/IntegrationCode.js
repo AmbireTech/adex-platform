@@ -5,7 +5,7 @@ import copy from 'copy-to-clipboard'
 import CopyIcon from '@material-ui/icons/FileCopy'
 import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import { Paper, IconButton } from '@material-ui/core'
+import { Paper, IconButton, Box, Typography } from '@material-ui/core'
 import { Alert, AlertTitle } from '@material-ui/lab'
 
 import { execute, addToast } from 'actions'
@@ -89,34 +89,46 @@ export const IntegrationCode = ({ slot = {} }) => {
 	// 	/>
 	// </Alert>
 	return isEmailConfirmed ? (
-		<div>
-			<div className={classes.integrationLabel}>
-				{t('INTEGRATION_CODE')}
-				<IconButton
-					color='default'
-					onCopy={() =>
-						addToast({
-							type: 'accept',
-							label: t('COPIED_TO_CLIPBOARD'),
-							timeout: 5000,
-						})
-					}
-					onClick={() => {
-						copy(iframeStr)
-						execute(
-							addToast({
-								type: 'accept',
-								label: t('COPIED_TO_CLIPBOARD'),
-								timeout: 5000,
-							})
-						)
-					}}
-				>
-					<CopyIcon />
-				</IconButton>
-			</div>
+		<Box overflow='hidden'>
+			<Box mb={1}>
+				<Paper variant='outlined'>
+					<Box
+						display='flex'
+						flexDirection='row'
+						alignItems='center'
+						justifyContent='space-between'
+						px={1}
+					>
+						<Typography>{t('INTEGRATION_CODE')}</Typography>
+						<IconButton
+							color='default'
+							onCopy={() =>
+								addToast({
+									type: 'accept',
+									label: t('COPIED_TO_CLIPBOARD'),
+									timeout: 5000,
+								})
+							}
+							onClick={() => {
+								copy(iframeStr)
+								execute(
+									addToast({
+										type: 'accept',
+										label: t('COPIED_TO_CLIPBOARD'),
+										timeout: 5000,
+									})
+								)
+							}}
+						>
+							<CopyIcon />
+						</IconButton>
+					</Box>
+				</Paper>
+			</Box>
 			<Paper variant='outlined'>
-				<pre className={classes.integrationCode}>{iframeStr}</pre>
+				<Box p={1} color='grey.contrastText' bgcolor='grey.main'>
+					<pre className={classes.integrationCode}>{iframeStr}</pre>
+				</Box>
 			</Paper>
 			{process.env.NODE_ENV !== 'production' && (
 				<div>
@@ -125,7 +137,7 @@ export const IntegrationCode = ({ slot = {} }) => {
 					<div dangerouslySetInnerHTML={{ __html: iframeStr }} />
 				</div>
 			)}
-		</div>
+		</Box>
 	) : (
 		<Alert severity='warning' variant='outlined'>
 			<AlertTitle>{t('EMAIL_NOT_CONFIRMED_WARNING_TITLE')}</AlertTitle>
