@@ -91,8 +91,13 @@ export const styles = theme => {
 			'& svg': {
 				marginRight: theme.spacing(1),
 			},
-			[theme.breakpoints.down('xs')]: {
-				marginBottom: theme.spacing(1),
+			[theme.breakpoints.down('sm')]: {
+				marginBottom: 0,
+				position: 'fixed',
+				top: 'auto',
+				left: 'auto',
+				bottom: spacing,
+				right: spacing,
 			},
 		},
 		breakLong: {
