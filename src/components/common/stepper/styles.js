@@ -44,19 +44,7 @@ export const styles = theme => {
 			},
 		},
 		mobileStepper: {
-			width: '100%',
-			'& div': {
-				width: '100%',
-				height: '10px',
-			},
-		},
-		mobileStepLabel: {
-			'& span': {
-				fontSize: '24px',
-				margin: '14px auto',
-			},
-			textAlign: 'center',
-			width: 'auto',
+			justifyContent: 'center',
 		},
 		buttonProgressWrapper: {
 			marginLeft: spacing,
