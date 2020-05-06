@@ -13,6 +13,9 @@ export const SECONDARY_LIGHT = '#65fad0'
 export const SECONDARY_DARK = '#009471'
 
 export const ALEX_GREY = '#3C3C3C'
+export const ALEX_GREY_LIGHT = '#666'
+export const ALEX_GREY_DARK = '#161616'
+
 export const GANDALF_GREY = '#C4C4C4'
 
 export const ACCENT_ONE = '#FF6942'
@@ -47,7 +50,12 @@ export const palette = {
 	secondary,
 	accentOne: { main: ACCENT_ONE, light: ACCENT_ONE_LIGHT, contrastText: WHITE },
 	accentTwo: { main: ACCENT_TWO, light: ACCENT_TWO_LIGHT, contrastText: WHITE },
-	grey: { main: ALEX_GREY, contrastText: WHITE, light: GANDALF_GREY },
+	grey: {
+		main: ALEX_GREY,
+		contrastText: WHITE,
+		light: ACCENT_ONE_LIGHT,
+		dark: ALEX_GREY_DARK,
+	},
 	appBar: { main: grey[200], contrastText: grey[900] },
 	error: {
 		main: ERROR_COLOR,
@@ -88,10 +96,14 @@ export const theme = createMuiTheme({
 			},
 			outlined: {
 				borderRadius: 0,
+				borderColor: ALEX_GREY,
 			},
 			contained: {
+				backgroundColor: ALEX_GREY,
+				color: WHITE,
 				boxShadow: 0,
 				'&:hover': {
+					backgroundColor: ALEX_GREY_LIGHT,
 					boxShadow: 0,
 					'@media (hover: none)': {
 						boxShadow: 0,
@@ -99,8 +111,11 @@ export const theme = createMuiTheme({
 				},
 				'&$focusVisible': {
 					boxShadow: 0,
+					backgroundColor: ALEX_GREY_LIGHT,
 				},
 				'&:active': {
+					backgroundColor: ALEX_GREY_LIGHT,
+
 					boxShadow: 0,
 				},
 			},
