@@ -20,7 +20,7 @@ export function AdvertiserStats() {
 					<Tab label={t('CHARTS')} />
 				</Tabs>
 			</Paper>
-			<Box my={2}>
+			<Box my={1}>
 				{tabIndex === 0 && (
 					<Paper variant='outlined'>
 						<Box p={1}>
