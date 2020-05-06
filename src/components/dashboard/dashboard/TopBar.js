@@ -23,7 +23,6 @@ import {
 	Hidden,
 } from '@material-ui/core'
 
-import classnames from 'classnames'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import MenuIcon from '@material-ui/icons/Menu'
@@ -65,7 +64,6 @@ function TopNav({ handleDrawerToggle, side, t }) {
 								color='inherit'
 								aria-label='open drawer'
 								onClick={handleDrawerToggle}
-								// className={classnames(classes.navIconHide)}
 							>
 								<MenuIcon />
 							</IconButton>
@@ -73,7 +71,7 @@ function TopNav({ handleDrawerToggle, side, t }) {
 					</Hidden>
 
 					<Hidden smDown>
-						<Box flex flexGrow='1' pl={2}>
+						<Box display='flex' flexGrow='1' pl={2}>
 							<Breadcrumbs aria-label='breadcrumb'>
 								{breadcrumbs.map(({ to, label }, index) =>
 									to && index < breadcrumbs.length - 1 ? (
