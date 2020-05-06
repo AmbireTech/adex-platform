@@ -49,12 +49,6 @@ export const styles = theme => {
 		toolbarTitle: {
 			justifyContent: 'flex-start',
 		},
-		navIconHide: {
-			marginRight: 10,
-			[theme.breakpoints.up('md')]: {
-				display: 'none',
-			},
-		},
 		toolbar: {
 			flexFlow: 'wrap',
 			height: 69,
