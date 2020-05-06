@@ -75,6 +75,7 @@ function Dropdown(props) {
 							)
 						})}
 					</Select>
+					{helperText && <FormHelperText>{helperText}</FormHelperText>}
 				</FormControl>
 			) : (
 				<>
@@ -84,11 +85,11 @@ function Dropdown(props) {
 						variant={variant}
 						disabled
 						value={loading ? t('LOADING_DATA') : noSrcLabel}
+						helperText={helperText}
 					/>
 					{!!loading && <InputLoading />}
 				</>
 			)}
-			{helperText && <FormHelperText>{helperText}</FormHelperText>}
 		</Fragment>
 	)
 }
