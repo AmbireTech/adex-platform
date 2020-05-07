@@ -98,6 +98,7 @@ function Receipt(props) {
 							<Button
 								startIcon={<Print />}
 								variant='contained'
+								size='large'
 								color='primary'
 								disabled={
 									side === 'publisher' &&
@@ -169,6 +170,7 @@ function Receipt(props) {
 							</Box>
 							<Box m={1} display='flex' flex={1}>
 								<Button
+									style={{ minHeight: 54.63 }}
 									fullWidth
 									size='large'
 									startIcon={<GetApp />}
