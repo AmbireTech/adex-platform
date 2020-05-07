@@ -1,8 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.6
+##### *2020-05-07*
+
+### Fixed
+- Receipts styles
+
+### Changed
+- Receipts preview visible on mobile
+
 ## 4.20.5
-##### *2020-05-06*
+##### *2020-05-07*
 
 ### Fixed
 - Misc bugs, styles and translations
