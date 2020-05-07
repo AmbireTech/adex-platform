@@ -1,10 +1,9 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { useParams, Redirect } from 'react-router'
-import { Box, Hidden, Button, Typography, Paper } from '@material-ui/core'
+import { Box, Button, Paper } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import ReactToPrint from 'react-to-print'
-import classnames from 'classnames'
-import { Print, Visibility, DateRangeSharp, GetApp } from '@material-ui/icons'
+import { Print, DateRangeSharp, GetApp } from '@material-ui/icons'
 import { PublisherReceiptTpl } from './PublisherReceiptTpl'
 import { CampaignReceiptTpl } from './CampaignReceiptTpl'
 import CompanyDetails from './CompanyDetails'
@@ -87,9 +86,14 @@ function Receipt(props) {
 				justifyContent='center'
 				alignContent='center'
 				flexDirection='column'
+				flexGrow={1}
+				overflow='hidden'
 			>
 				<CompanyDetails>
 					<ReactToPrint
+						pageStyle={
+							'@page { size: A4 portrait; marks: none; } @media print { body { -webkit-print-color-adjust: exact; } }'
+						}
 						trigger={() => (
 							<Button
 								startIcon={<Print />}
@@ -166,6 +170,7 @@ function Receipt(props) {
 							<Box m={1} display='flex' flex={1}>
 								<Button
 									fullWidth
+									size='large'
 									startIcon={<GetApp />}
 									variant='contained'
 									color='primary'
@@ -180,27 +185,11 @@ function Receipt(props) {
 						)}
 					</Paper>
 				)}
-				<Box mt={2}>
-					<Hidden mdUp>
-						<Paper variant='outlined'>
-							<Box
-								p={2}
-								display='flex'
-								justifyContent='center'
-								alignItems='center'
-								flexDirection='column'
-							>
-								<Visibility />
-								<Typography variant='overline' display='block' gutterBottom>
-									{t('RECEIPT_PREVIEW_ONLY_DESKTOP')}
-								</Typography>
-							</Box>
-						</Paper>
-					</Hidden>
-					<Hidden smDown>
-						{receipts.length > 0 && (
+				<Box mt={2} display='flex' alignItems='center' justifyContent='center'>
+					{receipts.length > 0 && (
+						<Box width={1}>
 							<Paper variant='outlined'>
-								<Box ref={invoice} className={classnames(classes.a4)}>
+								<Box ref={invoice}>
 									{receipts.map(item =>
 										side === 'advertiser' ? (
 											<CampaignReceiptTpl campaignId={item} key={item} />
@@ -212,8 +201,8 @@ function Receipt(props) {
 									)}
 								</Box>
 							</Paper>
-						)}
-					</Hidden>
+						</Box>
+					)}
 				</Box>
 			</Box>
 		</Box>
