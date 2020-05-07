@@ -86,19 +86,6 @@ export const styles = theme => {
 			position: 'sticky',
 			top: 0,
 			zIndex: theme.zIndex.appBar,
-			[theme.breakpoints.down('sm')]: {
-				marginBottom: 0,
-				position: 'fixed',
-				top: 'auto',
-				left: theme.spacing(2),
-				bottom: theme.spacing(2),
-				right: theme.spacing(2),
-			},
-			[theme.breakpoints.down('xs')]: {
-				left: theme.spacing(1),
-				bottom: theme.spacing(1),
-				right: theme.spacing(1),
-			},
 		},
 		changeControlsPaper: {
 			borderColor: theme.palette.secondary.main,
