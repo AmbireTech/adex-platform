@@ -1,17 +1,31 @@
 import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { makeStyles } from '@material-ui/core/styles'
-import { TextField } from '@material-ui/core'
-import InputLabel from '@material-ui/core/InputLabel'
-import MenuItem from '@material-ui/core/MenuItem'
-import ListSubheader from '@material-ui/core/ListSubheader'
-import FormHelperText from '@material-ui/core/FormHelperText'
-import FormControl from '@material-ui/core/FormControl'
-import Select from '@material-ui/core/Select'
+import {
+	TextField,
+	ListSubheader,
+	InputLabel,
+	MenuItem,
+	FormHelperText,
+	FormControl,
+	Select,
+} from '@material-ui/core'
 import { InputLoading } from 'components/common/spinners/'
 import classnames from 'classnames'
-import { styles } from './styles'
 import { t } from 'selectors'
+
+export const styles = theme => ({
+	formControl: {
+		minWidth: 120,
+	},
+	groupHeader: {
+		backgroundColor: theme.palette.background.paper,
+	},
+	menuItem: {
+		whiteSpace: 'break-spaces',
+		wordBreak: 'break-word',
+	},
+})
 
 const useStyles = makeStyles(styles)
 
@@ -62,11 +76,15 @@ function Dropdown(props) {
 					>
 						{[...source].map(src => {
 							return src.group ? (
-								<ListSubheader key={src.group.name || src.group}>
+								<ListSubheader
+									className={classes.groupHeader}
+									key={src.group.name || src.group}
+								>
 									{src.group.name || src.group}
 								</ListSubheader>
 							) : (
 								<MenuItem
+									className={classes.menuItem}
 									key={src.value.key || src.value.id || src.value}
 									value={src.value.id || src.value}
 								>
