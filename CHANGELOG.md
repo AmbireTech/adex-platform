@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.5
+##### *2020-05-06*
+
+### Fixed
+- Misc bugs, styles and translations
+
 ## 4.20.4
 ##### *2020-05-06*
 
