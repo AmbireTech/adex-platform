@@ -89,27 +89,25 @@ function Receipt(props) {
 				flexDirection='column'
 			>
 				<CompanyDetails>
-					<Box mt={2}>
-						<ReactToPrint
-							trigger={() => (
-								<Button
-									startIcon={<Print />}
-									variant='contained'
-									color='primary'
-									disabled={
-										side === 'publisher' &&
-										(receipts.length === 0 || fetchingPublisherReceiptsSpinner)
-									}
-									fullWidth
-								>
-									{!selectedByPropsOrParams
-										? `${t('RECEIPTS_PRINT_ALL')}`
-										: `${t('RECEIPT_PRINT')}`}
-								</Button>
-							)}
-							content={() => invoice.current}
-						/>
-					</Box>
+					<ReactToPrint
+						trigger={() => (
+							<Button
+								startIcon={<Print />}
+								variant='contained'
+								color='primary'
+								disabled={
+									side === 'publisher' &&
+									(receipts.length === 0 || fetchingPublisherReceiptsSpinner)
+								}
+								fullWidth
+							>
+								{!selectedByPropsOrParams
+									? `${t('RECEIPTS_PRINT_ALL')}`
+									: `${t('RECEIPT_PRINT')}`}
+							</Button>
+						)}
+						content={() => invoice.current}
+					/>
 				</CompanyDetails>
 				{side === 'publisher' && (
 					<Paper variant='outlined'>
