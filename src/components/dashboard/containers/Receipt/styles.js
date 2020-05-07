@@ -26,16 +26,6 @@ export const styles = theme => {
 			minHeight: '297mm',
 			padding: '8mm',
 		},
-		hideOnMobile: {
-			[theme.breakpoints.down('sm')]: {
-				display: 'none',
-			},
-		},
-		hideOnDesktop: {
-			[theme.breakpoints.up('md')]: {
-				display: 'none',
-			},
-		},
 		progress: {
 			width: '100%',
 		},
