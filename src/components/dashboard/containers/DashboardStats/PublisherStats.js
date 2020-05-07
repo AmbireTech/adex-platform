@@ -1,5 +1,14 @@
 import React, { Fragment, useState } from 'react'
-import { Box, Grid, Paper, Typography, Tab, Tabs } from '@material-ui/core'
+import { useSelector } from 'react-redux'
+import {
+	Box,
+	Grid,
+	Paper,
+	Typography,
+	Tab,
+	Tabs,
+	LinearProgress,
+} from '@material-ui/core'
 import BestEarnersTable from 'components/dashboard/containers/Tables/BestEarnersTable'
 import StatsByCountryTable from 'components/dashboard/containers/Tables/StatsByCountryTable'
 import MapChart from 'components/dashboard/charts/map/MapChart'
@@ -9,10 +18,14 @@ import {
 	selectPublisherStatsByCountryTableData,
 	selectPublisherStatsByCountryMapChartData,
 	selectBestEarnersTableData,
+	selectInitialDataLoadedByData,
 } from 'selectors'
 
 export function PublisherStats() {
 	const [tabIndex, setTabIndex] = useState(0)
+	const dataLoaded = useSelector(state =>
+		selectInitialDataLoadedByData(state, 'advancedAnalytics')
+	)
 
 	return (
 		<Fragment>
@@ -39,8 +52,8 @@ export function PublisherStats() {
 					</Paper>
 				)}
 				{tabIndex === 1 && (
-					<Grid container spacing={2}>
-						<Grid item xs={12} md={12} lg={6}>
+					<Grid container spacing={1}>
+						<Grid item xs={12}>
 							<Paper variant='outlined'>
 								<Box p={2}>
 									<Typography variant='button' align='center'>
@@ -48,12 +61,10 @@ export function PublisherStats() {
 									</Typography>
 								</Box>
 							</Paper>
-
-							<Box mt={2}>
-								<MapChart
-									selector={selectPublisherStatsByCountryMapChartData}
-								/>
-							</Box>
+							{!dataLoaded && <LinearProgress />}
+						</Grid>
+						<Grid item xs={12} md={12} lg={6}>
+							<MapChart selector={selectPublisherStatsByCountryMapChartData} />
 						</Grid>
 
 						<Grid item xs={12} md={12} lg={6}>
