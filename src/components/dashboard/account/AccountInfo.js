@@ -279,28 +279,31 @@ function AccountInfo() {
 									})}
 								/>
 							</ListItem>
-							<ListDivider />
+
 							{allowEasterEggs && (
-								<ListItem>
-									<Box
-										display='flex'
-										flexWrap={'wrap'}
-										flex='1'
-										justifyContent='space-between'
-										alignItems='center'
-									>
-										<Box flexGrow='1'>
-											<Box py={1}>
-												<WithdrawAnyTokenFromIdentity
-													fullWidth
-													variant='contained'
-													color='default'
-													size='large'
-												/>
+								<Fragment>
+									<ListDivider />
+									<ListItem>
+										<Box
+											display='flex'
+											flexWrap={'wrap'}
+											flex='1'
+											justifyContent='space-between'
+											alignItems='center'
+										>
+											<Box flexGrow='1'>
+												<Box py={1}>
+													<WithdrawAnyTokenFromIdentity
+														fullWidth
+														variant='contained'
+														color='default'
+														size='large'
+													/>
+												</Box>
 											</Box>
 										</Box>
-									</Box>
-								</ListItem>
+									</ListItem>
+								</Fragment>
 							)}
 						</List>
 					</Box>
