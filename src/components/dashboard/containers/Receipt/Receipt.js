@@ -1,10 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { useParams, Redirect } from 'react-router'
-import { Box, Card, Button, Typography, Paper } from '@material-ui/core'
+import { Box, Hidden, Button, Typography, Paper } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import ReactToPrint from 'react-to-print'
 import classnames from 'classnames'
-import { Print, Visibility, CalendarToday, GetApp } from '@material-ui/icons'
+import { Print, Visibility, DateRangeSharp, GetApp } from '@material-ui/icons'
 import { PublisherReceiptTpl } from './PublisherReceiptTpl'
 import { CampaignReceiptTpl } from './CampaignReceiptTpl'
 import CompanyDetails from './CompanyDetails'
@@ -89,38 +89,39 @@ function Receipt(props) {
 				flexDirection='column'
 			>
 				<CompanyDetails>
-					<Box mt={2}>
-						<ReactToPrint
-							trigger={() => (
-								<Button
-									startIcon={<Print />}
-									variant='contained'
-									color='primary'
-									disabled={
-										side === 'publisher' &&
-										(receipts.length === 0 || fetchingPublisherReceiptsSpinner)
-									}
-									fullWidth
-								>
-									{!selectedByPropsOrParams
-										? `${t('RECEIPTS_PRINT_ALL')}`
-										: `${t('RECEIPT_PRINT')}`}
-								</Button>
-							)}
-							content={() => invoice.current}
-						/>
-					</Box>
+					<ReactToPrint
+						trigger={() => (
+							<Button
+								startIcon={<Print />}
+								variant='contained'
+								color='primary'
+								disabled={
+									side === 'publisher' &&
+									(receipts.length === 0 || fetchingPublisherReceiptsSpinner)
+								}
+								fullWidth
+							>
+								{!selectedByPropsOrParams
+									? `${t('RECEIPTS_PRINT_ALL')}`
+									: `${t('RECEIPT_PRINT')}`}
+							</Button>
+						)}
+						content={() => invoice.current}
+					/>
 				</CompanyDetails>
 				{side === 'publisher' && (
 					<Paper variant='outlined'>
 						<Box
-							p={3}
+							p={1}
 							display='flex'
 							justifyContent='space-between'
-							alignItems='center'
+							alignItems='flex-start'
+							flexDirection='row'
+							flexWrap='wrap'
 						>
-							<Box mr={2} display='flex' flex={1}>
+							<Box m={1} display='flex' flex={1}>
 								<Dropdown
+									variant='outlined'
 									fullWidth
 									source={[...monthMappingStartPeriod]}
 									onChange={val => {
@@ -137,11 +138,12 @@ function Receipt(props) {
 									label={t('START_PERIOD')}
 									name='startDate'
 									htmlId='start-date-select'
-									IconComponent={CalendarToday}
+									IconComponent={DateRangeSharp}
 								/>
 							</Box>
-							<Box mr={2} display='flex' flex={1}>
+							<Box m={1} display='flex' flex={1}>
 								<Dropdown
+									variant='outlined'
 									fullWidth
 									source={[...monthMappingEndPeriod]}
 									onChange={val => {
@@ -158,11 +160,12 @@ function Receipt(props) {
 									label={t('END_PERIOD')}
 									name='endDate'
 									htmlId='end-date-select'
-									IconComponent={CalendarToday}
+									IconComponent={DateRangeSharp}
 								/>
 							</Box>
-							<Box>
+							<Box m={1} display='flex' flex={1}>
 								<Button
+									fullWidth
 									startIcon={<GetApp />}
 									variant='contained'
 									color='primary'
@@ -177,37 +180,41 @@ function Receipt(props) {
 						)}
 					</Paper>
 				)}
-				<Card variant='outlined'>
-					<Box className={classnames(classes.hideOnDesktop)}>
-						<Box
-							p={5}
-							display='flex'
-							justifyContent='center'
-							alignItems='center'
-							flexDirection='column'
-						>
-							<Visibility />
-							<Typography variant='overline' display='block' gutterBottom>
-								{t('RECEIPT_PREVIEW_ONLY_DESKTOP')}
-							</Typography>
-						</Box>
-					</Box>
-					<Box className={classnames(classes.hideOnMobile)}>
-						{receipts.length > 0 && (
-							<Box ref={invoice} className={classnames(classes.a4)}>
-								{receipts.map(item =>
-									side === 'advertiser' ? (
-										<CampaignReceiptTpl campaignId={item} key={item} />
-									) : (
-										fetchingPublisherReceiptsSpinner === false && (
-											<PublisherReceiptTpl date={item} key={item} />
-										)
-									)
-								)}
+				<Box mt={2}>
+					<Hidden mdUp>
+						<Paper variant='outlined'>
+							<Box
+								p={2}
+								display='flex'
+								justifyContent='center'
+								alignItems='center'
+								flexDirection='column'
+							>
+								<Visibility />
+								<Typography variant='overline' display='block' gutterBottom>
+									{t('RECEIPT_PREVIEW_ONLY_DESKTOP')}
+								</Typography>
 							</Box>
+						</Paper>
+					</Hidden>
+					<Hidden smDown>
+						{receipts.length > 0 && (
+							<Paper variant='outlined'>
+								<Box ref={invoice} className={classnames(classes.a4)}>
+									{receipts.map(item =>
+										side === 'advertiser' ? (
+											<CampaignReceiptTpl campaignId={item} key={item} />
+										) : (
+											fetchingPublisherReceiptsSpinner === false && (
+												<PublisherReceiptTpl date={item} key={item} />
+											)
+										)
+									)}
+								</Box>
+							</Paper>
 						)}
-					</Box>
-				</Card>
+					</Hidden>
+				</Box>
 			</Box>
 		</Box>
 	)

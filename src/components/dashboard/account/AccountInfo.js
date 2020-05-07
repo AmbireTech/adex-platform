@@ -7,23 +7,25 @@ import {
 	SetAccountENS,
 } from 'components/dashboard/forms/web3/transactions'
 import { makeStyles } from '@material-ui/core/styles'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemText from '@material-ui/core/ListItemText'
-import ListDivider from '@material-ui/core/Divider'
-import ListSubheader from '@material-ui/core/ListSubheader'
-import Button from '@material-ui/core/Button'
-import Box from '@material-ui/core/Box'
-import ExpansionPanel from '@material-ui/core/ExpansionPanel'
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails'
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary'
-import Typography from '@material-ui/core/Typography'
+import {
+	List,
+	ListItem,
+	ListItemText,
+	Divider as ListDivider,
+	ListSubheader,
+	Button,
+	Box,
+	ExpansionPanel,
+	ExpansionPanelSummary,
+	Typography,
+	IconButton,
+	Paper,
+} from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { styles } from './styles.js'
 import { LoadingSection } from 'components/common/spinners'
 import CreditCardIcon from '@material-ui/icons/CreditCard'
 import CopyIcon from '@material-ui/icons/FileCopy'
-import IconButton from '@material-ui/core/IconButton'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import copy from 'copy-to-clipboard'
 import {
@@ -66,7 +68,7 @@ const AccountItem = props => (
 			>
 				<Box flex='1'>{props.left}</Box>
 			</Box>
-			<Box flexGrow='1' flexBasis='20em'>
+			<Box flexGrow='1' flexBasis='17em'>
 				{props.right}
 			</Box>
 		</Box>
@@ -103,100 +105,105 @@ function AccountInfo() {
 	}
 
 	return (
-		<div>
-			<List className={classes.root}>
-				<ListSubheader>{t('ADEX_ACCOUNT')}</ListSubheader>
-				<AccountItem
-					left={
-						<Box display='flex' flexDirection='row' flexWrap='wrap'>
-							<ListItemText
-								className={classes.address}
-								{...(identityEnsName && {
-									primary: identityEnsName,
-									secondary: identityAddress,
-								})}
-								{...(!identityEnsName && {
-									primary: identityAddress,
-									secondary: t('ENS_NOT_SET'),
-								})}
-							/>
-							<IconButton
-								color='default'
-								onClick={() => {
-									copy(identityAddress)
-									execute(
-										addToast({
-											type: 'info',
-											label: t('COPIED_TO_CLIPBOARD'),
-											timeout: 5000,
-										})
-									)
-								}}
-							>
-								<CopyIcon />
-							</IconButton>
-						</Box>
-					}
-					right={
-						!!identityAddress && (
-							<SetAccountENS
-								disabled={!canMakeTx}
-								fullWidth
-								variant='contained'
-								color='default'
-								token='DAI'
-								size='large'
-								identityAvailable={availableIdentityBalanceMainToken}
-							/>
-						)
-					}
-				/>
-
-				<ListDivider />
-				<AccountItem
-					left={
-						<LoadingSection
-							loading={
-								!identityBalanceMainToken && identityBalanceMainToken !== 0
-							}
-						>
-							<ListItemText
-								className={classes.address}
-								primary={`${availableIdentityBalanceMainToken || 0} ${symbol}`}
-								secondary={t('IDENTITY_MAIN_TOKEN_BALANCE_AVAILABLE_INFO')}
-							/>
-						</LoadingSection>
-					}
-					right={
-						<Fragment>
-							<Box py={1}>
-								<RRButton
-									to={`/dashboard/${side}/topup`}
-									fullWidth
-									variant='contained'
-									color='secondary'
-									aria-label='delete'
-									size='large'
+		<Fragment>
+			<Paper variant='outlined'>
+				<List className={classes.root} disablePadding>
+					<ListSubheader disableSticky>{t('ADEX_ACCOUNT')}</ListSubheader>
+					<AccountItem
+						left={
+							<Box display='flex' flexDirection='row' flexWrap='wrap'>
+								<ListItemText
+									className={classes.address}
+									{...(identityEnsName && {
+										primary: identityEnsName,
+										secondary: identityAddress,
+									})}
+									{...(!identityEnsName && {
+										primary: identityAddress,
+										secondary: t('ENS_NOT_SET'),
+									})}
+								/>
+								<IconButton
+									color='default'
+									onClick={() => {
+										copy(identityAddress)
+										execute(
+											addToast({
+												type: 'info',
+												label: t('COPIED_TO_CLIPBOARD'),
+												timeout: 5000,
+											})
+										)
+									}}
 								>
-									<CreditCardIcon className={classes.iconBtnLeft} />
-									{t('TOP_UP')}
-								</RRButton>
+									<CopyIcon />
+								</IconButton>
 							</Box>
-							<Box py={1}>
-								<WithdrawTokenFromIdentity
+						}
+						right={
+							!!identityAddress && (
+								<SetAccountENS
 									disabled={!canMakeTx}
 									fullWidth
 									variant='contained'
 									color='default'
-									identityAvailable={availableIdentityBalanceMainToken}
-									identityAvailableRaw={availableIdentityBalanceMainToken}
-									token={symbol}
+									token='DAI'
 									size='large'
+									identityAvailable={availableIdentityBalanceMainToken}
 								/>
-							</Box>
-						</Fragment>
-					}
-				/>
+							)
+						}
+					/>
+
+					<ListDivider />
+					<AccountItem
+						left={
+							<LoadingSection
+								loading={
+									!identityBalanceMainToken && identityBalanceMainToken !== 0
+								}
+							>
+								<ListItemText
+									className={classes.address}
+									primary={`${availableIdentityBalanceMainToken ||
+										0} ${symbol}`}
+									secondary={t('IDENTITY_MAIN_TOKEN_BALANCE_AVAILABLE_INFO')}
+								/>
+							</LoadingSection>
+						}
+						right={
+							<Fragment>
+								<Box py={1}>
+									<RRButton
+										to={`/dashboard/${side}/topup`}
+										fullWidth
+										variant='contained'
+										color='secondary'
+										aria-label='delete'
+										size='large'
+									>
+										<CreditCardIcon className={classes.iconBtnLeft} />
+										{t('TOP_UP')}
+									</RRButton>
+								</Box>
+								<Box py={1}>
+									<WithdrawTokenFromIdentity
+										disabled={!canMakeTx}
+										fullWidth
+										variant='contained'
+										color='default'
+										identityAvailable={availableIdentityBalanceMainToken}
+										identityAvailableRaw={availableIdentityBalanceMainToken}
+										token={symbol}
+										size='large'
+									/>
+								</Box>
+							</Fragment>
+						}
+					/>
+				</List>
+			</Paper>
+			<Box mt={1}>
 				<ExpansionPanel
 					expanded={expanded}
 					onChange={handleExpandChange}
@@ -212,7 +219,7 @@ function AccountInfo() {
 							{t('ACCOUNT_ADVANCED_INFO_AND_ACTIONS')}
 						</Typography>
 					</ExpansionPanelSummary>
-					<ExpansionPanelDetails>
+					<Box>
 						<List classes={{ root: classes.advancedList }}>
 							<AccountItem
 								left={
@@ -272,34 +279,37 @@ function AccountInfo() {
 									})}
 								/>
 							</ListItem>
-							<ListDivider />
+
 							{allowEasterEggs && (
-								<ListItem>
-									<Box
-										display='flex'
-										flexWrap={'wrap'}
-										flex='1'
-										justifyContent='space-between'
-										alignItems='center'
-									>
-										<Box flexGrow='1'>
-											<Box py={1}>
-												<WithdrawAnyTokenFromIdentity
-													fullWidth
-													variant='contained'
-													color='default'
-													size='large'
-												/>
+								<Fragment>
+									<ListDivider />
+									<ListItem>
+										<Box
+											display='flex'
+											flexWrap={'wrap'}
+											flex='1'
+											justifyContent='space-between'
+											alignItems='center'
+										>
+											<Box flexGrow='1'>
+												<Box py={1}>
+													<WithdrawAnyTokenFromIdentity
+														fullWidth
+														variant='contained'
+														color='default'
+														size='large'
+													/>
+												</Box>
 											</Box>
 										</Box>
-									</Box>
-								</ListItem>
+									</ListItem>
+								</Fragment>
 							)}
 						</List>
-					</ExpansionPanelDetails>
+					</Box>
 				</ExpansionPanel>
-			</List>
-		</div>
+			</Box>
+		</Fragment>
 	)
 }
 

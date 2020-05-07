@@ -3,8 +3,6 @@ import { makeStyles } from '@material-ui/core/styles'
 import { CircularProgress, Fab } from '@material-ui/core'
 import { Check, Save } from '@material-ui/icons'
 
-import color from '@material-ui/core/colors/purple'
-
 export const styles = theme => ({
 	root: {
 		display: 'flex',
@@ -14,25 +12,17 @@ export const styles = theme => ({
 		position: 'relative',
 	},
 	buttonSuccess: {
-		backgroundColor: color[500],
+		backgroundColor: theme.palette.success.main,
+		color: theme.palette.success.contrastText,
 		'&:hover': {
-			backgroundColor: color[700],
+			backgroundColor: theme.palette.success.dark,
 		},
 	},
 	fabProgress: {
-		color: color[500],
 		position: 'absolute',
-		top: -6,
-		left: -6,
+		top: -5,
+		left: -5,
 		zIndex: 1,
-	},
-	buttonProgress: {
-		color: color[500],
-		position: 'absolute',
-		top: '50%',
-		left: '50%',
-		marginTop: -12,
-		marginLeft: -12,
 	},
 })
 
@@ -50,6 +40,7 @@ export const SaveBtn = ({
 		!!dirtyProps.length && (
 			<div className={classes.wrapper}>
 				<Fab
+					size='medium'
 					color='primary'
 					onClick={save}
 					disabled={disabled || spinner || !dirtyProps.length}
@@ -58,7 +49,11 @@ export const SaveBtn = ({
 					{success ? <Check /> : <Save />}
 				</Fab>
 				{!!spinner && (
-					<CircularProgress size={68} className={classes.fabProgress} />
+					<CircularProgress
+						size={58}
+						className={classes.fabProgress}
+						color='secondary'
+					/>
 				)}
 			</div>
 		)
