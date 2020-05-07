@@ -67,7 +67,7 @@ function CompanyDetails(props) {
 							/>
 						</Grid>
 
-						<Grid item xs={12}>
+						<Grid item xs={12} lg={6}>
 							{props.children}
 						</Grid>
 					</Grid>
