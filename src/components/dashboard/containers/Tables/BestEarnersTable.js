@@ -4,7 +4,12 @@ import { commify } from 'ethers/utils'
 import Img from 'components/common/img/Img'
 import { useSelector } from 'react-redux'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
-import { t, selectBestEarnersTableData, selectMainToken } from 'selectors'
+import {
+	t,
+	selectBestEarnersTableData,
+	selectMainToken,
+	selectInitialDataLoadedByData,
+} from 'selectors'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
@@ -116,6 +121,9 @@ function BestEarnersTable(props) {
 	} = props
 	const classes = useStyles()
 	const { symbol } = useSelector(selectMainToken)
+	const dataLoaded = useSelector(state =>
+		selectInitialDataLoadedByData(state, 'advancedAnalytics')
+	)
 
 	const { data, columns, reloadData } = useTableData({
 		selector,
@@ -145,6 +153,7 @@ function BestEarnersTable(props) {
 			data={data}
 			columns={columns}
 			options={options}
+			loading={!dataLoaded}
 			noSearch
 			noDownload
 			noPrint
