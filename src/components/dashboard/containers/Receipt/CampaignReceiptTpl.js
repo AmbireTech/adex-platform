@@ -10,6 +10,7 @@ import {
 	TableBody,
 	TableRow,
 	TableCell,
+	TableContainer,
 } from '@material-ui/core'
 import classnames from 'classnames'
 import { makeStyles } from '@material-ui/core/styles'
@@ -62,16 +63,16 @@ export function CampaignReceiptTpl({ campaignId } = {}) {
 	}
 	if (!receiptReady) return null
 	return (
-		<Box mb={5} className={classnames(classes.pageBreak)}>
-			<Box mb={2} display='flex' justifyContent='space-between'>
+		<Box p={2} mb={5} className={classnames(classes.pageBreak)} width={1}>
+			<Box mb={2} display='flex' justifyContent='space-between' flexWrap='wrap'>
 				<Box>
-					<Typography variant='h4'>{`${t('RECEIPT_FOR', {
+					<Typography variant='h4' gutterBottom>{`${t('RECEIPT_FOR', {
 						args: [companyName || '...'],
 					})}`}</Typography>
-					<Typography variant='h5'>{`${t('RECEIPT_ACCOUNT_ID', {
+					<Typography variant='h5' gutterBottom>{`${t('RECEIPT_ACCOUNT_ID', {
 						args: [formatAddress(identityAddr)],
 					})}`}</Typography>
-					<Typography variant='body2'>{`${t('RECEIPT_ID', {
+					<Typography variant='body2' gutterBottom>{`${t('RECEIPT_ID', {
 						args: [formatAddress(campaignId, '-')],
 					})}`}</Typography>
 				</Box>
@@ -81,10 +82,12 @@ export function CampaignReceiptTpl({ campaignId } = {}) {
 			</Box>
 			<Divider />
 			<Box
-				mt={5}
+				mt={3}
 				display='flex'
 				justifyContent='space-between'
 				alignContent='center'
+				flexDirection='row'
+				flexWrap='wrap'
 			>
 				<Box display='flex' flexDirection='column'>
 					<Box mb={2}>
@@ -110,9 +113,11 @@ export function CampaignReceiptTpl({ campaignId } = {}) {
 						</Typography>
 					</Box>
 				</Box>
-				<Box display='flex' flexDirection='column' alignItems='flex-end'>
-					<Typography variant='h6'>{t('RECEIPT_PAID')}</Typography>
-					<Typography variant='h4'>
+				<Box mb={2} display='flex' flexDirection='column' alignItems='flex-end'>
+					<Typography variant='h6' align='right'>
+						{t('RECEIPT_PAID')}
+					</Typography>
+					<Typography variant='h4' align='right'>
 						<strong>{`${formatNumberWithCommas(
 							(
 								Number(formatUnits(campaign.depositAmount || '0', decimals)) *
@@ -183,67 +188,76 @@ export function CampaignReceiptTpl({ campaignId } = {}) {
 				<Fragment>
 					<Box mt={2} display='flex' justifyContent='space-between'>
 						<Box>
-							<Typography variant='h6'>
+							<Typography variant='h6' gutterBottom>
 								{t('RECEIPT_CAMPAIGN_BREAKDOWN')}
 							</Typography>
 						</Box>
 					</Box>
 					<Divider className={classnames(classes.dottedDivider)} />
 					<Box>
-						<Table size='small'>
-							<TableHead>
-								<TableRow className={classnames(classes.dottedDivider)}>
-									<TableCell>
-										<Typography variant='subtitle2'>
-											<strong>{t('WEBSITE')}</strong>
-										</Typography>
-									</TableCell>
-									<TableCell>
-										<Typography variant='subtitle2'>
-											<strong>{t('LABEL_IMPRESSIONS')}</strong>
-										</Typography>
-									</TableCell>
-									<TableCell>
-										<Typography variant='subtitle2'>
-											<strong>{t('CHART_LABEL_CLICKS')}</strong>
-										</Typography>
-									</TableCell>
-									<TableCell>
-										<Typography variant='subtitle2'>
-											<strong>{t('WEBSITE_EARNINGS')}</strong>
-										</Typography>
-									</TableCell>
-								</TableRow>
-							</TableHead>
-							<TableBody>
-								{campaignBreakdown
-									.sort((a, b) => b.earnings - a.earnings)
-									.map((stats, i) => (
-										<TableRow key={i}>
-											<TableCell className={classnames(classes.breakAll)}>
-												<Typography variant='body2'>{stats.website}</Typography>
-											</TableCell>
-											<TableCell>
-												<Typography variant='body2'>
-													{formatNumberWithCommas(stats.impressions)}
-												</Typography>
-											</TableCell>
-											<TableCell>
-												<Typography variant='body2'>
-													{formatNumberWithCommas(stats.clicks)}
-												</Typography>
-											</TableCell>
-											<TableCell>
-												<Typography variant='body2'>
-													{`${formatNumberWithCommas(
-														stats.earnings.toFixed(2)
-													)} ${symbol}`}
-												</Typography>
-											</TableCell>
-										</TableRow>
-									))}
-							</TableBody>
-						</Table>
+						<TableContainer>
+							<Table size='small'>
+								<TableHead>
+									<TableRow className={classnames(classes.dottedDivider)}>
+										<TableCell align='left'>
+											<Typography variant='subtitle2'>
+												<strong>{t('WEBSITE')}</strong>
+											</Typography>
+										</TableCell>
+										<TableCell align='right'>
+											<Typography variant='subtitle2'>
+												<strong>{t('LABEL_IMPRESSIONS')}</strong>
+											</Typography>
+										</TableCell>
+										<TableCell align='right'>
+											<Typography variant='subtitle2'>
+												<strong>{t('CHART_LABEL_CLICKS')}</strong>
+											</Typography>
+										</TableCell>
+										<TableCell align='right'>
+											<Typography variant='subtitle2'>
+												<strong>
+													{`${t('WEBSITE_EARNINGS')} (${symbol})`}
+												</strong>
+											</Typography>
+										</TableCell>
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									{campaignBreakdown
+										.sort((a, b) => b.earnings - a.earnings)
+										.map((stats, i) => (
+											<TableRow key={i}>
+												<TableCell
+													align='left'
+													className={classnames(classes.breakAll)}
+												>
+													<Typography variant='body2'>
+														{stats.website}
+													</Typography>
+												</TableCell>
+												<TableCell>
+													<Typography align='right' variant='body2'>
+														{formatNumberWithCommas(stats.impressions)}
+													</Typography>
+												</TableCell>
+												<TableCell>
+													<Typography align='right' variant='body2'>
+														{formatNumberWithCommas(stats.clicks)}
+													</Typography>
+												</TableCell>
+												<TableCell>
+													<Typography align='right' variant='body2'>
+														{`${formatNumberWithCommas(
+															stats.earnings.toFixed(2)
+														)}`}
+													</Typography>
+												</TableCell>
+											</TableRow>
+										))}
+								</TableBody>
+							</Table>
+						</TableContainer>
 					</Box>
 				</Fragment>
 			)}
