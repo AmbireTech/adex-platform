@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import IconButton from '@material-ui/core/IconButton'
 import {
-	DateRange,
+	DateRangeSharp,
 	NavigateNextRounded,
 	NavigateBeforeRounded,
 	Update,
@@ -14,7 +14,7 @@ import utils, { makeJSDateObject } from 'helpers/dateUtils'
 import clsx from 'clsx'
 
 const CalendarIconAdor = ({
-	icon = <DateRange />,
+	icon = <DateRangeSharp />,
 	iconColor,
 	onIconClick,
 	onNextClick,

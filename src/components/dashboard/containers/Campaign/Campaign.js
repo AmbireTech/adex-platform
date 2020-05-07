@@ -1,5 +1,6 @@
 import React, { useState, Fragment, useEffect } from 'react'
 import PropTypes from 'prop-types'
+import { useSelector } from 'react-redux'
 import {
 	Grid,
 	Box,
@@ -10,6 +11,7 @@ import {
 	Typography,
 	Tabs,
 	Tab,
+	LinearProgress,
 } from '@material-ui/core'
 import { AdUnitsTable } from 'components/dashboard/containers/Tables'
 import { Campaign as CampaignModel } from 'adex-models'
@@ -20,6 +22,7 @@ import { Receipt } from 'components/dashboard/containers/Receipt'
 import {
 	selectCampaignAnalyticsToCountryTableData,
 	selectCampaignAnalyticsToCountryMapChartData,
+	selectInitialDataLoadedByData,
 	t,
 } from 'selectors'
 import StatsByCountryTable from 'components/dashboard/containers/Tables/StatsByCountryTable'
@@ -37,6 +40,9 @@ function Campaign({ match }) {
 		objModel: CampaignModel,
 		validateAndUpdateFn: validateAndUpdateCampaign,
 	})
+	const dataLoaded = useSelector(state =>
+		selectInitialDataLoadedByData(state, 'advancedAnalytics')
+	)
 
 	const campaign = new CampaignModel(item)
 	const { humanFriendlyName } = campaign.status || {}
@@ -77,23 +83,26 @@ function Campaign({ match }) {
 			<Box my={1}>
 				{tabIndex === 0 && <CampaignBasic item={item} {...hookProps} />}
 				{tabIndex === 1 && (
-					<Box
-						display='flex'
-						flexDirection='row'
-						flexWrap='wrap'
-						flexGrow='1'
-						justifyContent='center'
-					>
-						<Box flexGrow='1' order={{ xs: 2, md: 2, lg: 1 }}>
-							<CampaignStatsBreakdownTable campaignId={campaignId} />
-						</Box>
-						<Box p={2} order={{ xs: 1, md: 1, lg: 2 }}>
-							<CampaignStatsDoughnut campaignId={campaignId} />
+					<Box>
+						{!dataLoaded && <LinearProgress />}
+						<Box
+							display='flex'
+							flexDirection='row'
+							flexWrap='wrap'
+							flexGrow='1'
+							justifyContent='center'
+						>
+							<Box flexGrow='1' order={{ xs: 2, md: 2, lg: 1 }}>
+								<CampaignStatsBreakdownTable campaignId={campaignId} />
+							</Box>
+							<Box p={2} order={{ xs: 1, md: 1, lg: 2 }}>
+								<CampaignStatsDoughnut campaignId={campaignId} />
+							</Box>
 						</Box>
 					</Box>
 				)}
 				{tabIndex === 2 && (
-					<Grid container spacing={2} alignItems='flex-start'>
+					<Grid container spacing={1} alignItems='flex-start'>
 						<Grid item xs={12}>
 							<Paper variant='outlined'>
 								<Box p={2}>
@@ -102,6 +111,7 @@ function Campaign({ match }) {
 									</Typography>
 								</Box>
 							</Paper>
+							{!dataLoaded && <LinearProgress />}
 						</Grid>
 						<Grid item xs={12} md={12} lg={6}>
 							<MapChart

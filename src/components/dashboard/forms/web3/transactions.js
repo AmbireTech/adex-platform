@@ -47,7 +47,7 @@ export const WithdrawTokenFromIdentity = props => (
 			},
 			{
 				title: 'PREVIEW_AND_MAKE_TX',
-				completeBtnTitle: 'SIGN_TX',
+				completeBtnTitle: 'PROCEED',
 				component: TransactionPreview,
 				completeFn: props =>
 					execute(
@@ -78,7 +78,7 @@ export const SetIdentityPrivilege = ({ SaveBtn, ...props }) => {
 				},
 				{
 					title: 'PREVIEW_AND_MAKE_TX',
-					completeBtnTitle: 'SIGN_TX',
+					completeBtnTitle: 'PROCEED',
 					component: TransactionPreview,
 					completeFn: props =>
 						execute(
@@ -109,7 +109,7 @@ export const WithdrawAnyTokenFromIdentity = props => (
 			},
 			{
 				title: 'PREVIEW_AND_MAKE_TX',
-				completeBtnTitle: 'SIGN_TX',
+				completeBtnTitle: 'PROCEED',
 				component: TransactionPreview,
 				completeFn: props =>
 					execute(
@@ -139,7 +139,7 @@ export const SetAccountENS = props => (
 			},
 			{
 				title: 'PREVIEW_AND_MAKE_TX',
-				completeBtnTitle: 'SIGN_TX',
+				completeBtnTitle: 'PROCEED',
 				component: TransactionPreview,
 				completeFn: props =>
 					execute(
