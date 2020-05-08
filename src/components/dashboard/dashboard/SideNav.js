@@ -222,6 +222,19 @@ function SideNav(props) {
 						<>
 							<RRListItem
 								button
+								to={{ pathname: '/dashboard/publisher/websites' }}
+								className={classnames({
+									[classes.active]: location === 'websites',
+								})}
+							>
+								<ListItemIcon>
+									<Receipt />
+								</ListItemIcon>
+								<ListItemText primary={t('WEBSITES')} />
+							</RRListItem>
+							<ListDivider />
+							<RRListItem
+								button
 								to={{ pathname: '/dashboard/publisher/receipts' }}
 								className={classnames({
 									[classes.active]: location === 'receipts',
