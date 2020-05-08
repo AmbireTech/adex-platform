@@ -6,7 +6,7 @@ import { Alert } from '@material-ui/lab'
 import { useSelector } from 'react-redux'
 import { selectWebsiteByWebsite, t } from 'selectors'
 
-const getIssue = issue => {
+export const getIssue = issue => {
 	const data = {
 		label: issue,
 		args: [],
