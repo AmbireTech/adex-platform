@@ -19,6 +19,7 @@ import {
 	WebsiteIssuesLegend,
 } from 'components/dashboard/containers/Slot/WebsiteIssues'
 import { t, selectWebsitesArray } from 'selectors'
+import { execute, updateWebsiteVerification } from 'actions'
 
 const useStyles = makeStyles(theme => ({
 	list: {
@@ -48,28 +49,31 @@ export default function Websites() {
 						<ListSubheader disableSticky>
 							{t('REGISTERED_WEBSITES')}
 						</ListSubheader>
-						{websites.map((ws, index) => (
-							<Fragment key={ws.id}>
+						{websites.map(({ id, issues }, index) => (
+							<Fragment key={id}>
 								<ListItem>
 									<ListItemIcon>
-										{ws.issues.length ? (
+										{issues.length ? (
 											<WarningSharp className={classes.warning} />
 										) : (
 											<CheckSharp className={classes.success} />
 										)}
 									</ListItemIcon>
 									<ListItemText
-										primary={ws.id}
-										secondary={<WebsiteIssues issues={ws.issues} asIcons />}
+										primary={id}
+										secondary={<WebsiteIssues issues={issues} asIcons />}
 									/>
 									<ListItemSecondaryAction>
-										{!!ws.issues.length && (
+										{!!issues.length && (
 											<Button
 												variant='contained'
 												color='primary'
 												startIcon={<RefreshSharp />}
 												size='small'
 												edge='end'
+												onClick={() =>
+													execute(updateWebsiteVerification({ id }))
+												}
 											>
 												{t('TRY_VERIFY')}
 											</Button>
