@@ -329,12 +329,15 @@ export function updateSlotTargeting({ updateField, itemId, onValid }) {
 	}
 }
 
-export function updateWebsiteVerification({ id }) {
+export function updateWebsiteVerification({ id, website }) {
 	return async function(dispatch, getState) {
+		const websiteUrl = website || 'https://' + id
 		updateSpinner('vilifying' + id, true)(dispatch)
 		try {
-			const { issues } = await verifyWebsite({ websiteUrl: 'https://' + id })
-			const item = { id, issues }
+			const { issues, updated, id: hostname } = await verifyWebsite({
+				websiteUrl,
+			})
+			const item = { id: hostname, issues, updated }
 
 			dispatch({
 				type: UPDATE_ITEM,
@@ -346,14 +349,14 @@ export function updateWebsiteVerification({ id }) {
 				addToast({
 					type: 'warning',
 					label: 'UPDATING_WS_VERIFICATION_WITH_ISSUES',
-					args: [id],
+					args: [websiteUrl],
 					timeout: 20000,
 				})(dispatch)
 			} else {
 				addToast({
 					type: 'success',
 					label: 'SUCCESS_UPDATING_WS_VERIFICATION',
-					args: [id],
+					args: [websiteUrl],
 					timeout: 20000,
 				})(dispatch)
 			}
@@ -556,9 +559,6 @@ export function validateAndUpdateSlot({
 
 			const slot = newSlot.marketUpdate
 
-			console.log('slot', slot)
-			console.log('isValid', isValid)
-
 			if (isValid) {
 				const finalValidations = await Promise.all([
 					validateSchemaProp({
@@ -582,6 +582,10 @@ export function validateAndUpdateSlot({
 
 			if (isValid && update) {
 				const updatedSlot = (await updateAdSlot({ slot, id })).slot
+
+				if (dirtyProps.includes('website')) {
+					await updateWebsiteVerification({ website })
+				}
 
 				if (newUnit) {
 					dispatch({
