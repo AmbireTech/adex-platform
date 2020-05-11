@@ -332,9 +332,9 @@ export function updateSlotTargeting({ updateField, itemId, onValid }) {
 export function updateWebsiteVerification({ id, website }) {
 	return async function(dispatch, getState) {
 		const websiteUrl = website || 'https://' + id
-		updateSpinner('vilifying' + id, true)(dispatch)
+		updateSpinner('vilifying' + websiteUrl, true)(dispatch)
 		try {
-			const { issues, updated, id: hostname } = await verifyWebsite({
+			const { issues, updated, hostname } = await verifyWebsite({
 				websiteUrl,
 			})
 			const item = { id: hostname, issues, updated }
@@ -369,7 +369,7 @@ export function updateWebsiteVerification({ id, website }) {
 				timeout: 20000,
 			})(dispatch)
 		}
-		updateSpinner('vilifying' + id, false)(dispatch)
+		updateSpinner('vilifying' + websiteUrl, false)(dispatch)
 	}
 }
 
@@ -584,7 +584,7 @@ export function validateAndUpdateSlot({
 				const updatedSlot = (await updateAdSlot({ slot, id })).slot
 
 				if (dirtyProps.includes('website')) {
-					await updateWebsiteVerification({ website })
+					await updateWebsiteVerification({ website })(dispatch)
 				}
 
 				if (newUnit) {
