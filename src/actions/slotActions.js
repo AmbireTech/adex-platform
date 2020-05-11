@@ -277,7 +277,7 @@ export function saveSlot() {
 			addToast({
 				type: 'accept',
 				label: t('SUCCESS_CREATING_ITEM', { args: ['AdSlot', newItem.title] }),
-				timeout: 50000,
+				timeout: 20000,
 			})(dispatch)
 		} catch (err) {
 			console.error('ERR_CREATING_ITEM', err)
@@ -286,7 +286,7 @@ export function saveSlot() {
 				label: t('ERR_CREATING_ITEM', {
 					args: ['AdSlot', Helper.getErrMsg(err)],
 				}),
-				timeout: 50000,
+				timeout: 20000,
 			})(dispatch)
 			throw new Error('ERR_CREATING_ITEM', err)
 		}
@@ -326,6 +326,47 @@ export function updateSlotTargeting({ updateField, itemId, onValid }) {
 		const { tags } = selectNewItemByTypeAndId(state, 'AdSlot', itemId)
 		updateField('tags', tags)
 		onValid()
+	}
+}
+
+export function updateWebsiteVerification({ id }) {
+	return async function(dispatch, getState) {
+		updateSpinner('vilifying' + id, true)(dispatch)
+		try {
+			const { issues } = await verifyWebsite({ websiteUrl: 'https://' + id })
+			const item = { id, issues }
+
+			dispatch({
+				type: UPDATE_ITEM,
+				item,
+				itemType: 'Website',
+			})
+
+			if (issues && issues.length) {
+				addToast({
+					type: 'warning',
+					label: 'UPDATING_WS_VERIFICATION_WITH_ISSUES',
+					args: [id],
+					timeout: 20000,
+				})(dispatch)
+			} else {
+				addToast({
+					type: 'success',
+					label: 'SUCCESS_UPDATING_WS_VERIFICATION',
+					args: [id],
+					timeout: 20000,
+				})(dispatch)
+			}
+		} catch (err) {
+			console.error('ERR_UPDATING_WS_VERIFICATION', err)
+			addToast({
+				type: 'error',
+				label: 'ERR_UPDATING_WS_VERIFICATION',
+				args: [id, err],
+				timeout: 20000,
+			})(dispatch)
+		}
+		updateSpinner('vilifying' + id, false)(dispatch)
 	}
 }
 
@@ -514,6 +555,9 @@ export function validateAndUpdateSlot({
 			}
 
 			const slot = newSlot.marketUpdate
+
+			console.log('slot', slot)
+			console.log('isValid', isValid)
 
 			if (isValid) {
 				const finalValidations = await Promise.all([
