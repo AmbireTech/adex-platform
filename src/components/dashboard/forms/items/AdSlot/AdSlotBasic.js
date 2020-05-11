@@ -107,7 +107,9 @@ function AdSlotBasic({ validateId }) {
 							name='website'
 							value={website}
 							onChange={ev =>
-								execute(updateNewSlot('website', ev.target.value))
+								execute(
+									updateNewSlot('website', (ev.target.value || '').trim())
+								)
 							}
 							error={errWebsite && !!errWebsite.dirty}
 							maxLength={120}
