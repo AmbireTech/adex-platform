@@ -400,7 +400,7 @@ export const ItemWebsite = ({
 			onChange={ev => {
 				updateField('website', (ev.target.value || '').trim())
 			}}
-			disabled={initialItemState.website || !active}
+			disabled={!!initialItemState.website || !active}
 			error={showError}
 			helperText={
 				showError ? (
