@@ -7,6 +7,7 @@ import {
 	ListItemText,
 	ListItemIcon,
 	ListItem,
+	Button,
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { ExternalAnchor } from 'components/common/anchor/anchor'
@@ -16,9 +17,11 @@ import {
 	LooksTwoSharp,
 	Looks3Sharp,
 	Looks4Sharp,
+	RefreshSharp,
 } from '@material-ui/icons'
 import { useSelector } from 'react-redux'
 import { selectWebsiteByWebsite, t } from 'selectors'
+import { execute, updateWebsiteVerification } from 'actions'
 
 export const getIssue = issue => {
 	const data = {
@@ -87,7 +90,7 @@ export const ALL_ISSUES = {
 	SLOT_ISSUE_SOMEONE_ELSE_VERIFIED: Looks4Sharp,
 }
 
-export function WebsiteIssues({ issues, website, asIcons }) {
+export function WebsiteIssues({ issues, website, asIcons, tryAgainBtn }) {
 	const classes = useStyles()
 	const site = useSelector(state => selectWebsiteByWebsite(state, website))
 	const defaultIssues = !website ? ['SLOT_ISSUE_NO_WEBSITE'] : []
@@ -95,6 +98,19 @@ export function WebsiteIssues({ issues, website, asIcons }) {
 
 	return (
 		<Fragment>
+			{tryAgainBtn && data.length && (
+				<Box my={1}>
+					<Button
+						fullWidth
+						variant='contained'
+						color='primary'
+						startIcon={<RefreshSharp />}
+						onClick={() => execute(updateWebsiteVerification({ id: site.id }))}
+					>
+						{t('TRY_VERIFY')}
+					</Button>
+				</Box>
+			)}
 			{data.map((id, index) => {
 				const { label, args } = getIssue(id)
 				const Icon = ALL_ISSUES[label]

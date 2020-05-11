@@ -78,7 +78,7 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 								<ItemWebsite item={item} {...hookProps} />
 							</Box>
 							<Box>
-								<WebsiteIssues website={website} />
+								<WebsiteIssues website={website} tryAgainBtn />
 							</Box>
 						</Grid>
 						<Grid item xs={12} sm={12} md={12} lg={6}></Grid>
