@@ -397,12 +397,12 @@ export const ItemWebsite = ({
 			name='website'
 			value={website || ' '}
 			onChange={ev => {
-				updateField('website', ev.target.value)
+				updateField('website', (ev.target.value || '').trim())
 			}}
 			disabled={!active}
 			error={showError}
 			helperText={
-				showError && activeFields.website ? (
+				showError ? (
 					t(error.errMsg, { args: error.errMsgArgs })
 				) : (
 					<Fragment>
