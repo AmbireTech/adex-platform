@@ -59,24 +59,22 @@ const useStyles = makeStyles(theme => ({
 }))
 
 export function RenderIssue({ label, args }) {
-	return (
+	return args.some(a => a.type === 'anchor') ? (
+		t(label, {
+			args: args.map((a, index) =>
+				a.type === 'anchor' ? (
+					<ExternalAnchor key={index} href={a.href}>
+						{` ${t(a.label)}`}
+					</ExternalAnchor>
+				) : (
+					t(a)
+				)
+			),
+		})
+	) : (
 		<div
 			dangerouslySetInnerHTML={{
-				__html: t(label, {
-					args: args.map((a, index) =>
-						a.type === 'anchor' ? (
-							<ExternalAnchor key={index} href={a.href}>
-								{` ${t(a.label)}`}
-							</ExternalAnchor>
-						) : (
-							<div
-								dangerouslySetInnerHTML={{
-									__html: t(a),
-								}}
-							/>
-						)
-					),
-				}),
+				__html: t(label, { args }),
 			}}
 		/>
 	)
@@ -97,19 +95,20 @@ export function WebsiteIssues({ issues, website, asIcons }) {
 
 	return (
 		<Fragment>
-			{data.map((x = {}, index) => {
-				const { label, args } = getIssue(x)
+			{data.map((id, index) => {
+				const { label, args } = getIssue(id)
 				const Icon = ALL_ISSUES[label]
 
 				return !!asIcons ? (
 					<Tooltip
+						key={id}
 						title={<RenderIssue label={label} args={args} />}
 						aria-label='add'
 					>
 						<Icon />
 					</Tooltip>
 				) : (
-					<Box key={x.id} my={index !== 0 && index < data.length ? 1 : 0}>
+					<Box key={id} my={index !== 0 && index < data.length ? 1 : 0}>
 						<Alert severity='warning' variant='outlined' classes={classes}>
 							<RenderIssue label={label} args={args} />
 						</Alert>
