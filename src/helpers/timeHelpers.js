@@ -1,4 +1,13 @@
 import dateUtils from 'helpers/dateUtils'
+import { t } from 'selectors'
+
+const SECOND = 1000
+const MINUTE = 60 * SECOND
+const HOUR = 60 * MINUTE
+const DAY = 24 * HOUR
+const WEEK = 7 * DAY
+const MONTH = 30 * DAY
+const YEAR = 365 * DAY
 
 export const fillEmptyTime = (
 	prevAggr,
@@ -127,4 +136,27 @@ export const getBorderPeriodStart = ({ timeframe, start, next = false }) => {
 	}
 
 	return start
+}
+
+const TIME_INTERVALS = [
+	{ label: 'YEAR', ms: YEAR },
+	{ label: 'MONTH', ms: MONTH },
+	{ label: 'WEEK', ms: WEEK },
+	{ label: 'DAY', ms: DAY },
+	{ label: 'HOUR', ms: HOUR },
+	{ label: 'MINUTE', ms: MINUTE },
+	{ label: 'SECOND', ms: SECOND },
+]
+
+export const timeAgo = (time, since = Date.now()) => {
+	const ms = Math.floor(since - time)
+	const interval = TIME_INTERVALS.find(i => i.ms < ms)
+	if (!interval) {
+		return t('JUST_NOW')
+	}
+
+	const intervalTimes = Math.floor(ms / interval.ms)
+	return t('TIME_AGO', {
+		args: [intervalTimes, interval.label + (intervalTimes > 1 ? 'S' : '')],
+	})
 }
