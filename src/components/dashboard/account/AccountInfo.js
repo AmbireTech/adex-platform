@@ -21,6 +21,7 @@ import {
 	IconButton,
 	Paper,
 	Chip,
+	Badge,
 } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { styles } from './styles.js'
@@ -231,7 +232,7 @@ function AccountInfo() {
 								<ListItemText
 									className={classes.address}
 									secondary={''}
-									primary={t('WALLETS_WITH_PRIVILAGES')}
+									primary={t('WALLETS_WITH_PRIVILEGES')}
 								/>
 							}
 						/>
@@ -240,6 +241,7 @@ function AccountInfo() {
 							<AccountPrivilageItem
 								address={walletAddress}
 								privileges={privileges}
+								authType={authType}
 								current
 							/>
 							{Object.keys(currentPrivileges)
@@ -333,7 +335,7 @@ function AccountPrivilageItem(props) {
 	const classes = useStyles()
 	const currUserPrivileges = useSelector(selectWalletPrivileges)
 	const canMakeTx = currUserPrivileges > 1
-	const { address, privileges, authType, current } = props
+	const { address, privileges, current, authType } = props
 	return (
 		<AccountItem
 			left={
@@ -360,7 +362,7 @@ function AccountPrivilageItem(props) {
 										<Chip
 											color='primary'
 											size='small'
-											label='Current'
+											label={authType.toUpperCase()}
 											classes={{ root: classes.currentChip }}
 										/>
 									</Box>
@@ -369,12 +371,8 @@ function AccountPrivilageItem(props) {
 								formatAddress(address)
 							)
 						}
-						secondary={t('WALLET_INFO_LABEL', {
-							args: [
-								authType ? `AUTH_${authType.toUpperCase()}` : null,
-								`PRIV_${privileges}_LABEL`,
-								authType,
-							],
+						secondary={t('WALLET_PRIV_LABEL', {
+							args: [`PRIV_${privileges}_LABEL`],
 						})}
 					/>
 				</Box>
