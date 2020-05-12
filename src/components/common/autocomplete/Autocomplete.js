@@ -1,10 +1,15 @@
 import React, { useEffect, Fragment, useState } from 'react'
 import PropTypes from 'prop-types'
-import FormHelperText from '@material-ui/core/FormHelperText'
-import TextField from '@material-ui/core/TextField'
+import { FormHelperText, TextField, Box } from '@material-ui/core'
 import AutocompleteMUI, {
 	createFilterOptions,
 } from '@material-ui/lab/Autocomplete'
+import { CheckSharp, ErrorSharp } from '@material-ui/icons'
+
+const StatusIcon = {
+	success: <CheckSharp color='secondary' />,
+	error: <ErrorSharp color='error' />,
+}
 
 function Autocomplete({
 	source,
@@ -112,9 +117,8 @@ export const AutocompleteWithCreate = ({
 				return filtered
 			}}
 			selectOnFocus
-			clearOnBlur
-			handleHomeEndKeys
-			// id='free-solo-with-text-demo'
+			// clearOnBlur
+			// handleHomeEndKeys
 			options={source}
 			getOptionLabel={option => {
 				// Value selected with enter, right from the input
@@ -128,7 +132,23 @@ export const AutocompleteWithCreate = ({
 				// Regular option
 				return option.label
 			}}
-			renderOption={option => option.label}
+			renderOption={option =>
+				option.status ? (
+					<Box
+						display='flex'
+						justifyContent='space-between'
+						flexDirection='row'
+						alignItems='center'
+						width={1}
+					>
+						{option.label}
+
+						{StatusIcon[option.status] || option.status}
+					</Box>
+				) : (
+					option.label
+				)
+			}
 			freeSolo
 			renderInput={params => (
 				<TextField
