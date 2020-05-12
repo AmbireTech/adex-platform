@@ -70,9 +70,14 @@ export const AutocompleteWithCreate = ({
 	error,
 	helperText,
 	fullWidth,
+	initialValue,
 	onChange,
 }) => {
 	const [value, setValue] = useState(null)
+
+	useEffect(() => {
+		setValue({ label: initialValue, value: initialValue })
+	}, [initialValue])
 
 	return (
 		<AutocompleteMUI
