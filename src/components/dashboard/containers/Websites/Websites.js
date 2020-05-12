@@ -8,18 +8,17 @@ import {
 	ListItemText,
 	ListItemIcon,
 	ListItemSecondaryAction,
-	Button,
 	ListSubheader,
 	Paper,
 	Box,
 } from '@material-ui/core'
-import { CheckSharp, WarningSharp, RefreshSharp } from '@material-ui/icons'
+import { CheckSharp, WarningSharp } from '@material-ui/icons'
 import {
 	WebsiteIssues,
 	WebsiteIssuesLegend,
+	WebsiteVerifyBtn,
 } from 'components/dashboard/containers/Slot/WebsiteIssues'
 import { t, selectWebsitesArray } from 'selectors'
-import { execute, updateWebsiteVerification } from 'actions'
 
 const useStyles = makeStyles(theme => ({
 	list: {
@@ -49,40 +48,33 @@ export default function Websites() {
 						<ListSubheader disableSticky>
 							{t('REGISTERED_WEBSITES')}
 						</ListSubheader>
-						{websites.map(({ id, issues }, index) => (
-							<Fragment key={id}>
-								<ListItem>
-									<ListItemIcon>
-										{issues.length ? (
-											<WarningSharp className={classes.warning} />
-										) : (
-											<CheckSharp className={classes.success} />
-										)}
-									</ListItemIcon>
-									<ListItemText
-										primary={id}
-										secondary={<WebsiteIssues issues={issues} asIcons />}
-									/>
-									<ListItemSecondaryAction>
-										{!!issues.length && (
-											<Button
-												variant='contained'
-												color='primary'
-												startIcon={<RefreshSharp />}
-												size='small'
-												edge='end'
-												onClick={() =>
-													execute(updateWebsiteVerification({ id }))
-												}
-											>
-												{t('TRY_VERIFY')}
-											</Button>
-										)}
-									</ListItemSecondaryAction>
-								</ListItem>
-								{index < websites.length - 1 && <Divider />}
-							</Fragment>
-						))}
+						{websites.map(({ id, issues, updated }, index) => {
+							return (
+								<Fragment key={id}>
+									<ListItem>
+										<ListItemIcon>
+											{issues.length ? (
+												<WarningSharp className={classes.warning} />
+											) : (
+												<CheckSharp className={classes.success} />
+											)}
+										</ListItemIcon>
+										<ListItemText
+											primary={id}
+											secondary={<WebsiteIssues issues={issues} asIcons />}
+										/>
+										<ListItemSecondaryAction>
+											<WebsiteVerifyBtn
+												id={id}
+												issues={issues}
+												updated={updated}
+											/>
+										</ListItemSecondaryAction>
+									</ListItem>
+									{index < websites.length - 1 && <Divider />}
+								</Fragment>
+							)
+						})}
 					</List>
 				</Paper>
 			</Box>
