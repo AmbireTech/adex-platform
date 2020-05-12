@@ -131,19 +131,7 @@ export function WebsiteIssues({ issues, website, asIcons, tryAgainBtn }) {
 
 	return (
 		<Fragment>
-			{tryAgainBtn && data.length && (
-				<Box my={1}>
-					<Button
-						fullWidth
-						variant='contained'
-						color='primary'
-						startIcon={<RefreshSharp />}
-						onClick={() => execute(updateWebsiteVerification({ id: site.id }))}
-					>
-						{t('TRY_VERIFY')}
-					</Button>
-				</Box>
-			)}
+			{site.id && tryAgainBtn && data.length && <WebsiteVerifyBtn {...site} />}
 			{data.map((id, index) => {
 				const { label, args } = getIssue(id)
 				const Icon = ALL_ISSUES[label]
