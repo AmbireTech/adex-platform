@@ -12,8 +12,17 @@ export const styles = theme => {
 		advancedList: {
 			width: '100%',
 		},
+		scrollableList: {
+			width: '100%',
+			position: 'relative',
+			overflow: 'auto',
+			maxHeight: 280,
+		},
 		iconBtnLeft: {
 			marginRight: theme.spacing(1),
+		},
+		currentChip: {
+			height: '1.1rem',
 		},
 	}
 }
