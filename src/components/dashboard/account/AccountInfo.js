@@ -20,6 +20,7 @@ import {
 	Typography,
 	IconButton,
 	Paper,
+	Chip,
 } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { styles } from './styles.js'
@@ -37,10 +38,13 @@ import {
 	selectMainToken,
 	selectEasterEggsAllowed,
 	selectEnsAddressByAddr,
+	selectAccountIdentityCurrentPrivileges,
+	selectIdentityRecoveryAddr,
 	selectSide,
 } from 'selectors'
-import { execute, addToast } from 'actions'
+import { execute, addToast, updateNewTransaction } from 'actions'
 import { formatAddress } from 'helpers/formatters'
+
 const RRButton = withReactRouterLink(Button)
 
 const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
@@ -83,6 +87,8 @@ function AccountInfo() {
 	const privileges = useSelector(selectWalletPrivileges)
 	const side = useSelector(selectSide)
 	const canMakeTx = privileges > 1
+	const currentPrivileges = useSelector(selectAccountIdentityCurrentPrivileges)
+	const identityRecoveryAddr = useSelector(selectIdentityRecoveryAddr)
 	const { symbol } = useSelector(selectMainToken)
 	const {
 		walletAddress,
@@ -220,23 +226,33 @@ function AccountInfo() {
 						</Typography>
 					</ExpansionPanelSummary>
 					<Box>
-						<List classes={{ root: classes.advancedList }}>
-							<AccountItem
-								left={
-									<ListItemText
-										className={classes.address}
-										primary={formatAddress(walletAddress)}
-										secondary={t('WALLET_INFO_LABEL', {
-											args: [
-												`AUTH_${authType.toUpperCase()}`,
-												`PRIV_${privileges}_LABEL`,
-												authType,
-											],
-										})}
-									/>
-								}
+						<AccountItem
+							left={
+								<ListItemText
+									className={classes.address}
+									secondary={''}
+									primary={t('WALLETS_WITH_PRIVILAGES')}
+								/>
+							}
+						/>
+						<ListDivider />
+						<List classes={{ root: classes.scrollableList }}>
+							<AccountPrivilageItem
+								address={walletAddress}
+								privileges={privileges}
+								current
 							/>
-							<ListDivider />
+							{Object.keys(currentPrivileges)
+								.filter(a => a !== identityRecoveryAddr && a !== walletAddress)
+								.map(address => (
+									<AccountPrivilageItem
+										address={address}
+										privileges={currentPrivileges[address]}
+									/>
+								))}
+						</List>
+						<ListDivider />
+						<List classes={{ root: classes.advancedList }}>
 							<AccountItem
 								left={
 									<ListItemText
@@ -255,7 +271,7 @@ function AccountInfo() {
 										identityAvailable={availableIdentityBalanceMainToken}
 									/>
 								}
-							></AccountItem>
+							/>
 							<ListDivider />
 							<ListItem>
 								<ListItemText
@@ -310,6 +326,79 @@ function AccountInfo() {
 				</ExpansionPanel>
 			</Box>
 		</Fragment>
+	)
+}
+
+function AccountPrivilageItem(props) {
+	const classes = useStyles()
+	const currUserPrivileges = useSelector(selectWalletPrivileges)
+	const canMakeTx = currUserPrivileges > 1
+	const { address, privileges, authType, current } = props
+	return (
+		<AccountItem
+			left={
+				<Box
+					display='flex'
+					flexWrap={'wrap'}
+					flex='1'
+					justifyContent='space-between'
+					alignItems='center'
+				>
+					<ListItemText
+						className={classes.address}
+						primary={
+							current ? (
+								<Typography>
+									<Box
+										display='flex'
+										flexWrap={'wrap'}
+										flex='1'
+										justifyContent='space-between'
+										alignItems='center'
+									>
+										{formatAddress(address)}
+										<Chip
+											color='primary'
+											size='small'
+											label='Current'
+											classes={{ root: classes.currentChip }}
+										/>
+									</Box>
+								</Typography>
+							) : (
+								formatAddress(address)
+							)
+						}
+						secondary={t('WALLET_INFO_LABEL', {
+							args: [
+								authType ? `AUTH_${authType.toUpperCase()}` : null,
+								`PRIV_${privileges}_LABEL`,
+								authType,
+							],
+						})}
+					/>
+				</Box>
+			}
+			right={
+				<SetIdentityPrivilege
+					disabled={!canMakeTx}
+					fullWidth
+					color='default'
+					label='CHANGE_PRIVILEGE'
+					onClick={() =>
+						execute(
+							updateNewTransaction({
+								tx: 'setIdentityPrivilege',
+								key: 'setAddr',
+								value: address,
+							})
+						)
+					}
+					// size='large'
+					// identityAvailable={availableIdentityBalanceMainToken}
+				/>
+			}
+		/>
 	)
 }
 
