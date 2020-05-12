@@ -175,6 +175,10 @@ export const websitesAutocompleteSrc = createSelector(
 	websites =>
 		websites.map(ws => {
 			const website = `https://${ws.id}`
-			return { label: website, value: website }
+			return {
+				label: website,
+				value: website,
+				status: ws.issues && ws.issues.length ? 'error' : 'success',
+			}
 		})
 )
