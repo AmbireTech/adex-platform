@@ -23,6 +23,7 @@ export const styles = theme => {
 		},
 		currentChip: {
 			height: '1.1rem',
+			margin: '0 10px',
 		},
 	}
 }
