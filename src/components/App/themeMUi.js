@@ -228,22 +228,6 @@ export const theme = createMuiTheme({
 				width: '100%',
 			},
 		},
-		MuiCssBaseline: {
-			'@global': {
-				'*::-webkit-scrollbar': {
-					width: '7px',
-				},
-				'*::-webkit-scrollbar-track': {
-					background: grey[200],
-				},
-				'*::-webkit-scrollbar-thumb': {
-					background: ALEX_GREY_LIGHT,
-				},
-				'*::-webkit-scrollbar-thumb:hover': {
-					background: ALEX_GREY,
-				},
-			},
-		},
 	},
 })
 
