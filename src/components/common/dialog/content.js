@@ -9,7 +9,9 @@ import { t } from 'selectors'
 
 // TODO: Use it with Grid in previews - we can have more than one in row
 export const PropRow = ({ left, right }) => (
-	<OutlinedPropView label={left} value={right} />
+	<Box p={1}>
+		<OutlinedPropView label={left} value={right} />
+	</Box>
 )
 
 const contentBox = ({ classes, children, className }) => (
