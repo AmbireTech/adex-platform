@@ -22,7 +22,6 @@ export const styles = theme => {
 			marginRight: theme.spacing(1),
 		},
 		currentChip: {
-			height: '1.1rem',
 			margin: '0 10px',
 		},
 	}
