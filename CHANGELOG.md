@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.7
+##### *2020-05-13*
+
+### Added
+- Publisher websites page
+- Retry verification for website in slot details
+
+### Changed
+- Autocomplete with creation for slot website input
+
 ## 4.20.6
 ##### *2020-05-07*
 

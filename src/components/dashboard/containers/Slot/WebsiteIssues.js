@@ -99,7 +99,7 @@ export const WebsiteVerifyBtn = ({ id, website, issues, updated }) => {
 	const lastUpdated = updated ? Date.now() - new Date(updated).valueOf() : null
 	const canUpdate = !updated || lastUpdated > UPDATE_AGAIN_AFTER
 	return (
-		issues.length && (
+		!!issues.length && (
 			<Box my={1}>
 				<Button
 					disabled={!canUpdate}
