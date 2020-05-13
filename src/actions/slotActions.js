@@ -348,14 +348,17 @@ export function updateWebsiteVerification({ id, website }) {
 			if (issues && issues.length) {
 				addToast({
 					type: 'warning',
-					label: 'UPDATING_WS_VERIFICATION_WITH_ISSUES',
-					args: [websiteUrl],
+					label: t('UPDATING_WS_VERIFICATION_WITH_ISSUES', {
+						args: [websiteUrl],
+					}),
 					timeout: 20000,
 				})(dispatch)
 			} else {
 				addToast({
 					type: 'success',
-					label: 'SUCCESS_UPDATING_WS_VERIFICATION',
+					label: t('SUCCESS_UPDATING_WS_VERIFICATION', {
+						args: [websiteUrl],
+					}),
 					args: [websiteUrl],
 					timeout: 20000,
 				})(dispatch)
@@ -364,7 +367,10 @@ export function updateWebsiteVerification({ id, website }) {
 			console.error('ERR_UPDATING_WS_VERIFICATION', err)
 			addToast({
 				type: 'error',
-				label: 'ERR_UPDATING_WS_VERIFICATION',
+
+				label: t('ERR_UPDATING_WS_VERIFICATION', {
+					args: [id, err],
+				}),
 				args: [id, err],
 				timeout: 20000,
 			})(dispatch)
