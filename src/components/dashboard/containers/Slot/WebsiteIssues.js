@@ -131,27 +131,35 @@ export function WebsiteIssues({ issues, website, asIcons, tryAgainBtn }) {
 
 	return (
 		<Fragment>
-			{site.id && tryAgainBtn && data.length && <WebsiteVerifyBtn {...site} />}
-			{data.map((id, index) => {
-				const { label, args } = getIssue(id)
-				const Icon = ALL_ISSUES[label]
+			{!!data.length ? (
+				<Fragment>
+					{site.id && tryAgainBtn && <WebsiteVerifyBtn {...site} />}
+					{data.map((id, index) => {
+						const { label, args } = getIssue(id)
+						const Icon = ALL_ISSUES[label]
 
-				return !!asIcons ? (
-					<Tooltip
-						key={id}
-						title={<RenderIssue label={label} args={args} />}
-						aria-label='add'
-					>
-						<Icon />
-					</Tooltip>
-				) : (
-					<Box key={id} my={index !== 0 && index < data.length ? 1 : 0}>
-						<Alert severity='warning' variant='outlined' classes={classes}>
-							<RenderIssue label={label} args={args} />
-						</Alert>
-					</Box>
-				)
-			})}
+						return !!asIcons ? (
+							<Tooltip
+								key={id}
+								title={<RenderIssue label={label} args={args} />}
+								aria-label='add'
+							>
+								<Icon />
+							</Tooltip>
+						) : (
+							<Box key={id} my={index !== 0 && index < data.length ? 1 : 0}>
+								<Alert severity='warning' variant='outlined' classes={classes}>
+									<RenderIssue label={label} args={args} />
+								</Alert>
+							</Box>
+						)
+					})}
+				</Fragment>
+			) : !asIcons ? (
+				<Alert severity='success' variant='outlined' classes={classes}>
+					{t('WEBSITE_VERIFIED')}
+				</Alert>
+			) : null}
 		</Fragment>
 	)
 }
