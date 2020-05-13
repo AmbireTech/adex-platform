@@ -244,16 +244,19 @@ function AccountInfo() {
 								authType={authType}
 								current
 							/>
+							<ListDivider />
 							{Object.keys(currentPrivileges)
 								.filter(a => a !== identityRecoveryAddr && a !== walletAddress)
 								.map(address => (
-									<AccountPrivilageItem
-										address={address}
-										privileges={currentPrivileges[address]}
-									/>
+									<Fragment>
+										<AccountPrivilageItem
+											address={address}
+											privileges={currentPrivileges[address]}
+										/>
+										<ListDivider />
+									</Fragment>
 								))}
 						</List>
-						<ListDivider />
 						<List classes={{ root: classes.advancedList }}>
 							<AccountItem
 								left={
