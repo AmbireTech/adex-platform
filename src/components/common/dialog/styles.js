@@ -86,7 +86,7 @@ export const styles = theme => {
 			position: 'sticky',
 			top: 0,
 			left: 0,
-			marginBottom: theme.spacing(2),
+			marginBottom: theme.spacing(1),
 			zIndex: theme.zIndex.appBar,
 			'& svg': {
 				marginRight: theme.spacing(1),

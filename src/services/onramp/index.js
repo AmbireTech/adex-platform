@@ -5,6 +5,7 @@ import { t } from 'selectors'
 
 const PAYTRIE_PARTNER_URL = 'https://partner.paytrie.com/?app=876454'
 const WYRE_URL = 'https://pay.sendwyre.com/purchase?'
+const { RAMP_HOST_API_KEY } = process.env
 
 //https://docs.sendwyre.com/docs/wyre-widget-v2
 export const openWyre = ({ accountId, symbol, ...rest }) => {
@@ -56,6 +57,7 @@ export const openOnRampNetwork = ({ accountId, symbol }) => {
 		variant: 'auto',
 		swapAsset: symbol,
 		userAddress: accountId,
+		hostApiKey: RAMP_HOST_API_KEY,
 	})
 	widget.domNodes.overlay.style.zIndex = 1000
 	widget.show()

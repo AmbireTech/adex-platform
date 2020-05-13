@@ -2,6 +2,7 @@ import React, { Fragment } from 'react'
 import { Paper, Grid, Box } from '@material-ui/core'
 import { WebsiteIssues } from 'components/dashboard/containers/Slot/WebsiteIssues'
 import TargetsList from 'components/dashboard/containers/TargetsList'
+import OutlinedPropView from 'components/common/OutlinedPropView'
 import { SlotEdits } from './SlotEdits'
 import {
 	ChangeControls,
@@ -78,7 +79,10 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 								<ItemWebsite item={item} {...hookProps} />
 							</Box>
 							<Box>
-								<WebsiteIssues website={website} />
+								<OutlinedPropView
+									label={t('WEBSITE_VERIFICATION')}
+									value={<WebsiteIssues website={website} tryAgainBtn />}
+								/>
 							</Box>
 						</Grid>
 						<Grid item xs={12} sm={12} md={12} lg={6}></Grid>
