@@ -1,43 +1,15 @@
 import React from 'react'
 
-import {
-	CircularProgress,
-	OutlinedInput,
-	InputLabel,
-	FormControl,
-	Typography,
-	Box,
-} from '@material-ui/core'
+import { CircularProgress, Typography, Box } from '@material-ui/core'
+import OutlinedPropView from 'components/common/OutlinedPropView'
 import { styles } from './styles.js'
 import classnames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
 import { t } from 'selectors'
 
-const PropBaseComponent = ({ value, inputRef, ...rest }) => (
-	<Box {...rest}>{value}</Box>
-)
-
-// TODO: Make it common named PropView
 // TODO: Use it with Grid in previews - we can have more than one in row
 export const PropRow = ({ left, right }) => (
-	<Box p={1}>
-		<FormControl variant='outlined' fullWidth>
-			<InputLabel shrink disableAnimation>
-				{left}
-			</InputLabel>
-
-			<OutlinedInput
-				fullWidth
-				notched
-				readOnly
-				name={left}
-				label={left}
-				inputComponent={PropBaseComponent}
-				inputProps={{ style: { height: 'auto', wordWrap: 'break-word' } }}
-				value={right}
-			/>
-		</FormControl>
-	</Box>
+	<OutlinedPropView label={left} value={right} />
 )
 
 const contentBox = ({ classes, children, className }) => (
