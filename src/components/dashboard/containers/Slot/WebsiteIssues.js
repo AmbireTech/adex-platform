@@ -155,11 +155,15 @@ export function WebsiteIssues({ issues, website, asIcons, tryAgainBtn }) {
 						)
 					})}
 				</Fragment>
-			) : !asIcons ? (
+			) : !!asIcons ? (
+				<Typography variant='caption' color='secondary'>
+					{t('WEBSITE_VERIFIED')}
+				</Typography>
+			) : (
 				<Alert severity='success' variant='outlined' classes={classes}>
 					{t('WEBSITE_VERIFIED')}
 				</Alert>
-			) : null}
+			)}
 		</Fragment>
 	)
 }
