@@ -377,6 +377,7 @@ export const ItemMinPerImpression = ({
 
 export const ItemWebsite = ({
 	item = {},
+	initialItemState = {},
 	validations,
 	updateField,
 	setActiveFields,
@@ -397,12 +398,12 @@ export const ItemWebsite = ({
 			name='website'
 			value={website || ' '}
 			onChange={ev => {
-				updateField('website', ev.target.value)
+				updateField('website', (ev.target.value || '').trim())
 			}}
-			disabled={!active}
+			disabled={!!initialItemState.website || !active}
 			error={showError}
 			helperText={
-				showError && activeFields.website ? (
+				showError ? (
 					t(error.errMsg, { args: error.errMsgArgs })
 				) : (
 					<Fragment>
@@ -423,7 +424,7 @@ export const ItemWebsite = ({
 			}
 			variant='outlined'
 			InputProps={{
-				endAdornment: (
+				endAdornment: !initialItemState.website && (
 					<InputAdornment position='end'>
 						<IconButton
 							// size='small'

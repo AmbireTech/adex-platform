@@ -1,5 +1,10 @@
 import { bigNumberify } from 'ethers/utils'
-import { t, selectDemandAnalytics, selectMainToken } from 'selectors'
+import {
+	t,
+	selectDemandAnalytics,
+	selectMainToken,
+	selectWebsitesArray,
+} from 'selectors'
 import { createSelector } from 'reselect'
 import { constants } from 'adex-models'
 import { WHERE_YOU_KNOW_US } from 'constants/misc'
@@ -164,3 +169,16 @@ export const unitSources = () => ({
 	tags: { src: autocompleteTagsSingleSelect(), collection: 'targeting' },
 	custom: { src: [], collection: 'targeting' },
 })
+
+export const websitesAutocompleteSrc = createSelector(
+	selectWebsitesArray,
+	websites =>
+		websites.map(ws => {
+			const website = `https://${ws.id}`
+			return {
+				label: website,
+				value: website,
+				status: ws.issues && ws.issues.length ? 'error' : 'success',
+			}
+		})
+)
