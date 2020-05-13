@@ -21,8 +21,9 @@ import {
 	IconButton,
 	Paper,
 	Chip,
-	Badge,
+	Grid,
 } from '@material-ui/core'
+import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { styles } from './styles.js'
 import { LoadingSection } from 'components/common/spinners'
@@ -342,43 +343,38 @@ function AccountPrivilageItem(props) {
 	return (
 		<AccountItem
 			left={
-				<Box
-					display='flex'
-					flexWrap={'wrap'}
-					flex='1'
-					justifyContent='space-between'
+				<Grid
+					container
+					direction='row'
+					spacing={2}
 					alignItems='center'
+					justify='flex-start'
 				>
-					<ListItemText
-						className={classes.address}
-						primary={
-							current ? (
+					<Grid item>
+						<AccountBalanceWalletIcon />
+					</Grid>
+					<Grid item>
+						<ListItemText
+							className={classes.address}
+							primary={
 								<Typography>
-									<Box
-										display='flex'
-										flexWrap={'wrap'}
-										flex='1'
-										justifyContent='space-between'
-										alignItems='center'
-									>
-										{formatAddress(address)}
+									{formatAddress(address)}
+									{current && (
 										<Chip
 											color='primary'
 											size='small'
 											label={authType.toUpperCase()}
 											classes={{ root: classes.currentChip }}
 										/>
-									</Box>
+									)}
 								</Typography>
-							) : (
-								formatAddress(address)
-							)
-						}
-						secondary={t('WALLET_PRIV_LABEL', {
-							args: [`PRIV_${privileges}_LABEL`],
-						})}
-					/>
-				</Box>
+							}
+							secondary={t('WALLET_PRIV_LABEL', {
+								args: [`PRIV_${privileges}_LABEL`],
+							})}
+						/>
+					</Grid>
+				</Grid>
 			}
 			right={
 				<SetIdentityPrivilege
