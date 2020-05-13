@@ -23,7 +23,7 @@ import {
 	Chip,
 	Grid,
 } from '@material-ui/core'
-import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet'
+import { VpnKey, LockOpen } from '@material-ui/icons'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { styles } from './styles.js'
 import { LoadingSection } from 'components/common/spinners'
@@ -340,6 +340,7 @@ function AccountPrivilageItem(props) {
 	const currUserPrivileges = useSelector(selectWalletPrivileges)
 	const canMakeTx = currUserPrivileges > 1
 	const { address, privileges, current, authType } = props
+	const privColors = ['disabled', 'secondary', 'primary']
 	return (
 		<AccountItem
 			left={
@@ -351,7 +352,7 @@ function AccountPrivilageItem(props) {
 					justify='flex-start'
 				>
 					<Grid item>
-						<AccountBalanceWalletIcon />
+						<VpnKey color={privColors[privileges]} />
 					</Grid>
 					<Grid item>
 						<ListItemText
@@ -361,7 +362,8 @@ function AccountPrivilageItem(props) {
 									{formatAddress(address)}
 									{current && (
 										<Chip
-											color='primary'
+											icon={<LockOpen />}
+											color={privColors[currUserPrivileges]}
 											size='small'
 											label={authType.toUpperCase()}
 											classes={{ root: classes.currentChip }}
