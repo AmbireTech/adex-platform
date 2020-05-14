@@ -1,11 +1,28 @@
 import { Providers, Contract, Adapter } from '@jelly-swap/bitcoin'
 import { Wallet } from '@jelly-swap/btc-web-wallet'
+import { entropyToMnemonic } from 'bip39'
+import crypto from 'crypto'
 
 import { BTC_CONFIG } from './config'
+const config = BTC_CONFIG()
 
 export const createWallet = (mnemonic, providerUrl) => {
 	const provider = new Providers.BitcoinProvider(providerUrl)
 	return new Wallet(mnemonic, provider)
+}
+/**
+ *  Eth wallet hex sig 132
+ * @param {string} sig
+ */
+export const signatureToBtcWallet = sig => {
+	// entropyToMnemonic entropy max length is 32
+	const hash = crypto.createHash('sha256')
+	hash.update(sig)
+	const entropy = hash.digest()
+	const mnemonic = entropyToMnemonic(entropy)
+	const wallet = createWallet(mnemonic, config.providerUrl)
+
+	return wallet
 }
 
 // const userInput = {
