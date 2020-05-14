@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import Button from '@material-ui/core/Button'
-import Box from '@material-ui/core/Box'
+import { Box, Divider } from '@material-ui/core'
 import { Close } from '@material-ui/icons'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import { Typography } from '@material-ui/core'
@@ -117,14 +117,33 @@ const AuthSelect = () => {
 						variant='contained'
 						size='large'
 						onClick={() => {
-							removeFromLocalStorage(w.key)
-							setWallets(wallets.filter(i => i.key !== w.key))
+							execute(
+								confirmAction(
+									() => {
+										removeFromLocalStorage(w.key)
+										setWallets(wallets.filter(i => i.key !== w.key))
+									},
+									null,
+									{
+										confirmLabel: t('CONTINUE_NEW_AUTH'),
+										cancelLabel: t('KEEP_MY_SESSION'),
+										title: t('CONFIRM_DIALOG_REMOVE_SAVED_AUTH_TITLE'),
+										text: t('CONFIRM_DIALOG_REMOVE_SAVED_AUTH_TEXT', {
+											args: [
+												(wallet.email || (wallet.authType || '')).toUpperCase(),
+												identity.address,
+											],
+										}),
+									}
+								)
+							)
 						}}
 					>
 						<Close />
 					</Button>
 				</Box>
 			))}
+			{(wallets.length > 0 || auth) && <Divider />}
 			{showRegistration && (
 				<Box m={1}>
 					<Button
