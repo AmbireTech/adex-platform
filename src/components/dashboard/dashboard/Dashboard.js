@@ -13,6 +13,7 @@ import Slot from 'components/dashboard/containers/Slot'
 import Websites from 'components/dashboard/containers/Websites'
 import Account from 'components/dashboard/account/AccountInfo'
 import TopUp from 'components/dashboard/deposit/TopUp'
+import TopUpBtc from 'components/dashboard/deposit/TopUpBtc'
 import {
 	NewUnitDialog,
 	NewCampaignDialog,
@@ -29,7 +30,6 @@ import PageNotFound from 'components/page_not_found/PageNotFound'
 import { makeStyles } from '@material-ui/core/styles'
 import { Add } from '@material-ui/icons'
 import { styles } from './styles'
-import Anchor from 'components/common/anchor/anchor'
 import {
 	execute,
 	resolveEnsAddress,
@@ -37,7 +37,6 @@ import {
 	loadAccountData,
 	stopAccountDataUpdate,
 	updateNav,
-	updateMemoryUi,
 } from 'actions'
 import {
 	t,
@@ -248,6 +247,11 @@ function Dashboard(props) {
 								exact
 								path={'/dashboard/:side/account'}
 								component={Account}
+							/>
+							<Route
+								exact
+								path={'/dashboard/:side/topup/btc'}
+								component={TopUpBtc}
 							/>
 							<Route exact path={'/dashboard/:side/topup'} component={TopUp} />
 							{/* <Route
