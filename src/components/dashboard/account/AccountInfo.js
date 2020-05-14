@@ -258,6 +258,7 @@ function AccountInfo() {
 									</Fragment>
 								))}
 						</List>
+						<ListDivider />
 						<List classes={{ root: classes.advancedList }}>
 							<AccountItem
 								left={
