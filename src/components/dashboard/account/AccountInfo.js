@@ -341,6 +341,9 @@ function AccountPrivilageItem(props) {
 	const canMakeTx = currUserPrivileges > 1
 	const { address, privileges, current, authType } = props
 	const privColors = ['disabled', 'secondary', 'primary']
+	const { availableIdentityBalanceMainToken } = useSelector(
+		selectAccountStatsFormatted
+	)
 	return (
 		<AccountItem
 			left={
@@ -357,20 +360,7 @@ function AccountPrivilageItem(props) {
 					<Grid item>
 						<ListItemText
 							className={classes.address}
-							primary={
-								<Typography>
-									{formatAddress(address)}
-									{current && (
-										<Chip
-											icon={<LockOpen />}
-											color={privColors[currUserPrivileges]}
-											size='small'
-											label={authType.toUpperCase()}
-											classes={{ root: classes.currentChip }}
-										/>
-									)}
-								</Typography>
-							}
+							primary={<Typography>{formatAddress(address)}</Typography>}
 							secondary={t('WALLET_PRIV_LABEL', {
 								args: [`PRIV_${privileges}_LABEL`],
 							})}
@@ -379,23 +369,35 @@ function AccountPrivilageItem(props) {
 				</Grid>
 			}
 			right={
-				<SetIdentityPrivilege
-					disabled={!canMakeTx}
-					fullWidth
-					color='default'
-					label='CHANGE_PRIVILEGE'
-					onClick={() =>
-						execute(
-							updateNewTransaction({
-								tx: 'setIdentityPrivilege',
-								key: 'setAddr',
-								value: address,
-							})
-						)
-					}
-					// size='large'
-					// identityAvailable={availableIdentityBalanceMainToken}
-				/>
+				<Grid container direction='row' justify='center' alignItems='center'>
+					{current ? (
+						<Chip
+							icon={<LockOpen />}
+							color={privColors[currUserPrivileges]}
+							size='small'
+							label={authType.toUpperCase()}
+							classes={{ root: classes.currentChip }}
+						/>
+					) : (
+						<SetIdentityPrivilege
+							disabled={!canMakeTx}
+							fullWidth
+							color='action'
+							label='CHANGE_PRIVILEGE'
+							onClick={() =>
+								execute(
+									updateNewTransaction({
+										tx: 'setIdentityPrivilege',
+										key: 'setAddr',
+										value: address,
+									})
+								)
+							}
+							size='large'
+							identityAvailable={availableIdentityBalanceMainToken}
+						/>
+					)}
+				</Grid>
 			}
 		/>
 	)
