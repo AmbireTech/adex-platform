@@ -380,6 +380,7 @@ export function validateStandardLogin({ validateId, dirty }) {
 			updateIdentity('identityData', identityData)(dispatch)
 
 			const isValid = !!identityData.address
+			const hasPrivToLogin = identityData.privileges > 0
 
 			validate(validateId, 'identityContractAddress', {
 				isValid: isValid,
@@ -387,7 +388,13 @@ export function validateStandardLogin({ validateId, dirty }) {
 				dirty: dirty,
 			})(dispatch)
 
-			if (isValid) {
+			validate(validateId, 'identityContractAddress', {
+				isValid: hasPrivToLogin,
+				err: { msg: 'ACCOUNT_NONE_PRIVILEGES' },
+				dirty: dirty,
+			})(dispatch)
+
+			if (isValid && hasPrivToLogin) {
 				await login()(dispatch, getState)
 			}
 		} catch (err) {
