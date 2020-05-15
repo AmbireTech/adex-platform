@@ -234,7 +234,6 @@ export function login() {
 				(await getIdentityData({
 					identityAddr: identityData.address,
 				})) || {}
-
 			const identity = {
 				...identityData,
 				address: relayerData.deployData._id,
@@ -242,13 +241,20 @@ export function login() {
 				isLimitedVolume: relayerData.isLimitedVolume,
 				relayerData,
 			}
-
-			await createSession({
-				identity,
-				wallet,
-				email,
-				deleteLegacyKey,
-			})(dispatch, getState)
+			if (identity.currentPrivileges[wallet.address] > 0) {
+				await createSession({
+					identity,
+					wallet,
+					email,
+					deleteLegacyKey,
+				})(dispatch, getState)
+			} else {
+				addToast({
+					type: 'cancel',
+					label: t('ACCOUNT_NONE_PRIVILEGES'),
+					timeout: 20000,
+				})(dispatch)
+			}
 		} catch (err) {
 			console.error('ERR_LOGIN', err)
 			addToast({
