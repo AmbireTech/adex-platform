@@ -248,8 +248,8 @@ function AccountInfo() {
 							<ListDivider />
 							{Object.keys(currentPrivileges)
 								.filter(a => a !== identityRecoveryAddr && a !== walletAddress)
-								.map(address => (
-									<Fragment>
+								.map((address, key) => (
+									<Fragment key={key}>
 										<AccountPrivilageItem
 											address={address}
 											privileges={currentPrivileges[address]}
@@ -371,7 +371,7 @@ function AccountPrivilageItem(props) {
 			}
 			right={
 				<Grid container direction='row' justify='center' alignItems='center'>
-					{current ? (
+					{/* {current ? (
 						<Chip
 							icon={<LockOpen />}
 							color={privColors[currUserPrivileges]}
@@ -379,25 +379,25 @@ function AccountPrivilageItem(props) {
 							label={authType.toUpperCase()}
 							classes={{ root: classes.currentChip }}
 						/>
-					) : (
-						<SetIdentityPrivilege
-							disabled={!canMakeTx}
-							fullWidth
-							color='action'
-							label='CHANGE_PRIVILEGE'
-							onClick={() =>
-								execute(
-									updateNewTransaction({
-										tx: 'setIdentityPrivilege',
-										key: 'setAddr',
-										value: address,
-									})
-								)
-							}
-							size='large'
-							identityAvailable={availableIdentityBalanceMainToken}
-						/>
-					)}
+					) : ( */}
+					<SetIdentityPrivilege
+						disabled={!canMakeTx}
+						fullWidth
+						color='default'
+						label='CHANGE_PRIVILEGE'
+						onClick={() =>
+							execute(
+								updateNewTransaction({
+									tx: 'setIdentityPrivilege',
+									key: 'setAddr',
+									value: address,
+								})
+							)
+						}
+						size='large'
+						identityAvailable={availableIdentityBalanceMainToken}
+					/>
+					{/* )} */}
 				</Grid>
 			}
 		/>
