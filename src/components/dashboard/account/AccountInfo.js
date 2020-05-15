@@ -365,9 +365,8 @@ function AccountPrivilageItem(props) {
 							startIcon={<Lock />}
 							size='large'
 							color={privColors[currUserPrivileges]}
-							label={authType.toUpperCase()}
 						>
-							{authType}
+							{`${t('CURRENT_AUTH')} : ${authType}`}
 						</Button>
 					) : (
 						<SetIdentityPrivilege
