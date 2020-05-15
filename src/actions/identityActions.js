@@ -308,10 +308,6 @@ export function validateQuickLogin({ validateId, dirty }) {
 				}
 
 				if (!!walletData && walletData.data && walletData.data.address) {
-					const { currentPrivileges } =
-						(await getIdentityData({
-							identityAddr: walletData.identity,
-						})) || {}
 					wallet = { ...walletData.data }
 					wallet.email = email
 					wallet.password = password
@@ -319,7 +315,6 @@ export function validateQuickLogin({ validateId, dirty }) {
 					wallet.identity = {
 						address: walletData.identity,
 						privileges: walletData.privileges || walletData.identityPrivileges,
-						currentPrivileges,
 					}
 
 					if (!authType) {
@@ -341,20 +336,14 @@ export function validateQuickLogin({ validateId, dirty }) {
 		}
 
 		const isValid = !!wallet.address
-		const hasPrivToLogin =
-			!!wallet.identity &&
-			wallet.identity.currentPrivileges[wallet.address] !== 0
-		if (isValid && !hasPrivToLogin) {
-			error = 'ACCOUNT_NONE_PRIVILEGES'
-		}
 
 		validate(validateId, 'wallet', {
-			isValid: isValid && hasPrivToLogin,
+			isValid,
 			err: { msg: 'ERR_QUICK_WALLET_LOGIN', args: [getErrorMsg(error)] },
 			dirty: dirty,
 		})(dispatch)
 
-		if (isValid && hasPrivToLogin) {
+		if (isValid) {
 			await login()(dispatch, getState)
 		}
 		updateSpinner(validateId, false)(dispatch)
@@ -380,7 +369,6 @@ export function validateStandardLogin({ validateId, dirty }) {
 			updateIdentity('identityData', identityData)(dispatch)
 
 			const isValid = !!identityData.address
-			const hasPrivToLogin = identityData.privileges > 0
 
 			validate(validateId, 'identityContractAddress', {
 				isValid: isValid,
@@ -388,13 +376,7 @@ export function validateStandardLogin({ validateId, dirty }) {
 				dirty: dirty,
 			})(dispatch)
 
-			validate(validateId, 'identityContractAddress', {
-				isValid: hasPrivToLogin,
-				err: { msg: 'ACCOUNT_NONE_PRIVILEGES' },
-				dirty: dirty,
-			})(dispatch)
-
-			if (isValid && hasPrivToLogin) {
+			if (isValid) {
 				await login()(dispatch, getState)
 			}
 		} catch (err) {
