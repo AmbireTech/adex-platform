@@ -57,11 +57,17 @@ const AccountItem = ({ left, right }) => {
 	const classes = useStyles()
 	return (
 		<ListItem>
-			<Grid container className={classes.root} spacing={3}>
-				<Grid item xs={12} sm={6} md={8}>
+			<Grid
+				container
+				className={classes.root}
+				spacing={1}
+				justify='center'
+				alignItems='center'
+			>
+				<Grid item xs={12} sm={6} md={9}>
 					{left}
 				</Grid>
-				<Grid item xs={12} sm={6} md={4}>
+				<Grid item xs={12} sm={6} md={3}>
 					{right}
 				</Grid>
 			</Grid>
@@ -216,24 +222,37 @@ function AccountInfo() {
 						</Typography>
 					</ExpansionPanelSummary>
 					<Box>
+						<ListDivider />
 						<AccountItem
 							left={
 								<ListItemText
 									className={classes.address}
 									secondary={''}
-									primary={t('WALLETS_WITH_PRIVILEGES')}
+									primary={t('MANAGE_IDENTITY')}
+								/>
+							}
+							right={
+								<SetIdentityPrivilege
+									disabled={!canMakeTx}
+									fullWidth
+									variant='contained'
+									color='secondary'
+									size='large'
+									identityAvailable={availableIdentityBalanceMainToken}
 								/>
 							}
 						/>
 						<ListDivider />
-						<List>
+						<ListSubheader disableSticky>
+							{t('WALLETS_WITH_PRIVILEGES')}
+						</ListSubheader>
+						<List disablePadding>
 							<AccountPrivilageItem
 								address={walletAddress}
 								privileges={privileges}
 								authType={authType}
 								current
 							/>
-							<ListDivider />
 							{Object.keys(currentPrivileges)
 								.filter(a => a !== identityRecoveryAddr && a !== walletAddress)
 								.map((address, key) => (
@@ -242,32 +261,11 @@ function AccountInfo() {
 											address={address}
 											privileges={currentPrivileges[address]}
 										/>
-										<ListDivider />
 									</Fragment>
 								))}
 						</List>
 						<ListDivider />
 						<List classes={{ root: classes.advancedList }}>
-							<AccountItem
-								left={
-									<ListItemText
-										className={classes.address}
-										secondary={''}
-										primary={t('MANAGE_IDENTITY')}
-									/>
-								}
-								right={
-									<SetIdentityPrivilege
-										disabled={!canMakeTx}
-										fullWidth
-										variant='contained'
-										color='default'
-										size='large'
-										identityAvailable={availableIdentityBalanceMainToken}
-									/>
-								}
-							/>
-							<ListDivider />
 							<ListItem>
 								<ListItemText
 									className={classes.address}
