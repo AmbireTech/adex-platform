@@ -26,8 +26,8 @@ class App extends Component {
 	render() {
 		return (
 			<React.Fragment>
-				<CssBaseline />
 				<MuiThemeProvider theme={themeMUI}>
+					<CssBaseline />
 					<MuiPickersUtilsProvider utils={DateUtils}>
 						<Provider store={store}>
 							<PersistGate onBeforeLift={onBeforeLift} persistor={persistor}>

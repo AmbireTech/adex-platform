@@ -93,7 +93,6 @@ export default function TopUp() {
 								className={classes.copyBtn}
 								size='large'
 								color='default'
-								variant='contained'
 								disableElevation
 								fullWidth
 								endIcon={<FileCopy fontSize='small' color='disabled' />}

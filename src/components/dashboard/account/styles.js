@@ -1,6 +1,9 @@
 export const styles = theme => {
 	const spacing = theme.spacing(1)
 	return {
+		root: {
+			flexGrow: 1,
+		},
 		actionBtn: {
 			margin: spacing,
 		},

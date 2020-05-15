@@ -67,6 +67,11 @@ export const selectMainToken = createSelector(
 	({ mainToken }) => mainToken || {}
 )
 
+export const selectIdentityRecoveryAddr = createSelector(
+	[selectRelayerConfig],
+	({ identityRecoveryAddr }) => identityRecoveryAddr
+)
+
 export const selectGasPriceCap = createSelector(
 	[selectRelayerConfig],
 	({ gasPriceCap }) => gasPriceCap

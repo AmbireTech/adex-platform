@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import Button from '@material-ui/core/Button'
-import Box from '@material-ui/core/Box'
+import { Box, Divider } from '@material-ui/core'
+import { Close } from '@material-ui/icons'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import { Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
@@ -16,6 +17,7 @@ import { logOut } from 'services/store-data/auth'
 import { formatAddress } from 'helpers/formatters'
 import { push } from 'connected-react-router'
 import { t } from 'selectors'
+import { removeFromLocalStorage } from 'helpers/localStorageHelpers'
 
 const RRButton = withReactRouterLink(Button)
 const useStyles = makeStyles(styles)
@@ -96,7 +98,7 @@ const AuthSelect = () => {
 				</Box>
 			)}
 			{wallets.map(w => (
-				<Box key={w.name} m={1}>
+				<Box key={w.name} m={1} display='flex'>
 					<Button
 						variant='contained'
 						size='large'
@@ -111,8 +113,37 @@ const AuthSelect = () => {
 					>
 						{t('SIGN_IN_TO', { args: [w.name] })}
 					</Button>
+					<Button
+						variant='contained'
+						size='large'
+						onClick={() => {
+							execute(
+								confirmAction(
+									() => {
+										removeFromLocalStorage(w.key)
+										setWallets(wallets.filter(i => i.key !== w.key))
+									},
+									null,
+									{
+										confirmLabel: t('CONFIRM_YES'),
+										cancelLabel: t('CANCEL'),
+										title: t('CONFIRM_DIALOG_REMOVE_SAVED_AUTH_TITLE'),
+										text: t('CONFIRM_DIALOG_REMOVE_SAVED_AUTH_TEXT', {
+											args: [
+												(wallet.email || (wallet.authType || '')).toUpperCase(),
+												identity.address,
+											],
+										}),
+									}
+								)
+							)
+						}}
+					>
+						<Close />
+					</Button>
 				</Box>
 			))}
+			{(wallets.length > 0 || auth) && <Divider />}
 			{showRegistration && (
 				<Box m={1}>
 					<Button
