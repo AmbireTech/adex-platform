@@ -20,10 +20,9 @@ import {
 	Typography,
 	IconButton,
 	Paper,
-	Chip,
 	Grid,
 } from '@material-ui/core'
-import { VpnKey, LockOpen } from '@material-ui/icons'
+import { VpnKey, Lock } from '@material-ui/icons'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { styles } from './styles.js'
 import { LoadingSection } from 'components/common/spinners'
@@ -54,32 +53,21 @@ const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 const VALIDATOR_FOLLOWER_URL = process.env.VALIDATOR_FOLLOWER_URL
 const VALIDATOR_FOLLOWER_ID = process.env.VALIDATOR_FOLLOWER_ID
 
-const AccountItem = props => (
-	<ListItem>
-		<Box
-			display='flex'
-			flexWrap={'wrap'}
-			flex='1'
-			justifyContent='space-between'
-			alignItems='center'
-		>
-			<Box
-				flexGrow='8'
-				flexBasis='700px'
-				mr={1}
-				flexWrap={'nowrap'}
-				display='flex'
-				alignItems='center'
-				justifyContent='space-between'
-			>
-				<Box flex='1'>{props.left}</Box>
-			</Box>
-			<Box flexGrow='1' flexBasis='17em'>
-				{props.right}
-			</Box>
-		</Box>
-	</ListItem>
-)
+const AccountItem = ({ left, right }) => {
+	const classes = useStyles()
+	return (
+		<ListItem>
+			<Grid container className={classes.root} spacing={3}>
+				<Grid item xs={12} sm={6} md={8}>
+					{left}
+				</Grid>
+				<Grid item xs={12} sm={6} md={4}>
+					{right}
+				</Grid>
+			</Grid>
+		</ListItem>
+	)
+}
 
 const useStyles = makeStyles(styles)
 
@@ -238,7 +226,7 @@ function AccountInfo() {
 							}
 						/>
 						<ListDivider />
-						<List classes={{ root: classes.scrollableList }}>
+						<List>
 							<AccountPrivilageItem
 								address={walletAddress}
 								privileges={privileges}
@@ -372,17 +360,23 @@ function AccountPrivilageItem(props) {
 			right={
 				<Grid container direction='row' justify='center' alignItems='center'>
 					{current ? (
-						<Chip
-							icon={<LockOpen />}
+						<Button
+							variant='contained'
+							fullWidth
+							disabled
+							startIcon={<Lock />}
+							size='large'
 							color={privColors[currUserPrivileges]}
 							label={authType.toUpperCase()}
-							classes={{ root: classes.currentChip }}
-						/>
+						>
+							{authType}
+						</Button>
 					) : (
 						<SetIdentityPrivilege
 							disabled={!canMakeTx}
 							fullWidth
 							color='default'
+							variant='contained'
 							label='CHANGE_PRIVILEGE'
 							onClick={() =>
 								execute(
