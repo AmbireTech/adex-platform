@@ -375,7 +375,6 @@ function AccountPrivilageItem(props) {
 						<Chip
 							icon={<LockOpen />}
 							color={privColors[currUserPrivileges]}
-							size='small'
 							label={authType.toUpperCase()}
 							classes={{ root: classes.currentChip }}
 						/>
