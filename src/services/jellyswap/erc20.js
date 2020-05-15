@@ -1,45 +1,58 @@
-import { Providers, Contract } from '@jelly-swap/erc20'
+import { Interface } from 'ethers/utils'
+import { getEthers } from 'services/smart-contracts/ethers'
+import {
+	getIdentityTxnsWithNoncesAndFees,
+	processExecuteByFeeTokens,
+} from 'services/smart-contracts/actions/identity'
+import { Contract } from '@jelly-swap/erc20'
+import Erc20SwapAbi from '@jelly-swap/erc20/dist/config/abi'
 import { DAI_CONFIG } from './config'
 
-export const withdraw = async ({ id, secret, tokenAddress }) => {
-	const config = DAI_CONFIG()
+const ERC20Swap = new Interface(Erc20SwapAbi)
 
-	const privateKey = 'PRIVATE_KEY'
-	const provider = new Providers.WalletProvider(privateKey, config.providerUrl) // web wallet
-	const contract = new Contract(provider, config)
+const config = DAI_CONFIG()
 
-	const txHash = await contract.withdraw({ id, secret, tokenAddress })
+export const erc20SwapWithdraw = async ({
+	identityAddr,
+	account,
+	id, // Id from NEW_CONTRACT contract event result
+	secret,
+	mainTokenAddr,
+}) => {
+	const { wallet } = account
+	const { provider, getToken, Identity } = await getEthers(wallet.authType)
 
-	return txHash
-}
+	// NOTE: We Do not need this account but just in case for the testing
+	const erc20Contract = new Contract(provider, config)
+	const txData = ERC20Swap.functions.withdraw([id, secret, mainTokenAddr])
 
-const onErc20Event = result => {
-	console.log(result)
-
-	switch (result.eventName) {
-		case 'NEW_CONTRACT': {
-			if (result.isSesnder) {
-				// in AdEX case this won't happen, because user's won't send DAI, only BTC
-			} else {
-				// Handle DAI withdraw here.
-			}
-			break
-		}
-
-		case 'WITHDRAW': {
-			// logic for when user's DAI withdraw is confirmed
-			break
-		}
+	const withdrawTx = {
+		identityContract: identityAddr,
+		feeTokenAddr: mainTokenAddr,
+		to: config.contractAddress, // JELLYSWAPSWAP ERC20 contract addr,
+		data: txData,
 	}
-}
 
-export const subscribe = (contract, userDAIAddress) => {
-	contract.subscribe(onErc20Event, {
-		new: {
-			receiver: userDAIAddress,
-		},
-		withdraw: {
-			receiver: userDAIAddress,
-		},
+	const txns = [withdrawTx]
+
+	const txnsByFeeToken = await getIdentityTxnsWithNoncesAndFees({
+		txns,
+		identityAddr,
+		provider,
+		Identity,
+		account,
+		getToken,
 	})
+
+	const result = await processExecuteByFeeTokens({
+		identityAddr,
+		txnsByFeeToken,
+		wallet,
+		provider,
+	})
+
+	// We are not going to track the txns in the dapp, just other transactions
+	// - etherscan + auto update
+
+	return { result, erc20Contract }
 }
