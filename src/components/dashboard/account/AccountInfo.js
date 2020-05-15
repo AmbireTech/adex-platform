@@ -20,7 +20,9 @@ import {
 	Typography,
 	IconButton,
 	Paper,
+	Grid,
 } from '@material-ui/core'
+import { VpnKey, Lock } from '@material-ui/icons'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { styles } from './styles.js'
 import { LoadingSection } from 'components/common/spinners'
@@ -37,10 +39,13 @@ import {
 	selectMainToken,
 	selectEasterEggsAllowed,
 	selectEnsAddressByAddr,
+	selectAccountIdentityCurrentPrivileges,
+	selectIdentityRecoveryAddr,
 	selectSide,
 } from 'selectors'
-import { execute, addToast } from 'actions'
+import { execute, addToast, updateNewTransaction } from 'actions'
 import { formatAddress } from 'helpers/formatters'
+
 const RRButton = withReactRouterLink(Button)
 
 const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
@@ -48,32 +53,27 @@ const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 const VALIDATOR_FOLLOWER_URL = process.env.VALIDATOR_FOLLOWER_URL
 const VALIDATOR_FOLLOWER_ID = process.env.VALIDATOR_FOLLOWER_ID
 
-const AccountItem = props => (
-	<ListItem>
-		<Box
-			display='flex'
-			flexWrap={'wrap'}
-			flex='1'
-			justifyContent='space-between'
-			alignItems='center'
-		>
-			<Box
-				flexGrow='8'
-				flexBasis='700px'
-				mr={1}
-				flexWrap={'nowrap'}
-				display='flex'
+const AccountItem = ({ left, right }) => {
+	const classes = useStyles()
+	return (
+		<ListItem>
+			<Grid
+				container
+				className={classes.root}
+				spacing={1}
+				justify='center'
 				alignItems='center'
-				justifyContent='space-between'
 			>
-				<Box flex='1'>{props.left}</Box>
-			</Box>
-			<Box flexGrow='1' flexBasis='17em'>
-				{props.right}
-			</Box>
-		</Box>
-	</ListItem>
-)
+				<Grid item xs={12} sm={6} md={9}>
+					{left}
+				</Grid>
+				<Grid item xs={12} sm={6} md={3}>
+					{right}
+				</Grid>
+			</Grid>
+		</ListItem>
+	)
+}
 
 const useStyles = makeStyles(styles)
 
@@ -83,6 +83,8 @@ function AccountInfo() {
 	const privileges = useSelector(selectWalletPrivileges)
 	const side = useSelector(selectSide)
 	const canMakeTx = privileges > 1
+	const currentPrivileges = useSelector(selectAccountIdentityCurrentPrivileges)
+	const identityRecoveryAddr = useSelector(selectIdentityRecoveryAddr)
 	const { symbol } = useSelector(selectMainToken)
 	const {
 		walletAddress,
@@ -220,43 +222,50 @@ function AccountInfo() {
 						</Typography>
 					</ExpansionPanelSummary>
 					<Box>
-						<List classes={{ root: classes.advancedList }}>
-							<AccountItem
-								left={
-									<ListItemText
-										className={classes.address}
-										primary={formatAddress(walletAddress)}
-										secondary={t('WALLET_INFO_LABEL', {
-											args: [
-												`AUTH_${authType.toUpperCase()}`,
-												`PRIV_${privileges}_LABEL`,
-												authType,
-											],
-										})}
-									/>
-								}
+						<ListDivider />
+						<AccountItem
+							left={
+								<ListItemText
+									className={classes.address}
+									secondary={''}
+									primary={t('MANAGE_IDENTITY')}
+								/>
+							}
+							right={
+								<SetIdentityPrivilege
+									disabled={!canMakeTx}
+									fullWidth
+									variant='contained'
+									color='secondary'
+									size='large'
+									identityAvailable={availableIdentityBalanceMainToken}
+								/>
+							}
+						/>
+						<ListDivider />
+						<ListSubheader disableSticky>
+							{t('WALLETS_WITH_PRIVILEGES')}
+						</ListSubheader>
+						<List disablePadding>
+							<AccountPrivilageItem
+								address={walletAddress}
+								privileges={privileges}
+								authType={authType}
+								current
 							/>
-							<ListDivider />
-							<AccountItem
-								left={
-									<ListItemText
-										className={classes.address}
-										secondary={''}
-										primary={t('MANAGE_IDENTITY')}
-									/>
-								}
-								right={
-									<SetIdentityPrivilege
-										disabled={!canMakeTx}
-										fullWidth
-										variant='contained'
-										color='default'
-										size='large'
-										identityAvailable={availableIdentityBalanceMainToken}
-									/>
-								}
-							></AccountItem>
-							<ListDivider />
+							{Object.keys(currentPrivileges)
+								.filter(a => a !== identityRecoveryAddr && a !== walletAddress)
+								.map((address, key) => (
+									<Fragment key={key}>
+										<AccountPrivilageItem
+											address={address}
+											privileges={currentPrivileges[address]}
+										/>
+									</Fragment>
+								))}
+						</List>
+						<ListDivider />
+						<List classes={{ root: classes.advancedList }}>
 							<ListItem>
 								<ListItemText
 									className={classes.address}
@@ -310,6 +319,78 @@ function AccountInfo() {
 				</ExpansionPanel>
 			</Box>
 		</Fragment>
+	)
+}
+
+function AccountPrivilageItem(props) {
+	const classes = useStyles()
+	const currUserPrivileges = useSelector(selectWalletPrivileges)
+	const canMakeTx = currUserPrivileges > 1
+	const { address, privileges, current, authType } = props
+	const privColors = ['disabled', 'secondary', 'primary']
+	const { availableIdentityBalanceMainToken } = useSelector(
+		selectAccountStatsFormatted
+	)
+	return (
+		<AccountItem
+			left={
+				<Grid
+					container
+					direction='row'
+					spacing={2}
+					alignItems='center'
+					justify='flex-start'
+				>
+					<Grid item>
+						<VpnKey color={privColors[privileges]} />
+					</Grid>
+					<Grid item>
+						<ListItemText
+							className={classes.address}
+							primary={<Typography>{formatAddress(address)}</Typography>}
+							secondary={t('WALLET_PRIV_LABEL', {
+								args: [`PRIV_${privileges}_LABEL`],
+							})}
+						/>
+					</Grid>
+				</Grid>
+			}
+			right={
+				<Grid container direction='row' justify='center' alignItems='center'>
+					{current ? (
+						<Button
+							variant='contained'
+							fullWidth
+							disabled
+							startIcon={<Lock />}
+							size='large'
+							color={privColors[currUserPrivileges]}
+						>
+							{`${t('CURRENT_AUTH')} : ${authType}`}
+						</Button>
+					) : (
+						<SetIdentityPrivilege
+							disabled={!canMakeTx}
+							fullWidth
+							color='default'
+							variant='contained'
+							label='CHANGE_PRIVILEGE'
+							onClick={() =>
+								execute(
+									updateNewTransaction({
+										tx: 'setIdentityPrivilege',
+										key: 'setAddr',
+										value: address,
+									})
+								)
+							}
+							size='large'
+							identityAvailable={availableIdentityBalanceMainToken}
+						/>
+					)}
+				</Grid>
+			}
+		/>
 	)
 }
 

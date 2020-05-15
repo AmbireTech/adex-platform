@@ -33,6 +33,7 @@ import {
 } from 'selectors'
 
 const RRListItem = withReactRouterLink(ListItem)
+const RRAdexIconTxt = withReactRouterLink(AdexIconTxt)
 const { ETH_SCAN_ADDR_HOST } = process.env
 
 const useStyles = makeStyles(theme => {
@@ -109,6 +110,7 @@ const useStyles = makeStyles(theme => {
 		icon: {
 			height: 32,
 			width: 'auto',
+			cursor: 'pointer',
 		},
 		amount: {
 			fontSize: theme.typography.pxToRem(18),
@@ -146,12 +148,13 @@ function SideNav(props) {
 						bgcolor='background.paper'
 						className={classnames(classes.sideNavToolbar)}
 					>
-						<RRListItem
-							// @cryptofan
-							to={{ pathname: '/dashboard/' + side }}
-						>
-							<AdexIconTxt className={classes.icon} />
-						</RRListItem>
+						<ListItem>
+							<RRAdexIconTxt
+								// @cryptofan
+								to={{ pathname: '/dashboard/' + side }}
+								className={classes.icon}
+							/>
+						</ListItem>
 						<ListItem>
 							<LoadingSection
 								loading={

@@ -61,11 +61,11 @@ export const WithdrawTokenFromIdentity = props => (
 	/>
 )
 
-export const SetIdentityPrivilege = ({ SaveBtn, ...props }) => {
+export const SetIdentityPrivilege = ({ SaveBtn, label, ...props }) => {
 	return (
 		<FormStepsWithDialog
 			{...props}
-			btnLabel='ACCOUNT_SET_IDENTITY_PRIVILEGE_BTN'
+			btnLabel={label || 'ACCOUNT_SET_IDENTITY_PRIVILEGE_BTN'}
 			saveBtnLabel='ACCOUNT_SET_IDENTITY_PRIVILEGE_SAVE_BTN'
 			title='ACCOUNT_SET_IDENTITY_PRIVILEGE_TITLE'
 			stepsId='setIdentityPrivilege'
