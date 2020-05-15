@@ -124,6 +124,7 @@ export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 
 	return {
 		item,
+		initialItemState,
 		activeFields,
 		setActiveFields,
 		dirtyProps,

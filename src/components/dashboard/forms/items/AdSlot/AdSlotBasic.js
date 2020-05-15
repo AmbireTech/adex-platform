@@ -5,6 +5,7 @@ import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 import Dropdown from 'components/common/dropdown'
 import { FullContentSpinner } from 'components/common/dialog/content'
+import { AutocompleteWithCreate } from 'components/common/autocomplete'
 import {
 	t,
 	selectMainToken,
@@ -12,6 +13,7 @@ import {
 	selectValidationsById,
 	selectSpinnerById,
 	selectSlotTypesSourceWithDemands,
+	websitesAutocompleteSrc,
 } from 'selectors'
 import { UPDATING_SLOTS_DEMAND } from 'constants/spinners'
 import {
@@ -23,6 +25,7 @@ import {
 
 function AdSlotBasic({ validateId }) {
 	const newItem = useSelector(selectNewAdSlot)
+	const websitesSrc = useSelector(websitesAutocompleteSrc)
 	const adTypesSource = useSelector(selectSlotTypesSourceWithDemands)
 	const {
 		title = '',
@@ -98,19 +101,13 @@ function AdSlotBasic({ validateId }) {
 						/>
 					</Grid>
 					<Grid item xs={12}>
-						<TextField
-							fullWidth
+						<AutocompleteWithCreate
+							initialValue={website}
 							variant='outlined'
-							type='text'
-							required
+							source={websitesSrc}
+							fullWidth
 							label={t('SLOT_WEBSITE')}
-							name='website'
-							value={website}
-							onChange={ev =>
-								execute(updateNewSlot('website', ev.target.value))
-							}
 							error={errWebsite && !!errWebsite.dirty}
-							maxLength={120}
 							helperText={
 								errWebsite && !!errWebsite.dirty ? (
 									errWebsite.errMsg
@@ -121,6 +118,9 @@ function AdSlotBasic({ validateId }) {
 										}}
 									/>
 								)
+							}
+							onChange={value =>
+								execute(updateNewSlot('website', (value || '').trim()))
 							}
 						/>
 					</Grid>

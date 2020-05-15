@@ -10,6 +10,7 @@ import {
 } from 'components/dashboard/containers/DashboardStats'
 import Unit from 'components/dashboard/containers/Unit'
 import Slot from 'components/dashboard/containers/Slot'
+import Websites from 'components/dashboard/containers/Websites'
 import Account from 'components/dashboard/account/AccountInfo'
 import TopUp from 'components/dashboard/deposit/TopUp'
 import {
@@ -232,6 +233,11 @@ function Dashboard(props) {
 								exact
 								path='/dashboard/publisher/slots/:itemId'
 								component={Slot}
+							/>
+							<Route
+								exact
+								path='/dashboard/publisher/websites'
+								component={Websites}
 							/>
 							<Route
 								exact

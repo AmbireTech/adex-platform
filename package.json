@@ -1,15 +1,15 @@
 {
   "name": "adex-dapp",
-  "version": "4.20.6",
+  "version": "4.20.7",
   "tosVersion": "1.0.0",
   "private": true,
   "dependencies": {
     "@babel/core": "7.4.3",
     "@date-io/date-fns": "^1.1.0",
     "@date-io/moment": "^1.1.0",
-    "@material-ui/core": "4.9.11",
+    "@material-ui/core": "4.9.13",
     "@material-ui/icons": "4.9.1",
-    "@material-ui/lab": "4.0.0-alpha.50",
+    "@material-ui/lab": "4.0.0-alpha.52",
     "@material-ui/pickers": "^3.2.10",
     "@ramp-network/ramp-instant-sdk": "^1.5.1",
     "@svgr/webpack": "4.1.0",

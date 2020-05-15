@@ -17,7 +17,7 @@ import {
 import { makeStyles } from '@material-ui/core/styles'
 import { useSelector } from 'react-redux'
 import { styles } from './styles'
-import { formatDateTime } from 'helpers/formatters'
+import { formatDateTime, truncateString } from 'helpers/formatters'
 import { useTableData } from './tableHooks'
 import { ReloadData } from './toolbars'
 
@@ -56,6 +56,7 @@ const getCols = ({ classes, symbol }) => [
 		options: {
 			filter: false,
 			sort: true,
+			customBodyRender: title => truncateString(title, 20),
 		},
 	},
 	{

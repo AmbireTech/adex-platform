@@ -115,6 +115,7 @@ function getClientEnvironment(publicUrl) {
 				BUILD_TYPE: process.env.BUILD_TYPE,
 				ADEX_SUPPORT_URL: process.env.ADEX_SUPPORT_URL,
 				GA_CODE: process.env.GA_CODE,
+				RAMP_HOST_API_KEY: process.env.RAMP_HOST_API_KEY,
 			}
 		)
 
