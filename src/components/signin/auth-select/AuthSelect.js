@@ -125,8 +125,8 @@ const AuthSelect = () => {
 									},
 									null,
 									{
-										confirmLabel: t('CONTINUE_NEW_AUTH'),
-										cancelLabel: t('KEEP_MY_SESSION'),
+										confirmLabel: t('CONFIRM_YES'),
+										cancelLabel: t('CANCEL'),
 										title: t('CONFIRM_DIALOG_REMOVE_SAVED_AUTH_TITLE'),
 										text: t('CONFIRM_DIALOG_REMOVE_SAVED_AUTH_TEXT', {
 											args: [
