@@ -37,23 +37,16 @@ export const signatureToBtcWallet = sig => {
 
 //     secret: 'film ritual cream paper try search asthma grab admit viable work auction',
 // };
-export const initiateSwap = async userInput => {
-	const config = BTC_CONFIG()
-
-	const mnemonic =
-		'choose stone donkey wheat pudding gasp harsh pupil sibling post brief afraid'
-
-	const wallet = createWallet(mnemonic, config.providerUrl)
-
-	const contract = new Contract(wallet, config)
+export const initiateBtcToDaiSwap = async ({ btcWallet, ...userInput }) => {
+	const btcContract = new Contract(btcWallet, config)
 
 	const adapter = new Adapter(config)
 
 	const swapInput = adapter.formatInput(userInput)
 
-	const txHash = await contract.newContract(swapInput)
+	const btcTxHash = await btcContract.newContract(swapInput)
 
-	return txHash
+	return { btcContract, btcTxHash }
 }
 
 const onBtcEvent = result => {
@@ -62,7 +55,6 @@ const onBtcEvent = result => {
 	switch (result.eventName) {
 		case 'NEW_CONTRACT': {
 			if (result.isSesnder) {
-				// logic for when user's BTC swap is confirmed
 			} else {
 				// when result.isSender is false, this means the swap is made from LP to the user and the user needs to withdraw the BTC
 				// in AdEX case this won't happen.
