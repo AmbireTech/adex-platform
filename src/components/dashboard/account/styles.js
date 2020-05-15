@@ -1,6 +1,9 @@
 export const styles = theme => {
 	const spacing = theme.spacing(1)
 	return {
+		root: {
+			flexGrow: 1,
+		},
 		actionBtn: {
 			margin: spacing,
 		},
@@ -12,17 +15,8 @@ export const styles = theme => {
 		advancedList: {
 			width: '100%',
 		},
-		scrollableList: {
-			width: '100%',
-			position: 'relative',
-			overflow: 'auto',
-			maxHeight: 280,
-		},
 		iconBtnLeft: {
 			marginRight: theme.spacing(1),
-		},
-		currentChip: {
-			margin: '0 10px',
 		},
 	}
 }
