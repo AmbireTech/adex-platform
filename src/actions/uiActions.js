@@ -10,10 +10,12 @@ import {
 	selectSide,
 	selectMemoryUi,
 	t,
+	selectAuthSig,
 } from 'selectors'
 import { getTimePeriods, getBorderPeriodStart } from 'helpers/timeHelpers'
 import dateUtils from 'helpers/dateUtils'
 import { getErrorMsg } from 'helpers/errors'
+import { encrypt, decrypt } from 'services/crypto/crypto'
 
 export function updateSpinner(item, value) {
 	return function(dispatch) {
@@ -61,16 +63,60 @@ export function updateInitialDataLoaded(dataType, loaded) {
 	}
 }
 
+const encryptIdentityUi = async ({
+	state,
+	identity,
+	item,
+	value,
+	category,
+}) => {
+	const authSig = selectAuthSig(state)
+
+	const newState = { ...state }
+	newState.byIdentity = { ...newState.byIdentity }
+	newState.byIdentity[identity] = {
+		...newState.byIdentity[identity],
+	}
+
+	const identityState =
+		typeof newState.byIdentity[identity] === 'string'
+			? JSON.parse(await decrypt(newState.byIdentity[identity], authSig))
+			: { ...newState.byIdentity[identity] }
+
+	if (category) {
+		identityState[category] = {
+			...identityState[category],
+		}
+		identityState[category][item] = value
+	} else {
+		identityState[item] = value
+	}
+
+	const encryptedIdentitySate = await encrypt(
+		JSON.stringify(identityState),
+		authSig
+	)
+
+	return encryptedIdentitySate
+}
+
 export function updateUiByIdentity(item, value, category) {
-	return function(dispatch, getState) {
-		const identity = selectAccountIdentityAddr(getState())
+	return async function(dispatch, getState) {
+		const state = getState()
+		const identity = selectAccountIdentityAddr(state)
+
+		const newIdentityState = await encryptIdentityUi({
+			state,
+			identity,
+			item,
+			value,
+			category,
+		})
 
 		return dispatch({
 			type: types.UPDATE_UI_BY_IDENTITY,
+			newIdentityState,
 			identity,
-			item: item,
-			value: value,
-			category: category,
 		})
 	}
 }
@@ -78,15 +124,9 @@ export function updateUiByIdentity(item, value, category) {
 export function updateIdentitySideUi(item, value) {
 	return function(dispatch, getState) {
 		const state = getState()
-		const identity = selectAccountIdentityAddr(state)
 		const side = selectSide(state)
-		return dispatch({
-			type: types.UPDATE_UI_BY_IDENTITY_AND_SIDE,
-			identity,
-			item,
-			value,
-			side,
-		})
+
+		updateUiByIdentity(item, value, side)
 	}
 }
 
@@ -196,7 +236,10 @@ export function updateCompanyData(newData) {
 		try {
 			const companyData = selectCompanyData(getState())
 			const newCompanyData = { ...companyData, ...newData }
-			updateUiByIdentity('companyData', newCompanyData)(dispatch, getState)
+			await updateUiByIdentity('companyData', newCompanyData)(
+				dispatch,
+				getState
+			)
 		} catch (err) {
 			console.error('ERR_UPDATING_COMPANY_DATA', err)
 			addToast({
@@ -355,8 +398,8 @@ export function updateEasterEggsAllowed(search) {
 }
 
 export function updatePrivilegesWarningAccepted(accepted) {
-	return function(dispatch, getState) {
-		updateUiByIdentity('privilegesWarningAccepted', accepted)(
+	return async function(dispatch, getState) {
+		await updateUiByIdentity('privilegesWarningAccepted', accepted)(
 			dispatch,
 			getState
 		)
@@ -364,8 +407,8 @@ export function updatePrivilegesWarningAccepted(accepted) {
 }
 
 export function updateMissingRevenueDataPointAccepted(accepted) {
-	return function(dispatch, getState) {
-		updateUiByIdentity('missingRevenueDataPointsAccepted', accepted)(
+	return async function(dispatch, getState) {
+		await updateUiByIdentity('missingRevenueDataPointsAccepted', accepted)(
 			dispatch,
 			getState
 		)
@@ -373,14 +416,20 @@ export function updateMissingRevenueDataPointAccepted(accepted) {
 }
 
 export function hideGettingStarted(side) {
-	return function(dispatch, getState) {
-		updateUiByIdentity('hideGettingStarted', true, side)(dispatch, getState)
+	return async function(dispatch, getState) {
+		await updateUiByIdentity('hideGettingStarted', true, side)(
+			dispatch,
+			getState
+		)
 	}
 }
 
 export function setGettingStartedExpanded(expanded) {
-	return function(dispatch, getState) {
-		updateUiByIdentity('gettingStartedExpanded', expanded)(dispatch, getState)
+	return async function(dispatch, getState) {
+		await updateUiByIdentity('gettingStartedExpanded', expanded)(
+			dispatch,
+			getState
+		)
 	}
 }
 

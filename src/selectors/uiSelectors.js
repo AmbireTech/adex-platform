@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect'
 import dateUtils from 'helpers/dateUtils'
-
-import { selectAccountIdentityAddr } from './accountSelectors'
+import { decrypt } from 'services/crypto/crypto'
+import { selectAccountIdentityAddr, selectAuthSig } from './accountSelectors'
 
 const REGISTRATION_OPEN = process.env.REGISTRATION_OPEN === 'true'
 
@@ -16,8 +16,11 @@ export const selectConfirm = state => state.memory.confirm
 export const selectSpinners = state => state.memory.spinners
 
 export const selectIdentityUi = createSelector(
-	[selectAccountIdentityAddr, selectIdentitiesUi],
-	(identityAddr, identitiesUi) => identitiesUi[identityAddr] || {}
+	[selectAccountIdentityAddr, selectIdentitiesUi, selectAuthSig],
+	(identityAddr, identitiesUi, authSig) =>
+		identitiesUi[identityAddr] && typeof identitiesUi[identityAddr] === 'string'
+			? JSON.parse(decrypt(identitiesUi[identityAddr], authSig))
+			: identitiesUi[identityAddr] || {}
 )
 
 export const selectIdentitySideUi = createSelector(

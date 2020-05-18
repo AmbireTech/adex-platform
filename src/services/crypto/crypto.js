@@ -13,7 +13,7 @@ const getKeyHash = key => {
 	return hashed
 }
 
-export const encrypt = async (text, key) => {
+export const encrypt = (text, key) => {
 	if (!text) return ''
 	if (!key) {
 		throw new Error('ERR_ENCRYPTING_NO_PASS')
@@ -26,7 +26,7 @@ export const encrypt = async (text, key) => {
 	return `${iv.toString('hex')}:${encrypted.toString('hex')}`
 }
 
-export const decrypt = async (text, key) => {
+export const decrypt = (text, key) => {
 	const textParts = text.split(':')
 	const iv = Buffer.from(textParts.shift(), 'hex')
 	const encryptedText = Buffer.from(textParts.join(':'), 'hex')
