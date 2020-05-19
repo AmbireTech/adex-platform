@@ -11,11 +11,12 @@ import {
 	selectMemoryUi,
 	t,
 	selectAuthSig,
+	selectIdentityUi,
 } from 'selectors'
 import { getTimePeriods, getBorderPeriodStart } from 'helpers/timeHelpers'
 import dateUtils from 'helpers/dateUtils'
 import { getErrorMsg } from 'helpers/errors'
-import { encrypt, decrypt } from 'services/crypto/crypto'
+import { encrypt } from 'services/crypto/crypto'
 
 export function updateSpinner(item, value) {
 	return function(dispatch) {
@@ -72,16 +73,13 @@ const encryptIdentityUi = async ({
 }) => {
 	const authSig = selectAuthSig(state)
 
+	const identityState = selectIdentityUi(state)
+
 	const newState = { ...state }
 	newState.byIdentity = { ...newState.byIdentity }
 	newState.byIdentity[identity] = {
 		...newState.byIdentity[identity],
 	}
-
-	const identityState =
-		typeof newState.byIdentity[identity] === 'string'
-			? JSON.parse(await decrypt(newState.byIdentity[identity], authSig))
-			: { ...newState.byIdentity[identity] }
 
 	if (category) {
 		identityState[category] = {
@@ -126,7 +124,7 @@ export function updateIdentitySideUi(item, value) {
 		const state = getState()
 		const side = selectSide(state)
 
-		updateUiByIdentity(item, value, side)
+		updateUiByIdentity(item, value, side)(dispatch, getState)
 	}
 }
 
