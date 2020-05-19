@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.8
+##### *2020-05-19*
+
+### Added
+- Changelly BTC to DAI swap widget
+- List all privileges on account info page
+- Remove buttons for listed emails on login screen
+
+### Fixed
+- Login w/o privileges
+- Css
+
 ## 4.20.7
 ##### *2020-05-13*
 
