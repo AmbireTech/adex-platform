@@ -14,17 +14,21 @@ import {
 	selectAccountIdentityAddr,
 	selectMainToken,
 	selectEmail,
+	selectSide,
 } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
 import Img from 'components/common/img/Img'
 import { useSelector } from 'react-redux'
 import copy from 'copy-to-clipboard'
 import { openWyre, openPayTrie, openOnRampNetwork } from 'services/onramp'
+import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import RAMP_LOGO from 'resources/ramp.svg'
 import WYRE_LOGO from 'resources/wyre.svg'
 import PAYTRIE_LOGO from 'resources/paytrie.svg'
 import { styles } from './styles'
 import { execute, addToast } from 'actions'
+
+const RRButton = withReactRouterLink(Button)
 
 const useStyles = makeStyles(styles)
 const onRampProvidersDetails = [
@@ -62,6 +66,7 @@ export default function TopUp() {
 	const accountId = useSelector(selectAccountIdentityAddr)
 	const { symbol } = useSelector(selectMainToken)
 	const email = useSelector(selectEmail)
+	const side = useSelector(selectSide)
 
 	return (
 		<Grid container spacing={2}>
@@ -176,15 +181,16 @@ export default function TopUp() {
 							</Box>
 						</Box>
 						<Box>
-							<Button
+							<RRButton
+								to={`/dashboard/${side}/topup/btc`}
 								size='large'
 								color='primary'
 								variant='contained'
 								fullWidth
-								disabled
+								// disabled
 							>
-								{t('COMING_SOON')}
-							</Button>
+								{t('TOPUP_BTC')}
+							</RRButton>
 						</Box>
 					</Box>
 				</Paper>
