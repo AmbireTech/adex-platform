@@ -1,6 +1,6 @@
 import { generateMnemonic } from 'bip39'
 import { parseUnits } from 'ethers/utils'
-import { updateUiByIdentity, addToast, execute } from 'actions'
+import { updateUiByIdentity, addToast, updateSpinner, execute } from 'actions'
 
 import {
 	selectMainToken,
@@ -52,6 +52,8 @@ export function onBtcContractCreated({
 				secret,
 				tokenAddress,
 			})
+
+			await updateSpinner(event.transactionHash, false)(dispatch)
 		} catch (err) {
 			console.error('ERR_UPDATING_BTC_TO_MAIN_TOKEN_SWAP_ERC20_WITHDRAW', err)
 			addToast({
@@ -82,6 +84,7 @@ export function swapBtcToMainToken({ btcWallet, btcAmount, tokenAmount }) {
 			secret,
 			outputAddress: identityAddr,
 		})
+		await updateSpinner(btcTxHash, true)(dispatch)
 
 		btcContract.subscribe(
 			async event => {
