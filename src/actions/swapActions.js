@@ -1,13 +1,67 @@
 import { generateMnemonic } from 'bip39'
 import { parseUnits } from 'ethers/utils'
+import { updateUiByIdentity, addToast, execute } from 'actions'
 
 import {
 	selectMainToken,
 	t,
 	selectAccountIdentity,
 	selectAccount,
+	selectBtcToMainTokenSwapTxns,
 } from 'selectors'
 import { initiateBtcToDaiSwap, erc20SwapWithdraw } from 'services/jellyswap'
+
+export function updateBtcToMainTokenSwapTxns(tx) {
+	return async function(dispatch, getState) {
+		try {
+			const txns = selectBtcToMainTokenSwapTxns(getState())
+			const newTxns = { ...txns }
+			newTxns[tx.id] = tx
+			await updateUiByIdentity('btcToMainTokenSwapTxns', newTxns)(
+				dispatch,
+				getState
+			)
+		} catch (err) {
+			console.error('ERR_UPDATING_BTC_TO_MAIN_TOKEN_SWAP_TXNS', err)
+			addToast({
+				type: 'cancel',
+				label: t('ERR_UPDATING_BTC_TO_MAIN_TOKEN_SWAP_TXNS'),
+				timeout: 20000,
+			})(dispatch)
+		}
+	}
+}
+
+export function onBtcContractCreated({
+	event,
+	secret,
+	identityAddr,
+	account,
+	tokenAddress,
+}) {
+	return async function(dispatch, getState) {
+		const tx = { ...event }
+		tx.secret = secret
+		execute(updateBtcToMainTokenSwapTxns(tx))
+
+		try {
+			const { erc20Contract, result } = await erc20SwapWithdraw({
+				id: tx.id,
+				identityAddr,
+				account,
+				secret,
+				tokenAddress,
+			})
+		} catch (err) {
+			console.error('ERR_UPDATING_BTC_TO_MAIN_TOKEN_SWAP_ERC20_WITHDRAW', err)
+			addToast({
+				type: 'cancel',
+				label: t('ERR_UPDATING_BTC_TO_MAIN_TOKEN_SWAP_ERC20_WITHDRAW'),
+				timeout: 20000,
+			})(dispatch)
+		}
+	}
+}
 
 export function swapBtcToMainToken({ btcWallet, btcAmount, tokenAmount }) {
 	return async function(dispatch, getState) {
@@ -29,15 +83,24 @@ export function swapBtcToMainToken({ btcWallet, btcAmount, tokenAmount }) {
 			outputAddress: identityAddr,
 		})
 
-		// TODO: store the secret and the btc tx hash in encrypted storage by user
-		// TODO: subscribe and get the id
-
-		const { erc20Contract, result } = await erc20SwapWithdraw({
-			// id, // Id from NEW_CONTRACT contract event result
-			identityAddr,
-			account,
-			secret,
-			tokenAddress,
-		})
+		btcContract.subscribe(
+			async event => {
+				if (event.eventName === 'NEW_CONTRACT' && event.isSender) {
+					onBtcContractCreated({
+						event,
+						secret,
+						identityAddr,
+						account,
+						tokenAddress,
+					})
+				}
+			},
+			{
+				new: {
+					type: 'getSwapsByAddressAndBlock',
+					address: userBtcAddress,
+				},
+			}
+		)
 	}
 }
