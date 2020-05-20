@@ -389,20 +389,6 @@ export function getRelayerConfig() {
 	}
 }
 
-async function getNetworkId() {
-	const { provider } = await getEthers(AUTH_TYPES.METAMASK.name)
-	const networkId = (await provider.getNetwork()).chainId
-
-	return networkId
-}
-
-async function getNetworkData({ id }) {
-	const networkId = id || (await getNetworkId())
-	const network = ETHEREUM_NETWORKS[networkId] || {}
-
-	return network
-}
-
 async function isMetamaskMatters(getState) {
 	const state = getState()
 	const searchParams = selectSearchParams(state)
@@ -421,7 +407,7 @@ export function onMetamaskNetworkChange({ id } = {}) {
 	return async function(dispatch, getState) {
 		if (
 			(await isMetamaskMatters(getState)) &&
-			process.env.NODE_ENV !== (await getNetworkData({ id })).for
+			process.env.NODE_ENV !== (ETHEREUM_NETWORKS[id] || {}).for
 		) {
 			confirmAction(
 				null,
