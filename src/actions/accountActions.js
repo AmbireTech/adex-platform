@@ -34,6 +34,7 @@ import {
 	getEthers,
 	getEthereumProvider,
 	ethereumNetworkId,
+	getMemaskEthereum,
 } from 'services/smart-contracts/ethers'
 import { AUTH_TYPES, ETHEREUM_NETWORKS } from 'constants/misc'
 import {
@@ -463,11 +464,12 @@ export const onMetamaskAccountChange = (accountAddress = '') => {
 
 export function metamaskAccountCheck() {
 	return async function(_, getState) {
-		if (await isMetamaskMatters(getState)) {
-			const { provider } = await getEthers(AUTH_TYPES.METAMASK.name)
+		const isMatters = await isMetamaskMatters(getState)
+		const mmEthereum = await getMemaskEthereum()
+		const selectedAddress = mmEthereum ? mmEthereum.selectedAddress : null
 
-			// NOTE: using provider with ethereum.enable() seems to work
-			onMetamaskAccountChange(provider.provider.selectedAddress)(_, getState)
+		if (isMatters) {
+			onMetamaskAccountChange(selectedAddress)(_, getState)
 		}
 	}
 }
