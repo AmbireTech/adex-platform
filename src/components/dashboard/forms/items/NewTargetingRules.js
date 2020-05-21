@@ -41,6 +41,21 @@ const marks = [
 	},
 ]
 
+const targetFunctions = [
+	{
+		value: 'nin',
+		label: 'TF_NIN',
+	},
+	{
+		value: 'in',
+		label: 'TF_IN',
+	},
+	{
+		value: 'lt',
+		label: 'TF_LD',
+	},
+]
+
 const Targets = ({
 	source = [],
 	collection,
@@ -120,23 +135,10 @@ const Targets = ({
 					alignItems='center'
 				>
 					<Box flexGrow={1}>
-						<Typography id={`target-score-${index}`}>
-							{/*TODO: Translate target name*/}
-							{t('TARGET_SCORE_LABEL', {
-								args: [target.score],
-							})}
-						</Typography>
-						<Slider
-							// classes={{ root: classes.slider, markLabel: classes.markLabel }}
-							aria-label={`target-score-${index}`}
-							min={1}
-							max={100}
-							step={1}
-							valueLabelDisplay='auto'
-							disabled={!target.tag}
-							value={target.score}
-							marks={marks}
-							onChange={(ev, score) =>
+						<Dropdown
+							variant='outlined'
+							fullWidth
+							onChange={score => {
 								execute(
 									updateNewItemTarget({
 										index,
@@ -146,7 +148,13 @@ const Targets = ({
 										collection,
 									})
 								)
-							}
+							}}
+							source={[...targetFunctions]}
+							value={''}
+							label={t('TARGET_ACTION')}
+							htmlId='ad-type-dd'
+							name='adType'
+							IconComponent={AddIcon}
 						/>
 					</Box>
 					<Box p={1}>
