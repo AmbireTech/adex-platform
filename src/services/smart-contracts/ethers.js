@@ -143,4 +143,19 @@ const getEthereumProvider = async () => {
 	return null
 }
 
-export { getEthers, ethereumNetworkId, getEthereumProvider }
+const getMetamaskEthereum = async () => {
+	const { ethereum } = await loadInjectedWeb3
+
+	if (ethereum && ethereum.isMetaMask) {
+		return ethereum
+	}
+
+	return null
+}
+
+export {
+	getEthers,
+	ethereumNetworkId,
+	getEthereumProvider,
+	getMetamaskEthereum,
+}
