@@ -31,10 +31,9 @@ import {
 import { getAllItems } from './itemActions'
 import { updateSlotsDemandThrottled } from './analyticsActions'
 import {
-	getEthers,
 	getEthereumProvider,
 	ethereumNetworkId,
-	getMemaskEthereum,
+	getMetamaskEthereum,
 } from 'services/smart-contracts/ethers'
 import { AUTH_TYPES, ETHEREUM_NETWORKS } from 'constants/misc'
 import {
@@ -451,10 +450,26 @@ export const onMetamaskAccountChange = (accountAddress = '') => {
 export function metamaskAccountCheck() {
 	return async function(_, getState) {
 		const isMatters = await isMetamaskMatters(getState)
-		const mmEthereum = await getMemaskEthereum()
-		const selectedAddress = mmEthereum ? mmEthereum.selectedAddress : null
-
 		if (isMatters) {
+			const mmEthereum = await getMetamaskEthereum()
+			// NOTE:
+			// after refresh if metamask is enabled ethereum.selectedAddress is ok,
+			// but it is open in new tab is undefined and them most secure way is to call enable() again
+			// or just some unknown timeout that may not work
+			// the reason for the timeout for the enable is because if it is not enabled and there is
+			// auth we need to log out
+
+			const selectedAddress =
+				mmEthereum && mmEthereum.selectedAddress
+					? mmEthereum.selectedAddress
+					: (await Promise.race([
+							mmEthereum.enable(),
+							new Promise(resolve => {
+								setTimeout(() => {
+									resolve([null])
+								}, 333)
+							}),
+					  ]))[0]
 			onMetamaskAccountChange(selectedAddress)(_, getState)
 		}
 	}
