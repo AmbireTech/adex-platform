@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.9
+##### *2020-05-19*
+
+### Fixed
+- Metamask auth bug
+
 ## 4.20.8
 ##### *2020-05-19*
 
