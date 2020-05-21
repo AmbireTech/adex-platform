@@ -39,11 +39,12 @@ function Autocomplete({
 			<AutocompleteMUI
 				multiple={multiple}
 				options={source}
-				value={value || null}
+				{...(multiple ? {} : { value: value || null })}
 				getOptionLabel={option => option.label || option}
 				getOptionSelected={(a, b = '') => {
-					return [JSON.stringify(b), b, b.value].includes(a.value)
+					return !!a && !!b && [JSON.stringify(b), b, b.value].includes(a.value)
 				}}
+				freeSolo
 				onChange={(_, newValue) => handleChange(newValue)}
 				renderInput={params => {
 					return (

@@ -59,6 +59,7 @@ const Targets = ({
 			<Grid item xs={12} md={6}>
 				{source.length ? (
 					<Autocomplete
+						multiple
 						id={id}
 						fullWidth
 						direction='auto'
@@ -84,10 +85,7 @@ const Targets = ({
 						label={label}
 						placeholder={placeholder}
 						source={source}
-						value={target.tag}
-						suggestionMatch='anywhere'
-						showSuggestionsWhenValueIsSet={true}
-						allowCreate={!source.length}
+						// value={target.tag}
 						variant='outlined'
 					/>
 				) : (

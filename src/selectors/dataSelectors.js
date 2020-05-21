@@ -173,14 +173,14 @@ export const unitSources = () => ({
 export const campaignSources = () => ({
 	locations: {
 		src: autocompleteLocationsSingleSelect(),
-		collection: 'targetingRules',
+		collection: 'targeting',
 	},
 	genders: {
 		src: autocompleteGendersSingleSelect(),
-		collection: 'targetingRules',
+		collection: 'targeting',
 	},
-	tags: { src: autocompleteTagsSingleSelect(), collection: 'targetingRules' },
-	custom: { src: [], collection: 'targetingRules' },
+	tags: { src: autocompleteTagsSingleSelect(), collection: 'targeting' },
+	custom: { src: [], collection: 'targeting' },
 })
 
 export const websitesAutocompleteSrc = createSelector(
