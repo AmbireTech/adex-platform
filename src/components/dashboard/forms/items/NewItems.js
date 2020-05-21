@@ -12,6 +12,7 @@ import CampaignFormPreview from './Campaign/CampaignFormPreview'
 import AdSlotBasic from './AdSlot/AdSlotBasic'
 import AdSlotMedia from './AdSlot/AdSlotMedia'
 import NewItemTargeting from './NewItemTargeting'
+import NewTargetingRules from './NewTargetingRules'
 import AdSlotPreview from './AdSlot/AdSlotPreview'
 
 import {
@@ -44,6 +45,14 @@ const AdUnitTargeting = props => (
 	<NewItemTargeting
 		{...props}
 		itemType='AdUnit'
+		sourcesSelector={unitSources}
+	/>
+)
+
+const CampaignTargetingRules = props => (
+	<NewTargetingRules
+		{...props}
+		itemType='Campaign'
 		sourcesSelector={unitSources}
 	/>
 )
@@ -120,6 +129,10 @@ export const NewCampaignSteps = props => (
 		itemType='Campaign'
 		stepsId='new-campaign-'
 		steps={[
+			{
+				title: 'CAMPAIGN_TARGETING_RULES_STEP',
+				component: CampaignTargetingRules,
+			},
 			{
 				title: 'CAMPAIGN_UNITS_STEP',
 				component: CampaignUnits,
