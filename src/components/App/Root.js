@@ -28,6 +28,7 @@ import JustDialog from 'components/common/dialog/JustDialog'
 import { migrateLegacyWallet, removeLegacyKey } from 'services/wallet/wallet'
 import Translate from 'components/translate/Translate'
 import { selectAuth, selectWallet, selectLocation } from 'selectors'
+import { getMetamaskEthereum } from 'services/smart-contracts/ethers'
 
 const ConnectedCreateQuickIdentity = ConnectHoc(JustDialog(CreateQuickIdentity))
 const ConnectedQuickLogin = ConnectHoc(JustDialog(LoginQuickIdentity))
@@ -73,8 +74,12 @@ const Root = () => {
 	const location = useSelector(selectLocation)
 
 	useEffect(() => {
+		;(async function checkMetamask() {
+			await getMetamaskEthereum()
+			execute(metamaskChecks())
+		})()
+
 		execute(getRelayerConfig())
-		execute(metamaskChecks())
 		execute(handleRedirectParams(location.search))
 		execute(handleSignupLink(location.search))
 		// eslint-disable-next-line react-hooks/exhaustive-deps

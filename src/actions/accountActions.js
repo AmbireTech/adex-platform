@@ -31,9 +31,9 @@ import {
 import { getAllItems } from './itemActions'
 import { updateSlotsDemandThrottled } from './analyticsActions'
 import {
-	getEthers,
 	getEthereumProvider,
 	ethereumNetworkId,
+	getMetamaskEthereum,
 } from 'services/smart-contracts/ethers'
 import { AUTH_TYPES, ETHEREUM_NETWORKS } from 'constants/misc'
 import {
@@ -388,20 +388,6 @@ export function getRelayerConfig() {
 	}
 }
 
-async function getNetworkId() {
-	const { provider } = await getEthers(AUTH_TYPES.METAMASK.name)
-	const networkId = (await provider.getNetwork()).chainId
-
-	return networkId
-}
-
-async function getNetworkData({ id }) {
-	const networkId = id || (await getNetworkId())
-	const network = ETHEREUM_NETWORKS[networkId] || {}
-
-	return network
-}
-
 async function isMetamaskMatters(getState) {
 	const state = getState()
 	const searchParams = selectSearchParams(state)
@@ -420,7 +406,7 @@ export function onMetamaskNetworkChange({ id } = {}) {
 	return async function(dispatch, getState) {
 		if (
 			(await isMetamaskMatters(getState)) &&
-			process.env.NODE_ENV !== (await getNetworkData({ id })).for
+			process.env.NODE_ENV !== (ETHEREUM_NETWORKS[id] || {}).for
 		) {
 			confirmAction(
 				null,
@@ -463,11 +449,28 @@ export const onMetamaskAccountChange = (accountAddress = '') => {
 
 export function metamaskAccountCheck() {
 	return async function(_, getState) {
-		if (await isMetamaskMatters(getState)) {
-			const { provider } = await getEthers(AUTH_TYPES.METAMASK.name)
+		const isMatters = await isMetamaskMatters(getState)
+		if (isMatters) {
+			const mmEthereum = await getMetamaskEthereum()
+			// NOTE:
+			// after refresh if metamask is enabled ethereum.selectedAddress is ok,
+			// but it is open in new tab is undefined and them most secure way is to call enable() again
+			// or just some unknown timeout that may not work
+			// the reason for the timeout for the enable is because if it is not enabled and there is
+			// auth we need to log out
 
-			// NOTE: using provider with ethereum.enable() seems to work
-			onMetamaskAccountChange(provider.provider.selectedAddress)(_, getState)
+			const selectedAddress =
+				mmEthereum && mmEthereum.selectedAddress
+					? mmEthereum.selectedAddress
+					: (await Promise.race([
+							mmEthereum.enable(),
+							new Promise(resolve => {
+								setTimeout(() => {
+									resolve([null])
+								}, 333)
+							}),
+					  ]))[0]
+			onMetamaskAccountChange(selectedAddress)(_, getState)
 		}
 	}
 }
