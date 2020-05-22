@@ -39,6 +39,7 @@ function Autocomplete({
 			<AutocompleteMUI
 				multiple={multiple}
 				options={source}
+				groupBy={option => option.group}
 				{...(multiple ? {} : { value: value || null })}
 				getOptionLabel={option => option.label || option}
 				getOptionSelected={(a, b = '') => {
@@ -121,6 +122,7 @@ export const AutocompleteWithCreate = ({
 			// clearOnBlur
 			// handleHomeEndKeys
 			options={source}
+			groupBy={option => option.group}
 			getOptionLabel={option => {
 				// Value selected with enter, right from the input
 				if (typeof option === 'string') {
