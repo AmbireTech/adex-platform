@@ -31,7 +31,7 @@ import {
 	openCampaign,
 } from 'actions'
 
-import { slotSources, unitSources } from 'selectors'
+import { slotSources, unitSources, campaignSources } from 'selectors'
 
 export const AdSlotTargeting = props => (
 	<NewItemTargeting
@@ -53,7 +53,7 @@ const CampaignTargetingRules = props => (
 	<NewTargetingRules
 		{...props}
 		itemType='Campaign'
-		sourcesSelector={unitSources}
+		sourcesSelector={campaignSources}
 	/>
 )
 

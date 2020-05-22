@@ -170,18 +170,11 @@ export const unitSources = () => ({
 	custom: { src: [], collection: 'targeting' },
 })
 
-export const campaignSources = () => ({
-	locations: {
-		src: autocompleteLocationsSingleSelect(),
-		collection: 'targeting',
-	},
-	genders: {
-		src: autocompleteGendersSingleSelect(),
-		collection: 'targeting',
-	},
-	tags: { src: autocompleteTagsSingleSelect(), collection: 'targeting' },
-	custom: { src: [], collection: 'targeting' },
-})
+export const campaignSources = () => [
+	{ parameter: 'location', src: autocompleteLocationsSingleSelect() },
+	{ parameter: 'categories', src: autocompleteTagsSingleSelect() },
+	{ parameter: 'publishers', src: autocompleteTagsSingleSelect() },
+]
 
 export const websitesAutocompleteSrc = createSelector(
 	selectWebsitesArray,
