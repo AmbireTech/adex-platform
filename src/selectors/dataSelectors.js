@@ -135,10 +135,18 @@ export const selectTargetingSources = createSelector(
 )
 
 const autocompleteLocationsSingleSelect = () => {
-	return constants.AllCountries.map(({ name, value } = {}) => ({
+	const tiers = constants.CountryTiers.map(({ name, ruleValue } = {}) => ({
 		label: t(name),
-		value: value,
+		value: ruleValue,
+		group: t('BY_TIER'),
 	}))
+	const all = constants.AllCountries.map(({ name, ruleValue } = {}) => ({
+		label: t(name),
+		value: ruleValue,
+		group: name[0].toUpperCase(),
+	}))
+
+	return [...tiers, ...all]
 }
 
 const autocompleteGendersSingleSelect = () => {
@@ -171,9 +179,12 @@ export const unitSources = () => ({
 })
 
 export const campaignSources = () => [
-	{ parameter: 'location', src: autocompleteLocationsSingleSelect() },
-	{ parameter: 'categories', src: autocompleteTagsSingleSelect() },
-	{ parameter: 'publishers', src: autocompleteTagsSingleSelect() },
+	{
+		parameter: 'location',
+		singleValuesSrc: autocompleteLocationsSingleSelect(),
+	},
+	{ parameter: 'categories', singleValuesSrc: autocompleteTagsSingleSelect() },
+	{ parameter: 'publishers', singleValuesSrc: autocompleteTagsSingleSelect() },
 ]
 
 export const websitesAutocompleteSrc = createSelector(
