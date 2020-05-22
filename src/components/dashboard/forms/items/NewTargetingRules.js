@@ -1,21 +1,22 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
 import { makeStyles } from '@material-ui/core/styles'
 import {
 	Grid,
-	Slider,
-	IconButton,
 	Box,
 	Typography,
 	TextField,
+	Paper,
+	Tab,
+	Tabs,
 } from '@material-ui/core'
-import { Cancel as CancelIcon, Add as AddIcon } from '@material-ui/icons'
+import { Add as AddIcon } from '@material-ui/icons'
 import Autocomplete from 'components/common/autocomplete'
 import Dropdown from 'components/common/dropdown'
 
-import { t, selectTargetingSources, selectNewItemByTypeAndId } from 'selectors'
-import { execute, updateNewItemTarget } from 'actions'
+import { t, selectNewItemByTypeAndId } from 'selectors'
+import { execute, updateTargetRuleInput } from 'actions'
 
 const useStyles = makeStyles(theme => ({
 	slider: {
@@ -26,33 +27,14 @@ const useStyles = makeStyles(theme => ({
 	},
 }))
 
-const marks = [
-	{
-		value: 5,
-		label: 'Low',
-	},
-	{
-		value: 50,
-		label: 'Medium',
-	},
-	{
-		value: 95,
-		label: 'High',
-	},
-]
-
-const targetFunctions = [
-	{
-		value: 'nin',
-		label: 'TF_NIN',
-	},
+const ruleActions = [
 	{
 		value: 'in',
-		label: 'TF_IN',
+		label: 'SHOW_ONLY',
 	},
 	{
-		value: 'lt',
-		label: 'TF_LD',
+		value: 'nin',
+		label: 'DO_NOT_SHOW',
 	},
 ]
 
@@ -62,7 +44,8 @@ const Targets = ({
 	placeholder,
 	label,
 	index,
-	target,
+	target = {},
+	parameter,
 	// classes,
 	// invalidFields,
 	itemId,
@@ -71,7 +54,7 @@ const Targets = ({
 	const id = `target-${index}`
 	return (
 		<Grid container spacing={2} alignItems='center'>
-			<Grid item xs={12} md={6}>
+			<Grid item xs={12} md={8}>
 				{source.length ? (
 					<Autocomplete
 						multiple
@@ -86,13 +69,14 @@ const Targets = ({
 						// 		? invalidFields[id].errMsg
 						// 		: null
 						// }
-						onChange={tag => {
+						onChange={value => {
 							execute(
-								updateNewItemTarget({
+								updateTargetRuleInput({
 									index,
 									itemType,
 									itemId,
-									target: { target: { ...target, tag } },
+									parameter,
+									target: { ...target, value },
 									collection,
 								})
 							)
@@ -114,11 +98,12 @@ const Targets = ({
 						label={label}
 						onChange={ev =>
 							execute(
-								updateNewItemTarget({
+								updateTargetRuleInput({
 									index,
 									itemType,
 									itemId,
-									target: { target: { ...target, tag: ev.target.value } },
+									parameter,
+									target: { ...target, value: ev.target.value },
 									collection,
 								})
 							)
@@ -127,7 +112,7 @@ const Targets = ({
 					/>
 				)}
 			</Grid>
-			<Grid item xs={12} md={6}>
+			<Grid item xs={12} md={4}>
 				<Box
 					display='flex'
 					flexDirection='row'
@@ -138,42 +123,25 @@ const Targets = ({
 						<Dropdown
 							variant='outlined'
 							fullWidth
-							onChange={score => {
+							onChange={action => {
 								execute(
-									updateNewItemTarget({
+									updateTargetRuleInput({
 										index,
 										itemType,
 										itemId,
-										target: { target: { ...target, score } },
+										parameter,
+										target: { ...target, action },
 										collection,
 									})
 								)
 							}}
-							source={[...targetFunctions]}
-							value={''}
+							source={ruleActions}
+							value={target.action || ruleActions[0].value}
 							label={t('TARGET_ACTION')}
 							htmlId='ad-type-dd'
 							name='adType'
 							IconComponent={AddIcon}
 						/>
-					</Box>
-					<Box p={1}>
-						<IconButton
-							onClick={() =>
-								execute(
-									updateNewItemTarget({
-										index,
-										itemType,
-										itemId,
-										target,
-										collection,
-										remove: true,
-									})
-								)
-							}
-						>
-							<CancelIcon />
-						</IconButton>
 					</Box>
 				</Box>
 			</Grid>
@@ -182,59 +150,46 @@ const Targets = ({
 }
 
 const NewItemTargeting = ({ itemType, itemId, sourcesSelector }) => {
+	const [tabIndex, setTabIndex] = useState(0)
 	const SOURCES = useSelector(sourcesSelector)
-	const SourcesSelect = useSelector(() => selectTargetingSources(SOURCES))
 	const classes = useStyles()
+	const { parameter, src } = SOURCES[tabIndex]
 
-	const { temp } = useSelector(state =>
+	const { audienceInput } = useSelector(state =>
 		selectNewItemByTypeAndId(state, itemType, itemId)
 	)
-	const { targets = [] } = temp
+	const { inputs = {} } = audienceInput
 
 	return (
 		<Grid container spacing={1}>
 			<Grid item xs={12}>
-				{[...targets].map(
-					(
-						{ source = '', collection, label, placeholder, target = {} } = {},
-						index
-					) => (
-						<Targets
-							key={`${collection}-${index}`}
-							label={t(label)}
-							placeholder={t(placeholder)}
-							index={index}
-							source={(SOURCES[source] || {}).src || []}
-							itemId={itemId}
-							collection={collection}
-							target={target}
-							itemType={itemType}
-							classes={classes}
-						/>
-					)
-				)}
-			</Grid>
-			<Grid item xs={12}>
-				<Dropdown
-					variant='outlined'
-					fullWidth
-					onChange={target => {
-						execute(
-							updateNewItemTarget({
-								itemType,
-								itemId,
-								target,
-								collection: target.collection,
-							})
-						)
-					}}
-					source={[...SourcesSelect]}
-					value={''}
-					label={t('NEW_TARGET')}
-					htmlId='ad-type-dd'
-					name='adType'
-					IconComponent={AddIcon}
-				/>
+				<Paper position='static' variant='outlined'>
+					<Tabs
+						value={tabIndex}
+						onChange={(ev, index) => setTabIndex(index)}
+						variant='scrollable'
+						scrollButtons='auto'
+						indicatorColor='primary'
+						textColor='primary'
+					>
+						{SOURCES.map(({ parameter, src }, index) => (
+							<Tab key={parameter} label={parameter} />
+						))}
+					</Tabs>
+				</Paper>
+				<Box mt={2}>
+					<Targets
+						target={inputs[parameter]}
+						key={parameter}
+						parameter={parameter}
+						label={t(parameter)}
+						placeholder={t(parameter)}
+						source={src || []}
+						itemId={itemId}
+						itemType={itemType}
+						classes={classes}
+					/>
+				</Box>
 			</Grid>
 		</Grid>
 	)
