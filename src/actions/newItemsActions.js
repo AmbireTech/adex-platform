@@ -118,6 +118,33 @@ export function updateNewItemTarget({
 	}
 }
 
+export function updateTargetRuleInput({
+	parameter,
+	itemType,
+	itemId,
+	target = {},
+}) {
+	return async function(dispatch, getState) {
+		const state = getState()
+		const { audienceInput } = selectNewItemByTypeAndId(state, itemType, itemId)
+		const audience = { ...audienceInput }
+		const { inputs } = audienceInput
+		const newInputs = { ...inputs }
+		newInputs[parameter] = { ...target }
+
+		audience.inputs = newInputs
+
+		const newValues = {
+			audienceInput: audience,
+		}
+
+		await updateNewItemAction(itemType, null, null, newValues, itemId)(
+			dispatch,
+			getState
+		)
+	}
+}
+
 export function completeItem({
 	itemType,
 	competeAction,
