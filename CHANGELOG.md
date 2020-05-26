@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.10
+##### *2020-05-26*
+
+### Changed
+- dropped SAI
+
 ## 4.20.9
 ##### *2020-05-19*
 
