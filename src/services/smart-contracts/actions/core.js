@@ -442,6 +442,8 @@ function getSwapAmountsByToken({ balances }) {
 		(swaps, balance) => {
 			// TODO: currently work only for SAI to DAI swap
 			if (
+				saiToken &&
+				saiToken.address &&
 				balance.token.address !== mainToken.address &&
 				// TEMP: remove that check when all tokens swaps are available
 				balance.token.address === saiToken.address
