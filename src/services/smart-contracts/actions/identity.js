@@ -258,6 +258,7 @@ function txnsByTokenWithSaiToDaiSwap({
 			const { withdrawAmountByToken } = tx
 
 			const needSaiToDaiSwap =
+				!!saiAddr &&
 				!!withdrawAmountByToken &&
 				!!withdrawAmountByToken[saiAddr] &&
 				(tx.feeTokenAddr === saiAddr || !tx.feeTokenAddr) &&
