@@ -40,6 +40,78 @@ const parameterIcon = {
 	publishers: <PublisherIcon />,
 }
 
+const Sources = ({
+	id,
+	source = [],
+	collection,
+	placeholder,
+	label,
+	index,
+	target = {},
+	parameter,
+	itemId,
+	itemType,
+	disabled,
+}) =>
+	source.length ? (
+		<Autocomplete
+			multiple
+			id={id}
+			fullWidth
+			direction='auto'
+			openOnClick
+			required={true}
+			disabled={disabled}
+			// error={invalidFields[id] && invalidFields[id].dirty}
+			// errorText={
+			// 	invalidFields[id] && !!invalidFields[id].dirty
+			// 		? invalidFields[id].errMsg
+			// 		: null
+			// }
+			onChange={value => {
+				execute(
+					updateTargetRuleInput({
+						index,
+						itemType,
+						itemId,
+						parameter,
+						target: { ...target, value },
+						collection,
+					})
+				)
+			}}
+			label={label}
+			placeholder={placeholder}
+			source={source}
+			value={target.value}
+			variant='outlined'
+		/>
+	) : (
+		<TextField
+			fullWidth
+			variant='outlined'
+			type='text'
+			required
+			disabled={disabled}
+			name='name'
+			value={target.value}
+			label={label}
+			onChange={ev =>
+				execute(
+					updateTargetRuleInput({
+						index,
+						itemType,
+						itemId,
+						parameter,
+						target: { ...target, value: ev.target.value },
+						collection,
+					})
+				)
+			}
+			maxLength={120}
+		/>
+	)
+
 const Targets = ({
 	source = [],
 	collection,
@@ -50,111 +122,61 @@ const Targets = ({
 	parameter,
 	// classes,
 	// invalidFields,
+	actions,
+	actionsType,
 	itemId,
 	itemType,
 }) => {
 	const id = `target-${index}`
+	const applyValue = target.apply || actions[0].type
 	return (
 		<Grid container spacing={2} alignItems='center'>
 			<Grid item xs={12} md={12}>
-				{source.length ? (
-					<Autocomplete
-						multiple
-						id={id}
-						fullWidth
-						direction='auto'
-						openOnClick
-						required={true}
-						// error={invalidFields[id] && invalidFields[id].dirty}
-						// errorText={
-						// 	invalidFields[id] && !!invalidFields[id].dirty
-						// 		? invalidFields[id].errMsg
-						// 		: null
-						// }
-						onChange={value => {
-							execute(
-								updateTargetRuleInput({
-									index,
-									itemType,
-									itemId,
-									parameter,
-									target: { ...target, value },
-									collection,
-								})
-							)
-						}}
-						label={label}
-						placeholder={placeholder}
-						source={source}
-						value={target.value}
-						variant='outlined'
-					/>
-				) : (
-					<TextField
-						fullWidth
-						variant='outlined'
-						type='text'
-						required
-						name='name'
-						value={target.value}
-						label={label}
-						onChange={ev =>
-							execute(
-								updateTargetRuleInput({
-									index,
-									itemType,
-									itemId,
-									parameter,
-									target: { ...target, value: ev.target.value },
-									collection,
-								})
-							)
-						}
-						maxLength={120}
-					/>
-				)}
-			</Grid>
-			<Grid item xs={12} md={12}>
-				<Box
-					display='flex'
-					flexDirection='row'
-					flexWrap='wrap'
-					alignItems='center'
+				<RadioGroup
+					aria-label={parameter}
+					name={parameter}
+					value={applyValue}
+					onChange={ev =>
+						execute(
+							updateTargetRuleInput({
+								index,
+								itemType,
+								itemId,
+								parameter,
+								target: { ...target, apply: ev.target.value },
+								collection,
+							})
+						)
+					}
 				>
-					<Box flexGrow={1}>
-						<FormControl component='fieldset'>
-							<RadioGroup
-								row
-								aria-label='position'
-								name='position'
-								defaultValue='top'
-								onChange={ev =>
-									execute(
-										updateTargetRuleInput({
-											index,
-											itemType,
-											itemId,
-											parameter,
-											target: { ...target, action: ev.target.value },
-											collection,
-										})
-									)
-								}
-							>
-								<FormControlLabel
-									value='in'
-									control={<Radio color='secondary' />}
-									label={t('SHOW_ONLY')}
+					{actions.map(a => (
+						<Box key={parameter + a.type}>
+							<FormControlLabel
+								control={<Radio />}
+								value={a.type}
+								label={a.label}
+							/>
+
+							{!!a.value ? (
+								a.value
+							) : (
+								<Sources
+									id={id}
+									source={source}
+									collection={collection}
+									placeholder={placeholder}
+									disabled={a.type !== applyValue}
+									label={label}
+									index={index}
+									target={target}
+									parameter={parameter}
+									itemId={itemId}
+									itemType={itemType}
 								/>
-								<FormControlLabel
-									value='nin'
-									control={<Radio color='secondary' />}
-									label={t('DO_NOT_SHOW')}
-								/>
-							</RadioGroup>
-						</FormControl>
-					</Box>
-				</Box>
+							)}
+						</Box>
+					))}
+				</RadioGroup>
 			</Grid>
 		</Grid>
 	)
@@ -164,7 +186,7 @@ const NewItemTargeting = ({ itemType, itemId, sourcesSelector }) => {
 	const [tabIndex, setTabIndex] = useState(0)
 	const SOURCES = useSelector(sourcesSelector)
 	const classes = useStyles()
-	const { parameter, singleValuesSrc } = SOURCES[tabIndex]
+	const { parameter, singleValuesSrc, actions, actionsType } = SOURCES[tabIndex]
 
 	const { audienceInput } = useSelector(state =>
 		selectNewItemByTypeAndId(state, itemType, itemId)
@@ -200,6 +222,8 @@ const NewItemTargeting = ({ itemType, itemId, sourcesSelector }) => {
 						label={t(parameter)}
 						placeholder={t(parameter)}
 						source={singleValuesSrc || []}
+						actions={actions}
+						actionsType={actionsType}
 						itemId={itemId}
 						itemType={itemType}
 						classes={classes}
