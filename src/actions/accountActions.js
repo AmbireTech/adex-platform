@@ -467,7 +467,7 @@ export function metamaskAccountCheck() {
 							new Promise(resolve => {
 								setTimeout(() => {
 									resolve([null])
-								}, 333)
+								}, 666)
 							}),
 					  ]))[0]
 			onMetamaskAccountChange(selectedAddress)(_, getState)

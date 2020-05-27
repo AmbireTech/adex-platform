@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
+import clsx from 'clsx'
 import { makeStyles } from '@material-ui/core/styles'
 import {
 	Grid,
@@ -10,10 +11,8 @@ import {
 	Tab,
 	Tabs,
 	FormControlLabel,
-	FormControl,
 	RadioGroup,
 	Radio,
-	FormLabel,
 } from '@material-ui/core'
 import {
 	PublicSharp as LocationIcon,
@@ -31,6 +30,15 @@ const useStyles = makeStyles(theme => ({
 	},
 	markLabel: {
 		top: '30px',
+	},
+	disabled: {
+		opacity: 0.5,
+	},
+	in: {
+		color: theme.palette.success.main,
+	},
+	nin: {
+		color: theme.palette.error.main,
 	},
 }))
 
@@ -127,6 +135,7 @@ const Targets = ({
 	itemId,
 	itemType,
 }) => {
+	const classes = useStyles()
 	const id = `target-${index}`
 	const applyValue = target.apply || actions[0].type
 	return (
@@ -152,9 +161,20 @@ const Targets = ({
 					{actions.map(a => (
 						<Box key={parameter + a.type}>
 							<FormControlLabel
-								control={<Radio />}
+								control={
+									<Radio
+										className={clsx({
+											[classes.in]: ['in', 'allin'].includes(a.type),
+											[classes.nin]: a.type === 'nin',
+										})}
+										color='default'
+									/>
+								}
 								value={a.type}
 								label={a.label}
+								className={clsx({
+									[classes.disabled]: a.type !== applyValue,
+								})}
 							/>
 
 							{!!a.value ? (
