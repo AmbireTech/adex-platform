@@ -182,9 +182,29 @@ export const campaignSources = () => [
 	{
 		parameter: 'location',
 		singleValuesSrc: autocompleteLocationsSingleSelect(),
+		actionsType: 'single',
+		actions: [
+			{ type: 'allin', label: t('SHOW_EVERYWHERE'), value: 'ALL' },
+			{ type: 'in', label: t('SHOW_ONLY_IN_SELECTED'), minSelected: 1 },
+			{ type: 'nin', label: t('DONT_SHOW_IN_SELECTED'), minSelected: 1 },
+		],
 	},
-	{ parameter: 'categories', singleValuesSrc: autocompleteTagsSingleSelect() },
-	{ parameter: 'publishers', singleValuesSrc: autocompleteTagsSingleSelect() },
+	{
+		parameter: 'categories',
+		singleValuesSrc: autocompleteTagsSingleSelect(),
+		actionsType: 'multiple',
+		actions: ['in', 'nin'],
+	},
+	{
+		parameter: 'publishers',
+		singleValuesSrc: autocompleteTagsSingleSelect(),
+		actionsType: 'single',
+		actions: [
+			{ type: 'allin', label: t('SHOW_EVERYWHERE'), value: 'ALL' },
+			{ type: 'in', label: t('SHOW_ONLY_IN_SELECTED'), minSelected: 1 },
+			{ type: 'nin', label: t('DONT_SHOW_IN_SELECTED'), minSelected: 1 },
+		],
+	},
 ]
 
 export const websitesAutocompleteSrc = createSelector(
