@@ -22,6 +22,7 @@ function Autocomplete({
 	value,
 	onChange,
 	fullWidth,
+	disabled,
 	enableCreate,
 }) {
 	useEffect(() => {
@@ -39,6 +40,7 @@ function Autocomplete({
 			<AutocompleteMUI
 				multiple={multiple}
 				options={source}
+				disabled={disabled}
 				groupBy={option => option.group}
 				{...(multiple ? {} : { value: value || null })}
 				getOptionLabel={option => option.label || option}
@@ -78,6 +80,7 @@ export const AutocompleteWithCreate = ({
 	helperText,
 	fullWidth,
 	initialValue,
+	disabled,
 	onChange,
 }) => {
 	const [value, setValue] = useState(null)
@@ -121,6 +124,7 @@ export const AutocompleteWithCreate = ({
 			selectOnFocus
 			// clearOnBlur
 			// handleHomeEndKeys
+			disabled={disabled}
 			options={source}
 			groupBy={option => option.group}
 			getOptionLabel={option => {
