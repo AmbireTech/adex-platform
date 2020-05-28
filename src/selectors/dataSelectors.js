@@ -135,11 +135,13 @@ export const selectTargetingSources = createSelector(
 )
 
 const autocompleteLocationsSingleSelect = () => {
-	const tiers = constants.CountryTiers.map(({ name, ruleValue } = {}) => ({
-		label: t(name),
-		value: ruleValue,
-		group: t('BY_TIER'),
-	}))
+	const tiers = Object.values(constants.CountryTiers).map(
+		({ name, ruleValue } = {}) => ({
+			label: t(name),
+			value: ruleValue,
+			group: t('BY_TIER'),
+		})
+	)
 	const all = constants.AllCountries.map(({ name, ruleValue } = {}) => ({
 		label: t(name),
 		value: ruleValue,
@@ -182,7 +184,7 @@ export const campaignSources = () => [
 	{
 		parameter: 'location',
 		singleValuesSrc: autocompleteLocationsSingleSelect(),
-		actionsType: 'single',
+		applyType: 'single',
 		actions: [
 			{ type: 'in', label: t('SHOW_ONLY_IN_SELECTED'), minSelected: 1 },
 			{ type: 'nin', label: t('DONT_SHOW_IN_SELECTED'), minSelected: 1 },
@@ -192,13 +194,16 @@ export const campaignSources = () => [
 	{
 		parameter: 'categories',
 		singleValuesSrc: autocompleteTagsSingleSelect(),
-		actionsType: 'multiple',
-		actions: ['in', 'nin'],
+		applyType: 'multiple',
+		actions: [
+			{ type: 'in', label: t('SHOW_SELECTED'), minSelected: 1 },
+			{ type: 'nin', label: t('DONT_SHOW_SELECTED'), minSelected: 1 },
+		],
 	},
 	{
 		parameter: 'publishers',
 		singleValuesSrc: autocompleteTagsSingleSelect(),
-		actionsType: 'single',
+		applyType: 'single',
 		actions: [
 			{ type: 'in', label: t('SHOW_ONLY_IN_SELECTED'), minSelected: 1 },
 			{ type: 'nin', label: t('DONT_SHOW_IN_SELECTED'), minSelected: 1 },
