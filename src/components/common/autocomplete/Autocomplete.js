@@ -31,8 +31,11 @@ function Autocomplete({
 	}, [])
 
 	const handleChange = item => {
-		const selectedItem = item ? item.value || item.label : item
-		onChange(selectedItem)
+		if (multiple) {
+			onChange(item.map(i => i.value || i.label || i))
+		} else {
+			onChange(item ? item.value || item.label || item : item)
+		}
 	}
 
 	return (
@@ -42,12 +45,16 @@ function Autocomplete({
 				options={source}
 				disabled={disabled}
 				groupBy={option => option.group}
-				{...(multiple ? {} : { value: value || null })}
+				value={value}
 				getOptionLabel={option => option.label || option}
-				getOptionSelected={(a, b = '') => {
-					return !!a && !!b && [JSON.stringify(b), b, b.value].includes(a.value)
+				getOptionSelected={(opt, val = '') => {
+					const isSelected =
+						!!opt &&
+						!!val &&
+						[JSON.stringify(val), val, val.value].includes(opt.value)
+					return isSelected
 				}}
-				freeSolo
+				// freeSolo
 				onChange={(_, newValue) => handleChange(newValue)}
 				renderInput={params => {
 					return (
