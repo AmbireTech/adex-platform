@@ -59,9 +59,10 @@ const Sources = ({
 	parameter,
 	itemId,
 	itemType,
+	actionType,
 	disabled,
-}) =>
-	source.length ? (
+}) => {
+	return source.length ? (
 		<Autocomplete
 			multiple
 			id={id}
@@ -83,7 +84,10 @@ const Sources = ({
 						itemType,
 						itemId,
 						parameter,
-						target: { ...target, value },
+						target: {
+							...target,
+							...{ [actionType]: value, apply: actionType },
+						},
 						collection,
 					})
 				)
@@ -91,7 +95,7 @@ const Sources = ({
 			label={label}
 			placeholder={placeholder}
 			source={source}
-			value={target.value}
+			value={target[actionType] || []}
 			variant='outlined'
 		/>
 	) : (
@@ -111,7 +115,7 @@ const Sources = ({
 						itemType,
 						itemId,
 						parameter,
-						target: { ...target, value: ev.target.value },
+						target: { ...target, ...{ [actionType]: ev.target.value } },
 						collection,
 					})
 				)
@@ -119,6 +123,7 @@ const Sources = ({
 			maxLength={120}
 		/>
 	)
+}
 
 const Targets = ({
 	source = [],
@@ -138,6 +143,7 @@ const Targets = ({
 	const classes = useStyles()
 	const id = `target-${index}`
 	const applyValue = target.apply || actions[0].type
+
 	return (
 		<Grid container spacing={2} alignItems='center'>
 			<Grid item xs={12} md={12}>
@@ -148,7 +154,6 @@ const Targets = ({
 					onChange={ev =>
 						execute(
 							updateTargetRuleInput({
-								index,
 								itemType,
 								itemId,
 								parameter,
@@ -191,6 +196,7 @@ const Targets = ({
 									target={target}
 									parameter={parameter}
 									itemId={itemId}
+									actionType={a.type}
 									itemType={itemType}
 								/>
 							)}
