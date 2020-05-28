@@ -48,6 +48,11 @@ const parameterIcon = {
 	publishers: <PublisherIcon />,
 }
 
+const getApply = (applyType, currentApply = [], actionType) =>
+	applyType === 'single'
+		? actionType
+		: [...currentApply, actionType].filter((t, i, all) => all.indexOf(t) === i)
+
 const Sources = ({
 	id,
 	source = [],
@@ -60,8 +65,11 @@ const Sources = ({
 	itemId,
 	itemType,
 	actionType,
+	applyType,
 	disabled,
 }) => {
+	const apply = getApply(applyType, target.apply, actionType)
+
 	return source.length ? (
 		<Autocomplete
 			multiple
@@ -86,7 +94,7 @@ const Sources = ({
 						parameter,
 						target: {
 							...target,
-							...{ [actionType]: value, apply: actionType },
+							...{ [actionType]: value, apply },
 						},
 						collection,
 					})
@@ -115,7 +123,7 @@ const Sources = ({
 						itemType,
 						itemId,
 						parameter,
-						target: { ...target, ...{ [actionType]: ev.target.value } },
+						target: { ...target, ...{ [actionType]: ev.target.value, apply } },
 						collection,
 					})
 				)
@@ -136,7 +144,7 @@ const Targets = ({
 	// classes,
 	// invalidFields,
 	actions,
-	actionsType,
+	applyType,
 	itemId,
 	itemType,
 }) => {
@@ -197,6 +205,7 @@ const Targets = ({
 									parameter={parameter}
 									itemId={itemId}
 									actionType={a.type}
+									applyType={applyType}
 									itemType={itemType}
 								/>
 							)}
@@ -212,7 +221,7 @@ const NewItemTargeting = ({ itemType, itemId, sourcesSelector }) => {
 	const [tabIndex, setTabIndex] = useState(0)
 	const SOURCES = useSelector(sourcesSelector)
 	const classes = useStyles()
-	const { parameter, singleValuesSrc, actions, actionsType } = SOURCES[tabIndex]
+	const { parameter, singleValuesSrc, actions, applyType } = SOURCES[tabIndex]
 
 	const { audienceInput } = useSelector(state =>
 		selectNewItemByTypeAndId(state, itemType, itemId)
@@ -249,7 +258,7 @@ const NewItemTargeting = ({ itemType, itemId, sourcesSelector }) => {
 						placeholder={t(parameter)}
 						source={singleValuesSrc || []}
 						actions={actions}
-						actionsType={actionsType}
+						applyType={applyType}
 						itemId={itemId}
 						itemType={itemType}
 						classes={classes}
