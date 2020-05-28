@@ -13,6 +13,7 @@ import {
 	FormControlLabel,
 	RadioGroup,
 	Radio,
+	Typography,
 } from '@material-ui/core'
 import {
 	PublicSharp as LocationIcon,
@@ -155,41 +156,76 @@ const Targets = ({
 	return (
 		<Grid container spacing={2} alignItems='center'>
 			<Grid item xs={12} md={12}>
-				<RadioGroup
-					aria-label={parameter}
-					name={parameter}
-					value={applyValue}
-					onChange={ev =>
-						execute(
-							updateTargetRuleInput({
-								itemType,
-								itemId,
-								parameter,
-								target: { ...target, apply: ev.target.value },
-								collection,
-							})
-						)
-					}
-				>
-					{actions.map(a => (
-						<Box key={parameter + a.type}>
-							<FormControlLabel
-								control={
-									<Radio
-										className={clsx({
-											[classes.in]: ['in', 'allin'].includes(a.type),
-											[classes.nin]: a.type === 'nin',
-										})}
-										color='default'
-									/>
-								}
-								value={a.type}
-								label={a.label}
-								className={clsx({
-									[classes.disabled]: a.type !== applyValue,
-								})}
-							/>
+				{applyType === 'single' && (
+					<RadioGroup
+						aria-label={parameter}
+						name={parameter}
+						value={applyValue}
+						onChange={ev =>
+							execute(
+								updateTargetRuleInput({
+									itemType,
+									itemId,
+									parameter,
+									target: { ...target, apply: ev.target.value },
+									collection,
+								})
+							)
+						}
+					>
+						{actions.map(a => (
+							<Box key={parameter + a.type}>
+								<FormControlLabel
+									control={
+										<Radio
+											className={clsx({
+												[classes.in]: ['in', 'allin'].includes(a.type),
+												[classes.nin]: a.type === 'nin',
+											})}
+											color='default'
+										/>
+									}
+									value={a.type}
+									label={a.label}
+									className={clsx({
+										[classes.disabled]: a.type !== applyValue,
+									})}
+								/>
 
+								{!!a.value ? (
+									a.value
+								) : (
+									<Sources
+										id={id}
+										source={source}
+										collection={collection}
+										placeholder={placeholder}
+										disabled={a.type !== applyValue}
+										label={label}
+										index={index}
+										target={target}
+										parameter={parameter}
+										itemId={itemId}
+										actionType={a.type}
+										applyType={applyType}
+										itemType={itemType}
+									/>
+								)}
+							</Box>
+						))}
+					</RadioGroup>
+				)}
+				{applyType === 'multiple' &&
+					actions.map(a => (
+						<Box key={parameter + a.type}>
+							<Typography
+								className={clsx({
+									[classes.in]: ['in', 'allin'].includes(a.type),
+									[classes.nin]: a.type === 'nin',
+								})}
+							>
+								{a.label}
+							</Typography>
 							{!!a.value ? (
 								a.value
 							) : (
@@ -198,7 +234,6 @@ const Targets = ({
 									source={source}
 									collection={collection}
 									placeholder={placeholder}
-									disabled={a.type !== applyValue}
 									label={label}
 									index={index}
 									target={target}
@@ -211,7 +246,6 @@ const Targets = ({
 							)}
 						</Box>
 					))}
-				</RadioGroup>
 			</Grid>
 		</Grid>
 	)
