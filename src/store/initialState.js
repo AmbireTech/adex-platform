@@ -13,7 +13,9 @@ let initialState = {
 		authenticated: false,
 	},
 	newItem: {
-		Campaign: new Campaign().plainObj(),
+		Campaign: new Campaign({
+			audienceInput: { version: '1', inputs: {} },
+		}).plainObj(),
 		AdUnit: new AdUnit({ temp: { addUtmLink: true } }).plainObj(),
 		AdSlot: new AdSlot().plainObj(),
 	},

@@ -19,7 +19,7 @@ import {
 	updateSelectedItems,
 } from 'actions'
 import { push } from 'connected-react-router'
-import { schemas, Campaign } from 'adex-models'
+import { schemas, Campaign, helpers } from 'adex-models'
 import { parseUnits } from 'ethers/utils'
 import { getAllValidatorsAuthForIdentity } from 'services/smart-contracts/actions/stats'
 import { getCampaigns } from 'services/adex-market/actions'
@@ -48,6 +48,7 @@ import {
 	PRINTING_CAMPAIGNS_RECEIPTS,
 } from 'constants/spinners'
 import Helper from 'helpers/miscHelpers'
+const { audienceInputToTargetingRules } = helpers
 
 const { campaignPut } = schemas
 
@@ -325,7 +326,7 @@ export function validateCampaignAudienceInput({
 		await updateSpinner(validateId, true)(dispatch)
 		try {
 			const state = getState()
-			const { audienceInput = [] } = selectNewCampaign(state)
+			const { audienceInput = {} } = selectNewCampaign(state)
 			const { location, categories, publishers } = audienceInput.inputs
 
 			const errors = [
@@ -337,6 +338,15 @@ export function validateCampaignAudienceInput({
 			const isValid = !errors.length
 			const errArgs = errors.map(e => t(e)).join(', ')
 
+			const targetingRules = isValid
+				? audienceInputToTargetingRules(audienceInput)
+				: {}
+
+			await updateNewCampaign('targetingRules', targetingRules)(
+				dispatch,
+				getState
+			)
+
 			await validate(validateId, 'audienceInput', {
 				isValid,
 				err: {
@@ -347,7 +357,9 @@ export function validateCampaignAudienceInput({
 			})(dispatch)
 
 			await handleAfterValidation({ isValid, onValid, onInvalid })
-		} catch (err) {}
+		} catch (err) {
+			console.log('err', err)
+		}
 
 		await updateSpinner(validateId, false)(dispatch)
 	}
