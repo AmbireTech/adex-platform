@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.12
+##### *2020-05-29*
+
+### Changed
+- Slot website input - UX drama hotfix
+
 ## 4.20.11
 ##### *2020-05-26*
 
