@@ -297,7 +297,7 @@ const locationAudienceInputError = ({ apply, ...values } = {}) => {
 	}
 }
 
-const publushersAudienceInputError = ({ apply, ...values } = {}) => {
+const publishersAudienceInputError = ({ apply, ...values } = {}) => {
 	if (!apply) {
 		return 'ERR_PUBLISHERS_AUDIENCE_NOT_SELECTED'
 	} else if (apply === 'in' && (!values.in || !values.in.length)) {
@@ -307,7 +307,15 @@ const publushersAudienceInputError = ({ apply, ...values } = {}) => {
 	}
 }
 
-export function validateCampaignTargetingInput({
+const categoriesAudienceInputError = ({ apply = [], ...values } = {}) => {
+	if (!apply.includes('in')) {
+		return 'ERR_CATEGORIES_AUDIENCE_NOT_SELECTED'
+	} else if (apply.includes('in') && (!values.in || !values.in.length)) {
+		return 'ERR_CATEGORIES_AUDIENCE_IN_NOT_SELECTED'
+	}
+}
+
+export function validateCampaignAudienceInput({
 	validateId,
 	dirty,
 	onValid,
@@ -320,18 +328,20 @@ export function validateCampaignTargetingInput({
 			const { audienceInput = [] } = selectNewCampaign(state)
 			const { location, categories, publishers } = audienceInput.inputs
 
-			const locationError = locationAudienceInputError(location)
-			const publishersError = locationAudienceInputError(publishers)
+			const errors = [
+				locationAudienceInputError(location),
+				publishersAudienceInputError(publishers),
+				categoriesAudienceInputError(categories),
+			].filter(x => !!x)
 
-			const errors = [locationError, publishersError].filter(x => !!x)
+			const isValid = !errors.length
+			const errArgs = errors.map(e => t(e)).join(', ')
 
-			const isValid = errors.length
-
-			await validate(validateId, 'targeting', {
+			await validate(validateId, 'audienceInput', {
 				isValid,
 				err: {
 					msg: 'ERR_AUDIENCE_INPUT',
-					args: errors.map(e => t(e)).join(', '),
+					args: [errArgs],
 				},
 				dirty: dirty,
 			})(dispatch)
