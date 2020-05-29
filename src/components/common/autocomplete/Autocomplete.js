@@ -77,6 +77,7 @@ export const AutocompleteWithCreate = ({
 	fullWidth,
 	initialValue,
 	onChange,
+	changeOnInputUpdate,
 }) => {
 	const [value, setValue] = useState(null)
 
@@ -96,18 +97,21 @@ export const AutocompleteWithCreate = ({
 						value: inputValue,
 					})
 					onChange(inputValue)
-
-					return
+				} else {
+					setValue(newValue)
+					onChange('')
 				}
-
-				setValue(newValue)
-				onChange('')
+			}}
+			onInputChange={(ev, value) => {
+				if (changeOnInputUpdate) {
+					onChange(value)
+				}
 			}}
 			filterOptions={(options, params) => {
 				const filtered = filter(options, params)
 
 				// Suggest the creation of a new value
-				if (params.inputValue !== '') {
+				if (!changeOnInputUpdate && params.inputValue !== '') {
 					filtered.push({
 						inputValue: params.inputValue,
 						label: `Add "${params.inputValue}"`,
@@ -149,7 +153,7 @@ export const AutocompleteWithCreate = ({
 					option.label
 				)
 			}
-			freeSolo
+			freeSolo={!changeOnInputUpdate}
 			renderInput={params => (
 				<TextField
 					{...params}
