@@ -24,6 +24,7 @@ import {
 	validateNewSlotPassback,
 	validateNewUnitMedia,
 	validateNewUnitTargeting,
+	validateCampaignTargetingInput,
 	completeItem,
 	resetNewItem,
 	saveUnit,
@@ -132,6 +133,7 @@ export const NewCampaignSteps = props => (
 			{
 				title: 'CAMPAIGN_TARGETING_RULES_STEP',
 				component: CampaignTargetingRules,
+				validationFn: props => execute(validateCampaignTargetingInput(props)),
 			},
 			{
 				title: 'CAMPAIGN_UNITS_STEP',

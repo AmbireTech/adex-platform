@@ -7,6 +7,7 @@ import {
 	updateValidatorAuthTokens,
 	updateNewCampaign,
 	handleAfterValidation,
+	validate,
 	validateCampaignValidators,
 	validateCampaignAmount,
 	validateCampaignTitle,
@@ -282,6 +283,62 @@ export function validateNewCampaignAdUnits({
 		)
 
 		await handleAfterValidation({ isValid, onValid, onInvalid })
+		await updateSpinner(validateId, false)(dispatch)
+	}
+}
+
+const locationAudienceInputError = ({ apply, ...values } = {}) => {
+	if (!apply) {
+		return 'ERR_LOCATION_AUDIENCE_NOT_SELECTED'
+	} else if (apply === 'in' && !values.in.length) {
+		return 'ERR_LOCATION_AUDIENCE_IN_NOT_SELECTED'
+	} else if (apply === 'nin' && !values.nin.length) {
+		return 'ERR_LOCATION_AUDIENCE_NIN_NOT_SELECTED'
+	}
+}
+
+const publushersAudienceInputError = ({ apply, ...values } = {}) => {
+	if (!apply) {
+		return 'ERR_PUBLISHERS_AUDIENCE_NOT_SELECTED'
+	} else if (apply === 'in' && (!values.in || !values.in.length)) {
+		return 'ERR_PUBLISHERS_AUDIENCE_IN_NOT_SELECTED'
+	} else if (apply === 'nin' && (!values.nin || !values.nin.length)) {
+		return 'ERR_PUBLISHERS_AUDIENCE_NIN_NOT_SELECTED'
+	}
+}
+
+export function validateCampaignTargetingInput({
+	validateId,
+	dirty,
+	onValid,
+	onInvalid,
+}) {
+	return async function(dispatch, getState) {
+		await updateSpinner(validateId, true)(dispatch)
+		try {
+			const state = getState()
+			const { audienceInput = [] } = selectNewCampaign(state)
+			const { location, categories, publishers } = audienceInput.inputs
+
+			const locationError = locationAudienceInputError(location)
+			const publishersError = locationAudienceInputError(publishers)
+
+			const errors = [locationError, publishersError].filter(x => !!x)
+
+			const isValid = errors.length
+
+			await validate(validateId, 'targeting', {
+				isValid,
+				err: {
+					msg: 'ERR_AUDIENCE_INPUT',
+					args: errors.map(e => t(e)).join(', '),
+				},
+				dirty: dirty,
+			})(dispatch)
+
+			await handleAfterValidation({ isValid, onValid, onInvalid })
+		} catch (err) {}
+
 		await updateSpinner(validateId, false)(dispatch)
 	}
 }
