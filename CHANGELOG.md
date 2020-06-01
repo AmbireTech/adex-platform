@@ -1,6 +1,33 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.13
+##### *2020-06-01*
+
+### Changed
+- removed website integration issue
+
+### Fixed
+- Typos
+
+## 4.20.12
+##### *2020-05-29*
+
+### Changed
+- Slot website input - UX drama hotfix
+
+## 4.20.11
+##### *2020-05-26*
+
+### Fixed
+- Changelly integration 
+
+## 4.20.10
+##### *2020-05-26*
+
+### Changed
+- dropped SAI
+
 ## 4.20.9
 ##### *2020-05-19*
 

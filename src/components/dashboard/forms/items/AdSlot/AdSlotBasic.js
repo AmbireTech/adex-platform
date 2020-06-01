@@ -102,6 +102,7 @@ function AdSlotBasic({ validateId }) {
 					</Grid>
 					<Grid item xs={12}>
 						<AutocompleteWithCreate
+							changeOnInputUpdate
 							initialValue={website}
 							variant='outlined'
 							source={websitesSrc}
@@ -119,9 +120,9 @@ function AdSlotBasic({ validateId }) {
 									/>
 								)
 							}
-							onChange={value =>
+							onChange={value => {
 								execute(updateNewSlot('website', (value || '').trim()))
-							}
+							}}
 						/>
 					</Grid>
 					<Grid item xs={12}>

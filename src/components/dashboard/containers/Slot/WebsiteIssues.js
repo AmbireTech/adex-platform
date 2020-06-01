@@ -90,9 +90,8 @@ export function RenderIssue({ label, args }) {
 
 export const ALL_ISSUES = {
 	SLOT_ISSUE_BLACKLISTED: LooksOneSharp,
-	SLOT_ISSUE_INTEGRATION_NOT_VERIFIED: LooksTwoSharp,
-	SLOT_ISSUE_OWNERSHIP_NOT_VERIFIED: Looks3Sharp,
-	SLOT_ISSUE_SOMEONE_ELSE_VERIFIED: Looks4Sharp,
+	SLOT_ISSUE_OWNERSHIP_NOT_VERIFIED: LooksTwoSharp,
+	SLOT_ISSUE_SOMEONE_ELSE_VERIFIED: Looks3Sharp,
 }
 
 export const WebsiteVerifyBtn = ({ id, website, issues, updated }) => {
