@@ -215,18 +215,15 @@ export const campaignSources = () => [
 		applyType: 'multiple-checkbox',
 		actions: [
 			{
-				value: 'incentivized',
-				inputType: 'checkbox',
+				value: 'includeIncentivized',
 				label: t('INCLUDE_INCENTIVIZED_TRAFFIC'),
 			},
 			{
-				value: 'frequencyCapping',
-				inputType: 'checkbox',
+				value: 'disableFrequencyCapping',
 				label: t('DISABLE_FREQUENCY_CAPPING'),
 			},
 			{
-				value: 'dailyAverageSpending',
-				inputType: 'checkbox',
+				value: 'limitDailyAverageSpending',
 				label: t('LIMIT_AVERAGE_DAILY_SPENDING'),
 			},
 		],
