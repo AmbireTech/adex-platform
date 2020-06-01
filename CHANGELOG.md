@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.13
+##### *2020-06-01*
+
+### Changed
+- removed website integration issue
+
+### Fixed
+- Typos
+
 ## 4.20.12
 ##### *2020-05-29*
 
