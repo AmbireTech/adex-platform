@@ -210,6 +210,27 @@ export const campaignSources = () => [
 			{ type: 'allin', label: t('SHOW_EVERYWHERE'), value: 'ALL' },
 		],
 	},
+	{
+		parameter: 'advanced',
+		applyType: 'multiple-checkbox',
+		actions: [
+			{
+				value: 'incentivized',
+				inputType: 'checkbox',
+				label: t('INCLUDE_INCENTIVIZED_TRAFFIC'),
+			},
+			{
+				value: 'frequencyCapping',
+				inputType: 'checkbox',
+				label: t('DISABLE_FREQUENCY_CAPPING'),
+			},
+			{
+				value: 'dailyAverageSpending',
+				inputType: 'checkbox',
+				label: t('LIMIT_AVERAGE_DAILY_SPENDING'),
+			},
+		],
+	},
 ]
 
 export const websitesAutocompleteSrc = createSelector(

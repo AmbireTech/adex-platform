@@ -14,11 +14,13 @@ import {
 	RadioGroup,
 	Radio,
 	Typography,
+	Checkbox,
 } from '@material-ui/core'
 import {
 	PublicSharp as LocationIcon,
 	LocalOfferSharp as CategoryIcon,
 	WebAssetSharp as PublisherIcon,
+	MoreHorizSharp as AdvIcon,
 } from '@material-ui/icons'
 import Autocomplete from 'components/common/autocomplete'
 
@@ -47,6 +49,7 @@ const parameterIcon = {
 	location: <LocationIcon />,
 	categories: <CategoryIcon />,
 	publishers: <PublisherIcon />,
+	advanced: <AdvIcon />,
 }
 
 const getApply = (applyType, currentApply = [], actionType) =>
@@ -244,6 +247,37 @@ const Targets = ({
 									itemType={itemType}
 								/>
 							)}
+						</Box>
+					))}
+				{applyType === 'multiple-checkbox' &&
+					actions.map(a => (
+						<Box key={parameter + a.value}>
+							<FormControlLabel
+								control={
+									<Checkbox
+										checked={!!target[a.value]}
+										name={a.value}
+										onChange={ev =>
+											execute(
+												updateTargetRuleInput({
+													index,
+													itemType,
+													itemId,
+													parameter,
+													target: {
+														...target,
+														...{
+															[a.value]: ev.target.checked,
+														},
+													},
+													collection,
+												})
+											)
+										}
+									/>
+								}
+								label={a.label}
+							/>
 						</Box>
 					))}
 			</Grid>
