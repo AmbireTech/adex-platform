@@ -64,6 +64,17 @@ export const selectDemandAnalytics = createSelector(
 	({ demand }) => demand || {}
 )
 
+export const selectTargetingAnalytics = createSelector(
+	[selectAnalytics],
+	({ targeting }) => targeting || []
+)
+
+export const selectTargetingAnalyticsByType = createSelector(
+	[selectTargetingAnalytics, (_, type) => type],
+	(targetingAnalytics, type) =>
+		targetingAnalytics.filter(x => x.type.includes(type))
+)
+
 export const selectAdvancedAnalyticsByType = createSelector(
 	[selectAdvancedAnalytics, (_, type) => type],
 	(campaignAnalytics, type) => campaignAnalytics[type] || {}
