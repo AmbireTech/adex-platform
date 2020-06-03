@@ -90,13 +90,13 @@ export const AutocompleteWithCreate = ({
 			value={value}
 			onChange={(event, newValue) => {
 				// Create a new value from the user input
-				if (newValue && newValue.inputValue) {
-					const { inputValue } = newValue
+				if (newValue && (newValue.inputValue || newValue.value)) {
+					const value = newValue.inputValue || newValue.value
 					setValue({
-						label: inputValue,
-						value: inputValue,
+						label: newValue.label || value,
+						value,
 					})
-					onChange(inputValue)
+					onChange(value)
 				} else {
 					setValue(newValue)
 					onChange('')
