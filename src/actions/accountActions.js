@@ -29,7 +29,10 @@ import {
 	updateInitialDataLoaded,
 } from './uiActions'
 import { getAllItems } from './itemActions'
-import { updateSlotsDemandThrottled } from './analyticsActions'
+import {
+	updateSlotsDemandThrottled,
+	updateTargetingDataThrottled,
+} from './analyticsActions'
 import {
 	getEthereumProvider,
 	ethereumNetworkId,
@@ -559,8 +562,11 @@ export function loadAccountData() {
 			updateInitialDataLoaded('campaigns', true)(dispatch, getState)
 		)
 		const demand = updateSlotsDemandThrottled()(dispatch, getState)
+		const targetingData = updateTargetingDataThrottled()(dispatch, getState)
 
-		await Promise.all[(items, advancedAnalytics, campaigns, demand)]
+		await Promise.all[
+			(items, advancedAnalytics, campaigns, demand, targetingData)
+		]
 
 		await statsLoop.start(() =>
 			updateInitialDataLoaded('stats', true)(dispatch, getState)
