@@ -7,6 +7,7 @@ import {
 	UPDATE_PUBLISHER_RECEIPTS,
 	UPDATE_ADVANCED_ANALYTICS,
 	UPDATE_DEMAND_ANALYTICS,
+	UPDATE_TARGETING_ANALYTICS,
 } from 'constants/actionTypes'
 import initialState from 'store/initialState'
 
@@ -55,6 +56,10 @@ export default function analyticsReducer(
 		case UPDATE_DEMAND_ANALYTICS:
 			newState = { ...state }
 			newState.demand = action.value
+			return newState
+		case UPDATE_TARGETING_ANALYTICS:
+			newState = { ...state }
+			newState.targeting = action.value
 			return newState
 		case UPDATE_PUBLISHER_RECEIPTS:
 			newState = { ...state }
