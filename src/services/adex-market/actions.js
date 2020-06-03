@@ -133,6 +133,15 @@ export const getAdSlots = ({ identity }) => {
 		.then(processResponse)
 }
 
+export const getTargetingData = () => {
+	return requester
+		.fetch({
+			route: 'slots/targeting-data',
+			method: 'GET',
+		})
+		.then(processResponse)
+}
+
 export const postAdSlot = ({ slot, authSig }) => {
 	return requester
 		.fetch({
