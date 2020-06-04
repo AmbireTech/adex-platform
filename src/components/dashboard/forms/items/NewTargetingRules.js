@@ -289,7 +289,12 @@ const NewItemTargeting = ({ itemType, itemId, sourcesSelector }) => {
 	const [tabIndex, setTabIndex] = useState(0)
 	const SOURCES = useSelector(sourcesSelector)
 	const classes = useStyles()
-	const { parameter, singleValuesSrc, actions, applyType } = SOURCES[tabIndex]
+	const { parameter, singleValuesSrc, actions, applyType } =
+		SOURCES[tabIndex] || {}
+
+	const source = useSelector(state =>
+		singleValuesSrc ? singleValuesSrc(state, 'legacy_300x250') : []
+	)
 
 	const { audienceInput } = useSelector(state =>
 		selectNewItemByTypeAndId(state, itemType, itemId)
@@ -324,7 +329,7 @@ const NewItemTargeting = ({ itemType, itemId, sourcesSelector }) => {
 						parameter={parameter}
 						label={t(parameter)}
 						placeholder={t(parameter)}
-						source={singleValuesSrc || []}
+						source={source || []}
 						actions={actions}
 						applyType={applyType}
 						itemId={itemId}
