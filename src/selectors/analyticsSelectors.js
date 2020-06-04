@@ -89,7 +89,6 @@ export const selectTargetingCategoriesByType = createSelector(
 export const selectTargetingPublishersByType = createSelector(
 	[selectTargetingAnalyticsByType],
 	targeting => {
-		console.log('targeting', targeting)
 		return Array.from(
 			targeting
 				.reduce((publishers, { owner, hostname, alexaRank, categories }) => {
