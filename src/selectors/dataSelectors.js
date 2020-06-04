@@ -5,6 +5,7 @@ import {
 	selectMainToken,
 	selectWebsitesArray,
 	selectTargetingCategoriesByType,
+	selectTargetingPublishersByType,
 } from 'selectors'
 import { createSelector } from 'reselect'
 import { constants, IabCategories } from 'adex-models'
@@ -165,6 +166,12 @@ const autocompleteCategoriesSingleSelect = (state, type) =>
 		value: cat,
 	}))
 
+const autocompletePublishersSingleSelect = (state, type) =>
+	selectTargetingPublishersByType(state, type).map(pub => ({
+		label: pub.hostname,
+		value: pub.hostname,
+	}))
+
 export const slotSources = () => ({
 	tags: { src: autocompleteCategoriesSingleSelect(), collection: 'tags' },
 	custom: { src: [], collection: 'tags' },
@@ -203,7 +210,8 @@ export const campaignSources = () => [
 	},
 	{
 		parameter: 'publishers',
-		singleValuesSrc: () => [], //autocompleteCategoriesSingleSelect(),
+		singleValuesSrc: (state, type) =>
+			autocompletePublishersSingleSelect(state, type),
 		applyType: 'single',
 		actions: [
 			{ type: 'in', label: t('SHOW_ONLY_IN_SELECTED'), minSelected: 1 },
