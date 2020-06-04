@@ -86,6 +86,19 @@ export const selectTargetingCategoriesByType = createSelector(
 		)
 )
 
+export const selectTargetingPublishersByType = createSelector(
+	[selectTargetingAnalytics],
+	targeting =>
+		Array.from(
+			targeting
+				.reduce((publishers, { owner, hostname, alexaRank, categories }) => {
+					publishers.set(owner, { owner, hostname, alexaRank, categories })
+					return publishers
+				}, new Map())
+				.values()
+		)
+)
+
 export const selectAdvancedAnalyticsByType = createSelector(
 	[selectAdvancedAnalytics, (_, type) => type],
 	(campaignAnalytics, type) => campaignAnalytics[type] || {}
