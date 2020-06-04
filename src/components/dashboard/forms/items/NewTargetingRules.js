@@ -312,7 +312,15 @@ const NewItemTargeting = ({ itemType, itemId, sourcesSelector }) => {
 		SOURCES[tabIndex] || {}
 
 	const source = useSelector(state =>
-		singleValuesSrc ? singleValuesSrc(state, 'legacy_300x250') : []
+		singleValuesSrc
+			? singleValuesSrc(state, [
+					'legacy_300x250',
+					'legacy_88x31',
+					'legacy_234x60',
+					'legacy_300x100',
+					'legacy_120x60',
+			  ])
+			: []
 	)
 
 	const { audienceInput } = useSelector(state =>

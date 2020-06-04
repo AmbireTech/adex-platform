@@ -160,14 +160,14 @@ const autocompleteGendersSingleSelect = () => {
 	}))
 }
 
-const autocompleteCategoriesSingleSelect = (state, type) =>
-	selectTargetingCategoriesByType(state, type).map(cat => ({
+const autocompleteCategoriesSingleSelect = (state, types) =>
+	selectTargetingCategoriesByType(state, types).map(cat => ({
 		label: t(IabCategories.wrbshrinkerWebsiteApiV3Categories[cat] || cat),
 		value: cat,
 	}))
 
-const autocompletePublishersSingleSelect = (state, type) =>
-	selectTargetingPublishersByType(state, type).map(pub => ({
+const autocompletePublishersSingleSelect = (state, types) =>
+	selectTargetingPublishersByType(state, types).map(pub => ({
 		label: pub.hostname,
 		value: pub.hostname,
 	}))
