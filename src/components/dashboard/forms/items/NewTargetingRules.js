@@ -71,6 +71,7 @@ const Sources = ({
 	actionType,
 	applyType,
 	disabled,
+	disabledSrcValues,
 }) => {
 	const apply = getApply(applyType, target.apply, actionType)
 
@@ -83,6 +84,8 @@ const Sources = ({
 			openOnClick
 			required={true}
 			disabled={disabled}
+			disabledSrcValues={disabledSrcValues}
+			disableCloseOnSelect
 			// error={invalidFields[id] && invalidFields[id].dirty}
 			// errorText={
 			// 	invalidFields[id] && !!invalidFields[id].dirty
@@ -135,6 +138,17 @@ const Sources = ({
 			maxLength={120}
 		/>
 	)
+}
+
+const getMultipleActionsUsedValues = ({ actions, currentAction, target }) => {
+	const currentSelectedValues = actions
+		.filter(a => a.type !== currentAction.type)
+		.reduce((all, a) => {
+			return [...all, ...(target[a.type] || [])]
+		}, [])
+		.filter((x, i, all) => all.indexOf(x) === i)
+
+	return currentSelectedValues
 }
 
 const Targets = ({
@@ -245,6 +259,11 @@ const Targets = ({
 									actionType={a.type}
 									applyType={applyType}
 									itemType={itemType}
+									disabledSrcValues={getMultipleActionsUsedValues({
+										actions,
+										currentAction: a,
+										target,
+									})}
 								/>
 							)}
 						</Box>

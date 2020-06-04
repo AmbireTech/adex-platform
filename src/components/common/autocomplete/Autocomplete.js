@@ -23,6 +23,8 @@ function Autocomplete({
 	onChange,
 	fullWidth,
 	disabled,
+	disableCloseOnSelect,
+	disabledSrcValues = [],
 	enableCreate,
 }) {
 	useEffect(() => {
@@ -46,13 +48,17 @@ function Autocomplete({
 		<Fragment>
 			<AutocompleteMUI
 				multiple={multiple}
+				disableCloseOnSelect={disableCloseOnSelect}
 				options={source}
 				disabled={disabled}
 				groupBy={option => option.group}
 				value={srcValue}
 				getOptionLabel={option => option.label || option}
 				getLimitTagsText={more => `${more} more`}
-				limitTags={2}
+				limitTags={10}
+				getOptionDisabled={option =>
+					disabledSrcValues.some(x => (option.value || option) === x)
+				}
 				getOptionSelected={(opt, val = '') => {
 					const isSelected =
 						!!opt &&
