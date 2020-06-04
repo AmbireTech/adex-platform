@@ -38,6 +38,10 @@ function Autocomplete({
 		}
 	}
 
+	const srcValue = multiple
+		? source.filter(s => Array.isArray(value) && value.includes(s.value))
+		: source.find(s => s.value === value) || value
+
 	return (
 		<Fragment>
 			<AutocompleteMUI
@@ -45,8 +49,10 @@ function Autocomplete({
 				options={source}
 				disabled={disabled}
 				groupBy={option => option.group}
-				value={value}
+				value={srcValue}
 				getOptionLabel={option => option.label || option}
+				getLimitTagsText={more => `${more} more`}
+				limitTags={2}
 				getOptionSelected={(opt, val = '') => {
 					const isSelected =
 						!!opt &&
@@ -137,6 +143,8 @@ export const AutocompleteWithCreate = ({
 			// handleHomeEndKeys
 			disabled={disabled}
 			options={source}
+			getLimitTagsText={more => `${more} more`}
+			limitTags={2}
 			groupBy={option => option.group}
 			getOptionLabel={option => {
 				// Value selected with enter, right from the input
