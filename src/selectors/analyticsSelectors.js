@@ -70,13 +70,13 @@ export const selectTargetingAnalytics = createSelector(
 )
 
 export const selectTargetingAnalyticsByType = createSelector(
-	[selectTargetingAnalytics, (_, type) => type],
-	(targetingAnalytics, type) =>
-		targetingAnalytics.filter(x => x.type.includes(type))
+	[selectTargetingAnalytics, (_, types) => types],
+	(targetingAnalytics, types) =>
+		targetingAnalytics.filter(x => types.some(t => x.types.includes(t)))
 )
 
 export const selectTargetingCategoriesByType = createSelector(
-	[selectTargetingAnalytics],
+	[selectTargetingAnalyticsByType],
 	targeting =>
 		Array.from(
 			targeting.reduce((categories, x) => {
@@ -87,16 +87,18 @@ export const selectTargetingCategoriesByType = createSelector(
 )
 
 export const selectTargetingPublishersByType = createSelector(
-	[selectTargetingAnalytics],
-	targeting =>
-		Array.from(
+	[selectTargetingAnalyticsByType],
+	targeting => {
+		console.log('targeting', targeting)
+		return Array.from(
 			targeting
 				.reduce((publishers, { owner, hostname, alexaRank, categories }) => {
-					publishers.set(owner, { owner, hostname, alexaRank, categories })
+					publishers.set(hostname, { owner, hostname, alexaRank, categories })
 					return publishers
 				}, new Map())
 				.values()
 		)
+	}
 )
 
 export const selectAdvancedAnalyticsByType = createSelector(
