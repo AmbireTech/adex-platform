@@ -4,9 +4,10 @@ import {
 	selectDemandAnalytics,
 	selectMainToken,
 	selectWebsitesArray,
+	selectTargetingCategoriesByType,
 } from 'selectors'
 import { createSelector } from 'reselect'
-import { constants } from 'adex-models'
+import { constants, IabCategories } from 'adex-models'
 import { WHERE_YOU_KNOW_US } from 'constants/misc'
 import moment from 'moment'
 
@@ -158,15 +159,14 @@ const autocompleteGendersSingleSelect = () => {
 	}))
 }
 
-const autocompleteTagsSingleSelect = () => {
-	return constants.PredefinedTags.map(({ _id }) => ({
-		label: t(_id),
-		value: _id,
+const autocompleteCategoriesSingleSelect = (state, type) =>
+	selectTargetingCategoriesByType(state, type).map(cat => ({
+		label: t(IabCategories.wrbshrinkerWebsiteApiV3Categories[cat] || cat),
+		value: cat,
 	}))
-}
 
 export const slotSources = () => ({
-	tags: { src: autocompleteTagsSingleSelect(), collection: 'tags' },
+	tags: { src: autocompleteCategoriesSingleSelect(), collection: 'tags' },
 	custom: { src: [], collection: 'tags' },
 })
 
@@ -176,14 +176,14 @@ export const unitSources = () => ({
 		collection: 'targeting',
 	},
 	genders: { src: autocompleteGendersSingleSelect(), collection: 'targeting' },
-	tags: { src: autocompleteTagsSingleSelect(), collection: 'targeting' },
+	tags: { src: autocompleteCategoriesSingleSelect(), collection: 'targeting' },
 	custom: { src: [], collection: 'targeting' },
 })
 
 export const campaignSources = () => [
 	{
 		parameter: 'location',
-		singleValuesSrc: autocompleteLocationsSingleSelect(),
+		singleValuesSrc: () => autocompleteLocationsSingleSelect(),
 		applyType: 'single',
 		actions: [
 			{ type: 'in', label: t('SHOW_ONLY_IN_SELECTED'), minSelected: 1 },
@@ -193,7 +193,8 @@ export const campaignSources = () => [
 	},
 	{
 		parameter: 'categories',
-		singleValuesSrc: autocompleteTagsSingleSelect(),
+		singleValuesSrc: (state, opts) =>
+			autocompleteCategoriesSingleSelect(state, opts),
 		applyType: 'multiple',
 		actions: [
 			{ type: 'in', label: t('SHOW_SELECTED'), minSelected: 1 },
@@ -202,7 +203,7 @@ export const campaignSources = () => [
 	},
 	{
 		parameter: 'publishers',
-		singleValuesSrc: autocompleteTagsSingleSelect(),
+		singleValuesSrc: () => [], //autocompleteCategoriesSingleSelect(),
 		applyType: 'single',
 		actions: [
 			{ type: 'in', label: t('SHOW_ONLY_IN_SELECTED'), minSelected: 1 },

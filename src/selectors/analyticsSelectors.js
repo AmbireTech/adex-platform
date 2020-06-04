@@ -75,6 +75,17 @@ export const selectTargetingAnalyticsByType = createSelector(
 		targetingAnalytics.filter(x => x.type.includes(type))
 )
 
+export const selectTargetingCategoriesByType = createSelector(
+	[selectTargetingAnalytics],
+	targeting =>
+		Array.from(
+			targeting.reduce((categories, x) => {
+				x.categories.forEach(c => categories.add(c))
+				return categories
+			}, new Set())
+		)
+)
+
 export const selectAdvancedAnalyticsByType = createSelector(
 	[selectAdvancedAnalytics, (_, type) => type],
 	(campaignAnalytics, type) => campaignAnalytics[type] || {}
