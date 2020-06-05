@@ -171,7 +171,7 @@ const autocompleteCategoriesSingleSelect = (state, types) =>
 const autocompletePublishersSingleSelect = (state, types) =>
 	selectTargetingPublishersByType(state, types).map(pub => ({
 		label: pub.hostname,
-		value: pub.hostname,
+		value: JSON.stringify({ hostname: pub.hostname, publisher: pub.owner }),
 	}))
 
 export const slotSources = () => ({
