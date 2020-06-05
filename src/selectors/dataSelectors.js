@@ -207,7 +207,12 @@ export const campaignSources = () => [
 		applyType: 'multiple',
 		actions: [
 			{ type: 'in', label: t('SHOW_SELECTED'), minSelected: 1 },
-			{ type: 'nin', label: t('DONT_SHOW_SELECTED'), minSelected: 1 },
+			{
+				type: 'nin',
+				label: t('DONT_SHOW_SELECTED'),
+				minSelected: 1,
+				disabledValues: ['ALL'],
+			},
 		],
 	},
 	{
