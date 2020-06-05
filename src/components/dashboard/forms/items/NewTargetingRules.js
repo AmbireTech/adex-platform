@@ -144,7 +144,11 @@ const getMultipleActionsUsedValues = ({ actions, currentAction, target }) => {
 	const currentSelectedValues = actions
 		.filter(a => a.type !== currentAction.type)
 		.reduce((all, a) => {
-			return [...all, ...(target[a.type] || [])]
+			return [
+				...all,
+				...(target[a.type] || []),
+				...(currentAction.disabledValues || []),
+			]
 		}, [])
 		.filter((x, i, all) => all.indexOf(x) === i)
 
