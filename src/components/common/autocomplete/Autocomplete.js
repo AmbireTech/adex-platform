@@ -1,6 +1,13 @@
 import React, { useEffect, Fragment, useState } from 'react'
 import PropTypes from 'prop-types'
-import { FormHelperText, TextField, Box } from '@material-ui/core'
+import {
+	FormHelperText,
+	TextField,
+	Box,
+	Tooltip,
+	Typography,
+	Chip,
+} from '@material-ui/core'
 import AutocompleteMUI, {
 	createFilterOptions,
 } from '@material-ui/lab/Autocomplete'
@@ -79,6 +86,26 @@ function Autocomplete({
 						/>
 					)
 				}}
+				renderOption={option => {
+					return (
+						<Tooltip title={option.extraLabel || ''}>
+							{<Typography fullWidth>{option.label}</Typography>}
+						</Tooltip>
+					)
+				}}
+				renderTags={(value, getCustomizedTagProps) =>
+					value.map((option, index) => (
+						<Tooltip
+							key={option.value + '' + index}
+							title={option.extraLabel || ''}
+						>
+							<Chip
+								label={option.label || option}
+								{...getCustomizedTagProps({ index })}
+							/>
+						</Tooltip>
+					))
+				}
 			/>
 			{error && (
 				<FormHelperText error id='component-error-text'>

@@ -138,8 +138,9 @@ export const selectTargetingSources = createSelector(
 
 const autocompleteLocationsSingleSelect = () => {
 	const tiers = Object.values(constants.CountryTiers).map(
-		({ name, ruleValue } = {}) => ({
+		({ name, ruleValue, countries } = {}) => ({
 			label: t(name),
+			extraLabel: countries.join(', '),
 			value: ruleValue,
 			group: t('BY_TIER'),
 		})
