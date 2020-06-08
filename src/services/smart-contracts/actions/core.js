@@ -504,6 +504,18 @@ export async function getSweepingTxnsIfNeeded({
 	return sweepData
 }
 
+export function getChannelId({ campaign, account }) {
+	const { identity } = account
+	const mainToken = selectMainFeeToken()
+
+	const readyCampaign = getReadyCampaign(campaign, identity, mainToken)
+	const openReady = readyCampaign.openReady
+	const ethChannel = toEthereumChannel(openReady)
+	const id = ethChannel.hashHex(AdExCore.address)
+
+	return id
+}
+
 export async function openChannel({
 	campaign,
 	account,
