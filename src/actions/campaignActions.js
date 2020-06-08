@@ -17,20 +17,22 @@ import {
 	validateCampaignMinTargetingScore,
 	confirmAction,
 	updateSelectedItems,
+	saveAudience,
 } from 'actions'
 import { push } from 'connected-react-router'
 import { schemas, Campaign, helpers } from 'adex-models'
 import { parseUnits } from 'ethers/utils'
 import { getAllValidatorsAuthForIdentity } from 'services/smart-contracts/actions/stats'
-import { getCampaigns } from 'services/adex-market/actions'
 import {
 	openChannel,
+	getChannelId,
 	closeChannel,
 } from 'services/smart-contracts/actions/core'
 import { lastApprovedState } from 'services/adex-validator/actions'
 import {
 	closeCampaignMarket,
 	updateCampaign,
+	getCampaigns,
 } from 'services/adex-market/actions'
 import { getErrorMsg } from 'helpers/errors'
 import {
@@ -75,8 +77,14 @@ export function openCampaign() {
 				withBalance: [{ channel: campaign }],
 				account,
 			})
+			const campaignId = getChannelId({ campaign: { ...campaign }, account })
 
-			const { storeCampaign } = await openChannel({
+			await saveAudience({
+				campaignId,
+				audienceInput: campaign.audienceInput,
+			})(dispatch, getState)
+
+			const storeCampaign = await openChannel({
 				campaign,
 				account,
 			})

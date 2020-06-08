@@ -9,6 +9,7 @@ import * as bidActions from './bidActions'
 import * as transactionActions from './transactionActions'
 import * as analyticsActions from './analyticsActions'
 import * as newItemsActions from './newItemsActions'
+import * as audienceActions from './audienceActions'
 import * as campaignActions from './campaignActions'
 import * as slotActions from './slotActions'
 import * as unitActions from './unitActions'
@@ -27,6 +28,7 @@ export default {
 	...transactionActions,
 	...analyticsActions,
 	...newItemsActions,
+	...audienceActions,
 	...campaignActions,
 	...slotActions,
 	...unitActions,
@@ -46,6 +48,7 @@ export * from './bidActions'
 export * from './transactionActions'
 export * from './analyticsActions'
 export * from './newItemsActions'
+export * from './audienceActions'
 export * from './campaignActions'
 export * from './slotActions'
 export * from './unitActions'
