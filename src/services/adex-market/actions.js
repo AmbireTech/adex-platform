@@ -255,7 +255,7 @@ export const getUserAudienceByCampaign = ({ campaignId }) => {
 		.then(processResponse)
 }
 
-export const updateAudience = ({ campaignId, audienceInput }) => {
+export const putAudience = ({ campaignId, audienceInput }) => {
 	return requester
 		.fetch({
 			route: `audiences/${campaignId}`,
@@ -266,7 +266,7 @@ export const updateAudience = ({ campaignId, audienceInput }) => {
 		.then(processResponse)
 }
 
-export const addAudience = ({ campaignId, audienceInput }) => {
+export const postAudience = ({ campaignId, audienceInput }) => {
 	return requester
 		.fetch({
 			route: `audiences/${campaignId}`,
