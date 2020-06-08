@@ -30,6 +30,7 @@ let initialState = {
 		AdUnit: {},
 		AdSlot: {},
 		Website: {},
+		Audience: {},
 	},
 	spinners: {},
 	ui: {
