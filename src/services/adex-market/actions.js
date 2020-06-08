@@ -234,3 +234,45 @@ export const verifyWebsite = ({ websiteUrl }) => {
 		})
 		.then(processResponse)
 }
+
+export const getUserAudiences = () => {
+	return requester
+		.fetch({
+			route: 'audiences/by-owner',
+			method: 'GET',
+			noCache: true,
+		})
+		.then(processResponse)
+}
+
+export const getUserAudienceByCampaign = ({ campaignId }) => {
+	return requester
+		.fetch({
+			route: `audiences/${campaignId}`,
+			method: 'GET',
+			noCache: true,
+		})
+		.then(processResponse)
+}
+
+export const updateAudience = ({ campaignId, audienceInput }) => {
+	return requester
+		.fetch({
+			route: `audiences/${campaignId}`,
+			method: 'PUT',
+			body: convertItemToJSON(audienceInput),
+			headers: { 'Content-Type': 'application/json' },
+		})
+		.then(processResponse)
+}
+
+export const addAudience = ({ campaignId, audienceInput }) => {
+	return requester
+		.fetch({
+			route: `audiences/${campaignId}`,
+			method: 'POST',
+			body: convertItemToJSON(audienceInput),
+			headers: { 'Content-Type': 'application/json' },
+		})
+		.then(processResponse)
+}
