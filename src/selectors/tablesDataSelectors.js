@@ -22,6 +22,7 @@ import {
 	selectCampaignAggrStatsByCountry,
 	selectPublisherPayStatsByCountry,
 	selectPublisherAdvanceStatsToAdSlot,
+	selectSavedAudiences,
 } from 'selectors'
 import { formatUnits } from 'ethers/utils'
 import chartCountriesData from 'world-atlas/countries-50m.json'
@@ -229,6 +230,20 @@ export const selectAdUnitsTableData = createSelector(
 					to,
 					item,
 				},
+			}
+		})
+)
+
+export const selectAudiencesTableData = createSelector(
+	[selectSavedAudiences],
+	audiences =>
+		audiences.map(item => {
+			const id = item.id
+			const inputs = item.inputs
+
+			return {
+				id,
+				inputs,
 			}
 		})
 )
