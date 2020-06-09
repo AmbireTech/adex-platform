@@ -97,3 +97,28 @@ export const selectWebsiteByWebsite = createSelector(
 	[selectWebsites, (_, ws) => ws],
 	(items, ws) => (ws ? items[url.parse(ws).hostname] || {} : {})
 )
+
+export const selectAudiences = createSelector(
+	state => selectItemsByType(state, 'Audience'),
+	audiences => audiences
+)
+
+export const selectAudiencesArray = createSelector(
+	state => selectItemsArrayByType(state, 'Audience'),
+	audiences => audiences
+)
+
+export const selectAudienceById = createSelector(
+	[selectAudiences, (_, id) => id],
+	(items, id) => items[id]
+)
+
+export const selectAudienceByCampaignId = createSelector(
+	[selectAudiencesArray, (_, id) => id],
+	(items, id) => items.find(x => x && x.campaignId === id)
+)
+
+export const selectSavedAudiences = createSelector(
+	[selectAudiencesArray],
+	items => items.filter(x => x && !x.campaignId)
+)
