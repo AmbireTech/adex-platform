@@ -23,6 +23,7 @@ import {
 	CampaignsTable,
 	AdSlotsTable,
 	AdUnitsTable,
+	AudiencesTable,
 } from 'components/dashboard/containers/Tables'
 import { Drawer, Box, Hidden, Paper } from '@material-ui/core'
 import { Alert } from '@material-ui/lab'
@@ -93,6 +94,12 @@ const AdSlots = () => (
 			icon={<Add />}
 		/>
 		<AdSlotsTable />
+	</Box>
+)
+
+const Audiences = () => (
+	<Box>
+		<AudiencesTable />
 	</Box>
 )
 
@@ -205,13 +212,18 @@ function Dashboard(props) {
 							/>
 							<Route
 								exact
-								path='/dashboard/advertiser/campaigns/:itemId'
-								component={Campaign}
+								path='/dashboard/advertiser/audiences'
+								component={Audiences}
 							/>
 							<Route
 								exact
 								path='/dashboard/advertiser/receipts'
 								component={Receipt}
+							/>
+							<Route
+								exact
+								path='/dashboard/advertiser/campaigns/:itemId'
+								component={Campaign}
 							/>
 							<Route
 								exact
