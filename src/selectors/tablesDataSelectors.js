@@ -244,6 +244,10 @@ export const selectAudiencesTableData = createSelector(
 			return {
 				id,
 				inputs,
+				actions: {
+					id,
+					item,
+				},
 			}
 		})
 )
