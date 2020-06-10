@@ -9,7 +9,11 @@ import { Base, AdSlot, AdUnit, helpers, Campaign } from 'adex-models'
 import { addToast as AddToastUi, updateSpinner } from './uiActions'
 
 import { translate } from 'services/translations/translations'
-import { getAdUnits, getAdSlots } from 'services/adex-market/actions'
+import {
+	getAdUnits,
+	getAdSlots,
+	getUserAudiences,
+} from 'services/adex-market/actions'
 
 import initialState from 'store/initialState'
 import { getMediaSize } from 'helpers/mediaHelpers'
@@ -49,8 +53,13 @@ export function getAllItems(onDataUpdated) {
 			const { address } = account.identity
 			const units = getAdUnits({ identity: address })
 			const slots = getAdSlots({ identity: address })
+			const audiences = getUserAudiences()
 
-			const [resUnits, resSlots] = await Promise.all([units, slots])
+			const [resUnits, resSlots, resAudiences] = await Promise.all([
+				units,
+				slots,
+				audiences,
+			])
 			const userSlots = resSlots.slots || []
 			const userPassbackUnits = (resSlots.passbackUnits || []).reduce(
 				(passbacks, u) => {
@@ -73,6 +82,10 @@ export function getAllItems(onDataUpdated) {
 				updateItems({
 					items: slotWithUnitsRes,
 					itemType: 'AdSlot',
+				})(dispatch)
+				updateItems({
+					items: resAudiences.audiences,
+					itemType: 'Audience',
 				})(dispatch)
 				updateItems({ items: resSlots.websites || [], itemType: 'Website' })(
 					dispatch
