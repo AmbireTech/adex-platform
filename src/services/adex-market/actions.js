@@ -238,7 +238,7 @@ export const verifyWebsite = ({ websiteUrl }) => {
 export const getUserAudiences = () => {
 	return requester
 		.fetch({
-			route: 'audiences/by-owner',
+			route: 'audiences',
 			method: 'GET',
 			noCache: true,
 		})
