@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import { Tooltip, Button, ButtonGroup } from '@material-ui/core'
-import { EditSharp } from '@material-ui/icons'
+import { EditSharp, VisibilitySharp as Visibility } from '@material-ui/icons'
 import CampaignIcon from 'components/common/icons/CampaignIcon'
 
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
@@ -11,6 +11,7 @@ import {
 	selectMainToken,
 	selectInitialDataLoadedByData,
 } from 'selectors'
+import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import { makeStyles } from '@material-ui/core/styles'
 import { useSelector } from 'react-redux'
 import { styles } from './styles'
@@ -18,6 +19,7 @@ import { useTableData } from './tableHooks'
 import { ReloadData } from './toolbars'
 
 const useStyles = makeStyles(styles)
+const RRIconButton = withReactRouterLink(Button)
 
 const getCols = ({ classes, symbol }) => [
 	{
@@ -43,7 +45,7 @@ const getCols = ({ classes, symbol }) => [
 		options: {
 			filter: false,
 			sort: false,
-			customBodyRender: ({ id, item }) => (
+			customBodyRender: ({ id, item, to }) => (
 				<Fragment key={id}>
 					<Tooltip
 						title={t('LABEL_EDIT')}
@@ -70,6 +72,15 @@ const getCols = ({ classes, symbol }) => [
 						>
 							{t('NEW_CAMPAIGN')}
 						</Button>
+					</Tooltip>
+					<Tooltip
+						title={t('LABEL_VIEW')}
+						// placement='top'
+						enterDelay={1000}
+					>
+						<RRIconButton to={to} variant='contained' aria-label='preview'>
+							<Visibility color='primary' />
+						</RRIconButton>
 					</Tooltip>
 				</Fragment>
 			),
