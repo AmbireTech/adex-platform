@@ -203,7 +203,6 @@ export const NewSlotSteps = props => (
 				component: AdSlotMedia,
 				validationFn: props => execute(validateNewSlotPassback(props)),
 			},
-			{ title: 'SLOT_TAGS_STEP', component: AdSlotTargeting },
 			{
 				title: 'PREVIEW_AND_SAVE_ITEM',
 				completeBtnTitle: 'SAVE',
