@@ -66,18 +66,6 @@ function AdUnitPreview() {
 							}
 						/>
 					</Grid>
-
-					<Grid item xs={12} md={6}>
-						<PropRow
-							left={t('targeting', { isProp: true })}
-							right={
-								<TargetsList
-									targets={targeting}
-									// subHeader={'TARGETING'}
-								/>
-							}
-						/>
-					</Grid>
 				</Grid>
 			</ContentBody>
 		</ContentBox>

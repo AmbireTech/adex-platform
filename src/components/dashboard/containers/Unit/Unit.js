@@ -11,7 +11,6 @@ import {
 	MediaCard,
 } from 'components/dashboard/containers/ItemCommon/'
 import { AdUnit } from 'adex-models'
-import TargetsList from 'components/dashboard/containers/TargetsList'
 import { validateAndUpdateUnit } from 'actions'
 import { t } from 'selectors'
 
@@ -58,12 +57,6 @@ function Unit({ match }) {
 									description={description}
 									errDescription={errDescription}
 									{...hookProps}
-								/>
-							</Box>
-							<Box py={1}>
-								<TargetsList
-									targets={item.targeting}
-									subHeader={'PROP_TARGETING'}
 								/>
 							</Box>
 						</Grid>

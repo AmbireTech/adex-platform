@@ -70,33 +70,6 @@ export function validateNewUnitBasics({
 	}
 }
 
-export function validateNewUnitTargeting({
-	validateId,
-	dirty,
-	onValid,
-	onInvalid,
-}) {
-	return async function(dispatch, getState) {
-		await updateSpinner(validateId, true)(dispatch)
-		try {
-			const state = getState()
-			const { targeting = [] } = selectNewAdUnit(state)
-
-			const isValid = !!targeting.length
-
-			await validate(validateId, 'targeting', {
-				isValid,
-				err: { msg: 'ERR_TARGETING_NOT_SELECTED' },
-				dirty: dirty,
-			})(dispatch)
-
-			await handleAfterValidation({ isValid, onValid, onInvalid })
-		} catch (err) {}
-
-		await updateSpinner(validateId, false)(dispatch)
-	}
-}
-
 export function validateNewUnitMedia({
 	validateId,
 	dirty,
