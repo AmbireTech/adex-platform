@@ -238,15 +238,13 @@ export const selectAudiencesTableData = createSelector(
 	[selectSavedAudiences],
 	audiences =>
 		audiences.map(item => {
-			const id = item.id
-			const inputs = item.inputs
+			const { id, inputs, version } = item
 
 			return {
 				id,
-				inputs,
 				actions: {
 					id,
-					item,
+					audienceInput: { inputs, version },
 					to: `/dashboard/advertiser/audiences/${id}`,
 				},
 			}

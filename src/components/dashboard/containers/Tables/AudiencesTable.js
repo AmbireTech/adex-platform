@@ -2,6 +2,7 @@ import React, { Fragment } from 'react'
 import { Tooltip, Button, ButtonGroup } from '@material-ui/core'
 import { EditSharp, VisibilitySharp as Visibility } from '@material-ui/icons'
 import CampaignIcon from 'components/common/icons/CampaignIcon'
+import { NewCampaignFromAudience } from 'components/dashboard/forms/items/NewItems'
 
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import {
@@ -17,6 +18,7 @@ import { useSelector } from 'react-redux'
 import { styles } from './styles'
 import { useTableData } from './tableHooks'
 import { ReloadData } from './toolbars'
+import { execute, updateNewCampaign } from 'actions'
 
 const useStyles = makeStyles(styles)
 const RRIconButton = withReactRouterLink(Button)
@@ -31,21 +33,12 @@ const getCols = ({ classes, symbol }) => [
 		},
 	},
 	{
-		name: 'inputs',
-		label: t('PROP_INPUTS'),
-		options: {
-			filter: false,
-			sort: false,
-			customBodyRender: ({ location, categories, publishers }) => '',
-		},
-	},
-	{
 		name: 'actions',
 		label: t('ACTIONS'),
 		options: {
 			filter: false,
 			sort: false,
-			customBodyRender: ({ id, item, to }) => (
+			customBodyRender: ({ id, audienceInput, to }) => (
 				<Fragment key={id}>
 					<Tooltip
 						title={t('LABEL_EDIT')}
@@ -66,12 +59,25 @@ const getCols = ({ classes, symbol }) => [
 						enterDelay={1000}
 						aria-label='view'
 					>
-						<Button
-							// startIcon={<CampaignIcon />}
-							variant='contained'
+						<Tooltip
+							title={t('NEW_CAMPAIGN_FROM_AUDIENCE')}
+							// placement='top'
+							enterDelay={1000}
 						>
-							{t('NEW_CAMPAIGN')}
-						</Button>
+							<span>
+								<NewCampaignFromAudience
+									onBeforeOpen={() =>
+										execute(
+											updateNewCampaign('audienceInput', {
+												...audienceInput,
+											})
+										)
+									}
+									icon={<CampaignIcon />}
+									iconButton
+								/>
+							</span>
+						</Tooltip>
 					</Tooltip>
 					<Tooltip
 						title={t('LABEL_VIEW')}

@@ -176,6 +176,10 @@ export const NewCampaignDialog = props => (
 	/>
 )
 
+export const NewCampaignFromAudience = props => (
+	<NewCampaignStepsWithDialog {...props} title='NEW_CAMPAIGN_FROM_AUDIENCE' />
+)
+
 // Ad slot
 export const NewSlotSteps = props => (
 	<FormSteps
