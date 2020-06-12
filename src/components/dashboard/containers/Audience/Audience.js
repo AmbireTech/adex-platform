@@ -8,17 +8,19 @@ import AudiencePreview from 'components/dashboard/containers/AudiencePreview'
 import { t } from 'selectors'
 
 function Audience({ match }) {
-	const { item, ...hookProps } = useItem({
+	const { item = {}, ...hookProps } = useItem({
 		itemType: 'Audience',
 		match,
 		objModel: AudienceModel,
 		// validateAndUpdateFn,
 	})
 
+	const { inputs, title } = item
+
 	return (
 		<Fragment>
 			<Paper variant='outlined'>
-				<AudiencePreview audienceInput={item.inputs} />
+				<AudiencePreview audienceInput={inputs} title={title} />
 			</Paper>
 		</Fragment>
 	)
