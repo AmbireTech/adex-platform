@@ -24,6 +24,7 @@ import {
 	updateCampaignAudienceInput,
 } from 'actions'
 import { Campaign } from 'adex-models'
+import { NewAudienceWithDialog } from 'components/dashboard/forms/items/NewItems'
 
 export const TargetingSteps = ({ updateField, itemId, ...props }) => {
 	return (
@@ -71,6 +72,19 @@ export const CampaignAudience = ({ item, ...hookProps }) => {
 				<Box p={2}>
 					<NewCampaignFromAudience
 						btnLabel='NEW_CAMPAIGN_FROM_AUDIENCE'
+						color='primary'
+						variant='contained'
+						onBeforeOpen={() =>
+							execute(
+								updateNewCampaign('audienceInput', {
+									...audienceInput,
+								})
+							)
+						}
+					/>
+
+					<NewAudienceWithDialog
+						btnLabel='SAVE_AUDIENCE'
 						color='primary'
 						variant='contained'
 						onBeforeOpen={() =>
