@@ -78,6 +78,15 @@ export function updateNewCampaign(prop, value, newValues) {
 	}
 }
 
+export function updateNewAudience(prop, value, newValues) {
+	return async function(dispatch, getState) {
+		await updateNewItemAction('Audience', prop, value, newValues)(
+			dispatch,
+			getState
+		)
+	}
+}
+
 export function updateNewItemTarget({
 	collection,
 	itemType,
