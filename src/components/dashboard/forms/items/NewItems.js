@@ -1,7 +1,7 @@
 import React from 'react'
 import FormSteps from 'components/common/stepper/FormSteps'
 import WithDialog from 'components/common/dialog/WithDialog'
-import { AdUnit, AdSlot, Campaign } from 'adex-models'
+import { AdUnit, AdSlot, Campaign, Audience } from 'adex-models'
 import FileCopyIcon from '@material-ui/icons/FileCopy'
 import AdUnitBasic from './AdUnit/AdUnitBasic'
 import AdUnitMedia from './AdUnit/AdUnitMedia'
@@ -11,9 +11,12 @@ import CampaignFinance from './Campaign/CampaignFinance'
 import CampaignFormPreview from './Campaign/CampaignFormPreview'
 import AdSlotBasic from './AdSlot/AdSlotBasic'
 import AdSlotMedia from './AdSlot/AdSlotMedia'
+import AudienceBasic from './Audience/AudienceBasic'
+import NewAudiencePreview from './Audience/NewAudiencePreview'
 import NewItemTargeting from './NewItemTargeting'
 import NewTargetingRules from './NewTargetingRules'
 import AdSlotPreview from './AdSlot/AdSlotPreview'
+import AudiencePreview from 'components/dashboard/containers/AudiencePreview'
 
 import {
 	execute,
@@ -24,10 +27,12 @@ import {
 	validateNewSlotPassback,
 	validateNewUnitMedia,
 	validateCampaignAudienceInput,
+	validateAudienceBasics,
 	completeItem,
 	resetNewItem,
 	saveUnit,
 	saveSlot,
+	saveAudience,
 	openCampaign,
 } from 'actions'
 
@@ -49,7 +54,7 @@ const AdUnitTargeting = props => (
 	/>
 )
 
-const CampaignTargetingRules = props => (
+export const CampaignTargetingRules = props => (
 	<NewTargetingRules
 		{...props}
 		itemType='Campaign'
@@ -237,3 +242,46 @@ export const NewSlotDialog = props => (
 		title='CREATE_NEW_SLOT'
 	/>
 )
+
+// Audience
+
+export const AudienceSteps = props => (
+	<FormSteps
+		{...props}
+		cancelFunction={() => execute(resetNewItem('Audience'))}
+		validateIdBase='new-Audience-'
+		itemType='Audience'
+		stepsId='new-audience-'
+		steps={[
+			{
+				title: 'AUDIENCE_BASIC_STEP',
+				component: AudienceBasic,
+				validationFn: ({ validateId, dirty, onValid, onInvalid }) =>
+					execute(
+						validateAudienceBasics({
+							validateId,
+							dirty,
+							onValid,
+							onInvalid,
+						})
+					),
+			},
+			{
+				title: 'PREVIEW_AND_SAVE_ITEM',
+				completeBtnTitle: 'SAVE',
+				component: NewAudiencePreview,
+				completeFn: props =>
+					execute(
+						completeItem({
+							...props,
+							itemType: 'Audience',
+							competeAction: saveAudience,
+						})
+					),
+			},
+		]}
+		itemModel={Audience}
+	/>
+)
+
+export const NewAudienceWithDialog = WithDialog(AudienceSteps)
