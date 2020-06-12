@@ -42,6 +42,7 @@ import {
 	selectAuthSig,
 	selectAuth,
 	selectMainToken,
+	selectNewItemByTypeAndId,
 } from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
 import {
@@ -163,6 +164,19 @@ function getHumanFriendlyName(campaign) {
 			return 'Completed'
 		default:
 			return 'N/A'
+	}
+}
+
+export function updateCampaignAudienceInput({ updateField, itemId, onValid }) {
+	return async function(dispatch, getState) {
+		const state = getState()
+		const { audienceInput } = selectNewItemByTypeAndId(
+			state,
+			'Campaign',
+			itemId
+		)
+		updateField('audienceInput', audienceInput)
+		onValid()
 	}
 }
 
