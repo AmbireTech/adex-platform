@@ -8,7 +8,7 @@ import { Box, Chip, Tooltip } from '@material-ui/core'
 
 const { CountryNames, CountryTiers } = constants
 
-const AudiencePreview = ({ audienceInput = {}, subHeader }) => {
+const AudiencePreview = ({ audienceInput = {}, title, subHeader }) => {
 	const {
 		location = {},
 		categories = {},
@@ -19,6 +19,7 @@ const AudiencePreview = ({ audienceInput = {}, subHeader }) => {
 	return (
 		<Box>
 			<Box m={1}>
+				{title && <OutlinedPropView label={t('TITLE')} value={title} />}
 				<OutlinedPropView
 					margin='dense'
 					label={t(`LOCATION_${(location.apply || '').toUpperCase()}`)}
