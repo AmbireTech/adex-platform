@@ -89,7 +89,7 @@ function Autocomplete({
 				renderOption={option => {
 					return (
 						<Tooltip title={option.extraLabel || ''}>
-							{<Typography fullWidth>{option.label}</Typography>}
+							{<Typography>{option.label}</Typography>}
 						</Tooltip>
 					)
 				}}
