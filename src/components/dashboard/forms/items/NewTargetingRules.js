@@ -308,7 +308,7 @@ const Targets = ({
 	)
 }
 
-const NewItemTargeting = ({ itemType, itemId, sourcesSelector }) => {
+const NewTargetingRules = ({ itemType, itemId, sourcesSelector }) => {
 	const [tabIndex, setTabIndex] = useState(0)
 	const SOURCES = useSelector(sourcesSelector)
 	const classes = useStyles()
@@ -327,10 +327,13 @@ const NewItemTargeting = ({ itemType, itemId, sourcesSelector }) => {
 			: []
 	)
 
-	const { audienceInput } = useSelector(state =>
+	const selectedItem = useSelector(state =>
 		selectNewItemByTypeAndId(state, itemType, itemId)
 	)
-	const { inputs = {} } = audienceInput
+	const inputs =
+		(selectedItem.audienceInput
+			? selectedItem.audienceInput.inputs
+			: selectedItem.inputs) || {}
 
 	return (
 		<Grid container spacing={1}>
@@ -373,8 +376,8 @@ const NewItemTargeting = ({ itemType, itemId, sourcesSelector }) => {
 	)
 }
 
-NewItemTargeting.propTypes = {
+NewTargetingRules.propTypes = {
 	title: PropTypes.string,
 }
 
-export default NewItemTargeting
+export default NewTargetingRules
