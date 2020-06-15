@@ -7,20 +7,20 @@ import {
 	updateValidatorAuthTokens,
 	updateNewCampaign,
 	handleAfterValidation,
-	validate,
 	validateCampaignValidators,
 	validateCampaignAmount,
 	validateCampaignTitle,
 	validateCampaignDates,
 	validateCampaignUnits,
 	validateSchemaProp,
+	validateAudience,
 	validateCampaignMinTargetingScore,
 	confirmAction,
 	updateSelectedItems,
 	saveAudience,
 } from 'actions'
 import { push } from 'connected-react-router'
-import { schemas, Campaign, helpers } from 'adex-models'
+import { schemas, Campaign, Audience, helpers } from 'adex-models'
 import { parseUnits } from 'ethers/utils'
 import { getAllValidatorsAuthForIdentity } from 'services/smart-contracts/actions/stats'
 import {
@@ -33,6 +33,7 @@ import {
 	closeCampaignMarket,
 	updateCampaign,
 	getCampaigns,
+	postAudience,
 } from 'services/adex-market/actions'
 import { getErrorMsg } from 'helpers/errors'
 import {
@@ -66,6 +67,38 @@ const VALIDATOR_FOLLOWER_ID = process.env.VALIDATOR_FOLLOWER_ID
 const VALIDATOR_FOLLOWER_FEE_NUM = process.env.VALIDATOR_FOLLOWER_FEE_NUM
 const VALIDATOR_FOLLOWER_FEE_DEN = process.env.VALIDATOR_FOLLOWER_FEE_DEN
 const VALIDATOR_FOLLOWER_FEE_ADDR = process.env.VALIDATOR_FOLLOWER_FEE_ADDR
+
+export function saveCampaignAudience({ campaignId, audienceInput }) {
+	return async function(dispatch, getState) {
+		try {
+			const audience = new Audience({
+				...audienceInput,
+				title: null,
+				campaignId,
+			}).marketAdd
+
+			const resItem = await postAudience({
+				audience,
+			})
+
+			dispatch({
+				type: ADD_ITEM,
+				item: resItem,
+				itemType: 'Audience',
+			})
+		} catch (err) {
+			console.error('ERR_CREATING_AUDIENCE', err)
+			addToast({
+				type: 'cancel',
+				label: t('ERR_CREATING_AUDIENCE', {
+					args: ['AdUnit', getErrorMsg(err)],
+				}),
+				timeout: 50000,
+			})(dispatch)
+			throw new Error('ERR_CREATING_ITEM', err)
+		}
+	}
+}
 
 export function openCampaign() {
 	return async function(dispatch, getState) {
@@ -310,34 +343,6 @@ export function validateNewCampaignAdUnits({
 	}
 }
 
-const locationAudienceInputError = ({ apply, ...values } = {}) => {
-	if (!apply) {
-		return 'ERR_LOCATION_AUDIENCE_NOT_SELECTED'
-	} else if (apply === 'in' && !values.in.length) {
-		return 'ERR_LOCATION_AUDIENCE_IN_NOT_SELECTED'
-	} else if (apply === 'nin' && !values.nin.length) {
-		return 'ERR_LOCATION_AUDIENCE_NIN_NOT_SELECTED'
-	}
-}
-
-const publishersAudienceInputError = ({ apply, ...values } = {}) => {
-	if (!apply) {
-		return 'ERR_PUBLISHERS_AUDIENCE_NOT_SELECTED'
-	} else if (apply === 'in' && (!values.in || !values.in.length)) {
-		return 'ERR_PUBLISHERS_AUDIENCE_IN_NOT_SELECTED'
-	} else if (apply === 'nin' && (!values.nin || !values.nin.length)) {
-		return 'ERR_PUBLISHERS_AUDIENCE_NIN_NOT_SELECTED'
-	}
-}
-
-const categoriesAudienceInputError = ({ apply = [], ...values } = {}) => {
-	if (!apply.includes('in')) {
-		return 'ERR_CATEGORIES_AUDIENCE_NOT_SELECTED'
-	} else if (apply.includes('in') && (!values.in || !values.in.length)) {
-		return 'ERR_CATEGORIES_AUDIENCE_IN_NOT_SELECTED'
-	}
-}
-
 export function validateCampaignAudienceInput({
 	validateId,
 	dirty,
@@ -349,16 +354,13 @@ export function validateCampaignAudienceInput({
 		try {
 			const state = getState()
 			const { audienceInput = {} } = selectNewCampaign(state)
-			const { location, categories, publishers } = audienceInput.inputs
 
-			const errors = [
-				locationAudienceInputError(location),
-				publishersAudienceInputError(publishers),
-				categoriesAudienceInputError(categories),
-			].filter(x => !!x)
-
-			const isValid = !errors.length
-			const errArgs = errors.map(e => t(e)).join(', ')
+			const isValid = await validateAudience({
+				validateId,
+				inputs: audienceInput,
+				dirty,
+				propName: 'audienceInput',
+			})(dispatch)
 
 			const targetingRules = isValid
 				? audienceInputToTargetingRules(audienceInput)
@@ -368,15 +370,6 @@ export function validateCampaignAudienceInput({
 				dispatch,
 				getState
 			)
-
-			await validate(validateId, 'audienceInput', {
-				isValid,
-				err: {
-					msg: 'ERR_AUDIENCE_INPUT',
-					args: [errArgs],
-				},
-				dirty: dirty,
-			})(dispatch)
 
 			await handleAfterValidation({ isValid, onValid, onInvalid })
 		} catch (err) {
