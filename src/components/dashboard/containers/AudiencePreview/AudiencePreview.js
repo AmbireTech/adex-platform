@@ -20,33 +20,41 @@ const AudiencePreview = ({ audienceInput = {}, title, subHeader }) => {
 		<Box>
 			<Box m={1}>
 				{title && <OutlinedPropView label={t('TITLE')} value={title} />}
-				<OutlinedPropView
-					margin='dense'
-					label={t(`LOCATION_${(location.apply || '').toUpperCase()}`)}
-					value={
-						location.apply === 'allin' ? (
-							<Chip
-								variant='outlined'
-								size='small'
-								label={t('ALL_COUNTRIES')}
-							/>
-						) : (
-							(location[location.apply] || []).map(x => (
-								<Tooltip
-									title={
-										CountryTiers[x]
-											? CountryTiers[x].countries.join(', ')
-											: t(CountryNames[x] || x || '')
-									}
-								>
-									<Chip variant='outlined' size='small' label={t(x || '')} />
-								</Tooltip>
-							))
-						)
-					}
-				/>
+				{!!location.apply ? (
+					<OutlinedPropView
+						margin='dense'
+						label={t(`LOCATION_${location.apply.toUpperCase()}`)}
+						value={
+							location.apply === 'allin' ? (
+								<Chip
+									variant='outlined'
+									size='small'
+									label={t('ALL_COUNTRIES')}
+								/>
+							) : (
+								(location[location.apply] || []).map(x => (
+									<Tooltip
+										title={
+											CountryTiers[x]
+												? CountryTiers[x].countries.join(', ')
+												: t(CountryNames[x] || x || '')
+										}
+									>
+										<Chip variant='outlined' size='small' label={t(x || '')} />
+									</Tooltip>
+								))
+							)
+						}
+					/>
+				) : (
+					<OutlinedPropView
+						margin='dense'
+						label={t(`LOCATION`)}
+						value={t('NOT_SELECTED')}
+					/>
+				)}
 			</Box>
-			{!!categories.apply &&
+			{!!categories.apply ? (
 				categories.apply.map(apply => (
 					<Box m={1}>
 						<OutlinedPropView
@@ -63,31 +71,49 @@ const AudiencePreview = ({ audienceInput = {}, title, subHeader }) => {
 							))}
 						/>
 					</Box>
-				))}
+				))
+			) : (
+				<Box m={1}>
+					<OutlinedPropView
+						margin='dense'
+						label={t(`CATEGORIES`)}
+						value={t('NOT_SELECTED')}
+					/>
+				</Box>
+			)}
 
 			<Box m={1}>
-				<OutlinedPropView
-					margin='dense'
-					label={t(`PUBLISHERS_${(publishers.apply || '').toUpperCase()}`)}
-					value={
-						publishers.apply === 'allin' ? (
-							<Chip
-								variant='outlined'
-								size='small'
-								label={t('ALL_PUBLISHERS')}
-							/>
-						) : (
-							(publishers[publishers.apply] || []).map(x => (
+				{publishers.apply ? (
+					<OutlinedPropView
+						margin='dense'
+						label={t(`PUBLISHERS_${publishers.apply.toUpperCase()}`)}
+						value={
+							publishers.apply === 'allin' ? (
 								<Chip
 									variant='outlined'
 									size='small'
-									label={(JSON.parse(x) || {}).hostname}
+									label={t('ALL_PUBLISHERS')}
 								/>
-							))
-						)
-					}
-				/>
+							) : (
+								(publishers[publishers.apply] || []).map(x => (
+									<Chip
+										variant='outlined'
+										size='small'
+										label={(JSON.parse(x) || {}).hostname}
+									/>
+								))
+							)
+						}
+					/>
+				) : (
+					<OutlinedPropView
+						margin='dense'
+						label={t(`PUBLISHERS`)}
+						value={t('NOT_SELECTED')}
+					/>
+				)}
 			</Box>
+
 			<Box m={1}>
 				<OutlinedPropView
 					margin='dense'
@@ -114,7 +140,7 @@ const AudiencePreview = ({ audienceInput = {}, title, subHeader }) => {
 }
 
 AudiencePreview.propTypes = {
-	audienceInput: PropTypes.array,
+	audienceInput: PropTypes.object,
 	subHeader: PropTypes.string,
 }
 
