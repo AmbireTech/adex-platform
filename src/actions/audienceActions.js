@@ -5,20 +5,27 @@ import { postAudience } from 'services/adex-market/actions'
 import { getErrorMsg } from 'helpers/errors'
 import { t, selectNewAudience } from 'selectors'
 import {
-	// validateSchemaProp,
+	validateSchemaProp,
 	handleAfterValidation,
+	validateAudience,
 } from 'actions'
-// import { schemas } from 'adex-models'
+import { Audience, schemas } from 'adex-models'
 
 // TODO:
-// const { audiencePost, audiencePu } = schemas
+const { audiencePost, audiencePut } = schemas
 
-export function saveAudience({ campaignId, audienceInput }) {
+export function saveAudience() {
 	return async function(dispatch, getState) {
 		try {
+			const state = getState()
+			const newAudience = selectNewAudience(state)
+
+			const audience = new Audience({
+				...newAudience,
+			}).marketAdd
+
 			const resItem = await postAudience({
-				campaignId,
-				audienceInput,
+				audience,
 			})
 
 			dispatch({
@@ -48,37 +55,71 @@ export function validateAudienceBasics({
 }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
-		// TODO:
-		let isValid = true
+
+		let isValid = false
 		try {
 			const state = getState()
 			const audience = selectNewAudience(state)
 			const { title, inputs, version } = audience
 
-			// TODO:
-			// const validations = await Promise.all([
-			// 	validateSchemaProp({
-			// 		validateId,
-			// 		value: title,
-			// 		prop: 'title',
-			// 		schema: audiencePost.title,
-			// 		dirty,
-			// 	})(dispatch),
-			// 	validateSchemaProp({
-			// 		validateId,
-			// 		value: inputs,
-			// 		prop: 'inputs',
-			// 		schema: audiencePost.description,
-			// 		dirty,
-			// 	})(dispatch),
-			// ])
+			const validations = await Promise.all([
+				validateSchemaProp({
+					validateId,
+					value: title,
+					prop: 'title',
+					schema: audiencePost.title,
+					dirty,
+				})(dispatch),
+				validateSchemaProp({
+					validateId,
+					value: inputs,
+					prop: 'inputs',
+					schema: audiencePost.inputs,
+					dirty,
+				})(dispatch),
+				validateSchemaProp({
+					validateId,
+					value: version,
+					prop: 'version',
+					schema: audiencePost.version,
+					dirty,
+				})(dispatch),
+			])
 
-			// isValid = validations.every(v => v === true)
+			isValid = validations.every(v => v === true)
 		} catch (err) {
 			console.error('ERR_VALIDATING_SLOT_BASIC', err)
 		}
 
 		await handleAfterValidation({ isValid, onValid, onInvalid })
+		await updateSpinner(validateId, false)(dispatch)
+	}
+}
+
+export function validateAudienceInput({
+	validateId,
+	dirty,
+	onValid,
+	onInvalid,
+}) {
+	return async function(dispatch, getState) {
+		await updateSpinner(validateId, true)(dispatch)
+		try {
+			const state = getState()
+			const { inputs = {} } = selectNewAudience(state)
+
+			const isValid = await validateAudience({
+				validateId,
+				inputs,
+				dirty,
+				propName: 'inputs',
+			})(dispatch)
+
+			await handleAfterValidation({ isValid, onValid, onInvalid })
+		} catch (err) {
+			console.log('err', err)
+		}
+
 		await updateSpinner(validateId, false)(dispatch)
 	}
 }
