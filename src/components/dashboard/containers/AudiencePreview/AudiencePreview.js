@@ -63,6 +63,7 @@ const AudiencePreview = ({ audienceInput = {}, title, subHeader }) => {
 							label={t(`CATEGORIES_${(apply || '').toUpperCase()}`)}
 							value={(categories[apply] || []).map(cat => (
 								<Chip
+									key={cat}
 									variant='outlined'
 									size='small'
 									label={t(
