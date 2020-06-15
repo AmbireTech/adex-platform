@@ -18,7 +18,7 @@ import {
 	resetNewItem,
 	updateCampaignAudienceInput,
 } from 'actions'
-import { NewAudienceWithDialog } from 'components/dashboard/forms/items/NewItems'
+import { NewAudienceDialog } from 'components/dashboard/forms/items/NewItems'
 
 // import { validateAndUpdateAudience as validateAndUpdateFn } from 'actions'
 import { t } from 'selectors'
@@ -98,7 +98,7 @@ function Audience({ match }) {
 						}
 					/>
 
-					<NewAudienceWithDialog
+					<NewAudienceDialog
 						btnLabel='NEW_AUDIENCE'
 						color='primary'
 						variant='contained'
