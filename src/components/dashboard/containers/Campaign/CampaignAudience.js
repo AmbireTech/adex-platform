@@ -21,6 +21,7 @@ import {
 import {
 	execute,
 	updateNewCampaign,
+	updateNewAudience,
 	resetNewItem,
 	updateCampaignAudienceInput,
 } from 'actions'
@@ -64,12 +65,12 @@ const TargetingRulesEdit = WithDialog(TargetingSteps)
 
 export const CampaignAudience = ({ item, ...hookProps }) => {
 	const classes = useStyles()
-	const { inputs } =
+	const campaignAudienceInput =
 		useSelector(state => selectAudienceByCampaignId(state, item.id)) || {}
 
 	const audienceInput = Object.keys(item.audienceInput.inputs).length
-		? item.audienceInput.inputs
-		: inputs
+		? item.audienceInput
+		: campaignAudienceInput
 
 	return (
 		<Fragment>
@@ -77,12 +78,12 @@ export const CampaignAudience = ({ item, ...hookProps }) => {
 
 			<Paper elevation={2} variant='outlined'>
 				<Box p={1}>
-					<AudiencePreview audienceInput={audienceInput} />
+					<AudiencePreview audienceInput={audienceInput.inputs} />
 				</Box>
 				<Box p={1} className={classes.actions}>
 					<TargetingRulesEdit
-						btnLabel='UPDATE_TAGS'
-						title='UPDATE_SLOT_TAGS'
+						btnLabel='UPDATE_AUDIENCE'
+						title='UPDATE_CAMPAIGN_AUDIENCE'
 						itemId={item.id}
 						disableBackdropClick
 						updateField={hookProps.updateField}
@@ -107,10 +108,9 @@ export const CampaignAudience = ({ item, ...hookProps }) => {
 						btnLabel='SAVE_AUDIENCE'
 						color='primary'
 						variant='contained'
-						fromCampaign
 						onBeforeOpen={() =>
 							execute(
-								updateNewCampaign('audienceInput', {
+								updateNewAudience(null, null, {
 									...audienceInput,
 								})
 							)
