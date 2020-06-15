@@ -266,6 +266,14 @@ export const AudienceSteps = props => (
 						})
 					),
 			},
+			...(props.fromCampaign
+				? []
+				: [
+						{
+							title: 'CAMPAIGN_TARGETING_RULES_STEP',
+							component: CampaignTargetingRules,
+						},
+				  ]),
 			{
 				title: 'PREVIEW_AND_SAVE_ITEM',
 				completeBtnTitle: 'SAVE',

@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react'
 import { useSelector } from 'react-redux'
+import { makeStyles } from '@material-ui/core/styles'
 import {
 	Paper,
 	Box,
@@ -25,6 +26,14 @@ import {
 } from 'actions'
 import { Campaign } from 'adex-models'
 import { NewAudienceWithDialog } from 'components/dashboard/forms/items/NewItems'
+
+const useStyles = makeStyles(theme => ({
+	actions: {
+		'& > *': {
+			margin: theme.spacing(1),
+		},
+	},
+}))
 
 export const TargetingSteps = ({ updateField, itemId, ...props }) => {
 	return (
@@ -54,6 +63,7 @@ export const TargetingSteps = ({ updateField, itemId, ...props }) => {
 const TargetingRulesEdit = WithDialog(TargetingSteps)
 
 export const CampaignAudience = ({ item, ...hookProps }) => {
+	const classes = useStyles()
 	const { inputs } =
 		useSelector(state => selectAudienceByCampaignId(state, item.id)) || {}
 
@@ -69,7 +79,17 @@ export const CampaignAudience = ({ item, ...hookProps }) => {
 				<Box p={1}>
 					<AudiencePreview audienceInput={audienceInput} />
 				</Box>
-				<Box p={2}>
+				<Box p={1} className={classes.actions}>
+					<TargetingRulesEdit
+						btnLabel='UPDATE_TAGS'
+						title='UPDATE_SLOT_TAGS'
+						itemId={item.id}
+						disableBackdropClick
+						updateField={hookProps.updateField}
+						color='secondary'
+						variant='contained'
+					/>
+
 					<NewCampaignFromAudience
 						btnLabel='NEW_CAMPAIGN_FROM_AUDIENCE'
 						color='primary'
@@ -87,6 +107,7 @@ export const CampaignAudience = ({ item, ...hookProps }) => {
 						btnLabel='SAVE_AUDIENCE'
 						color='primary'
 						variant='contained'
+						fromCampaign
 						onBeforeOpen={() =>
 							execute(
 								updateNewCampaign('audienceInput', {
@@ -94,16 +115,6 @@ export const CampaignAudience = ({ item, ...hookProps }) => {
 								})
 							)
 						}
-					/>
-
-					<TargetingRulesEdit
-						btnLabel='UPDATE_TAGS'
-						title='UPDATE_SLOT_TAGS'
-						itemId={item.id}
-						disableBackdropClick
-						updateField={hookProps.updateField}
-						color='secondary'
-						variant='contained'
 					/>
 				</Box>
 			</Paper>
