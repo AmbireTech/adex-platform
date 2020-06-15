@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { Tooltip, Button, ButtonGroup } from '@material-ui/core'
+import { Tooltip, IconButton, Box } from '@material-ui/core'
 import { EditSharp, VisibilitySharp as Visibility } from '@material-ui/icons'
 import CampaignIcon from 'components/common/icons/CampaignIcon'
 import { NewCampaignFromAudience } from 'components/dashboard/forms/items/NewItems'
@@ -21,12 +21,12 @@ import { ReloadData } from './toolbars'
 import { execute, updateNewCampaign } from 'actions'
 
 const useStyles = makeStyles(styles)
-const RRIconButton = withReactRouterLink(Button)
+const RRIconButton = withReactRouterLink(IconButton)
 
 const getCols = ({ classes, symbol }) => [
 	{
-		name: 'id',
-		label: t('PROP_ID'),
+		name: 'title',
+		label: t('PROP_TITLE'),
 		options: {
 			filter: false,
 			sort: false,
@@ -39,56 +39,31 @@ const getCols = ({ classes, symbol }) => [
 			filter: false,
 			sort: false,
 			customBodyRender: ({ id, audienceInput, to }) => (
-				<Fragment key={id}>
+				<Box key={id} className={classes.actions}>
 					<Tooltip
-						title={t('LABEL_EDIT')}
-						// placement='top'
-						enterDelay={1000}
-						aria-label='view'
+						title={t('LABEL_NEW_CAMPAIGN_FROM_AUDIENCE')}
+						aria-label='new-campaign'
 					>
-						<Button
-							// startIcon={<EditSharp />}
-							variant='contained'
-						>
-							{t('EDIT')}
-						</Button>
+						<span>
+							<NewCampaignFromAudience
+								onBeforeOpen={() =>
+									execute(
+										updateNewCampaign('audienceInput', {
+											...audienceInput,
+										})
+									)
+								}
+								icon={<CampaignIcon />}
+								iconButton
+							/>
+						</span>
 					</Tooltip>
-					<Tooltip
-						title={t('LABEL_NEW_CAMPAIGN')}
-						// placement='top'
-						enterDelay={1000}
-						aria-label='view'
-					>
-						<Tooltip
-							title={t('NEW_CAMPAIGN_FROM_AUDIENCE')}
-							// placement='top'
-							enterDelay={1000}
-						>
-							<span>
-								<NewCampaignFromAudience
-									onBeforeOpen={() =>
-										execute(
-											updateNewCampaign('audienceInput', {
-												...audienceInput,
-											})
-										)
-									}
-									icon={<CampaignIcon />}
-									iconButton
-								/>
-							</span>
-						</Tooltip>
-					</Tooltip>
-					<Tooltip
-						title={t('LABEL_VIEW')}
-						// placement='top'
-						enterDelay={1000}
-					>
-						<RRIconButton to={to} variant='contained' aria-label='preview'>
+					<Tooltip title={t('LABEL_VIEW')} aria-label='view'>
+						<RRIconButton to={to} aria-label='preview'>
 							<Visibility color='primary' />
 						</RRIconButton>
 					</Tooltip>
-				</Fragment>
+				</Box>
 			),
 		},
 	},
@@ -122,7 +97,7 @@ function AudiencesTable(props) {
 
 	return (
 		<MUIDataTableEnhanced
-			title={t('ALL_AUDIENCES')}
+			title={t('SAVED_AUDIENCES')}
 			data={data}
 			columns={columns}
 			options={options}
