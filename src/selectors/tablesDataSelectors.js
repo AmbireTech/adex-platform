@@ -238,10 +238,10 @@ export const selectAudiencesTableData = createSelector(
 	[selectSavedAudiences],
 	audiences =>
 		audiences.map(item => {
-			const { id, inputs, version } = item
+			const { id, title, inputs, version } = item
 
 			return {
-				id,
+				title: title || id,
 				actions: {
 					id,
 					audienceInput: { inputs, version },
