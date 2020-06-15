@@ -26,7 +26,7 @@ import {
 	updateCampaignAudienceInput,
 } from 'actions'
 import { Campaign } from 'adex-models'
-import { NewAudienceWithDialog } from 'components/dashboard/forms/items/NewItems'
+import { NewAudienceDialog } from 'components/dashboard/forms/items/NewItems'
 
 const useStyles = makeStyles(theme => ({
 	actions: {
@@ -104,8 +104,9 @@ export const CampaignAudience = ({ item, ...hookProps }) => {
 						}
 					/>
 
-					<NewAudienceWithDialog
+					<NewAudienceDialog
 						btnLabel='SAVE_AUDIENCE'
+						title='CREATE_NEW_AUDIENCE'
 						color='primary'
 						variant='contained'
 						onBeforeOpen={() =>
