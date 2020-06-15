@@ -19,6 +19,7 @@ import {
 	NewUnitDialog,
 	NewCampaignDialog,
 	NewSlotDialog,
+	NewAudienceWithDialog,
 } from 'components/dashboard/forms/items/NewItems'
 import {
 	CampaignsTable,
@@ -100,6 +101,14 @@ const AdSlots = () => (
 
 const Audiences = () => (
 	<Box>
+		<NewAudienceWithDialog
+			fabButton
+			variant='extended'
+			color='secondary'
+			btnLabel='NEW_AUDIENCE'
+			size='medium'
+			icon={<Add />}
+		/>
 		<AudiencesTable />
 	</Box>
 )
