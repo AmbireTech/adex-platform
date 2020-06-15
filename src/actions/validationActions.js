@@ -707,3 +707,63 @@ export function validateEmail(validateId, email, dirty, validateNotExisting) {
 		return isValid
 	}
 }
+
+export const locationAudienceInputError = ({ apply, ...values } = {}) => {
+	if (!apply) {
+		return 'ERR_LOCATION_AUDIENCE_NOT_SELECTED'
+	} else if (apply === 'in' && !values.in.length) {
+		return 'ERR_LOCATION_AUDIENCE_IN_NOT_SELECTED'
+	} else if (apply === 'nin' && !values.nin.length) {
+		return 'ERR_LOCATION_AUDIENCE_NIN_NOT_SELECTED'
+	}
+}
+
+export const publishersAudienceInputError = ({ apply, ...values } = {}) => {
+	if (!apply) {
+		return 'ERR_PUBLISHERS_AUDIENCE_NOT_SELECTED'
+	} else if (apply === 'in' && (!values.in || !values.in.length)) {
+		return 'ERR_PUBLISHERS_AUDIENCE_IN_NOT_SELECTED'
+	} else if (apply === 'nin' && (!values.nin || !values.nin.length)) {
+		return 'ERR_PUBLISHERS_AUDIENCE_NIN_NOT_SELECTED'
+	}
+}
+
+export const categoriesAudienceInputError = ({
+	apply = [],
+	...values
+} = {}) => {
+	if (!apply.includes('in')) {
+		return 'ERR_CATEGORIES_AUDIENCE_NOT_SELECTED'
+	} else if (apply.includes('in') && (!values.in || !values.in.length)) {
+		return 'ERR_CATEGORIES_AUDIENCE_IN_NOT_SELECTED'
+	}
+}
+
+export function validateAudience({ validateId, propName, inputs, dirty }) {
+	return async function(dispatch) {
+		const { location, categories, publishers } = inputs
+
+		const errors = [
+			locationAudienceInputError(location),
+			publishersAudienceInputError(publishers),
+			categoriesAudienceInputError(categories),
+		].filter(x => !!x)
+
+		const isValid = !errors.length
+		const errArgs = errors
+			.filter(e => !!e)
+			.map(e => t(e))
+			.join(', ')
+
+		await validate(validateId, propName, {
+			isValid,
+			err: {
+				msg: 'ERR_AUDIENCE_INPUT',
+				args: [errArgs],
+			},
+			dirty: dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
