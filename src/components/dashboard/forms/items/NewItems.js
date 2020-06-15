@@ -62,6 +62,14 @@ export const CampaignTargetingRules = props => (
 	/>
 )
 
+export const AudienceRules = props => (
+	<NewTargetingRules
+		{...props}
+		itemType='Audience'
+		sourcesSelector={campaignSources}
+	/>
+)
+
 // Ad unit
 export const NewUnitSteps = props => (
 	<FormSteps
@@ -130,7 +138,7 @@ export const NewCampaignSteps = props => (
 		stepsId='new-campaign-'
 		steps={[
 			{
-				title: 'CAMPAIGN_TARGETING_RULES_STEP',
+				title: 'CAMPAIGN_AUDIENCE_STEP',
 				component: CampaignTargetingRules,
 				validationFn: props => execute(validateCampaignAudienceInput(props)),
 			},
@@ -175,9 +183,9 @@ const NewCampaignStepsWithDialog = WithDialog(NewCampaignSteps)
 
 export const NewCampaignDialog = props => (
 	<NewCampaignStepsWithDialog
-		{...props}
 		btnLabel='NEW_CAMPAIGN'
 		title='CREATE_NEW_CAMPAIGN'
+		{...props}
 	/>
 )
 
@@ -266,12 +274,12 @@ export const AudienceSteps = props => (
 						})
 					),
 			},
-			...(props.fromCampaign
+			...(props.skipRules
 				? []
 				: [
 						{
-							title: 'CAMPAIGN_TARGETING_RULES_STEP',
-							component: CampaignTargetingRules,
+							title: 'AUDIENCE_STEP',
+							component: AudienceRules,
 						},
 				  ]),
 			{
@@ -293,3 +301,11 @@ export const AudienceSteps = props => (
 )
 
 export const NewAudienceWithDialog = WithDialog(AudienceSteps)
+
+export const NewAudienceDialog = props => (
+	<NewAudienceWithDialog
+		{...props}
+		btnLabel='NEW_AUDIENCE'
+		title='CREATE_NEW_AUDIENCE'
+	/>
+)
