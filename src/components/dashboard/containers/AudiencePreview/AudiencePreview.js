@@ -34,6 +34,7 @@ const AudiencePreview = ({ audienceInput = {}, title, subHeader }) => {
 							) : (
 								(location[location.apply] || []).map(x => (
 									<Tooltip
+										key={x}
 										title={
 											CountryTiers[x]
 												? CountryTiers[x].countries.join(', ')
@@ -56,7 +57,7 @@ const AudiencePreview = ({ audienceInput = {}, title, subHeader }) => {
 			</Box>
 			{!!categories.apply ? (
 				categories.apply.map(apply => (
-					<Box m={1}>
+					<Box key={apply} m={1}>
 						<OutlinedPropView
 							margin='dense'
 							label={t(`CATEGORIES_${(apply || '').toUpperCase()}`)}
@@ -95,8 +96,9 @@ const AudiencePreview = ({ audienceInput = {}, title, subHeader }) => {
 									label={t('ALL_PUBLISHERS')}
 								/>
 							) : (
-								(publishers[publishers.apply] || []).map(x => (
+								(publishers[publishers.apply] || []).map((x, index) => (
 									<Chip
+										key={index}
 										variant='outlined'
 										size='small'
 										label={(JSON.parse(x) || {}).hostname}
