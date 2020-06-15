@@ -266,12 +266,12 @@ export const putAudience = ({ campaignId, audienceInput }) => {
 		.then(processResponse)
 }
 
-export const postAudience = ({ campaignId, audienceInput }) => {
+export const postAudience = ({ audience }) => {
 	return requester
 		.fetch({
-			route: `audiences/${campaignId}`,
+			route: `audiences`,
 			method: 'POST',
-			body: convertItemToJSON(audienceInput),
+			body: convertItemToJSON(audience),
 			headers: { 'Content-Type': 'application/json' },
 		})
 		.then(processResponse)
