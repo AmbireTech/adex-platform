@@ -16,7 +16,6 @@ import NewAudiencePreview from './Audience/NewAudiencePreview'
 import NewItemTargeting from './NewItemTargeting'
 import NewTargetingRules from './NewTargetingRules'
 import AdSlotPreview from './AdSlot/AdSlotPreview'
-import AudiencePreview from 'components/dashboard/containers/AudiencePreview'
 
 import {
 	execute,
@@ -28,6 +27,7 @@ import {
 	validateNewUnitMedia,
 	validateCampaignAudienceInput,
 	validateAudienceBasics,
+	validateAudienceInput,
 	completeItem,
 	resetNewItem,
 	saveUnit,
@@ -280,6 +280,15 @@ export const AudienceSteps = props => (
 						{
 							title: 'AUDIENCE_STEP',
 							component: AudienceRules,
+							validationFn: ({ validateId, dirty, onValid, onInvalid }) =>
+								execute(
+									validateAudienceInput({
+										validateId,
+										dirty,
+										onValid,
+										onInvalid,
+									})
+								),
 						},
 				  ]),
 			{
@@ -304,8 +313,8 @@ export const NewAudienceWithDialog = WithDialog(AudienceSteps)
 
 export const NewAudienceDialog = props => (
 	<NewAudienceWithDialog
-		{...props}
 		btnLabel='NEW_AUDIENCE'
 		title='CREATE_NEW_AUDIENCE'
+		{...props}
 	/>
 )
