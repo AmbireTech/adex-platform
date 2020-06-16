@@ -9,14 +9,15 @@ import FormSteps from 'components/common/stepper/FormSteps'
 import WithDialog from 'components/common/dialog/WithDialog'
 import {
 	NewCampaignFromAudience,
-	CampaignTargetingRules,
+	AudienceRules,
 } from 'components/dashboard/forms/items/NewItems'
 import {
 	execute,
 	updateNewCampaign,
 	updateNewAudience,
 	resetNewItem,
-	updateCampaignAudienceInput,
+	updateAudienceInput,
+	mapCurrentToNewAudience,
 } from 'actions'
 import { NewAudienceDialog } from 'components/dashboard/forms/items/NewItems'
 
@@ -43,12 +44,10 @@ export const TargetingSteps = ({ updateField, itemId, ...props }) => {
 			steps={[
 				{
 					title: 'SAVED_AUDIENCE',
-					component: CampaignTargetingRules,
+					component: AudienceRules,
 					completeBtnTitle: 'OK',
 					completeFn: props =>
-						execute(
-							updateCampaignAudienceInput({ updateField, itemId, ...props })
-						),
+						execute(updateAudienceInput({ updateField, itemId, ...props })),
 				},
 			]}
 			itemModel={AudienceModel}
@@ -83,6 +82,14 @@ function Audience({ match }) {
 						updateField={hookProps.updateField}
 						color='secondary'
 						variant='contained'
+						onClick={() =>
+							execute(
+								mapCurrentToNewAudience({
+									itemId: item.id,
+									dirtyProps: hookProps.dirtyProps,
+								})
+							)
+						}
 					/>
 
 					<NewCampaignFromAudience
