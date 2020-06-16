@@ -135,7 +135,7 @@ export function WebsiteIssues({ issues, website, asIcons, tryAgainBtn }) {
 					{site.id && tryAgainBtn && <WebsiteVerifyBtn {...site} />}
 					{data.map((id, index) => {
 						const { label, args } = getIssue(id)
-						const Icon = ALL_ISSUES[label]
+						const Icon = ALL_ISSUES[label] || InfoSharp
 
 						return !!asIcons ? (
 							<Tooltip
