@@ -118,7 +118,7 @@ export function openCampaign() {
 				audienceInput: campaign.audienceInput,
 			})(dispatch, getState)
 
-			const storeCampaign = await openChannel({
+			const { storeCampaign } = await openChannel({
 				campaign,
 				account,
 			})
@@ -354,10 +354,11 @@ export function validateCampaignAudienceInput({
 		try {
 			const state = getState()
 			const { audienceInput = {} } = selectNewCampaign(state)
+			const { inputs } = audienceInput
 
 			const isValid = await validateAudience({
 				validateId,
-				inputs: audienceInput,
+				inputs,
 				dirty,
 				propName: 'audienceInput',
 			})(dispatch)
