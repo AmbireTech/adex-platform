@@ -3,7 +3,10 @@ import { makeStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
 import { Audience as AudienceModel } from 'adex-models'
 import { Paper, Box } from '@material-ui/core'
-import { useItem } from 'components/dashboard/containers/ItemCommon/'
+import {
+	useItem,
+	ChangeControls,
+} from 'components/dashboard/containers/ItemCommon/'
 import AudiencePreview from 'components/dashboard/containers/AudiencePreview'
 import FormSteps from 'components/common/stepper/FormSteps'
 import WithDialog from 'components/common/dialog/WithDialog'
@@ -71,6 +74,8 @@ function Audience({ match }) {
 
 	return (
 		<Fragment>
+			<ChangeControls {...hookProps} />
+
 			<Paper variant='outlined'>
 				<AudiencePreview audienceInput={inputs} title={title} />
 				<Box p={1} className={classes.actions}>
