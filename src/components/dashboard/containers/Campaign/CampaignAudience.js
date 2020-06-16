@@ -24,6 +24,7 @@ import {
 	updateNewAudience,
 	resetNewItem,
 	updateCampaignAudienceInput,
+	mapCurrentToNewCampaignAudienceInput,
 } from 'actions'
 import { Campaign } from 'adex-models'
 import { NewAudienceDialog } from 'components/dashboard/forms/items/NewItems'
@@ -89,6 +90,14 @@ export const CampaignAudience = ({ item, ...hookProps }) => {
 						updateField={hookProps.updateField}
 						color='secondary'
 						variant='contained'
+						onClick={() =>
+							execute(
+								mapCurrentToNewCampaignAudienceInput({
+									itemId: item.id,
+									dirtyProps: hookProps.dirtyProps,
+								})
+							)
+						}
 					/>
 
 					<NewCampaignFromAudience
@@ -129,7 +138,13 @@ export const CampaignAudience = ({ item, ...hookProps }) => {
 						<Typography>{t('TARGETING_RULES')}</Typography>
 					</ExpansionPanelSummary>
 					<Box p={1} color='grey.contrastText' bgcolor='grey.main'>
-						<pre>{JSON.stringify(item.targetingRiles || {}, null, 2)}</pre>
+						<pre>
+							{JSON.stringify(
+								item.targetingRules || item.spec.targetingRules || [],
+								null,
+								2
+							)}
+						</pre>
 					</Box>
 				</ExpansionPanel>
 			</Box>
