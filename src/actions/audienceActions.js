@@ -25,7 +25,6 @@ export function updateAudienceInput({
 	itemId,
 	onValid,
 	validateId,
-	dirty,
 }) {
 	return async function(dispatch, getState) {
 		const state = getState()
@@ -138,11 +137,15 @@ export function mapCurrentToNewAudience({ itemId, dirtyProps }) {
 	}
 }
 
-export function saveAudience() {
+export function saveAudience({ audienceInput, campaignId } = {}) {
 	return async function(dispatch, getState) {
 		try {
 			const state = getState()
-			const newAudience = selectNewAudience(state)
+			const newAudience = { ...(audienceInput || selectNewAudience(state)) }
+			newAudience.campaignId = campaignId || null
+			if (campaignId) {
+				newAudience.title = null
+			}
 
 			const audience = new Audience({
 				...newAudience,
