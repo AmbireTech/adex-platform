@@ -1,6 +1,6 @@
-import { ADD_ITEM } from 'constants/actionTypes'
+import { ADD_ITEM, UPDATE_ITEM } from 'constants/actionTypes'
 import { addToast, updateSpinner } from 'actions'
-import { postAudience } from 'services/adex-market/actions'
+import { postAudience, putAudience } from 'services/adex-market/actions'
 
 import { getErrorMsg } from 'helpers/errors'
 import {
@@ -42,6 +42,81 @@ export function updateAudienceInput({
 			await updateField('inputs', inputs)
 			onValid()
 		}
+	}
+}
+
+export function validateAndUpdateAudience({ validateId, dirty, item, update }) {
+	return async function(dispatch, getState) {
+		await updateSpinner(validateId, true)(dispatch)
+		try {
+			const { id, title, version, inputs } = item
+
+			const audience = new Audience(item).marketUpdate
+
+			const validations = await Promise.all([
+				validateSchemaProp({
+					validateId,
+					value: title,
+					prop: 'title',
+					schema: audiencePut.title,
+					dirty,
+				})(dispatch),
+				validateSchemaProp({
+					validateId,
+					value: version,
+					prop: 'version',
+					schema: audiencePut.version,
+					dirty,
+				})(dispatch),
+				validateAudience({
+					validateId,
+					inputs,
+					dirty,
+					propName: 'inputs',
+				})(dispatch),
+				validateSchemaProp({
+					validateId,
+					value: audience,
+					prop: 'audience',
+					schema: audiencePut,
+					dirty,
+				})(dispatch),
+			])
+
+			const isValid = validations.every(v => v === true)
+
+			if (isValid && update) {
+				const updatedAudience = (await putAudience({
+					audience,
+					id,
+				})).audience
+
+				dispatch({
+					type: UPDATE_ITEM,
+					item: new Audience(updatedAudience).plainObj(),
+					itemType: 'Audience',
+				})
+			} else if (!isValid && update) {
+				addToast({
+					type: 'cancel',
+					label: t('ERR_UPDATING_ITEM', {
+						args: ['Audience', getErrorMsg('INVALID_DATA')],
+					}),
+					timeout: 50000,
+				})(dispatch)
+			}
+		} catch (err) {
+			console.error('ERR_UPDATING_ITEM', err)
+			addToast({
+				type: 'cancel',
+				label: t('ERR_UPDATING_ITEM', {
+					args: ['Audience', getErrorMsg(err)],
+				}),
+				timeout: 50000,
+			})(dispatch)
+		}
+
+		await updateSpinner(validateId, false)(dispatch)
 	}
 }
 
@@ -87,7 +162,7 @@ export function saveAudience() {
 			addToast({
 				type: 'cancel',
 				label: t('ERR_CREATING_AUDIENCE', {
-					args: ['AdUnit', getErrorMsg(err)],
+					args: ['Audience', getErrorMsg(err)],
 				}),
 				timeout: 50000,
 			})(dispatch)
