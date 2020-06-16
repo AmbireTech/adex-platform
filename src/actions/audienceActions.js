@@ -20,12 +20,28 @@ import { Audience, schemas } from 'adex-models'
 // TODO:
 const { audiencePost, audiencePut } = schemas
 
-export function updateAudienceInput({ updateField, itemId, onValid }) {
+export function updateAudienceInput({
+	updateField,
+	itemId,
+	onValid,
+	validateId,
+	dirty,
+}) {
 	return async function(dispatch, getState) {
 		const state = getState()
-		const audience = selectNewItemByTypeAndId(state, 'Audience', itemId)
-		updateField('inputs', audience.inputs)
-		onValid()
+		const { inputs } = selectNewItemByTypeAndId(state, 'Audience', itemId)
+
+		const isValid = await validateAudience({
+			validateId,
+			inputs,
+			dirty: true,
+			propName: 'inputs',
+		})(dispatch)
+
+		if (isValid) {
+			await updateField('inputs', inputs)
+			onValid()
+		}
 	}
 }
 
