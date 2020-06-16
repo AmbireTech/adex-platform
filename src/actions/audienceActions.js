@@ -3,16 +3,49 @@ import { addToast, updateSpinner } from 'actions'
 import { postAudience } from 'services/adex-market/actions'
 
 import { getErrorMsg } from 'helpers/errors'
-import { t, selectNewAudience } from 'selectors'
+import {
+	t,
+	selectNewAudience,
+	selectNewItemByTypeAndId,
+	selectAudienceById,
+} from 'selectors'
 import {
 	validateSchemaProp,
 	handleAfterValidation,
 	validateAudience,
+	updateNewItem,
 } from 'actions'
 import { Audience, schemas } from 'adex-models'
 
 // TODO:
 const { audiencePost, audiencePut } = schemas
+
+export function updateAudienceInput({ updateField, itemId, onValid }) {
+	return async function(dispatch, getState) {
+		const state = getState()
+		const audience = selectNewItemByTypeAndId(state, 'Audience', itemId)
+		updateField('inputs', audience.inputs)
+		onValid()
+	}
+}
+
+export function mapCurrentToNewAudience({ itemId, dirtyProps }) {
+	return async function(dispatch, getState) {
+		const state = getState()
+		const item = selectAudienceById(state, itemId)
+		const audience = selectNewItemByTypeAndId(state, 'Audience', itemId)
+
+		const inputs = dirtyProps.includes('inputs') ? audience.inputs : item.inputs
+
+		updateNewItem(
+			item,
+			{ inputs: { ...inputs } },
+			'Audience',
+			Audience,
+			item.id
+		)(dispatch, getState)
+	}
+}
 
 export function saveAudience() {
 	return async function(dispatch, getState) {
