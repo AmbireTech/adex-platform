@@ -18,6 +18,7 @@ import {
 	confirmAction,
 	updateSelectedItems,
 	saveAudience,
+	updateNewItem,
 } from 'actions'
 import { push } from 'connected-react-router'
 import { schemas, Campaign, Audience, helpers } from 'adex-models'
@@ -40,6 +41,7 @@ import {
 	t,
 	selectAccount,
 	selectNewCampaign,
+	selectCampaignById,
 	selectAuthSig,
 	selectAuth,
 	selectMainToken,
@@ -67,38 +69,6 @@ const VALIDATOR_FOLLOWER_ID = process.env.VALIDATOR_FOLLOWER_ID
 const VALIDATOR_FOLLOWER_FEE_NUM = process.env.VALIDATOR_FOLLOWER_FEE_NUM
 const VALIDATOR_FOLLOWER_FEE_DEN = process.env.VALIDATOR_FOLLOWER_FEE_DEN
 const VALIDATOR_FOLLOWER_FEE_ADDR = process.env.VALIDATOR_FOLLOWER_FEE_ADDR
-
-export function saveCampaignAudience({ campaignId, audienceInput }) {
-	return async function(dispatch, getState) {
-		try {
-			const audience = new Audience({
-				...audienceInput,
-				title: null,
-				campaignId,
-			}).marketAdd
-
-			const resItem = await postAudience({
-				audience,
-			})
-
-			dispatch({
-				type: ADD_ITEM,
-				item: resItem,
-				itemType: 'Audience',
-			})
-		} catch (err) {
-			console.error('ERR_CREATING_AUDIENCE', err)
-			addToast({
-				type: 'cancel',
-				label: t('ERR_CREATING_AUDIENCE', {
-					args: ['AdUnit', getErrorMsg(err)],
-				}),
-				timeout: 50000,
-			})(dispatch)
-			throw new Error('ERR_CREATING_ITEM', err)
-		}
-	}
-}
 
 export function openCampaign() {
 	return async function(dispatch, getState) {
@@ -200,7 +170,12 @@ function getHumanFriendlyName(campaign) {
 	}
 }
 
-export function updateCampaignAudienceInput({ updateField, itemId, onValid }) {
+export function updateCampaignAudienceInput({
+	updateField,
+	itemId,
+	validateId,
+	onValid,
+}) {
 	return async function(dispatch, getState) {
 		const state = getState()
 		const { audienceInput } = selectNewItemByTypeAndId(
@@ -208,8 +183,38 @@ export function updateCampaignAudienceInput({ updateField, itemId, onValid }) {
 			'Campaign',
 			itemId
 		)
-		updateField('audienceInput', audienceInput)
-		onValid()
+
+		const isValid = await validateAudience({
+			validateId,
+			inputs: audienceInput.inputs,
+			dirty: true,
+			propName: 'audienceInput',
+		})(dispatch)
+
+		if (isValid) {
+			await updateField('audienceInput', audienceInput)
+			onValid()
+		}
+	}
+}
+
+export function mapCurrentToNewCampaignAudienceInput({ itemId, dirtyProps }) {
+	return async function(dispatch, getState) {
+		const state = getState()
+		const item = selectCampaignById(state, itemId)
+		const campaign = selectNewItemByTypeAndId(state, 'Campaign', itemId)
+
+		const audienceInput = dirtyProps.includes('audienceInput')
+			? campaign.audienceInput
+			: item.audienceInput
+
+		updateNewItem(
+			item,
+			{ audienceInput: { ...audienceInput } },
+			'Campaign',
+			Campaign,
+			item.id
+		)(dispatch, getState)
 	}
 }
 
@@ -365,7 +370,7 @@ export function validateCampaignAudienceInput({
 
 			const targetingRules = isValid
 				? audienceInputToTargetingRules(audienceInput)
-				: {}
+				: []
 
 			await updateNewCampaign('targetingRules', targetingRules)(
 				dispatch,
