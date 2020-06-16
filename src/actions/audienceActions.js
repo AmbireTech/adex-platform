@@ -72,13 +72,6 @@ export function validateAudienceBasics({
 				})(dispatch),
 				validateSchemaProp({
 					validateId,
-					value: inputs,
-					prop: 'inputs',
-					schema: audiencePost.inputs,
-					dirty,
-				})(dispatch),
-				validateSchemaProp({
-					validateId,
 					value: version,
 					prop: 'version',
 					schema: audiencePost.version,
