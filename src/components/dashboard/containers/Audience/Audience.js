@@ -24,7 +24,7 @@ import {
 } from 'actions'
 import { NewAudienceDialog } from 'components/dashboard/forms/items/NewItems'
 
-// import { validateAndUpdateAudience as validateAndUpdateFn } from 'actions'
+import { validateAndUpdateAudience as validateAndUpdateFn } from 'actions'
 import { t } from 'selectors'
 
 const useStyles = makeStyles(theme => ({
@@ -67,7 +67,7 @@ function Audience({ match }) {
 		itemType: 'Audience',
 		match,
 		objModel: AudienceModel,
-		// validateAndUpdateFn,
+		validateAndUpdateFn,
 	})
 
 	const { inputs, title } = item
