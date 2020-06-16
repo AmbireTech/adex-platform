@@ -149,7 +149,10 @@ export function updateTargetRuleInput({
 		if (isAudience) {
 			newValues.inputs = newInputs
 		} else {
-			newValues.audienceInput = { inputs: newInputs }
+			newValues.audienceInput = {
+				...newValues.audienceInput,
+				inputs: newInputs,
+			}
 		}
 
 		await updateNewItemAction(itemType, null, null, newValues, itemId)(
