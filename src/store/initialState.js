@@ -15,6 +15,7 @@ let initialState = {
 	newItem: {
 		Campaign: new Campaign({
 			audienceInput: { version: '1', inputs: {} },
+			temp: { useUtmTags: true },
 		}).plainObj(),
 		AdUnit: new AdUnit({ temp: { addUtmLink: true } }).plainObj(),
 		AdSlot: new AdSlot().plainObj(),
