@@ -6,6 +6,7 @@ import {
 	selectWebsitesArray,
 	selectTargetingCategoriesByType,
 	selectTargetingPublishersByType,
+	selectNewItemByTypeAndId,
 } from 'selectors'
 import { createSelector } from 'reselect'
 import { constants, IabCategories } from 'adex-models'
@@ -246,6 +247,13 @@ export const campaignSources = () => [
 		],
 	},
 ]
+
+export const selectAudienceInputItemOptions = createSelector(
+	[selectNewItemByTypeAndId],
+	item => {
+		return item && item.adUnits ? item.adUnits.map(u => u.type) : null
+	}
+)
 
 export const websitesAutocompleteSrc = createSelector(
 	selectWebsitesArray,
