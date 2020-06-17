@@ -24,7 +24,11 @@ import {
 } from '@material-ui/icons'
 import Autocomplete from 'components/common/autocomplete'
 
-import { t, selectNewItemByTypeAndId } from 'selectors'
+import {
+	t,
+	selectNewItemByTypeAndId,
+	selectAudienceInputItemOptions,
+} from 'selectors'
 import { execute, updateTargetRuleInput } from 'actions'
 
 const useStyles = makeStyles(theme => ({
@@ -315,16 +319,12 @@ const NewTargetingRules = ({ itemType, itemId, sourcesSelector }) => {
 	const { parameter, singleValuesSrc, actions, applyType } =
 		SOURCES[tabIndex] || {}
 
+	const options = useSelector(state =>
+		selectAudienceInputItemOptions(state, itemType, itemId)
+	)
+
 	const source = useSelector(state =>
-		singleValuesSrc
-			? singleValuesSrc(state, [
-					'legacy_300x250',
-					'legacy_88x31',
-					'legacy_234x60',
-					'legacy_300x100',
-					'legacy_120x60',
-			  ])
-			: []
+		singleValuesSrc ? singleValuesSrc(state, options) : []
 	)
 
 	const selectedItem = useSelector(state =>
