@@ -10,7 +10,6 @@ import {
 	Checkbox,
 	TextField,
 } from '@material-ui/core'
-import { Alert } from '@material-ui/lab'
 import DateTimePicker from 'components/common/DateTimePicker'
 import { FullContentSpinner } from 'components/common/dialog/content'
 import { utils } from 'ethers'
@@ -67,7 +66,7 @@ function CampaignFinance({ validateId }) {
 		temp = {},
 	} = campaign
 
-	const { maxChannelFees, maxDepositFormatted } = temp
+	const { maxChannelFees, maxDepositFormatted, useUtmTags } = temp
 
 	const spinner = useSelector(state =>
 		selectSpinnerById(state, GETTING_CAMPAIGNS_FEES)
@@ -243,38 +242,30 @@ function CampaignFinance({ validateId }) {
 							}
 						/>
 					</Grid>
-					{/* <Grid item xs={12} sm={12} md={6}>
-						<FormControl error={errUnitsTargeting && errUnitsTargeting.dirty}>
+					<Grid item xs={12} sm={12} md={6}>
+						<FormControl>
 							<FormGroup row>
 								<FormControlLabel
 									control={
 										<Checkbox
-											checked={!!minTargetingScore}
+											checked={!!useUtmTags}
 											onChange={ev =>
 												execute(
-													updateNewCampaign(
-														'minTargetingScore',
-														ev.target.checked ? 1 : null
-													)
+													updateNewCampaign('temp', {
+														...temp,
+														useUtmTags: ev.target.checked,
+													})
 												)
 											}
-											value='minTargetingScore'
+											value='useUtmTags'
 										/>
 									}
-									label={t('minTargetingScore', { isProp: true })}
+									label={t('CAMPAIGN_UTM_TAGS')}
 								/>
 							</FormGroup>
-							<FormHelperText>
-								{errUnitsTargeting && !!errUnitsTargeting.dirty ? (
-									<Alert severity='error' variant='outlined'>
-										{t('ERR_MIN_TARGETING_SCORE_ALERT')}
-									</Alert>
-								) : (
-									''
-								)}
-							</FormHelperText>
+							<FormHelperText>{t('CAMPAIGN_UTM_TAGS_INFO')}</FormHelperText>
 						</FormControl>
-					</Grid> */}
+					</Grid>
 				</Grid>
 			)}
 		</div>
