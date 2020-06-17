@@ -72,7 +72,9 @@ export const selectTargetingAnalytics = createSelector(
 export const selectTargetingAnalyticsByType = createSelector(
 	[selectTargetingAnalytics, (_, types) => types],
 	(targetingAnalytics, types) =>
-		targetingAnalytics.filter(x => types.some(t => x.types.includes(t)))
+		types && types.length
+			? targetingAnalytics.filter(x => types.some(t => x.types.includes(t)))
+			: targetingAnalytics
 )
 
 export const selectTargetingCategoriesByType = createSelector(
