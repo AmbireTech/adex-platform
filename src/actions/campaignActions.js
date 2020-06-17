@@ -14,7 +14,7 @@ import {
 	validateCampaignUnits,
 	validateSchemaProp,
 	validateAudience,
-	validateCampaignMinTargetingScore,
+	// validateCampaignMinTargetingScore,
 	confirmAction,
 	updateSelectedItems,
 	saveAudience,
@@ -410,8 +410,8 @@ export function validateNewCampaignFinance({
 				activeFrom,
 				withdrawPeriodStart,
 				created,
-				minTargetingScore,
-				adUnits,
+				// minTargetingScore,
+				// adUnits,
 				temp = {},
 			} = campaign
 
@@ -473,12 +473,12 @@ export function validateNewCampaignFinance({
 					withdrawPeriodStart,
 					created,
 				})(dispatch),
-				validateCampaignMinTargetingScore({
-					validateId,
-					minTargetingScore,
-					adUnits,
-					dirty,
-				})(dispatch),
+				// validateCampaignMinTargetingScore({
+				// 	validateId,
+				// 	minTargetingScore,
+				// 	adUnits,
+				// 	dirty,
+				// })(dispatch),
 			])
 
 			const isValid = validations.every(v => v === true)

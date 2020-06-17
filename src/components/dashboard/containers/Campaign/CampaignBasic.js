@@ -85,13 +85,13 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 											label={t('withdrawPeriodStart', { isProp: true })}
 										/>
 									</Box>
-									<Box my={1}>
+									{/* <Box my={1}>
 										<ItemSpecProp
 											prop={'CAMPAIGN_MIN_TARGETING'}
 											value={item.minTargetingScore > 0 ? t('YES') : t('NO')}
 											label={t('CAMPAIGN_MIN_TARGETING')}
 										/>
-									</Box>
+									</Box> */}
 								</Grid>
 								<Grid item xs={12} sm={12} md={6}>
 									<Box my={1}>
