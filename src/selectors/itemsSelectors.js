@@ -120,5 +120,5 @@ export const selectAudienceByCampaignId = createSelector(
 
 export const selectSavedAudiences = createSelector(
 	[selectAudiencesArray],
-	items => items.filter(x => x && !x.campaignId)
+	items => items.filter(x => x && !x.campaignId && x.title)
 )
