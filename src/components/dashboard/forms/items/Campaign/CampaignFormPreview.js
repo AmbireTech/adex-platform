@@ -47,7 +47,7 @@ function CampaignFormPreview() {
 		// depositAsset,
 		withdrawPeriodStart,
 		activeFrom,
-		minTargetingScore,
+		// minTargetingScore,
 		audienceInput,
 		// nonce
 		temp = {},
@@ -133,12 +133,12 @@ function CampaignFormPreview() {
 						/>
 					</Grid>
 
-					<Grid item xs={12} md={6}>
+					{/* <Grid item xs={12} md={6}>
 						<PropRow
 							left={t('CAMPAIGN_MIN_TARGETING')}
 							right={t(minTargetingScore ? 'YES' : 'NO')}
 						/>
-					</Grid>
+					</Grid> */}
 
 					<Grid item xs={12} md={6}>
 						<PropRow

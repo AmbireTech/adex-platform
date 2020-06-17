@@ -63,7 +63,7 @@ function CampaignFinance({ validateId }) {
 		// depositAsset,
 		activeFrom,
 		withdrawPeriodStart,
-		minTargetingScore,
+		// minTargetingScore,
 		temp = {},
 	} = campaign
 
@@ -83,7 +83,7 @@ function CampaignFinance({ validateId }) {
 		minPerImpression: errMin,
 		activeFrom: errFrom,
 		withdrawPeriodStart: errTo,
-		minTargetingScore: errUnitsTargeting,
+		// minTargetingScore: errUnitsTargeting,
 	} = invalidFields
 
 	const impressions = getTotalImpressions({
@@ -243,7 +243,7 @@ function CampaignFinance({ validateId }) {
 							}
 						/>
 					</Grid>
-					<Grid item xs={12} sm={12} md={6}>
+					{/* <Grid item xs={12} sm={12} md={6}>
 						<FormControl error={errUnitsTargeting && errUnitsTargeting.dirty}>
 							<FormGroup row>
 								<FormControlLabel
@@ -274,7 +274,7 @@ function CampaignFinance({ validateId }) {
 								)}
 							</FormHelperText>
 						</FormControl>
-					</Grid>
+					</Grid> */}
 				</Grid>
 			)}
 		</div>
