@@ -138,14 +138,14 @@ export const NewCampaignSteps = props => (
 		stepsId='new-campaign-'
 		steps={[
 			{
-				title: 'CAMPAIGN_AUDIENCE_STEP',
-				component: CampaignTargetingRules,
-				validationFn: props => execute(validateCampaignAudienceInput(props)),
-			},
-			{
 				title: 'CAMPAIGN_UNITS_STEP',
 				component: CampaignUnits,
 				validationFn: props => execute(validateNewCampaignAdUnits(props)),
+			},
+			{
+				title: 'CAMPAIGN_AUDIENCE_STEP',
+				component: CampaignTargetingRules,
+				validationFn: props => execute(validateCampaignAudienceInput(props)),
 			},
 			{
 				title: 'CAMPAIGN_FINANCE_STEP',
