@@ -55,6 +55,8 @@ import {
 	PRINTING_CAMPAIGNS_RECEIPTS,
 } from 'constants/spinners'
 import Helper from 'helpers/miscHelpers'
+import { addUrlUtmTracking } from 'helpers/utmHelpers'
+
 const { audienceInputToTargetingRules } = helpers
 
 const { campaignPut } = schemas
@@ -76,8 +78,20 @@ export function openCampaign() {
 		updateSpinner(OPENING_CAMPAIGN, true)(dispatch)
 		try {
 			const state = getState()
-			const campaign = selectNewCampaign(state)
+			const selectedCampaign = selectNewCampaign(state)
 			const account = selectAccount(state)
+			const campaign = { ...selectedCampaign }
+
+			campaign.adUnits = [...campaign.adUnits].map(unit => ({
+				...unit,
+				targetUrl: addUrlUtmTracking({
+					targetUrl: unit.targetUrl,
+					campaign: campaign.title,
+					content: unit.type,
+					removeFromUrl: !campaign.temp.useUtmTags,
+				}),
+			}))
+
 			await getAllValidatorsAuthForIdentity({
 				withBalance: [{ channel: campaign }],
 				account,
