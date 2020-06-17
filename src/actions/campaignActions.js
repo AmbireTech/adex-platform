@@ -46,6 +46,7 @@ import {
 	selectAuth,
 	selectMainToken,
 	selectNewItemByTypeAndId,
+	selectAudienceByCampaignId,
 } from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
 import {
@@ -81,17 +82,16 @@ export function openCampaign() {
 				withBalance: [{ channel: campaign }],
 				account,
 			})
-			const campaignId = getChannelId({ campaign: { ...campaign }, account })
-
-			await saveAudience({
-				campaignId,
-				audienceInput: campaign.audienceInput,
-			})(dispatch, getState)
 
 			const { storeCampaign } = await openChannel({
 				campaign,
 				account,
 			})
+
+			await saveAudience({
+				campaignId: storeCampaign.id,
+				audienceInput: campaign.audienceInput,
+			})(dispatch, getState)
 
 			dispatch({
 				type: ADD_ITEM,
@@ -203,10 +203,15 @@ export function mapCurrentToNewCampaignAudienceInput({ itemId, dirtyProps }) {
 		const state = getState()
 		const item = selectCampaignById(state, itemId)
 		const campaign = selectNewItemByTypeAndId(state, 'Campaign', itemId)
+		const initialAudienceInput = selectAudienceByCampaignId(state, itemId)
+		const itemAudienceInput =
+			item.audienceInput && Object.keys(item.audienceInput.inputs).length
+				? item.audienceInput
+				: initialAudienceInput
 
 		const audienceInput = dirtyProps.includes('audienceInput')
 			? campaign.audienceInput
-			: item.audienceInput
+			: item.audienceInput || itemAudienceInput
 
 		updateNewItem(
 			item,
@@ -623,6 +628,14 @@ export function validateAndUpdateCampaign({ validateId, dirty, item, update }) {
 					item: new Campaign(updatedCampaign).plainObj(),
 					itemType: 'Campaign',
 				})
+			} else if (!isValid && update) {
+				addToast({
+					type: 'cancel',
+					label: t('ERR_UPDATING_ITEM', {
+						args: ['Campaign', getErrorMsg('INVALID_DATA')],
+					}),
+					timeout: 50000,
+				})(dispatch)
 			}
 		} catch (err) {
 			console.error('ERR_UPDATING_ITEM', err)
