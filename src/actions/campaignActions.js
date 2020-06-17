@@ -82,15 +82,16 @@ export function openCampaign() {
 			const account = selectAccount(state)
 			const campaign = { ...selectedCampaign }
 
-			campaign.adUnits = [...campaign.adUnits].map(unit => ({
-				...unit,
-				targetUrl: addUrlUtmTracking({
-					targetUrl: unit.targetUrl,
-					campaign: campaign.title,
-					content: unit.type,
-					removeFromUrl: !campaign.temp.useUtmTags,
-				}),
-			}))
+			if (campaign.temp.useUtmTags) {
+				campaign.adUnits = [...campaign.adUnits].map((unit, index) => ({
+					...unit,
+					targetUrl: addUrlUtmTracking({
+						targetUrl: unit.targetUrl,
+						campaign: campaign.title,
+						content: `${index + 1}_${unit.type}`,
+					}),
+				}))
+			}
 
 			await getAllValidatorsAuthForIdentity({
 				withBalance: [{ channel: campaign }],
