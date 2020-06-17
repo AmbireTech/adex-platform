@@ -1,13 +1,9 @@
-import React, { useCallback, useEffect } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux'
-
 import PropTypes from 'prop-types'
-import { Grid, TextField, Button } from '@material-ui/core'
-
+import { Grid, TextField } from '@material-ui/core'
 import Dropdown from 'components/common/dropdown'
 import { constants } from 'adex-models'
-
-import { addUrlUtmTracking } from 'helpers/utmHelpers'
 import { execute, updateNewUnit } from 'actions'
 import { t, selectValidationsById, selectNewAdUnit } from 'selectors'
 
@@ -19,45 +15,14 @@ const AdTypes = constants.AdUnitsTypes.map(type => {
 })
 
 function AdUnitBasic({ validateId }) {
-	const { title, description, targetUrl, type, temp } = useSelector(
-		selectNewAdUnit
-	)
-	const { autoUtmAdded } = temp
+	const { title, description, targetUrl, type } = useSelector(selectNewAdUnit)
+
 	const {
 		title: errTitle,
 		description: errDescription,
 		targetUrl: errTargetUrl,
 		type: errType,
 	} = useSelector(state => selectValidationsById(state, validateId) || {})
-
-	const updateUtmParameters = useCallback(
-		removeFromUrl => {
-			if (targetUrl) {
-				const withUTM = addUrlUtmTracking({
-					targetUrl,
-					campaign: title,
-					content: type,
-					removeFromUrl,
-				})
-
-				execute(updateNewUnit('targetUrl', withUTM))
-			}
-		},
-		[targetUrl, title, type]
-	)
-
-	const handleUtmButton = useCallback(() => {
-		if (targetUrl) {
-			execute(updateNewUnit('temp', { ...temp, autoUtmAdded: !autoUtmAdded }))
-			updateUtmParameters(autoUtmAdded)
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [autoUtmAdded, targetUrl, title, type])
-
-	useEffect(() => {
-		autoUtmAdded && updateUtmParameters()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [title, type])
 
 	return (
 		<div>
@@ -118,16 +83,6 @@ function AdUnitBasic({ validateId }) {
 								: t('TARGETIRL_HELPER')
 						}
 					/>
-				</Grid>
-				<Grid item xs={12}>
-					<Button
-						fullWidth
-						onClick={handleUtmButton}
-						color={!autoUtmAdded ? 'primary' : 'secondary'}
-						variant='contained'
-					>
-						{!autoUtmAdded ? t('ADD_UTM_LINK') : t('REMOVE_UTM_LINK')}
-					</Button>
 				</Grid>
 				<Grid item xs={12}>
 					<Dropdown
