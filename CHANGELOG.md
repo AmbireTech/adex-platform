@@ -1,6 +1,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.15
+##### *2020-06-18*
+
+### Added
+- Targeting on campaign level
+- Audiences page and table
+
+### Changed
+- Removed targeting on Ad Units and Ad slots level
+- UTM tags on campaign instead on ad unit
+- Websites page - no legend
+
+### Fixed
+- Slot fallback update
+
 ## 4.20.14
 ##### *2020-06-03*
 
