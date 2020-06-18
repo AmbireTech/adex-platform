@@ -199,13 +199,20 @@ export function validateAndUpdateUnit({ validateId, dirty, item, update }) {
 					item: new AdUnit(updatedUnit).plainObj(),
 					itemType: 'AdUnit',
 				})
+				addToast({
+					type: 'success',
+					label: t('SUCCESS_UPDATING_ITEM', {
+						args: ['ADUNIT', updatedUnit.title],
+					}),
+					timeout: 50000,
+				})(dispatch)
 			}
 		} catch (err) {
 			console.error('ERR_UPDATING_ITEM', err)
 			addToast({
 				type: 'cancel',
 				label: t('ERR_UPDATING_ITEM', {
-					args: ['AdUnit', Helper.getErrMsg(err)],
+					args: ['ADUNIT', Helper.getErrMsg(err)],
 				}),
 				timeout: 50000,
 			})(dispatch)

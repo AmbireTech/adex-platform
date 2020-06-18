@@ -643,11 +643,18 @@ export function validateAndUpdateCampaign({ validateId, dirty, item, update }) {
 					item: new Campaign(updatedCampaign).plainObj(),
 					itemType: 'Campaign',
 				})
+				addToast({
+					type: 'success',
+					label: t('SUCCESS_UPDATING_ITEM', {
+						args: ['CAMPAIGN', updatedCampaign.title],
+					}),
+					timeout: 50000,
+				})(dispatch)
 			} else if (!isValid && update) {
 				addToast({
 					type: 'cancel',
 					label: t('ERR_UPDATING_ITEM', {
-						args: ['Campaign', getErrorMsg('INVALID_DATA')],
+						args: ['CAMPAIGN', getErrorMsg('INVALID_DATA')],
 					}),
 					timeout: 50000,
 				})(dispatch)
@@ -657,7 +664,7 @@ export function validateAndUpdateCampaign({ validateId, dirty, item, update }) {
 			addToast({
 				type: 'cancel',
 				label: t('ERR_UPDATING_ITEM', {
-					args: ['Campaign', Helper.getErrMsg(err)],
+					args: ['CAMPAIGN', Helper.getErrMsg(err)],
 				}),
 				timeout: 50000,
 			})(dispatch)
