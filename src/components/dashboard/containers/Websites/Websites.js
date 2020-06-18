@@ -61,7 +61,7 @@ export default function Websites() {
 										</ListItemIcon>
 										<ListItemText
 											primary={id}
-											secondary={<WebsiteIssues issues={issues} asIcons />}
+											secondary={<WebsiteIssues issues={issues} asKeyWords />}
 										/>
 										<ListItemSecondaryAction>
 											<WebsiteVerifyBtn
