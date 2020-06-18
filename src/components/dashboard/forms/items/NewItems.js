@@ -13,7 +13,6 @@ import AdSlotBasic from './AdSlot/AdSlotBasic'
 import AdSlotMedia from './AdSlot/AdSlotMedia'
 import AudienceBasic from './Audience/AudienceBasic'
 import NewAudiencePreview from './Audience/NewAudiencePreview'
-import NewItemTargeting from './NewItemTargeting'
 import NewTargetingRules from './NewTargetingRules'
 import AdSlotPreview from './AdSlot/AdSlotPreview'
 
@@ -36,23 +35,7 @@ import {
 	openCampaign,
 } from 'actions'
 
-import { slotSources, unitSources, campaignSources } from 'selectors'
-
-export const AdSlotTargeting = props => (
-	<NewItemTargeting
-		{...props}
-		itemType='AdSlot'
-		sourcesSelector={slotSources}
-	/>
-)
-
-const AdUnitTargeting = props => (
-	<NewItemTargeting
-		{...props}
-		itemType='AdUnit'
-		sourcesSelector={unitSources}
-	/>
-)
+import { campaignSources } from 'selectors'
 
 export const CampaignTargetingRules = props => (
 	<NewTargetingRules
