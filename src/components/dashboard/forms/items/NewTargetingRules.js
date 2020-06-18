@@ -21,6 +21,7 @@ import {
 	LocalOfferSharp as CategoryIcon,
 	WebAssetSharp as PublisherIcon,
 	MoreHorizSharp as AdvIcon,
+	ErrorSharp as ErrIcon,
 } from '@material-ui/icons'
 import Autocomplete from 'components/common/autocomplete'
 
@@ -28,6 +29,7 @@ import {
 	t,
 	selectNewItemByTypeAndId,
 	selectAudienceInputItemOptions,
+	selectValidationsById,
 } from 'selectors'
 import { execute, updateTargetRuleInput } from 'actions'
 
@@ -312,7 +314,12 @@ const Targets = ({
 	)
 }
 
-const NewTargetingRules = ({ itemType, itemId, sourcesSelector }) => {
+const NewTargetingRules = ({
+	itemType,
+	itemId,
+	sourcesSelector,
+	validateId,
+}) => {
 	const [tabIndex, setTabIndex] = useState(0)
 	const SOURCES = useSelector(sourcesSelector)
 	const classes = useStyles()
@@ -330,8 +337,19 @@ const NewTargetingRules = ({ itemType, itemId, sourcesSelector }) => {
 	const selectedItem = useSelector(state =>
 		selectNewItemByTypeAndId(state, itemType, itemId)
 	)
+
+	const isCampaignAudienceItem = !!selectedItem.audienceInput
+
+	const validations =
+		useSelector(state => selectValidationsById(state, validateId)) || {}
+
+	const errors =
+		validations[isCampaignAudienceItem ? 'audienceInput' : 'inputs'] || {}
+
+	const errorParameters = errors.dirty ? errors.errFields || {} : {}
+
 	const inputs =
-		(selectedItem.audienceInput
+		(isCampaignAudienceItem
 			? selectedItem.audienceInput.inputs
 			: selectedItem.inputs) || {}
 
@@ -351,7 +369,13 @@ const NewTargetingRules = ({ itemType, itemId, sourcesSelector }) => {
 							<Tab
 								key={parameter}
 								label={parameter}
-								icon={parameterIcon[parameter]}
+								icon={
+									errorParameters[parameter] ? (
+										<ErrIcon color='error' />
+									) : (
+										parameterIcon[parameter]
+									)
+								}
 							/>
 						))}
 					</Tabs>
