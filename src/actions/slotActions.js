@@ -527,8 +527,8 @@ export function validateAndUpdateSlot({
 				}
 			}
 
-			const isPassbackUpdated = ['mediaUrl', 'targetUrl'].some(prop =>
-				dirtyProps.includes(prop)
+			const isPassbackUpdated = dirtyProps.some(
+				prop => prop && prop.name === 'passbackData'
 			)
 
 			const fallbackData = {
