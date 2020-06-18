@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react'
 import { Paper, Grid, Box } from '@material-ui/core'
 import { WebsiteIssues } from 'components/dashboard/containers/Slot/WebsiteIssues'
-import TargetsList from 'components/dashboard/containers/TargetsList'
 import OutlinedPropView from 'components/common/OutlinedPropView'
 import { SlotEdits } from './SlotEdits'
 import {
@@ -47,9 +46,6 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 							</Box>
 							<Box py={1}>
 								<SlotEdits item={item} {...hookProps} />
-							</Box>
-							<Box py={1}>
-								<TargetsList targets={item.tags} subHeader={'PROP_TAGS'} />
 							</Box>
 						</Grid>
 						<Grid item xs={12} sm={12} md={6} lg={7}>
