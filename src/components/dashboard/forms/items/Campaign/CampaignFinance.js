@@ -260,10 +260,12 @@ function CampaignFinance({ validateId }) {
 											value='useUtmTags'
 										/>
 									}
-									label={t('CAMPAIGN_UTM_TAGS')}
+									label={t('CAMPAIGN_AUTO_UTM_TAGS')}
 								/>
 							</FormGroup>
-							<FormHelperText>{t('CAMPAIGN_UTM_TAGS_INFO')}</FormHelperText>
+							<FormHelperText>
+								{t('CAMPAIGN_AUTO_UTM_TAGS_INFO')}
+							</FormHelperText>
 						</FormControl>
 					</Grid>
 				</Grid>
