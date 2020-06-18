@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { Tooltip, IconButton, Box } from '@material-ui/core'
+import { Tooltip, IconButton, Typography, Box } from '@material-ui/core'
 import { EditSharp, VisibilitySharp as Visibility } from '@material-ui/icons'
 import CampaignIcon from 'components/common/icons/CampaignIcon'
 import { NewCampaignFromAudience } from 'components/dashboard/forms/items/NewItems'
@@ -22,6 +22,7 @@ import { execute, updateNewCampaign } from 'actions'
 
 const useStyles = makeStyles(styles)
 const RRIconButton = withReactRouterLink(IconButton)
+const RRTypography = withReactRouterLink(Typography)
 
 const getCols = ({ classes, symbol }) => [
 	{
@@ -30,6 +31,12 @@ const getCols = ({ classes, symbol }) => [
 		options: {
 			filter: false,
 			sort: false,
+			setCellProps: () => ({ style: { cursor: 'pointer' } }),
+			customBodyRender: ({ title, to }) => (
+				<RRTypography key={title} to={to}>
+					{title}
+				</RRTypography>
+			),
 		},
 	},
 	{
