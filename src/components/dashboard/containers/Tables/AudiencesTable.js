@@ -38,6 +38,8 @@ const getCols = ({ classes, symbol }) => [
 		options: {
 			filter: false,
 			sort: false,
+			setCellHeaderProps: () => ({ style: { textAlign: 'right' } }),
+			setCellProps: () => ({ style: { textAlign: 'right' } }),
 			customBodyRender: ({ id, audienceInput, to }) => (
 				<Box key={id} className={classes.actions}>
 					<Tooltip
