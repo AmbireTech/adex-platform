@@ -160,10 +160,17 @@ export function saveAudience({ audienceInput, campaignId } = {}) {
 				item: resItem,
 				itemType: 'Audience',
 			})
+			addToast({
+				type: 'success',
+				label: t('AUDIENCE_SAVED', {
+					args: [newAudience.title || campaignId],
+				}),
+				timeout: 20000,
+			})(dispatch)
 		} catch (err) {
 			console.error('ERR_CREATING_AUDIENCE', err)
 			addToast({
-				type: 'cancel',
+				type: 'error',
 				label: t('ERR_CREATING_AUDIENCE', {
 					args: ['Audience', getErrorMsg(err)],
 				}),
