@@ -78,6 +78,15 @@ export function updateNewCampaign(prop, value, newValues) {
 	}
 }
 
+export function updateNewAudience(prop, value, newValues) {
+	return async function(dispatch, getState) {
+		await updateNewItemAction('Audience', prop, value, newValues)(
+			dispatch,
+			getState
+		)
+	}
+}
+
 export function updateNewItemTarget({
 	collection,
 	itemType,
@@ -109,6 +118,41 @@ export function updateNewItemTarget({
 		const newValues = {
 			[collection]: filtered,
 			temp: { ...temp, targets },
+		}
+
+		await updateNewItemAction(itemType, null, null, newValues, itemId)(
+			dispatch,
+			getState
+		)
+	}
+}
+
+export function updateTargetRuleInput({
+	parameter,
+	itemType,
+	itemId,
+	target = {},
+}) {
+	return async function(dispatch, getState) {
+		const state = getState()
+		const item = selectNewItemByTypeAndId(state, itemType, itemId)
+		const isAudience = itemType === 'Audience'
+
+		const newValues = { ...item }
+
+		const newInputs = {
+			...(isAudience ? newValues.inputs : newValues.audienceInput.inputs),
+		}
+
+		newInputs[parameter] = { ...target }
+
+		if (isAudience) {
+			newValues.inputs = newInputs
+		} else {
+			newValues.audienceInput = {
+				...newValues.audienceInput,
+				inputs: newInputs,
+			}
 		}
 
 		await updateNewItemAction(itemType, null, null, newValues, itemId)(

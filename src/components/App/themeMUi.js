@@ -76,8 +76,8 @@ export const palette = {
 	tonalOffset: 0.2,
 	text: grey,
 	action: {
-		disabledBackground: grey[300],
-		disabled: grey[600],
+		disabledBackground: grey[200],
+		disabled: grey[500],
 	},
 }
 

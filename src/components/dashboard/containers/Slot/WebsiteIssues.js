@@ -8,6 +8,7 @@ import {
 	ListItemIcon,
 	ListItem,
 	Button,
+	Chip,
 	Typography,
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
@@ -89,9 +90,15 @@ export function RenderIssue({ label, args }) {
 }
 
 export const ALL_ISSUES = {
-	SLOT_ISSUE_BLACKLISTED: LooksOneSharp,
-	SLOT_ISSUE_OWNERSHIP_NOT_VERIFIED: LooksTwoSharp,
-	SLOT_ISSUE_SOMEONE_ELSE_VERIFIED: Looks3Sharp,
+	SLOT_ISSUE_BLACKLISTED: { icon: LooksOneSharp, shortLabel: t('BLACKLISTED') },
+	SLOT_ISSUE_OWNERSHIP_NOT_VERIFIED: {
+		icon: LooksTwoSharp,
+		shortLabel: t('NOT_VERIFIED'),
+	},
+	SLOT_ISSUE_SOMEONE_ELSE_VERIFIED: {
+		icon: Looks3Sharp,
+		shortLabel: t('VERIFIED_BY_SOMEONE_ELSE'),
+	},
 }
 
 export const WebsiteVerifyBtn = ({ id, website, issues, updated }) => {
@@ -122,7 +129,7 @@ export const WebsiteVerifyBtn = ({ id, website, issues, updated }) => {
 	)
 }
 
-export function WebsiteIssues({ issues, website, asIcons, tryAgainBtn }) {
+export function WebsiteIssues({ issues, website, asKeyWords, tryAgainBtn }) {
 	const classes = useStyles()
 	const site = useSelector(state => selectWebsiteByWebsite(state, website))
 	const defaultIssues = !website ? ['SLOT_ISSUE_NO_WEBSITE'] : []
@@ -135,15 +142,12 @@ export function WebsiteIssues({ issues, website, asIcons, tryAgainBtn }) {
 					{site.id && tryAgainBtn && <WebsiteVerifyBtn {...site} />}
 					{data.map((id, index) => {
 						const { label, args } = getIssue(id)
-						const Icon = ALL_ISSUES[label]
-
-						return !!asIcons ? (
+						return !!asKeyWords ? (
 							<Tooltip
 								key={id}
 								title={<RenderIssue label={label} args={args} />}
-								aria-label='add'
 							>
-								<Icon />
+								<Chip size='small' label={ALL_ISSUES[label].shortLabel} />
 							</Tooltip>
 						) : (
 							<Box key={id} my={index !== 0 && index < data.length ? 1 : 0}>
@@ -154,7 +158,7 @@ export function WebsiteIssues({ issues, website, asIcons, tryAgainBtn }) {
 						)
 					})}
 				</Fragment>
-			) : !!asIcons ? (
+			) : !!asKeyWords ? (
 				<Typography variant='caption' color='secondary'>
 					{t('WEBSITE_VERIFIED')}
 				</Typography>
@@ -170,7 +174,6 @@ export function WebsiteIssues({ issues, website, asIcons, tryAgainBtn }) {
 export function WebsiteIssuesLegend() {
 	return (
 		<List dense disablePadding>
-			<ListSubheader disableSticky>{t('ISSUES_LEGEND')}</ListSubheader>
 			<ListItem>
 				<ListItemIcon>
 					<InfoSharp />
@@ -181,17 +184,6 @@ export function WebsiteIssuesLegend() {
 					})}
 				/>
 			</ListItem>
-			{Object.entries(ALL_ISSUES).map(([issue, Icon], index) => {
-				const { label, args } = getIssue(issue)
-				return (
-					<ListItem key={label}>
-						<ListItemIcon>
-							<Icon />
-						</ListItemIcon>
-						<ListItemText primary={<RenderIssue label={label} args={args} />} />
-					</ListItem>
-				)
-			})}
 		</List>
 	)
 }

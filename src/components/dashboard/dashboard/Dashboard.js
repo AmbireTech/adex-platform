@@ -10,6 +10,7 @@ import {
 } from 'components/dashboard/containers/DashboardStats'
 import Unit from 'components/dashboard/containers/Unit'
 import Slot from 'components/dashboard/containers/Slot'
+import Audience from 'components/dashboard/containers/Audience'
 import Websites from 'components/dashboard/containers/Websites'
 import Account from 'components/dashboard/account/AccountInfo'
 import TopUp from 'components/dashboard/deposit/TopUp'
@@ -18,11 +19,13 @@ import {
 	NewUnitDialog,
 	NewCampaignDialog,
 	NewSlotDialog,
+	NewAudienceDialog,
 } from 'components/dashboard/forms/items/NewItems'
 import {
 	CampaignsTable,
 	AdSlotsTable,
 	AdUnitsTable,
+	AudiencesTable,
 } from 'components/dashboard/containers/Tables'
 import { Drawer, Box, Hidden, Paper } from '@material-ui/core'
 import { Alert } from '@material-ui/lab'
@@ -93,6 +96,20 @@ const AdSlots = () => (
 			icon={<Add />}
 		/>
 		<AdSlotsTable />
+	</Box>
+)
+
+const Audiences = () => (
+	<Box>
+		<NewAudienceDialog
+			fabButton
+			variant='extended'
+			color='secondary'
+			btnLabel='NEW_AUDIENCE'
+			size='medium'
+			icon={<Add />}
+		/>
+		<AudiencesTable />
 	</Box>
 )
 
@@ -205,13 +222,23 @@ function Dashboard(props) {
 							/>
 							<Route
 								exact
-								path='/dashboard/advertiser/campaigns/:itemId'
-								component={Campaign}
+								path='/dashboard/advertiser/audiences'
+								component={Audiences}
+							/>
+							<Route
+								exact
+								path='/dashboard/advertiser/audiences/:itemId'
+								component={Audience}
 							/>
 							<Route
 								exact
 								path='/dashboard/advertiser/receipts'
 								component={Receipt}
+							/>
+							<Route
+								exact
+								path='/dashboard/advertiser/campaigns/:itemId'
+								component={Campaign}
 							/>
 							<Route
 								exact

@@ -6,7 +6,7 @@ const PropBaseComponent = ({ value, inputRef, ...rest }) => (
 	<Box {...rest}>{value}</Box>
 )
 
-const OutlinedPropView = ({ label, value }) => (
+const OutlinedPropView = ({ label, value, margin }) => (
 	<Box py={1}>
 		<FormControl variant='outlined' fullWidth>
 			<InputLabel shrink disableAnimation>
@@ -14,6 +14,7 @@ const OutlinedPropView = ({ label, value }) => (
 			</InputLabel>
 
 			<OutlinedInput
+				margin={margin}
 				fullWidth
 				notched
 				readOnly

@@ -133,6 +133,15 @@ export const getAdSlots = ({ identity }) => {
 		.then(processResponse)
 }
 
+export const getTargetingData = () => {
+	return requester
+		.fetch({
+			route: 'slots/targeting-data',
+			method: 'GET',
+		})
+		.then(processResponse)
+}
+
 export const postAdSlot = ({ slot, authSig }) => {
 	return requester
 		.fetch({
@@ -221,6 +230,48 @@ export const verifyWebsite = ({ websiteUrl }) => {
 			route: 'slots/verify-website',
 			method: 'POST',
 			body: convertItemToJSON({ websiteUrl }),
+			headers: { 'Content-Type': 'application/json' },
+		})
+		.then(processResponse)
+}
+
+export const getUserAudiences = () => {
+	return requester
+		.fetch({
+			route: 'audiences',
+			method: 'GET',
+			noCache: true,
+		})
+		.then(processResponse)
+}
+
+export const getUserAudienceByCampaign = ({ campaignId }) => {
+	return requester
+		.fetch({
+			route: `audiences/${campaignId}`,
+			method: 'GET',
+			noCache: true,
+		})
+		.then(processResponse)
+}
+
+export const putAudience = ({ audience, id }) => {
+	return requester
+		.fetch({
+			route: `audiences/${id}`,
+			method: 'PUT',
+			body: convertItemToJSON(audience),
+			headers: { 'Content-Type': 'application/json' },
+		})
+		.then(processResponse)
+}
+
+export const postAudience = ({ audience }) => {
+	return requester
+		.fetch({
+			route: `audiences`,
+			method: 'POST',
+			body: convertItemToJSON(audience),
 			headers: { 'Content-Type': 'application/json' },
 		})
 		.then(processResponse)

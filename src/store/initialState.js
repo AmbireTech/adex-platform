@@ -13,7 +13,10 @@ let initialState = {
 		authenticated: false,
 	},
 	newItem: {
-		Campaign: new Campaign().plainObj(),
+		Campaign: new Campaign({
+			audienceInput: { version: '1', inputs: {} },
+			temp: { useUtmTags: true },
+		}).plainObj(),
 		AdUnit: new AdUnit({ temp: { addUtmLink: true } }).plainObj(),
 		AdSlot: new AdSlot().plainObj(),
 	},
@@ -28,6 +31,7 @@ let initialState = {
 		AdUnit: {},
 		AdSlot: {},
 		Website: {},
+		Audience: {},
 	},
 	spinners: {},
 	ui: {

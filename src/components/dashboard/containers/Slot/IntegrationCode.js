@@ -58,7 +58,7 @@ export const IntegrationCode = ({ slot = {} }) => {
 		width: sizes.width,
 		height: sizes.height,
 		minPerImpression: '0',
-		minTargetingScore: '0',
+		// minTargetingScore: '0',
 		fallbackUnit,
 		marketSlot: id,
 	}

@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux'
 import { makeStyles } from '@material-ui/core/styles'
 import { Typography, Grid } from '@material-ui/core'
 import Img from 'components/common/img/Img'
-import TargetsList from 'components/dashboard/containers/TargetsList'
 import Anchor from 'components/common/anchor/anchor'
 import { WebsiteIssues } from 'components/dashboard/containers/Slot/WebsiteIssues'
 import {
@@ -60,7 +59,6 @@ const AdSlotPreview = () => {
 		description,
 		website,
 		temp,
-		tags,
 		targetUrl,
 		minPerImpression,
 	} = useSelector(selectNewAdSlot)
@@ -136,13 +134,6 @@ const AdSlotPreview = () => {
 						) : (
 							<PropRow left={t('FALLBACK_DATA')} right={t('NO')} />
 						)}
-					</Grid>
-
-					<Grid item xs={12} md={6}>
-						<PropRow
-							left={t('tags', { isProp: true })}
-							right={<TargetsList targets={tags} />}
-						/>
 					</Grid>
 				</Grid>
 			</ContentBody>

@@ -2,6 +2,7 @@ import {
 	Campaign as CampaignModel,
 	AdUnit as AdUnitModel,
 	AdSlot as AdSlotModel,
+	Audience as AudienceModel,
 } from 'adex-models'
 import initialState from 'store/initialState'
 
@@ -34,4 +35,9 @@ export const selectNewAdUnit = createSelector(
 export const selectNewAdSlot = createSelector(
 	selectNewItems,
 	({ AdSlot }) => new AdSlotModel(AdSlot)
+)
+
+export const selectNewAudience = createSelector(
+	selectNewItems,
+	({ Audience }) => new AudienceModel(Audience)
 )
