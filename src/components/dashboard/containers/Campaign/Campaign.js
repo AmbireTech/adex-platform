@@ -28,6 +28,7 @@ import {
 import StatsByCountryTable from 'components/dashboard/containers/Tables/StatsByCountryTable'
 import MapChart from 'components/dashboard/charts/map/MapChart'
 import { CampaignBasic } from './CampaignBasic'
+import { CampaignAudience } from './CampaignAudience'
 import { validateAndUpdateCampaign, updateMemoryUi, execute } from 'actions'
 import { useItem } from 'components/dashboard/containers/ItemCommon/'
 import { CampaignStatsByTimeframe } from './CampaignStatsByTimeframe'
@@ -70,6 +71,7 @@ function Campaign({ match }) {
 					textColor='primary'
 				>
 					<Tab label={t('CAMPAIGN_MAIN')} />
+					<Tab label={t('CAMPAIGN_AUDIENCE')} />
 					<Tab label={t('WEBSITE_STATS')} />
 					<Tab label={t('COUNTRY_STATS')} />
 					<Tab label={t('TIMEFRAME_STATS')} />
@@ -82,7 +84,8 @@ function Campaign({ match }) {
 			</Paper>
 			<Box my={1}>
 				{tabIndex === 0 && <CampaignBasic item={item} {...hookProps} />}
-				{tabIndex === 1 && (
+				{tabIndex === 1 && <CampaignAudience item={item} {...hookProps} />}
+				{tabIndex === 2 && (
 					<Box>
 						{!dataLoaded && <LinearProgress />}
 						<Box
@@ -101,7 +104,7 @@ function Campaign({ match }) {
 						</Box>
 					</Box>
 				)}
-				{tabIndex === 2 && (
+				{tabIndex === 3 && (
 					<Grid container spacing={1} alignItems='flex-start'>
 						<Grid item xs={12}>
 							<Paper variant='outlined'>
@@ -135,9 +138,9 @@ function Campaign({ match }) {
 					</Grid>
 				)}
 
-				{tabIndex === 3 && <CampaignStatsByTimeframe item={item} />}
-				{tabIndex === 4 && <AdUnitsTable campaignId={campaignId} noClone />}
-				{tabIndex === 5 && (
+				{tabIndex === 4 && <CampaignStatsByTimeframe item={item} />}
+				{tabIndex === 5 && <AdUnitsTable campaignId={campaignId} noClone />}
+				{tabIndex === 6 && (
 					<List>
 						<Anchor
 							target='_blank'
@@ -173,7 +176,7 @@ function Campaign({ match }) {
 						</Anchor>
 					</List>
 				)}
-				{tabIndex === 6 && <Receipt itemId={campaignId} />}
+				{tabIndex === 7 && <Receipt itemId={campaignId} />}
 			</Box>
 		</Fragment>
 	)

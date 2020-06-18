@@ -10,6 +10,7 @@ import {
 	ContentStickyTop,
 	FullContentSpinner,
 } from 'components/common/dialog/content'
+import AudiencePreview from 'components/dashboard/containers/AudiencePreview'
 import { formatDateTime } from 'helpers/formatters'
 import {
 	selectAccountIdentityAddr,
@@ -46,7 +47,8 @@ function CampaignFormPreview() {
 		// depositAsset,
 		withdrawPeriodStart,
 		activeFrom,
-		minTargetingScore,
+		// minTargetingScore,
+		audienceInput,
 		// nonce
 		temp = {},
 	} = useSelector(selectNewCampaign)
@@ -131,12 +133,12 @@ function CampaignFormPreview() {
 						/>
 					</Grid>
 
-					<Grid item xs={12} md={6}>
+					{/* <Grid item xs={12} md={6}>
 						<PropRow
 							left={t('CAMPAIGN_MIN_TARGETING')}
 							right={t(minTargetingScore ? 'YES' : 'NO')}
 						/>
-					</Grid>
+					</Grid> */}
 
 					<Grid item xs={12} md={6}>
 						<PropRow
@@ -148,6 +150,13 @@ function CampaignFormPreview() {
 									))}
 								</div>
 							}
+						/>
+					</Grid>
+
+					<Grid item xs={12} md={6}>
+						<PropRow
+							left={t('AUDIENCE')}
+							right={<AudiencePreview audienceInput={audienceInput.inputs} />}
 						/>
 					</Grid>
 

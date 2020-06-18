@@ -13,32 +13,40 @@ import {
 	validateCampaignDates,
 	validateCampaignUnits,
 	validateSchemaProp,
-	validateCampaignMinTargetingScore,
+	validateAudience,
+	// validateCampaignMinTargetingScore,
 	confirmAction,
 	updateSelectedItems,
+	saveAudience,
+	updateNewItem,
 } from 'actions'
 import { push } from 'connected-react-router'
-import { schemas, Campaign } from 'adex-models'
+import { schemas, Campaign, Audience, helpers } from 'adex-models'
 import { parseUnits } from 'ethers/utils'
 import { getAllValidatorsAuthForIdentity } from 'services/smart-contracts/actions/stats'
-import { getCampaigns } from 'services/adex-market/actions'
 import {
 	openChannel,
+	getChannelId,
 	closeChannel,
 } from 'services/smart-contracts/actions/core'
 import { lastApprovedState } from 'services/adex-validator/actions'
 import {
 	closeCampaignMarket,
 	updateCampaign,
+	getCampaigns,
+	postAudience,
 } from 'services/adex-market/actions'
 import { getErrorMsg } from 'helpers/errors'
 import {
 	t,
 	selectAccount,
 	selectNewCampaign,
+	selectCampaignById,
 	selectAuthSig,
 	selectAuth,
 	selectMainToken,
+	selectNewItemByTypeAndId,
+	selectAudienceByCampaignId,
 } from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
 import {
@@ -47,6 +55,9 @@ import {
 	PRINTING_CAMPAIGNS_RECEIPTS,
 } from 'constants/spinners'
 import Helper from 'helpers/miscHelpers'
+import { addUrlUtmTracking } from 'helpers/utmHelpers'
+
+const { audienceInputToTargetingRules } = helpers
 
 const { campaignPut } = schemas
 
@@ -67,8 +78,21 @@ export function openCampaign() {
 		updateSpinner(OPENING_CAMPAIGN, true)(dispatch)
 		try {
 			const state = getState()
-			const campaign = selectNewCampaign(state)
+			const selectedCampaign = selectNewCampaign(state)
 			const account = selectAccount(state)
+			const campaign = { ...selectedCampaign }
+
+			if (campaign.temp.useUtmTags) {
+				campaign.adUnits = [...campaign.adUnits].map((unit, index) => ({
+					...unit,
+					targetUrl: addUrlUtmTracking({
+						targetUrl: unit.targetUrl,
+						campaign: campaign.title,
+						content: `${index + 1}_${unit.type}`,
+					}),
+				}))
+			}
+
 			await getAllValidatorsAuthForIdentity({
 				withBalance: [{ channel: campaign }],
 				account,
@@ -78,6 +102,11 @@ export function openCampaign() {
 				campaign,
 				account,
 			})
+
+			await saveAudience({
+				campaignId: storeCampaign.id,
+				audienceInput: campaign.audienceInput,
+			})(dispatch, getState)
 
 			dispatch({
 				type: ADD_ITEM,
@@ -153,6 +182,59 @@ function getHumanFriendlyName(campaign) {
 			return 'Completed'
 		default:
 			return 'N/A'
+	}
+}
+
+export function updateCampaignAudienceInput({
+	updateField,
+	itemId,
+	validateId,
+	onValid,
+}) {
+	return async function(dispatch, getState) {
+		const state = getState()
+		const { audienceInput } = selectNewItemByTypeAndId(
+			state,
+			'Campaign',
+			itemId
+		)
+
+		const isValid = await validateAudience({
+			validateId,
+			inputs: audienceInput.inputs,
+			dirty: true,
+			propName: 'audienceInput',
+		})(dispatch)
+
+		if (isValid) {
+			await updateField('audienceInput', audienceInput)
+			onValid()
+		}
+	}
+}
+
+export function mapCurrentToNewCampaignAudienceInput({ itemId, dirtyProps }) {
+	return async function(dispatch, getState) {
+		const state = getState()
+		const item = selectCampaignById(state, itemId)
+		const campaign = selectNewItemByTypeAndId(state, 'Campaign', itemId)
+		const initialAudienceInput = selectAudienceByCampaignId(state, itemId)
+		const itemAudienceInput =
+			item.audienceInput && Object.keys(item.audienceInput.inputs).length
+				? item.audienceInput
+				: initialAudienceInput
+
+		const audienceInput = dirtyProps.includes('audienceInput')
+			? campaign.audienceInput
+			: item.audienceInput || itemAudienceInput
+
+		updateNewItem(
+			item,
+			{ audienceInput: { ...audienceInput } },
+			'Campaign',
+			Campaign,
+			item.id
+		)(dispatch, getState)
 	}
 }
 
@@ -286,6 +368,44 @@ export function validateNewCampaignAdUnits({
 	}
 }
 
+export function validateCampaignAudienceInput({
+	validateId,
+	dirty,
+	onValid,
+	onInvalid,
+}) {
+	return async function(dispatch, getState) {
+		await updateSpinner(validateId, true)(dispatch)
+		try {
+			const state = getState()
+			const { audienceInput = {} } = selectNewCampaign(state)
+			const { inputs } = audienceInput
+
+			const isValid = await validateAudience({
+				validateId,
+				inputs,
+				dirty,
+				propName: 'audienceInput',
+			})(dispatch)
+
+			const targetingRules = isValid
+				? audienceInputToTargetingRules(audienceInput)
+				: []
+
+			await updateNewCampaign('targetingRules', targetingRules)(
+				dispatch,
+				getState
+			)
+
+			await handleAfterValidation({ isValid, onValid, onInvalid })
+		} catch (err) {
+			console.log('err', err)
+		}
+
+		await updateSpinner(validateId, false)(dispatch)
+	}
+}
+
 export function validateNewCampaignFinance({
 	validateId,
 	dirty,
@@ -305,8 +425,8 @@ export function validateNewCampaignFinance({
 				activeFrom,
 				withdrawPeriodStart,
 				created,
-				minTargetingScore,
-				adUnits,
+				// minTargetingScore,
+				// adUnits,
 				temp = {},
 			} = campaign
 
@@ -368,12 +488,12 @@ export function validateNewCampaignFinance({
 					withdrawPeriodStart,
 					created,
 				})(dispatch),
-				validateCampaignMinTargetingScore({
-					validateId,
-					minTargetingScore,
-					adUnits,
-					dirty,
-				})(dispatch),
+				// validateCampaignMinTargetingScore({
+				// 	validateId,
+				// 	minTargetingScore,
+				// 	adUnits,
+				// 	dirty,
+				// })(dispatch),
 			])
 
 			const isValid = validations.every(v => v === true)
@@ -523,13 +643,28 @@ export function validateAndUpdateCampaign({ validateId, dirty, item, update }) {
 					item: new Campaign(updatedCampaign).plainObj(),
 					itemType: 'Campaign',
 				})
+				addToast({
+					type: 'success',
+					label: t('SUCCESS_UPDATING_ITEM', {
+						args: ['CAMPAIGN', updatedCampaign.title],
+					}),
+					timeout: 50000,
+				})(dispatch)
+			} else if (!isValid && update) {
+				addToast({
+					type: 'cancel',
+					label: t('ERR_UPDATING_ITEM', {
+						args: ['CAMPAIGN', getErrorMsg('INVALID_DATA')],
+					}),
+					timeout: 50000,
+				})(dispatch)
 			}
 		} catch (err) {
 			console.error('ERR_UPDATING_ITEM', err)
 			addToast({
 				type: 'cancel',
 				label: t('ERR_UPDATING_ITEM', {
-					args: ['Campaign', Helper.getErrMsg(err)],
+					args: ['CAMPAIGN', Helper.getErrMsg(err)],
 				}),
 				timeout: 50000,
 			})(dispatch)

@@ -13,10 +13,14 @@ import {
 	VALIDATOR_ANALYTICS_EVENT_TYPES,
 	VALIDATOR_ANALYTICS_METRICS,
 } from 'constants/misc'
-import { UPDATING_SLOTS_DEMAND } from 'constants/spinners'
+import {
+	UPDATING_SLOTS_DEMAND,
+	UPDATING_TARGETING_DATA,
+} from 'constants/spinners'
 import { getErrorMsg } from 'helpers/errors'
 import { fillEmptyTime } from 'helpers/timeHelpers'
 import { getUnitsStatsByType } from 'services/adex-market/aggregates'
+import { getTargetingData } from 'services/adex-market/actions'
 import {
 	selectChannelsWithUserBalancesAll,
 	selectFeeTokenWhitelist,
@@ -468,6 +472,36 @@ export const updateSlotsDemand = throttle(
 	{ leading: true, trailing: false }
 )
 
+export const updateTargetingData = throttle(
+	async function(dispatch) {
+		await updateSpinner(UPDATING_TARGETING_DATA, true)(dispatch)
+		try {
+			const targetingData = await getTargetingData()
+
+			dispatch({
+				type: types.UPDATE_TARGETING_ANALYTICS,
+				value: targetingData,
+			})
+		} catch (err) {
+			console.error('ERR_TARGETING_DATA_ANALYTICS', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_TARGETING_DATA_ANALYTICS', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+		await updateSpinner(UPDATING_TARGETING_DATA, false)(dispatch)
+	},
+	5 * 60 * 1000,
+	{ leading: true, trailing: false }
+)
+
 export const updateSlotsDemandThrottled = () => dispatch => {
 	return updateSlotsDemand(dispatch)
+}
+
+export const updateTargetingDataThrottled = () => dispatch => {
+	return updateTargetingData(dispatch)
 }

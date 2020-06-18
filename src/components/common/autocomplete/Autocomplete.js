@@ -1,6 +1,13 @@
 import React, { useEffect, Fragment, useState } from 'react'
 import PropTypes from 'prop-types'
-import { FormHelperText, TextField, Box } from '@material-ui/core'
+import {
+	FormHelperText,
+	TextField,
+	Box,
+	Tooltip,
+	Typography,
+	Chip,
+} from '@material-ui/core'
 import AutocompleteMUI, {
 	createFilterOptions,
 } from '@material-ui/lab/Autocomplete'
@@ -22,6 +29,9 @@ function Autocomplete({
 	value,
 	onChange,
 	fullWidth,
+	disabled,
+	disableCloseOnSelect,
+	disabledSrcValues = [],
 	enableCreate,
 }) {
 	useEffect(() => {
@@ -30,20 +40,40 @@ function Autocomplete({
 	}, [])
 
 	const handleChange = item => {
-		const selectedItem = item ? item.value || item.label : item
-		onChange(selectedItem)
+		if (multiple) {
+			onChange(item.map(i => i.value || i.label || i))
+		} else {
+			onChange(item ? item.value || item.label || item : item)
+		}
 	}
+
+	const srcValue = multiple
+		? source.filter(s => Array.isArray(value) && value.includes(s.value))
+		: source.find(s => s.value === value) || value
 
 	return (
 		<Fragment>
 			<AutocompleteMUI
 				multiple={multiple}
+				disableCloseOnSelect={disableCloseOnSelect}
 				options={source}
-				value={value || null}
+				disabled={disabled}
+				groupBy={option => option.group}
+				value={srcValue}
 				getOptionLabel={option => option.label || option}
-				getOptionSelected={(a, b = '') => {
-					return [JSON.stringify(b), b, b.value].includes(a.value)
+				getLimitTagsText={more => `${more} more`}
+				limitTags={10}
+				getOptionDisabled={option =>
+					disabledSrcValues.some(x => (option.value || option) === x)
+				}
+				getOptionSelected={(opt, val = '') => {
+					const isSelected =
+						!!opt &&
+						!!val &&
+						[JSON.stringify(val), val, val.value].includes(opt.value)
+					return isSelected
 				}}
+				// freeSolo
 				onChange={(_, newValue) => handleChange(newValue)}
 				renderInput={params => {
 					return (
@@ -56,6 +86,26 @@ function Autocomplete({
 						/>
 					)
 				}}
+				renderOption={option => {
+					return (
+						<Tooltip title={option.extraLabel || ''}>
+							{<Typography>{option.label}</Typography>}
+						</Tooltip>
+					)
+				}}
+				renderTags={(value, getCustomizedTagProps) =>
+					value.map((option, index) => (
+						<Tooltip
+							key={option.value + '' + index}
+							title={option.extraLabel || ''}
+						>
+							<Chip
+								label={option.label || option}
+								{...getCustomizedTagProps({ index })}
+							/>
+						</Tooltip>
+					))
+				}
 			/>
 			{error && (
 				<FormHelperText error id='component-error-text'>
@@ -76,6 +126,7 @@ export const AutocompleteWithCreate = ({
 	helperText,
 	fullWidth,
 	initialValue,
+	disabled,
 	onChange,
 	changeOnInputUpdate,
 }) => {
@@ -123,7 +174,11 @@ export const AutocompleteWithCreate = ({
 			selectOnFocus
 			// clearOnBlur
 			// handleHomeEndKeys
+			disabled={disabled}
 			options={source}
+			getLimitTagsText={more => `${more} more`}
+			limitTags={2}
+			groupBy={option => option.group}
 			getOptionLabel={option => {
 				// Value selected with enter, right from the input
 				if (typeof option === 'string') {

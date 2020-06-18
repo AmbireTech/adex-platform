@@ -64,6 +64,44 @@ export const selectDemandAnalytics = createSelector(
 	({ demand }) => demand || {}
 )
 
+export const selectTargetingAnalytics = createSelector(
+	[selectAnalytics],
+	({ targeting }) => targeting || []
+)
+
+export const selectTargetingAnalyticsByType = createSelector(
+	[selectTargetingAnalytics, (_, types) => types],
+	(targetingAnalytics, types) =>
+		types && types.length
+			? targetingAnalytics.filter(x => types.some(t => x.types.includes(t)))
+			: targetingAnalytics
+)
+
+export const selectTargetingCategoriesByType = createSelector(
+	[selectTargetingAnalyticsByType],
+	targeting =>
+		Array.from(
+			targeting.reduce((categories, x) => {
+				x.categories.forEach(c => categories.add(c))
+				return categories
+			}, new Set())
+		)
+)
+
+export const selectTargetingPublishersByType = createSelector(
+	[selectTargetingAnalyticsByType],
+	targeting => {
+		return Array.from(
+			targeting
+				.reduce((publishers, { owner, hostname, alexaRank, categories }) => {
+					publishers.set(hostname, { owner, hostname, alexaRank, categories })
+					return publishers
+				}, new Map())
+				.values()
+		)
+	}
+)
+
 export const selectAdvancedAnalyticsByType = createSelector(
 	[selectAdvancedAnalytics, (_, type) => type],
 	(campaignAnalytics, type) => campaignAnalytics[type] || {}

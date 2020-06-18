@@ -4,9 +4,12 @@ import {
 	selectDemandAnalytics,
 	selectMainToken,
 	selectWebsitesArray,
+	selectTargetingCategoriesByType,
+	selectTargetingPublishersByType,
+	selectNewItemByTypeAndId,
 } from 'selectors'
 import { createSelector } from 'reselect'
-import { constants } from 'adex-models'
+import { constants, IabCategories } from 'adex-models'
 import { WHERE_YOU_KNOW_US } from 'constants/misc'
 import moment from 'moment'
 
@@ -135,10 +138,21 @@ export const selectTargetingSources = createSelector(
 )
 
 const autocompleteLocationsSingleSelect = () => {
-	return constants.AllCountries.map(({ name, value } = {}) => ({
+	const tiers = Object.values(constants.CountryTiers).map(
+		({ name, ruleValue, countries } = {}) => ({
+			label: t(name),
+			extraLabel: countries.join(', '),
+			value: ruleValue,
+			group: t('BY_TIER'),
+		})
+	)
+	const all = constants.AllCountries.map(({ name, ruleValue } = {}) => ({
 		label: t(name),
-		value: value,
+		value: ruleValue,
+		group: name[0].toUpperCase(),
 	}))
+
+	return [...tiers, ...all]
 }
 
 const autocompleteGendersSingleSelect = () => {
@@ -148,15 +162,22 @@ const autocompleteGendersSingleSelect = () => {
 	}))
 }
 
-const autocompleteTagsSingleSelect = () => {
-	return constants.PredefinedTags.map(({ _id }) => ({
-		label: t(_id),
-		value: _id,
+const autocompleteCategoriesSingleSelect = (state, types) =>
+	[{ label: t('ALL_CATEGORIES'), value: 'ALL' }].concat(
+		selectTargetingCategoriesByType(state, types).map(cat => ({
+			label: t(IabCategories.wrbshrinkerWebsiteApiV3Categories[cat] || cat),
+			value: cat,
+		}))
+	)
+
+const autocompletePublishersSingleSelect = (state, types) =>
+	selectTargetingPublishersByType(state, types).map(pub => ({
+		label: pub.hostname,
+		value: JSON.stringify({ hostname: pub.hostname, publisher: pub.owner }),
 	}))
-}
 
 export const slotSources = () => ({
-	tags: { src: autocompleteTagsSingleSelect(), collection: 'tags' },
+	tags: { src: autocompleteCategoriesSingleSelect(), collection: 'tags' },
 	custom: { src: [], collection: 'tags' },
 })
 
@@ -166,9 +187,73 @@ export const unitSources = () => ({
 		collection: 'targeting',
 	},
 	genders: { src: autocompleteGendersSingleSelect(), collection: 'targeting' },
-	tags: { src: autocompleteTagsSingleSelect(), collection: 'targeting' },
+	tags: { src: autocompleteCategoriesSingleSelect(), collection: 'targeting' },
 	custom: { src: [], collection: 'targeting' },
 })
+
+export const campaignSources = () => [
+	{
+		parameter: 'location',
+		singleValuesSrc: () => autocompleteLocationsSingleSelect(),
+		applyType: 'single',
+		actions: [
+			{ type: 'in', label: t('SHOW_ONLY_IN_SELECTED'), minSelected: 1 },
+			{ type: 'nin', label: t('DONT_SHOW_IN_SELECTED'), minSelected: 1 },
+			{ type: 'allin', label: t('SHOW_EVERYWHERE'), value: 'ALL' },
+		],
+	},
+	{
+		parameter: 'categories',
+		singleValuesSrc: (state, opts) =>
+			autocompleteCategoriesSingleSelect(state, opts),
+		applyType: 'multiple',
+		actions: [
+			{ type: 'in', label: t('SHOW_SELECTED'), minSelected: 1 },
+			{
+				type: 'nin',
+				label: t('DONT_SHOW_SELECTED'),
+				minSelected: 1,
+				disabledValues: ['ALL'],
+			},
+		],
+	},
+	{
+		parameter: 'publishers',
+		singleValuesSrc: (state, type) =>
+			autocompletePublishersSingleSelect(state, type),
+		applyType: 'single',
+		actions: [
+			{ type: 'in', label: t('SHOW_ONLY_IN_SELECTED'), minSelected: 1 },
+			{ type: 'nin', label: t('DONT_SHOW_IN_SELECTED'), minSelected: 1 },
+			{ type: 'allin', label: t('SHOW_EVERYWHERE'), value: 'ALL' },
+		],
+	},
+	{
+		parameter: 'advanced',
+		applyType: 'multiple-checkbox',
+		actions: [
+			{
+				value: 'includeIncentivized',
+				label: t('INCLUDE_INCENTIVIZED_TRAFFIC'),
+			},
+			{
+				value: 'disableFrequencyCapping',
+				label: t('DISABLE_FREQUENCY_CAPPING'),
+			},
+			{
+				value: 'limitDailyAverageSpending',
+				label: t('LIMIT_AVERAGE_DAILY_SPENDING'),
+			},
+		],
+	},
+]
+
+export const selectAudienceInputItemOptions = createSelector(
+	[selectNewItemByTypeAndId],
+	item => {
+		return item && item.adUnits ? item.adUnits.map(u => u.type) : null
+	}
+)
 
 export const websitesAutocompleteSrc = createSelector(
 	selectWebsitesArray,

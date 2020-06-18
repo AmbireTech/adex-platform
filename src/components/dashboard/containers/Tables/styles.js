@@ -6,4 +6,9 @@ export const styles = theme => ({
 		cursor: 'pointer',
 		display: 'flex',
 	},
+	actions: {
+		'& > *': {
+			margin: theme.spacing(0.5),
+		},
+	},
 })

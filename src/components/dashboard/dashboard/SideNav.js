@@ -20,6 +20,8 @@ import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
 import Box from '@material-ui/core/Box'
 import ListIcon from '@material-ui/icons/List'
+import AudienceIcon from '@material-ui/icons/Group'
+import WebsitesIcon from '@material-ui/icons/WebSharp'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import { LoadingSection } from 'components/common/spinners'
@@ -219,6 +221,19 @@ function SideNav(props) {
 								<ListItemText primary={t('CAMPAIGNS')} />
 							</RRListItem>
 							<ListDivider />
+							<RRListItem
+								button
+								to={{ pathname: '/dashboard/advertiser/audiences' }}
+								className={classnames({
+									[classes.active]: location === 'audiences',
+								})}
+							>
+								<ListItemIcon>
+									<AudienceIcon />
+								</ListItemIcon>
+								<ListItemText primary={t('AUDIENCES')} />
+							</RRListItem>
+							<ListDivider />
 						</>
 					)}
 					{side === 'publisher' && (
@@ -231,7 +246,7 @@ function SideNav(props) {
 								})}
 							>
 								<ListItemIcon>
-									<Receipt />
+									<WebsitesIcon />
 								</ListItemIcon>
 								<ListItemText primary={t('WEBSITES')} />
 							</RRListItem>

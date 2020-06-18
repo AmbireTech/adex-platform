@@ -1,7 +1,7 @@
 import React from 'react'
 import FormSteps from 'components/common/stepper/FormSteps'
 import WithDialog from 'components/common/dialog/WithDialog'
-import { AdUnit, AdSlot, Campaign } from 'adex-models'
+import { AdUnit, AdSlot, Campaign, Audience } from 'adex-models'
 import FileCopyIcon from '@material-ui/icons/FileCopy'
 import AdUnitBasic from './AdUnit/AdUnitBasic'
 import AdUnitMedia from './AdUnit/AdUnitMedia'
@@ -11,7 +11,9 @@ import CampaignFinance from './Campaign/CampaignFinance'
 import CampaignFormPreview from './Campaign/CampaignFormPreview'
 import AdSlotBasic from './AdSlot/AdSlotBasic'
 import AdSlotMedia from './AdSlot/AdSlotMedia'
-import NewItemTargeting from './NewItemTargeting'
+import AudienceBasic from './Audience/AudienceBasic'
+import NewAudiencePreview from './Audience/NewAudiencePreview'
+import NewTargetingRules from './NewTargetingRules'
 import AdSlotPreview from './AdSlot/AdSlotPreview'
 
 import {
@@ -22,29 +24,32 @@ import {
 	validateNewSlotBasics,
 	validateNewSlotPassback,
 	validateNewUnitMedia,
-	validateNewUnitTargeting,
+	validateCampaignAudienceInput,
+	validateAudienceBasics,
+	validateAudienceInput,
 	completeItem,
 	resetNewItem,
 	saveUnit,
 	saveSlot,
+	saveAudience,
 	openCampaign,
 } from 'actions'
 
-import { slotSources, unitSources } from 'selectors'
+import { campaignSources } from 'selectors'
 
-export const AdSlotTargeting = props => (
-	<NewItemTargeting
+export const CampaignTargetingRules = props => (
+	<NewTargetingRules
 		{...props}
-		itemType='AdSlot'
-		sourcesSelector={slotSources}
+		itemType='Campaign'
+		sourcesSelector={campaignSources}
 	/>
 )
 
-const AdUnitTargeting = props => (
-	<NewItemTargeting
+export const AudienceRules = props => (
+	<NewTargetingRules
 		{...props}
-		itemType='AdUnit'
-		sourcesSelector={unitSources}
+		itemType='Audience'
+		sourcesSelector={campaignSources}
 	/>
 )
 
@@ -66,11 +71,6 @@ export const NewUnitSteps = props => (
 				title: 'UNIT_MEDIA_STEP',
 				component: AdUnitMedia,
 				validationFn: props => execute(validateNewUnitMedia(props)),
-			},
-			{
-				title: 'UNIT_TARGETS_STEP',
-				component: AdUnitTargeting,
-				validationFn: props => execute(validateNewUnitTargeting(props)),
 			},
 			{
 				title: 'PREVIEW_AND_SAVE_ITEM',
@@ -126,6 +126,11 @@ export const NewCampaignSteps = props => (
 				validationFn: props => execute(validateNewCampaignAdUnits(props)),
 			},
 			{
+				title: 'CAMPAIGN_AUDIENCE_STEP',
+				component: CampaignTargetingRules,
+				validationFn: props => execute(validateCampaignAudienceInput(props)),
+			},
+			{
 				title: 'CAMPAIGN_FINANCE_STEP',
 				component: CampaignFinance,
 				validationFn: ({ validateId, dirty, onValid, onInvalid }) =>
@@ -161,10 +166,14 @@ const NewCampaignStepsWithDialog = WithDialog(NewCampaignSteps)
 
 export const NewCampaignDialog = props => (
 	<NewCampaignStepsWithDialog
-		{...props}
 		btnLabel='NEW_CAMPAIGN'
 		title='CREATE_NEW_CAMPAIGN'
+		{...props}
 	/>
+)
+
+export const NewCampaignFromAudience = props => (
+	<NewCampaignStepsWithDialog {...props} title='NEW_CAMPAIGN_FROM_AUDIENCE' />
 )
 
 // Ad slot
@@ -194,7 +203,6 @@ export const NewSlotSteps = props => (
 				component: AdSlotMedia,
 				validationFn: props => execute(validateNewSlotPassback(props)),
 			},
-			{ title: 'SLOT_TAGS_STEP', component: AdSlotTargeting },
 			{
 				title: 'PREVIEW_AND_SAVE_ITEM',
 				completeBtnTitle: 'SAVE',
@@ -223,5 +231,73 @@ export const NewSlotDialog = props => (
 		{...props}
 		btnLabel='NEW_SLOT'
 		title='CREATE_NEW_SLOT'
+	/>
+)
+
+// Audience
+
+export const AudienceSteps = props => (
+	<FormSteps
+		{...props}
+		cancelFunction={() => execute(resetNewItem('Audience'))}
+		validateIdBase='new-Audience-'
+		itemType='Audience'
+		stepsId='new-audience-'
+		steps={[
+			{
+				title: 'AUDIENCE_BASIC_STEP',
+				component: AudienceBasic,
+				validationFn: ({ validateId, dirty, onValid, onInvalid }) =>
+					execute(
+						validateAudienceBasics({
+							validateId,
+							dirty,
+							onValid,
+							onInvalid,
+						})
+					),
+			},
+			...(props.skipRules
+				? []
+				: [
+						{
+							title: 'AUDIENCE_STEP',
+							component: AudienceRules,
+							validationFn: ({ validateId, dirty, onValid, onInvalid }) =>
+								execute(
+									validateAudienceInput({
+										validateId,
+										dirty,
+										onValid,
+										onInvalid,
+									})
+								),
+						},
+				  ]),
+			{
+				title: 'PREVIEW_AND_SAVE_ITEM',
+				completeBtnTitle: 'SAVE',
+				component: NewAudiencePreview,
+				completeFn: props =>
+					execute(
+						completeItem({
+							...props,
+							itemType: 'Audience',
+							competeAction: saveAudience,
+						})
+					),
+			},
+		]}
+		itemModel={Audience}
+	/>
+)
+
+export const NewAudienceWithDialog = WithDialog(AudienceSteps)
+
+export const NewAudienceDialog = props => (
+	<NewAudienceWithDialog
+		btnLabel='NEW_AUDIENCE'
+		title='CREATE_NEW_AUDIENCE'
+		{...props}
 	/>
 )

@@ -11,6 +11,7 @@ import {
 	updateNewItem,
 } from 'actions'
 import { numStringCPMtoImpression } from 'helpers/numbers'
+import { getErrorMsg } from 'helpers/errors'
 import {
 	selectMainToken,
 	selectNewAdSlot,
@@ -29,7 +30,6 @@ import {
 import { getWidAndHightFromType } from 'helpers/itemsHelpers'
 
 import { ADD_ITEM, UPDATE_ITEM } from 'constants/actionTypes'
-import Helper from 'helpers/miscHelpers'
 import { ipfsSrc } from 'helpers/ipfsHelpers'
 import { getImgObjectUrlFromExternalUrl } from 'services/images/blob'
 
@@ -276,7 +276,7 @@ export function saveSlot() {
 
 			addToast({
 				type: 'accept',
-				label: t('SUCCESS_CREATING_ITEM', { args: ['AdSlot', newItem.title] }),
+				label: t('SUCCESS_CREATING_ITEM', { args: ['ADSLOT', newItem.title] }),
 				timeout: 20000,
 			})(dispatch)
 		} catch (err) {
@@ -284,48 +284,12 @@ export function saveSlot() {
 			addToast({
 				type: 'cancel',
 				label: t('ERR_CREATING_ITEM', {
-					args: ['AdSlot', Helper.getErrMsg(err)],
+					args: ['ADSLOT', getErrorMsg(err)],
 				}),
 				timeout: 20000,
 			})(dispatch)
 			throw new Error('ERR_CREATING_ITEM', err)
 		}
-	}
-}
-
-export function mapCurrentToNewTargeting({ itemId, dirtyProps }) {
-	return async function(dispatch, getState) {
-		const state = getState()
-		const item = selectAdSlotById(state, itemId)
-		const { temp } = selectNewItemByTypeAndId(state, 'AdSlot', itemId)
-
-		const targets = dirtyProps.includes('tags')
-			? temp.targets
-			: [...item.tags].map((tag, key) => ({
-					key,
-					collection: 'tags',
-					source: 'custom',
-					label: t(`TARGET_LABEL_TAGS`),
-					placeholder: t(`TARGET_LABEL_TAGS`),
-					target: { ...tag },
-			  }))
-
-		updateNewItem(
-			item,
-			{ temp: { ...temp, targets } },
-			'AdSlot',
-			AdSlot,
-			item.id
-		)(dispatch, getState)
-	}
-}
-
-export function updateSlotTargeting({ updateField, itemId, onValid }) {
-	return async function(dispatch, getState) {
-		const state = getState()
-		const { tags } = selectNewItemByTypeAndId(state, 'AdSlot', itemId)
-		updateField('tags', tags)
-		onValid()
 	}
 }
 
@@ -527,8 +491,8 @@ export function validateAndUpdateSlot({
 				}
 			}
 
-			const isPassbackUpdated = ['mediaUrl', 'targetUrl'].some(prop =>
-				dirtyProps.includes(prop)
+			const isPassbackUpdated = dirtyProps.some(
+				prop => prop && prop.name === 'passbackData'
 			)
 
 			const fallbackData = {
@@ -606,13 +570,28 @@ export function validateAndUpdateSlot({
 					item: new AdSlot({ ...updatedSlot, ...fallbackData }).plainObj(),
 					itemType: 'AdSlot',
 				})
+				addToast({
+					type: 'success',
+					label: t('SUCCESS_UPDATING_ITEM', {
+						args: ['ADSLOT', updatedSlot.title],
+					}),
+					timeout: 50000,
+				})(dispatch)
+			} else if (!isValid && update) {
+				addToast({
+					type: 'error',
+					label: t('ERR_UPDATING_ITEM', {
+						args: ['ADSLOT', getErrorMsg('INVALID_DATA')],
+					}),
+					timeout: 50000,
+				})(dispatch)
 			}
 		} catch (err) {
 			console.error('ERR_UPDATING_ITEM', err)
 			addToast({
-				type: 'cancel',
+				type: 'error',
 				label: t('ERR_UPDATING_ITEM', {
-					args: ['AdSlot', Helper.getErrMsg(err)],
+					args: ['ADSLOT', getErrorMsg(err)],
 				}),
 				timeout: 50000,
 			})(dispatch)
