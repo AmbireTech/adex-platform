@@ -118,6 +118,7 @@ function Audience({ match }) {
 							execute(
 								updateNewAudience(null, null, {
 									...item,
+									title: item.title + ' (2)',
 								})
 							)
 						}
