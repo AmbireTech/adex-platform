@@ -17,7 +17,6 @@ import {
 } from 'actions'
 import { Audience, schemas } from 'adex-models'
 
-// TODO:
 const { audiencePost, audiencePut } = schemas
 
 export function updateAudienceInput({
@@ -95,11 +94,18 @@ export function validateAndUpdateAudience({ validateId, dirty, item, update }) {
 					item: new Audience(updatedAudience).plainObj(),
 					itemType: 'Audience',
 				})
+				addToast({
+					type: 'success',
+					label: t('SUCCESS_UPDATING_ITEM', {
+						args: ['AUDIENCE', updatedAudience.title],
+					}),
+					timeout: 50000,
+				})(dispatch)
 			} else if (!isValid && update) {
 				addToast({
-					type: 'cancel',
+					type: 'error',
 					label: t('ERR_UPDATING_ITEM', {
-						args: ['Audience', getErrorMsg('INVALID_DATA')],
+						args: ['AUDIENCE', getErrorMsg('INVALID_DATA')],
 					}),
 					timeout: 50000,
 				})(dispatch)
@@ -107,9 +113,9 @@ export function validateAndUpdateAudience({ validateId, dirty, item, update }) {
 		} catch (err) {
 			console.error('ERR_UPDATING_ITEM', err)
 			addToast({
-				type: 'cancel',
+				type: 'error',
 				label: t('ERR_UPDATING_ITEM', {
-					args: ['Audience', getErrorMsg(err)],
+					args: ['AUDIENCE', getErrorMsg(err)],
 				}),
 				timeout: 50000,
 			})(dispatch)
@@ -172,7 +178,7 @@ export function saveAudience({ audienceInput, campaignId } = {}) {
 			addToast({
 				type: 'error',
 				label: t('ERR_CREATING_AUDIENCE', {
-					args: ['Audience', getErrorMsg(err)],
+					args: ['AUDIENCE', getErrorMsg(err)],
 				}),
 				timeout: 50000,
 			})(dispatch)
