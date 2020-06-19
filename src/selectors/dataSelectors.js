@@ -7,6 +7,7 @@ import {
 	selectTargetingCategoriesByType,
 	selectTargetingPublishersByType,
 	selectNewItemByTypeAndId,
+	selectValidationsById,
 } from 'selectors'
 import { createSelector } from 'reselect'
 import { constants, IabCategories } from 'adex-models'
@@ -174,6 +175,7 @@ const autocompletePublishersSingleSelect = (state, types) =>
 	selectTargetingPublishersByType(state, types).map(pub => ({
 		label: pub.hostname,
 		value: JSON.stringify({ hostname: pub.hostname, publisher: pub.owner }),
+		extraData: pub,
 	}))
 
 export const slotSources = () => ({
@@ -191,7 +193,7 @@ export const unitSources = () => ({
 	custom: { src: [], collection: 'targeting' },
 })
 
-export const campaignSources = () => [
+export const audienceSources = () => [
 	{
 		parameter: 'location',
 		singleValuesSrc: () => autocompleteLocationsSingleSelect(),
@@ -266,4 +268,42 @@ export const websitesAutocompleteSrc = createSelector(
 				status: ws.issues && ws.issues.length ? 'error' : 'success',
 			}
 		})
+)
+
+export const selectAudienceInputsDatByItem = createSelector(
+	[
+		audienceSources,
+		selectNewItemByTypeAndId,
+		selectAudienceInputItemOptions,
+		(state, itemType, itemId, validateId) => ({
+			state,
+			itemType,
+			itemId,
+			validateId,
+		}),
+	],
+	(sources, selectedItem, options, { state, itemType, itemId, validateId }) => {
+		const SOURCES = sources.map(s => ({
+			...s,
+			source: s.singleValuesSrc ? s.singleValuesSrc(state, options) : [],
+		}))
+
+		const isCampaignAudienceItem = !!selectedItem.audienceInput
+
+		const validations = selectValidationsById(state, validateId) || {}
+
+		const errors =
+			validations[isCampaignAudienceItem ? 'audienceInput' : 'inputs'] || {}
+
+		const errorParameters = errors.dirty ? errors.errFields || {} : {}
+
+		const inputs =
+			(isCampaignAudienceItem
+				? selectedItem.audienceInput.inputs
+				: selectedItem.inputs) || {}
+
+		const audienceInputData = { SOURCES, inputs, errorParameters }
+
+		return audienceInputData
+	}
 )

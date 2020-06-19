@@ -25,12 +25,7 @@ import {
 } from '@material-ui/icons'
 import Autocomplete from 'components/common/autocomplete'
 
-import {
-	t,
-	selectNewItemByTypeAndId,
-	selectAudienceInputItemOptions,
-	selectValidationsById,
-} from 'selectors'
+import { t, selectAudienceInputsDatByItem } from 'selectors'
 import { execute, updateTargetRuleInput } from 'actions'
 
 const useStyles = makeStyles(theme => ({
@@ -62,6 +57,30 @@ const getApply = (applyType, currentApply = [], actionType) =>
 	applyType === 'single'
 		? actionType
 		: [...currentApply, actionType].filter((t, i, all) => all.indexOf(t) === i)
+
+const getDisabledPublishersAfterCategoriesRules = ({
+	selectedCategories,
+	publishers,
+}) => {
+	console.log('selectedCategories', selectedCategories)
+	console.log('publishers', publishers)
+}
+
+const getDisabledValues = ({
+	target,
+	actionType,
+	parameter,
+	inputs,
+	SOURCES,
+}) => {
+	if (parameter === 'publishers') {
+		return getDisabledPublishersAfterCategoriesRules({
+			selectedCategories: inputs['categories'],
+			actionType,
+			publishers: SOURCES.find(x => x.parameter === 'publishers'),
+		})
+	}
+}
 
 const Sources = ({
 	id,
@@ -162,6 +181,7 @@ const getMultipleActionsUsedValues = ({ actions, currentAction, target }) => {
 }
 
 const Targets = ({
+	inputs,
 	source = [],
 	collection,
 	placeholder,
@@ -175,6 +195,7 @@ const Targets = ({
 	applyType,
 	itemId,
 	itemType,
+	SOURCES,
 }) => {
 	const classes = useStyles()
 	const id = `target-${index}`
@@ -236,6 +257,14 @@ const Targets = ({
 										actionType={a.type}
 										applyType={applyType}
 										itemType={itemType}
+										disabledSrcValues={getDisabledValues({
+											inputs,
+											target,
+											actionType: a.type,
+											parameter,
+											source,
+											SOURCES,
+										})}
 									/>
 								)}
 							</Box>
@@ -314,44 +343,15 @@ const Targets = ({
 	)
 }
 
-const NewTargetingRules = ({
-	itemType,
-	itemId,
-	sourcesSelector,
-	validateId,
-}) => {
+const NewTargetingRules = ({ itemType, itemId, validateId }) => {
 	const [tabIndex, setTabIndex] = useState(0)
-	const SOURCES = useSelector(sourcesSelector)
 	const classes = useStyles()
-	const { parameter, singleValuesSrc, actions, applyType } =
-		SOURCES[tabIndex] || {}
 
-	const options = useSelector(state =>
-		selectAudienceInputItemOptions(state, itemType, itemId)
+	const { SOURCES, inputs, errorParameters } = useSelector(state =>
+		selectAudienceInputsDatByItem(state, itemType, itemId, validateId)
 	)
 
-	const source = useSelector(state =>
-		singleValuesSrc ? singleValuesSrc(state, options) : []
-	)
-
-	const selectedItem = useSelector(state =>
-		selectNewItemByTypeAndId(state, itemType, itemId)
-	)
-
-	const isCampaignAudienceItem = !!selectedItem.audienceInput
-
-	const validations =
-		useSelector(state => selectValidationsById(state, validateId)) || {}
-
-	const errors =
-		validations[isCampaignAudienceItem ? 'audienceInput' : 'inputs'] || {}
-
-	const errorParameters = errors.dirty ? errors.errFields || {} : {}
-
-	const inputs =
-		(isCampaignAudienceItem
-			? selectedItem.audienceInput.inputs
-			: selectedItem.inputs) || {}
+	const { parameter, source, actions, applyType } = SOURCES[tabIndex] || {}
 
 	return (
 		<Grid container spacing={1}>
@@ -382,12 +382,14 @@ const NewTargetingRules = ({
 				</Paper>
 				<Box mt={2}>
 					<Targets
+						inputs={inputs}
 						target={inputs[parameter]}
 						key={parameter}
 						parameter={parameter}
 						label={t(parameter)}
 						placeholder={t(parameter)}
 						source={source || []}
+						SOURCES={SOURCES}
 						actions={actions}
 						applyType={applyType}
 						itemId={itemId}

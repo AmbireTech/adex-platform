@@ -35,22 +35,12 @@ import {
 	openCampaign,
 } from 'actions'
 
-import { campaignSources } from 'selectors'
-
 export const CampaignTargetingRules = props => (
-	<NewTargetingRules
-		{...props}
-		itemType='Campaign'
-		sourcesSelector={campaignSources}
-	/>
+	<NewTargetingRules {...props} itemType='Campaign' />
 )
 
 export const AudienceRules = props => (
-	<NewTargetingRules
-		{...props}
-		itemType='Audience'
-		sourcesSelector={campaignSources}
-	/>
+	<NewTargetingRules {...props} itemType='Audience' />
 )
 
 // Ad unit
@@ -244,19 +234,19 @@ export const AudienceSteps = props => (
 		itemType='Audience'
 		stepsId='new-audience-'
 		steps={[
-			{
-				title: 'AUDIENCE_BASIC_STEP',
-				component: AudienceBasic,
-				validationFn: ({ validateId, dirty, onValid, onInvalid }) =>
-					execute(
-						validateAudienceBasics({
-							validateId,
-							dirty,
-							onValid,
-							onInvalid,
-						})
-					),
-			},
+			// {
+			// 	title: 'AUDIENCE_BASIC_STEP',
+			// 	component: AudienceBasic,
+			// 	validationFn: ({ validateId, dirty, onValid, onInvalid }) =>
+			// 		execute(
+			// 			validateAudienceBasics({
+			// 				validateId,
+			// 				dirty,
+			// 				onValid,
+			// 				onInvalid,
+			// 			})
+			// 		),
+			// },
 			...(props.skipRules
 				? []
 				: [
