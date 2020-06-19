@@ -19,7 +19,7 @@ export const selectNewItemByType = createSelector(
 export const selectNewItemByTypeAndId = createSelector(
 	[selectNewItems, (_, type, itemId) => ({ type, itemId })],
 	(items, { type, itemId }) =>
-		itemId ? items[itemId] || { ...initialState.newItem[type] } : items[type]
+		(itemId ? items[itemId] : items[type]) || { ...initialState.newItem[type] }
 )
 
 export const selectNewCampaign = createSelector(
