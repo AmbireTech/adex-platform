@@ -171,10 +171,21 @@ const autocompleteCategoriesSingleSelect = (state, types) =>
 		}))
 	)
 
+const getPublisherExtraDataLabel = publisher => [
+	`${t('HOSTNAME')}: ${publisher.hostname}`,
+	`${t('ALEXA_RANK')}: ${publisher.alexaRank || '-'}`,
+	`${t('CATEGORIES')}: ${(publisher.categories || [])
+		.map(
+			cat => `"${IabCategories.wrbshrinkerWebsiteApiV3Categories[cat] || cat}"`
+		)
+		.join(', ')}`,
+]
+
 const autocompletePublishersSingleSelect = (state, types) =>
 	selectTargetingPublishersByType(state, types).map(pub => ({
 		label: pub.hostname,
 		value: JSON.stringify({ hostname: pub.hostname, publisher: pub.owner }),
+		extraLabel: getPublisherExtraDataLabel(pub),
 		extraData: pub,
 	}))
 
