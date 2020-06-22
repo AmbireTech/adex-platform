@@ -199,8 +199,8 @@ export const audienceSources = () => [
 		singleValuesSrc: () => autocompleteLocationsSingleSelect(),
 		applyType: 'single',
 		actions: [
-			{ type: 'in', label: t('SHOW_ONLY_IN_SELECTED'), minSelected: 1 },
-			{ type: 'nin', label: t('DONT_SHOW_IN_SELECTED'), minSelected: 1 },
+			{ type: 'in', label: t('TARGET_COUNTRIES'), minSelected: 1 },
+			{ type: 'nin', label: t('EXCLUDED_COUNTRIES'), minSelected: 1 },
 			{ type: 'allin', label: t('SHOW_EVERYWHERE'), value: 'ALL' },
 		],
 	},
