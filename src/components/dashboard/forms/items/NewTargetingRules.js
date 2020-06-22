@@ -62,30 +62,6 @@ const getApply = (applyType, currentApply = [], actionType) =>
 		? actionType
 		: [...currentApply, actionType].filter((t, i, all) => all.indexOf(t) === i)
 
-const getDisabledPublishersAfterCategoriesRules = ({
-	selectedCategories,
-	publishers,
-}) => {
-	console.log('selectedCategories', selectedCategories)
-	console.log('publishers', publishers)
-}
-
-const getDisabledValues = ({
-	target,
-	actionType,
-	parameter,
-	inputs,
-	SOURCES,
-}) => {
-	if (parameter === 'publishers') {
-		return getDisabledPublishersAfterCategoriesRules({
-			selectedCategories: inputs['categories'],
-			actionType,
-			publishers: SOURCES.find(x => x.parameter === 'publishers'),
-		})
-	}
-}
-
 const Sources = ({
 	id,
 	source = [],
