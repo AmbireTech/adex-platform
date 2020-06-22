@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react'
 import { bigNumberify } from 'ethers/utils'
 import {
 	t,
@@ -7,10 +8,12 @@ import {
 	selectTargetingCategoriesByType,
 	selectTargetingPublishersByType,
 	selectNewItemByTypeAndId,
+	selectValidationsById,
 } from 'selectors'
 import { createSelector } from 'reselect'
 import { constants, IabCategories } from 'adex-models'
 import { WHERE_YOU_KNOW_US } from 'constants/misc'
+import { ExternalAnchor } from 'components/common/anchor/anchor'
 import moment from 'moment'
 
 export const selectSlotTypesSourceWithDemands = createSelector(
@@ -170,10 +173,22 @@ const autocompleteCategoriesSingleSelect = (state, types) =>
 		}))
 	)
 
+const getPublisherExtraDataLabel = publisher => [
+	`${t('HOSTNAME')}: ${publisher.hostname}`,
+	`${t('ALEXA_RANK')}: ${publisher.alexaRank || '-'}`,
+	`${t('CATEGORIES')}: ${(publisher.categories || [])
+		.map(
+			cat => `"${IabCategories.wrbshrinkerWebsiteApiV3Categories[cat] || cat}"`
+		)
+		.join(', ')}`,
+]
+
 const autocompletePublishersSingleSelect = (state, types) =>
 	selectTargetingPublishersByType(state, types).map(pub => ({
 		label: pub.hostname,
 		value: JSON.stringify({ hostname: pub.hostname, publisher: pub.owner }),
+		extraLabel: getPublisherExtraDataLabel(pub),
+		extraData: pub,
 	}))
 
 export const slotSources = () => ({
@@ -191,14 +206,14 @@ export const unitSources = () => ({
 	custom: { src: [], collection: 'targeting' },
 })
 
-export const campaignSources = () => [
+export const audienceSources = () => [
 	{
 		parameter: 'location',
 		singleValuesSrc: () => autocompleteLocationsSingleSelect(),
 		applyType: 'single',
 		actions: [
-			{ type: 'in', label: t('SHOW_ONLY_IN_SELECTED'), minSelected: 1 },
-			{ type: 'nin', label: t('DONT_SHOW_IN_SELECTED'), minSelected: 1 },
+			{ type: 'in', label: t('TARGET_COUNTRIES'), minSelected: 1 },
+			{ type: 'nin', label: t('EXCLUDED_COUNTRIES'), minSelected: 1 },
 			{ type: 'allin', label: t('SHOW_EVERYWHERE'), value: 'ALL' },
 		],
 	},
@@ -234,15 +249,45 @@ export const campaignSources = () => [
 		actions: [
 			{
 				value: 'includeIncentivized',
-				label: t('INCLUDE_INCENTIVIZED_TRAFFIC'),
+				label: t('INCLUDE_INCENTIVIZED_TRAFFIC', {
+					args: [
+						<ExternalAnchor
+							href={
+								'https://help.adex.network/hc/en-us/articles/360014543380-What-is-incentivized-traffic-'
+							}
+						>
+							{t('LEARN_MORE')}
+						</ExternalAnchor>,
+					],
+				}),
 			},
 			{
 				value: 'disableFrequencyCapping',
-				label: t('DISABLE_FREQUENCY_CAPPING'),
+				label: t('DISABLE_FREQUENCY_CAPPING', {
+					args: [
+						<ExternalAnchor
+							href={
+								'https://help.adex.network/hc/en-us/articles/360014597299-What-is-frequency-capping-'
+							}
+						>
+							{t('LEARN_MORE')}
+						</ExternalAnchor>,
+					],
+				}),
 			},
 			{
 				value: 'limitDailyAverageSpending',
-				label: t('LIMIT_AVERAGE_DAILY_SPENDING'),
+				label: t('LIMIT_AVERAGE_DAILY_SPENDING', {
+					args: [
+						<ExternalAnchor
+							href={
+								'https://help.adex.network/hc/en-us/articles/360014597319-How-to-limit-your-average-daily-spend'
+							}
+						>
+							{t('LEARN_MORE')}
+						</ExternalAnchor>,
+					],
+				}),
 			},
 		],
 	},
@@ -266,4 +311,93 @@ export const websitesAutocompleteSrc = createSelector(
 				status: ws.issues && ws.issues.length ? 'error' : 'success',
 			}
 		})
+)
+
+const getDisabledValues = (data, source, inputs, allSrcs) => {
+	const disabled = {}
+
+	if (
+		data.parameter === 'publishers' &&
+		inputs.categories &&
+		inputs.categories.in.length
+	) {
+		disabled.in = source
+			.filter(
+				x => !x.extraData.categories.some(c => inputs.categories.in.includes(c))
+			)
+			.map(c => c.value)
+	} else if (
+		data.parameter === 'categories' &&
+		inputs.publishers &&
+		inputs.publishers.in.length
+	) {
+		const selectedPublishersCategories = new Set()
+		allSrcs
+			.find(s => s.parameter === 'publishers')
+			.source.forEach(p => {
+				if (inputs.publishers.in.includes(p.value)) {
+					p.extraData.categories.forEach(c =>
+						selectedPublishersCategories.add(c)
+					)
+				}
+			})
+
+		disabled.in = source
+			.filter(c => !selectedPublishersCategories.has(c.value))
+			.map(c => c.value)
+	}
+
+	return disabled
+}
+
+export const selectAudienceSourcesWithOptions = createSelector(
+	[audienceSources, selectAudienceInputItemOptions, state => state],
+	(sources, options, state) =>
+		sources.map(s => {
+			const source = s.singleValuesSrc ? s.singleValuesSrc(state, options) : []
+			return {
+				...s,
+				source,
+			}
+		})
+)
+
+export const selectAudienceInputsDatByItem = createSelector(
+	[
+		selectAudienceSourcesWithOptions,
+		selectNewItemByTypeAndId,
+		(state, itemType, itemId, validateId) => ({
+			state,
+			validateId,
+		}),
+	],
+	(allSrcsWithOptions, selectedItem, { state, validateId }) => {
+		const isCampaignAudienceItem = !!selectedItem.audienceInput
+
+		const validations = selectValidationsById(state, validateId) || {}
+
+		const errors =
+			validations[isCampaignAudienceItem ? 'audienceInput' : 'inputs'] || {}
+
+		const errorParameters = errors.dirty ? errors.errFields || {} : {}
+
+		const inputs =
+			(isCampaignAudienceItem
+				? selectedItem.audienceInput.inputs
+				: selectedItem.inputs) || {}
+
+		const SOURCES = allSrcsWithOptions.map(s => ({
+			...s,
+			disabledValues: getDisabledValues(
+				s,
+				s.source,
+				inputs,
+				allSrcsWithOptions
+			),
+		}))
+
+		const audienceInputData = { SOURCES, inputs, errorParameters }
+
+		return audienceInputData
+	}
 )

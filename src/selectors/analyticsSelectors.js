@@ -11,8 +11,11 @@ import {
 } from 'selectors'
 import dateUtils from 'helpers/dateUtils'
 import { DEFAULT_DATETIME_FORMAT } from 'helpers/formatters'
+import { t } from './translationsSelectors'
 
 export const selectAnalytics = state => state.memory.analytics
+
+const MIN_SLOTS_FOR_AD_TYPE = 2
 
 export const selectAnalyticsData = createSelector(
 	[selectAnalytics, (_, side) => side],
@@ -69,12 +72,36 @@ export const selectTargetingAnalytics = createSelector(
 	({ targeting }) => targeting || []
 )
 
+export const selectTargetingAnalyticsWithMinSlotsCountByType = createSelector(
+	[selectTargetingAnalytics],
+	targetingAnalytics => {
+		const bySlotCount = targetingAnalytics.reduce((byType, x) => {
+			x.types.forEach(t => {
+				byType[t] = (byType[t] || 0) + 1
+			})
+
+			return byType
+		}, {})
+
+		return targetingAnalytics
+			.map(t => ({
+				...t,
+				types: t.types.filter(x => bySlotCount[x] >= MIN_SLOTS_FOR_AD_TYPE),
+			}))
+			.filter(x => x.types.length && x.categories.length)
+	}
+)
+
 export const selectTargetingAnalyticsByType = createSelector(
-	[selectTargetingAnalytics, (_, types) => types],
-	(targetingAnalytics, types) =>
-		types && types.length
-			? targetingAnalytics.filter(x => types.some(t => x.types.includes(t)))
-			: targetingAnalytics
+	[selectTargetingAnalyticsWithMinSlotsCountByType, (_, types) => types],
+	(targetingAnalytics, types) => {
+		const filterByType = types && types.length
+
+		return targetingAnalytics.filter(
+			x =>
+				!filterByType || (filterByType && types.some(t => x.types.includes(t)))
+		)
+	}
 )
 
 export const selectTargetingCategoriesByType = createSelector(
@@ -98,6 +125,8 @@ export const selectTargetingPublishersByType = createSelector(
 					return publishers
 				}, new Map())
 				.values()
+		).sort((a, b) =>
+			!!a.alexaRank ? a.alexaRank - b.alexaRank : b.alexaRank - 0
 		)
 	}
 )

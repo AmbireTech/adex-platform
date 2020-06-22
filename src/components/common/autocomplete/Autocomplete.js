@@ -18,6 +18,24 @@ const StatusIcon = {
 	error: <ErrorSharp color='error' />,
 }
 
+const ExtraLabel = ({ label }) =>
+	Array.isArray(label) ? (
+		<Fragment>
+			{label.map((x, index) => (
+				<Typography
+					key={index}
+					display='block'
+					variant='caption'
+					color='inherit'
+				>
+					{x}
+				</Typography>
+			))}
+		</Fragment>
+	) : (
+		label
+	)
+
 function Autocomplete({
 	source,
 	multiple,
@@ -30,6 +48,7 @@ function Autocomplete({
 	onChange,
 	fullWidth,
 	disabled,
+	hideSelectedOnDisable,
 	disableCloseOnSelect,
 	disabledSrcValues = [],
 	enableCreate,
@@ -48,7 +67,9 @@ function Autocomplete({
 	}
 
 	const srcValue = multiple
-		? source.filter(s => Array.isArray(value) && value.includes(s.value))
+		? Array.isArray(value)
+			? value.map(v => source.find(s => s.value === v) || '')
+			: []
 		: source.find(s => s.value === value) || value
 
 	return (
@@ -60,7 +81,7 @@ function Autocomplete({
 				disabled={disabled}
 				groupBy={option => option.group}
 				value={srcValue}
-				getOptionLabel={option => option.label || option}
+				getOptionLabel={option => option.label || option.name || option}
 				getLimitTagsText={more => `${more} more`}
 				limitTags={10}
 				getOptionDisabled={option =>
@@ -88,23 +109,29 @@ function Autocomplete({
 				}}
 				renderOption={option => {
 					return (
-						<Tooltip title={option.extraLabel || ''}>
+						<Tooltip
+							key={option.label}
+							title={<ExtraLabel label={option.extraLabel || ''} />}
+						>
 							{<Typography>{option.label}</Typography>}
 						</Tooltip>
 					)
 				}}
 				renderTags={(value, getCustomizedTagProps) =>
-					value.map((option, index) => (
-						<Tooltip
-							key={option.value + '' + index}
-							title={option.extraLabel || ''}
-						>
-							<Chip
-								label={option.label || option}
-								{...getCustomizedTagProps({ index })}
-							/>
-						</Tooltip>
-					))
+					value.map(
+						(option, index) =>
+							!(disabled && hideSelectedOnDisable) && (
+								<Tooltip
+									key={option.value + '' + index}
+									title={<ExtraLabel label={option.extraLabel || ''} />}
+								>
+									<Chip
+										label={option.label || option}
+										{...getCustomizedTagProps({ index })}
+									/>
+								</Tooltip>
+							)
+					)
 				}
 			/>
 			{error && (

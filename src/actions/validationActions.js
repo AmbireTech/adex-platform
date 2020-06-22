@@ -74,13 +74,19 @@ export function resetValidationErrors(item, key) {
 export function validate(
 	validateId,
 	key,
-	{ isValid, err = { msg: '', args: [] }, dirty = false, removeAll = false }
+	{
+		isValid,
+		err = { msg: '', args: [], fields: {} },
+		dirty = false,
+		removeAll = false,
+	}
 ) {
 	return async function(dispatch, getState) {
 		if (!isValid) {
 			let errors = {}
 			errors[key] = {
 				errMsg: t(err.msg, { args: err.args }),
+				errFields: err.fields,
 				dirty: dirty,
 			}
 
@@ -747,9 +753,9 @@ export function validateAudience({ validateId, propName, inputs, dirty }) {
 			locationAudienceInputError(location),
 			publishersAudienceInputError(publishers),
 			categoriesAudienceInputError(categories),
-		].filter(x => !!x)
+		]
 
-		const isValid = !errors.length
+		const isValid = errors.every(e => !e)
 		const errArgs = errors
 			.filter(e => !!e)
 			.map(e => t(e))
@@ -760,6 +766,11 @@ export function validateAudience({ validateId, propName, inputs, dirty }) {
 			err: {
 				msg: 'ERR_AUDIENCE_INPUT',
 				args: [errArgs],
+				fields: {
+					location: !!errors[0],
+					publishers: !!errors[1],
+					categories: !!errors[2],
+				},
 			},
 			dirty: dirty,
 		})(dispatch)

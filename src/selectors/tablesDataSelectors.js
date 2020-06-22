@@ -1,5 +1,4 @@
 import { createSelector } from 'reselect'
-import ISOCountries from 'i18n-iso-countries'
 import {
 	t,
 	selectCampaignsArray,
@@ -35,7 +34,8 @@ import {
 	SECONDARY_LIGHT,
 } from 'components/App/themeMUi'
 import { grey } from '@material-ui/core/colors'
-const COUNTRY_NAMES = ISOCountries.getNames('en')
+import { constants } from 'adex-models'
+const { CountryNames, numericToAlpha2 } = constants
 
 export const selectCampaignsTableData = createSelector(
 	[selectCampaignsArray, selectRoutineWithdrawTokens, (_, side) => side],
@@ -267,7 +267,7 @@ const mapByCountryTableData = ({
 	// NOTE: assume that there are no click without impressions
 	return Object.keys(impressionsByCountry).map(key => {
 		return {
-			countryName: COUNTRY_NAMES[key],
+			countryName: CountryNames[key],
 			impressions: impressionsByCountry[key] || 0,
 			percentImpressions:
 				((impressionsByCountry[key] || 0) /
@@ -378,10 +378,10 @@ const mapByCountryMapChartData = ({
 
 	chartData.objects.countries.geometries = chartCountriesData.objects.countries.geometries.map(
 		data => {
-			const id = ISOCountries.numericToAlpha2(data.id)
+			const id = numericToAlpha2(data.id)
 			const impressions = impressionsByCountry[id] || 0
 			const clicks = clicksByCountry[id] || 0
-			const name = COUNTRY_NAMES[id] || data.name
+			const name = CountryNames[id] || data.name
 			const percentImpressions =
 				((impressions || 0) / impressionsAggrByCountry.total) * 100 || 0
 			const ctr = ((clicks || 0) / (impressions || 1)) * 100 || 0
