@@ -18,6 +18,24 @@ const StatusIcon = {
 	error: <ErrorSharp color='error' />,
 }
 
+const ExtraLabel = ({ label }) =>
+	Array.isArray(label) ? (
+		<Fragment>
+			{label.map((x, index) => (
+				<Typography
+					key={index}
+					display='block'
+					variant='caption'
+					color='inherit'
+				>
+					{x}
+				</Typography>
+			))}
+		</Fragment>
+	) : (
+		label
+	)
+
 function Autocomplete({
 	source,
 	multiple,
@@ -91,7 +109,10 @@ function Autocomplete({
 				}}
 				renderOption={option => {
 					return (
-						<Tooltip title={option.extraLabel || ''}>
+						<Tooltip
+							key={option.label}
+							title={<ExtraLabel label={option.extraLabel || ''} />}
+						>
 							{<Typography>{option.label}</Typography>}
 						</Tooltip>
 					)
@@ -102,7 +123,7 @@ function Autocomplete({
 							!(disabled && hideSelectedOnDisable) && (
 								<Tooltip
 									key={option.value + '' + index}
-									title={option.extraLabel || ''}
+									title={<ExtraLabel label={option.extraLabel || ''} />}
 								>
 									<Chip
 										label={option.label || option}
