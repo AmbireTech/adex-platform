@@ -345,18 +345,8 @@ const NewTargetingRules = ({ itemType, itemId, validateId }) => {
 	const [tabIndex, setTabIndex] = useState(0)
 	const classes = useStyles()
 
-	const selectedItem = useSelector(state =>
-		selectNewItemByTypeAndId(state, itemType, itemId)
-	)
-
 	const { SOURCES, inputs, errorParameters } = useSelector(state =>
-		selectAudienceInputsDatByItem(
-			state,
-			itemType,
-			itemId,
-			validateId,
-			selectedItem
-		)
+		selectAudienceInputsDatByItem(state, itemType, itemId, validateId)
 	)
 
 	const { parameter, source, actions, applyType, disabledValues } =
