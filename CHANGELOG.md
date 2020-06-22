@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.16
+##### *2020-06-22*
+
+### Added
+- Audience categories with min slots count filter
+- Error icons on audience tabs when error
+- Audience inputs Categories to Publishers and vice versa filtering
+
+### Changed
+- Audience input selected values hidden instead disabled when not selected
+
+### Fixed
+- Misc minor bugs
+
 ## 4.20.15
 ##### *2020-06-18*
 
