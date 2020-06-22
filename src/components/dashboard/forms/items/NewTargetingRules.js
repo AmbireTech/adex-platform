@@ -113,6 +113,7 @@ const Sources = ({
 			openOnClick
 			required={true}
 			disabled={disabled}
+			hideSelectedOnDisable
 			disabledSrcValues={disabledSrcValues}
 			disableCloseOnSelect
 			// error={invalidFields[id] && invalidFields[id].dirty}
