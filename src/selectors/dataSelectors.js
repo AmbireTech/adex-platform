@@ -270,7 +270,7 @@ export const websitesAutocompleteSrc = createSelector(
 		})
 )
 
-const getDisabledValues = (data, source, inputs) => {
+const getDisabledValues = (data, source, inputs, allSrcs) => {
 	const disabled = {}
 
 	if (
@@ -282,6 +282,25 @@ const getDisabledValues = (data, source, inputs) => {
 			.filter(
 				x => !x.extraData.categories.some(c => inputs.categories.in.includes(c))
 			)
+			.map(c => c.value)
+	} else if (
+		data.parameter === 'categories' &&
+		inputs.publishers &&
+		inputs.publishers.in.length
+	) {
+		const selectedPublishersCategories = new Set()
+		allSrcs
+			.find(s => s.parameter === 'publishers')
+			.source.forEach(p => {
+				if (inputs.publishers.in.includes(p.value)) {
+					p.extraData.categories.forEach(c =>
+						selectedPublishersCategories.add(c)
+					)
+				}
+			})
+
+		disabled.in = source
+			.filter(c => !selectedPublishersCategories.has(c.value))
 			.map(c => c.value)
 	}
 
@@ -315,14 +334,23 @@ export const selectAudienceInputsDatByItem = createSelector(
 				? selectedItem.audienceInput.inputs
 				: selectedItem.inputs) || {}
 
-		const SOURCES = sources.map(s => {
+		const allSrcsWithOptions = sources.map(s => {
 			const source = s.singleValuesSrc ? s.singleValuesSrc(state, options) : []
 			return {
 				...s,
 				source,
-				disabledValues: getDisabledValues(s, source, inputs),
 			}
 		})
+
+		const SOURCES = allSrcsWithOptions.map(s => ({
+			...s,
+			disabledValues: getDisabledValues(
+				s,
+				s.source,
+				inputs,
+				allSrcsWithOptions
+			),
+		}))
 
 		const audienceInputData = { SOURCES, inputs, errorParameters }
 

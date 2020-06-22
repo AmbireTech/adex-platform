@@ -300,7 +300,7 @@ const Targets = ({
 										actions,
 										currentAction: a,
 										target,
-									})}
+									}).concat(disabledValues[a.type] || [])}
 								/>
 							)}
 						</Box>
