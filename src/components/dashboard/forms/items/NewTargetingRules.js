@@ -21,14 +21,11 @@ import {
 	LocalOfferSharp as CategoryIcon,
 	WebAssetSharp as PublisherIcon,
 	MoreHorizSharp as AdvIcon,
+	ErrorSharp as ErrIcon,
 } from '@material-ui/icons'
 import Autocomplete from 'components/common/autocomplete'
 
-import {
-	t,
-	selectNewItemByTypeAndId,
-	selectAudienceInputItemOptions,
-} from 'selectors'
+import { t, selectAudienceInputsDatByItem } from 'selectors'
 import { execute, updateTargetRuleInput } from 'actions'
 
 const useStyles = makeStyles(theme => ({
@@ -88,6 +85,7 @@ const Sources = ({
 			openOnClick
 			required={true}
 			disabled={disabled}
+			hideSelectedOnDisable
 			disabledSrcValues={disabledSrcValues}
 			disableCloseOnSelect
 			// error={invalidFields[id] && invalidFields[id].dirty}
@@ -160,6 +158,7 @@ const getMultipleActionsUsedValues = ({ actions, currentAction, target }) => {
 }
 
 const Targets = ({
+	inputs,
 	source = [],
 	collection,
 	placeholder,
@@ -173,6 +172,8 @@ const Targets = ({
 	applyType,
 	itemId,
 	itemType,
+	disabledValues,
+	SOURCES,
 }) => {
 	const classes = useStyles()
 	const id = `target-${index}`
@@ -234,6 +235,7 @@ const Targets = ({
 										actionType={a.type}
 										applyType={applyType}
 										itemType={itemType}
+										disabledSrcValues={disabledValues[a.type]}
 									/>
 								)}
 							</Box>
@@ -271,7 +273,7 @@ const Targets = ({
 										actions,
 										currentAction: a,
 										target,
-									})}
+									}).concat(disabledValues[a.type] || [])}
 								/>
 							)}
 						</Box>
@@ -312,28 +314,16 @@ const Targets = ({
 	)
 }
 
-const NewTargetingRules = ({ itemType, itemId, sourcesSelector }) => {
+const NewTargetingRules = ({ itemType, itemId, validateId }) => {
 	const [tabIndex, setTabIndex] = useState(0)
-	const SOURCES = useSelector(sourcesSelector)
 	const classes = useStyles()
-	const { parameter, singleValuesSrc, actions, applyType } =
+
+	const { SOURCES, inputs, errorParameters } = useSelector(state =>
+		selectAudienceInputsDatByItem(state, itemType, itemId, validateId)
+	)
+
+	const { parameter, source, actions, applyType, disabledValues } =
 		SOURCES[tabIndex] || {}
-
-	const options = useSelector(state =>
-		selectAudienceInputItemOptions(state, itemType, itemId)
-	)
-
-	const source = useSelector(state =>
-		singleValuesSrc ? singleValuesSrc(state, options) : []
-	)
-
-	const selectedItem = useSelector(state =>
-		selectNewItemByTypeAndId(state, itemType, itemId)
-	)
-	const inputs =
-		(selectedItem.audienceInput
-			? selectedItem.audienceInput.inputs
-			: selectedItem.inputs) || {}
 
 	return (
 		<Grid container spacing={1}>
@@ -351,19 +341,28 @@ const NewTargetingRules = ({ itemType, itemId, sourcesSelector }) => {
 							<Tab
 								key={parameter}
 								label={parameter}
-								icon={parameterIcon[parameter]}
+								icon={
+									errorParameters[parameter] ? (
+										<ErrIcon color='error' />
+									) : (
+										parameterIcon[parameter]
+									)
+								}
 							/>
 						))}
 					</Tabs>
 				</Paper>
 				<Box mt={2}>
 					<Targets
+						inputs={inputs}
 						target={inputs[parameter]}
 						key={parameter}
 						parameter={parameter}
 						label={t(parameter)}
 						placeholder={t(parameter)}
 						source={source || []}
+						disabledValues={disabledValues || {}}
+						SOURCES={SOURCES}
 						actions={actions}
 						applyType={applyType}
 						itemId={itemId}

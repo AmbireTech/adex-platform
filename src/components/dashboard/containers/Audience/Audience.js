@@ -111,7 +111,7 @@ function Audience({ match }) {
 					/>
 
 					<NewAudienceDialog
-						btnLabel='NEW_AUDIENCE'
+						btnLabel='NEW_AUDIENCE_FROM_THIS'
 						color='primary'
 						variant='contained'
 						onBeforeOpen={() =>

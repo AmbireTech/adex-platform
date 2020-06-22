@@ -15,6 +15,7 @@ import { FullContentSpinner } from 'components/common/dialog/content'
 import { utils } from 'ethers'
 import MomentUtils from '@date-io/moment'
 import { ItemSpecProp } from 'components/dashboard/containers/ItemCommon/'
+import { ExternalAnchor } from 'components/common/anchor/anchor'
 import {
 	selectSpinnerById,
 	selectMainToken,
@@ -260,10 +261,22 @@ function CampaignFinance({ validateId }) {
 											value='useUtmTags'
 										/>
 									}
-									label={t('CAMPAIGN_UTM_TAGS')}
+									label={t('CAMPAIGN_AUTO_UTM_TAGS')}
 								/>
 							</FormGroup>
-							<FormHelperText>{t('CAMPAIGN_UTM_TAGS_INFO')}</FormHelperText>
+							<FormHelperText>
+								{t('CAMPAIGN_AUTO_UTM_TAGS_INFO', {
+									args: [
+										<ExternalAnchor
+											href={
+												' https://help.adex.network/hc/en-us/articles/360011670859-How-to-add-UTM-links-and-track-campaigns'
+											}
+										>
+											{t('CHECK_HERE')}
+										</ExternalAnchor>,
+									],
+								})}
+							</FormHelperText>
 						</FormControl>
 					</Grid>
 				</Grid>

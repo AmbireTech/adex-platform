@@ -30,6 +30,7 @@ export const styles = theme => {
 			fontSize: '120px',
 			opacity: '0.13',
 			transform: 'rotate(-45deg)',
+			pointerEvents: 'none',
 		},
 	}
 }
