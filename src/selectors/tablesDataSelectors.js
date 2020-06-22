@@ -35,7 +35,7 @@ import {
 } from 'components/App/themeMUi'
 import { grey } from '@material-ui/core/colors'
 import { constants } from 'adex-models'
-const { CountryNames } = constants
+const { CountryNames, numericToAlpha2 } = constants
 
 export const selectCampaignsTableData = createSelector(
 	[selectCampaignsArray, selectRoutineWithdrawTokens, (_, side) => side],
@@ -378,13 +378,10 @@ const mapByCountryMapChartData = ({
 
 	chartData.objects.countries.geometries = chartCountriesData.objects.countries.geometries.map(
 		data => {
-			const id = ISOCountries.numericToAlpha2(data.id)
+			const id = numericToAlpha2(data.id)
 			const impressions = impressionsByCountry[id] || 0
 			const clicks = clicksByCountry[id] || 0
 			const name = CountryNames[id] || data.name
-			console.log('id', id)
-			console.log('COUNTRY_NAMES', CountryNames)
-			console.log('name', name)
 			const percentImpressions =
 				((impressions || 0) / impressionsAggrByCountry.total) * 100 || 0
 			const ctr = ((clicks || 0) / (impressions || 1)) * 100 || 0
