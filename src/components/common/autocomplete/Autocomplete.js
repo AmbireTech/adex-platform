@@ -30,6 +30,7 @@ function Autocomplete({
 	onChange,
 	fullWidth,
 	disabled,
+	hideSelectedOnDisable,
 	disableCloseOnSelect,
 	disabledSrcValues = [],
 	enableCreate,
@@ -96,17 +97,20 @@ function Autocomplete({
 					)
 				}}
 				renderTags={(value, getCustomizedTagProps) =>
-					value.map((option, index) => (
-						<Tooltip
-							key={option.value + '' + index}
-							title={option.extraLabel || ''}
-						>
-							<Chip
-								label={option.label || option}
-								{...getCustomizedTagProps({ index })}
-							/>
-						</Tooltip>
-					))
+					value.map(
+						(option, index) =>
+							!(disabled && hideSelectedOnDisable) && (
+								<Tooltip
+									key={option.value + '' + index}
+									title={option.extraLabel || ''}
+								>
+									<Chip
+										label={option.label || option}
+										{...getCustomizedTagProps({ index })}
+									/>
+								</Tooltip>
+							)
+					)
 				}
 			/>
 			{error && (
