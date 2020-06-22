@@ -48,7 +48,9 @@ function Autocomplete({
 	}
 
 	const srcValue = multiple
-		? source.filter(s => Array.isArray(value) && value.includes(s.value))
+		? Array.isArray(value)
+			? value.map(v => source.find(s => s.value === v) || '')
+			: []
 		: source.find(s => s.value === value) || value
 
 	return (
@@ -60,7 +62,7 @@ function Autocomplete({
 				disabled={disabled}
 				groupBy={option => option.group}
 				value={srcValue}
-				getOptionLabel={option => option.label || option}
+				getOptionLabel={option => option.label || option.name || option}
 				getLimitTagsText={more => `${more} more`}
 				limitTags={10}
 				getOptionDisabled={option =>
