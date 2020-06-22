@@ -25,11 +25,7 @@ import {
 } from '@material-ui/icons'
 import Autocomplete from 'components/common/autocomplete'
 
-import {
-	t,
-	selectAudienceInputsDatByItem,
-	selectNewItemByTypeAndId,
-} from 'selectors'
+import { t, selectAudienceInputsDatByItem } from 'selectors'
 import { execute, updateTargetRuleInput } from 'actions'
 
 const useStyles = makeStyles(theme => ({

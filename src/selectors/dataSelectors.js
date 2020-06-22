@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react'
 import { bigNumberify } from 'ethers/utils'
 import {
 	t,
@@ -12,6 +13,7 @@ import {
 import { createSelector } from 'reselect'
 import { constants, IabCategories } from 'adex-models'
 import { WHERE_YOU_KNOW_US } from 'constants/misc'
+import { ExternalAnchor } from 'components/common/anchor/anchor'
 import moment from 'moment'
 
 export const selectSlotTypesSourceWithDemands = createSelector(
@@ -247,15 +249,45 @@ export const audienceSources = () => [
 		actions: [
 			{
 				value: 'includeIncentivized',
-				label: t('INCLUDE_INCENTIVIZED_TRAFFIC'),
+				label: t('INCLUDE_INCENTIVIZED_TRAFFIC', {
+					args: [
+						<ExternalAnchor
+							href={
+								'https://help.adex.network/hc/en-us/articles/360014543380-What-is-incentivized-traffic-'
+							}
+						>
+							{t('LEARN_MORE')}
+						</ExternalAnchor>,
+					],
+				}),
 			},
 			{
 				value: 'disableFrequencyCapping',
-				label: t('DISABLE_FREQUENCY_CAPPING'),
+				label: t('DISABLE_FREQUENCY_CAPPING', {
+					args: [
+						<ExternalAnchor
+							href={
+								'https://help.adex.network/hc/en-us/articles/360014597299-What-is-frequency-capping-'
+							}
+						>
+							{t('LEARN_MORE')}
+						</ExternalAnchor>,
+					],
+				}),
 			},
 			{
 				value: 'limitDailyAverageSpending',
-				label: t('LIMIT_AVERAGE_DAILY_SPENDING'),
+				label: t('LIMIT_AVERAGE_DAILY_SPENDING', {
+					args: [
+						<ExternalAnchor
+							href={
+								'https://help.adex.network/hc/en-us/articles/360014597319-How-to-limit-your-average-daily-spend'
+							}
+						>
+							{t('LEARN_MORE')}
+						</ExternalAnchor>,
+					],
+				}),
 			},
 		],
 	},
