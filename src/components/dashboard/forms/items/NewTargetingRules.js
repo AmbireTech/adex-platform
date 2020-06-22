@@ -25,7 +25,11 @@ import {
 } from '@material-ui/icons'
 import Autocomplete from 'components/common/autocomplete'
 
-import { t, selectAudienceInputsDatByItem } from 'selectors'
+import {
+	t,
+	selectAudienceInputsDatByItem,
+	selectNewItemByTypeAndId,
+} from 'selectors'
 import { execute, updateTargetRuleInput } from 'actions'
 
 const useStyles = makeStyles(theme => ({
@@ -195,6 +199,7 @@ const Targets = ({
 	applyType,
 	itemId,
 	itemType,
+	disabledValues,
 	SOURCES,
 }) => {
 	const classes = useStyles()
@@ -257,14 +262,7 @@ const Targets = ({
 										actionType={a.type}
 										applyType={applyType}
 										itemType={itemType}
-										disabledSrcValues={getDisabledValues({
-											inputs,
-											target,
-											actionType: a.type,
-											parameter,
-											source,
-											SOURCES,
-										})}
+										disabledSrcValues={disabledValues[a.type]}
 									/>
 								)}
 							</Box>
@@ -347,11 +345,22 @@ const NewTargetingRules = ({ itemType, itemId, validateId }) => {
 	const [tabIndex, setTabIndex] = useState(0)
 	const classes = useStyles()
 
-	const { SOURCES, inputs, errorParameters } = useSelector(state =>
-		selectAudienceInputsDatByItem(state, itemType, itemId, validateId)
+	const selectedItem = useSelector(state =>
+		selectNewItemByTypeAndId(state, itemType, itemId)
 	)
 
-	const { parameter, source, actions, applyType } = SOURCES[tabIndex] || {}
+	const { SOURCES, inputs, errorParameters } = useSelector(state =>
+		selectAudienceInputsDatByItem(
+			state,
+			itemType,
+			itemId,
+			validateId,
+			selectedItem
+		)
+	)
+
+	const { parameter, source, actions, applyType, disabledValues } =
+		SOURCES[tabIndex] || {}
 
 	return (
 		<Grid container spacing={1}>
@@ -389,6 +398,7 @@ const NewTargetingRules = ({ itemType, itemId, validateId }) => {
 						label={t(parameter)}
 						placeholder={t(parameter)}
 						source={source || []}
+						disabledValues={disabledValues || {}}
 						SOURCES={SOURCES}
 						actions={actions}
 						applyType={applyType}

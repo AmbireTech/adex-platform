@@ -270,24 +270,37 @@ export const websitesAutocompleteSrc = createSelector(
 		})
 )
 
+const getDisabledValues = (data, source, inputs) => {
+	const disabled = {}
+
+	if (
+		data.parameter === 'publishers' &&
+		inputs.categories &&
+		inputs.categories.in.length
+	) {
+		disabled.in = source
+			.filter(
+				x => !x.extraData.categories.some(c => inputs.categories.in.includes(c))
+			)
+			.map(c => c.value)
+	}
+
+	return disabled
+}
+
 export const selectAudienceInputsDatByItem = createSelector(
 	[
 		audienceSources,
-		selectNewItemByTypeAndId,
 		selectAudienceInputItemOptions,
-		(state, itemType, itemId, validateId) => ({
+		(state, itemType, itemId, validateId, selectedItem) => ({
 			state,
 			itemType,
 			itemId,
 			validateId,
+			selectedItem,
 		}),
 	],
-	(sources, selectedItem, options, { state, itemType, itemId, validateId }) => {
-		const SOURCES = sources.map(s => ({
-			...s,
-			source: s.singleValuesSrc ? s.singleValuesSrc(state, options) : [],
-		}))
-
+	(sources, options, { state, itemType, itemId, validateId, selectedItem }) => {
 		const isCampaignAudienceItem = !!selectedItem.audienceInput
 
 		const validations = selectValidationsById(state, validateId) || {}
@@ -301,6 +314,15 @@ export const selectAudienceInputsDatByItem = createSelector(
 			(isCampaignAudienceItem
 				? selectedItem.audienceInput.inputs
 				: selectedItem.inputs) || {}
+
+		const SOURCES = sources.map(s => {
+			const source = s.singleValuesSrc ? s.singleValuesSrc(state, options) : []
+			return {
+				...s,
+				source,
+				disabledValues: getDisabledValues(s, source, inputs),
+			}
+		})
 
 		const audienceInputData = { SOURCES, inputs, errorParameters }
 
