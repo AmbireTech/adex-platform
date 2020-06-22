@@ -234,19 +234,19 @@ export const AudienceSteps = props => (
 		itemType='Audience'
 		stepsId='new-audience-'
 		steps={[
-			// {
-			// 	title: 'AUDIENCE_BASIC_STEP',
-			// 	component: AudienceBasic,
-			// 	validationFn: ({ validateId, dirty, onValid, onInvalid }) =>
-			// 		execute(
-			// 			validateAudienceBasics({
-			// 				validateId,
-			// 				dirty,
-			// 				onValid,
-			// 				onInvalid,
-			// 			})
-			// 		),
-			// },
+			{
+				title: 'AUDIENCE_BASIC_STEP',
+				component: AudienceBasic,
+				validationFn: ({ validateId, dirty, onValid, onInvalid }) =>
+					execute(
+						validateAudienceBasics({
+							validateId,
+							dirty,
+							onValid,
+							onInvalid,
+						})
+					),
+			},
 			...(props.skipRules
 				? []
 				: [
