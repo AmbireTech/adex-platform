@@ -307,19 +307,28 @@ const getDisabledValues = (data, source, inputs, allSrcs) => {
 	return disabled
 }
 
+export const selectAudienceSourcesWithOptions = createSelector(
+	[audienceSources, selectAudienceInputItemOptions, state => state],
+	(sources, options, state) =>
+		sources.map(s => {
+			const source = s.singleValuesSrc ? s.singleValuesSrc(state, options) : []
+			return {
+				...s,
+				source,
+			}
+		})
+)
+
 export const selectAudienceInputsDatByItem = createSelector(
 	[
-		audienceSources,
-		selectAudienceInputItemOptions,
-		(state, itemType, itemId, validateId, selectedItem) => ({
+		selectAudienceSourcesWithOptions,
+		selectNewItemByTypeAndId,
+		(state, itemType, itemId, validateId) => ({
 			state,
-			itemType,
-			itemId,
 			validateId,
-			selectedItem,
 		}),
 	],
-	(sources, options, { state, itemType, itemId, validateId, selectedItem }) => {
+	(allSrcsWithOptions, selectedItem, { state, validateId }) => {
 		const isCampaignAudienceItem = !!selectedItem.audienceInput
 
 		const validations = selectValidationsById(state, validateId) || {}
@@ -333,14 +342,6 @@ export const selectAudienceInputsDatByItem = createSelector(
 			(isCampaignAudienceItem
 				? selectedItem.audienceInput.inputs
 				: selectedItem.inputs) || {}
-
-		const allSrcsWithOptions = sources.map(s => {
-			const source = s.singleValuesSrc ? s.singleValuesSrc(state, options) : []
-			return {
-				...s,
-				source,
-			}
-		})
 
 		const SOURCES = allSrcsWithOptions.map(s => ({
 			...s,
