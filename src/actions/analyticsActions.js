@@ -476,11 +476,15 @@ export const updateTargetingData = throttle(
 	async function(dispatch) {
 		await updateSpinner(UPDATING_TARGETING_DATA, true)(dispatch)
 		try {
-			const targetingData = await getTargetingData()
+			const {
+				targetingData,
+				minByCategory,
+				countryTiersCoefficients,
+			} = await getTargetingData()
 
 			dispatch({
 				type: types.UPDATE_TARGETING_ANALYTICS,
-				value: targetingData,
+				value: { targetingData, minByCategory, countryTiersCoefficients },
 			})
 		} catch (err) {
 			console.error('ERR_TARGETING_DATA_ANALYTICS', err)
