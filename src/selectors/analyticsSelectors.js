@@ -69,7 +69,7 @@ export const selectDemandAnalytics = createSelector(
 
 export const selectTargetingAnalytics = createSelector(
 	[selectAnalytics],
-	({ targeting }) => targeting || []
+	({ targeting = {} }) => targeting.targetingData || []
 )
 
 export const selectTargetingAnalyticsWithMinSlotsCountByType = createSelector(
