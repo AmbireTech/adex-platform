@@ -45,8 +45,8 @@ export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 		[dirtyProps, item, validateAndUpdateFn, validateId]
 	)
 
-	const save = useCallback(() => {
-		execute(
+	const save = useCallback(async () => {
+		await execute(
 			validateAndUpdateFn({
 				item,
 				validateId,
