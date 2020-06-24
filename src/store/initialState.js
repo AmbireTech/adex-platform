@@ -52,7 +52,11 @@ let initialState = {
 		default: {},
 	},
 	web3Transactions: {},
-	tags: {},
+	targeting: {
+		targetingData: [],
+		minByCategory: {},
+		countryTiersCoefficients: {},
+	},
 	identity: {},
 	ethNetwork: {
 		networkId: null,
