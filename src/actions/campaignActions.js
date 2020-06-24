@@ -29,7 +29,10 @@ import {
 	getChannelId,
 	closeChannel,
 } from 'services/smart-contracts/actions/core'
-import { lastApprovedState } from 'services/adex-validator/actions'
+import {
+	lastApprovedState,
+	updateTargeting,
+} from 'services/adex-validator/actions'
 import {
 	closeCampaignMarket,
 	updateCampaign,
@@ -257,7 +260,11 @@ export function updateUserCampaigns() {
 						c => c.creator && c.creator.toLowerCase() === address.toLowerCase()
 					)
 					.map(c => {
-						const campaign = { ...c.spec, ...c }
+						const campaign = {
+							...c.spec,
+							...c,
+							targetingRules: c.spec.targetingRules || c.targetingRules,
+						}
 
 						if (!campaign.humanFriendlyName) {
 							campaign.status.humanFriendlyName = getHumanFriendlyName(campaign)
@@ -607,15 +614,24 @@ export function handlePrintSelectedReceiptsAdvertiser(selected) {
 	}
 }
 
-export function validateAndUpdateCampaign({ validateId, dirty, item, update }) {
+export function validateAndUpdateCampaign({
+	validateId,
+	dirty,
+	item,
+	update,
+	dirtyProps,
+}) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
 		try {
 			const { id, title, audienceInput } = item
 
 			const updated = new Campaign(item)
+			const isAudienceUpdated = dirtyProps.includes('audienceInput')
 
-			updated.targetingRules = audienceInputToTargetingRules(audienceInput)
+			if (isAudienceUpdated) {
+				updated.targetingRules = audienceInputToTargetingRules(audienceInput)
+			}
 
 			const campaign = updated.marketUpdate
 
@@ -637,6 +653,20 @@ export function validateAndUpdateCampaign({ validateId, dirty, item, update }) {
 			const isValid = validations.every(v => v === true)
 
 			if (isValid && update) {
+				if (isAudienceUpdated) {
+					const state = getState()
+					const account = selectAccount(state)
+					const { authTokens } = await updateTargeting({
+						account,
+						campaign: updated,
+						targetingRules: updated.targetingRules,
+					})
+					await updateValidatorAuthTokens({ newAuth: authTokens })(
+						dispatch,
+						getState
+					)
+				}
+
 				const updatedCampaign = (await updateCampaign({
 					campaign,
 					id,
