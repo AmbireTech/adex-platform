@@ -611,9 +611,13 @@ export function validateAndUpdateCampaign({ validateId, dirty, item, update }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
 		try {
-			const { id, title } = item
+			const { id, title, audienceInput } = item
 
-			const campaign = new Campaign(item).marketUpdate
+			const updated = new Campaign(item)
+
+			updated.targetingRules = audienceInputToTargetingRules(audienceInput)
+
+			const campaign = updated.marketUpdate
 
 			const validations = await Promise.all([
 				validateCampaignTitle({
