@@ -120,6 +120,19 @@ export const closeCampaign = ({ campaign, account }) => {
 	return sendMessage({ campaign, options, account })
 }
 
+export const updateTargeting = ({ campaign, account, targetingRules }) => {
+	const options = {
+		route: `channel/${campaign.id}/events`,
+		method: 'POST',
+		body: JSON.stringify({
+			events: [{ type: 'UPDATE_TARGETING', targetingRules }],
+		}),
+		headers: { 'Content-Type': 'application/json' },
+	}
+
+	return sendMessage({ campaign, options, account })
+}
+
 export const identityAnalytics = async ({
 	leaderAuth,
 	eventType,
