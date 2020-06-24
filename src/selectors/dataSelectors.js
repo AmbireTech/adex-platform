@@ -319,6 +319,7 @@ const getDisabledValues = (data, source, inputs, allSrcs) => {
 	if (
 		data.parameter === 'publishers' &&
 		inputs.categories &&
+		inputs.categories.in &&
 		inputs.categories.in.length
 	) {
 		disabled.in = source
@@ -329,6 +330,7 @@ const getDisabledValues = (data, source, inputs, allSrcs) => {
 	} else if (
 		data.parameter === 'categories' &&
 		inputs.publishers &&
+		inputs.publishers.in &&
 		inputs.publishers.in.length
 	) {
 		const selectedPublishersCategories = new Set()
