@@ -14,6 +14,7 @@ import { DEFAULT_DATETIME_FORMAT } from 'helpers/formatters'
 import { t } from './translationsSelectors'
 
 export const selectAnalytics = state => state.memory.analytics
+export const selectTargeting = state => state.persist.targeting
 
 const MIN_SLOTS_FOR_AD_TYPE = 2
 
@@ -68,8 +69,8 @@ export const selectDemandAnalytics = createSelector(
 )
 
 export const selectTargetingAnalytics = createSelector(
-	[selectAnalytics],
-	({ targeting = {} }) => targeting.targetingData || []
+	[selectTargeting],
+	({ targetingData = {} }) => targetingData || []
 )
 
 export const selectTargetingAnalyticsWithMinSlotsCountByType = createSelector(
