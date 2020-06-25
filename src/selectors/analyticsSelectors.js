@@ -70,7 +70,17 @@ export const selectDemandAnalytics = createSelector(
 
 export const selectTargetingAnalytics = createSelector(
 	[selectTargeting],
-	({ targetingData = {} }) => targetingData || []
+	({ targetingData = [] }) => targetingData
+)
+
+export const selectTargetingAnalyticsMinByCategories = createSelector(
+	[selectTargeting],
+	({ minByCategory = {} }) => minByCategory
+)
+
+export const selectTargetingAnalyticsCountryTiersCoefficients = createSelector(
+	[selectTargeting],
+	({ countryTiersCoefficients = {} }) => countryTiersCoefficients
 )
 
 export const selectTargetingAnalyticsWithMinSlotsCountByType = createSelector(
