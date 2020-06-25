@@ -1,4 +1,5 @@
 import React, { Fragment, forwardRef } from 'react'
+import { useSelector } from 'react-redux'
 import { Prompt } from 'react-router'
 import { makeStyles } from '@material-ui/core/styles'
 import {
@@ -12,14 +13,16 @@ import {
 	Paper,
 	Collapse,
 } from '@material-ui/core'
+import { Alert } from '@material-ui/lab'
 import { Info, Edit, UndoOutlined, OpenInNew } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
 import { ExternalAnchor } from 'components/common/anchor/anchor'
 import { formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
-import { t, selectMainToken } from 'selectors'
+import { t, selectMainToken, selectAuthType } from 'selectors'
 import { styles } from './styles'
 import { SaveBtn } from './SaveBtn'
+import { WALLET_ACTIONS_MSGS } from 'constants/misc'
 
 const useStyles = makeStyles(styles)
 
@@ -65,6 +68,7 @@ export const DirtyProps = ({ dirtyProps = [], returnPropToInitialState }) => {
 
 export const ChangeControls = hookProps => {
 	const classes = useStyles()
+	const authType = useSelector(selectAuthType)
 
 	return (
 		<div className={classes.changeControls}>
@@ -81,6 +85,17 @@ export const ChangeControls = hookProps => {
 						<SaveBtn {...hookProps} />
 					</Box>
 				</Paper>
+				{hookProps.spinner && hookProps.dirtyProps.includes('audienceInput') && (
+					<Box>
+						{WALLET_ACTIONS_MSGS[authType || 'default'].map((msg, i) => (
+							<Box my={1}>
+								<Alert key={i} severity='info' variant='outlined'>
+									{t(msg.message)}
+								</Alert>
+							</Box>
+						))}
+					</Box>
+				)}
 			</Collapse>
 		</div>
 	)
