@@ -50,6 +50,8 @@ import {
 	selectMainToken,
 	selectNewItemByTypeAndId,
 	selectAudienceByCampaignId,
+	selectTargetingAnalyticsMinByCategories,
+	selectTargetingAnalyticsCountryTiersCoefficients,
 } from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
 import {
@@ -60,7 +62,7 @@ import {
 import Helper from 'helpers/miscHelpers'
 import { addUrlUtmTracking } from 'helpers/utmHelpers'
 
-const { audienceInputToTargetingRules } = helpers
+const { audienceInputToTargetingRules, getSuggestedCPMRange } = helpers
 
 const { campaignPut } = schemas
 
@@ -403,6 +405,21 @@ export function validateCampaignAudienceInput({
 				dispatch,
 				getState
 			)
+
+			if (isValid) {
+				const minByCategory = selectTargetingAnalyticsMinByCategories(state)
+				const countryTiersCoefficients = selectTargetingAnalyticsCountryTiersCoefficients(
+					state
+				)
+				const suggestedCPMRage = getSuggestedCPMRange({
+					minByCategory,
+					countryTiersCoefficients,
+					audienceInput,
+				})
+
+				// TODO:
+				console.log('suggestedCPMRage', suggestedCPMRage)
+			}
 
 			await handleAfterValidation({ isValid, onValid, onInvalid })
 		} catch (err) {
