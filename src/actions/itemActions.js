@@ -324,15 +324,6 @@ export const resetAllItems = () => {
 	}
 }
 
-export const updateTags = ({ tags }) => {
-	return dispatch => {
-		return dispatch({
-			type: types.UPDATE_TAGS,
-			tags: tags,
-		})
-	}
-}
-
 export const addNewTag = ({ tag }) => {
 	return dispatch => {
 		return dispatch({

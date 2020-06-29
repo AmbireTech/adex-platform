@@ -20,7 +20,7 @@ import {
 	selectNewItemByTypeAndId,
 	selectAdSlotById,
 } from 'selectors'
-import { schemas, AdSlot, AdUnit } from 'adex-models'
+import { schemas, AdSlot, AdUnit, helpers } from 'adex-models'
 import {
 	verifyWebsite,
 	postAdUnit,
@@ -34,6 +34,7 @@ import { ipfsSrc } from 'helpers/ipfsHelpers'
 import { getImgObjectUrlFromExternalUrl } from 'services/images/blob'
 
 const { adSlotPost, adUnitPost, adSlotPut } = schemas
+const { slotRulesInputToTargetingRules } = helpers
 
 async function getFallbackUnit({
 	mediaMime,
@@ -89,6 +90,7 @@ export function validateNewSlotBasics({
 				type,
 				website,
 				minPerImpression = null,
+				rulesInput,
 				temp,
 			} = slot
 
@@ -121,12 +123,6 @@ export function validateNewSlotBasics({
 					schema: adSlotPost.website,
 					dirty,
 				})(dispatch),
-				validateNumberString({
-					validateId,
-					prop: 'minPerImpression',
-					value: minPerImpression || '0',
-					dirty,
-				})(dispatch),
 			])
 
 			isValid = validations.every(v => v === true)
@@ -146,11 +142,18 @@ export function validateNewSlotBasics({
 				})(dispatch)
 			}
 
-			const { hostname, issues } = isValid
+			const { hostname, issues, categories, suggestedMinCPM } = isValid
 				? await verifyWebsite({ websiteUrl: website })
 				: {}
-			const newTemp = { ...temp, hostname, issues }
+			const newTemp = { ...temp, hostname, issues, categories, suggestedMinCPM }
+			const rules = slotRulesInputToTargetingRules({
+				rulesInput,
+				suggestedMinCPM,
+				decimals: mainToken.decimals,
+			})
+
 			updateNewSlot('temp', newTemp)(dispatch, getState)
+			updateNewSlot('rules', rules)(dispatch, getState)
 		} catch (err) {
 			// NOTE: Just log - most probably the error can be from verifyWebsite
 			// bet this doesn't matter at that point

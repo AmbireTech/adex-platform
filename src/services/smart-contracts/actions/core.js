@@ -75,7 +75,14 @@ function getValidUntil(activeFrom, withdrawPeriodStart) {
 	return Math.floor(validUntil / 1000)
 }
 
+function userInputToTokenValue({ input, decimals, divider = 1 }) {
+	return parseUnits(input || '0', decimals)
+		.div(bigNumberify(divider))
+		.toString()
+}
+
 function getReadyCampaign(campaign, identity, mainToken) {
+	const { decimals } = mainToken
 	const newCampaign = new Campaign(campaign)
 
 	newCampaign.creator = identity.address
@@ -86,10 +93,10 @@ function getReadyCampaign(campaign, identity, mainToken) {
 	)
 	newCampaign.nonce = bigNumberify(randomBytes(32)).toString()
 	newCampaign.adUnits = newCampaign.adUnits.map(unit => new AdUnit(unit).spec)
-	newCampaign.depositAmount = parseUnits(
-		newCampaign.depositAmount || '0',
-		mainToken.decimals
-	).toString()
+	newCampaign.depositAmount = userInputToTokenValue({
+		input: newCampaign.depositAmount,
+		decimals,
+	})
 
 	const validators = newCampaign.validators.map(v => {
 		const deposit = bigNumberify(newCampaign.depositAmount || 0)
@@ -113,14 +120,18 @@ function getReadyCampaign(campaign, identity, mainToken) {
 
 	newCampaign.validators = validators
 
-	// NOTE: TEMP in UI its set per 1000 impressions (CPM)
-	newCampaign.minPerImpression = parseUnits(
-		newCampaign.minPerImpression || '0',
-		mainToken.decimals
-	)
-		.div(bigNumberify(1000))
-		.toString()
-	newCampaign.maxPerImpression = newCampaign.minPerImpression
+	const pricingBounds = { ...newCampaign.pricingBounds }
+	pricingBounds.min = userInputToTokenValue({
+		input: pricingBounds.min,
+		decimals,
+		divider: 1000, // Input is for CPM (1000)
+	})
+
+	pricingBounds.max = userInputToTokenValue({
+		input: pricingBounds.max,
+		decimals,
+		divider: 1000, // Input is for CPM (1000)
+	})
 
 	newCampaign.depositAsset = mainToken.address
 	newCampaign.eventSubmission = {

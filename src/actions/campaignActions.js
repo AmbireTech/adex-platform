@@ -29,7 +29,10 @@ import {
 	getChannelId,
 	closeChannel,
 } from 'services/smart-contracts/actions/core'
-import { lastApprovedState } from 'services/adex-validator/actions'
+import {
+	lastApprovedState,
+	updateTargeting,
+} from 'services/adex-validator/actions'
 import {
 	closeCampaignMarket,
 	updateCampaign,
@@ -47,6 +50,8 @@ import {
 	selectMainToken,
 	selectNewItemByTypeAndId,
 	selectAudienceByCampaignId,
+	selectTargetingAnalyticsMinByCategories,
+	selectTargetingAnalyticsCountryTiersCoefficients,
 } from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
 import {
@@ -57,7 +62,7 @@ import {
 import Helper from 'helpers/miscHelpers'
 import { addUrlUtmTracking } from 'helpers/utmHelpers'
 
-const { audienceInputToTargetingRules } = helpers
+const { audienceInputToTargetingRules, getSuggestedPricingBounds } = helpers
 
 const { campaignPut } = schemas
 
@@ -257,7 +262,11 @@ export function updateUserCampaigns() {
 						c => c.creator && c.creator.toLowerCase() === address.toLowerCase()
 					)
 					.map(c => {
-						const campaign = { ...c.spec, ...c }
+						const campaign = {
+							...c.spec,
+							...c,
+							targetingRules: c.spec.targetingRules || c.targetingRules,
+						}
 
 						if (!campaign.humanFriendlyName) {
 							campaign.status.humanFriendlyName = getHumanFriendlyName(campaign)
@@ -378,7 +387,7 @@ export function validateCampaignAudienceInput({
 		await updateSpinner(validateId, true)(dispatch)
 		try {
 			const state = getState()
-			const { audienceInput = {} } = selectNewCampaign(state)
+			const { audienceInput = {}, temp } = selectNewCampaign(state)
 			const { inputs } = audienceInput
 
 			const isValid = await validateAudience({
@@ -388,14 +397,28 @@ export function validateCampaignAudienceInput({
 				propName: 'audienceInput',
 			})(dispatch)
 
-			const targetingRules = isValid
-				? audienceInputToTargetingRules(audienceInput)
-				: []
+			if (isValid) {
+				const minByCategory = selectTargetingAnalyticsMinByCategories(state)
+				const countryTiersCoefficients = selectTargetingAnalyticsCountryTiersCoefficients(
+					state
+				)
+				const pricingBounds = getSuggestedPricingBounds({
+					minByCategory,
+					countryTiersCoefficients,
+					audienceInput,
+				})
 
-			await updateNewCampaign('targetingRules', targetingRules)(
-				dispatch,
-				getState
-			)
+				await updateNewCampaign('temp', {
+					...temp,
+					suggestedPricingBounds: pricingBounds,
+				})(dispatch, getState)
+
+				// Update pricingBounds here in order to avoid value check at nex steps
+				await updateNewCampaign('pricingBounds', pricingBounds)(
+					dispatch,
+					getState
+				)
+			}
 
 			await handleAfterValidation({ isValid, onValid, onInvalid })
 		} catch (err) {
@@ -416,15 +439,17 @@ export function validateNewCampaignFinance({
 		await updateSpinner(validateId, true)(dispatch)
 		try {
 			const state = getState()
+			const { decimals } = selectMainToken(state)
 			const campaign = selectNewCampaign(state)
 			const {
 				validators,
 				depositAmount,
-				minPerImpression,
 				title,
 				activeFrom,
 				withdrawPeriodStart,
 				created,
+				pricingBounds,
+				audienceInput,
 				// minTargetingScore,
 				// adUnits,
 				temp = {},
@@ -451,19 +476,21 @@ export function validateNewCampaignFinance({
 					value: depositAmount,
 					dirty,
 					depositAmount,
-					minPerImpression,
+					pricingBounds,
 					errMsg: !dirty && 'REQUIRED_FIELD',
 					maxDeposit,
+					decimals,
 				})(dispatch),
 				validateCampaignAmount({
 					validateId,
-					prop: 'minPerImpression',
-					value: minPerImpression,
+					prop: 'pricingBounds_min',
+					value: pricingBounds.min,
 					dirty,
+					pricingBounds,
 					depositAmount,
-					minPerImpression,
 					errMsg: !dirty && 'REQUIRED_FIELD',
 					maxDeposit,
+					decimals,
 				})(dispatch),
 				validateCampaignTitle({
 					validateId,
@@ -488,12 +515,6 @@ export function validateNewCampaignFinance({
 					withdrawPeriodStart,
 					created,
 				})(dispatch),
-				// validateCampaignMinTargetingScore({
-				// 	validateId,
-				// 	minTargetingScore,
-				// 	adUnits,
-				// 	dirty,
-				// })(dispatch),
 			])
 
 			const isValid = validations.every(v => v === true)
@@ -520,6 +541,30 @@ export function validateNewCampaignFinance({
 				newTemp.maxDepositFormatted = maxAvailableFormatted
 
 				await updateNewCampaign('temp', newTemp)(dispatch, getState)
+			}
+
+			if (isValid) {
+				const minByCategory = selectTargetingAnalyticsMinByCategories(state)
+				const countryTiersCoefficients = selectTargetingAnalyticsCountryTiersCoefficients(
+					state
+				)
+
+				const pricingBoundsInTokenValue = {
+					min: parseUnits(pricingBounds.min, decimals),
+					max: parseUnits(pricingBounds.max, decimals),
+				}
+
+				const targetingRules = audienceInputToTargetingRules({
+					audienceInput,
+					minByCategory,
+					countryTiersCoefficients,
+					pricingBounds: pricingBoundsInTokenValue,
+					decimals,
+				})
+				await updateNewCampaign('targetingRules', targetingRules)(
+					dispatch,
+					getState
+				)
 			}
 
 			await handleAfterValidation({ isValid, onValid, onInvalid })
@@ -607,13 +652,26 @@ export function handlePrintSelectedReceiptsAdvertiser(selected) {
 	}
 }
 
-export function validateAndUpdateCampaign({ validateId, dirty, item, update }) {
+export function validateAndUpdateCampaign({
+	validateId,
+	dirty,
+	item,
+	update,
+	dirtyProps,
+}) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
 		try {
-			const { id, title } = item
+			const { id, title, audienceInput } = item
 
-			const campaign = new Campaign(item).marketUpdate
+			const updated = new Campaign(item)
+			const isAudienceUpdated = dirtyProps.includes('audienceInput')
+
+			if (isAudienceUpdated) {
+				updated.targetingRules = audienceInputToTargetingRules(audienceInput)
+			}
+
+			const campaign = updated.marketUpdate
 
 			const validations = await Promise.all([
 				validateCampaignTitle({
@@ -633,6 +691,20 @@ export function validateAndUpdateCampaign({ validateId, dirty, item, update }) {
 			const isValid = validations.every(v => v === true)
 
 			if (isValid && update) {
+				if (isAudienceUpdated) {
+					const state = getState()
+					const account = selectAccount(state)
+					const { authTokens } = await updateTargeting({
+						account,
+						campaign: updated,
+						targetingRules: updated.targetingRules,
+					})
+					await updateValidatorAuthTokens({ newAuth: authTokens })(
+						dispatch,
+						getState
+					)
+				}
+
 				const updatedCampaign = (await updateCampaign({
 					campaign,
 					id,
