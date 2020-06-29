@@ -1,6 +1,14 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { Grid, CircularProgress } from '@material-ui/core'
+import {
+	Grid,
+	Box,
+	CircularProgress,
+	ExpansionPanel,
+	ExpansionPanelSummary,
+	Typography,
+} from '@material-ui/core'
+import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
 import { AdUnitsTable } from 'components/dashboard/containers/Tables'
 import { WalletAction } from 'components/dashboard/forms/FormsCommon'
 import {
@@ -42,12 +50,13 @@ function CampaignFormPreview() {
 		adUnits,
 		validators,
 		depositAmount,
-		minPerImpression,
+		pricingBounds,
 		// maxPerImpression,
 		// depositAsset,
 		withdrawPeriodStart,
 		activeFrom,
 		// minTargetingScore,
+		targetingRules,
 		audienceInput,
 		// nonce
 		temp = {},
@@ -79,7 +88,7 @@ function CampaignFormPreview() {
 						<PropRow left={t('owner', { isProp: true })} right={identityAddr} />
 					</Grid>
 
-					<Grid item xs={12} md={6}>
+					<Grid item xs={12} md={12}>
 						<PropRow
 							left={t('depositAmount', { isProp: true })}
 							right={`${depositAmount} ${symbol}`}
@@ -88,8 +97,15 @@ function CampaignFormPreview() {
 
 					<Grid item xs={12} md={6}>
 						<PropRow
-							left={t('CPM', { isProp: true })}
-							right={`${minPerImpression} ${symbol}`}
+							left={t('CPM_MIN_LABEL')}
+							right={`${pricingBounds.min} ${symbol}`}
+						/>
+					</Grid>
+
+					<Grid item xs={12} md={6}>
+						<PropRow
+							left={t('CPM_MAX_LABEL')}
+							right={`${pricingBounds.max} ${symbol}`}
 						/>
 					</Grid>
 
@@ -140,7 +156,7 @@ function CampaignFormPreview() {
 						/>
 					</Grid> */}
 
-					<Grid item xs={12} md={6}>
+					<Grid item xs={12} md={12}>
 						<PropRow
 							left={t('validators', { isProp: true })}
 							right={
@@ -153,7 +169,7 @@ function CampaignFormPreview() {
 						/>
 					</Grid>
 
-					<Grid item xs={12} md={6}>
+					<Grid item xs={12} md={12}>
 						<PropRow
 							left={t('AUDIENCE')}
 							right={<AudiencePreview audienceInput={audienceInput.inputs} />}
@@ -173,6 +189,21 @@ function CampaignFormPreview() {
 								/>
 							}
 						/>
+					</Grid>
+
+					<Grid item xs={12}>
+						<ExpansionPanel square={true} variant='outlined'>
+							<ExpansionPanelSummary
+								expandIcon={<ExpandMoreIcon />}
+								aria-controls='targeting-rules-content'
+								id='targeting-rules-header'
+							>
+								<Typography>{t('TARGETING_RULES')}</Typography>
+							</ExpansionPanelSummary>
+							<Box p={1} color='grey.contrastText' bgcolor='grey.main'>
+								<pre>{JSON.stringify(targetingRules || [], null, 2)}</pre>
+							</Box>
+						</ExpansionPanel>
 					</Grid>
 				</Grid>
 			</ContentBody>
