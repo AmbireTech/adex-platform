@@ -30,20 +30,22 @@ const { isNumberString } = validations
 
 const moment = new MomentUtils()
 
-const getTotalImpressions = ({ depositAmount, minPerImpression }) => {
+const getTotalImpressions = ({ depositAmount, min, max }) => {
 	try {
 		const dep = isNumberString(depositAmount) && parseFloat(depositAmount)
-		const min = isNumberString(minPerImpression) && parseFloat(minPerImpression)
+		const minBound = isNumberString(min) && parseFloat(min)
+		const maxBound = isNumberString(max) && parseFloat(max)
 		if (!dep) {
 			return t('DEPOSIT_NOT_SET')
-		} else if (!min) {
-			return t('CPM_NOT_SET')
+		} else if (!minBound || !maxBound) {
+			return ''
+			// return t('BOUNDS_NOT_NOT_SET')
 		} else {
-			const impressions = utils.commify(Math.floor((dep / min) * 1000))
-			return t('TOTAL_IMPRESSIONS', { args: [impressions] })
+			const impressions = utils.commify(Math.floor((dep / minBound) * 1000))
+			return t('TOTAL_IMPRESSIONS_UP_TO', { args: [impressions] })
 		}
 	} catch (err) {
-		return 'N/A'
+		return ''
 	}
 }
 
@@ -59,7 +61,7 @@ function CampaignFinance({ validateId }) {
 		title,
 		validators,
 		depositAmount,
-		minPerImpression,
+		pricingBounds,
 		// depositAsset,
 		activeFrom,
 		withdrawPeriodStart,
@@ -67,7 +69,12 @@ function CampaignFinance({ validateId }) {
 		temp = {},
 	} = campaign
 
-	const { maxChannelFees, maxDepositFormatted, useUtmTags } = temp
+	const {
+		maxChannelFees,
+		maxDepositFormatted,
+		useUtmTags,
+		suggestedPricingBounds,
+	} = temp
 
 	const spinner = useSelector(state =>
 		selectSpinnerById(state, GETTING_CAMPAIGNS_FEES)
@@ -80,19 +87,46 @@ function CampaignFinance({ validateId }) {
 	const {
 		title: errTitle,
 		depositAmount: errDepAmnt,
-		minPerImpression: errMin,
+		pricingBounds_min: errMin,
+		pricingBounds_max: errMax,
 		activeFrom: errFrom,
 		withdrawPeriodStart: errTo,
-		// minTargetingScore: errUnitsTargeting,
 	} = invalidFields
-
-	const impressions = getTotalImpressions({
-		depositAmount,
-		minPerImpression,
-	})
 
 	const leader = validators[0] || {}
 	const follower = validators[1] || {}
+
+	const currentPricingBounds = {
+		min:
+			pricingBounds && pricingBounds.min
+				? pricingBounds.min
+				: suggestedPricingBounds.min,
+		max:
+			pricingBounds && pricingBounds.max
+				? pricingBounds.max
+				: suggestedPricingBounds.max,
+	}
+
+	const impressions = getTotalImpressions({
+		depositAmount,
+		min: currentPricingBounds.min,
+		max: currentPricingBounds.max,
+	})
+
+	const updatePricingBounds = (type, value) => {
+		const newPricingBounds = { ...pricingBounds }
+		newPricingBounds[type] = value
+
+		execute(updateNewCampaign('pricingBounds', newPricingBounds))
+		execute(
+			validateNumberString({
+				validateId,
+				prop: `pricingBounds_${type}`,
+				value,
+				dirty: true,
+			})
+		)
+	}
 
 	return (
 		<div>
@@ -142,7 +176,7 @@ function CampaignFinance({ validateId }) {
 						/>
 					</Grid>
 
-					<Grid item xs={12} sm={12} md={6}>
+					<Grid item xs={12} sm={12} md={12}>
 						<TextField
 							fullWidth
 							variant='outlined'
@@ -168,7 +202,9 @@ function CampaignFinance({ validateId }) {
 							error={errDepAmnt && !!errDepAmnt.dirty}
 							maxLength={120}
 							helperText={
-								errDepAmnt && !!errDepAmnt.dirty ? errDepAmnt.errMsg : ''
+								errDepAmnt && !!errDepAmnt.dirty
+									? errDepAmnt.errMsg
+									: impressions
 							}
 						/>
 					</Grid>
@@ -178,25 +214,45 @@ function CampaignFinance({ validateId }) {
 							variant='outlined'
 							type='text'
 							required
-							label={t('CPM_LABEL', { args: [impressions] })}
-							name='minPerImpression'
-							value={minPerImpression}
+							label={t('CPM_MIN_LABEL')}
+							name='currentPricingBounds_min'
+							value={currentPricingBounds.min}
 							onChange={ev => {
 								const value = ev.target.value
-								execute(updateNewCampaign('minPerImpression', value))
-								execute(
-									validateNumberString({
-										validateId,
-										prop: 'minPerImpression',
-										value,
-										dirty: true,
-									})
-								)
+								updatePricingBounds('min', value)
 							}}
 							error={errMin && !!errMin.dirty}
 							maxLength={120}
 							helperText={
-								errMin && !!errMin.dirty ? errMin.errMsg : t('CPM_HELPER_TXT')
+								errMin && !!errMin.dirty
+									? errMin.errMsg
+									: t('CPM_MIN_HELPER_TXT', {
+											args: [suggestedPricingBounds.min, symbol],
+									  })
+							}
+						/>
+					</Grid>
+					<Grid item xs={12} sm={12} md={6}>
+						<TextField
+							fullWidth
+							variant='outlined'
+							type='text'
+							required
+							label={t('CPM_MAX_LABEL')}
+							name='CurrentPricingBounds_max'
+							value={currentPricingBounds.max}
+							onChange={ev => {
+								const value = ev.target.value
+								updatePricingBounds('max', value)
+							}}
+							error={errMax && !!errMax.dirty}
+							maxLength={120}
+							helperText={
+								errMax && !!errMax.dirty
+									? errMax.errMsg
+									: t('CPM_MAX_HELPER_TXT', {
+											args: [suggestedPricingBounds.max, symbol],
+									  })
 							}
 						/>
 					</Grid>
