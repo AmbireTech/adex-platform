@@ -57,10 +57,6 @@ export default function analyticsReducer(
 			newState = { ...state }
 			newState.demand = action.value
 			return newState
-		case UPDATE_TARGETING_ANALYTICS:
-			newState = { ...state }
-			newState.targeting = action.value
-			return newState
 		case UPDATE_PUBLISHER_RECEIPTS:
 			newState = { ...state }
 			newState.receipts = { ...newState.receipts, ...action.value }

@@ -148,15 +148,6 @@ export function resetChannelsWithOutstandingBalance() {
 	}
 }
 
-export function updateGasData({ gasData }) {
-	return function(dispatch) {
-		return dispatch({
-			type: types.UPDATE_GAS_DATA,
-			gasData: gasData,
-		})
-	}
-}
-
 // getIdentityStatistics tooks to long some times
 // if the account is change we do not update the account
 // TODO: we can use something for abortable tasks

@@ -15,8 +15,7 @@ import language from './languageReducer'
 import validations from './validateItemsReducer'
 import newTransactions from './newTransactionsReducer'
 import web3Transactions from './web3TransactionsReducer'
-import tags from './tagsReducer'
-import ethNetwork from './ethNetworkReducer'
+import targeting from './targetingReducer'
 import config from './configReducer'
 import analytics from './analyticsReducer'
 import channels from './channelsReducer'
@@ -31,8 +30,7 @@ export const persistReducers = {
 	items: filterActions(items, action => action.type.match(/_ITEM/)),
 	language,
 	web3Transactions,
-	tags,
-	ethNetwork,
+	targeting,
 	config,
 	ensAddresses,
 }

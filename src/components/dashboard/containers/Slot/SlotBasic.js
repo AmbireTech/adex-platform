@@ -10,7 +10,6 @@ import {
 	ItemAdType,
 	ItemFallbackMediaURL,
 	MediaCard,
-	ItemMinPerImpression,
 	ItemWebsite,
 } from 'components/dashboard/containers/ItemCommon/'
 import { t } from 'selectors'
@@ -63,11 +62,6 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 								<Grid item xs={12} sm={12} md={6}>
 									<Box py={1}>
 										<ItemAdType type={type} />
-									</Box>
-								</Grid>
-								<Grid item xs={12} sm={12} md={6}>
-									<Box py={1}>
-										<ItemMinPerImpression item={item} {...hookProps} />
 									</Box>
 								</Grid>
 							</Grid>

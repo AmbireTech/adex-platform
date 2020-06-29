@@ -467,7 +467,7 @@ export function validateCampaignAmount({
 	dirty,
 	errMsg,
 	depositAmount,
-	minPerImpression,
+	pricingBounds,
 	maxDeposit,
 	decimals,
 }) {
@@ -478,7 +478,7 @@ export function validateCampaignAmount({
 
 		if (isValid) {
 			const deposit = prop === 'depositAmount' ? value : depositAmount
-			const min = prop === 'minPerImpression' ? value : minPerImpression
+			const min = prop === 'pricingBounds_min' ? value : pricingBounds.min
 
 			const isValidDeposit = isNumberString(deposit)
 			const isValidMin = isNumberString(min)
