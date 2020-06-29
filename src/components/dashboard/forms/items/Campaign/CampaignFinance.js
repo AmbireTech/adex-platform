@@ -96,21 +96,10 @@ function CampaignFinance({ validateId }) {
 	const leader = validators[0] || {}
 	const follower = validators[1] || {}
 
-	const currentPricingBounds = {
-		min:
-			pricingBounds && pricingBounds.min
-				? pricingBounds.min
-				: suggestedPricingBounds.min,
-		max:
-			pricingBounds && pricingBounds.max
-				? pricingBounds.max
-				: suggestedPricingBounds.max,
-	}
-
 	const impressions = getTotalImpressions({
 		depositAmount,
-		min: currentPricingBounds.min,
-		max: currentPricingBounds.max,
+		min: pricingBounds.min,
+		max: pricingBounds.max,
 	})
 
 	const updatePricingBounds = (type, value) => {
@@ -215,8 +204,8 @@ function CampaignFinance({ validateId }) {
 							type='text'
 							required
 							label={t('CPM_MIN_LABEL')}
-							name='currentPricingBounds_min'
-							value={currentPricingBounds.min}
+							name='pricingBounds_min'
+							value={pricingBounds.min}
 							onChange={ev => {
 								const value = ev.target.value
 								updatePricingBounds('min', value)
@@ -239,8 +228,8 @@ function CampaignFinance({ validateId }) {
 							type='text'
 							required
 							label={t('CPM_MAX_LABEL')}
-							name='CurrentPricingBounds_max'
-							value={currentPricingBounds.max}
+							name='pricingBounds_max'
+							value={pricingBounds.max}
 							onChange={ev => {
 								const value = ev.target.value
 								updatePricingBounds('max', value)
