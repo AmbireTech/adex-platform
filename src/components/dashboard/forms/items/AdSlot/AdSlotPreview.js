@@ -1,7 +1,16 @@
 import React, { Fragment } from 'react'
 import { useSelector } from 'react-redux'
 import { makeStyles } from '@material-ui/core/styles'
-import { Typography, Grid } from '@material-ui/core'
+import {
+	Typography,
+	Grid,
+	Box,
+	ExpansionPanel,
+	ExpansionPanelSummary,
+	Chip,
+} from '@material-ui/core'
+import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
+import { IabCategories } from 'adex-models'
 import Img from 'components/common/img/Img'
 import Anchor from 'components/common/anchor/anchor'
 import { WebsiteIssues } from 'components/dashboard/containers/Slot/WebsiteIssues'
@@ -60,12 +69,15 @@ const AdSlotPreview = () => {
 		website,
 		temp,
 		targetUrl,
-		minPerImpression,
+		rules,
+		rulesInput,
 	} = useSelector(selectNewAdSlot)
 
 	const identityAddr = useSelector(selectAccountIdentityAddr)
 	const { symbol } = useSelector(selectMainToken)
 
+	const { allowAdultContent, autoSetMinCPM } = rulesInput.inputs
+	const { categories = [], suggestedMinCPM } = temp
 	return (
 		<ContentBox>
 			<ContentBody>
@@ -79,24 +91,51 @@ const AdSlotPreview = () => {
 					</Grid>
 
 					<Grid item xs={12} md={6}>
+						<PropRow left={t('website', { isProp: true })} right={website} />
+					</Grid>
+
+					<Grid item xs={12} md={6}>
 						<PropRow
-							left={t('MIN_CPM_SLOT_LABEL')}
-							right={`${minPerImpression || 0} ${symbol}`}
+							left={t('SLOT_AUTO_MIN_CPM')}
+							right={
+								autoSetMinCPM
+									? `${t('YES')} - ${suggestedMinCPM || 0} ${symbol}`
+									: t('NO')
+							}
 						/>
 					</Grid>
 
 					<Grid item xs={12} md={6}>
-						<PropRow left={t('website', { isProp: true })} right={website} />
+						<PropRow
+							left={t('SLOT_ALLOW_ADULT_CONTENT')}
+							right={allowAdultContent ? t('YES') : t('NO')}
+						/>
 					</Grid>
 
 					<Grid item xs={12} md={6}>
 						<PropRow left={t('owner', { isProp: true })} right={identityAddr} />
 					</Grid>
 
-					<Grid item xs={12} md={6}>
+					<Grid item xs={12} md={12}>
 						<PropRow
 							left={t('description', { isProp: true })}
 							right={description}
+						/>
+					</Grid>
+
+					<Grid item xs={12} md={12}>
+						<PropRow
+							left={t('WEBSITE_CATEGORIES')}
+							right={categories.map(cat => (
+								<Chip
+									key={cat}
+									variant='outlined'
+									size='small'
+									label={t(
+										IabCategories.wrbshrinkerWebsiteApiV3Categories[cat] || cat
+									)}
+								/>
+							))}
 						/>
 					</Grid>
 
@@ -128,12 +167,28 @@ const AdSlotPreview = () => {
 							<PropRow right={<WebsiteIssues issues={temp.issues} />} />
 						</Grid>
 					)}
-					<Grid item xs={12} md={6}>
+					<Grid item xs={12} md={12}>
 						{temp.useFallback ? (
 							<SlotFallback img={temp} targetUrl={targetUrl} />
 						) : (
 							<PropRow left={t('FALLBACK_DATA')} right={t('NO')} />
 						)}
+					</Grid>
+					<Grid item xs={12}>
+						<Box p={1}>
+							<ExpansionPanel square={true} variant='outlined'>
+								<ExpansionPanelSummary
+									expandIcon={<ExpandMoreIcon />}
+									aria-controls='slot-rules-content'
+									id='slot-rules-header'
+								>
+									<Typography>{t('SLOT_RULES')}</Typography>
+								</ExpansionPanelSummary>
+								<Box p={1} color='grey.contrastText' bgcolor='grey.main'>
+									<pre>{JSON.stringify(rules || [], null, 2)}</pre>
+								</Box>
+							</ExpansionPanel>
+						</Box>
 					</Grid>
 				</Grid>
 			</ContentBody>
