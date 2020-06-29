@@ -132,8 +132,8 @@ export const CampaignAudience = ({ item, ...hookProps }) => {
 				<ExpansionPanel square={true} variant='outlined'>
 					<ExpansionPanelSummary
 						expandIcon={<ExpandMoreIcon />}
-						aria-controls='panel1a-content'
-						id='panel1a-header'
+						aria-controls='targeting-rules-content'
+						id='targeting-rules-header'
 					>
 						<Typography>{t('TARGETING_RULES')}</Typography>
 					</ExpansionPanelSummary>
