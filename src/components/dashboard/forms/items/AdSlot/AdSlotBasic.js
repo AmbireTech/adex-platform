@@ -1,14 +1,20 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
-import Grid from '@material-ui/core/Grid'
-import TextField from '@material-ui/core/TextField'
+import {
+	Grid,
+	TextField,
+	FormGroup,
+	FormControlLabel,
+	FormControl,
+	FormHelperText,
+	Checkbox,
+} from '@material-ui/core'
 import Dropdown from 'components/common/dropdown'
 import { FullContentSpinner } from 'components/common/dialog/content'
 import { AutocompleteWithCreate } from 'components/common/autocomplete'
 import {
 	t,
-	selectMainToken,
 	selectNewAdSlot,
 	selectValidationsById,
 	selectSpinnerById,
@@ -16,12 +22,7 @@ import {
 	websitesAutocompleteSrc,
 } from 'selectors'
 import { UPDATING_SLOTS_DEMAND } from 'constants/spinners'
-import {
-	updateSlotsDemandThrottled,
-	validateNumberString,
-	updateNewSlot,
-	execute,
-} from 'actions'
+import { updateSlotsDemandThrottled, updateNewSlot, execute } from 'actions'
 
 function AdSlotBasic({ validateId }) {
 	const newItem = useSelector(selectNewAdSlot)
@@ -32,8 +33,10 @@ function AdSlotBasic({ validateId }) {
 		description = '',
 		website = '',
 		type = '',
-		minPerImpression = '',
+		temp = {},
 	} = newItem
+
+	const { allowAdultContent, autoSetMinCPM } = temp
 
 	const spinner = useSelector(state =>
 		selectSpinnerById(state, UPDATING_SLOTS_DEMAND)
@@ -44,15 +47,12 @@ function AdSlotBasic({ validateId }) {
 		description: errDescription,
 		website: errWebsite,
 		type: errType,
-		minPerImpression: errMin,
 	} = useSelector(state => selectValidationsById(state, validateId) || {})
 
 	useEffect(() => {
 		execute(updateSlotsDemandThrottled())
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
-
-	const { symbol } = selectMainToken
 
 	return (
 		<div>
@@ -146,34 +146,54 @@ function AdSlotBasic({ validateId }) {
 						/>
 					</Grid>
 					<Grid item xs={12}>
-						<TextField
-							fullWidth
-							variant='outlined'
-							type='text'
-							required
-							label={t('MIN_CPM_SLOT_LABEL', { args: [symbol] })}
-							name='minPerImpression'
-							value={minPerImpression || ''}
-							onChange={ev => {
-								const value = ev.target.value
-								execute(updateNewSlot('minPerImpression', value))
-								execute(
-									validateNumberString({
-										validateId,
-										prop: 'minPerImpression',
-										value,
-										dirty: true,
-									})
-								)
-							}}
-							error={errMin && !!errMin.dirty}
-							maxLength={120}
-							helperText={
-								errMin && !!errMin.dirty
-									? errMin.errMsg
-									: t('SLOT_MIN_CPM_HELPER')
-							}
-						/>
+						<FormControl>
+							<FormGroup row>
+								<FormControlLabel
+									control={
+										<Checkbox
+											checked={!!autoSetMinCPM}
+											onChange={ev =>
+												execute(
+													updateNewSlot('temp', {
+														...temp,
+														autoSetMinCPM: ev.target.checked,
+													})
+												)
+											}
+											value='autoSetMinCPM'
+										/>
+									}
+									label={t('SLOT_AUTO_MIN_CPM')}
+								/>
+							</FormGroup>
+							<FormHelperText>{t('SLOT_AUTO_MIN_CPM_INFO')}</FormHelperText>
+						</FormControl>
+					</Grid>
+					<Grid item xs={12}>
+						<FormControl>
+							<FormGroup row>
+								<FormControlLabel
+									control={
+										<Checkbox
+											checked={!!allowAdultContent}
+											onChange={ev =>
+												execute(
+													updateNewSlot('temp', {
+														...temp,
+														allowAdultContent: ev.target.checked,
+													})
+												)
+											}
+											value='allowAdultContent'
+										/>
+									}
+									label={t('SLOT_ALLOW_ADULT_CONTENT')}
+								/>
+							</FormGroup>
+							<FormHelperText>
+								{t('SLOT_ALLOW_ADULT_CONTENT_INFO')}
+							</FormHelperText>
+						</FormControl>
 					</Grid>
 				</Grid>
 			)}
