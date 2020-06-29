@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.17
+##### *2020-06-29*
+
+### Added
+- Auto suggested CPM-s for campaigns and slots
+- Sots rules
+- More validations
+- Toasts on items update
+
+### Fixed
+- Misc audience bugs
+
 ## 4.20.16
 ##### *2020-06-22*
 
