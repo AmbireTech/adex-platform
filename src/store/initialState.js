@@ -18,7 +18,9 @@ let initialState = {
 			temp: { useUtmTags: true },
 		}).plainObj(),
 		AdUnit: new AdUnit({ temp: { addUtmLink: true } }).plainObj(),
-		AdSlot: new AdSlot({ temp: { autoSetMinCPM: true } }).plainObj(),
+		AdSlot: new AdSlot({
+			rulesInput: { version: '1', inputs: { autoSetMinCPM: true } },
+		}).plainObj(),
 	},
 	currentItem: {},
 	selectedItems: {
