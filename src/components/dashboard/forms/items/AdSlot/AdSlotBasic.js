@@ -33,10 +33,10 @@ function AdSlotBasic({ validateId }) {
 		description = '',
 		website = '',
 		type = '',
-		temp = {},
+		rulesInput = {},
 	} = newItem
 
-	const { allowAdultContent, autoSetMinCPM } = temp
+	const { allowAdultContent, autoSetMinCPM } = rulesInput.inputs
 
 	const spinner = useSelector(state =>
 		selectSpinnerById(state, UPDATING_SLOTS_DEMAND)
@@ -154,9 +154,12 @@ function AdSlotBasic({ validateId }) {
 											checked={!!autoSetMinCPM}
 											onChange={ev =>
 												execute(
-													updateNewSlot('temp', {
-														...temp,
-														autoSetMinCPM: ev.target.checked,
+													updateNewSlot('rulesInput', {
+														...rulesInput,
+														inputs: {
+															...rulesInput.inputs,
+															autoSetMinCPM: ev.target.checked,
+														},
 													})
 												)
 											}
@@ -178,9 +181,12 @@ function AdSlotBasic({ validateId }) {
 											checked={!!allowAdultContent}
 											onChange={ev =>
 												execute(
-													updateNewSlot('temp', {
-														...temp,
-														allowAdultContent: ev.target.checked,
+													updateNewSlot('rulesInput', {
+														...rulesInput,
+														inputs: {
+															...rulesInput.inputs,
+															allowAdultContent: ev.target.checked,
+														},
 													})
 												)
 											}
