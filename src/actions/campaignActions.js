@@ -62,7 +62,7 @@ import {
 import Helper from 'helpers/miscHelpers'
 import { addUrlUtmTracking } from 'helpers/utmHelpers'
 
-const { audienceInputToTargetingRules, getSuggestedCPMRange } = helpers
+const { audienceInputToTargetingRules, getSuggestedPricingBounds } = helpers
 
 const { campaignPut } = schemas
 
@@ -387,7 +387,7 @@ export function validateCampaignAudienceInput({
 		await updateSpinner(validateId, true)(dispatch)
 		try {
 			const state = getState()
-			const { audienceInput = {} } = selectNewCampaign(state)
+			const { audienceInput = {}, temp } = selectNewCampaign(state)
 			const { inputs } = audienceInput
 
 			const isValid = await validateAudience({
@@ -397,28 +397,27 @@ export function validateCampaignAudienceInput({
 				propName: 'audienceInput',
 			})(dispatch)
 
-			const targetingRules = isValid
-				? audienceInputToTargetingRules(audienceInput)
-				: []
-
-			await updateNewCampaign('targetingRules', targetingRules)(
-				dispatch,
-				getState
-			)
-
 			if (isValid) {
 				const minByCategory = selectTargetingAnalyticsMinByCategories(state)
 				const countryTiersCoefficients = selectTargetingAnalyticsCountryTiersCoefficients(
 					state
 				)
-				const suggestedCPMRage = getSuggestedCPMRange({
+				const pricingBounds = getSuggestedPricingBounds({
 					minByCategory,
 					countryTiersCoefficients,
 					audienceInput,
 				})
 
-				// TODO:
-				console.log('suggestedCPMRage', suggestedCPMRage)
+				await updateNewCampaign('temp', {
+					...temp,
+					suggestedPricingBounds: pricingBounds,
+				})(dispatch, getState)
+
+				// Update pricingBounds here in order to avoid value check at nex steps
+				await updateNewCampaign('pricingBounds', pricingBounds)(
+					dispatch,
+					getState
+				)
 			}
 
 			await handleAfterValidation({ isValid, onValid, onInvalid })
@@ -440,15 +439,17 @@ export function validateNewCampaignFinance({
 		await updateSpinner(validateId, true)(dispatch)
 		try {
 			const state = getState()
+			const { decimals } = selectMainToken(state)
 			const campaign = selectNewCampaign(state)
 			const {
 				validators,
 				depositAmount,
-				minPerImpression,
 				title,
 				activeFrom,
 				withdrawPeriodStart,
 				created,
+				pricingBounds,
+				audienceInput,
 				// minTargetingScore,
 				// adUnits,
 				temp = {},
@@ -475,19 +476,21 @@ export function validateNewCampaignFinance({
 					value: depositAmount,
 					dirty,
 					depositAmount,
-					minPerImpression,
+					pricingBounds,
 					errMsg: !dirty && 'REQUIRED_FIELD',
 					maxDeposit,
+					decimals,
 				})(dispatch),
 				validateCampaignAmount({
 					validateId,
-					prop: 'minPerImpression',
-					value: minPerImpression,
+					prop: 'pricingBounds_min',
+					value: pricingBounds.min,
 					dirty,
+					pricingBounds,
 					depositAmount,
-					minPerImpression,
 					errMsg: !dirty && 'REQUIRED_FIELD',
 					maxDeposit,
+					decimals,
 				})(dispatch),
 				validateCampaignTitle({
 					validateId,
@@ -512,12 +515,6 @@ export function validateNewCampaignFinance({
 					withdrawPeriodStart,
 					created,
 				})(dispatch),
-				// validateCampaignMinTargetingScore({
-				// 	validateId,
-				// 	minTargetingScore,
-				// 	adUnits,
-				// 	dirty,
-				// })(dispatch),
 			])
 
 			const isValid = validations.every(v => v === true)
@@ -544,6 +541,30 @@ export function validateNewCampaignFinance({
 				newTemp.maxDepositFormatted = maxAvailableFormatted
 
 				await updateNewCampaign('temp', newTemp)(dispatch, getState)
+			}
+
+			if (isValid) {
+				const minByCategory = selectTargetingAnalyticsMinByCategories(state)
+				const countryTiersCoefficients = selectTargetingAnalyticsCountryTiersCoefficients(
+					state
+				)
+
+				const pricingBoundsInTokenValue = {
+					min: parseUnits(pricingBounds.min, decimals),
+					max: parseUnits(pricingBounds.max, decimals),
+				}
+
+				const targetingRules = audienceInputToTargetingRules({
+					audienceInput,
+					minByCategory,
+					countryTiersCoefficients,
+					pricingBounds: pricingBoundsInTokenValue,
+					decimals,
+				})
+				await updateNewCampaign('targetingRules', targetingRules)(
+					dispatch,
+					getState
+				)
 			}
 
 			await handleAfterValidation({ isValid, onValid, onInvalid })
