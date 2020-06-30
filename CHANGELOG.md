@@ -4,12 +4,22 @@ All notable changes to this project will be documented in this file.
 ## 4.20.17
 ##### *2020-06-30*
 
+### Changed
+- Hide campaign audience update btn when inactive
+
+### Fixed
+- Updating legacy campaigns audience
+- Misc bug fixes
+
+## 4.20.17
+##### *2020-06-30*
+
 ### Added
 - Ability to pause/resume campaign
 - Confirm dialog and spinner for campaign close/pause/resume buttons
 - Created and Updated columns at Audiences table
 
-#### Fixed
+### Fixed
 - Styles
 
 ## 4.20.17
