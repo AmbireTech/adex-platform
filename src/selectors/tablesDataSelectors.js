@@ -238,7 +238,7 @@ export const selectAudiencesTableData = createSelector(
 	[selectSavedAudiences],
 	audiences =>
 		audiences.map(item => {
-			const { id, title, inputs, version } = item
+			const { id, title, inputs, version, created, updated } = item
 
 			const to = `/dashboard/advertiser/audiences/${id}`
 
@@ -247,6 +247,8 @@ export const selectAudiencesTableData = createSelector(
 					title: title || id,
 					to,
 				},
+				created,
+				updated,
 				actions: {
 					id,
 					audienceInput: { inputs, version },

@@ -19,6 +19,7 @@ import { styles } from './styles'
 import { useTableData } from './tableHooks'
 import { ReloadData } from './toolbars'
 import { execute, updateNewCampaign } from 'actions'
+import { formatDate } from 'helpers/formatters'
 
 const useStyles = makeStyles(styles)
 const RRIconButton = withReactRouterLink(IconButton)
@@ -37,6 +38,26 @@ const getCols = ({ classes, symbol }) => [
 					{title}
 				</RRTypography>
 			),
+		},
+	},
+	{
+		name: 'created',
+		label: t('PROP_CREATED'),
+		options: {
+			filter: false,
+			sort: true,
+			sortDirection: 'desc',
+			customBodyRender: created => formatDate(created),
+		},
+	},
+	{
+		name: 'updated',
+		label: t('PROP_UPDATED'),
+		options: {
+			filter: false,
+			sort: true,
+			sortDirection: 'desc',
+			customBodyRender: created => formatDate(created, undefined, t('-')),
 		},
 	},
 	{
