@@ -13,7 +13,7 @@ const mapStatusIcons = (humanFriendlyStatus, status = '', size) => {
 	const waitIcon = <HourglassFullIcon style={icon[size]} color={'secondary'} />
 	const doneIcon = <DoneAllIcon style={icon[size]} color={'primary'} />
 	const warningIcon = <WarningIcon style={icon[size]} color={'error'} />
-	const cashIcon = <MonetizationOnIcon style={icon[size]} color={'accentTwo'} />
+	const cashIcon = <MonetizationOnIcon style={icon[size]} color={'secondary'} />
 	if (humanFriendlyStatus === 'Closed' && status.toLowerCase() !== 'exhausted')
 		return waitIcon
 	switch (status.toLowerCase()) {

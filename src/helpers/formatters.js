@@ -6,17 +6,25 @@ const moment = new MomentUtils()
 export const DEFAULT_DATETIME_FORMAT = 'YYYY-MM-DD HH:mm'
 export const DEFAULT_DATE_FORMAT = 'YYYY-MM-DD'
 
-export const formatDateTime = (timestamp, format = DEFAULT_DATETIME_FORMAT) => {
+export const formatDateTime = (
+	timestamp,
+	format = DEFAULT_DATETIME_FORMAT,
+	noDateLabel = 'no date'
+) => {
 	if (!timestamp) {
-		return 'no date'
+		return noDateLabel
 	}
 	const date = moment.date(timestamp)
 	return date.format(format)
 }
 
-export const formatDate = (timestamp, format = DEFAULT_DATE_FORMAT) => {
+export const formatDate = (
+	timestamp,
+	format = DEFAULT_DATE_FORMAT,
+	noDateLabel = 'no date'
+) => {
 	if (!timestamp) {
-		return 'no date'
+		return noDateLabel
 	}
 	const date = moment.date(timestamp)
 	return date.format(format)
