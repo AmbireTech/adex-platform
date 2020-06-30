@@ -55,7 +55,6 @@ const getCols = ({ classes, symbol }) => [
 		label: t('PROP_UPDATED'),
 		options: {
 			filter: false,
-			sort: true,
 			sortDirection: 'desc',
 			customBodyRender: created => formatDate(created, undefined, t('-')),
 		},
