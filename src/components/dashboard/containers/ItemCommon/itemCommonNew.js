@@ -88,7 +88,7 @@ export const ChangeControls = hookProps => {
 				{hookProps.spinner && hookProps.dirtyProps.includes('audienceInput') && (
 					<Box>
 						{WALLET_ACTIONS_MSGS[authType || 'default'].map((msg, i) => (
-							<Box my={1}>
+							<Box my={1} key={msg.message + i}>
 								<Alert key={i} severity='info' variant='outlined'>
 									{t(msg.message)}
 								</Alert>
