@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react'
 import { Paper, Grid, Box, InputAdornment, Button } from '@material-ui/core'
+import { StopSharp, PauseSharp, StarSharp } from '@material-ui/icons'
 
 import { bigNumberify } from 'ethers/utils'
 import {
@@ -11,7 +12,7 @@ import {
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
 import { t, selectMainToken } from 'selectors'
-import { execute, closeCampaign } from 'actions'
+import { execute, closeCampaign, pauseOrResumeCampaign } from 'actions'
 
 export const CampaignBasic = ({ item, ...hookProps }) => {
 	const { title, adUnits = [], humanFriendlyName } = item
@@ -20,6 +21,7 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 
 	const { mediaUrl, mediaMime } = adUnits[0] || {}
 	const status = item.status || {}
+	const isPaused = ((item.targetingRules || [])[0] || {}).onlyShowIf === true
 
 	return (
 		<Fragment>
@@ -31,22 +33,41 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 							<Box my={1}>
 								<MediaCard mediaUrl={mediaUrl} mediaMime={mediaMime} />
 							</Box>
-							{['Ready', 'Active', 'Withdraw', 'Unhealthy'].includes(
-								status.name
-							) && (
-								<Box my={1}>
-									<Button
-										variant='contained'
-										color='secondary'
-										size='large'
-										onClick={() => {
-											execute(closeCampaign({ campaign: item }))
-										}}
-										disabled={humanFriendlyName === 'Closed'}
-									>
-										{t('BTN_CLOSE_CAMPAIGN')}
-									</Button>
-								</Box>
+							{(['Ready', 'Active', 'Unhealthy'].includes(status.name) ||
+								true) && (
+								<Grid container spacing={1} alignItems='center'>
+									<Grid item xs={12} sm={6} md={12} lg={6}>
+										<Button
+											variant='contained'
+											color='secondary'
+											size='large'
+											fullWidth
+											onClick={() => {
+												execute(closeCampaign({ campaign: item }))
+											}}
+											disabled={humanFriendlyName === 'Closed'}
+											endIcon={<StopSharp />}
+										>
+											{t('BTN_CLOSE_CAMPAIGN')}
+										</Button>
+									</Grid>
+
+									<Grid item xs={12} sm={6} md={12} lg={6}>
+										<Button
+											variant='contained'
+											color='secondary'
+											size='large'
+											fullWidth
+											onClick={() => {
+												execute(pauseOrResumeCampaign({ campaign: item }))
+											}}
+											disabled={humanFriendlyName === 'Closed'}
+											endIcon={isPaused ? <StarSharp /> : <PauseSharp />}
+										>
+											{t(`BTN_${isPaused ? 'RESUME' : 'PAUSE'}_CAMPAIGN`)}
+										</Button>
+									</Grid>
+								</Grid>
 							)}
 						</Grid>
 
