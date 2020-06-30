@@ -70,8 +70,7 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 							<Box my={1}>
 								<MediaCard mediaUrl={mediaUrl} mediaMime={mediaMime} />
 							</Box>
-							{(['Ready', 'Active', 'Unhealthy'].includes(status.name) ||
-								true) && (
+							{['Ready', 'Active', 'Unhealthy'].includes(status.name) && (
 								<Grid container spacing={1} alignItems='center'>
 									<Grid item xs={12} sm={6} md={12} lg={6}>
 										<div className={classes.wrapper}>
