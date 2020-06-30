@@ -150,6 +150,7 @@ export function updateTargetRuleInput({
 			newValues.inputs = newInputs
 		} else {
 			newValues.audienceInput = {
+				version: newValues.audienceInput.version || '1',
 				...newValues.audienceInput,
 				inputs: newInputs,
 			}
