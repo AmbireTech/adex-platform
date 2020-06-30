@@ -296,7 +296,7 @@ export function updateUserCampaigns() {
 
 export function closeCampaign({ campaign }) {
 	return async function(dispatch, getState) {
-		updateSpinner('closing-campaign', true)(dispatch)
+		updateSpinner(`closing-campaign-${campaign.id}`, true)(dispatch)
 		try {
 			const state = getState()
 			const authSig = selectAuthSig(state)
@@ -334,13 +334,13 @@ export function closeCampaign({ campaign }) {
 				timeout: 20000,
 			})(dispatch)
 		}
-		updateSpinner('closing-campaign', false)(dispatch)
+		updateSpinner(`closing-campaign-${campaign.id}`, false)(dispatch)
 	}
 }
 
 export function pauseOrResumeCampaign({ campaign }) {
 	return async function(dispatch, getState) {
-		updateSpinner('pausing-campaign', true)(dispatch)
+		updateSpinner(`pausing-campaign-${campaign.id}`, true)(dispatch)
 		let action = 'PAUSING'
 		try {
 			const state = getState()
@@ -399,7 +399,7 @@ export function pauseOrResumeCampaign({ campaign }) {
 				timeout: 20000,
 			})(dispatch)
 		}
-		updateSpinner('pausing-campaign', false)(dispatch)
+		updateSpinner(`pausing-campaign-${campaign.id}`, false)(dispatch)
 	}
 }
 
