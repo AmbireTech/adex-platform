@@ -727,13 +727,40 @@ export function validateAndUpdateCampaign({
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
 		try {
-			const { id, title, audienceInput } = item
+			const {
+				id,
+				title,
+				audienceInput,
+				pricingBounds,
+				minPerImpression,
+				maxPerImpression,
+			} = item
 
 			const updated = new Campaign(item)
 			const isAudienceUpdated = dirtyProps.includes('audienceInput')
 
 			if (isAudienceUpdated) {
-				updated.targetingRules = audienceInputToTargetingRules(audienceInput)
+				const state = getState()
+				const { decimals } = selectMainToken(state)
+				const minByCategory = selectTargetingAnalyticsMinByCategories(state)
+				const countryTiersCoefficients = selectTargetingAnalyticsCountryTiersCoefficients(
+					state
+				)
+
+				// TODO: fix it when it is possible to edit pricing bounds
+				// Legacy campaigns shim
+				const campaignPricingBounds = pricingBounds || {
+					min: minPerImpression,
+					max: maxPerImpression,
+				}
+
+				updated.targetingRules = audienceInputToTargetingRules({
+					audienceInput,
+					minByCategory,
+					countryTiersCoefficients,
+					pricingBounds: campaignPricingBounds,
+					decimals,
+				})
 			}
 
 			const campaign = updated.marketUpdate
