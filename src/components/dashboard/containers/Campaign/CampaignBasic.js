@@ -19,7 +19,12 @@ import {
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
 import { t, selectMainToken, selectSpinnerById } from 'selectors'
-import { execute, closeCampaign, pauseOrResumeCampaign } from 'actions'
+import {
+	execute,
+	closeCampaign,
+	pauseOrResumeCampaign,
+	confirmAction,
+} from 'actions'
 import { useSelector } from 'react-redux'
 
 const useStyles = makeStyles(theme => ({
@@ -45,6 +50,7 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 	const { mediaUrl, mediaMime } = adUnits[0] || {}
 	const status = item.status || {}
 	const isPaused = ((item.targetingRules || [])[0] || {}).onlyShowIf === true
+	const pauseAction = isPaused ? 'RESUME' : 'PAUSE'
 
 	const closeSpinner = useSelector(state =>
 		selectSpinnerById(state, `closing-campaign-${item.id}`)
@@ -75,7 +81,22 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 												size='large'
 												fullWidth
 												onClick={() => {
-													execute(closeCampaign({ campaign: item }))
+													execute(
+														confirmAction(
+															() => execute(closeCampaign({ campaign: item })),
+															null,
+															{
+																confirmLabel: t('CLOSE_CAMPAIGN_CONFIRM_LABEL'),
+																cancelLabel: t('CANCEL'),
+																title: t('CLOSE_CAMPAIGN_CONFIRM_TITLE', {
+																	args: [title],
+																}),
+																text: t('CLOSE_CAMPAIGN_CONFIRM_INFO', {
+																	args: [],
+																}),
+															}
+														)
+													)
 												}}
 												disabled={
 													closeSpinner || humanFriendlyName === 'Closed'
@@ -101,14 +122,40 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 												size='large'
 												fullWidth
 												onClick={() => {
-													execute(pauseOrResumeCampaign({ campaign: item }))
+													execute(
+														confirmAction(
+															() =>
+																execute(
+																	pauseOrResumeCampaign({ campaign: item })
+																),
+															null,
+															{
+																confirmLabel: t(
+																	`${pauseAction}_CAMPAIGN_CONFIRM_LABEL`
+																),
+																cancelLabel: t('CANCEL'),
+																title: t(
+																	`${pauseAction}_CAMPAIGN_CONFIRM_TITLE`,
+																	{
+																		args: [title],
+																	}
+																),
+																text: t(
+																	`${pauseAction}_CAMPAIGN_CONFIRM_INFO`,
+																	{
+																		args: [],
+																	}
+																),
+															}
+														)
+													)
 												}}
 												disabled={
 													pauseSpinner || humanFriendlyName === 'Closed'
 												}
 												endIcon={isPaused ? <StarSharp /> : <PauseSharp />}
 											>
-												{t(`BTN_${isPaused ? 'RESUME' : 'PAUSE'}_CAMPAIGN`)}
+												{t(`BTN_${pauseAction}_CAMPAIGN`)}
 											</Button>
 											{pauseSpinner && (
 												<CircularProgress
