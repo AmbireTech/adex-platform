@@ -192,18 +192,20 @@ function CampaignFormPreview() {
 					</Grid>
 
 					<Grid item xs={12}>
-						<ExpansionPanel square={true} variant='outlined'>
-							<ExpansionPanelSummary
-								expandIcon={<ExpandMoreIcon />}
-								aria-controls='targeting-rules-content'
-								id='targeting-rules-header'
-							>
-								<Typography>{t('TARGETING_RULES')}</Typography>
-							</ExpansionPanelSummary>
-							<Box p={1} color='grey.contrastText' bgcolor='grey.main'>
-								<pre>{JSON.stringify(targetingRules || [], null, 2)}</pre>
-							</Box>
-						</ExpansionPanel>
+						<Box p={1}>
+							<ExpansionPanel square={true} variant='outlined'>
+								<ExpansionPanelSummary
+									expandIcon={<ExpandMoreIcon />}
+									aria-controls='targeting-rules-content'
+									id='targeting-rules-header'
+								>
+									<Typography>{t('TARGETING_RULES')}</Typography>
+								</ExpansionPanelSummary>
+								<Box p={1} color='grey.contrastText' bgcolor='grey.main'>
+									<pre>{JSON.stringify(targetingRules || [], null, 2)}</pre>
+								</Box>
+							</ExpansionPanel>
+						</Box>
 					</Grid>
 				</Grid>
 			</ContentBody>
