@@ -57,7 +57,10 @@ function AdUnitPreview() {
 							right={
 								<Img
 									allowFullscreen={true}
-									className={classes.imgPreview}
+									classes={{
+										img: classes.imgPreview,
+										wrapper: classes.imgPreviewWrapper,
+									}}
 									src={temp.tempUrl || ''}
 									alt={title}
 									mediaMime={temp.mime}
