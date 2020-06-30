@@ -338,6 +338,71 @@ export function closeCampaign({ campaign }) {
 	}
 }
 
+export function pauseOrResumeCampaign({ campaign }) {
+	return async function(dispatch, getState) {
+		updateSpinner('pausing-campaign', true)(dispatch)
+		let action = 'PAUSING'
+		try {
+			const state = getState()
+			const { account } = state.persist
+			const updated = new Campaign(campaign)
+
+			const currentTargetingRules = updated.targetingRules || []
+			const newRules = [...currentTargetingRules]
+
+			const isPaused = (currentTargetingRules[0] || {}).onlyShowIf === true
+			if (isPaused) {
+				action = 'RESUMING'
+				newRules.shift()
+			} else {
+				newRules.unshift({ onlyShowIf: false })
+			}
+
+			const { authTokens } = await updateTargeting({
+				account,
+				campaign: updated,
+				targetingRules: newRules,
+			})
+
+			const updatedCampaign = (await updateCampaign({
+				campaign: updated.marketUpdate,
+				id: updated.id,
+			})).campaign
+
+			await updateValidatorAuthTokens({ newAuth: authTokens })(
+				dispatch,
+				getState
+			)
+
+			dispatch({
+				type: UPDATE_ITEM,
+				item: new Campaign(updatedCampaign).plainObj(),
+				itemType: 'Campaign',
+			})
+			addToast({
+				type: 'success',
+				label: t(`SUCCESS_${action}_CAMPAIGN`, {
+					args: ['CAMPAIGN', updatedCampaign.title],
+				}),
+				timeout: 50000,
+			})(dispatch)
+
+			await updateUserCampaigns(dispatch, getState)
+			execute(push('/dashboard/advertiser/campaigns'))
+		} catch (err) {
+			console.error(`ERR_${action}_CAMPAIGN`, err)
+			addToast({
+				type: 'cancel',
+				label: t(`ERR_${action}_CAMPAIGN`, {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+		updateSpinner('pausing-campaign', false)(dispatch)
+	}
+}
+
 const tempValidators = [
 	{
 		id: VALIDATOR_LEADER_ID,
