@@ -69,9 +69,10 @@ export const CampaignAudience = ({ item, ...hookProps }) => {
 	const campaignAudienceInput =
 		useSelector(state => selectAudienceByCampaignId(state, item.id)) || {}
 
-	const audienceInput = Object.keys(item.audienceInput.inputs).length
-		? item.audienceInput
-		: campaignAudienceInput
+	const audienceInput =
+		item.audienceInput && Object.keys(item.audienceInput.inputs).length
+			? item.audienceInput
+			: campaignAudienceInput
 
 	return (
 		<Fragment>
@@ -82,23 +83,25 @@ export const CampaignAudience = ({ item, ...hookProps }) => {
 					<AudiencePreview audienceInput={audienceInput.inputs} />
 				</Box>
 				<Box p={1} className={classes.actions}>
-					<TargetingRulesEdit
-						btnLabel='UPDATE_AUDIENCE'
-						title='UPDATE_CAMPAIGN_AUDIENCE'
-						itemId={item.id}
-						disableBackdropClick
-						updateField={hookProps.updateField}
-						color='secondary'
-						variant='contained'
-						onClick={() =>
-							execute(
-								mapCurrentToNewCampaignAudienceInput({
-									itemId: item.id,
-									dirtyProps: hookProps.dirtyProps,
-								})
-							)
-						}
-					/>
+					{['Ready', 'Active', 'Unhealthy'].includes(item.status.name) && (
+						<TargetingRulesEdit
+							btnLabel='UPDATE_AUDIENCE'
+							title='UPDATE_CAMPAIGN_AUDIENCE'
+							itemId={item.id}
+							disableBackdropClick
+							updateField={hookProps.updateField}
+							color='secondary'
+							variant='contained'
+							onClick={() =>
+								execute(
+									mapCurrentToNewCampaignAudienceInput({
+										itemId: item.id,
+										dirtyProps: hookProps.dirtyProps,
+									})
+								)
+							}
+						/>
+					)}
 
 					<NewCampaignFromAudience
 						btnLabel='NEW_CAMPAIGN_FROM_AUDIENCE'
