@@ -86,7 +86,7 @@ const defaultTheme = createMuiTheme()
 export const theme = createMuiTheme({
 	typography: {
 		fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-		fontSize: 13,
+		fontSize: 13.42,
 	},
 	palette: { ...palette },
 	overrides: {
