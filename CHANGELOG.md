@@ -2,6 +2,17 @@
 All notable changes to this project will be documented in this file.
 
 ## 4.20.17
+##### *2020-06-30*
+
+### Added
+- Ability to pause/resume campaign
+- Confirm dialog and spinner for campaign close/pause/resume buttons
+- Created and Updated columns at Audiences table
+
+#### Fixed
+- Styles
+
+## 4.20.17
 ##### *2020-06-29*
 
 ### Added
