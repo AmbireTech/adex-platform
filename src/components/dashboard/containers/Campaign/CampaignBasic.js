@@ -1,7 +1,14 @@
 import React, { Fragment } from 'react'
-import { Paper, Grid, Box, InputAdornment, Button } from '@material-ui/core'
+import {
+	Paper,
+	Grid,
+	Box,
+	InputAdornment,
+	Button,
+	CircularProgress,
+} from '@material-ui/core'
 import { StopSharp, PauseSharp, StarSharp } from '@material-ui/icons'
-
+import { makeStyles } from '@material-ui/core/styles'
 import { bigNumberify } from 'ethers/utils'
 import {
 	ItemTitle,
@@ -11,10 +18,26 @@ import {
 } from 'components/dashboard/containers/ItemCommon/'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
-import { t, selectMainToken } from 'selectors'
+import { t, selectMainToken, selectSpinnerById } from 'selectors'
 import { execute, closeCampaign, pauseOrResumeCampaign } from 'actions'
+import { useSelector } from 'react-redux'
+
+const useStyles = makeStyles(theme => ({
+	wrapper: {
+		margin: theme.spacing(1),
+		position: 'relative',
+	},
+	buttonProgress: {
+		position: 'absolute',
+		top: '50%',
+		left: '50%',
+		marginTop: -12,
+		marginLeft: -12,
+	},
+}))
 
 export const CampaignBasic = ({ item, ...hookProps }) => {
+	const classes = useStyles()
 	const { title, adUnits = [], humanFriendlyName } = item
 	const { decimals, symbol } = selectMainToken()
 	const { title: errTitle } = hookProps.validations
@@ -22,6 +45,14 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 	const { mediaUrl, mediaMime } = adUnits[0] || {}
 	const status = item.status || {}
 	const isPaused = ((item.targetingRules || [])[0] || {}).onlyShowIf === true
+
+	const closeSpinner = useSelector(state =>
+		selectSpinnerById(state, `closing-campaign-${item.id}`)
+	)
+
+	const pauseSpinner = useSelector(state =>
+		selectSpinnerById(state, `pausing-campaign-${item.id}`)
+	)
 
 	return (
 		<Fragment>
@@ -37,35 +68,55 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 								true) && (
 								<Grid container spacing={1} alignItems='center'>
 									<Grid item xs={12} sm={6} md={12} lg={6}>
-										<Button
-											variant='contained'
-											color='secondary'
-											size='large'
-											fullWidth
-											onClick={() => {
-												execute(closeCampaign({ campaign: item }))
-											}}
-											disabled={humanFriendlyName === 'Closed'}
-											endIcon={<StopSharp />}
-										>
-											{t('BTN_CLOSE_CAMPAIGN')}
-										</Button>
+										<div className={classes.wrapper}>
+											<Button
+												variant='contained'
+												color='secondary'
+												size='large'
+												fullWidth
+												onClick={() => {
+													execute(closeCampaign({ campaign: item }))
+												}}
+												disabled={
+													closeSpinner || humanFriendlyName === 'Closed'
+												}
+												endIcon={<StopSharp />}
+											>
+												{t('BTN_CLOSE_CAMPAIGN')}
+											</Button>
+											{closeSpinner && (
+												<CircularProgress
+													size={24}
+													className={classes.buttonProgress}
+												/>
+											)}
+										</div>
 									</Grid>
 
 									<Grid item xs={12} sm={6} md={12} lg={6}>
-										<Button
-											variant='contained'
-											color='secondary'
-											size='large'
-											fullWidth
-											onClick={() => {
-												execute(pauseOrResumeCampaign({ campaign: item }))
-											}}
-											disabled={humanFriendlyName === 'Closed'}
-											endIcon={isPaused ? <StarSharp /> : <PauseSharp />}
-										>
-											{t(`BTN_${isPaused ? 'RESUME' : 'PAUSE'}_CAMPAIGN`)}
-										</Button>
+										<div className={classes.wrapper}>
+											<Button
+												variant='contained'
+												color='secondary'
+												size='large'
+												fullWidth
+												onClick={() => {
+													execute(pauseOrResumeCampaign({ campaign: item }))
+												}}
+												disabled={
+													pauseSpinner || humanFriendlyName === 'Closed'
+												}
+												endIcon={isPaused ? <StarSharp /> : <PauseSharp />}
+											>
+												{t(`BTN_${isPaused ? 'RESUME' : 'PAUSE'}_CAMPAIGN`)}
+											</Button>
+											{pauseSpinner && (
+												<CircularProgress
+													size={24}
+													className={classes.buttonProgress}
+												/>
+											)}
+										</div>
 									</Grid>
 								</Grid>
 							)}
