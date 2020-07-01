@@ -68,6 +68,11 @@ export const selectDemandAnalytics = createSelector(
 	({ demand }) => demand || {}
 )
 
+export const selectDemandAnalyticsByType = createSelector(
+	[selectDemandAnalytics, (_, type) => type],
+	(demand, type) => demand[type] || {}
+)
+
 export const selectTargetingAnalytics = createSelector(
 	[selectTargeting],
 	({ targetingData = [] }) => targetingData

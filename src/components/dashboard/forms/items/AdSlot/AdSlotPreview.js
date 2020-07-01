@@ -9,6 +9,7 @@ import {
 	ExpansionPanelSummary,
 	Chip,
 } from '@material-ui/core'
+import { Alert } from '@material-ui/lab'
 import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
 import { IabCategories } from 'adex-models'
 import Img from 'components/common/img/Img'
@@ -25,6 +26,7 @@ import {
 	selectMainToken,
 	selectNewAdSlot,
 	selectAccountIdentityAddr,
+	selectDemandAnalyticsByType,
 } from 'selectors'
 
 const useStyles = makeStyles(styles)
@@ -75,7 +77,9 @@ const AdSlotPreview = () => {
 
 	const identityAddr = useSelector(selectAccountIdentityAddr)
 	const { symbol } = useSelector(selectMainToken)
-
+	const typeDemand = useSelector(state =>
+		selectDemandAnalyticsByType(state, type)
+	)
 	const { allowAdultContent, autoSetMinCPM } = rulesInput.inputs
 	const { categories = [], suggestedMinCPM } = temp
 	return (
@@ -162,9 +166,25 @@ const AdSlotPreview = () => {
 						/>
 					</Grid>
 
+					{(!typeDemand || !typeDemand.raw) && (
+						<Grid item xs={12}>
+							<PropRow
+								left={t('DEMAND_WARNINGS')}
+								right={
+									<Alert severity='warning' variant='outlined'>
+										{t('SLOT_NO_CURRENT_DEMAND', { args: [type] })}
+									</Alert>
+								}
+							/>
+						</Grid>
+					)}
+
 					{temp.hostname && temp.issues && temp.issues.length && (
 						<Grid item xs={12}>
-							<PropRow right={<WebsiteIssues issues={temp.issues} />} />
+							<PropRow
+								left={t('WEBSITE_ISSUES')}
+								right={<WebsiteIssues issues={temp.issues} />}
+							/>
 						</Grid>
 					)}
 					<Grid item xs={12} md={12}>
