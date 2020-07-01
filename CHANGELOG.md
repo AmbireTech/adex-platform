@@ -1,7 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 4.20.17
+## 4.20.20
+##### *2020-07-01*
+
+### Fixed
+- Targeting rules from input when all countries is selected
+- Disabled values between categories and publishers when 'ALL' selected
+
+## 4.20.19
 ##### *2020-06-30*
 
 ### Changed
@@ -11,7 +18,7 @@ All notable changes to this project will be documented in this file.
 - Updating legacy campaigns audience
 - Misc bug fixes
 
-## 4.20.17
+## 4.20.18
 ##### *2020-06-30*
 
 ### Added
