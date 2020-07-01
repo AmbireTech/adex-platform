@@ -314,22 +314,31 @@ export const websitesAutocompleteSrc = createSelector(
 )
 
 const getDisabledValues = (data, source, inputs, allSrcs) => {
-	const disabled = {}
+	const disabled = []
 
 	if (
 		data.parameter === 'publishers' &&
 		inputs.categories &&
+		inputs.categories.apply &&
+		inputs.categories.apply.includes('in') &&
 		inputs.categories.in &&
 		inputs.categories.in.length
 	) {
-		disabled.in = source
-			.filter(
-				x => !x.extraData.categories.some(c => inputs.categories.in.includes(c))
-			)
-			.map(c => c.value)
+		disabled.in = inputs.categories.in.includes('ALL')
+			? []
+			: source
+					.filter(
+						x =>
+							!x.extraData.categories.some(c =>
+								inputs.categories.in.includes(c)
+							)
+					)
+					.map(c => c.value)
 	} else if (
 		data.parameter === 'categories' &&
 		inputs.publishers &&
+		inputs.publishers.apply &&
+		inputs.publishers.apply === 'in' &&
 		inputs.publishers.in &&
 		inputs.publishers.in.length
 	) {
