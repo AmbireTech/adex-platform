@@ -137,7 +137,7 @@ const WebsitesActions = ({
 											excludeOrIncludeWebsites({
 												campaignId,
 												hostnames,
-												blacklist: true,
+												exclude: true,
 											})
 										),
 									null,

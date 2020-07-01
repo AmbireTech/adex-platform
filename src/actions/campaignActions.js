@@ -420,10 +420,15 @@ export function excludeOrIncludeWebsites({ campaignId, hostnames, exclude }) {
 				campaignId
 			)
 
-			const newAudienceInput = { ...campaignAudienceInput }
+			// Add default value for legacy campaigns
+			const newAudienceInput = {
+				version: '1',
+				inputs: { publishers: {} },
+				...campaignAudienceInput,
+			}
 
 			const { inputs = {} } = newAudienceInput
-			const { publishers } = inputs
+			const { publishers = {} } = inputs
 
 			// exclude
 			if (exclude && publishers.apply && publishers.apply === 'in') {
@@ -442,7 +447,9 @@ export function excludeOrIncludeWebsites({ campaignId, hostnames, exclude }) {
 					.map(hostname =>
 						JSON.stringify({
 							hostname,
-							publisher: targetingData.find(x => x.hostname === hostname),
+							publisher: (
+								targetingData.find(x => x.hostname === hostname) || {}
+							).owner,
 						})
 					)
 
@@ -459,7 +466,9 @@ export function excludeOrIncludeWebsites({ campaignId, hostnames, exclude }) {
 					.map(hostname =>
 						JSON.stringify({
 							hostname,
-							publisher: targetingData.find(x => x.hostname === hostname),
+							publisher: (
+								targetingData.find(x => x.hostname === hostname) || {}
+							).owner,
 						})
 					)
 
@@ -480,11 +489,16 @@ export function excludeOrIncludeWebsites({ campaignId, hostnames, exclude }) {
 			}
 
 			// exclude
-			if (exclude && publishers.apply && publishers.apply === 'allin') {
+			if (
+				exclude &&
+				(!publishers.apply ||
+					(publishers.apply && publishers.apply === 'allin'))
+			) {
 				const newNin = hostnames.map(hostname =>
 					JSON.stringify({
 						hostname,
-						publisher: targetingData.find(x => x.hostname === hostname),
+						publisher: (targetingData.find(x => x.hostname === hostname) || {})
+							.owner,
 					})
 				)
 
@@ -493,7 +507,11 @@ export function excludeOrIncludeWebsites({ campaignId, hostnames, exclude }) {
 			}
 
 			// include
-			if (!exclude && publishers.apply && publishers.apply === 'allin') {
+			if (
+				!exclude &&
+				(!publishers.apply ||
+					(publishers.apply && publishers.apply === 'allin'))
+			) {
 				// if all in and include no need to do anything
 
 				// TODO: some toast
@@ -506,18 +524,19 @@ export function excludeOrIncludeWebsites({ campaignId, hostnames, exclude }) {
 			)
 
 			const { decimals } = selectMainToken(state)
-			const { pricingBounds } = campaign
+			const { pricingBounds, minPerImpression, maxPerImpression } = campaign
 
-			const pricingBoundsInTokenValue = {
-				min: parseUnits(pricingBounds.min, decimals),
-				max: parseUnits(pricingBounds.max, decimals),
+			// Legacy campaigns shim
+			const campaignPricingBounds = pricingBounds || {
+				min: minPerImpression,
+				max: maxPerImpression,
 			}
 
 			const newRules = audienceInputToTargetingRules({
 				audienceInput: newAudienceInput,
 				minByCategory,
 				countryTiersCoefficients,
-				pricingBounds: pricingBoundsInTokenValue,
+				pricingBounds: campaignPricingBounds,
 				decimals,
 			})
 
@@ -547,7 +566,7 @@ export function excludeOrIncludeWebsites({ campaignId, hostnames, exclude }) {
 			})
 			addToast({
 				type: 'success',
-				label: t(`SUCCESS_${action}_CAMPAIGN`, {
+				label: t(`SUCCESS_${action}_WEBSITE`, {
 					args: ['CAMPAIGN', updatedCampaign.title],
 				}),
 				timeout: 50000,
@@ -555,10 +574,10 @@ export function excludeOrIncludeWebsites({ campaignId, hostnames, exclude }) {
 
 			await updateUserCampaigns(dispatch, getState)
 		} catch (err) {
-			console.error(`ERR_${action}_CAMPAIGN`, err)
+			console.error(`ERR_${action}_WEBSITE`, err)
 			addToast({
 				type: 'cancel',
-				label: t(`ERR_${action}_CAMPAIGN`, {
+				label: t(`ERR_${action}_WEBSITE`, {
 					args: [getErrorMsg(err)],
 				}),
 				timeout: 20000,
