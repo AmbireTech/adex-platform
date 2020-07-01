@@ -50,6 +50,7 @@ import {
 	selectMainToken,
 	selectNewItemByTypeAndId,
 	selectAudienceByCampaignId,
+	selectTargetingAnalytics,
 	selectTargetingAnalyticsMinByCategories,
 	selectTargetingAnalyticsCountryTiersCoefficients,
 } from 'selectors'
@@ -388,7 +389,6 @@ export function pauseOrResumeCampaign({ campaign }) {
 			})(dispatch)
 
 			await updateUserCampaigns(dispatch, getState)
-			execute(push('/dashboard/advertiser/campaigns'))
 		} catch (err) {
 			console.error(`ERR_${action}_CAMPAIGN`, err)
 			addToast({
@@ -400,6 +400,171 @@ export function pauseOrResumeCampaign({ campaign }) {
 			})(dispatch)
 		}
 		updateSpinner(`pausing-campaign-${campaign.id}`, false)(dispatch)
+	}
+}
+
+export function excludeOrIncludeWebsites({ campaignId, hostnames, exclude }) {
+	return async function(dispatch, getState) {
+		let action = exclude ? 'EXCLUDING' : 'INCLUDING'
+		updateSpinner(`${action}-campaign-website${campaignId}`, true)(dispatch)
+
+		try {
+			const state = getState()
+			const campaign = selectCampaignById(state, campaignId)
+			const targetingData = selectTargetingAnalytics(state)
+			const { account } = state.persist
+			const updated = new Campaign(campaign)
+
+			const campaignAudienceInput = selectAudienceByCampaignId(
+				state,
+				campaignId
+			)
+
+			const newAudienceInput = { ...campaignAudienceInput }
+
+			const { inputs = {} } = newAudienceInput
+			const { publishers } = inputs
+
+			// exclude
+			if (exclude && publishers.apply && publishers.apply === 'in') {
+				const newIn = (publishers.in || []).filter(value => {
+					const { hostname } = JSON.parse(value)
+					return !hostnames.includes(hostname)
+				})
+				newAudienceInput.inputs.publishers.in = newIn
+			}
+
+			// include
+			if (!exclude && publishers.apply && publishers.apply === 'in') {
+				const newIn = hostnames
+					// Filter already included
+					.filter(h => (publishers.in || []).some(x => x.includes(h)))
+					.map(hostname =>
+						JSON.stringify({
+							hostname,
+							publisher: targetingData.find(x => x.hostname === hostname),
+						})
+					)
+
+				newAudienceInput.inputs.publishers.in = (publishers.nin || []).concat(
+					newIn
+				)
+			}
+
+			// exclude
+			if (exclude && publishers.apply && publishers.apply === 'nin') {
+				const newNin = hostnames
+					// Filter already excluded
+					.filter(h => !(publishers.nin || []).some(x => x.includes(h)))
+					.map(hostname =>
+						JSON.stringify({
+							hostname,
+							publisher: targetingData.find(x => x.hostname === hostname),
+						})
+					)
+
+				newAudienceInput.inputs.publishers.nin = (publishers.nin || []).concat(
+					newNin
+				)
+			}
+
+			// include
+			if (!exclude && publishers.apply && publishers.apply === 'nin') {
+				const newNin = (publishers.nin || [])
+					// Filter selected
+					.filter(value => {
+						const { hostname } = JSON.parse(value)
+						return !hostnames.includes(hostname)
+					})
+				newAudienceInput.inputs.publishers.nin = newNin
+			}
+
+			// exclude
+			if (exclude && publishers.apply && publishers.apply === 'allin') {
+				const newNin = hostnames.map(hostname =>
+					JSON.stringify({
+						hostname,
+						publisher: targetingData.find(x => x.hostname === hostname),
+					})
+				)
+
+				newAudienceInput.inputs.publishers.apply = 'nin'
+				newAudienceInput.inputs.publishers.nin = newNin
+			}
+
+			// include
+			if (!exclude && publishers.apply && publishers.apply === 'allin') {
+				// if all in and include no need to do anything
+
+				// TODO: some toast
+				return
+			}
+
+			const minByCategory = selectTargetingAnalyticsMinByCategories(state)
+			const countryTiersCoefficients = selectTargetingAnalyticsCountryTiersCoefficients(
+				state
+			)
+
+			const { decimals } = selectMainToken(state)
+			const { pricingBounds } = campaign
+
+			const pricingBoundsInTokenValue = {
+				min: parseUnits(pricingBounds.min, decimals),
+				max: parseUnits(pricingBounds.max, decimals),
+			}
+
+			const newRules = audienceInputToTargetingRules({
+				audienceInput: newAudienceInput,
+				minByCategory,
+				countryTiersCoefficients,
+				pricingBounds: pricingBoundsInTokenValue,
+				decimals,
+			})
+
+			updated.targetingRules = newRules
+			updated.audienceInput = newAudienceInput
+
+			const { authTokens } = await updateTargeting({
+				account,
+				campaign: updated,
+				targetingRules: newRules,
+			})
+
+			const updatedCampaign = (await updateCampaign({
+				campaign: updated.marketUpdate,
+				id: updated.id,
+			})).campaign
+
+			await updateValidatorAuthTokens({ newAuth: authTokens })(
+				dispatch,
+				getState
+			)
+
+			dispatch({
+				type: UPDATE_ITEM,
+				item: new Campaign(updatedCampaign).plainObj(),
+				itemType: 'Campaign',
+			})
+			addToast({
+				type: 'success',
+				label: t(`SUCCESS_${action}_CAMPAIGN`, {
+					args: ['CAMPAIGN', updatedCampaign.title],
+				}),
+				timeout: 50000,
+			})(dispatch)
+
+			await updateUserCampaigns(dispatch, getState)
+		} catch (err) {
+			console.error(`ERR_${action}_CAMPAIGN`, err)
+			addToast({
+				type: 'cancel',
+				label: t(`ERR_${action}_CAMPAIGN`, {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+		updateSpinner(`${action}-campaign-website${campaignId}`, true)(dispatch)
 	}
 }
 
