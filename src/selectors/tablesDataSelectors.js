@@ -485,11 +485,13 @@ export const selectCampaignStatsTableData = createSelector(
 			: null
 
 		return Object.keys(imprStats).map(key => ({
-			isBlacklisted: rules
-				? rules.apply === 'nin'
-					? rules.nin.some(x => x.includes(key))
-					: !rules.in.some(x => x.includes(key))
-				: false,
+			isBlacklisted:
+				rules &&
+				((rules.apply === 'nin' &&
+					(rules.nin || []).some(x => x.includes(key))) ||
+					(rules.apply === 'ni' &&
+						!(rules.in || []).some(x => x.includes(key)))),
+
 			website: key,
 			impressions: imprStats[key] || 0,
 			ctr: ((clickStats[key] || 0) / (imprStats[key] || 1)) * 100,
