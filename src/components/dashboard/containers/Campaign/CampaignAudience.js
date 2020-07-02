@@ -66,13 +66,8 @@ const TargetingRulesEdit = WithDialog(TargetingSteps)
 
 export const CampaignAudience = ({ item, ...hookProps }) => {
 	const classes = useStyles()
-	const campaignAudienceInput =
-		useSelector(state => selectAudienceByCampaignId(state, item.id)) || {}
-
 	const audienceInput =
-		item.audienceInput && Object.keys(item.audienceInput.inputs).length
-			? item.audienceInput
-			: campaignAudienceInput
+		useSelector(state => selectAudienceByCampaignId(state, item.id)) || {}
 
 	return (
 		<Fragment>
