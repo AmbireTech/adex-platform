@@ -312,11 +312,7 @@ function CampaignFinance({ validateId }) {
 							<FormHelperText>
 								{t('CAMPAIGN_AUTO_UTM_TAGS_INFO', {
 									args: [
-										<ExternalAnchor
-											href={
-												' https://help.adex.network/hc/en-us/articles/360011670859-How-to-add-UTM-links-and-track-campaigns'
-											}
-										>
+										<ExternalAnchor href='https://help.adex.network/hc/en-us/articles/360011670859-How-to-add-UTM-links-and-track-campaigns'>
 											{t('CHECK_HERE')}
 										</ExternalAnchor>,
 									],
