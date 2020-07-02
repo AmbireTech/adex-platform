@@ -50,6 +50,7 @@ import {
 	selectMainToken,
 	selectNewItemByTypeAndId,
 	selectAudienceByCampaignId,
+	selectTargetingAnalytics,
 	selectTargetingAnalyticsMinByCategories,
 	selectTargetingAnalyticsCountryTiersCoefficients,
 } from 'selectors'
@@ -388,7 +389,6 @@ export function pauseOrResumeCampaign({ campaign }) {
 			})(dispatch)
 
 			await updateUserCampaigns(dispatch, getState)
-			execute(push('/dashboard/advertiser/campaigns'))
 		} catch (err) {
 			console.error(`ERR_${action}_CAMPAIGN`, err)
 			addToast({
@@ -400,6 +400,218 @@ export function pauseOrResumeCampaign({ campaign }) {
 			})(dispatch)
 		}
 		updateSpinner(`pausing-campaign-${campaign.id}`, false)(dispatch)
+	}
+}
+
+export function excludeOrIncludeWebsites({
+	campaignId,
+	hostnames,
+	exclude,
+	action,
+}) {
+	return async function(dispatch, getState) {
+		updateSpinner(`${action}-campaign-website${campaignId}`, true)(dispatch)
+
+		try {
+			const state = getState()
+			const campaign = selectCampaignById(state, campaignId)
+			const targetingData = selectTargetingAnalytics(state)
+			const { account } = state.persist
+			const updated = new Campaign(campaign)
+
+			const campaignAudienceInput = selectAudienceByCampaignId(
+				state,
+				campaignId
+			)
+
+			// Add default value for legacy campaigns
+			const newAudienceInput = {
+				version: '1',
+				inputs: { publishers: {} },
+				...campaignAudienceInput,
+			}
+			newAudienceInput.inputs = { ...newAudienceInput.inputs }
+			newAudienceInput.inputs.publishers = {
+				...newAudienceInput.inputs.publishers,
+			}
+
+			const { inputs = {} } = newAudienceInput
+			const { publishers = {} } = inputs
+
+			// exclude
+			if (exclude && publishers.apply && publishers.apply === 'in') {
+				const newIn = [...(publishers.in || [])].filter(value => {
+					const { hostname } = JSON.parse(value)
+					return !hostnames.includes(hostname)
+				})
+				newAudienceInput.inputs.publishers.in = newIn
+			}
+			// include
+			else if (!exclude && publishers.apply && publishers.apply === 'in') {
+				const newIn = [...hostnames]
+					// Filter already included
+					.filter(h => [...(publishers.in || [])].some(x => x.includes(h)))
+					.map(hostname =>
+						JSON.stringify({
+							hostname,
+							publisher: (
+								targetingData.find(x => x.hostname === hostname) || {}
+							).owner,
+						})
+					)
+
+				newAudienceInput.inputs.publishers.in = (publishers.in || []).concat(
+					newIn
+				)
+			}
+			// exclude
+			else if (exclude && publishers.apply && publishers.apply === 'nin') {
+				const newNin = hostnames
+					// Filter already excluded
+					.filter(h => ![...(publishers.nin || [])].some(x => x.includes(h)))
+					.map(hostname =>
+						JSON.stringify({
+							hostname,
+							publisher: (
+								targetingData.find(x => x.hostname === hostname) || {}
+							).owner,
+						})
+					)
+
+				newAudienceInput.inputs.publishers.nin = (publishers.nin || []).concat(
+					newNin
+				)
+			}
+			// include
+			else if (!exclude && publishers.apply && publishers.apply === 'nin') {
+				const newNin = [...(publishers.nin || [])]
+					// Filter selected
+					.filter(value => {
+						const { hostname } = JSON.parse(value)
+						return !hostnames.includes(hostname)
+					})
+				newAudienceInput.inputs.publishers.nin = newNin
+			}
+			// exclude
+			else if (
+				exclude &&
+				(!publishers.apply ||
+					(publishers.apply && publishers.apply === 'allin'))
+			) {
+				const newNin = [...hostnames].map(hostname =>
+					JSON.stringify({
+						hostname,
+						publisher: (targetingData.find(x => x.hostname === hostname) || {})
+							.owner,
+					})
+				)
+
+				newAudienceInput.inputs.publishers.apply = 'nin'
+				newAudienceInput.inputs.publishers.nin = newNin
+			}
+			// include
+			else if (
+				!exclude &&
+				(!publishers.apply ||
+					(publishers.apply && publishers.apply === 'allin'))
+			) {
+				// There is nothing to do
+				return addToast({
+					type: 'success',
+					label: t(`SUCCESS_${action}_WEBSITE`, {
+						args: [hostnames.length, updated.title],
+					}),
+					timeout: 50000,
+				})(dispatch)
+			}
+
+			if (
+				newAudienceInput.inputs.publishers.apply === 'nin' &&
+				!newAudienceInput.inputs.publishers.nin.length
+			) {
+				newAudienceInput.inputs.publishers.apply = 'allin'
+				newAudienceInput.inputs.publishers.nin = null
+			}
+
+			const minByCategory = selectTargetingAnalyticsMinByCategories(state)
+			const countryTiersCoefficients = selectTargetingAnalyticsCountryTiersCoefficients(
+				state
+			)
+
+			const { decimals } = selectMainToken(state)
+			const { pricingBounds, minPerImpression, maxPerImpression } = campaign
+
+			// Legacy campaigns shim
+			const campaignPricingBounds = pricingBounds || {
+				IMPRESSION: {
+					min: minPerImpression,
+					max: maxPerImpression,
+				},
+			}
+
+			const newRules = audienceInputToTargetingRules({
+				audienceInput: newAudienceInput,
+				minByCategory,
+				countryTiersCoefficients,
+				pricingBounds: campaignPricingBounds,
+				decimals,
+			})
+
+			updated.targetingRules = newRules
+			updated.audienceInput = newAudienceInput
+
+			const { authTokens } = await updateTargeting({
+				account,
+				campaign: updated,
+				targetingRules: newRules,
+			})
+
+			const updatedCampaign = (await updateCampaign({
+				campaign: updated.marketUpdate,
+				id: updated.id,
+			})).campaign
+
+			await updateValidatorAuthTokens({ newAuth: authTokens })(
+				dispatch,
+				getState
+			)
+
+			let toastType = 'success'
+			let toastLabel = `SUCCESS_${action}_WEBSITE`
+
+			if (
+				newAudienceInput.inputs.publishers.apply === 'in' &&
+				!newAudienceInput.inputs.publishers.in.length
+			) {
+				toastType = 'warning'
+				toastLabel = `WARNING_NO_PUBLISHERS_${action}_WEBSITE`
+			}
+
+			dispatch({
+				type: UPDATE_ITEM,
+				item: new Campaign(updatedCampaign).plainObj(),
+				itemType: 'Campaign',
+			})
+			addToast({
+				type: toastType,
+				label: t(toastLabel, {
+					args: [hostnames.length, updatedCampaign.title],
+				}),
+				timeout: 50000,
+			})(dispatch)
+
+			await updateUserCampaigns(dispatch, getState)
+		} catch (err) {
+			console.error(`ERR_${action}_WEBSITE`, err)
+			addToast({
+				type: 'cancel',
+				label: t(`ERR_${action}_WEBSITE`, {
+					args: [hostnames.length, getErrorMsg(err)],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		}
+		updateSpinner(`${action}-campaign-website${campaignId}`, true)(dispatch)
 	}
 }
 
@@ -749,10 +961,16 @@ export function validateAndUpdateCampaign({
 
 				// TODO: fix it when it is possible to edit pricing bounds
 				// Legacy campaigns shim
-				const campaignPricingBounds = pricingBounds || {
-					min: minPerImpression,
-					max: maxPerImpression,
-				}
+				const campaignPricingBounds =
+					pricingBounds && (pricingBounds.IMPRESSION || pricingBounds.min)
+						? {
+								min: pricingBounds.IMPRESSION.min || pricingBounds.min,
+								max: pricingBounds.IMPRESSION.max || pricingBounds.max,
+						  }
+						: {
+								min: minPerImpression,
+								max: maxPerImpression,
+						  }
 
 				updated.targetingRules = audienceInputToTargetingRules({
 					audienceInput,
