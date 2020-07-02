@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { makeStyles } from '@material-ui/core/styles'
-import { Grid, Button, CircularProgress } from '@material-ui/core'
+import { Grid, Button, CircularProgress, Box, Tooltip } from '@material-ui/core'
 import { BlockSharp, CheckSharp } from '@material-ui/icons'
 import {
 	t,
@@ -42,9 +42,10 @@ const getCols = ({
 	{
 		name: 'isBlacklisted',
 		options: {
-			display: 'excluded',
-			download: false,
 			filter: false,
+			sort: false,
+			download: false,
+			display: false,
 		},
 	},
 	{
@@ -53,6 +54,15 @@ const getCols = ({
 		options: {
 			filter: true,
 			sort: true,
+			customBodyRender: (key, tableMeta) => {
+				return tableMeta.rowData[0] ? (
+					<Tooltip key={key} title={t('WEBSITE_IS_EXCLUDED')}>
+						<Box color='error.main'>{key}</Box>
+					</Tooltip>
+				) : (
+					key
+				)
+			},
 		},
 	},
 	{
