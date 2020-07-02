@@ -49,6 +49,16 @@ const getCols = ({
 		},
 	},
 	{
+		// NOTE: hidden - used for selected items
+		name: 'website',
+		options: {
+			filter: false,
+			sort: false,
+			download: false,
+			display: false,
+		},
+	},
+	{
 		name: 'website',
 		label: t('WEBSITE'),
 		options: {
@@ -188,7 +198,6 @@ const WebsitesActions = ({ campaignId, hostnames = [] }) => {
 		<Grid container spacing={1} alignItems='center'>
 			<Grid item xs={12} sm={6} md={12} lg={6}>
 				<IncludeOrExcludeWebsitesBtn
-					color='error'
 					action='EXCLUDE'
 					hostnames={hostnames}
 					exclude={true}
