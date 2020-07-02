@@ -430,13 +430,17 @@ export function excludeOrIncludeWebsites({
 				inputs: { publishers: {} },
 				...campaignAudienceInput,
 			}
+			newAudienceInput.inputs = { ...newAudienceInput.inputs }
+			newAudienceInput.inputs.publishers = {
+				...newAudienceInput.inputs.publishers,
+			}
 
 			const { inputs = {} } = newAudienceInput
 			const { publishers = {} } = inputs
 
 			// exclude
 			if (exclude && publishers.apply && publishers.apply === 'in') {
-				const newIn = (publishers.in || []).filter(value => {
+				const newIn = [...(publishers.in || [])].filter(value => {
 					const { hostname } = JSON.parse(value)
 					return !hostnames.includes(hostname)
 				})
@@ -445,9 +449,9 @@ export function excludeOrIncludeWebsites({
 
 			// include
 			if (!exclude && publishers.apply && publishers.apply === 'in') {
-				const newIn = hostnames
+				const newIn = [...hostnames]
 					// Filter already included
-					.filter(h => (publishers.in || []).some(x => x.includes(h)))
+					.filter(h => [...(publishers.in || [])].some(x => x.includes(h)))
 					.map(hostname =>
 						JSON.stringify({
 							hostname,
@@ -466,7 +470,7 @@ export function excludeOrIncludeWebsites({
 			if (exclude && publishers.apply && publishers.apply === 'nin') {
 				const newNin = hostnames
 					// Filter already excluded
-					.filter(h => !(publishers.nin || []).some(x => x.includes(h)))
+					.filter(h => ![...(publishers.nin || [])].some(x => x.includes(h)))
 					.map(hostname =>
 						JSON.stringify({
 							hostname,
@@ -483,7 +487,7 @@ export function excludeOrIncludeWebsites({
 
 			// include
 			if (!exclude && publishers.apply && publishers.apply === 'nin') {
-				const newNin = (publishers.nin || [])
+				const newNin = [...(publishers.nin || [])]
 					// Filter selected
 					.filter(value => {
 						const { hostname } = JSON.parse(value)
@@ -498,7 +502,7 @@ export function excludeOrIncludeWebsites({
 				(!publishers.apply ||
 					(publishers.apply && publishers.apply === 'allin'))
 			) {
-				const newNin = hostnames.map(hostname =>
+				const newNin = [...hostnames].map(hostname =>
 					JSON.stringify({
 						hostname,
 						publisher: (targetingData.find(x => x.hostname === hostname) || {})
@@ -536,8 +540,10 @@ export function excludeOrIncludeWebsites({
 
 			// Legacy campaigns shim
 			const campaignPricingBounds = pricingBounds || {
-				min: minPerImpression,
-				max: maxPerImpression,
+				IMPRESSION: {
+					min: minPerImpression,
+					max: maxPerImpression,
+				},
 			}
 
 			const newRules = audienceInputToTargetingRules({
@@ -941,10 +947,16 @@ export function validateAndUpdateCampaign({
 
 				// TODO: fix it when it is possible to edit pricing bounds
 				// Legacy campaigns shim
-				const campaignPricingBounds = pricingBounds || {
-					min: minPerImpression,
-					max: maxPerImpression,
-				}
+				const campaignPricingBounds =
+					pricingBounds && (pricingBounds.IMPRESSION || pricingBounds.min)
+						? {
+								min: pricingBounds.IMPRESSION.min || pricingBounds.min,
+								max: pricingBounds.IMPRESSION.max || pricingBounds.max,
+						  }
+						: {
+								min: minPerImpression,
+								max: maxPerImpression,
+						  }
 
 				updated.targetingRules = audienceInputToTargetingRules({
 					audienceInput,
