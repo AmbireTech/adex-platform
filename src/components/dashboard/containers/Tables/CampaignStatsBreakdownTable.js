@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { makeStyles } from '@material-ui/core/styles'
 import { Grid, Button, CircularProgress } from '@material-ui/core'
-import { BlockSharp, PauseSharp, StarSharp } from '@material-ui/icons'
+import { BlockSharp, CheckSharp } from '@material-ui/icons'
 import {
 	t,
 	selectCampaignStatsTableData,
@@ -16,13 +16,7 @@ import { sliderFilterOptions } from './commonFilters'
 import { formatNumberWithCommas } from 'helpers/formatters'
 import { useTableData } from './tableHooks'
 import { ReloadData } from './toolbars'
-import {
-	execute,
-	closeCampaign,
-	pauseOrResumeCampaign,
-	excludeOrIncludeWebsites,
-	confirmAction,
-} from 'actions'
+import { execute, excludeOrIncludeWebsites, confirmAction } from 'actions'
 
 const useStyles = makeStyles(theme => ({
 	wrapper: {
@@ -113,56 +107,84 @@ const getCols = ({
 	},
 ]
 
-const WebsitesActions = ({
-	campaignId,
+const IncludeOrExcludeWebsitesBtn = ({
+	action,
+	exclude,
 	hostnames = [],
-	blacklistingSpinner,
-	whitelistingSpinner,
+	campaignId,
+	icon,
+	color,
 }) => {
 	const classes = useStyles()
+	const spinner = useSelector(state =>
+		selectSpinnerById(state, `${action}-campaign-${campaignId}`)
+	)
+	return (
+		<div className={classes.wrapper}>
+			<Button
+				variant='contained'
+				color={color}
+				size='medium'
+				fullWidth
+				onClick={() => {
+					execute(
+						confirmAction(
+							() =>
+								execute(
+									excludeOrIncludeWebsites({
+										campaignId,
+										hostnames,
+										exclude,
+										action,
+									})
+								),
+							null,
+							{
+								confirmLabel: t(`${action}_WEBSITES_ACTION_LABEL`),
+								cancelLabel: t('CANCEL'),
+								title: t(`${action}_WEBSITES_CONFIRM_TITLE`, {
+									args: [hostnames.length],
+								}),
+								text: t(`${action}_WEBSITES_CONFIRM_INFO`, {
+									args: [hostnames.length],
+								}),
+							}
+						)
+					)
+				}}
+				disabled={spinner}
+				endIcon={icon}
+			>
+				{t(`BTN_${action}_WEBSITES`)}
+			</Button>
+			{spinner && (
+				<CircularProgress size={24} className={classes.buttonProgress} />
+			)}
+		</div>
+	)
+}
+
+const WebsitesActions = ({ campaignId, hostnames = [] }) => {
 	return (
 		<Grid container spacing={1} alignItems='center'>
 			<Grid item xs={12} sm={6} md={12} lg={6}>
-				<div className={classes.wrapper}>
-					<Button
-						variant='contained'
-						color='error'
-						size='medium'
-						fullWidth
-						onClick={() => {
-							execute(
-								confirmAction(
-									() =>
-										execute(
-											excludeOrIncludeWebsites({
-												campaignId,
-												hostnames,
-												exclude: true,
-											})
-										),
-									null,
-									{
-										confirmLabel: t('BLACKLIST_WEBSITES_ACTION_LABEL'),
-										cancelLabel: t('CANCEL'),
-										title: t('BLACKLIST_WEBSITES_CONFIRM_TITLE', {
-											args: [hostnames.length],
-										}),
-										text: t('BLACKLIST_WEBSITES_CONFIRM_INFO', {
-											args: [hostnames.length],
-										}),
-									}
-								)
-							)
-						}}
-						disabled={blacklistingSpinner}
-						endIcon={<BlockSharp />}
-					>
-						{t('BTN_EXCLUDE_WEBSITES')}
-					</Button>
-					{blacklistingSpinner && (
-						<CircularProgress size={24} className={classes.buttonProgress} />
-					)}
-				</div>
+				<IncludeOrExcludeWebsitesBtn
+					color='error'
+					action='EXCLUDE'
+					hostnames={hostnames}
+					exclude={true}
+					campaignId={campaignId}
+					icon={<BlockSharp />}
+				/>
+			</Grid>
+			<Grid item xs={12} sm={6} md={12} lg={6}>
+				<IncludeOrExcludeWebsitesBtn
+					color='secondary'
+					action='INCLUDE'
+					hostnames={hostnames}
+					campaignId={campaignId}
+					icon={<CheckSharp />}
+				/>
 			</Grid>
 		</Grid>
 	)
