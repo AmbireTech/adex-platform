@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.21
+##### *2020-07-02*
+
+### Added
+- Ability to blacklist publishers from the "by website" statistics
+- Average CPM column to campaigns by website and by country statistics
+- Slot demand warning on new slot preview id no active campaigns
+
+### Fix
+- Opening campaign
+- Misc bugs
+
 ## 4.20.20
 ##### *2020-07-01*
 
