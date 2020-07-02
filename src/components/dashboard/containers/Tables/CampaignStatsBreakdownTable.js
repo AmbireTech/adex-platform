@@ -90,6 +90,15 @@ const getCols = ({
 		},
 	},
 	{
+		name: 'averageCPM',
+		label: t('LABEL_AVERAGE_CPM'),
+		options: {
+			filter: false,
+			customBodyRender: averageCPM =>
+				`${formatNumberWithCommas((averageCPM || 0).toFixed(2))} ${symbol}`,
+		},
+	},
+	{
 		name: 'clicks',
 		label: t('CHART_LABEL_CLICKS'),
 		options: {

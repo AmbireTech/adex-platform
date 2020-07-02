@@ -59,6 +59,16 @@ const getCols = ({ showEarnings, symbol }) => [
 	...(showEarnings
 		? [
 				{
+					name: 'averageCPM',
+					label: t('LABEL_AVERAGE_CPM'),
+					options: {
+						filter: false,
+						sort: true,
+						customBodyRender: averageCPM =>
+							`${commify(averageCPM.toFixed(2))} ${symbol}`,
+					},
+				},
+				{
 					name: 'earnings',
 					label: t('LABEL_EARNINGS'),
 					options: {
