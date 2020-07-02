@@ -446,9 +446,8 @@ export function excludeOrIncludeWebsites({
 				})
 				newAudienceInput.inputs.publishers.in = newIn
 			}
-
 			// include
-			if (!exclude && publishers.apply && publishers.apply === 'in') {
+			else if (!exclude && publishers.apply && publishers.apply === 'in') {
 				const newIn = [...hostnames]
 					// Filter already included
 					.filter(h => [...(publishers.in || [])].some(x => x.includes(h)))
@@ -465,9 +464,8 @@ export function excludeOrIncludeWebsites({
 					newIn
 				)
 			}
-
 			// exclude
-			if (exclude && publishers.apply && publishers.apply === 'nin') {
+			else if (exclude && publishers.apply && publishers.apply === 'nin') {
 				const newNin = hostnames
 					// Filter already excluded
 					.filter(h => ![...(publishers.nin || [])].some(x => x.includes(h)))
@@ -483,14 +481,9 @@ export function excludeOrIncludeWebsites({
 				newAudienceInput.inputs.publishers.nin = (publishers.nin || []).concat(
 					newNin
 				)
-				if (!newAudienceInput.inputs.publishers.nin.length) {
-					newAudienceInput.inputs.publishers.apply = 'allin'
-					publishers.nin = null
-				}
 			}
-
 			// include
-			if (!exclude && publishers.apply && publishers.apply === 'nin') {
+			else if (!exclude && publishers.apply && publishers.apply === 'nin') {
 				const newNin = [...(publishers.nin || [])]
 					// Filter selected
 					.filter(value => {
@@ -499,9 +492,8 @@ export function excludeOrIncludeWebsites({
 					})
 				newAudienceInput.inputs.publishers.nin = newNin
 			}
-
 			// exclude
-			if (
+			else if (
 				exclude &&
 				(!publishers.apply ||
 					(publishers.apply && publishers.apply === 'allin'))
@@ -517,9 +509,8 @@ export function excludeOrIncludeWebsites({
 				newAudienceInput.inputs.publishers.apply = 'nin'
 				newAudienceInput.inputs.publishers.nin = newNin
 			}
-
 			// include
-			if (
+			else if (
 				!exclude &&
 				(!publishers.apply ||
 					(publishers.apply && publishers.apply === 'allin'))
@@ -532,6 +523,14 @@ export function excludeOrIncludeWebsites({
 					}),
 					timeout: 50000,
 				})(dispatch)
+			}
+
+			if (
+				newAudienceInput.inputs.publishers.apply === 'nin' &&
+				!newAudienceInput.inputs.publishers.nin.length
+			) {
+				newAudienceInput.inputs.publishers.apply = 'allin'
+				newAudienceInput.inputs.publishers.nin = null
 			}
 
 			const minByCategory = selectTargetingAnalyticsMinByCategories(state)
@@ -581,8 +580,8 @@ export function excludeOrIncludeWebsites({
 			let toastLabel = `SUCCESS_${action}_WEBSITE`
 
 			if (
-				newAudienceInput.publisher.apply === 'in' &&
-				!newAudienceInput.publishers.in.length
+				newAudienceInput.inputs.publishers.apply === 'in' &&
+				!newAudienceInput.inputs.publishers.in.length
 			) {
 				toastType = 'warning'
 				toastLabel = `WARNING_NO_PUBLISHERS_${action}_WEBSITE`
