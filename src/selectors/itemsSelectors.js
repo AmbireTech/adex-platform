@@ -114,8 +114,21 @@ export const selectAudienceById = createSelector(
 )
 
 export const selectAudienceByCampaignId = createSelector(
-	[selectAudiencesArray, (_, id) => id],
-	(items, id) => items.find(x => x && x.campaignId === id)
+	[selectCampaignById, selectAudiencesArray, (_, id) => id],
+	(campaign, items, id) => {
+		const hasCampaignAudienceUpdated =
+			campaign &&
+			campaign.audienceInput &&
+			campaign.audienceInput.inputs &&
+			(campaign.audienceInput.inputs.location ||
+				campaign.audienceInput.inputs.categories ||
+				campaign.audienceInput.inputs.publishers ||
+				campaign.audienceInput.inputs.advanced)
+
+		return hasCampaignAudienceUpdated
+			? campaign.audienceInput
+			: items.find(x => x && x.campaignId === id)
+	}
 )
 
 export const selectSavedAudiences = createSelector(
