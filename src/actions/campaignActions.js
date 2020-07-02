@@ -403,9 +403,13 @@ export function pauseOrResumeCampaign({ campaign }) {
 	}
 }
 
-export function excludeOrIncludeWebsites({ campaignId, hostnames, exclude }) {
+export function excludeOrIncludeWebsites({
+	campaignId,
+	hostnames,
+	exclude,
+	action,
+}) {
 	return async function(dispatch, getState) {
-		let action = exclude ? 'EXCLUDING' : 'INCLUDING'
 		updateSpinner(`${action}-campaign-website${campaignId}`, true)(dispatch)
 
 		try {
@@ -512,10 +516,14 @@ export function excludeOrIncludeWebsites({ campaignId, hostnames, exclude }) {
 				(!publishers.apply ||
 					(publishers.apply && publishers.apply === 'allin'))
 			) {
-				// if all in and include no need to do anything
-
-				// TODO: some toast
-				return
+				// There is nothing to do
+				return addToast({
+					type: 'success',
+					label: t(`SUCCESS_${action}_WEBSITE`, {
+						args: [hostnames.length, updated.title],
+					}),
+					timeout: 50000,
+				})(dispatch)
 			}
 
 			const minByCategory = selectTargetingAnalyticsMinByCategories(state)
@@ -567,7 +575,7 @@ export function excludeOrIncludeWebsites({ campaignId, hostnames, exclude }) {
 			addToast({
 				type: 'success',
 				label: t(`SUCCESS_${action}_WEBSITE`, {
-					args: ['CAMPAIGN', updatedCampaign.title],
+					args: [hostnames.length, updatedCampaign.title],
 				}),
 				timeout: 50000,
 			})(dispatch)
@@ -578,7 +586,7 @@ export function excludeOrIncludeWebsites({ campaignId, hostnames, exclude }) {
 			addToast({
 				type: 'cancel',
 				label: t(`ERR_${action}_WEBSITE`, {
-					args: [getErrorMsg(err)],
+					args: [hostnames.length, getErrorMsg(err)],
 				}),
 				timeout: 20000,
 			})(dispatch)
