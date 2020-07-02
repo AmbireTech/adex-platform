@@ -461,7 +461,7 @@ export function excludeOrIncludeWebsites({
 						})
 					)
 
-				newAudienceInput.inputs.publishers.in = (publishers.nin || []).concat(
+				newAudienceInput.inputs.publishers.in = (publishers.in || []).concat(
 					newIn
 				)
 			}
@@ -483,6 +483,10 @@ export function excludeOrIncludeWebsites({
 				newAudienceInput.inputs.publishers.nin = (publishers.nin || []).concat(
 					newNin
 				)
+				if (!newAudienceInput.inputs.publishers.nin.length) {
+					newAudienceInput.inputs.publishers.apply = 'allin'
+					publishers.nin = null
+				}
 			}
 
 			// include
