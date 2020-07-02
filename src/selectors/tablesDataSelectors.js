@@ -22,6 +22,8 @@ import {
 	selectPublisherPayStatsByCountry,
 	selectPublisherAdvanceStatsToAdSlot,
 	selectSavedAudiences,
+	selectAudienceByCampaignId,
+	selectCampaignById,
 } from 'selectors'
 import { formatUnits } from 'ethers/utils'
 import chartCountriesData from 'world-atlas/countries-50m.json'
@@ -35,6 +37,7 @@ import {
 } from 'components/App/themeMUi'
 import { grey } from '@material-ui/core/colors'
 import { constants } from 'adex-models'
+import { number } from 'prop-types'
 const { CountryNames, numericToAlpha2 } = constants
 
 export const selectCampaignsTableData = createSelector(
@@ -276,11 +279,16 @@ const mapByCountryTableData = ({
 					(impressionsAggrByCountry.total || 1)) *
 				100,
 			clicks: clicksByCountry[key] || 0,
+
 			ctr:
 				((clicksByCountry[key] || 0) / (impressionsByCountry[key] || 1)) * 100,
 			...(addEarnings && {
 				earnings:
 					(impressionsPayByCountry[key] || 0) + (clicksPayByCountry[key] || 0),
+				averageCPM:
+					(Number(impressionsPayByCountry[key] || 0) /
+						Number(impressionsByCountry[key] || 1)) *
+					1000,
 			}),
 		}
 	})
@@ -464,17 +472,32 @@ export const selectCampaignStatsTableData = createSelector(
 				type: 'CLICK',
 				campaignId,
 			}),
+			campaignAudienceInput: selectAudienceByCampaignId(state, campaignId),
 		}
 	},
-	({ impressions, clicks }) => {
+	({ impressions, clicks, campaignAudienceInput }) => {
 		const imprStats = impressions.reportChannelToHostname || {}
 		const clickStats = clicks.reportChannelToHostname || {}
 		const earnStats = impressions.reportChannelToHostnamePay || {}
+
+		const rules = campaignAudienceInput
+			? campaignAudienceInput.inputs.publishers
+			: null
+
 		return Object.keys(imprStats).map(key => ({
+			isBlacklisted:
+				rules &&
+				((rules.apply === 'nin' &&
+					(rules.nin || []).some(x => x.includes(key))) ||
+					(rules.apply === 'ni' &&
+						!(rules.in || []).some(x => x.includes(key)))),
+
 			website: key,
 			impressions: imprStats[key] || 0,
 			ctr: ((clickStats[key] || 0) / (imprStats[key] || 1)) * 100,
 			earnings: Number(earnStats[key] || 0),
+			averageCPM:
+				(Number(earnStats[key] || 0) / Number(imprStats[key] || 1)) * 1000,
 			clicks: clickStats[key] || 0,
 		}))
 	}

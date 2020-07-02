@@ -50,14 +50,14 @@ function CampaignFormPreview() {
 		adUnits,
 		validators,
 		depositAmount,
-		pricingBounds,
+		pricingBounds = {},
 		// maxPerImpression,
 		// depositAsset,
 		withdrawPeriodStart,
 		activeFrom,
 		// minTargetingScore,
-		targetingRules,
-		audienceInput,
+		targetingRules = {},
+		audienceInput = {},
 		// nonce
 		temp = {},
 	} = useSelector(selectNewCampaign)
@@ -98,14 +98,14 @@ function CampaignFormPreview() {
 					<Grid item xs={12} md={6}>
 						<PropRow
 							left={t('CPM_MIN_LABEL')}
-							right={`${pricingBounds.min} ${symbol}`}
+							right={`${pricingBounds.IMPRESSION.min} ${symbol}`}
 						/>
 					</Grid>
 
 					<Grid item xs={12} md={6}>
 						<PropRow
 							left={t('CPM_MAX_LABEL')}
-							right={`${pricingBounds.max} ${symbol}`}
+							right={`${pricingBounds.IMPRESSION.max} ${symbol}`}
 						/>
 					</Grid>
 
@@ -192,20 +192,18 @@ function CampaignFormPreview() {
 					</Grid>
 
 					<Grid item xs={12}>
-						<Box p={1}>
-							<ExpansionPanel square={true} variant='outlined'>
-								<ExpansionPanelSummary
-									expandIcon={<ExpandMoreIcon />}
-									aria-controls='targeting-rules-content'
-									id='targeting-rules-header'
-								>
-									<Typography>{t('TARGETING_RULES')}</Typography>
-								</ExpansionPanelSummary>
-								<Box p={1} color='grey.contrastText' bgcolor='grey.main'>
-									<pre>{JSON.stringify(targetingRules || [], null, 2)}</pre>
-								</Box>
-							</ExpansionPanel>
-						</Box>
+						<ExpansionPanel square={true} variant='outlined'>
+							<ExpansionPanelSummary
+								expandIcon={<ExpandMoreIcon />}
+								aria-controls='targeting-rules-content'
+								id='targeting-rules-header'
+							>
+								<Typography>{t('TARGETING_RULES')}</Typography>
+							</ExpansionPanelSummary>
+							<Box p={1} color='grey.contrastText' bgcolor='grey.main'>
+								<pre>{JSON.stringify(targetingRules || [], null, 2)}</pre>
+							</Box>
+						</ExpansionPanel>
 					</Grid>
 				</Grid>
 			</ContentBody>

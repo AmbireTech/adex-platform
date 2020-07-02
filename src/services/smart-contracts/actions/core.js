@@ -133,6 +133,13 @@ function getReadyCampaign(campaign, identity, mainToken) {
 		divider: 1000, // Input is for CPM (1000)
 	})
 
+	// TODO: CLICK when available
+	newCampaign.pricingBounds = pricingBounds
+
+	// TEMP: legacy compatibility
+	newCampaign.minPerImpression = pricingBounds.IMPRESSION.min
+	newCampaign.maxPerImpression = pricingBounds.IMPRESSION.max
+
 	newCampaign.depositAsset = mainToken.address
 	newCampaign.eventSubmission = {
 		allow: [
