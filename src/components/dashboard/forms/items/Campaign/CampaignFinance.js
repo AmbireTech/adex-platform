@@ -61,7 +61,7 @@ function CampaignFinance({ validateId }) {
 		title,
 		validators,
 		depositAmount,
-		pricingBounds,
+		pricingBounds = { IMPRESSION: {} },
 		// depositAsset,
 		activeFrom,
 		withdrawPeriodStart,
@@ -102,9 +102,9 @@ function CampaignFinance({ validateId }) {
 		max: pricingBounds.max,
 	})
 
-	const updatePricingBounds = (type, value) => {
+	const updatePricingBoundsImpression = (type, value) => {
 		const newPricingBounds = { ...pricingBounds }
-		newPricingBounds[type] = value
+		newPricingBounds.IMPRESSION[type] = value
 
 		execute(updateNewCampaign('pricingBounds', newPricingBounds))
 		execute(
@@ -205,10 +205,10 @@ function CampaignFinance({ validateId }) {
 							required
 							label={t('CPM_MIN_LABEL')}
 							name='pricingBounds_min'
-							value={pricingBounds.min}
+							value={pricingBounds.IMPRESSION.min}
 							onChange={ev => {
 								const value = ev.target.value
-								updatePricingBounds('min', value)
+								updatePricingBoundsImpression('min', value)
 							}}
 							error={errMin && !!errMin.dirty}
 							maxLength={120}
@@ -216,7 +216,7 @@ function CampaignFinance({ validateId }) {
 								errMin && !!errMin.dirty
 									? errMin.errMsg
 									: t('CPM_MIN_HELPER_TXT', {
-											args: [suggestedPricingBounds.min, symbol],
+											args: [suggestedPricingBounds.IMPRESSION.min, symbol],
 									  })
 							}
 						/>
@@ -229,10 +229,10 @@ function CampaignFinance({ validateId }) {
 							required
 							label={t('CPM_MAX_LABEL')}
 							name='pricingBounds_max'
-							value={pricingBounds.max}
+							value={pricingBounds.IMPRESSION.max}
 							onChange={ev => {
 								const value = ev.target.value
-								updatePricingBounds('max', value)
+								updatePricingBoundsImpression('max', value)
 							}}
 							error={errMax && !!errMax.dirty}
 							maxLength={120}
@@ -240,7 +240,7 @@ function CampaignFinance({ validateId }) {
 								errMax && !!errMax.dirty
 									? errMax.errMsg
 									: t('CPM_MAX_HELPER_TXT', {
-											args: [suggestedPricingBounds.max, symbol],
+											args: [suggestedPricingBounds.IMPRESSION.max, symbol],
 									  })
 							}
 						/>
