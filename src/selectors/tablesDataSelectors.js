@@ -472,32 +472,15 @@ export const selectCampaignStatsTableData = createSelector(
 				type: 'CLICK',
 				campaignId,
 			}),
-			campaign: selectCampaignById(state, campaignId),
 			campaignAudienceInput: selectAudienceByCampaignId(state, campaignId),
 		}
 	},
-	({ impressions, clicks, campaign, campaignAudienceInput }) => {
+	({ impressions, clicks, campaignAudienceInput }) => {
 		const imprStats = impressions.reportChannelToHostname || {}
 		const clickStats = clicks.reportChannelToHostname || {}
 		const earnStats = impressions.reportChannelToHostnamePay || {}
-		const hasCampaignAudienceInput =
-			campaign &&
-			campaign.audienceInput &&
-			campaign.audienceInput.inputs &&
-			campaign.audienceInput.inputs.publishers &&
-			campaign.audienceInput.inputs.publishers.apply &&
-			campaign.audienceInput.inputs.publishers.apply !== 'allin'
 
-		const hasAudienceInput =
-			campaignAudienceInput &&
-			campaignAudienceInput.inputs &&
-			campaignAudienceInput.inputs.publishers &&
-			campaignAudienceInput.inputs.publishers.apply &&
-			campaignAudienceInput.inputs.publishers.apply !== 'allin'
-
-		const rules = hasCampaignAudienceInput
-			? campaign.audienceInput.inputs.publishers
-			: hasAudienceInput
+		const rules = campaignAudienceInput
 			? campaignAudienceInput.inputs.publishers
 			: null
 
