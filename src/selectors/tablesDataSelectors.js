@@ -22,6 +22,8 @@ import {
 	selectPublisherPayStatsByCountry,
 	selectPublisherAdvanceStatsToAdSlot,
 	selectSavedAudiences,
+	selectAudienceByCampaignId,
+	selectCampaignById,
 } from 'selectors'
 import { formatUnits } from 'ethers/utils'
 import chartCountriesData from 'world-atlas/countries-50m.json'
@@ -464,13 +466,41 @@ export const selectCampaignStatsTableData = createSelector(
 				type: 'CLICK',
 				campaignId,
 			}),
+			campaign: selectCampaignById(state, campaignId),
+			campaignAudienceInput: selectAudienceByCampaignId(state, campaignId),
 		}
 	},
-	({ impressions, clicks }) => {
+	({ impressions, clicks, campaign, campaignAudienceInput }) => {
 		const imprStats = impressions.reportChannelToHostname || {}
 		const clickStats = clicks.reportChannelToHostname || {}
 		const earnStats = impressions.reportChannelToHostnamePay || {}
+		const hasCampaignAudienceInput =
+			campaign &&
+			campaign.audienceInput &&
+			campaign.audienceInput.inputs &&
+			campaign.audienceInput.inputs.publishers &&
+			campaign.audienceInput.inputs.publishers.apply &&
+			campaign.audienceInput.inputs.publishers.apply !== 'allin'
+
+		const hasAudienceInput =
+			campaignAudienceInput &&
+			campaignAudienceInput.inputs &&
+			campaignAudienceInput.inputs.publishers &&
+			campaignAudienceInput.inputs.publishers.apply &&
+			campaignAudienceInput.inputs.publishers.apply !== 'allin'
+
+		const rules = hasCampaignAudienceInput
+			? campaign.audienceInput.inputs.publishers
+			: hasAudienceInput
+			? campaignAudienceInput.inputs.publishers
+			: null
+
 		return Object.keys(imprStats).map(key => ({
+			isBlacklisted: rules
+				? rules.apply === 'nin'
+					? rules.nin.some(x => x.includes(key))
+					: !rules.in.some(x => x.includes(key))
+				: false,
 			website: key,
 			impressions: imprStats[key] || 0,
 			ctr: ((clickStats[key] || 0) / (imprStats[key] || 1)) * 100,
