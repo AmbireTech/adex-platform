@@ -577,14 +577,25 @@ export function excludeOrIncludeWebsites({
 				getState
 			)
 
+			let toastType = 'success'
+			let toastLabel = `SUCCESS_${action}_WEBSITE`
+
+			if (
+				newAudienceInput.publisher.apply === 'in' &&
+				!newAudienceInput.publishers.in.length
+			) {
+				toastType = 'warning'
+				toastLabel = `WARNING_NO_PUBLISHERS_${action}_WEBSITE`
+			}
+
 			dispatch({
 				type: UPDATE_ITEM,
 				item: new Campaign(updatedCampaign).plainObj(),
 				itemType: 'Campaign',
 			})
 			addToast({
-				type: 'success',
-				label: t(`SUCCESS_${action}_WEBSITE`, {
+				type: toastType,
+				label: t(toastLabel, {
 					args: [hostnames.length, updatedCampaign.title],
 				}),
 				timeout: 50000,
