@@ -37,6 +37,7 @@ import {
 } from 'components/App/themeMUi'
 import { grey } from '@material-ui/core/colors'
 import { constants } from 'adex-models'
+import { number } from 'prop-types'
 const { CountryNames, numericToAlpha2 } = constants
 
 export const selectCampaignsTableData = createSelector(
@@ -278,11 +279,16 @@ const mapByCountryTableData = ({
 					(impressionsAggrByCountry.total || 1)) *
 				100,
 			clicks: clicksByCountry[key] || 0,
+
 			ctr:
 				((clicksByCountry[key] || 0) / (impressionsByCountry[key] || 1)) * 100,
 			...(addEarnings && {
 				earnings:
 					(impressionsPayByCountry[key] || 0) + (clicksPayByCountry[key] || 0),
+				averageCPM:
+					(Number(impressionsPayByCountry[key] || 0) /
+						Number(impressionsByCountry[key] || 1)) *
+					1000,
 			}),
 		}
 	})
@@ -505,6 +511,8 @@ export const selectCampaignStatsTableData = createSelector(
 			impressions: imprStats[key] || 0,
 			ctr: ((clickStats[key] || 0) / (imprStats[key] || 1)) * 100,
 			earnings: Number(earnStats[key] || 0),
+			averageCPM:
+				(Number(earnStats[key] || 0) / Number(imprStats[key] || 1)) * 1000,
 			clicks: clickStats[key] || 0,
 		}))
 	}
