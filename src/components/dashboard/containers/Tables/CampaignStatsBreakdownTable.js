@@ -70,7 +70,7 @@ const getCols = ({
 						<Box color='error.main'>{key}</Box>
 					</Tooltip>
 				) : (
-					key
+					<Box>{key}</Box>
 				)
 			},
 		},

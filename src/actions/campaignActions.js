@@ -101,7 +101,7 @@ function updateCampaignOnMarket({ updated, toastLabel, toastArgs, toastType }) {
 		})(dispatch)
 
 		// Make sure to update tables
-		updateUserCampaigns()(dispatch, getState)
+		await updateUserCampaigns()(dispatch, getState)
 	}
 }
 
