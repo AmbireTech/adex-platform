@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.22
+##### *2020-07-03*
+
+### Fixed
+- Campaign update
+- Audience inputs sorting
+- Misc bugs
+
 ## 4.20.21
 ##### *2020-07-02*
 
