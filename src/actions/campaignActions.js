@@ -286,7 +286,10 @@ export function updateUserCampaigns() {
 				})
 				let campaignsMapped = campaigns
 					.filter(
-						c => c.creator && c.creator.toLowerCase() === address.toLowerCase()
+						c =>
+							c.id &&
+							c.creator &&
+							c.creator.toLowerCase() === address.toLowerCase()
 					)
 					.map(c => {
 						const campaign = {
@@ -419,6 +422,7 @@ export function excludeOrIncludeWebsites({
 	hostnames,
 	exclude,
 	action,
+	onSuccess,
 }) {
 	return async function(dispatch, getState) {
 		updateSpinner(`${action}-campaign-website${campaignId}`, true)(dispatch)
@@ -604,6 +608,10 @@ export function excludeOrIncludeWebsites({
 				toastLabel,
 				roastArgs: [hostnames.length, updatedCampaign.title],
 			})(dispatch, getState)
+
+			if (typeof onSuccess === 'function') {
+				onSuccess()
+			}
 		} catch (err) {
 			console.error(`ERR_${action}_WEBSITE`, err)
 			addToast({

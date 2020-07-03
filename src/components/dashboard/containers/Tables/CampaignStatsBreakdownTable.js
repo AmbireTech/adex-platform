@@ -143,6 +143,7 @@ const IncludeOrExcludeWebsitesBtn = ({
 	campaignId,
 	icon,
 	color,
+	onSuccess,
 }) => {
 	const classes = useStyles()
 	const spinner = useSelector(state =>
@@ -165,6 +166,7 @@ const IncludeOrExcludeWebsitesBtn = ({
 										hostnames,
 										exclude,
 										action,
+										onSuccess,
 									})
 								),
 							null,
@@ -193,7 +195,7 @@ const IncludeOrExcludeWebsitesBtn = ({
 	)
 }
 
-const WebsitesActions = ({ campaignId, hostnames = [] }) => {
+const WebsitesActions = ({ campaignId, hostnames = [], onSuccess }) => {
 	return (
 		<Grid container spacing={1} alignItems='center'>
 			<Grid item xs={12} sm={6} md={12} lg={6}>
@@ -203,6 +205,7 @@ const WebsitesActions = ({ campaignId, hostnames = [] }) => {
 					exclude={true}
 					campaignId={campaignId}
 					icon={<BlockSharp />}
+					onSuccess={onSuccess}
 				/>
 			</Grid>
 			<Grid item xs={12} sm={6} md={12} lg={6}>
@@ -212,6 +215,7 @@ const WebsitesActions = ({ campaignId, hostnames = [] }) => {
 					hostnames={hostnames}
 					campaignId={campaignId}
 					icon={<CheckSharp />}
+					onSuccess={onSuccess}
 				/>
 			</Grid>
 		</Grid>
@@ -232,6 +236,7 @@ const getOptions = ({ reloadData, campaignId }) => ({
 		const actionData = {
 			campaignId,
 			hostnames,
+			onSuccess: reloadData,
 		}
 
 		return <WebsitesActions {...actionData} />
