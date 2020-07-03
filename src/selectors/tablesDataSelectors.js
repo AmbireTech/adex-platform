@@ -462,20 +462,22 @@ export const selectBestEarnersTableData = createSelector(
 )
 
 export const selectCampaignStatsTableData = createSelector(
-	(state, campaignId) => {
-		return {
-			impressions: selectCampaignAnalyticsByChannelStats(state, {
-				type: 'IMPRESSION',
-				campaignId,
-			}),
-			clicks: selectCampaignAnalyticsByChannelStats(state, {
-				type: 'CLICK',
-				campaignId,
-			}),
-			campaignAudienceInput: selectAudienceByCampaignId(state, campaignId),
-		}
-	},
-	({ impressions, clicks, campaignAudienceInput }) => {
+	[
+		selectAudienceByCampaignId,
+		(state, campaignId) => {
+			return {
+				impressions: selectCampaignAnalyticsByChannelStats(state, {
+					type: 'IMPRESSION',
+					campaignId,
+				}),
+				clicks: selectCampaignAnalyticsByChannelStats(state, {
+					type: 'CLICK',
+					campaignId,
+				}),
+			}
+		},
+	],
+	(campaignAudienceInput, { impressions, clicks }) => {
 		const imprStats = impressions.reportChannelToHostname || {}
 		const clickStats = clicks.reportChannelToHostname || {}
 		const earnStats = impressions.reportChannelToHostnamePay || {}

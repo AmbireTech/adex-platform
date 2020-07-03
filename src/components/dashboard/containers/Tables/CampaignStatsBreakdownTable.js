@@ -9,6 +9,7 @@ import {
 	selectCampaignStatsMaxValues,
 	selectMainToken,
 	selectSpinnerById,
+	selectCampaignById,
 } from 'selectors'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { useSelector } from 'react-redux'
@@ -70,7 +71,7 @@ const getCols = ({
 						<Box color='error.main'>{key}</Box>
 					</Tooltip>
 				) : (
-					key
+					<Box>{key}</Box>
 				)
 			},
 		},
@@ -143,6 +144,7 @@ const IncludeOrExcludeWebsitesBtn = ({
 	campaignId,
 	icon,
 	color,
+	onSuccess,
 }) => {
 	const classes = useStyles()
 	const spinner = useSelector(state =>
@@ -165,6 +167,7 @@ const IncludeOrExcludeWebsitesBtn = ({
 										hostnames,
 										exclude,
 										action,
+										onSuccess,
 									})
 								),
 							null,
@@ -193,7 +196,7 @@ const IncludeOrExcludeWebsitesBtn = ({
 	)
 }
 
-const WebsitesActions = ({ campaignId, hostnames = [] }) => {
+const WebsitesActions = ({ campaignId, hostnames = [], onSuccess }) => {
 	return (
 		<Grid container spacing={1} alignItems='center'>
 			<Grid item xs={12} sm={6} md={12} lg={6}>
@@ -203,6 +206,7 @@ const WebsitesActions = ({ campaignId, hostnames = [] }) => {
 					exclude={true}
 					campaignId={campaignId}
 					icon={<BlockSharp />}
+					onSuccess={onSuccess}
 				/>
 			</Grid>
 			<Grid item xs={12} sm={6} md={12} lg={6}>
@@ -212,6 +216,7 @@ const WebsitesActions = ({ campaignId, hostnames = [] }) => {
 					hostnames={hostnames}
 					campaignId={campaignId}
 					icon={<CheckSharp />}
+					onSuccess={onSuccess}
 				/>
 			</Grid>
 		</Grid>
@@ -232,6 +237,7 @@ const getOptions = ({ reloadData, campaignId }) => ({
 		const actionData = {
 			campaignId,
 			hostnames,
+			onSuccess: reloadData,
 		}
 
 		return <WebsitesActions {...actionData} />
@@ -244,6 +250,11 @@ function CampaignStatsBreakdownTable({ campaignId }) {
 	const { maxClicks, maxImpressions, maxEarnings, maxCTR } = useSelector(
 		state => selectCampaignStatsMaxValues(state, campaignId)
 	)
+
+	const { status } =
+		useSelector(state => selectCampaignById(state, campaignId)) || {}
+
+	const allowActions = ['Ready', 'Active', 'Unhealthy'].includes(status.name)
 
 	const { data, columns, reloadData } = useTableData({
 		selector: selectCampaignStatsTableData,
@@ -260,7 +271,7 @@ function CampaignStatsBreakdownTable({ campaignId }) {
 			data={data}
 			columns={columns}
 			options={options}
-			rowSelectable
+			rowSelectable={allowActions}
 			toolbarEnabled
 		/>
 	)
