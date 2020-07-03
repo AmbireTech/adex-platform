@@ -104,8 +104,9 @@ function CampaignFinance({ validateId }) {
 
 	const updatePricingBoundsImpression = (type, value) => {
 		const newPricingBounds = { ...pricingBounds }
-		newPricingBounds.IMPRESSION[type] = value
-
+		const impression = { ...pricingBounds.IMPRESSION }
+		impression[type] = value
+		newPricingBounds.IMPRESSION = impression
 		execute(updateNewCampaign('pricingBounds', newPricingBounds))
 		execute(
 			validateNumberString({

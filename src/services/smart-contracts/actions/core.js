@@ -121,24 +121,26 @@ function getReadyCampaign(campaign, identity, mainToken) {
 	newCampaign.validators = validators
 
 	const pricingBounds = { ...newCampaign.pricingBounds }
-	pricingBounds.min = userInputToTokenValue({
+	const impression = { ...pricingBounds.IMPRESSION }
+
+	impression.min = userInputToTokenValue({
 		input: pricingBounds.min,
 		decimals,
 		divider: 1000, // Input is for CPM (1000)
 	})
-
-	pricingBounds.max = userInputToTokenValue({
+	impression.max = userInputToTokenValue({
 		input: pricingBounds.max,
 		decimals,
 		divider: 1000, // Input is for CPM (1000)
 	})
+	pricingBounds.IMPRESSION = impression
 
 	// TODO: CLICK when available
 	newCampaign.pricingBounds = pricingBounds
 
 	// TEMP: legacy compatibility
-	newCampaign.minPerImpression = pricingBounds.IMPRESSION.min
-	newCampaign.maxPerImpression = pricingBounds.IMPRESSION.max
+	newCampaign.minPerImpression = impression.min
+	newCampaign.maxPerImpression = impression.max
 
 	newCampaign.depositAsset = mainToken.address
 	newCampaign.eventSubmission = {

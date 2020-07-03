@@ -473,12 +473,13 @@ export function validateCampaignAmount({
 }) {
 	return async function(dispatch, getState) {
 		const isValidNumber = isNumberString(value)
-		let isValid = isValidNumber && parseUnits(value, decimals)
+		let isValid = isValidNumber && !!parseUnits(value, decimals)
 		let msg = errMsg || 'ERR_INVALID_AMOUNT'
 
 		if (isValid) {
 			const deposit = prop === 'depositAmount' ? value : depositAmount
-			const min = prop === 'pricingBounds_min' ? value : pricingBounds.min
+			const min =
+				prop === 'pricingBounds_min' ? value : pricingBounds.IMPRESSION.min
 
 			const isValidDeposit = isNumberString(deposit)
 			const isValidMin = isNumberString(min)
