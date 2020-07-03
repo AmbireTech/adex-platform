@@ -20,7 +20,7 @@ import {
 	updateNewItem,
 } from 'actions'
 import { push } from 'connected-react-router'
-import { schemas, Campaign, Audience, helpers } from 'adex-models'
+import { schemas, Campaign, helpers } from 'adex-models'
 import { parseUnits } from 'ethers/utils'
 import { getAllValidatorsAuthForIdentity } from 'services/smart-contracts/actions/stats'
 import {
@@ -88,7 +88,7 @@ function updateCampaignOnMarket({ updated, toastLabel, toastArgs, toastType }) {
 			type: UPDATE_ITEM,
 			item: new Campaign({
 				...updatedCampaign.spec,
-				updatedCampaign,
+				...updatedCampaign,
 			}).plainObj(),
 			itemType: 'Campaign',
 		})
@@ -101,7 +101,7 @@ function updateCampaignOnMarket({ updated, toastLabel, toastArgs, toastType }) {
 		})(dispatch)
 
 		// Make sure to update tables
-		updateUserCampaigns(dispatch, getState)
+		updateUserCampaigns()(dispatch, getState)
 	}
 }
 
@@ -344,7 +344,7 @@ export function closeCampaign({ campaign }) {
 				dispatch,
 				getState
 			)
-			await updateUserCampaigns(dispatch, getState)
+			await updateUserCampaigns()(dispatch, getState)
 			execute(push('/dashboard/advertiser/campaigns'))
 			addToast({
 				type: 'accept',
@@ -400,8 +400,6 @@ export function pauseOrResumeCampaign({ campaign }) {
 				updated,
 				toastLabel: `SUCCESS_${action}_CAMPAIGN`,
 			})(dispatch, getState)
-
-			await updateUserCampaigns(dispatch, getState)
 		} catch (err) {
 			console.error(`ERR_${action}_CAMPAIGN`, err)
 			addToast({
