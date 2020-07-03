@@ -14,19 +14,17 @@ import {
 	validateCampaignUnits,
 	validateSchemaProp,
 	validateAudience,
-	// validateCampaignMinTargetingScore,
 	confirmAction,
 	updateSelectedItems,
 	saveAudience,
 	updateNewItem,
 } from 'actions'
 import { push } from 'connected-react-router'
-import { schemas, Campaign, Audience, helpers } from 'adex-models'
+import { schemas, Campaign, helpers } from 'adex-models'
 import { parseUnits } from 'ethers/utils'
 import { getAllValidatorsAuthForIdentity } from 'services/smart-contracts/actions/stats'
 import {
 	openChannel,
-	getChannelId,
 	closeChannel,
 } from 'services/smart-contracts/actions/core'
 import {
@@ -37,7 +35,6 @@ import {
 	closeCampaignMarket,
 	updateCampaign,
 	getCampaigns,
-	postAudience,
 } from 'services/adex-market/actions'
 import { getErrorMsg } from 'helpers/errors'
 import {
@@ -78,6 +75,35 @@ const VALIDATOR_FOLLOWER_ID = process.env.VALIDATOR_FOLLOWER_ID
 const VALIDATOR_FOLLOWER_FEE_NUM = process.env.VALIDATOR_FOLLOWER_FEE_NUM
 const VALIDATOR_FOLLOWER_FEE_DEN = process.env.VALIDATOR_FOLLOWER_FEE_DEN
 const VALIDATOR_FOLLOWER_FEE_ADDR = process.env.VALIDATOR_FOLLOWER_FEE_ADDR
+
+// updatedCampaign updated campaign class instance
+function updateCampaignOnMarket({ updated, toastLabel, toastArgs, toastType }) {
+	return async function(dispatch, getState) {
+		const updatedCampaign = (await updateCampaign({
+			campaign: updated.marketUpdate,
+			id: updated.id,
+		})).campaign
+
+		dispatch({
+			type: UPDATE_ITEM,
+			item: new Campaign({
+				...updatedCampaign.spec,
+				...updatedCampaign,
+			}).plainObj(),
+			itemType: 'Campaign',
+		})
+		addToast({
+			type: toastType || 'success',
+			label: t(toastLabel, {
+				args: toastArgs || ['CAMPAIGN', updatedCampaign.title],
+			}),
+			timeout: 50000,
+		})(dispatch)
+
+		// Make sure to update tables
+		await updateUserCampaigns()(dispatch, getState)
+	}
+}
 
 export function openCampaign() {
 	return async function(dispatch, getState) {
@@ -260,13 +286,16 @@ export function updateUserCampaigns() {
 				})
 				let campaignsMapped = campaigns
 					.filter(
-						c => c.creator && c.creator.toLowerCase() === address.toLowerCase()
+						c =>
+							c.id &&
+							c.creator &&
+							c.creator.toLowerCase() === address.toLowerCase()
 					)
 					.map(c => {
 						const campaign = {
 							...c.spec,
 							...c,
-							targetingRules: c.spec.targetingRules || c.targetingRules,
+							targetingRules: c.targetingRules || c.spec.targetingRules,
 						}
 
 						if (!campaign.humanFriendlyName) {
@@ -318,7 +347,7 @@ export function closeCampaign({ campaign }) {
 				dispatch,
 				getState
 			)
-			await updateUserCampaigns(dispatch, getState)
+			await updateUserCampaigns()(dispatch, getState)
 			execute(push('/dashboard/advertiser/campaigns'))
 			addToast({
 				type: 'accept',
@@ -365,30 +394,15 @@ export function pauseOrResumeCampaign({ campaign }) {
 				targetingRules: newRules,
 			})
 
-			const updatedCampaign = (await updateCampaign({
-				campaign: updated.marketUpdate,
-				id: updated.id,
-			})).campaign
-
 			await updateValidatorAuthTokens({ newAuth: authTokens })(
 				dispatch,
 				getState
 			)
 
-			dispatch({
-				type: UPDATE_ITEM,
-				item: new Campaign(updatedCampaign).plainObj(),
-				itemType: 'Campaign',
-			})
-			addToast({
-				type: 'success',
-				label: t(`SUCCESS_${action}_CAMPAIGN`, {
-					args: ['CAMPAIGN', updatedCampaign.title],
-				}),
-				timeout: 50000,
-			})(dispatch)
-
-			await updateUserCampaigns(dispatch, getState)
+			await updateCampaignOnMarket({
+				updated,
+				toastLabel: `SUCCESS_${action}_CAMPAIGN`,
+			})(dispatch, getState)
 		} catch (err) {
 			console.error(`ERR_${action}_CAMPAIGN`, err)
 			addToast({
@@ -408,6 +422,7 @@ export function excludeOrIncludeWebsites({
 	hostnames,
 	exclude,
 	action,
+	onSuccess,
 }) {
 	return async function(dispatch, getState) {
 		updateSpinner(`${action}-campaign-website${campaignId}`, true)(dispatch)
@@ -587,20 +602,16 @@ export function excludeOrIncludeWebsites({
 				toastLabel = `WARNING_NO_PUBLISHERS_${action}_WEBSITE`
 			}
 
-			dispatch({
-				type: UPDATE_ITEM,
-				item: new Campaign(updatedCampaign).plainObj(),
-				itemType: 'Campaign',
-			})
-			addToast({
-				type: toastType,
-				label: t(toastLabel, {
-					args: [hostnames.length, updatedCampaign.title],
-				}),
-				timeout: 50000,
-			})(dispatch)
+			await updateCampaignOnMarket({
+				updated,
+				toastType,
+				toastLabel,
+				roastArgs: [hostnames.length, updatedCampaign.title],
+			})(dispatch, getState)
 
-			await updateUserCampaigns(dispatch, getState)
+			if (typeof onSuccess === 'function') {
+				onSuccess()
+			}
 		} catch (err) {
 			console.error(`ERR_${action}_WEBSITE`, err)
 			addToast({
@@ -940,7 +951,6 @@ export function validateAndUpdateCampaign({
 		await updateSpinner(validateId, true)(dispatch)
 		try {
 			const {
-				id,
 				title,
 				audienceInput,
 				pricingBounds,
@@ -962,14 +972,13 @@ export function validateAndUpdateCampaign({
 				// TODO: fix it when it is possible to edit pricing bounds
 				// Legacy campaigns shim
 				const campaignPricingBounds =
-					pricingBounds && (pricingBounds.IMPRESSION || pricingBounds.min)
-						? {
-								min: pricingBounds.IMPRESSION.min || pricingBounds.min,
-								max: pricingBounds.IMPRESSION.max || pricingBounds.max,
-						  }
+					pricingBounds && pricingBounds.IMPRESSION
+						? pricingBounds
 						: {
-								min: minPerImpression,
-								max: maxPerImpression,
+								IMPRESSION: {
+									min: pricingBounds.min || minPerImpression,
+									max: pricingBounds.min || maxPerImpression,
+								},
 						  }
 
 				updated.targetingRules = audienceInputToTargetingRules({
@@ -981,8 +990,6 @@ export function validateAndUpdateCampaign({
 				})
 			}
 
-			const campaign = updated.marketUpdate
-
 			const validations = await Promise.all([
 				validateCampaignTitle({
 					validateId,
@@ -991,7 +998,7 @@ export function validateAndUpdateCampaign({
 				})(dispatch),
 				validateSchemaProp({
 					validateId,
-					value: campaign,
+					value: updated.marketUpdate,
 					prop: 'campaign',
 					schema: campaignPut,
 					dirty,
@@ -1015,23 +1022,10 @@ export function validateAndUpdateCampaign({
 					)
 				}
 
-				const updatedCampaign = (await updateCampaign({
-					campaign,
-					id,
-				})).campaign
-
-				dispatch({
-					type: UPDATE_ITEM,
-					item: new Campaign(updatedCampaign).plainObj(),
-					itemType: 'Campaign',
-				})
-				addToast({
-					type: 'success',
-					label: t('SUCCESS_UPDATING_ITEM', {
-						args: ['CAMPAIGN', updatedCampaign.title],
-					}),
-					timeout: 50000,
-				})(dispatch)
+				await updateCampaignOnMarket({
+					updated,
+					toastLabel: 'SUCCESS_UPDATING_ITEM',
+				})(dispatch, getState)
 			} else if (!isValid && update) {
 				addToast({
 					type: 'cancel',

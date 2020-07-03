@@ -141,9 +141,17 @@ export const selectTargetingPublishersByType = createSelector(
 					return publishers
 				}, new Map())
 				.values()
-		).sort((a, b) =>
-			!!a.alexaRank ? a.alexaRank - b.alexaRank : b.alexaRank - 0
-		)
+		).sort((a, b) => {
+			if (a.alexaRank && !b.alexaRank) {
+				return -1
+			} else if (a.alexaRank && b.alexaRank) {
+				return a.alexaRank - b.alexaRank
+			} else if (!a.alexaRank && b.alexaRank) {
+				return 1
+			} else {
+				return 1
+			}
+		})
 	}
 )
 
