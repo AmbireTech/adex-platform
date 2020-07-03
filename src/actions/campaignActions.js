@@ -142,7 +142,10 @@ export function openCampaign() {
 
 			dispatch({
 				type: ADD_ITEM,
-				item: storeCampaign,
+				item: new Campaign({
+					...storeCampaign.spec,
+					...storeCampaign,
+				}).plainObj(),
 				itemType: 'Campaign',
 			})
 			addToast({
@@ -772,7 +775,7 @@ export function validateNewCampaignFinance({
 				validateCampaignAmount({
 					validateId,
 					prop: 'pricingBounds_min',
-					value: pricingBounds.min,
+					value: pricingBounds.IMPRESSION ? pricingBounds.IMPRESSION.min : null,
 					dirty,
 					pricingBounds,
 					depositAmount,
@@ -837,10 +840,12 @@ export function validateNewCampaignFinance({
 					state
 				)
 
-				const pricingBoundsInTokenValue = {
-					min: parseUnits(pricingBounds.min, decimals),
-					max: parseUnits(pricingBounds.max, decimals),
-				}
+				// TODO: make function in models
+				const pricingBoundsInTokenValue = { ...pricingBounds }
+				const impression = { ...pricingBoundsInTokenValue.IMPRESSION }
+				impression.min = parseUnits(impression.min, decimals)
+				impression.max = parseUnits(impression.max, decimals)
+				pricingBoundsInTokenValue.IMPRESSION = impression
 
 				const targetingRules = audienceInputToTargetingRules({
 					audienceInput,
@@ -854,6 +859,9 @@ export function validateNewCampaignFinance({
 					getState
 				)
 			}
+
+			console.log('isValid', isValid)
+			console.log('validations', validations)
 
 			await handleAfterValidation({ isValid, onValid, onInvalid })
 		} catch (err) {

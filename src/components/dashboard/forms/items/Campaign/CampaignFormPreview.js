@@ -50,7 +50,7 @@ function CampaignFormPreview() {
 		adUnits,
 		validators,
 		depositAmount,
-		pricingBounds = {},
+		pricingBounds,
 		// maxPerImpression,
 		// depositAsset,
 		withdrawPeriodStart,
@@ -63,6 +63,7 @@ function CampaignFormPreview() {
 	} = useSelector(selectNewCampaign)
 
 	const { feesFormatted, totalSpendFormatted } = temp
+	const { IMPRESSION = {} } = pricingBounds || {}
 
 	useEffect(() => {
 		execute(getCampaignActualFees())
@@ -98,14 +99,14 @@ function CampaignFormPreview() {
 					<Grid item xs={12} md={6}>
 						<PropRow
 							left={t('CPM_MIN_LABEL')}
-							right={`${pricingBounds.IMPRESSION.min} ${symbol}`}
+							right={`${IMPRESSION.min} ${symbol}`}
 						/>
 					</Grid>
 
 					<Grid item xs={12} md={6}>
 						<PropRow
 							left={t('CPM_MAX_LABEL')}
-							right={`${pricingBounds.IMPRESSION.max} ${symbol}`}
+							right={`${IMPRESSION.max} ${symbol}`}
 						/>
 					</Grid>
 
