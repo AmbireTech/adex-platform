@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.23
+##### *2020-07-03*
+
+### Fixed
+- Opening campaign
+
 ## 4.20.22
 ##### *2020-07-03*
 
