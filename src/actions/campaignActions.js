@@ -14,7 +14,6 @@ import {
 	validateCampaignUnits,
 	validateSchemaProp,
 	validateAudience,
-	// validateCampaignMinTargetingScore,
 	confirmAction,
 	updateSelectedItems,
 	saveAudience,
@@ -26,7 +25,6 @@ import { parseUnits } from 'ethers/utils'
 import { getAllValidatorsAuthForIdentity } from 'services/smart-contracts/actions/stats'
 import {
 	openChannel,
-	getChannelId,
 	closeChannel,
 } from 'services/smart-contracts/actions/core'
 import {
@@ -37,7 +35,6 @@ import {
 	closeCampaignMarket,
 	updateCampaign,
 	getCampaigns,
-	postAudience,
 } from 'services/adex-market/actions'
 import { getErrorMsg } from 'helpers/errors'
 import {
@@ -948,7 +945,6 @@ export function validateAndUpdateCampaign({
 		await updateSpinner(validateId, true)(dispatch)
 		try {
 			const {
-				id,
 				title,
 				audienceInput,
 				pricingBounds,
@@ -966,8 +962,6 @@ export function validateAndUpdateCampaign({
 				const countryTiersCoefficients = selectTargetingAnalyticsCountryTiersCoefficients(
 					state
 				)
-
-				console.log('pricingBounds', pricingBounds)
 
 				// TODO: fix it when it is possible to edit pricing bounds
 				// Legacy campaigns shim
