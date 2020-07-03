@@ -9,6 +9,7 @@ import {
 	selectCampaignStatsMaxValues,
 	selectMainToken,
 	selectSpinnerById,
+	selectCampaignById,
 } from 'selectors'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { useSelector } from 'react-redux'
@@ -250,6 +251,11 @@ function CampaignStatsBreakdownTable({ campaignId }) {
 		state => selectCampaignStatsMaxValues(state, campaignId)
 	)
 
+	const { status } =
+		useSelector(state => selectCampaignById(state, campaignId)) || {}
+
+	const allowActions = ['Ready', 'Active', 'Unhealthy'].includes(status.name)
+
 	const { data, columns, reloadData } = useTableData({
 		selector: selectCampaignStatsTableData,
 		selectorArgs: campaignId,
@@ -265,7 +271,7 @@ function CampaignStatsBreakdownTable({ campaignId }) {
 			data={data}
 			columns={columns}
 			options={options}
-			rowSelectable
+			rowSelectable={allowActions}
 			toolbarEnabled
 		/>
 	)
