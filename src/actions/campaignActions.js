@@ -860,9 +860,6 @@ export function validateNewCampaignFinance({
 				)
 			}
 
-			console.log('isValid', isValid)
-			console.log('validations', validations)
-
 			await handleAfterValidation({ isValid, onValid, onInvalid })
 		} catch (err) {
 			console.error('ERR_VALIDATING_CAMPAIGN_FINANCE', err)
