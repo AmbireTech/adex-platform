@@ -124,12 +124,12 @@ function getReadyCampaign(campaign, identity, mainToken) {
 	const impression = { ...pricingBounds.IMPRESSION }
 
 	impression.min = userInputToTokenValue({
-		input: pricingBounds.min,
+		input: impression.min,
 		decimals,
 		divider: 1000, // Input is for CPM (1000)
 	})
 	impression.max = userInputToTokenValue({
-		input: pricingBounds.max,
+		input: impression.max,
 		decimals,
 		divider: 1000, // Input is for CPM (1000)
 	})
