@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.24
+##### *2020-07-03*
+
+### Fixed
+- Campaign pricing bounds
+
 ## 4.20.23
 ##### *2020-07-03*
 
