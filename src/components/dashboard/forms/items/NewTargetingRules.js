@@ -159,7 +159,7 @@ const getMultipleActionsUsedValues = ({ actions, currentAction, target }) => {
 
 const Targets = ({
 	inputs,
-	source = [],
+	source = {},
 	collection,
 	placeholder,
 	label,
@@ -223,7 +223,7 @@ const Targets = ({
 								) : (
 									<Sources
 										id={id}
-										source={source}
+										source={source[a.type]}
 										collection={collection}
 										placeholder={placeholder}
 										disabled={a.type !== applyValue}
@@ -258,7 +258,7 @@ const Targets = ({
 							) : (
 								<Sources
 									id={id}
-									source={source}
+									source={source[a.type]}
 									collection={collection}
 									placeholder={placeholder}
 									label={label}
@@ -360,7 +360,7 @@ const NewTargetingRules = ({ itemType, itemId, validateId }) => {
 						parameter={parameter}
 						label={t(parameter)}
 						placeholder={t(parameter)}
-						source={source || []}
+						source={source || {}}
 						disabledValues={disabledValues || {}}
 						SOURCES={SOURCES}
 						actions={actions}
