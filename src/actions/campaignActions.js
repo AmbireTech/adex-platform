@@ -121,6 +121,9 @@ export function openCampaign() {
 						targetUrl: unit.targetUrl,
 						campaign: campaign.title,
 						content: `${index + 1}_${unit.type}`,
+						...(campaign.temp.useUtmSrcWithPub
+							? { src: 'adex_PUBHOSTNAME' }
+							: {}),
 					}),
 				}))
 			}
