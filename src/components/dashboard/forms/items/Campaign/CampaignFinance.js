@@ -61,7 +61,7 @@ function CampaignFinance({ validateId }) {
 		title,
 		validators,
 		depositAmount,
-		pricingBounds = { IMPRESSION: {} },
+		pricingBounds: campaignPricingBounds,
 		// depositAsset,
 		activeFrom,
 		withdrawPeriodStart,
@@ -73,8 +73,12 @@ function CampaignFinance({ validateId }) {
 		maxChannelFees,
 		maxDepositFormatted,
 		useUtmTags,
-		suggestedPricingBounds,
+		suggestedPricingBounds = { IMPRESSION: {} },
+		useUtmSrcWithPub,
 	} = temp
+
+	// if pricingBounds is null
+	const pricingBounds = campaignPricingBounds || { IMPRESSION: {} }
 
 	const spinner = useSelector(state =>
 		selectSpinnerById(state, GETTING_CAMPAIGNS_FEES)
@@ -98,8 +102,8 @@ function CampaignFinance({ validateId }) {
 
 	const impressions = getTotalImpressions({
 		depositAmount,
-		min: pricingBounds.min,
-		max: pricingBounds.max,
+		min: pricingBounds.IMPRESSION.min,
+		max: pricingBounds.IMPRESSION.max,
 	})
 
 	const updatePricingBoundsImpression = (type, value) => {
@@ -313,6 +317,37 @@ function CampaignFinance({ validateId }) {
 							<FormHelperText>
 								{t('CAMPAIGN_AUTO_UTM_TAGS_INFO', {
 									args: [
+										<ExternalAnchor href='https://help.adex.network/hc/en-us/articles/360011670859-How-to-add-UTM-links-and-track-campaigns'>
+											{t('CHECK_HERE')}
+										</ExternalAnchor>,
+									],
+								})}
+							</FormHelperText>
+						</FormControl>
+						<FormControl disabled={!useUtmTags}>
+							<FormGroup row>
+								<FormControlLabel
+									control={
+										<Checkbox
+											checked={!!useUtmSrcWithPub}
+											onChange={ev =>
+												execute(
+													updateNewCampaign('temp', {
+														...temp,
+														useUtmSrcWithPub: ev.target.checked,
+													})
+												)
+											}
+											value='useUtmSrcWithPub'
+										/>
+									}
+									label={t('CAMPAIGN_UTM_SRC_WITH_PUB')}
+								/>
+							</FormGroup>
+							<FormHelperText>
+								{t('CAMPAIGN_UTM_SRC_WITH_PUB_INFO', {
+									args: [
+										// TODO: link to help
 										<ExternalAnchor href='https://help.adex.network/hc/en-us/articles/360011670859-How-to-add-UTM-links-and-track-campaigns'>
 											{t('CHECK_HERE')}
 										</ExternalAnchor>,

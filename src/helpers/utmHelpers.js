@@ -1,7 +1,7 @@
 import url from 'url'
 import { UTM_PARAMS } from 'constants/misc'
 
-export const addUrlUtmTracking = ({ targetUrl, campaign, content }) => {
+export const addUrlUtmTracking = ({ targetUrl, campaign, content, src }) => {
 	if (!!targetUrl) {
 		const URL = url.parse(targetUrl, true)
 		URL.search = null
@@ -13,6 +13,9 @@ export const addUrlUtmTracking = ({ targetUrl, campaign, content }) => {
 			}
 			if (content) {
 				query['utm_content'] = content
+			}
+			if (src) {
+				query['utm_source'] = src
 			}
 			URL.query = query
 
