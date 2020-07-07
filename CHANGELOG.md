@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.25
+##### *2020-07-07*
+
+### Added
+- Optional `utm_source=adex_PUBHOSTNAME` for campaign units
+- Non filtered targeting data for exclusion inputs
+- Targeting data filtering by publishers revenue
+- Better sorting in targeting inputs when there are disabled values
+
+### Fixed
+- Crash when cancel on campaign finance step
+
 ## 4.20.24
 ##### *2020-07-03*
 
