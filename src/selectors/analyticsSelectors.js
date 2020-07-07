@@ -88,7 +88,7 @@ export const selectTargetingAnalyticsCountryTiersCoefficients = createSelector(
 	({ countryTiersCoefficients = {} }) => countryTiersCoefficients
 )
 
-export const selectTargetingAnalyticsWithMinSlotsCountByType = createSelector(
+export const selectVerifiedActiveTargetingAnalytics = createSelector(
 	[selectTargetingAnalytics],
 	targetingAnalytics => {
 		const bySlotCount = targetingAnalytics.reduce((byType, x) => {
@@ -100,22 +100,24 @@ export const selectTargetingAnalyticsWithMinSlotsCountByType = createSelector(
 		}, {})
 
 		return targetingAnalytics
+			.filter(
+				x =>
+					!!x.categories &&
+					x.categories.length &&
+					x.types &&
+					x.types.length &&
+					!!x.campaignsEarnedFrom
+			)
 			.map(t => ({
 				...t,
-				types: t.types.filter(
-					x =>
-						!!x.categories &&
-						x.categories.length &&
-						!!x.campaignsEarnedFrom &&
-						bySlotCount[x] >= MIN_SLOTS_FOR_AD_TYPE
-				),
+				types: t.types.filter(x => bySlotCount[x] >= MIN_SLOTS_FOR_AD_TYPE),
 			}))
-			.filter(x => x.types.length && x.categories.length)
+			.filter(x => x.types.length)
 	}
 )
 
 export const selectTargetingAnalyticsByType = createSelector(
-	[selectTargetingAnalyticsWithMinSlotsCountByType, (_, types) => types],
+	[selectVerifiedActiveTargetingAnalytics, (_, types) => types],
 	(targetingAnalytics, types) => {
 		const filterByType = types && types.length
 
