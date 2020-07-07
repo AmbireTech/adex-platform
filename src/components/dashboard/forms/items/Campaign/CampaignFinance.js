@@ -61,7 +61,7 @@ function CampaignFinance({ validateId }) {
 		title,
 		validators,
 		depositAmount,
-		pricingBounds = { IMPRESSION: {} },
+		pricingBounds: campaignPricingBounds,
 		// depositAsset,
 		activeFrom,
 		withdrawPeriodStart,
@@ -73,9 +73,12 @@ function CampaignFinance({ validateId }) {
 		maxChannelFees,
 		maxDepositFormatted,
 		useUtmTags,
-		suggestedPricingBounds,
+		suggestedPricingBounds = { IMPRESSION: {} },
 		useUtmSrcWithPub,
 	} = temp
+
+	// if pricingBounds is null
+	const pricingBounds = campaignPricingBounds || { IMPRESSION: {} }
 
 	const spinner = useSelector(state =>
 		selectSpinnerById(state, GETTING_CAMPAIGNS_FEES)
@@ -99,8 +102,8 @@ function CampaignFinance({ validateId }) {
 
 	const impressions = getTotalImpressions({
 		depositAmount,
-		min: pricingBounds.min,
-		max: pricingBounds.max,
+		min: pricingBounds.IMPRESSION.min,
+		max: pricingBounds.IMPRESSION.max,
 	})
 
 	const updatePricingBoundsImpression = (type, value) => {
