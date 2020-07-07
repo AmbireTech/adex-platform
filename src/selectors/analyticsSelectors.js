@@ -104,7 +104,10 @@ export const selectTargetingAnalyticsWithMinSlotsCountByType = createSelector(
 				...t,
 				types: t.types.filter(
 					x =>
-						!!x.campaignsEarnedFrom && bySlotCount[x] >= MIN_SLOTS_FOR_AD_TYPE
+						!!x.categories &&
+						x.categories.length &&
+						!!x.campaignsEarnedFrom &&
+						bySlotCount[x] >= MIN_SLOTS_FOR_AD_TYPE
 				),
 			}))
 			.filter(x => x.types.length && x.categories.length)
