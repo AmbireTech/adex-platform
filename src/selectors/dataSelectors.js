@@ -9,6 +9,8 @@ import {
 	selectTargetingPublishersByType,
 	selectNewItemByTypeAndId,
 	selectValidationsById,
+	selectAllTargetingPublishers,
+	selectTargetingCategories,
 } from 'selectors'
 import { createSelector } from 'reselect'
 import { constants, IabCategories } from 'adex-models'
@@ -165,9 +167,12 @@ const autocompleteGendersSingleSelect = () => {
 	}))
 }
 
-const autocompleteCategoriesSingleSelect = (state, types) =>
+const autocompleteCategoriesSingleSelect = (state, types, exclude) =>
 	[{ label: t('ALL_CATEGORIES'), value: 'ALL' }].concat(
-		selectTargetingCategoriesByType(state, types).map(cat => ({
+		(exclude ? selectTargetingCategories : selectTargetingCategoriesByType)(
+			state,
+			types
+		).map(cat => ({
 			label: t(IabCategories.wrbshrinkerWebsiteApiV3Categories[cat] || cat),
 			value: cat,
 		}))
@@ -183,8 +188,11 @@ const getPublisherExtraDataLabel = publisher => [
 		.join(', ')}`,
 ]
 
-const autocompletePublishersSingleSelect = (state, types) =>
-	selectTargetingPublishersByType(state, types).map(pub => ({
+const autocompletePublishersSingleSelect = (state, types, exclude) =>
+	(exclude ? selectAllTargetingPublishers : selectTargetingPublishersByType)(
+		state,
+		types
+	).map(pub => ({
 		label: pub.hostname,
 		value: JSON.stringify({ hostname: pub.hostname, publisher: pub.owner }),
 		extraLabel: getPublisherExtraDataLabel(pub),
@@ -219,8 +227,10 @@ export const audienceSources = () => [
 	},
 	{
 		parameter: 'categories',
-		singleValuesSrc: (state, opts) =>
-			autocompleteCategoriesSingleSelect(state, opts),
+		multipleValuesSrc: (state, opts) => ({
+			in: autocompleteCategoriesSingleSelect(state, opts),
+			nin: autocompleteCategoriesSingleSelect(state, opts, true),
+		}),
 		applyType: 'multiple',
 		actions: [
 			{ type: 'in', label: t('SHOW_SELECTED'), minSelected: 1 },
@@ -234,8 +244,10 @@ export const audienceSources = () => [
 	},
 	{
 		parameter: 'publishers',
-		singleValuesSrc: (state, type) =>
-			autocompletePublishersSingleSelect(state, type),
+		multipleValuesSrc: (state, type, exclude) => ({
+			in: autocompletePublishersSingleSelect(state, type),
+			nin: autocompletePublishersSingleSelect(state, type, true),
+		}),
 		applyType: 'single',
 		actions: [
 			{ type: 'in', label: t('SHOW_ONLY_IN_SELECTED'), minSelected: 1 },
@@ -345,7 +357,7 @@ const getDisabledValues = (data, source, inputs, allSrcs) => {
 		const selectedPublishersCategories = new Set()
 		allSrcs
 			.find(s => s.parameter === 'publishers')
-			.source.forEach(p => {
+			.source.in.forEach(p => {
 				if (inputs.publishers.in.includes(p.value)) {
 					p.extraData.categories.forEach(c =>
 						selectedPublishersCategories.add(c)
@@ -354,7 +366,9 @@ const getDisabledValues = (data, source, inputs, allSrcs) => {
 			})
 
 		disabled.in = source
-			.filter(c => !selectedPublishersCategories.has(c.value))
+			.filter(
+				c => c.value !== 'ALL' && !selectedPublishersCategories.has(c.value)
+			)
 			.map(c => c.value)
 	}
 
@@ -365,7 +379,16 @@ export const selectAudienceSourcesWithOptions = createSelector(
 	[audienceSources, selectAudienceInputItemOptions, state => state],
 	(sources, options, state) =>
 		sources.map(s => {
-			const source = s.singleValuesSrc ? s.singleValuesSrc(state, options) : []
+			const source = s.multipleValuesSrc
+				? s.multipleValuesSrc(state, options)
+				: {}
+
+			if (s.singleValuesSrc) {
+				const singleSource = s.singleValuesSrc(state, options)
+				s.actions.forEach(a => {
+					source[a.type] = a.value || singleSource
+				})
+			}
 			return {
 				...s,
 				source,
@@ -397,15 +420,44 @@ export const selectAudienceInputsDatByItem = createSelector(
 				? selectedItem.audienceInput.inputs
 				: selectedItem.inputs) || {}
 
-		const SOURCES = allSrcsWithOptions.map(s => ({
-			...s,
-			disabledValues: getDisabledValues(
+		const SOURCES = allSrcsWithOptions.map(s => {
+			const disabledValues = getDisabledValues(
 				s,
-				s.source,
+				//TODO: temp only used for in, so there is no point making it to work with other action types
+				s.source.in,
 				inputs,
 				allSrcsWithOptions
-			),
-		}))
+			)
+
+			const source = { ...s.source }
+			if (
+				!!source.in &&
+				source.in.length &&
+				!!disabledValues.in &&
+				disabledValues.in.length
+			) {
+				source.in = [...source.in].sort((a, b) => {
+					if (
+						disabledValues.in.includes(a.value) &&
+						!disabledValues.in.includes(b.value)
+					) {
+						return 1
+					} else if (
+						!disabledValues.in.includes(a.value) &&
+						disabledValues.in.includes(b.value)
+					) {
+						return -1
+					}
+
+					return 0
+				})
+			}
+			return {
+				...s,
+				source,
+				disabledValues,
+			}
+		})
 
 		const audienceInputData = { SOURCES, inputs, errorParameters }
 

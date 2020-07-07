@@ -88,7 +88,7 @@ export const selectTargetingAnalyticsCountryTiersCoefficients = createSelector(
 	({ countryTiersCoefficients = {} }) => countryTiersCoefficients
 )
 
-export const selectTargetingAnalyticsWithMinSlotsCountByType = createSelector(
+export const selectVerifiedActiveTargetingAnalytics = createSelector(
 	[selectTargetingAnalytics],
 	targetingAnalytics => {
 		const bySlotCount = targetingAnalytics.reduce((byType, x) => {
@@ -100,16 +100,24 @@ export const selectTargetingAnalyticsWithMinSlotsCountByType = createSelector(
 		}, {})
 
 		return targetingAnalytics
+			.filter(
+				x =>
+					!!x.categories &&
+					x.categories.length &&
+					x.types &&
+					x.types.length &&
+					!!x.campaignsEarnedFrom
+			)
 			.map(t => ({
 				...t,
 				types: t.types.filter(x => bySlotCount[x] >= MIN_SLOTS_FOR_AD_TYPE),
 			}))
-			.filter(x => x.types.length && x.categories.length)
+			.filter(x => x.types.length)
 	}
 )
 
 export const selectTargetingAnalyticsByType = createSelector(
-	[selectTargetingAnalyticsWithMinSlotsCountByType, (_, types) => types],
+	[selectVerifiedActiveTargetingAnalytics, (_, types) => types],
 	(targetingAnalytics, types) => {
 		const filterByType = types && types.length
 
@@ -150,6 +158,42 @@ export const selectTargetingPublishersByType = createSelector(
 				return 1
 			} else {
 				return 1
+			}
+		})
+	}
+)
+
+export const selectTargetingCategories = createSelector(
+	[selectTargetingAnalytics],
+	targeting =>
+		Array.from(
+			targeting.reduce((categories, x) => {
+				x.categories.forEach(c => categories.add(c))
+				return categories
+			}, new Set())
+		)
+)
+
+// It is used for exclusion so they are not filtered and are sorted from worst to best
+export const selectAllTargetingPublishers = createSelector(
+	[selectTargetingAnalytics],
+	targeting => {
+		return Array.from(
+			targeting
+				.reduce((publishers, { owner, hostname, alexaRank, categories }) => {
+					publishers.set(hostname, { owner, hostname, alexaRank, categories })
+					return publishers
+				}, new Map())
+				.values()
+		).sort((a, b) => {
+			if (a.alexaRank && !b.alexaRank) {
+				return 1
+			} else if (a.alexaRank && b.alexaRank) {
+				return a.alexaRank - b.alexaRank
+			} else if (!a.alexaRank && b.alexaRank) {
+				return -1
+			} else {
+				return -1
 			}
 		})
 	}
