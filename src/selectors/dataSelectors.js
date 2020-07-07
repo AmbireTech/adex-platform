@@ -366,7 +366,9 @@ const getDisabledValues = (data, source, inputs, allSrcs) => {
 			})
 
 		disabled.in = source
-			.filter(c => !selectedPublishersCategories.has(c.value))
+			.filter(
+				c => c.value !== 'ALL' && !selectedPublishersCategories.has(c.value)
+			)
 			.map(c => c.value)
 	}
 
@@ -418,16 +420,44 @@ export const selectAudienceInputsDatByItem = createSelector(
 				? selectedItem.audienceInput.inputs
 				: selectedItem.inputs) || {}
 
-		const SOURCES = allSrcsWithOptions.map(s => ({
-			...s,
-			disabledValues: getDisabledValues(
+		const SOURCES = allSrcsWithOptions.map(s => {
+			const disabledValues = getDisabledValues(
 				s,
 				//TODO: temp only used for in, so there is no point making it to work with other action types
 				s.source.in,
 				inputs,
 				allSrcsWithOptions
-			),
-		}))
+			)
+
+			const source = { ...s.source }
+			if (
+				!!source.in &&
+				source.in.length &&
+				!!disabledValues.in &&
+				disabledValues.in.length
+			) {
+				source.in = [...source.in].sort((a, b) => {
+					if (
+						disabledValues.in.includes(a.value) &&
+						!disabledValues.in.includes(b.value)
+					) {
+						return 1
+					} else if (
+						!disabledValues.in.includes(a.value) &&
+						disabledValues.in.includes(b.value)
+					) {
+						return -1
+					}
+
+					return 0
+				})
+			}
+			return {
+				...s,
+				source,
+				disabledValues,
+			}
+		})
 
 		const audienceInputData = { SOURCES, inputs, errorParameters }
 
