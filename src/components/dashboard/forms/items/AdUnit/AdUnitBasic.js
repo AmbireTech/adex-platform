@@ -3,19 +3,17 @@ import { useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
 import { Grid, TextField } from '@material-ui/core'
 import Dropdown from 'components/common/dropdown'
-import { constants } from 'adex-models'
 import { execute, updateNewUnit } from 'actions'
-import { t, selectValidationsById, selectNewAdUnit } from 'selectors'
-
-const AdTypes = constants.AdUnitsTypes.map(type => {
-	return {
-		value: type,
-		label: type.split('_')[1],
-	}
-})
+import {
+	t,
+	selectValidationsById,
+	selectNewAdUnit,
+	selectUnitTypesSourceWithRecommendations,
+} from 'selectors'
 
 function AdUnitBasic({ validateId }) {
 	const { title, description, targetUrl, type } = useSelector(selectNewAdUnit)
+	const typesSources = useSelector(selectUnitTypesSourceWithRecommendations)
 
 	const {
 		title: errTitle,
@@ -90,7 +88,7 @@ function AdUnitBasic({ validateId }) {
 						variant='outlined'
 						required
 						onChange={value => execute(updateNewUnit('type', value))}
-						source={AdTypes}
+						source={typesSources}
 						value={type + ''}
 						label={t('adType', { isProp: true })}
 						htmlId='ad-type-dd'
