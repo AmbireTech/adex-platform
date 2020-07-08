@@ -8,6 +8,8 @@ import {
 	MenuItem,
 	FormHelperText,
 	FormControl,
+	Tooltip,
+	Typography,
 	Select,
 } from '@material-ui/core'
 import { InputLoading } from 'components/common/spinners/'
@@ -28,6 +30,24 @@ export const styles = theme => ({
 })
 
 const useStyles = makeStyles(styles)
+
+const ExtraLabel = ({ label }) =>
+	Array.isArray(label) ? (
+		<Fragment>
+			{label.map((x, index) => (
+				<Typography
+					key={index}
+					display='block'
+					variant='caption'
+					color='inherit'
+				>
+					{x}
+				</Typography>
+			))}
+		</Fragment>
+	) : (
+		label
+	)
 
 function Dropdown(props) {
 	const classes = useStyles()
@@ -83,13 +103,19 @@ function Dropdown(props) {
 									{src.group.name || src.group}
 								</ListSubheader>
 							) : (
-								<MenuItem
-									className={classes.menuItem}
+								<Tooltip
 									key={src.value.key || src.value.id || src.value}
+									title={<ExtraLabel label={src.extraLabel || ''} />}
 									value={src.value.id || src.value}
 								>
-									{src.label}
-								</MenuItem>
+									<MenuItem
+										key={src.value.key || src.value.id || src.value}
+										className={classes.menuItem}
+										value={src.value.id || src.value}
+									>
+										{src.label}
+									</MenuItem>
+								</Tooltip>
 							)
 						})}
 					</Select>
