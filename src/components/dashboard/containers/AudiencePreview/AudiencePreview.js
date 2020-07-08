@@ -19,6 +19,7 @@ const AudiencePreview = ({ audienceInput = {}, title, subHeader }) => {
 	return (
 		<Box>
 			<Box m={1}>
+				{title && <OutlinedPropView label={t('TITLE')} value={title} />}
 				{!!location.apply ? (
 					<OutlinedPropView
 						margin='dense'

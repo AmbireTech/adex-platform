@@ -82,7 +82,7 @@ function Audience({ match }) {
 				<Box p={1}>
 					<ItemTitle title={title} errTitle={errTitle} {...hookProps} />
 				</Box>
-				<AudiencePreview audienceInput={inputs} title={title} />
+				<AudiencePreview audienceInput={inputs} />
 				<Box p={1} className={classes.actions}>
 					<TargetingRulesEdit
 						btnLabel='UPDATE_AUDIENCE'
