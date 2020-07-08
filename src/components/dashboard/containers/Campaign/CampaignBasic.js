@@ -43,12 +43,13 @@ const useStyles = makeStyles(theme => ({
 
 export const CampaignBasic = ({ item, ...hookProps }) => {
 	const classes = useStyles()
-	const { title, adUnits = [], humanFriendlyName } = item
+	const { title, adUnits = [] } = item
 	const { decimals, symbol } = selectMainToken()
 	const { title: errTitle } = hookProps.validations
 
 	const { mediaUrl, mediaMime } = adUnits[0] || {}
 	const status = item.status || {}
+	const { humanFriendlyName } = status
 	const isPaused = ((item.targetingRules || [])[0] || {}).onlyShowIf === true
 	const pauseAction = isPaused ? 'RESUME' : 'PAUSE'
 
@@ -215,13 +216,13 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 									<Box my={1}>
 										<ItemSpecProp
 											prop={'humanFriendlyName'}
-											value={status.humanFriendlyName}
+											value={t(humanFriendlyName, { toUpperCase: true })}
 											label={t('status', { isProp: true })}
 											InputProps={{
 												endAdornment: (
 													<InputAdornment position='end'>
 														{mapStatusIcons(
-															status.humanFriendlyName,
+															humanFriendlyName,
 															status.name,
 															'md'
 														)}
