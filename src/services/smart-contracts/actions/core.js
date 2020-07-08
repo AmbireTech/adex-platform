@@ -158,7 +158,7 @@ function getReadyCampaign(campaign, identity, mainToken) {
 
 	newCampaign.status = {
 		name: 'Pending',
-		humanFriendlyName: 'Active',
+		humanFriendlyName: 'Pending',
 		lastChecked: Date.now(),
 	}
 
