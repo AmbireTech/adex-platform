@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { bigNumberify } from 'ethers/utils'
+import { bigNumberify, parseUnits, formatUnits } from 'ethers/utils'
 import {
 	t,
 	selectDemandAnalytics,
@@ -11,12 +11,14 @@ import {
 	selectValidationsById,
 	selectAllTargetingPublishers,
 	selectTargetingCategories,
+	selectVerifiedActiveTargetingAnalytics,
 } from 'selectors'
 import { createSelector } from 'reselect'
 import { constants, IabCategories } from 'adex-models'
 import { WHERE_YOU_KNOW_US } from 'constants/misc'
 import { ExternalAnchor } from 'components/common/anchor/anchor'
 import moment from 'moment'
+import { formatTokenAmount } from 'helpers/formatters'
 
 export const selectSlotTypesSourceWithDemands = createSelector(
 	[selectDemandAnalytics, selectMainToken],
@@ -72,6 +74,67 @@ export const selectSlotTypesSourceWithDemands = createSelector(
 				},
 				{ source: [], hasPopularGroup: false, hasNoDemandGroup: false }
 			)
+		return source
+	}
+)
+
+export const selectVerifiedActiveTypes = createSelector(
+	[selectVerifiedActiveTargetingAnalytics],
+	targetingAnalytics => {
+		const verified = targetingAnalytics.reduce((types, data) => {
+			data.types.forEach(t => {
+				const typeData = types.get(t) || {
+					byOwner: {},
+					minSlotCount: 1,
+				}
+
+				typeData.byOwner[data.owner] = typeData.byOwner[data.owner] || {}
+				typeData.byOwner[data.owner].revenue = bigNumberify(
+					typeData.byOwner[data.owner].revenue || '0'
+				)
+					.add(bigNumberify(data.totalEarned || 0))
+					.toString()
+
+				types.set(t, typeData)
+			})
+
+			return types
+		}, new Map())
+
+		verified.forEach((value, key) => {
+			const totalRevenue = Object.values(value.byOwner).reduce(
+				(total, r = {}) => total.add(bigNumberify(r.revenue || '0')),
+				bigNumberify('0')
+			)
+
+			verified.set(key, totalRevenue)
+		})
+
+		return verified
+	}
+)
+
+export const selectUnitTypesSourceWithRecommendations = createSelector(
+	[selectVerifiedActiveTypes, selectMainToken],
+	(verifiedTypes, { decimals, symbol } = {}) => {
+		// console.log('verifiedTypes', verifiedTypes)
+
+		const source = constants.AdUnitsTypes.map(type => ({
+			value: type,
+
+			revenue: bigNumberify(verifiedTypes.get(type) || '0'),
+		}))
+			.sort((a, b) => {
+				return a.revenue.gt(b.revenue) ? -1 : b.revenue.gt(a.revenue) ? 1 : 0
+			})
+			.map(({ value, revenue }) => ({
+				value,
+				label: value.split('_')[1],
+				extraLabel:
+					formatTokenAmount(revenue.toString(), decimals, false, 2) +
+					` ${symbol}`,
+			}))
+
 		return source
 	}
 )
