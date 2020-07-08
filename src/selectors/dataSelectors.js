@@ -79,8 +79,8 @@ export const selectSlotTypesSourceWithDemands = createSelector(
 )
 
 export const selectVerifiedActiveTypes = createSelector(
-	[selectVerifiedActiveTargetingAnalytics],
-	targetingAnalytics => {
+	[selectVerifiedActiveTargetingAnalytics, selectMainToken],
+	(targetingAnalytics, { decimals }) => {
 		const verified = targetingAnalytics.reduce((types, data) => {
 			data.types.forEach(t => {
 				const typeData = types.get(t) || {
@@ -89,12 +89,14 @@ export const selectVerifiedActiveTypes = createSelector(
 				}
 
 				typeData.byOwner[data.owner] = typeData.byOwner[data.owner] || {}
-				typeData.byOwner[data.owner].revenue = bigNumberify(
-					typeData.byOwner[data.owner].revenue || '0'
-				)
-					.add(bigNumberify(data.totalEarned || 0))
-					.toString()
+				// As totalEarned is by owner we need it once
+				typeData.byOwner[data.owner].revenue =
+					typeData.byOwner[data.owner].revenue || data.totalEarned || '0'
 
+				typeData.byOwner[data.owner].campaignsEarnedFrom =
+					typeData.byOwner[data.owner].campaignsEarnedFrom ||
+					data.campaignsEarnedFrom ||
+					1
 				types.set(t, typeData)
 			})
 
@@ -107,7 +109,10 @@ export const selectVerifiedActiveTypes = createSelector(
 				bigNumberify('0')
 			)
 
-			verified.set(key, totalRevenue)
+			verified.set(
+				key,
+				parseFloat(formatUnits(totalRevenue.toString(), decimals))
+			)
 		})
 
 		return verified
@@ -116,23 +121,19 @@ export const selectVerifiedActiveTypes = createSelector(
 
 export const selectUnitTypesSourceWithRecommendations = createSelector(
 	[selectVerifiedActiveTypes, selectMainToken],
-	(verifiedTypes, { decimals, symbol } = {}) => {
-		// console.log('verifiedTypes', verifiedTypes)
-
+	(verifiedTypes, { symbol } = {}) => {
 		const source = constants.AdUnitsTypes.map(type => ({
 			value: type,
 
-			revenue: bigNumberify(verifiedTypes.get(type) || '0'),
+			revenue: verifiedTypes.get(type),
 		}))
 			.sort((a, b) => {
-				return a.revenue.gt(b.revenue) ? -1 : b.revenue.gt(a.revenue) ? 1 : 0
+				return b.revenue - a.revenue
 			})
 			.map(({ value, revenue }) => ({
 				value,
 				label: value.split('_')[1],
-				extraLabel:
-					formatTokenAmount(revenue.toString(), decimals, false, 2) +
-					` ${symbol}`,
+				extraLabel: revenue.toFixed(0) + ` ${symbol}`,
 			}))
 
 		return source
