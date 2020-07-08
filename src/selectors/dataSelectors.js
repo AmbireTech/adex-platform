@@ -18,7 +18,6 @@ import { constants, IabCategories } from 'adex-models'
 import { WHERE_YOU_KNOW_US } from 'constants/misc'
 import { ExternalAnchor } from 'components/common/anchor/anchor'
 import moment from 'moment'
-import { formatTokenAmount } from 'helpers/formatters'
 
 export const selectSlotTypesSourceWithDemands = createSelector(
 	[selectDemandAnalytics, selectMainToken],
@@ -109,10 +108,9 @@ export const selectVerifiedActiveTypes = createSelector(
 				bigNumberify('0')
 			)
 
-			verified.set(
-				key,
-				parseFloat(formatUnits(totalRevenue.toString(), decimals))
-			)
+			verified.set(key, {
+				revenue: parseFloat(formatUnits(totalRevenue.toString(), decimals)),
+			})
 		})
 
 		return verified
@@ -122,19 +120,66 @@ export const selectVerifiedActiveTypes = createSelector(
 export const selectUnitTypesSourceWithRecommendations = createSelector(
 	[selectVerifiedActiveTypes, selectMainToken],
 	(verifiedTypes, { symbol } = {}) => {
-		const source = constants.AdUnitsTypes.map(type => ({
+		const totoShare = Array.from(verifiedTypes.values()).reduce(
+			(total, { revenue = 0 }) => total + revenue,
+			1
+		)
+
+		const { source } = constants.AdUnitsTypes.map(type => ({
 			value: type,
 
-			revenue: verifiedTypes.get(type),
+			revenue: verifiedTypes.get(type).revenue,
 		}))
 			.sort((a, b) => {
 				return b.revenue - a.revenue
 			})
-			.map(({ value, revenue }) => ({
-				value,
-				label: value.split('_')[1],
-				extraLabel: revenue.toFixed(0) + ` ${symbol}`,
-			}))
+			.reduce(
+				(data, type, index, unitTypes) => {
+					const newData = { ...data }
+					const source = newData.source
+					const { revenue, ...typeRest } = type
+					const current = { ...typeRest }
+					current.label = current.value.split('_')[1]
+					if (index === 0 && revenue > 0) {
+						newData.hasPopularGroup = true
+						source.push({ group: t('MOST_POPULAR_UNITS_TYPES') })
+					}
+
+					const share = revenue / totoShare
+					if (
+						!newData.hasLessPopularGroup &&
+						newData.hasPopularGroup &&
+						index !== 0 &&
+						share <= 0.1 && // less than 10%
+						share >= 0.01 // more than 1%
+					) {
+						newData.hasLessPopularGroup = true
+						source.push({ group: t('LESS_POPULAR_UNITS_TYPES') })
+					}
+
+					if (
+						!newData.hasNoPopularGroup &&
+						newData.hasPopularGroup &&
+						index !== 0 &&
+						share < 0.01 // less than 1%
+					) {
+						newData.hasNoPopularGroup = true
+						source.push({ group: t('NO_POPULAR_UNITS_TYPES') })
+					}
+
+					source.push(current)
+
+					newData.source = source
+
+					return newData
+				},
+				{
+					source: [],
+					hasPopularGroup: false,
+					hasLessPopularGroup: false,
+					hasNoPopularGroup: false,
+				}
+			)
 
 		return source
 	}
