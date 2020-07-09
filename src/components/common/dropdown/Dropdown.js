@@ -102,20 +102,27 @@ function Dropdown(props) {
 								>
 									{src.group.name || src.group}
 								</ListSubheader>
-							) : (
+							) : !!src.extraLabel ? (
 								<Tooltip
 									key={src.value.key || src.value.id || src.value}
 									title={<ExtraLabel label={src.extraLabel || ''} />}
 									value={src.value.id || src.value}
 								>
 									<MenuItem
-										key={src.value.key || src.value.id || src.value}
 										className={classes.menuItem}
 										value={src.value.id || src.value}
 									>
 										{src.label}
 									</MenuItem>
 								</Tooltip>
+							) : (
+								<MenuItem
+									key={src.value.key || src.value.id || src.value}
+									className={classes.menuItem}
+									value={src.value.id || src.value}
+								>
+									{src.label}
+								</MenuItem>
 							)
 						})}
 					</Select>
