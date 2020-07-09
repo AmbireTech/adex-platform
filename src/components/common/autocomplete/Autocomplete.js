@@ -107,20 +107,23 @@ function Autocomplete({
 						/>
 					)
 				}}
-				renderOption={option => {
-					return (
+				renderOption={option =>
+					!!option.extraLabel ? (
 						<Tooltip
 							key={option.label}
 							title={<ExtraLabel label={option.extraLabel || ''} />}
 						>
 							{<Typography>{option.label}</Typography>}
 						</Tooltip>
+					) : (
+						<Typography key={option.label}> {option.label}</Typography>
 					)
-				}}
+				}
 				renderTags={(value, getCustomizedTagProps) =>
 					value.map(
 						(option, index) =>
-							!(disabled && hideSelectedOnDisable) && (
+							!(disabled && hideSelectedOnDisable) &&
+							(!!option.extraLabel ? (
 								<Tooltip
 									key={option.value + '' + index}
 									title={<ExtraLabel label={option.extraLabel || ''} />}
@@ -130,7 +133,12 @@ function Autocomplete({
 										{...getCustomizedTagProps({ index })}
 									/>
 								</Tooltip>
-							)
+							) : (
+								<Chip
+									label={option.label || option}
+									{...getCustomizedTagProps({ index })}
+								/>
+							))
 					)
 				}
 			/>
