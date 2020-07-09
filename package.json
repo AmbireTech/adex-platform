@@ -18,7 +18,7 @@
     "adex-constants": "1.0.10",
     "adex-models": "git+https://git@github.com/AdExBlockchain/adex-models.git#6bcbb72e73cdd7d217edff8462745102ca13a572",
     "adex-protocol-eth": "4.1.3",
-    "adex-translations": "git+https://git@github.com/AdExBlockchain/adex-translations.git#c12bd8da3c525483c9c7c29987237ec03c10bef0",
+    "adex-translations": "git+https://git@github.com/AdExBlockchain/adex-translations.git#2dd37a97a60330f9d4ec64b39e24ad595579b27f",
     "autoprefixer": "7.1.6",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.1",

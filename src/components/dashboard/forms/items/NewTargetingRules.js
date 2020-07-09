@@ -25,7 +25,7 @@ import {
 } from '@material-ui/icons'
 import Autocomplete from 'components/common/autocomplete'
 
-import { t, selectAudienceInputsDatByItem } from 'selectors'
+import { t, selectAudienceInputsDataByItem } from 'selectors'
 import { execute, updateTargetRuleInput } from 'actions'
 
 const useStyles = makeStyles(theme => ({
@@ -319,7 +319,7 @@ const NewTargetingRules = ({ itemType, itemId, validateId }) => {
 	const classes = useStyles()
 
 	const { SOURCES, inputs, errorParameters } = useSelector(state =>
-		selectAudienceInputsDatByItem(state, itemType, itemId, validateId)
+		selectAudienceInputsDataByItem(state, itemType, itemId, validateId)
 	)
 
 	const { parameter, source, actions, applyType, disabledValues } =

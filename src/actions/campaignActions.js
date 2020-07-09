@@ -204,9 +204,10 @@ function getHumanFriendlyName(campaign) {
 	if (campaign.status && campaign.status.humanFriendlyName === 'Closed')
 		return 'Closed'
 	switch ((campaign.status || {}).name) {
+		case 'Pending':
+			return 'Pending'
 		case 'Active':
 		case 'Ready':
-		case 'Pending':
 		case 'Initializing':
 		case 'Waiting':
 		case 'Offline':

@@ -6,7 +6,7 @@ import {
 } from 'selectors'
 import { formatTokenAmount, formatDateTime } from 'helpers/formatters'
 import {
-	selectWebsitesArray,
+	selectNewItemByTypeAndId,
 	selectIdentitySideAnalyticsPeriod,
 } from 'selectors'
 import dateUtils from 'helpers/dateUtils'
@@ -116,8 +116,18 @@ export const selectVerifiedActiveTargetingAnalytics = createSelector(
 	}
 )
 
+export const selectTargetingAnalyticsCurrentlyUsedTypes = createSelector(
+	[selectNewItemByTypeAndId],
+	item => {
+		return item && item.adUnits ? item.adUnits.map(u => u.type) : null
+	}
+)
+
 export const selectTargetingAnalyticsByType = createSelector(
-	[selectVerifiedActiveTargetingAnalytics, (_, types) => types],
+	[
+		selectVerifiedActiveTargetingAnalytics,
+		selectTargetingAnalyticsCurrentlyUsedTypes,
+	],
 	(targetingAnalytics, types) => {
 		const filterByType = types && types.length
 

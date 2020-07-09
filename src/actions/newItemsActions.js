@@ -78,9 +78,9 @@ export function updateNewCampaign(prop, value, newValues) {
 	}
 }
 
-export function updateNewAudience(prop, value, newValues) {
+export function updateNewAudience(prop, value, newValues, itemId) {
 	return async function(dispatch, getState) {
-		await updateNewItemAction('Audience', prop, value, newValues)(
+		await updateNewItemAction('Audience', prop, value, newValues, itemId)(
 			dispatch,
 			getState
 		)

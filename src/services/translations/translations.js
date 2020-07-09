@@ -34,12 +34,15 @@ const interpolate = (tpl, args) => {
 
 export const translate = (
 	val = '',
-	{ isProp = false, args = [''] } = {},
+	{ isProp = false, args = [''], toUpperCase = false } = {},
 	language = lang
 ) => {
 	let key = val + ''
 	if (isProp) {
 		key = 'PROP_' + key.replace(/^_/, '')
+	}
+	if (toUpperCase) {
+		key = key.toUpperCase()
 	}
 
 	key = key.toUpperCase()

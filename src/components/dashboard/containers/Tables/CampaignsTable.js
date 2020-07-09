@@ -90,7 +90,7 @@ const getCols = ({
 			},
 			customBodyRender: ({ humanFriendlyName, originalName, id }) => (
 				<Fragment key={id}>
-					{humanFriendlyName}{' '}
+					{t(humanFriendlyName, { toUpperCase: true })}{' '}
 					{mapStatusIcons(humanFriendlyName, originalName, 'xs')}
 				</Fragment>
 			),
