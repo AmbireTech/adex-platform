@@ -1,6 +1,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.26
+##### *2020-07-09*
+
+### Added
+- Groups by ad formats popularity at unit creation
+- Ability to edit saved audience title
+- Show min and max CPM at campaign details
+
+### Changed
+- Show 'Pending' instead 'Active' when campaign is not deployed
+- Misc labels and translations
+
+### Fixed
+- Fixed bug with audience inputs
+
 ## 4.20.25
 ##### *2020-07-07*
 
