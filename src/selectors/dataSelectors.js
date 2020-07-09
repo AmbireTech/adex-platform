@@ -257,23 +257,25 @@ const autocompleteLocationsSingleSelect = () => {
 	return [...tiers, ...all]
 }
 
-const autocompleteGendersSingleSelect = () => {
-	return constants.Genders.map(gender => ({
-		label: t(gender.split('_')[1].toUpperCase()),
-		value: gender,
-	}))
-}
+const autocompleteCategoriesMultiSelectIn = createSelector(
+	[selectTargetingCategoriesByType],
+	categories =>
+		[{ label: t('ALL_CATEGORIES'), value: 'ALL' }].concat(
+			categories.map(cat => ({
+				label: t(IabCategories.wrbshrinkerWebsiteApiV3Categories[cat] || cat),
+				value: cat,
+			}))
+		)
+)
 
-const autocompleteCategoriesSingleSelect = (state, types, exclude) =>
-	[{ label: t('ALL_CATEGORIES'), value: 'ALL' }].concat(
-		(exclude ? selectTargetingCategories : selectTargetingCategoriesByType)(
-			state,
-			types
-		).map(cat => ({
+const autocompleteCategoriesMultiSelectNin = createSelector(
+	[selectTargetingCategories],
+	categories =>
+		categories.map(cat => ({
 			label: t(IabCategories.wrbshrinkerWebsiteApiV3Categories[cat] || cat),
 			value: cat,
 		}))
-	)
+)
 
 const getPublisherExtraDataLabel = publisher => [
 	`${t('HOSTNAME')}: ${publisher.hostname}`,
@@ -285,36 +287,31 @@ const getPublisherExtraDataLabel = publisher => [
 		.join(', ')}`,
 ]
 
-const autocompletePublishersSingleSelect = (state, types, exclude) =>
-	(exclude ? selectAllTargetingPublishers : selectTargetingPublishersByType)(
-		state,
-		types
-	).map(pub => ({
-		label: pub.hostname,
-		value: JSON.stringify({ hostname: pub.hostname, publisher: pub.owner }),
-		extraLabel: getPublisherExtraDataLabel(pub),
-		extraData: pub,
-	}))
+const autocompletePublishersMultiSelectIn = createSelector(
+	[selectTargetingPublishersByType],
+	publishers =>
+		publishers.map(pub => ({
+			label: pub.hostname,
+			value: JSON.stringify({ hostname: pub.hostname, publisher: pub.owner }),
+			extraLabel: getPublisherExtraDataLabel(pub),
+			extraData: pub,
+		}))
+)
 
-export const slotSources = () => ({
-	tags: { src: autocompleteCategoriesSingleSelect(), collection: 'tags' },
-	custom: { src: [], collection: 'tags' },
-})
-
-export const unitSources = () => ({
-	locations: {
-		src: autocompleteLocationsSingleSelect(),
-		collection: 'targeting',
-	},
-	genders: { src: autocompleteGendersSingleSelect(), collection: 'targeting' },
-	tags: { src: autocompleteCategoriesSingleSelect(), collection: 'targeting' },
-	custom: { src: [], collection: 'targeting' },
-})
+const autocompletePublishersMultiSelectNin = createSelector(
+	[selectAllTargetingPublishers],
+	publishers =>
+		publishers.map(pub => ({
+			label: pub.hostname,
+			value: JSON.stringify({ hostname: pub.hostname, publisher: pub.owner }),
+			extraLabel: getPublisherExtraDataLabel(pub),
+			extraData: pub,
+		}))
+)
 
 export const audienceSources = () => [
 	{
 		parameter: 'location',
-		singleValuesSrc: () => autocompleteLocationsSingleSelect(),
 		applyType: 'single',
 		actions: [
 			{ type: 'in', label: t('TARGET_COUNTRIES'), minSelected: 1 },
@@ -324,10 +321,6 @@ export const audienceSources = () => [
 	},
 	{
 		parameter: 'categories',
-		multipleValuesSrc: (state, opts) => ({
-			in: autocompleteCategoriesSingleSelect(state, opts),
-			nin: autocompleteCategoriesSingleSelect(state, opts, true),
-		}),
 		applyType: 'multiple',
 		actions: [
 			{ type: 'in', label: t('SHOW_SELECTED'), minSelected: 1 },
@@ -341,10 +334,6 @@ export const audienceSources = () => [
 	},
 	{
 		parameter: 'publishers',
-		multipleValuesSrc: (state, type, exclude) => ({
-			in: autocompletePublishersSingleSelect(state, type),
-			nin: autocompletePublishersSingleSelect(state, type, true),
-		}),
 		applyType: 'single',
 		actions: [
 			{ type: 'in', label: t('SHOW_ONLY_IN_SELECTED'), minSelected: 1 },
@@ -401,6 +390,33 @@ export const audienceSources = () => [
 		],
 	},
 ]
+
+const selectAutocompleteAudienceSources = createSelector(
+	[
+		autocompleteLocationsSingleSelect,
+		autocompleteCategoriesMultiSelectIn,
+		autocompleteCategoriesMultiSelectNin,
+		autocompletePublishersMultiSelectIn,
+		autocompletePublishersMultiSelectNin,
+	],
+	(locations, catIn, catNin, pubIn, pubNin) => ({
+		location: {
+			singleValuesSrc: locations,
+		},
+		categories: {
+			multipleValuesSrc: {
+				in: catIn,
+				nin: catNin,
+			},
+		},
+		publishers: {
+			multipleValuesSrc: {
+				in: pubIn,
+				nin: pubNin,
+			},
+		},
+	})
+)
 
 export const selectAudienceInputItemOptions = createSelector(
 	[selectNewItemByTypeAndId],
@@ -473,17 +489,16 @@ const getDisabledValues = (data, source, inputs, allSrcs) => {
 }
 
 export const selectAudienceSourcesWithOptions = createSelector(
-	[audienceSources, selectAudienceInputItemOptions, state => state],
-	(sources, options, state) =>
+	[audienceSources, selectAutocompleteAudienceSources],
+	(sources, sourcesData) =>
 		sources.map(s => {
-			const source = s.multipleValuesSrc
-				? s.multipleValuesSrc(state, options)
+			const source = (sourcesData[s.parameter] || {}).multipleValuesSrc
+				? sourcesData[s.parameter].multipleValuesSrc
 				: {}
 
-			if (s.singleValuesSrc) {
-				const singleSource = s.singleValuesSrc(state, options)
+			if ((sourcesData[s.parameter] || {}).singleValuesSrc) {
 				s.actions.forEach(a => {
-					source[a.type] = a.value || singleSource
+					source[a.type] = a.value || sourcesData[s.parameter].singleValuesSrc
 				})
 			}
 			return {
@@ -493,24 +508,39 @@ export const selectAudienceSourcesWithOptions = createSelector(
 		})
 )
 
-export const selectAudienceInputsDatByItem = createSelector(
+export const selectAudienceValidations = createSelector(
+	selectWebsitesArray,
+	websites =>
+		websites.map(ws => {
+			const website = `https://${ws.id}`
+			return {
+				label: website,
+				value: website,
+				status: ws.issues && ws.issues.length ? 'error' : 'success',
+			}
+		})
+)
+
+export const selectAudienceInputsDataByItem = createSelector(
 	[
 		selectAudienceSourcesWithOptions,
 		selectNewItemByTypeAndId,
-		(state, itemType, itemId, validateId) => ({
-			state,
-			validateId,
-		}),
+		// (state, itemType, itemId, validateId) => ({
+		// 	state,
+		// 	validateId,
+		// }),
 	],
-	(allSrcsWithOptions, selectedItem, { state, validateId }) => {
+	(allSrcsWithOptions, selectedItem) => {
 		const isCampaignAudienceItem = !!selectedItem.audienceInput
 
-		const validations = selectValidationsById(state, validateId) || {}
+		// const validations = selectValidationsById(state, validateId) || {}
 
-		const errors =
-			validations[isCampaignAudienceItem ? 'audienceInput' : 'inputs'] || {}
+		// const errors =
+		// 	validations[isCampaignAudienceItem ? 'audienceInput' : 'inputs'] || {}
 
-		const errorParameters = errors.dirty ? errors.errFields || {} : {}
+		// const errorParameters = errors.dirty ? errors.errFields || {} : {}
+
+		// console.log('allSrcsWithOptions', allSrcsWithOptions)
 
 		const inputs =
 			(isCampaignAudienceItem
@@ -556,7 +586,7 @@ export const selectAudienceInputsDatByItem = createSelector(
 			}
 		})
 
-		const audienceInputData = { SOURCES, inputs, errorParameters }
+		const audienceInputData = { SOURCES, inputs, errorParameters: {} }
 
 		return audienceInputData
 	}
