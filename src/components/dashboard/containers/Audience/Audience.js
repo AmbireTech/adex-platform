@@ -6,6 +6,7 @@ import { Paper, Box } from '@material-ui/core'
 import {
 	useItem,
 	ChangeControls,
+	ItemTitle,
 } from 'components/dashboard/containers/ItemCommon/'
 import AudiencePreview from 'components/dashboard/containers/AudiencePreview'
 import FormSteps from 'components/common/stepper/FormSteps'
@@ -63,7 +64,7 @@ const TargetingRulesEdit = WithDialog(TargetingSteps)
 function Audience({ match }) {
 	const classes = useStyles()
 
-	const { item = {}, ...hookProps } = useItem({
+	const { item = {}, validations, ...hookProps } = useItem({
 		itemType: 'Audience',
 		match,
 		objModel: AudienceModel,
@@ -71,13 +72,17 @@ function Audience({ match }) {
 	})
 
 	const { inputs, title } = item
+	const { title: errTitle } = validations
 
 	return (
 		<Fragment>
 			<ChangeControls {...hookProps} />
 
 			<Paper variant='outlined'>
-				<AudiencePreview audienceInput={inputs} title={title} />
+				<Box p={1}>
+					<ItemTitle title={title} errTitle={errTitle} {...hookProps} />
+				</Box>
+				<AudiencePreview audienceInput={inputs} />
 				<Box p={1} className={classes.actions}>
 					<TargetingRulesEdit
 						btnLabel='UPDATE_AUDIENCE'

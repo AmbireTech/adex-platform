@@ -43,14 +43,25 @@ const useStyles = makeStyles(theme => ({
 
 export const CampaignBasic = ({ item, ...hookProps }) => {
 	const classes = useStyles()
-	const { title, adUnits = [], humanFriendlyName } = item
+	const {
+		title,
+		adUnits = [],
+		pricingBounds,
+		minPerImpression,
+		maxPerImpression,
+	} = item
 	const { decimals, symbol } = selectMainToken()
 	const { title: errTitle } = hookProps.validations
 
 	const { mediaUrl, mediaMime } = adUnits[0] || {}
 	const status = item.status || {}
+	const { humanFriendlyName } = status
 	const isPaused = ((item.targetingRules || [])[0] || {}).onlyShowIf === true
 	const pauseAction = isPaused ? 'RESUME' : 'PAUSE'
+
+	const campaignPricingBounds = pricingBounds || { IMPRESSION: {} }
+	const cpmMin = campaignPricingBounds.min || minPerImpression || 0
+	const cpmMax = campaignPricingBounds.max || maxPerImpression || 0
 
 	const closeSpinner = useSelector(state =>
 		selectSpinnerById(state, `closing-campaign-${item.id}`)
@@ -184,6 +195,24 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 								<Grid item xs={12} sm={12} md={6}>
 									<Box my={1}>
 										<ItemSpecProp
+											prop={'humanFriendlyName'}
+											value={t(humanFriendlyName, { toUpperCase: true })}
+											label={t('status', { isProp: true })}
+											InputProps={{
+												endAdornment: (
+													<InputAdornment position='end'>
+														{mapStatusIcons(
+															humanFriendlyName,
+															status.name,
+															'md'
+														)}
+													</InputAdornment>
+												),
+											}}
+										/>
+									</Box>
+									<Box my={1}>
+										<ItemSpecProp
 											prop={'created'}
 											value={formatDateTime(item.created)}
 											label={t('created', { isProp: true })}
@@ -214,24 +243,6 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 								<Grid item xs={12} sm={12} md={6}>
 									<Box my={1}>
 										<ItemSpecProp
-											prop={'humanFriendlyName'}
-											value={status.humanFriendlyName}
-											label={t('status', { isProp: true })}
-											InputProps={{
-												endAdornment: (
-													<InputAdornment position='end'>
-														{mapStatusIcons(
-															status.humanFriendlyName,
-															status.name,
-															'md'
-														)}
-													</InputAdornment>
-												),
-											}}
-										/>
-									</Box>
-									<Box my={1}>
-										<ItemSpecProp
 											prop={'fundsDistributedRatio'}
 											value={((status.fundsDistributedRatio || 0) / 10).toFixed(
 												2
@@ -252,17 +263,32 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 									</Box>
 									<Box my={1}>
 										<ItemSpecProp
-											prop={'CPM'}
+											prop={'CPM_MIN'}
 											value={
 												formatTokenAmount(
-													bigNumberify(item.minPerImpression || 0).mul(1000),
+													bigNumberify(cpmMin || 0).mul(1000),
 													decimals,
 													true
 												) +
 												' ' +
 												symbol
 											}
-											label={t('CPM', { isProp: true })}
+											label={t('CPM_MIN')}
+										/>
+									</Box>
+									<Box my={1}>
+										<ItemSpecProp
+											prop={'CPM_MAX'}
+											value={
+												formatTokenAmount(
+													bigNumberify(cpmMax || 0).mul(1000),
+													decimals,
+													true
+												) +
+												' ' +
+												symbol
+											}
+											label={t('CPM_MAX')}
 										/>
 									</Box>
 								</Grid>
