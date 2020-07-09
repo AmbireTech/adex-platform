@@ -134,7 +134,7 @@ export const selectUnitTypesSourceWithRecommendations = createSelector(
 				return b.revenue - a.revenue
 			})
 			.reduce(
-				(data, type, index, unitTypes) => {
+				(data, type, index) => {
 					const newData = { ...data }
 					const source = newData.source
 					const { revenue, ...typeRest } = type
@@ -150,21 +150,10 @@ export const selectUnitTypesSourceWithRecommendations = createSelector(
 						!newData.hasLessPopularGroup &&
 						newData.hasPopularGroup &&
 						index !== 0 &&
-						share <= 0.1 && // less than 10%
-						share >= 0.01 // more than 1%
+						share <= 0.01 // less than 1%
 					) {
 						newData.hasLessPopularGroup = true
 						source.push({ group: t('LESS_POPULAR_UNITS_TYPES') })
-					}
-
-					if (
-						!newData.hasNoPopularGroup &&
-						newData.hasPopularGroup &&
-						index !== 0 &&
-						share < 0.01 // less than 1%
-					) {
-						newData.hasNoPopularGroup = true
-						source.push({ group: t('NO_POPULAR_UNITS_TYPES') })
 					}
 
 					source.push(current)
@@ -177,7 +166,6 @@ export const selectUnitTypesSourceWithRecommendations = createSelector(
 					source: [],
 					hasPopularGroup: false,
 					hasLessPopularGroup: false,
-					hasNoPopularGroup: false,
 				}
 			)
 
