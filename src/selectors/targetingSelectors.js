@@ -86,17 +86,32 @@ export const selectTargetingCategoriesByType = createSelector(
 		)
 )
 
+const mapTargetingDataToPublishers = targetingData =>
+	Array.from(
+		targetingData
+			.reduce(
+				(
+					publishers,
+					{ owner, hostname, alexaRank, categories, reachPerMillion }
+				) => {
+					publishers.set(hostname, {
+						owner,
+						hostname,
+						alexaRank,
+						categories,
+						reachPerMillion,
+					})
+					return publishers
+				},
+				new Map()
+			)
+			.values()
+	)
+
 export const selectTargetingPublishersByType = createSelector(
 	[selectTargetingAnalyticsByType],
 	targeting => {
-		return Array.from(
-			targeting
-				.reduce((publishers, { owner, hostname, alexaRank, categories }) => {
-					publishers.set(hostname, { owner, hostname, alexaRank, categories })
-					return publishers
-				}, new Map())
-				.values()
-		).sort((a, b) => {
+		return mapTargetingDataToPublishers(targeting).sort((a, b) => {
 			if (a.alexaRank && !b.alexaRank) {
 				return -1
 			} else if (a.alexaRank && b.alexaRank) {
@@ -125,14 +140,7 @@ export const selectTargetingCategories = createSelector(
 export const selectAllTargetingPublishers = createSelector(
 	[selectTargetingAnalytics],
 	targeting => {
-		return Array.from(
-			targeting
-				.reduce((publishers, { owner, hostname, alexaRank, categories }) => {
-					publishers.set(hostname, { owner, hostname, alexaRank, categories })
-					return publishers
-				}, new Map())
-				.values()
-		).sort((a, b) => {
+		return mapTargetingDataToPublishers(targeting).sort((a, b) => {
 			if (a.alexaRank && !b.alexaRank) {
 				return 1
 			} else if (a.alexaRank && b.alexaRank) {
@@ -191,6 +199,7 @@ const autocompleteCategoriesMultiSelectNin = createSelector(
 const getPublisherExtraDataLabel = publisher => [
 	`${t('HOSTNAME')}: ${publisher.hostname}`,
 	`${t('ALEXA_RANK')}: ${publisher.alexaRank || '-'}`,
+	`${t('REACH_PER_MILLION')}: ${publisher.reachPerMillion || '-'}`,
 	`${t('CATEGORIES')}: ${(publisher.categories || [])
 		.map(
 			cat => `"${IabCategories.wrbshrinkerWebsiteApiV3Categories[cat] || cat}"`
