@@ -21,7 +21,7 @@ export default function itemsReducer(state = initialState.items, action) {
 		if (!action.item) return state
 		return {
 			...state,
-			[action.item.id]: action.item,
+			[action.item.id]: { ...action.item },
 		}
 	}
 
