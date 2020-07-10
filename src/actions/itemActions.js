@@ -4,8 +4,9 @@ import {
 	updateAdSlot,
 	updateAdUnit,
 	updateCampaign,
+	putAudience,
 } from 'services/adex-market/actions'
-import { Base, AdSlot, AdUnit, helpers, Campaign } from 'adex-models'
+import { Base, AdSlot, AdUnit, helpers, Campaign, Audience } from 'adex-models'
 import { addToast as AddToastUi, updateSpinner } from './uiActions'
 
 import { translate } from 'services/translations/translations'
@@ -18,14 +19,8 @@ import {
 import initialState from 'store/initialState'
 import { getMediaSize } from 'helpers/mediaHelpers'
 import { getErrorMsg } from 'helpers/errors'
-import { numStringCPMtoImpression } from 'helpers/numbers'
 import { SOURCES } from 'constants/targeting'
-import {
-	selectRelayerConfig,
-	selectAccount,
-	selectAuth,
-	selectItemByTypeAndId,
-} from 'selectors'
+import { selectAccount, selectAuth, selectItemByTypeAndId } from 'selectors'
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
 	return AddToastUi({
@@ -117,43 +112,32 @@ export function updateItem({ item, itemType, action = 'UPDATING' } = {}) {
 		const { id } = item
 		updateSpinner(action + id, true)(dispatch)
 		try {
-			const { account } = getState().persist
-			const { authSig } = account.wallet
-			const { mainToken } = selectRelayerConfig()
-
 			const newItem = { ...item }
 			let updatedItem = null
 			let objModel = null
 
 			switch (itemType) {
-				case 'AdSlot':
-					if (typeof newItem.temp.minPerImpression === 'string') {
-						newItem.minPerImpression = {
-							[mainToken.address]: numStringCPMtoImpression({
-								numStr: newItem.temp.minPerImpression,
-								decimals: mainToken.decimals,
-							}),
-						}
-					}
-					if (typeof newItem.temp.website === 'string') {
-						newItem.website = newItem.temp.website
-					}
-					// In case newItem.website is null (very few slots)
+				case 'AdSlot': // In case newItem.website is null (very few slots)
 					newItem.website = newItem.website || ''
 					const slot = new AdSlot(newItem).marketUpdate
-					updatedItem = (await updateAdSlot({ slot, id, authSig })).slot
+					updatedItem = (await updateAdSlot({ slot, id })).slot
 					objModel = AdSlot
 					break
 				case 'AdUnit':
 					const unit = new AdUnit(newItem).marketUpdate
-					updatedItem = (await updateAdUnit({ unit, id, authSig })).unit
+					updatedItem = (await updateAdUnit({ unit, id })).unit
 					objModel = AdUnit
 					break
 				case 'Campaign':
 					const campaign = new Campaign(newItem).marketUpdate
-					updatedItem = (await updateCampaign({ campaign, id, authSig }))
-						.campaign
+					updatedItem = (await updateCampaign({ campaign, id })).campaign
 					objModel = Campaign
+					break
+
+				case 'Audience':
+					const audience = new Audience(newItem).marketUpdate
+					updatedItem = (await putAudience({ audience, id })).audience
+					objModel = Audience
 					break
 				default:
 					throw new Error(translate('INVALID_ITEM_TYPE'))
@@ -182,25 +166,6 @@ export function updateItem({ item, itemType, action = 'UPDATING' } = {}) {
 		}
 		updateSpinner(action + item.id, false)(dispatch)
 	}
-}
-
-export function deleteItem({ item, objModel, authSig } = {}) {
-	item = { ...item }
-	item._deleted = true
-
-	// return updateItem({ item: item, authSig: authSig, successMsg: 'SUCCESS_DELETING_ITEM', errMsg: 'ERR_DELETING_ITEM' })
-}
-
-export function restoreItem({ item, authSig } = {}) {
-	item = { ...item }
-	item._deleted = false
-
-	return updateItem({
-		item: item,
-		authSig: authSig,
-		successMsg: 'SUCCESS_RESTORE_ITEM',
-		errMsg: 'ERR_RESTORING_ITEM',
-	})
 }
 
 const findSourceByTag = tag => {
@@ -270,7 +235,7 @@ export function cloneItem({ item, itemType, objModel } = {}) {
 
 export function archiveItem({ itemId, itemType } = {}) {
 	return async function(dispatch, getState) {
-		const selectedItem = selectItemByTypeAndId(getState(), itemId)
+		const selectedItem = selectItemByTypeAndId(getState(), itemType, itemId)
 		const item = { ...selectedItem }
 		item.archived = true
 
@@ -279,18 +244,6 @@ export function archiveItem({ itemId, itemType } = {}) {
 			getState
 		)
 	}
-}
-
-export function unarchiveItem({ item, authSig } = {}) {
-	item = { ...item }
-	item._archived = false
-
-	return updateItem({
-		item: item,
-		authSig: authSig,
-		successMsg: 'SUCCESS_UNARCHIVING_ITEM',
-		errMsg: 'ERR_UNARCHIVING_ITEM',
-	})
 }
 
 export function setCurrentItem(item) {
