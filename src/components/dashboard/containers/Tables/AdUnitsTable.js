@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useCallback, Fragment } from 'react'
 import classnames from 'classnames'
-import { Tooltip, IconButton } from '@material-ui/core'
+import { Tooltip, IconButton, Box } from '@material-ui/core'
 import { Visibility } from '@material-ui/icons'
 import { commify } from 'ethers/utils'
 import { sliderFilterOptions } from './commonFilters'
 import Img from 'components/common/img/Img'
+import { ArchiveItemBtn } from 'components/dashboard/containers/ItemCommon'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import {
@@ -132,8 +133,8 @@ const getCols = ({
 			display: !noActions,
 			sort: true,
 			download: false,
-			customBodyRender: ({ to, item }) => (
-				<Fragment key={item.id}>
+			customBodyRender: ({ to, item, id, title }) => (
+				<Box key={id} className={classes.actions}>
 					<Tooltip
 						title={t('LABEL_VIEW')}
 						// placement='top'
@@ -165,7 +166,13 @@ const getCols = ({
 							</span>
 						</Tooltip>
 					)}
-				</Fragment>
+					<ArchiveItemBtn
+						itemType='AdUnit'
+						itemId={id}
+						title={title}
+						isIconBtn
+					/>
+				</Box>
 			),
 		},
 	},
