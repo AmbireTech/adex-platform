@@ -43,70 +43,74 @@ const { CountryNames, numericToAlpha2 } = constants
 export const selectCampaignsTableData = createSelector(
 	[selectCampaignsArray, selectRoutineWithdrawTokens, (_, side) => side],
 	(campaigns, tokens, side) =>
-		campaigns.map(item => {
-			const { decimals = 18 } = tokens[item.depositAsset] || {}
-			const { id, spec = {}, adUnits = [] } = item
+		campaigns
+			.filter(x => !x.archived)
+			.map(item => {
+				const { decimals = 18 } = tokens[item.depositAsset] || {}
+				const { id, spec = {}, adUnits = [] } = item
 
-			const firstUnit = adUnits[0] || {}
+				const firstUnit = adUnits[0] || {}
 
-			const to = `/dashboard/${side}/campaigns/${id}`
-			const toReceipt = `/dashboard/${side}/receipt/${id}`
+				const to = `/dashboard/${side}/campaigns/${id}`
+				const toReceipt = `/dashboard/${side}/receipt/${id}`
 
-			return {
-				media: {
-					side,
+				return {
+					media: {
+						side,
+						id,
+						mediaUrl: firstUnit.mediaUrl || '',
+						mediaMime: firstUnit.mediaMime || '',
+						to,
+					},
+					title: item.title,
+					status: {
+						humanFriendlyName: item.status.humanFriendlyName,
+						originalName: item.status.name,
+					},
+					depositAmount: Number(
+						formatUnits(item.depositAmount || '0', decimals)
+					),
+					fundsDistributedRatio: item.status.fundsDistributedRatio || 0,
+					impressions: selectCampaignEventsCount('IMPRESSION', id),
+					clicks: selectCampaignEventsCount('CLICK', id),
+
+					ctr:
+						(selectCampaignEventsCount('CLICK', id) /
+							selectCampaignEventsCount('IMPRESSION', id)) *
+							100 || 0,
+
+					minPerImpression: {
+						id,
+						minPerImpression:
+							Number(
+								formatUnits(
+									spec.minPerImpression || item.minPerImpression || '0',
+									decimals
+								)
+							) * 1000,
+					},
+					created: item.created,
+					activeFrom: spec.activeFrom || item.activeFrom,
+					withdrawPeriodStart:
+						spec.withdrawPeriodStart || item.withdrawPeriodStart,
+					actions: {
+						side,
+
+						id,
+						to,
+						toReceipt,
+						receiptReady:
+							(item.status.humanFriendlyName === 'Closed' ||
+								item.status.humanFriendlyName === 'Completed') &&
+							(item.status.name === 'Exhausted' ||
+								item.status.name === 'Expired'),
+					},
 					id,
-					mediaUrl: firstUnit.mediaUrl || '',
-					mediaMime: firstUnit.mediaMime || '',
-					to,
-				},
-				title: item.title,
-				status: {
-					humanFriendlyName: item.status.humanFriendlyName,
-					originalName: item.status.name,
-				},
-				depositAmount: Number(formatUnits(item.depositAmount || '0', decimals)),
-				fundsDistributedRatio: item.status.fundsDistributedRatio || 0,
-				impressions: selectCampaignEventsCount('IMPRESSION', id),
-				clicks: selectCampaignEventsCount('CLICK', id),
-
-				ctr:
-					(selectCampaignEventsCount('CLICK', id) /
-						selectCampaignEventsCount('IMPRESSION', id)) *
-						100 || 0,
-
-				minPerImpression: {
-					id,
-					minPerImpression:
-						Number(
-							formatUnits(
-								spec.minPerImpression || item.minPerImpression || '0',
-								decimals
-							)
-						) * 1000,
-				},
-				created: item.created,
-				activeFrom: spec.activeFrom || item.activeFrom,
-				withdrawPeriodStart:
-					spec.withdrawPeriodStart || item.withdrawPeriodStart,
-				actions: {
-					side,
-
-					id,
-					to,
-					toReceipt,
-					receiptReady:
-						(item.status.humanFriendlyName === 'Closed' ||
-							item.status.humanFriendlyName === 'Completed') &&
-						(item.status.name === 'Exhausted' ||
-							item.status.name === 'Expired'),
-				},
-				id,
-				receiptAvailable:
-					item.status.humanFriendlyName === 'Closed' ||
-					item.status.humanFriendlyName === 'Completed',
-			}
-		})
+					receiptAvailable:
+						item.status.humanFriendlyName === 'Closed' ||
+						item.status.humanFriendlyName === 'Completed',
+				}
+			})
 )
 
 export const selectCampaignsTableDataOnLengthChange = creatArrayOnlyLengthChangeSelector(
@@ -150,34 +154,40 @@ export const selectAdSlotsTableData = createSelector(
 		},
 		side
 	) =>
-		slots.map(item => {
-			const id = item.id || item.ipfs
-			const to = `/dashboard/${side}/slots/${id}`
+		slots
+			.filter(x => !x.archived)
+			.map(item => {
+				const id = item.id || item.ipfs
+				const to = `/dashboard/${side}/slots/${id}`
 
-			const clicks = clicksByAdSlot[id]
-			const impressions = impressionsByAdSlot[id]
-			return {
-				media: {
-					id,
-					mediaUrl: item.mediaUrl,
-					mediaMime: item.mediaMime,
-					to,
-				},
-				title: item.title,
-				type: item.type.replace('legacy_', ''),
-				created: item.created,
-				impressions,
-				clicks,
-				ctr: ((clicks || 0) / (impressions || 1)) * 100,
-				earnings:
-					Number(impressionsPayByAdSlot[id] || 0) +
-					Number(clicksPayByAdSlot[id] || 0),
-				actions: {
-					to,
-					item,
-				},
-			}
-		})
+				const { title, mediaUrl, mediaMime, type, created } = item
+
+				const clicks = clicksByAdSlot[id]
+				const impressions = impressionsByAdSlot[id]
+				return {
+					media: {
+						id,
+						mediaUrl,
+						mediaMime,
+						to,
+					},
+					title: title,
+					type: type.replace('legacy_', ''),
+					created: created,
+					impressions,
+					clicks,
+					ctr: ((clicks || 0) / (impressions || 1)) * 100,
+					earnings:
+						Number(impressionsPayByAdSlot[id] || 0) +
+						Number(clicksPayByAdSlot[id] || 0),
+					actions: {
+						to,
+						item,
+						id,
+						title,
+					},
+				}
+			})
 )
 
 export const selectAdUnitsTableData = createSelector(
@@ -212,53 +222,62 @@ export const selectAdUnitsTableData = createSelector(
 		}),
 	],
 	({ side, items, impressionsByAdUnit, clicksByAdUnit }) =>
-		Object.values(items).map(item => {
-			const id = item.id || item.ipfs
-			const to = `/dashboard/${side}/units/${id}`
-			return {
-				id,
-				media: {
+		Object.values(items)
+			.filter(x => !x.archived)
+			.map(item => {
+				const id = item.id || item.ipfs
+				const to = `/dashboard/${side}/units/${id}`
+				const { title, mediaUrl, mediaMime, type, created } = item
+
+				return {
 					id,
-					mediaUrl: item.mediaUrl,
-					mediaMime: item.mediaMime,
-					to,
-				},
-				impressions: impressionsByAdUnit(id) || 0,
-				clicks: clicksByAdUnit(id) || 0,
-				ctr: (clicksByAdUnit(id) / impressionsByAdUnit(id)) * 100 || 0,
-				title: item.title,
-				type: item.type,
-				created: item.created,
-				actions: {
-					to,
-					item,
-				},
-			}
-		})
+					media: {
+						id,
+						mediaUrl,
+						mediaMime,
+						to,
+					},
+					impressions: impressionsByAdUnit(id) || 0,
+					clicks: clicksByAdUnit(id) || 0,
+					ctr: (clicksByAdUnit(id) / impressionsByAdUnit(id)) * 100 || 0,
+					title,
+					type,
+					created,
+					actions: {
+						id,
+						title,
+						to,
+						item,
+					},
+				}
+			})
 )
 
 export const selectAudiencesTableData = createSelector(
 	[selectSavedAudiences],
 	audiences =>
-		audiences.map(item => {
-			const { id, title, inputs, version, created, updated } = item
+		audiences
+			.filter(x => !x.archived)
+			.map(item => {
+				const { id, title, inputs, version, created, updated } = item
 
-			const to = `/dashboard/advertiser/audiences/${id}`
+				const to = `/dashboard/advertiser/audiences/${id}`
 
-			return {
-				title: {
-					title: title || id,
-					to,
-				},
-				created,
-				updated,
-				actions: {
-					id,
-					audienceInput: { inputs, version },
-					to: `/dashboard/advertiser/audiences/${id}`,
-				},
-			}
-		})
+				return {
+					title: {
+						title: title || id,
+						to,
+					},
+					created,
+					updated,
+					actions: {
+						id,
+						audienceInput: { inputs, version },
+						title,
+						to: `/dashboard/advertiser/audiences/${id}`,
+					},
+				}
+			})
 )
 
 const mapByCountryTableData = ({
