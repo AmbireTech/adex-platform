@@ -9,6 +9,7 @@ import {
 	ItemAdType,
 	ItemTargetURL,
 	MediaCard,
+	ArchiveItemBtn,
 } from 'components/dashboard/containers/ItemCommon/'
 import { AdUnit } from 'adex-models'
 import { validateAndUpdateUnit } from 'actions'
@@ -22,7 +23,16 @@ function Unit({ match }) {
 		validateAndUpdateFn: validateAndUpdateUnit,
 	})
 
-	const { title, description, mediaUrl, mediaMime, type, targetUrl } = item
+	const {
+		id,
+		title,
+		archived,
+		description,
+		mediaUrl,
+		mediaMime,
+		type,
+		targetUrl,
+	} = item
 	const { title: errTitle, description: errDescription } = validations
 
 	if (!item) return <h1>Unit '404'</h1>
@@ -41,12 +51,17 @@ function Unit({ match }) {
 									label={t('UNIT_MEDIA_IMG_LABEL')}
 								/>
 							</Box>
-							<Box py={1}>
-								<ItemAdType type={type} />
-							</Box>
-							<Box py={1}>
-								<ItemTargetURL targetUrl={targetUrl} />
-							</Box>
+							{!archived && (
+								<Box py={1}>
+									<ArchiveItemBtn
+										fullWidth
+										itemType='AdUnit'
+										itemId={id}
+										title={title}
+										goToTableOnSuccess
+									/>
+								</Box>
+							)}
 						</Grid>
 						<Grid item xs={12} sm={12} md={6} lg={7}>
 							<Box py={1}>
@@ -59,8 +74,13 @@ function Unit({ match }) {
 									{...hookProps}
 								/>
 							</Box>
+							<Box py={1}>
+								<ItemAdType type={type} />
+							</Box>
+							<Box py={1}>
+								<ItemTargetURL targetUrl={targetUrl} />
+							</Box>
 						</Grid>
-						<Grid item xs={12} sm={12} md={12} lg={6}></Grid>
 					</Grid>
 				</Box>
 			</Paper>
