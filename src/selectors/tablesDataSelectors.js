@@ -160,18 +160,20 @@ export const selectAdSlotsTableData = createSelector(
 				const id = item.id || item.ipfs
 				const to = `/dashboard/${side}/slots/${id}`
 
+				const { title, mediaUrl, mediaMime, type, created } = item
+
 				const clicks = clicksByAdSlot[id]
 				const impressions = impressionsByAdSlot[id]
 				return {
 					media: {
 						id,
-						mediaUrl: item.mediaUrl,
-						mediaMime: item.mediaMime,
+						mediaUrl,
+						mediaMime,
 						to,
 					},
-					title: item.title,
-					type: item.type.replace('legacy_', ''),
-					created: item.created,
+					title: title,
+					type: type.replace('legacy_', ''),
+					created: created,
 					impressions,
 					clicks,
 					ctr: ((clicks || 0) / (impressions || 1)) * 100,
@@ -181,6 +183,8 @@ export const selectAdSlotsTableData = createSelector(
 					actions: {
 						to,
 						item,
+						id,
+						title,
 					},
 				}
 			})
