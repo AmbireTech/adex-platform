@@ -19,7 +19,7 @@ import { useSelector } from 'react-redux'
 import { styles } from './styles'
 import { useTableData } from './tableHooks'
 import { ReloadData } from './toolbars'
-import { execute, updateNewCampaign, confirmAction, archiveItem } from 'actions'
+import { execute, updateNewCampaign } from 'actions'
 import { formatDate } from 'helpers/formatters'
 
 const useStyles = makeStyles(styles)

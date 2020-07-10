@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
 import { Audience as AudienceModel } from 'adex-models'
@@ -7,6 +7,7 @@ import {
 	useItem,
 	ChangeControls,
 	ItemTitle,
+	ArchiveItemBtn,
 } from 'components/dashboard/containers/ItemCommon/'
 import AudiencePreview from 'components/dashboard/containers/AudiencePreview'
 import FormSteps from 'components/common/stepper/FormSteps'
@@ -26,7 +27,6 @@ import {
 import { NewAudienceDialog } from 'components/dashboard/forms/items/NewItems'
 
 import { validateAndUpdateAudience as validateAndUpdateFn } from 'actions'
-import { t } from 'selectors'
 
 const useStyles = makeStyles(theme => ({
 	actions: {
@@ -71,7 +71,7 @@ function Audience({ match }) {
 		validateAndUpdateFn,
 	})
 
-	const { inputs, title } = item
+	const { inputs, title, id, archived } = item
 	const { title: errTitle } = validations
 
 	return (
@@ -87,7 +87,7 @@ function Audience({ match }) {
 					<TargetingRulesEdit
 						btnLabel='UPDATE_AUDIENCE'
 						title='UPDATE_CAMPAIGN_AUDIENCE'
-						itemId={item.id}
+						itemId={id}
 						disableBackdropClick
 						updateField={hookProps.updateField}
 						color='secondary'
@@ -95,7 +95,7 @@ function Audience({ match }) {
 						onClick={() =>
 							execute(
 								mapCurrentToNewAudience({
-									itemId: item.id,
+									itemId: id,
 									dirtyProps: hookProps.dirtyProps,
 								})
 							)
@@ -123,11 +123,15 @@ function Audience({ match }) {
 							execute(
 								updateNewAudience(null, null, {
 									...item,
-									title: item.title + ' (2)',
+									title: title + ' (2)',
 								})
 							)
 						}
 					/>
+
+					{!archived && (
+						<ArchiveItemBtn itemType='Audience' itemId={id} title={title} />
+					)}
 				</Box>
 			</Paper>
 		</Fragment>
