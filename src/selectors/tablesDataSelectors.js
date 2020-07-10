@@ -265,6 +265,7 @@ export const selectAudiencesTableData = createSelector(
 					actions: {
 						id,
 						audienceInput: { inputs, version },
+						title,
 						to: `/dashboard/advertiser/audiences/${id}`,
 					},
 				}
