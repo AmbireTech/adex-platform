@@ -20,7 +20,12 @@ import { getMediaSize } from 'helpers/mediaHelpers'
 import { getErrorMsg } from 'helpers/errors'
 import { numStringCPMtoImpression } from 'helpers/numbers'
 import { SOURCES } from 'constants/targeting'
-import { selectRelayerConfig, selectAccount, selectAuth } from 'selectors'
+import {
+	selectRelayerConfig,
+	selectAccount,
+	selectAuth,
+	selectItemByTypeAndId,
+} from 'selectors'
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
 	return AddToastUi({
@@ -107,10 +112,10 @@ export function getAllItems(onDataUpdated) {
 }
 
 // Accepts the entire new item and replace so be careful!
-export function updateItem({ item, itemType } = {}) {
+export function updateItem({ item, itemType, action = 'UPDATING' } = {}) {
 	return async function(dispatch, getState) {
 		const { id } = item
-		updateSpinner('update' + id, true)(dispatch)
+		updateSpinner(action + id, true)(dispatch)
 		try {
 			const { account } = getState().persist
 			const { authSig } = account.wallet
@@ -163,19 +168,19 @@ export function updateItem({ item, itemType } = {}) {
 			addToast({
 				dispatch,
 				type: 'accept',
-				toastStr: 'SUCCESS_UPDATING_ITEM',
+				toastStr: `SUCCESS_${action}_ITEM`,
 				args: [itemType, item.title],
 			})
 		} catch (err) {
-			console.error('ERR_UPDATING_ITEM', err)
+			console.error(`ERR_${action}_ITEM`, err)
 			addToast({
 				dispatch,
 				type: 'cancel',
-				toastStr: 'ERR_UPDATING_ITEM',
+				toastStr: `ERR_${action}_ITEM`,
 				args: [itemType, err],
 			})
 		}
-		updateSpinner('update' + item.id, false)(dispatch)
+		updateSpinner(action + item.id, false)(dispatch)
 	}
 }
 
@@ -263,16 +268,17 @@ export function cloneItem({ item, itemType, objModel } = {}) {
 	}
 }
 
-export function archiveItem({ item, authSig } = {}) {
-	item = { ...item }
-	item._archived = true
+export function archiveItem({ itemId, itemType } = {}) {
+	return async function(dispatch, getState) {
+		const selectedItem = selectItemByTypeAndId(getState(), itemId)
+		const item = { ...selectedItem }
+		item.archived = true
 
-	return updateItem({
-		item: item,
-		authSig: authSig,
-		successMsg: 'SUCCESS_ARCHIVING_ITEM',
-		errMsg: 'ERR_ARCHIVING_ITEM',
-	})
+		await updateItem({ item, itemType, action: 'ARCHIVING' })(
+			dispatch,
+			getState
+		)
+	}
 }
 
 export function unarchiveItem({ item, authSig } = {}) {
