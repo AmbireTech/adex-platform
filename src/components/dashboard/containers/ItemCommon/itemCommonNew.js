@@ -6,20 +6,29 @@ import {
 	Chip,
 	InputAdornment,
 	IconButton,
+	Tooltip,
 	Card,
 	CardMedia,
 	TextField,
 	Box,
 	Paper,
 	Collapse,
+	Button,
 } from '@material-ui/core'
 import { Alert } from '@material-ui/lab'
-import { Info, Edit, UndoOutlined, OpenInNew } from '@material-ui/icons'
+import {
+	Info,
+	Edit,
+	UndoOutlined,
+	OpenInNew,
+	ArchiveSharp as ArchiveIcon,
+} from '@material-ui/icons'
 import Img from 'components/common/img/Img'
 import { ExternalAnchor } from 'components/common/anchor/anchor'
 import { formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
 import { t, selectMainToken, selectAuthType } from 'selectors'
+import { execute, confirmAction, archiveItem } from 'actions'
 import { styles } from './styles'
 import { SaveBtn } from './SaveBtn'
 import { WALLET_ACTIONS_MSGS } from 'constants/misc'
@@ -456,5 +465,57 @@ export const ItemWebsite = ({
 				),
 			}}
 		/>
+	)
+}
+
+export const ArchiveItemBtn = ({
+	itemId,
+	itemType = '',
+	title,
+	isIconBtn,
+	onSuccess,
+}) => {
+	const labelArgs = itemType.toUpperCase()
+
+	const onClick = () => {
+		execute(
+			confirmAction(
+				() => execute(archiveItem({ itemId, itemType, onSuccess })),
+				null,
+				{
+					confirmLabel: t(`ARCHIVE_CONFIRM_LABEL`, {
+						args: [labelArgs],
+					}),
+					cancelLabel: t('CANCEL'),
+					title: t(`ARCHIVE_CONFIRM_TITLE`, {
+						args: [labelArgs, title],
+					}),
+					text: t(`ARCHIVE_CONFIRM_INFO`, {
+						args: [labelArgs, title],
+					}),
+				}
+			)
+		)
+	}
+	return (
+		<Tooltip
+			title={t('LABEL_ARCHIVE', { args: [labelArgs] })}
+			aria-label='archive'
+		>
+			{isIconBtn ? (
+				<IconButton onClick={onClick} aria-label={`archive-${itemId}`}>
+					<ArchiveIcon color='action' />
+				</IconButton>
+			) : (
+				<Button
+					color='default'
+					variant='contained'
+					onClick={onClick}
+					aria-label={`archive-${itemId}`}
+				>
+					{t('ARCHIVE')}
+				</Button>
+			)}
+		</Tooltip>
 	)
 }
