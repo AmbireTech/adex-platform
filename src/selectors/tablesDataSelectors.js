@@ -227,21 +227,25 @@ export const selectAdUnitsTableData = createSelector(
 			.map(item => {
 				const id = item.id || item.ipfs
 				const to = `/dashboard/${side}/units/${id}`
+				const { title, mediaUrl, mediaMime, type, created } = item
+
 				return {
 					id,
 					media: {
 						id,
-						mediaUrl: item.mediaUrl,
-						mediaMime: item.mediaMime,
+						mediaUrl,
+						mediaMime,
 						to,
 					},
 					impressions: impressionsByAdUnit(id) || 0,
 					clicks: clicksByAdUnit(id) || 0,
 					ctr: (clicksByAdUnit(id) / impressionsByAdUnit(id)) * 100 || 0,
-					title: item.title,
-					type: item.type,
-					created: item.created,
+					title,
+					type,
+					created,
 					actions: {
+						id,
+						title,
 						to,
 						item,
 					},
