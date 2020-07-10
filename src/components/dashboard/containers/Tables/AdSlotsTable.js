@@ -1,12 +1,12 @@
 import React from 'react'
 import classnames from 'classnames'
-import IconButton from '@material-ui/core/IconButton'
-import Tooltip from '@material-ui/core/Tooltip'
+import { Box, IconButton, Tooltip } from '@material-ui/core'
 import { commify } from 'ethers/utils'
 import { Visibility } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
+import { ArchiveItemBtn } from 'components/dashboard/containers/ItemCommon'
 import {
 	t,
 	selectSide,
@@ -120,18 +120,26 @@ const getCols = ({ classes, symbol }) => [
 			filter: false,
 			sort: true,
 			download: false,
-			customBodyRender: ({ to, item }) => (
-				<Tooltip
-					key={item.id}
-					title={t('LABEL_VIEW')}
-					// placement='top'
-					enterDelay={1000}
-					aria-label='view'
-				>
-					<RRIconButton to={to} variant='contained'>
-						<Visibility color='primary' />
-					</RRIconButton>
-				</Tooltip>
+			customBodyRender: ({ to, item, id, title }) => (
+				<Box key={id} className={classes.actions}>
+					<Tooltip
+						key={item.id}
+						title={t('LABEL_VIEW')}
+						// placement='top'
+						enterDelay={1000}
+						aria-label='view'
+					>
+						<RRIconButton to={to} variant='contained'>
+							<Visibility color='primary' />
+						</RRIconButton>
+					</Tooltip>
+					<ArchiveItemBtn
+						itemType='AdSlot'
+						itemId={id}
+						title={title}
+						isIconBtn
+					/>
+				</Box>
 			),
 		},
 	},
