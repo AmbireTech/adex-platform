@@ -474,13 +474,17 @@ export const ArchiveItemBtn = ({
 	title,
 	isIconBtn,
 	onSuccess,
+	goToTableOnSuccess,
 }) => {
 	const labelArgs = itemType.toUpperCase()
 
 	const onClick = () => {
 		execute(
 			confirmAction(
-				() => execute(archiveItem({ itemId, itemType, onSuccess })),
+				() =>
+					execute(
+						archiveItem({ itemId, itemType, onSuccess, goToTableOnSuccess })
+					),
 				null,
 				{
 					confirmLabel: t(`ARCHIVE_CONFIRM_LABEL`, {

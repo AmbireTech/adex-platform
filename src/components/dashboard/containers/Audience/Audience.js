@@ -130,7 +130,12 @@ function Audience({ match }) {
 					/>
 
 					{!archived && (
-						<ArchiveItemBtn itemType='Audience' itemId={id} title={title} />
+						<ArchiveItemBtn
+							itemType='Audience'
+							itemId={id}
+							title={title}
+							goToTableOnSuccess
+						/>
 					)}
 				</Box>
 			</Paper>
