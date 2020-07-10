@@ -1,5 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+## 4.20.27
+##### *2020-07-10*
+
+### Added
+- Added ability to archive Slots, Units and Audiences
 
 ## 4.20.26
 ##### *2020-07-09*
