@@ -475,6 +475,7 @@ export const ArchiveItemBtn = ({
 	isIconBtn,
 	onSuccess,
 	goToTableOnSuccess,
+	fullWidth,
 }) => {
 	const labelArgs = itemType.toUpperCase()
 
@@ -512,6 +513,7 @@ export const ArchiveItemBtn = ({
 				</IconButton>
 			) : (
 				<Button
+					fullWidth={fullWidth}
 					color='default'
 					variant='contained'
 					onClick={onClick}

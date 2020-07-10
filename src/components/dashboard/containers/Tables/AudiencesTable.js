@@ -3,7 +3,6 @@ import { Tooltip, IconButton, Typography, Box } from '@material-ui/core'
 import { VisibilitySharp as Visibility } from '@material-ui/icons'
 import CampaignIcon from 'components/common/icons/CampaignIcon'
 import { NewCampaignFromAudience } from 'components/dashboard/forms/items/NewItems'
-
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import {
 	t,
