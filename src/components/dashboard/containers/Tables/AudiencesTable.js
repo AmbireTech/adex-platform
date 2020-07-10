@@ -1,6 +1,6 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import { Tooltip, IconButton, Typography, Box } from '@material-ui/core'
-import { EditSharp, VisibilitySharp as Visibility } from '@material-ui/icons'
+import { VisibilitySharp as Visibility } from '@material-ui/icons'
 import CampaignIcon from 'components/common/icons/CampaignIcon'
 import { NewCampaignFromAudience } from 'components/dashboard/forms/items/NewItems'
 
@@ -13,12 +13,13 @@ import {
 	selectInitialDataLoadedByData,
 } from 'selectors'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
+import { ArchiveItemBtn } from 'components/dashboard/containers/ItemCommon'
 import { makeStyles } from '@material-ui/core/styles'
 import { useSelector } from 'react-redux'
 import { styles } from './styles'
 import { useTableData } from './tableHooks'
 import { ReloadData } from './toolbars'
-import { execute, updateNewCampaign } from 'actions'
+import { execute, updateNewCampaign, confirmAction, archiveItem } from 'actions'
 import { formatDate } from 'helpers/formatters'
 
 const useStyles = makeStyles(styles)
@@ -67,8 +68,13 @@ const getCols = ({ classes, symbol }) => [
 			sort: false,
 			setCellHeaderProps: () => ({ style: { textAlign: 'right' } }),
 			setCellProps: () => ({ style: { textAlign: 'right' } }),
-			customBodyRender: ({ id, audienceInput, to }) => (
+			customBodyRender: ({ id, audienceInput, to, title }) => (
 				<Box key={id} className={classes.actions}>
+					<Tooltip title={t('LABEL_VIEW')} aria-label='view'>
+						<RRIconButton to={to} aria-label='preview'>
+							<Visibility color='primary' />
+						</RRIconButton>
+					</Tooltip>
 					<Tooltip
 						title={t('LABEL_NEW_CAMPAIGN_FROM_AUDIENCE')}
 						aria-label='new-campaign'
@@ -82,16 +88,17 @@ const getCols = ({ classes, symbol }) => [
 										})
 									)
 								}
-								icon={<CampaignIcon />}
+								icon={<CampaignIcon color='secondary' />}
 								iconButton
 							/>
 						</span>
 					</Tooltip>
-					<Tooltip title={t('LABEL_VIEW')} aria-label='view'>
-						<RRIconButton to={to} aria-label='preview'>
-							<Visibility color='primary' />
-						</RRIconButton>
-					</Tooltip>
+					<ArchiveItemBtn
+						itemType='Audience'
+						itemId={id}
+						title={title}
+						isIconBtn
+					/>
 				</Box>
 			),
 		},
