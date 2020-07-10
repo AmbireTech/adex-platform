@@ -1,20 +1,19 @@
 import * as types from 'constants/actionTypes'
 import {
+	getAdUnits,
+	getAdSlots,
+	getUserAudiences,
 	uploadImage,
 	updateAdSlot,
 	updateAdUnit,
 	updateCampaign,
 	putAudience,
 } from 'services/adex-market/actions'
+import { execute, addToast as AddToastUi, updateSpinner } from 'actions'
+import { push } from 'connected-react-router'
 import { Base, AdSlot, AdUnit, helpers, Campaign, Audience } from 'adex-models'
-import { addToast as AddToastUi, updateSpinner } from './uiActions'
 
 import { translate } from 'services/translations/translations'
-import {
-	getAdUnits,
-	getAdSlots,
-	getUserAudiences,
-} from 'services/adex-market/actions'
 
 import initialState from 'store/initialState'
 import { getMediaSize } from 'helpers/mediaHelpers'
@@ -107,7 +106,13 @@ export function getAllItems(onDataUpdated) {
 }
 
 // Accepts the entire new item and replace so be careful!
-export function updateItem({ item, itemType, action = 'UPDATING' } = {}) {
+export function updateItem({
+	item,
+	itemType,
+	action = 'UPDATING',
+	onSuccess,
+	goToTableOnSuccess = false,
+} = {}) {
 	return async function(dispatch, getState) {
 		const { id } = item
 		updateSpinner(action + id, true)(dispatch)
@@ -115,6 +120,7 @@ export function updateItem({ item, itemType, action = 'UPDATING' } = {}) {
 			const newItem = { ...item }
 			let updatedItem = null
 			let objModel = null
+			let path = ''
 
 			switch (itemType) {
 				case 'AdSlot': // In case newItem.website is null (very few slots)
@@ -122,22 +128,26 @@ export function updateItem({ item, itemType, action = 'UPDATING' } = {}) {
 					const slot = new AdSlot(newItem).marketUpdate
 					updatedItem = (await updateAdSlot({ slot, id })).slot
 					objModel = AdSlot
+					path = '/dashboard/publisher/slots'
 					break
 				case 'AdUnit':
 					const unit = new AdUnit(newItem).marketUpdate
 					updatedItem = (await updateAdUnit({ unit, id })).unit
 					objModel = AdUnit
+					path = '/dashboard/advertiser/units'
 					break
 				case 'Campaign':
 					const campaign = new Campaign(newItem).marketUpdate
 					updatedItem = (await updateCampaign({ campaign, id })).campaign
 					objModel = Campaign
+					path = '/dashboard/advertiser/campaigns'
 					break
 
 				case 'Audience':
 					const audience = new Audience(newItem).marketUpdate
 					updatedItem = (await putAudience({ audience, id })).audience
 					objModel = Audience
+					path = '/dashboard/advertiser/audiences'
 					break
 				default:
 					throw new Error(translate('INVALID_ITEM_TYPE'))
@@ -155,6 +165,10 @@ export function updateItem({ item, itemType, action = 'UPDATING' } = {}) {
 				toastStr: `SUCCESS_${action}_ITEM`,
 				args: [itemType, item.title],
 			})
+
+			if (goToTableOnSuccess) {
+				execute(push(path))
+			}
 		} catch (err) {
 			console.error(`ERR_${action}_ITEM`, err)
 			addToast({
@@ -233,16 +247,18 @@ export function cloneItem({ item, itemType, objModel } = {}) {
 	}
 }
 
-export function archiveItem({ itemId, itemType } = {}) {
+export function archiveItem({ itemId, itemType, goToTableOnSuccess } = {}) {
 	return async function(dispatch, getState) {
 		const selectedItem = selectItemByTypeAndId(getState(), itemType, itemId)
 		const item = { ...selectedItem }
 		item.archived = true
 
-		await updateItem({ item, itemType, action: 'ARCHIVING' })(
-			dispatch,
-			getState
-		)
+		await updateItem({
+			item,
+			itemType,
+			action: 'ARCHIVING',
+			goToTableOnSuccess,
+		})(dispatch, getState)
 	}
 }
 
