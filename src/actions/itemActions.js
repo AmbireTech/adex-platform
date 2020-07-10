@@ -1,26 +1,25 @@
 import * as types from 'constants/actionTypes'
 import {
+	getAdUnits,
+	getAdSlots,
+	getUserAudiences,
 	uploadImage,
 	updateAdSlot,
 	updateAdUnit,
 	updateCampaign,
+	putAudience,
 } from 'services/adex-market/actions'
-import { Base, AdSlot, AdUnit, helpers, Campaign } from 'adex-models'
-import { addToast as AddToastUi, updateSpinner } from './uiActions'
+import { execute, addToast as AddToastUi, updateSpinner } from 'actions'
+import { push } from 'connected-react-router'
+import { Base, AdSlot, AdUnit, helpers, Campaign, Audience } from 'adex-models'
 
 import { translate } from 'services/translations/translations'
-import {
-	getAdUnits,
-	getAdSlots,
-	getUserAudiences,
-} from 'services/adex-market/actions'
 
 import initialState from 'store/initialState'
 import { getMediaSize } from 'helpers/mediaHelpers'
 import { getErrorMsg } from 'helpers/errors'
-import { numStringCPMtoImpression } from 'helpers/numbers'
 import { SOURCES } from 'constants/targeting'
-import { selectRelayerConfig, selectAccount, selectAuth } from 'selectors'
+import { selectAccount, selectAuth, selectItemByTypeAndId } from 'selectors'
 
 const addToast = ({ type, toastStr, args, dispatch }) => {
 	return AddToastUi({
@@ -107,48 +106,48 @@ export function getAllItems(onDataUpdated) {
 }
 
 // Accepts the entire new item and replace so be careful!
-export function updateItem({ item, itemType } = {}) {
+export function updateItem({
+	item,
+	itemType,
+	action = 'UPDATING',
+	onSuccess,
+	goToTableOnSuccess = false,
+} = {}) {
 	return async function(dispatch, getState) {
 		const { id } = item
-		updateSpinner('update' + id, true)(dispatch)
+		updateSpinner(action + id, true)(dispatch)
 		try {
-			const { account } = getState().persist
-			const { authSig } = account.wallet
-			const { mainToken } = selectRelayerConfig()
-
 			const newItem = { ...item }
 			let updatedItem = null
 			let objModel = null
+			let path = ''
 
 			switch (itemType) {
-				case 'AdSlot':
-					if (typeof newItem.temp.minPerImpression === 'string') {
-						newItem.minPerImpression = {
-							[mainToken.address]: numStringCPMtoImpression({
-								numStr: newItem.temp.minPerImpression,
-								decimals: mainToken.decimals,
-							}),
-						}
-					}
-					if (typeof newItem.temp.website === 'string') {
-						newItem.website = newItem.temp.website
-					}
-					// In case newItem.website is null (very few slots)
+				case 'AdSlot': // In case newItem.website is null (very few slots)
 					newItem.website = newItem.website || ''
 					const slot = new AdSlot(newItem).marketUpdate
-					updatedItem = (await updateAdSlot({ slot, id, authSig })).slot
+					updatedItem = (await updateAdSlot({ slot, id })).slot
 					objModel = AdSlot
+					path = '/dashboard/publisher/slots'
 					break
 				case 'AdUnit':
 					const unit = new AdUnit(newItem).marketUpdate
-					updatedItem = (await updateAdUnit({ unit, id, authSig })).unit
+					updatedItem = (await updateAdUnit({ unit, id })).unit
 					objModel = AdUnit
+					path = '/dashboard/advertiser/units'
 					break
 				case 'Campaign':
 					const campaign = new Campaign(newItem).marketUpdate
-					updatedItem = (await updateCampaign({ campaign, id, authSig }))
-						.campaign
+					updatedItem = (await updateCampaign({ campaign, id })).campaign
 					objModel = Campaign
+					path = '/dashboard/advertiser/campaigns'
+					break
+
+				case 'Audience':
+					const audience = new Audience(newItem).marketUpdate
+					updatedItem = (await putAudience({ audience, id })).audience
+					objModel = Audience
+					path = '/dashboard/advertiser/audiences'
 					break
 				default:
 					throw new Error(translate('INVALID_ITEM_TYPE'))
@@ -163,39 +162,24 @@ export function updateItem({ item, itemType } = {}) {
 			addToast({
 				dispatch,
 				type: 'accept',
-				toastStr: 'SUCCESS_UPDATING_ITEM',
+				toastStr: `SUCCESS_${action}_ITEM`,
 				args: [itemType, item.title],
 			})
+
+			if (goToTableOnSuccess) {
+				execute(push(path))
+			}
 		} catch (err) {
-			console.error('ERR_UPDATING_ITEM', err)
+			console.error(`ERR_${action}_ITEM`, err)
 			addToast({
 				dispatch,
 				type: 'cancel',
-				toastStr: 'ERR_UPDATING_ITEM',
+				toastStr: `ERR_${action}_ITEM`,
 				args: [itemType, err],
 			})
 		}
-		updateSpinner('update' + item.id, false)(dispatch)
+		updateSpinner(action + item.id, false)(dispatch)
 	}
-}
-
-export function deleteItem({ item, objModel, authSig } = {}) {
-	item = { ...item }
-	item._deleted = true
-
-	// return updateItem({ item: item, authSig: authSig, successMsg: 'SUCCESS_DELETING_ITEM', errMsg: 'ERR_DELETING_ITEM' })
-}
-
-export function restoreItem({ item, authSig } = {}) {
-	item = { ...item }
-	item._deleted = false
-
-	return updateItem({
-		item: item,
-		authSig: authSig,
-		successMsg: 'SUCCESS_RESTORE_ITEM',
-		errMsg: 'ERR_RESTORING_ITEM',
-	})
 }
 
 const findSourceByTag = tag => {
@@ -263,28 +247,19 @@ export function cloneItem({ item, itemType, objModel } = {}) {
 	}
 }
 
-export function archiveItem({ item, authSig } = {}) {
-	item = { ...item }
-	item._archived = true
+export function archiveItem({ itemId, itemType, goToTableOnSuccess } = {}) {
+	return async function(dispatch, getState) {
+		const selectedItem = selectItemByTypeAndId(getState(), itemType, itemId)
+		const item = { ...selectedItem }
+		item.archived = true
 
-	return updateItem({
-		item: item,
-		authSig: authSig,
-		successMsg: 'SUCCESS_ARCHIVING_ITEM',
-		errMsg: 'ERR_ARCHIVING_ITEM',
-	})
-}
-
-export function unarchiveItem({ item, authSig } = {}) {
-	item = { ...item }
-	item._archived = false
-
-	return updateItem({
-		item: item,
-		authSig: authSig,
-		successMsg: 'SUCCESS_UNARCHIVING_ITEM',
-		errMsg: 'ERR_UNARCHIVING_ITEM',
-	})
+		await updateItem({
+			item,
+			itemType,
+			action: 'ARCHIVING',
+			goToTableOnSuccess,
+		})(dispatch, getState)
+	}
 }
 
 export function setCurrentItem(item) {
