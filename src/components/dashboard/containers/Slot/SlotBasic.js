@@ -11,11 +11,13 @@ import {
 	ItemFallbackMediaURL,
 	MediaCard,
 	ItemWebsite,
+	ArchiveItemBtn,
 } from 'components/dashboard/containers/ItemCommon/'
 import { t } from 'selectors'
 
 export const SlotBasic = ({ item, ...hookProps }) => {
 	const {
+		id,
 		title,
 		description,
 		mediaUrl,
@@ -23,6 +25,7 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 		type,
 		targetUrl,
 		website,
+		archived,
 	} = item
 	const { title: errTitle, description: errDescription } = hookProps.validations
 
@@ -46,6 +49,17 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 							<Box py={1}>
 								<SlotEdits item={item} {...hookProps} />
 							</Box>
+							{!archived && (
+								<Box py={1}>
+									<ArchiveItemBtn
+										fullWidth
+										itemType='AdSlot'
+										itemId={id}
+										title={title}
+										goToTableOnSuccess
+									/>
+								</Box>
+							)}
 						</Grid>
 						<Grid item xs={12} sm={12} md={6} lg={7}>
 							<Box py={1}>
