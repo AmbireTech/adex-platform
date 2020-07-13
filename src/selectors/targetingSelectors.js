@@ -25,6 +25,20 @@ export const selectTargetingAnalyticsCountryTiersCoefficients = createSelector(
 	({ countryTiersCoefficients = {} }) => countryTiersCoefficients
 )
 
+export const selectMinTargetingCpm = createSelector(
+	[
+		selectTargetingAnalyticsMinByCategories,
+		selectTargetingAnalyticsCountryTiersCoefficients,
+	],
+	(minByCategory, coefficients) => {
+		const minCat = Object.values(minByCategory).sort((a, b) => a - b)[0] || 0
+		const minCof = Object.values(coefficients).sort((a, b) => a - b)[0] || 0
+		const minCPM = minCat * minCof
+
+		return minCPM
+	}
+)
+
 export const selectVerifiedActiveTargetingAnalytics = createSelector(
 	[selectTargetingAnalytics],
 	targetingAnalytics => {
