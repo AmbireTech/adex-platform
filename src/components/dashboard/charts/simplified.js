@@ -9,16 +9,17 @@ import { selectMainToken, selectAnalyticsNowLabel } from 'selectors'
 import { formatFloatNumberWithCommas } from 'helpers/formatters'
 import * as ChartAnnotation from 'chartjs-plugin-annotation'
 import { t } from 'selectors'
+import { useWindowSize } from 'hooks/useWindowSize'
 
 const commonDsProps = {
 	fill: false,
 	lineTension: 0,
-	borderWidth: 3,
-	pointRadius: 3,
-	pointHitRadius: 13,
+	borderWidth: 2,
+	pointRadius: 2,
+	pointHitRadius: 10,
 }
 
-const DEFAULT_FONT_SIZE = 16.9
+const DEFAULT_FONT_SIZE = 14.2
 const FONT = 'Roboto'
 const DASH_SIZE = 4
 const DASH_WIDTH = 2
@@ -47,6 +48,11 @@ export const SimpleStatistics = ({
 }) => {
 	const { symbol } = useSelector(selectMainToken)
 	const nowLabel = useSelector(selectAnalyticsNowLabel)
+	const windowSize = useWindowSize()
+	const chartHeight = Math.min(
+		Math.max(Math.floor((windowSize.height || 0) / 2.2), 240),
+		420
+	)
 	// Vertical line / crosshair
 	useEffect(() => {
 		Chart.pluginService.register({
@@ -279,9 +285,9 @@ export const SimpleStatistics = ({
 
 	return (
 		<Box>
-			<Box>
+			<Box height={chartHeight}>
 				<Line
-					height={420}
+					height={chartHeight}
 					data={chartData}
 					options={linesOptions}
 					plugins={[ChartAnnotation]}
@@ -295,13 +301,13 @@ export const SimpleStatistics = ({
 				px={1}
 				flexWrap='wrap'
 			>
-				<Typography component='div' align='left'>
+				<Typography component='div' variant='caption' align='left'>
 					{defaultLabels[0]}
 				</Typography>
-				<Typography component='div' align='center'>
+				<Typography component='div' variant='caption' align='center'>
 					{t(xLabel || 'TIMEFRAME')}
 				</Typography>
-				<Typography component='div' align='right'>
+				<Typography component='div' variant='caption' align='right'>
 					{defaultLabels[1]}
 				</Typography>
 			</Box>
