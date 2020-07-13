@@ -1,18 +1,14 @@
 export const styles = theme => {
 	const spacing = theme.spacing(2)
-	const fullHeight = Math.max(window.innerHeight - spacing, 400)
 	return {
 		dialog: {
-			minHeight: `${fullHeight}px`,
+			height: `calc(100vh - ${spacing}px)`,
 			minWidth: 1024,
 			maxWidth: 1080,
 			backgroundColor: theme.palette.appBar.main,
 			'@media(max-width:1080px)': {
 				maxWidth: '100%',
 				minWidth: `calc(100vw - ${spacing}px)`,
-			},
-			'@media(max-height:823px)': {
-				minHeight: `calc(${fullHeight} - ${spacing}px)`,
 			},
 		},
 		dialogTitle: {
