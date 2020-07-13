@@ -120,7 +120,7 @@ export const selectUnitTypesSourceWithRecommendations = createSelector(
 		const { source } = constants.AdUnitsTypes.map(type => ({
 			value: type,
 
-			revenue: verifiedTypes.get(type).revenue,
+			revenue: (verifiedTypes.get(type) || {}).revenue || 0,
 		}))
 			.sort((a, b) => {
 				return b.revenue - a.revenue
