@@ -9,6 +9,7 @@ import { t } from './translationsSelectors'
 export const selectTargeting = state => state.persist.targeting
 
 const MIN_SLOTS_FOR_AD_TYPE = 2
+const GLOBAL_MIN_CPM_MULTIPLIER = 0.7
 
 export const selectTargetingAnalytics = createSelector(
 	[selectTargeting],
@@ -33,7 +34,7 @@ export const selectMinTargetingCpm = createSelector(
 	(minByCategory, coefficients) => {
 		const minCat = Object.values(minByCategory).sort((a, b) => a - b)[0] || 0
 		const minCof = Object.values(coefficients).sort((a, b) => a - b)[0] || 0
-		const minCPM = minCat * minCof
+		const minCPM = minCat * minCof * GLOBAL_MIN_CPM_MULTIPLIER
 
 		return minCPM
 	}
