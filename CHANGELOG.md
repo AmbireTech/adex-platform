@@ -1,5 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+
+## 4.20.28
+##### *2020-07-13*
+
+### Fixed
+- Layout styles on safari browsers (mac and ios)
+- Recommended ad units formats
+
+### Changed
+- Stats chart styles and responsiveness
+
 ## 4.20.27
 ##### *2020-07-10*
 
