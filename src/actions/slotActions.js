@@ -94,6 +94,8 @@ export function validateNewSlotBasics({
 				temp,
 			} = slot
 
+			const { autoSetMinCPM } = temp
+
 			const validations = await Promise.all([
 				validateSchemaProp({
 					validateId,
@@ -127,7 +129,7 @@ export function validateNewSlotBasics({
 
 			isValid = validations.every(v => v === true)
 
-			if (isValid && minPerImpression) {
+			if (isValid && !autoSetMinCPM && minPerImpression !== null) {
 				isValid = await validateSchemaProp({
 					validateId,
 					value: {
@@ -148,7 +150,10 @@ export function validateNewSlotBasics({
 			const newTemp = { ...temp, hostname, issues, categories, suggestedMinCPM }
 			const rules = slotRulesInputToTargetingRules({
 				rulesInput,
-				suggestedMinCPM,
+				suggestedMinCPM:
+					!!autoSetMinCPM || minPerImpression === null
+						? suggestedMinCPM
+						: minPerImpression,
 				decimals: mainToken.decimals,
 			})
 

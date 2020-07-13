@@ -19,7 +19,7 @@ let initialState = {
 		}).plainObj(),
 		AdUnit: new AdUnit({ temp: { addUtmLink: true } }).plainObj(),
 		AdSlot: new AdSlot({
-			rulesInput: { version: '1', inputs: { autoSetMinCPM: true } },
+			rulesInput: { version: '1', inputs: { autoSetMinCPM: false } },
 		}).plainObj(),
 	},
 	currentItem: {},
