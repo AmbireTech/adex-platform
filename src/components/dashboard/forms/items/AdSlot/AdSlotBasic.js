@@ -26,6 +26,7 @@ import {
 	selectSlotTypesSourceWithDemands,
 	websitesAutocompleteSrc,
 	selectMainToken,
+	selectMinTargetingCpm,
 } from 'selectors'
 import { UPDATING_SLOTS_DEMAND } from 'constants/spinners'
 import {
@@ -40,6 +41,7 @@ function AdSlotBasic({ validateId }) {
 	const newItem = useSelector(selectNewAdSlot)
 	const websitesSrc = useSelector(websitesAutocompleteSrc)
 	const adTypesSource = useSelector(selectSlotTypesSourceWithDemands)
+	const minCPM = useSelector(selectMinTargetingCpm)
 	const {
 		title = '',
 		description = '',
@@ -66,7 +68,11 @@ function AdSlotBasic({ validateId }) {
 	useEffect(() => {
 		execute(updateSlotsDemandThrottled())
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+
+		if (!autoSetMinCPM && minPerImpression === null) {
+			execute(updateNewSlot('minPerImpression', minCPM.toFixed(2)))
+		}
+	}, [autoSetMinCPM, minCPM, minPerImpression])
 
 	return (
 		<div>
