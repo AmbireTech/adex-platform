@@ -8,25 +8,37 @@ export const getCroppedImgUrl = (image, crop, fileName, size) => {
 	const canvas = document.createElement('canvas')
 	const scaleX = image.naturalWidth / image.width
 	const scaleY = image.naturalHeight / image.height
-	canvas.width = crop.width
-	canvas.height = crop.height
+
+	const sourceWidth = crop.width * scaleX
+	const sourceHeight = crop.height * scaleY
+	canvas.width = sourceWidth
+	canvas.height = sourceHeight
 	const ctx = canvas.getContext('2d')
 
 	ctx.drawImage(
 		image,
 		crop.x * scaleX,
 		crop.y * scaleY,
-		crop.width * scaleX,
-		crop.height * scaleY,
+		sourceWidth,
+		sourceHeight,
 		0,
 		0,
-		crop.width,
-		crop.height
+		sourceWidth,
+		sourceHeight
 	)
 
 	let finalCanvas = canvas
 
 	if (size && size.width && size.height) {
+		// Pre blurred img
+		const bl = document.createElement('canvas')
+		bl.width = sourceWidth
+		bl.height = sourceHeight
+		const bctx = bl.getContext('2d')
+		const blur = Math.floor(sourceWidth / size.width / 3)
+		bctx.filter = `blur(${blur}px)`
+		bctx.drawImage(canvas, 0, 0, sourceWidth, sourceHeight)
+
 		finalCanvas = document.createElement('canvas')
 		finalCanvas.width = size.width
 		finalCanvas.height = size.height
@@ -34,11 +46,11 @@ export const getCroppedImgUrl = (image, crop, fileName, size) => {
 		const sctx = finalCanvas.getContext('2d')
 
 		sctx.drawImage(
-			canvas,
+			bl,
 			0,
 			0,
-			Math.floor(crop.width),
-			Math.floor(crop.height),
+			sourceWidth,
+			sourceHeight,
 			0,
 			0,
 			size.width,
