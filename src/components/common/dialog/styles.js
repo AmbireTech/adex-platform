@@ -1,5 +1,5 @@
 export const styles = theme => {
-	const spacing = theme.spacing(2)
+	const spacing = theme.spacing(1)
 	return {
 		dialog: {
 			height: `calc(100vh - ${spacing}px)`,
@@ -18,6 +18,7 @@ export const styles = theme => {
 			justifyContent: 'space-between',
 			wordWrap: 'break-word',
 			margin: spacing,
+			marginLeft: theme.spacing(2),
 			marginBottom: 0,
 			padding: 0,
 		},
