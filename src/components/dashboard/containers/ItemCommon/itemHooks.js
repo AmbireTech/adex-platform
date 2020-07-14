@@ -98,7 +98,7 @@ export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 			const dp = dirtyProps.slice(0)
 
 			if (!dp.some(p => (p.name || p) === (dpValue ? dpValue.name : field))) {
-				dp.push(field)
+				dp.push(dpValue || field)
 			}
 			setDirtyProps(dp)
 		},
