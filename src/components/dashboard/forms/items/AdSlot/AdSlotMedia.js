@@ -7,6 +7,7 @@ import {
 	TextField,
 	Collapse,
 	FormControlLabel,
+	FormControl,
 	FormHelperText,
 	Switch,
 } from '@material-ui/core'
@@ -30,82 +31,87 @@ function AdSlotMedia({ validateId, itemId }) {
 		<div>
 			<Grid container spacing={2}>
 				<Grid item xs={12}>
-					<FormControlLabel
-						control={
-							<Switch
-								checked={useFallback}
-								onChange={ev =>
-									execute(
-										updateNewSlot(
-											'temp',
-											{
-												...temp,
-												useFallback: ev.target.checked,
-											},
-											null,
-											itemId
+					<FormControl>
+						<FormControlLabel
+							control={
+								<Switch
+									checked={useFallback}
+									onChange={ev =>
+										execute(
+											updateNewSlot(
+												'temp',
+												{
+													...temp,
+													useFallback: ev.target.checked,
+												},
+												null,
+												itemId
+											)
 										)
-									)
-								}
-							/>
-						}
-						label={t('USE_FALLBACK_DATA')}
-					/>
-					<FormHelperText>{t('USE_FALLBACK_DATA_INFO')}</FormHelperText>
+									}
+								/>
+							}
+							label={t('USE_FALLBACK_DATA')}
+						/>
+						<FormHelperText>{t('USE_FALLBACK_DATA_INFO')}</FormHelperText>
+					</FormControl>
 				</Grid>
-				<Collapse in={useFallback}>
-					<Grid container spacing={2}>
-						<Grid item xs={12}>
-							<TextField
-								fullWidth
-								variant='outlined'
-								type='text'
-								required
-								label={t('targetUrl', { isProp: true })}
-								value={targetUrl}
-								onChange={ev =>
-									execute(
-										updateNewSlot('targetUrl', ev.target.value, null, itemId)
-									)
-								}
-								error={errFallbackUrl && !!errFallbackUrl.dirty}
-								helperText={
-									errFallbackUrl && !!errFallbackUrl.dirty
-										? errFallbackUrl.errMsg
-										: t('FALLBACKTARGETURL_HELPER')
-								}
-							/>
-						</Grid>
-						<Grid item xs={12}>
-							<ImgForm
-								label={t('SLOT_FALLBACK_MEDIA_LABEL')}
-								imgSrc={tempUrl || ''}
-								mime={mime || ''}
-								onChange={mediaProps =>
-									execute(
-										updateNewSlot(
-											'temp',
-											{
-												...temp,
-												...mediaProps,
-											},
-											null,
-											itemId
+
+				<Grid item xs={12}>
+					<Collapse in={useFallback}>
+						<Grid container spacing={2}>
+							<Grid item xs={12}>
+								<TextField
+									fullWidth
+									variant='outlined'
+									type='text'
+									required
+									label={t('targetUrl', { isProp: true })}
+									value={targetUrl}
+									onChange={ev =>
+										execute(
+											updateNewSlot('targetUrl', ev.target.value, null, itemId)
 										)
-									)
-								}
-								additionalInfo={t('SLOT_FALLBACK_MEDIA_INFO', {
-									args: [width, height, 'px'],
-								})}
-								errMsg={errImg && errImg.dirty ? errImg.errMsg : ''}
-								size={{
-									width,
-									height,
-								}}
-							/>
+									}
+									error={errFallbackUrl && !!errFallbackUrl.dirty}
+									helperText={
+										errFallbackUrl && !!errFallbackUrl.dirty
+											? errFallbackUrl.errMsg
+											: t('FALLBACKTARGETURL_HELPER')
+									}
+								/>
+							</Grid>
+							<Grid item xs={12}>
+								<ImgForm
+									label={t('SLOT_FALLBACK_MEDIA_LABEL')}
+									imgSrc={tempUrl || ''}
+									mime={mime || ''}
+									onChange={mediaProps =>
+										execute(
+											updateNewSlot(
+												'temp',
+												{
+													...temp,
+													...mediaProps,
+												},
+												null,
+												itemId
+											)
+										)
+									}
+									additionalInfo={t('SLOT_FALLBACK_MEDIA_INFO', {
+										args: [width, height, 'px'],
+									})}
+									errMsg={errImg && errImg.dirty ? errImg.errMsg : ''}
+									size={{
+										width,
+										height,
+									}}
+								/>
+							</Grid>
 						</Grid>
-					</Grid>
-				</Collapse>
+					</Collapse>
+				</Grid>
 			</Grid>
 		</div>
 	)
