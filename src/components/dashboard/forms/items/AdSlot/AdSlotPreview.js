@@ -105,7 +105,7 @@ const AdSlotPreview = () => {
 
 					<Grid item xs={12} md={6}>
 						<PropRow
-							left={t('SLOT_MIN_CPM')}
+							left={t('SLOT_MIN_CPM', { args: [symbol] })}
 							right={
 								autoSetMinCPM
 									? t('SLOT_AUTO_MIN_CPM_PREVIEW_LABEL', {
