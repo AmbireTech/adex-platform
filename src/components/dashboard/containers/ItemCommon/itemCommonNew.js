@@ -14,6 +14,12 @@ import {
 	Paper,
 	Collapse,
 	Button,
+	FormControl,
+	FormControlLabel,
+	FormGroup,
+	FormHelperText,
+	Checkbox,
+	Grid,
 } from '@material-ui/core'
 import { Alert } from '@material-ui/lab'
 import {
@@ -28,7 +34,12 @@ import { ExternalAnchor } from 'components/common/anchor/anchor'
 import { formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
 import { t, selectMainToken, selectAuthType } from 'selectors'
-import { execute, confirmAction, archiveItem } from 'actions'
+import {
+	execute,
+	confirmAction,
+	archiveItem,
+	validateNumberString,
+} from 'actions'
 import { styles } from './styles'
 import { SaveBtn } from './SaveBtn'
 import { WALLET_ACTIONS_MSGS } from 'constants/misc'
@@ -343,6 +354,91 @@ export const MediaCard = ({ mediaUrl = '', mediaMime = '', label = '' }) => {
 
 export const ItemMinPerImpression = ({
 	item = {},
+	updateMultipleFields,
+	validations,
+	validateId,
+	updateField,
+	setActiveFields,
+	returnPropToInitialState,
+	activeFields = {},
+}) => {
+	const { address, decimals, symbol } = selectMainToken()
+	const { id: itemId, minPerImpression, rulesInput = { inputs: {} } } = item
+	const { autoSetMinCPM } = rulesInput.inputs
+	const active = !!activeFields.minPerImpression
+	const { minPerImpression: errMin } = validations
+	const showError = !!errMin && errMin.dirty
+	const minCPM =
+		typeof minPerImpression === 'object'
+			? formatTokenAmount(
+					bigNumberify((item.minPerImpression || {})[address] || '0').mul(1000),
+					decimals,
+					true
+			  )
+			: minPerImpression
+
+	return (
+		<Grid container spacing={2}>
+			<Grid item xs={12}>
+				<TextField
+					fullWidth
+					variant='outlined'
+					type='text'
+					required
+					label={t('MIN_CPM_SLOT_LABEL', { args: [symbol] })}
+					name='minPerImpression'
+					value={minPerImpression || ''}
+					disabled={!!autoSetMinCPM}
+					onChange={ev => {
+						const value = ev.target.value
+						updateField('minPerImpression', value)
+						execute(
+							validateNumberString({
+								validateId,
+								prop: 'minPerImpression',
+								value,
+								dirty: true,
+							})
+						)
+					}}
+					error={errMin && !!errMin.dirty}
+					maxLength={120}
+					helperText={
+						errMin && !!errMin.dirty ? errMin.errMsg : t('SLOT_MIN_CPM_HELPER')
+					}
+				/>
+			</Grid>
+
+			<Grid item xs={12}>
+				<FormControl>
+					<FormGroup row>
+						<FormControlLabel
+							control={
+								<Checkbox
+									checked={!!autoSetMinCPM}
+									onChange={ev =>
+										updateField('rulesInput', {
+											...rulesInput,
+											inputs: {
+												...rulesInput.inputs,
+												autoSetMinCPM: ev.target.checked,
+											},
+										})
+									}
+									value='autoSetMinCPM'
+								/>
+							}
+							label={t('SLOT_AUTO_MIN_CPM')}
+						/>
+					</FormGroup>
+					<FormHelperText>{t('SLOT_AUTO_MIN_CPM_INFO')}</FormHelperText>
+				</FormControl>
+			</Grid>
+		</Grid>
+	)
+}
+export const SlotAdultContent = ({
+	item = {},
 	validations,
 	updateField,
 	setActiveFields,
@@ -350,7 +446,9 @@ export const ItemMinPerImpression = ({
 	activeFields = {},
 }) => {
 	const { address, decimals, symbol } = selectMainToken()
-	const { minPerImpression } = item
+	const { minPerImpression, rulesInput = { inputs: {} } } = item
+	const { allowAdultContent, autoSetMinCPM } = rulesInput.inputs
+
 	const active = !!activeFields.minPerImpression
 	const { minPerImpression: error } = validations
 	const showError = !!error && error.dirty
@@ -364,38 +462,31 @@ export const ItemMinPerImpression = ({
 			: minPerImpression
 
 	return (
-		<TextField
-			fullWidth
-			id='item-minPerImpression'
-			label={t('MIN_CPM_SLOT_LABEL', { args: [symbol] })}
-			type='text'
-			name='minPerImpression'
-			value={minCPM || ''}
-			onChange={ev => {
-				updateField('minPerImpression', ev.target.value.trim())
-			}}
-			disabled={!active}
-			error={showError}
-			helperText={showError ? t(error.errMsg, { args: error.errMsgArgs }) : ' '}
-			variant='outlined'
-			InputProps={{
-				endAdornment: (
-					<InputAdornment position='end'>
-						<IconButton
-							// size='small'
-							color='secondary'
-							onClick={() =>
-								active
-									? returnPropToInitialState('minPerImpression')
-									: setActiveFields('minPerImpression', true)
+		<FormControl>
+			<FormGroup row>
+				<FormControlLabel
+					control={
+						<Checkbox
+							checked={!!allowAdultContent}
+							onChange={ev =>
+								execute(
+									updateField('rulesInput', {
+										...rulesInput,
+										inputs: {
+											...rulesInput.inputs,
+											allowAdultContent: ev.target.checked,
+										},
+									})
+								)
 							}
-						>
-							{active ? <UndoOutlined /> : <Edit />}
-						</IconButton>
-					</InputAdornment>
-				),
-			}}
-		/>
+							value='allowAdultContent'
+						/>
+					}
+					label={t('SLOT_ALLOW_ADULT_CONTENT')}
+				/>
+			</FormGroup>
+			<FormHelperText>{t('SLOT_ALLOW_ADULT_CONTENT_INFO')}</FormHelperText>
+		</FormControl>
 	)
 }
 
