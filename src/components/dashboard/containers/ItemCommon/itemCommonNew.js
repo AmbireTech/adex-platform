@@ -30,6 +30,7 @@ import {
 	ArchiveSharp as ArchiveIcon,
 } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
+import OutlinedPropView from 'components/common/OutlinedPropView'
 import { ExternalAnchor } from 'components/common/anchor/anchor'
 import { formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
@@ -71,7 +72,7 @@ export const DirtyProps = ({ dirtyProps = [], returnPropToInitialState }) => {
 								size='small'
 								color='secondary'
 								className={classes.changeChip}
-								key={p}
+								key={p.name || p}
 								label={t(p.name || p, { isProp: true })}
 								onDelete={() => {
 									returnPropToInitialState(p)
@@ -383,7 +384,7 @@ export const ItemMinPerImpression = ({
 	activeFields = {},
 }) => {
 	const { address, decimals, symbol } = selectMainToken()
-	const { id: itemId, minPerImpression, rulesInput = { inputs: {} } } = item
+	const { minPerImpression, rulesInput = { inputs: {} } } = item
 	const { autoSetMinCPM } = rulesInput.inputs
 	const active = !!activeFields.minPerImpression
 	const { minPerImpression: errMin } = validations
@@ -398,115 +399,149 @@ export const ItemMinPerImpression = ({
 			: minPerImpression
 
 	return (
-		<Grid container spacing={2}>
-			<Grid item xs={12}>
-				<TextField
-					fullWidth
-					variant='outlined'
-					type='text'
-					required
-					label={t('MIN_CPM_SLOT_LABEL', { args: [symbol] })}
-					name='minPerImpression'
-					value={minPerImpression || ''}
-					disabled={!!autoSetMinCPM}
-					onChange={ev => {
-						const value = ev.target.value
-						updateField('minPerImpression', value)
-						execute(
-							validateNumberString({
-								validateId,
-								prop: 'minPerImpression',
-								value,
-								dirty: true,
-							})
-						)
-					}}
-					error={errMin && !!errMin.dirty}
-					maxLength={120}
-					helperText={
-						errMin && !!errMin.dirty ? errMin.errMsg : t('SLOT_MIN_CPM_HELPER')
-					}
-				/>
-			</Grid>
+		<OutlinedPropView
+			label={t('MIN_CPM_SLOT_LABEL', { args: [symbol] })}
+			value={
+				<Grid container spacing={2}>
+					<Grid item xs={12}>
+						<TextField
+							fullWidth
+							variant='outlined'
+							type='text'
+							required
+							label={t('MIN_CPM_SLOT_LABEL_MANUAL')}
+							name='minPerImpression'
+							value={minCPM || ''}
+							disabled={!!autoSetMinCPM || !active}
+							onChange={ev => {
+								const value = ev.target.value
+								updateField('minPerImpression', value)
+								execute(
+									validateNumberString({
+										validateId,
+										prop: 'minPerImpression',
+										value,
+										dirty: true,
+									})
+								)
+							}}
+							error={showError}
+							maxLength={120}
+							helperText={
+								showError ? errMin.errMsg : t('SLOT_MANUAL_CPM_MIN_HELPER')
+							}
+							InputProps={
+								!autoSetMinCPM
+									? {
+											endAdornment: (
+												<InputAdornment position='end'>
+													<IconButton
+														// size='small'
+														color='secondary'
+														onClick={() =>
+															active
+																? returnPropToInitialState('minPerImpression')
+																: setActiveFields('minPerImpression', true)
+														}
+													>
+														{active ? <UndoOutlined /> : <Edit />}
+													</IconButton>
+												</InputAdornment>
+											),
+									  }
+									: {}
+							}
+						/>
+					</Grid>
 
-			<Grid item xs={12}>
+					<Grid item xs={12}>
+						<OutlinedPropView
+							label={t('SLOT_AUTO_MIN_CPM_LABEL')}
+							value={
+								<FormControl>
+									<FormGroup row>
+										<FormControlLabel
+											control={
+												<Checkbox
+													checked={!!autoSetMinCPM}
+													onChange={ev => {
+														const checked = ev.target.checked
+														updateField(
+															'rulesInput',
+															{
+																...rulesInput,
+																inputs: {
+																	...rulesInput.inputs,
+																	autoSetMinCPM: checked,
+																},
+															},
+															{
+																name: 'autoSetMinCPM',
+																fields: ['rulesInput'],
+															}
+														)
+													}}
+													value='autoSetMinCPM'
+												/>
+											}
+											label={t('SLOT_AUTO_MIN_CPM_INFO_LABEL')}
+										/>
+									</FormGroup>
+								</FormControl>
+							}
+						/>
+					</Grid>
+				</Grid>
+			}
+		/>
+	)
+}
+export const SlotAdultContent = ({
+	item = {},
+	// validations,
+	updateField,
+	// setActiveFields,
+	// returnPropToInitialState,
+	// activeFields = {},
+}) => {
+	const { rulesInput = { inputs: {} } } = item
+	const { allowAdultContent } = rulesInput.inputs
+
+	return (
+		<OutlinedPropView
+			label={t('SLOT_ALLOW_ADULT_CONTENT_LABEL')}
+			value={
 				<FormControl>
 					<FormGroup row>
 						<FormControlLabel
 							control={
 								<Checkbox
-									checked={!!autoSetMinCPM}
+									checked={!!allowAdultContent}
 									onChange={ev =>
-										updateField('rulesInput', {
-											...rulesInput,
-											inputs: {
-												...rulesInput.inputs,
-												autoSetMinCPM: ev.target.checked,
+										updateField(
+											'rulesInput',
+											{
+												...rulesInput,
+												inputs: {
+													...rulesInput.inputs,
+													allowAdultContent: ev.target.checked,
+												},
 											},
-										})
+											{
+												name: 'allowAdultContent',
+												fields: ['rulesInput'],
+											}
+										)
 									}
-									value='autoSetMinCPM'
+									value='allowAdultContent'
 								/>
 							}
-							label={t('SLOT_AUTO_MIN_CPM')}
+							label={t('SLOT_ALLOW_ADULT_CONTENT_INFO_LABEL')}
 						/>
 					</FormGroup>
-					<FormHelperText>{t('SLOT_AUTO_MIN_CPM_INFO')}</FormHelperText>
 				</FormControl>
-			</Grid>
-		</Grid>
-	)
-}
-export const SlotAdultContent = ({
-	item = {},
-	validations,
-	updateField,
-	setActiveFields,
-	returnPropToInitialState,
-	activeFields = {},
-}) => {
-	const { address, decimals, symbol } = selectMainToken()
-	const { minPerImpression, rulesInput = { inputs: {} } } = item
-	const { allowAdultContent, autoSetMinCPM } = rulesInput.inputs
-
-	const active = !!activeFields.minPerImpression
-	const { minPerImpression: error } = validations
-	const showError = !!error && error.dirty
-	const minCPM =
-		typeof minPerImpression === 'object'
-			? formatTokenAmount(
-					bigNumberify((item.minPerImpression || {})[address] || '0').mul(1000),
-					decimals,
-					true
-			  )
-			: minPerImpression
-
-	return (
-		<FormControl>
-			<FormGroup row>
-				<FormControlLabel
-					control={
-						<Checkbox
-							checked={!!allowAdultContent}
-							onChange={ev =>
-								execute(
-									updateField('rulesInput', {
-										...rulesInput,
-										inputs: {
-											...rulesInput.inputs,
-											allowAdultContent: ev.target.checked,
-										},
-									})
-								)
-							}
-							value='allowAdultContent'
-						/>
-					}
-					label={t('SLOT_ALLOW_ADULT_CONTENT')}
-				/>
-			</FormGroup>
-			<FormHelperText>{t('SLOT_ALLOW_ADULT_CONTENT_INFO')}</FormHelperText>
-		</FormControl>
+			}
+		/>
 	)
 }
 
