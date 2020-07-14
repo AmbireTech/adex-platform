@@ -121,6 +121,26 @@ export const ChangeControls = hookProps => {
 	)
 }
 
+export const ItemTabsContainer = ({ children }) => {
+	const classes = useStyles()
+
+	return (
+		<Paper className={classes.itemTabsContainer} variant='outlined'>
+			{children}
+		</Paper>
+	)
+}
+
+export const ItemTabsBar = ({ children }) => {
+	const classes = useStyles()
+
+	return (
+		<Paper className={classes.itemTabsBar} variant='outlined'>
+			{children}
+		</Paper>
+	)
+}
+
 export const ItemSpecProp = ({
 	prop,
 	label,
