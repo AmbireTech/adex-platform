@@ -73,6 +73,7 @@ const AdSlotPreview = () => {
 		targetUrl,
 		rules,
 		rulesInput,
+		minPerImpression,
 	} = useSelector(selectNewAdSlot)
 
 	const identityAddr = useSelector(selectAccountIdentityAddr)
@@ -99,12 +100,20 @@ const AdSlotPreview = () => {
 					</Grid>
 
 					<Grid item xs={12} md={6}>
+						<PropRow left={t('owner', { isProp: true })} right={identityAddr} />
+					</Grid>
+
+					<Grid item xs={12} md={6}>
 						<PropRow
-							left={t('SLOT_AUTO_MIN_CPM')}
+							left={t('SLOT_MIN_CPM')}
 							right={
 								autoSetMinCPM
-									? `${t('YES')} - ${suggestedMinCPM || 0} ${symbol}`
-									: t('NO')
+									? t('SLOT_AUTO_MIN_CPM_PREVIEW_LABEL', {
+											args: [suggestedMinCPM, symbol],
+									  })
+									: t('SLOT_MANUAL_MIN_CPM_PREVIEW_LABEL', {
+											args: [minPerImpression, symbol],
+									  })
 							}
 						/>
 					</Grid>
@@ -114,10 +123,6 @@ const AdSlotPreview = () => {
 							left={t('SLOT_ALLOW_ADULT_CONTENT')}
 							right={allowAdultContent ? t('YES') : t('NO')}
 						/>
-					</Grid>
-
-					<Grid item xs={12} md={6}>
-						<PropRow left={t('owner', { isProp: true })} right={identityAddr} />
 					</Grid>
 
 					<Grid item xs={12} md={12}>
