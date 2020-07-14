@@ -451,10 +451,18 @@ export function validateAndUpdateSlot({
 				mediaUrl,
 				mediaMime,
 				targetUrl,
+				rulesInput = { inputs: {} },
 			} = item
 
+			const { autoSetMinCPM } = rulesInput.inputs
+
 			const newSlot = new AdSlot(item)
-			const checkMinPerImpression = typeof minPerImpression === 'string'
+			const updateMinPerImpression =
+				typeof minPerImpression === 'string' && !autoSetMinCPM
+
+			const updateRules = dirtyProps.some(
+				prop => prop && prop.name === 'rulesInput'
+			)
 
 			const validations = await Promise.all([
 				validateSchemaProp({
@@ -478,7 +486,7 @@ export function validateAndUpdateSlot({
 					schema: adSlotPut.website,
 					dirty,
 				})(dispatch),
-				checkMinPerImpression
+				updateMinPerImpression
 					? validateNumberString({
 							validateId,
 							prop: 'minPerImpression',
@@ -486,17 +494,42 @@ export function validateAndUpdateSlot({
 							dirty,
 					  })(dispatch)
 					: true,
+				updateRules
+					? validateNumberString({
+							validateId,
+							prop: 'rulesInput',
+							value: rulesInput,
+							dirty,
+					  })(dispatch)
+					: true,
 			])
 
 			let isValid = validations.every(v => v === true)
 
-			if (isValid && checkMinPerImpression) {
-				newSlot.minPerImpression = {
+			let minCPM = minPerImpression
+			let newRules = null
+			let suggestedMinCPM = null
+
+			if (isValid && updateMinPerImpression && !autoSetMinCPM) {
+				minCPM = {
 					[mainToken.address]: numStringCPMtoImpression({
 						numStr: minPerImpression || null,
 						decimals: mainToken.decimals,
 					}),
 				}
+			}
+
+			if (isValid && autoSetMinCPM) {
+				suggestedMinCPM = (await verifyWebsite({ websiteUrl: website }))
+					.suggestedMinCPM
+			}
+
+			if (isValid && (updateMinPerImpression || updateRules)) {
+				newRules = slotRulesInputToTargetingRules({
+					rulesInput,
+					suggestedMinCPM: !!autoSetMinCPM ? suggestedMinCPM : minPerImpression,
+					decimals: mainToken.decimals,
+				})
 			}
 
 			const isPassbackUpdated = dirtyProps.some(
@@ -510,7 +543,7 @@ export function validateAndUpdateSlot({
 			}
 
 			let newUnit = null
-			if (isPassbackUpdated && update) {
+			if (isValid && isPassbackUpdated && update) {
 				if (mediaUrl && mediaMime && targetUrl) {
 					const authSig = selectAuthSig(state)
 					newUnit = await getFallbackUnit({
@@ -535,6 +568,13 @@ export function validateAndUpdateSlot({
 				}
 			}
 
+			newSlot.minPerImpression =
+				updateMinPerImpression && !autoSetMinCPM ? minCPM : null
+
+			if (updateRules) {
+				newSlot.rules = newRules
+			}
+
 			const slot = newSlot.marketUpdate
 
 			if (isValid) {
@@ -544,6 +584,13 @@ export function validateAndUpdateSlot({
 						value: newSlot.minPerImpression,
 						prop: 'minPerImpression',
 						schema: adSlotPut.minPerImpression,
+						dirty,
+					})(dispatch),
+					validateSchemaProp({
+						validateId,
+						value: newSlot.rules,
+						prop: 'rules',
+						schema: adSlotPut.rules,
 						dirty,
 					})(dispatch),
 					validateSchemaProp({
