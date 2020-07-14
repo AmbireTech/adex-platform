@@ -144,7 +144,7 @@ export default function WithDialogHoc(Decorated) {
 						}}
 					>
 						<Typography variant='subtitle1'>{t(title)}</Typography>
-						<IconButton onClick={handleToggle}>
+						<IconButton onClick={handleToggle} size='small'>
 							<CancelIcon />
 						</IconButton>
 					</DialogTitle>
