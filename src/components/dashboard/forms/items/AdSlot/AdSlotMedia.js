@@ -7,11 +7,10 @@ import {
 	TextField,
 	Collapse,
 	FormControlLabel,
-	FormControl,
-	FormHelperText,
 	Switch,
 } from '@material-ui/core'
 import { getWidAndHightFromType } from 'helpers/itemsHelpers'
+import OutlinedPropView from 'components/common/OutlinedPropView'
 import { t, selectNewItemByTypeAndId, selectValidationsById } from 'selectors'
 import { updateNewSlot, execute } from 'actions'
 
@@ -31,30 +30,32 @@ function AdSlotMedia({ validateId, itemId }) {
 		<div>
 			<Grid container spacing={2}>
 				<Grid item xs={12}>
-					<FormControl>
-						<FormControlLabel
-							control={
-								<Switch
-									checked={useFallback}
-									onChange={ev =>
-										execute(
-											updateNewSlot(
-												'temp',
-												{
-													...temp,
-													useFallback: ev.target.checked,
-												},
-												null,
-												itemId
+					<OutlinedPropView
+						label={t('USE_FALLBACK_DATA')}
+						value={
+							<FormControlLabel
+								control={
+									<Switch
+										checked={useFallback}
+										onChange={ev =>
+											execute(
+												updateNewSlot(
+													'temp',
+													{
+														...temp,
+														useFallback: ev.target.checked,
+													},
+													null,
+													itemId
+												)
 											)
-										)
-									}
-								/>
-							}
-							label={t('USE_FALLBACK_DATA')}
-						/>
-						<FormHelperText>{t('USE_FALLBACK_DATA_INFO')}</FormHelperText>
-					</FormControl>
+										}
+									/>
+								}
+								label={t('USE_FALLBACK_DATA_INFO')}
+							/>
+						}
+					/>
 				</Grid>
 
 				<Grid item xs={12}>
