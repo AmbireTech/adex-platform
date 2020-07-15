@@ -44,9 +44,10 @@ const getCols = ({
 			filter: false,
 			sort: false,
 			download: false,
-			customBodyRender: ({ id, mediaUrl, mediaMime, to }) => {
+			customBodyRender: ({ selectOnImage, id, mediaUrl, mediaMime, to }) => {
+				const ImgComponent = selectOnImage ? Img : RRImg
 				return (
-					<RRImg
+					<ImgComponent
 						key={id}
 						fullScreenOnClick={true}
 						className={classnames(classes.cellImg)}
@@ -54,7 +55,7 @@ const getCols = ({
 						alt={id}
 						mediaMime={mediaMime}
 						allowVideo
-						to={to}
+						{...(!selectOnImage ? { to } : {})}
 					/>
 				)
 			},
