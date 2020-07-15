@@ -337,10 +337,10 @@ export function BasicStats() {
 	return (
 		uiSide && (
 			<Box>
-				<Box display='flex' flexDirection='row' flexWrap='wrap' m={1}>
-					<StatsCard>
+				<Box display='flex' flexDirection='row' flexWrap='wrap'>
+					<Box>
 						<Box display='flex' flexDirection='row' flexWrap='wrap'>
-							<Box m={1} flexGrow='1'>
+							<Box m={1} ml={0} flexGrow='1'>
 								<Dropdown
 									fullWidth
 									variant='outlined'
@@ -355,7 +355,7 @@ export function BasicStats() {
 									htmlId='timeframe-select'
 								/>
 							</Box>
-							<Box m={1} flexGrow='1'>
+							<Box m={1} ml={0} flexGrow='1'>
 								<DatePickerSwitch
 									timeframe={timeframe}
 									value={start}
@@ -387,7 +387,7 @@ export function BasicStats() {
 								/>
 							</Box>
 						</Box>
-					</StatsCard>
+					</Box>
 					<StatsCard
 						bgColor='primary'
 						subtitle={t('LABEL_TOTAL_IMPRESSIONS')}
@@ -463,7 +463,7 @@ export function BasicStats() {
 						<ImpressionsAlert impressions={totalImpressions} />
 					</Box>
 				)}
-				<Box m={1}>
+				<Box mt={1}>
 					<SimpleStatistics
 						start={start}
 						end={end}
