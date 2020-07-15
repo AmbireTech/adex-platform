@@ -122,11 +122,15 @@ export const ChangeControls = hookProps => {
 	)
 }
 
-export const ItemTabsContainer = ({ children }) => {
+export const ItemTabsContainer = ({ children, noBackground }) => {
 	const classes = useStyles()
 
 	return (
-		<Paper className={classes.itemTabsContainer} variant='outlined'>
+		<Paper
+			className={classes.itemTabsContainer}
+			style={noBackground ? { background: 0 } : {}}
+			variant='outlined'
+		>
 			{children}
 		</Paper>
 	)
