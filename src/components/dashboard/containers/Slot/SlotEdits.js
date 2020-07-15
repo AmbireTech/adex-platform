@@ -89,7 +89,7 @@ export const SlotAdvancedRules = ({
 					variant='outlined'
 					type='text'
 					required
-					label={t('MIN_CPM_SLOT_LABEL_MANUAL')}
+					label={t('MIN_CPM_SLOT_LABEL_MANUAL', { args: [symbol] })}
 					name='minPerImpression'
 					value={minCPM || ''}
 					disabled={!!autoSetMinCPM || !active}
@@ -176,7 +176,7 @@ export const SlotAdvancedRules = ({
 			</Grid>
 			<Grid item xs={12}>
 				<OutlinedPropView
-					label={t('SLOT_ALLOW_ADULT_CONTENT_LABEL')}
+					label={t('SLOT_ALLOW_ADULT_CONTENT')}
 					value={
 						<FormControl>
 							<FormGroup row>
@@ -203,7 +203,7 @@ export const SlotAdvancedRules = ({
 											value='allowAdultContent'
 										/>
 									}
-									label={t('SLOT_ALLOW_ADULT_CONTENT_INFO_LABEL')}
+									label={t('SLOT_ALLOW_ADULT_CONTENT_INFO')}
 								/>
 							</FormGroup>
 						</FormControl>
