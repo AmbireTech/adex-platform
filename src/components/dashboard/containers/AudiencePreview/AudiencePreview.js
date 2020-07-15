@@ -114,17 +114,17 @@ const AudiencePreview = ({ audienceInput = {}, title, subHeader }) => {
 
 			<OutlinedPropView
 				margin='dense'
-				label={t(`INCLUDE_INCENTIVIZED_TRAFFIC`)}
+				label={t(`INCLUDE_INCENTIVIZED_TRAFFIC_LABEL`)}
 				value={t(advanced.includeIncentivized ? 'YES' : 'NO')}
 			/>
 			<OutlinedPropView
 				margin='dense'
-				label={t(`DISABLE_FREQUENCY_CAPPING`)}
+				label={t(`DISABLE_FREQUENCY_CAPPING_LABEL`)}
 				value={t(advanced.disableFrequencyCapping ? 'YES' : 'NO')}
 			/>
 			<OutlinedPropView
 				margin='dense'
-				label={t(`LIMIT_AVERAGE_DAILY_SPENDING`)}
+				label={t(`LIMIT_AVERAGE_DAILY_SPENDING_LABEL`)}
 				value={t(advanced.limitDailyAverageSpending ? 'YES' : 'NO')}
 			/>
 		</Box>
