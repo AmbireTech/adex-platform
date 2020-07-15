@@ -338,54 +338,52 @@ export function BasicStats() {
 		uiSide && (
 			<Box>
 				<Box display='flex' flexDirection='row' flexWrap='wrap'>
-					<Box>
-						<Box display='flex' flexDirection='row' flexWrap='wrap'>
-							<Box m={1} ml={0} flexGrow='1'>
-								<Dropdown
-									fullWidth
-									variant='outlined'
-									label={t('SELECT_TIMEFRAME')}
-									// helperText={t(timeHints[timeframe])}
-									onChange={val => {
-										//TODO: fix change of timeframe, set default period as well
-										execute(updateIdSideAnalyticsChartTimeframe(val))
-									}}
-									source={timeFrames}
-									value={timeframe}
-									htmlId='timeframe-select'
-								/>
-							</Box>
-							<Box m={1} ml={0} flexGrow='1'>
-								<DatePickerSwitch
-									timeframe={timeframe}
-									value={start}
-									minutesStep={60}
-									onChange={val => {
-										execute(updateIdSideAnalyticsChartPeriod(val))
-									}}
-									disableFuture
-									inputVariant='outlined'
-									fullWidth
-									calendarIcon
-									label={t('ANALYTICS_PERIOD')}
-									max={Date.now()}
-									// Only when picking future hours as they can't be disabled
-									maxDateMessage={t('MAX_DATE_ERROR')}
-									strictCompareDates
-									onBackClick={e => {
-										e.stopPropagation()
-										goPrev()
-									}}
-									onLiveClick={e => {
-										e.stopPropagation()
-										goLive()
-									}}
-									onNextClick={e => {
-										e.stopPropagation()
-										goNext()
-									}}
-								/>
-							</Box>
+					<Box display='flex' flexDirection='row' flexWrap='wrap' flexGrow={1}>
+						<Box m={1} ml={0} flexGrow='1'>
+							<Dropdown
+								fullWidth
+								variant='outlined'
+								label={t('SELECT_TIMEFRAME')}
+								// helperText={t(timeHints[timeframe])}
+								onChange={val => {
+									//TODO: fix change of timeframe, set default period as well
+									execute(updateIdSideAnalyticsChartTimeframe(val))
+								}}
+								source={timeFrames}
+								value={timeframe}
+								htmlId='timeframe-select'
+							/>
+						</Box>
+						<Box m={1} ml={0} flexGrow='1'>
+							<DatePickerSwitch
+								timeframe={timeframe}
+								value={start}
+								minutesStep={60}
+								onChange={val => {
+									execute(updateIdSideAnalyticsChartPeriod(val))
+								}}
+								disableFuture
+								inputVariant='outlined'
+								fullWidth
+								calendarIcon
+								label={t('ANALYTICS_PERIOD')}
+								max={Date.now()}
+								// Only when picking future hours as they can't be disabled
+								maxDateMessage={t('MAX_DATE_ERROR')}
+								strictCompareDates
+								onBackClick={e => {
+									e.stopPropagation()
+									goPrev()
+								}}
+								onLiveClick={e => {
+									e.stopPropagation()
+									goLive()
+								}}
+								onNextClick={e => {
+									e.stopPropagation()
+									goNext()
+								}}
+							/>
 						</Box>
 					</Box>
 					<StatsCard
