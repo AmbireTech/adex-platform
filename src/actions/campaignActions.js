@@ -387,13 +387,15 @@ export function pauseOrResumeCampaign({ campaign }) {
 			const currentTargetingRules = updated.targetingRules || []
 			const newRules = [...currentTargetingRules]
 
-			const isPaused = (currentTargetingRules[0] || {}).onlyShowIf === true
+			const isPaused = (currentTargetingRules[0] || {}).onlyShowIf === false
 			if (isPaused) {
 				action = 'RESUMING'
 				newRules.shift()
 			} else {
 				newRules.unshift({ onlyShowIf: false })
 			}
+
+			updated.targetingRules = newRules
 
 			const { authTokens } = await updateTargeting({
 				account,
