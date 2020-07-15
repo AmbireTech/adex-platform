@@ -412,7 +412,10 @@ export const ItemMinPerImpression = ({
 					disabled={!!autoSetMinCPM || !active}
 					onChange={ev => {
 						const value = ev.target.value
-						updateField('minPerImpression', value)
+						updateField('minPerImpression', value, {
+							name: 'advanced',
+							fields: ['rulesInput', 'minPerImpression'],
+						})
 						execute(
 							validateNumberString({
 								validateId,
@@ -473,8 +476,8 @@ export const ItemMinPerImpression = ({
 														},
 													},
 													{
-														name: 'autoSetMinCPM',
-														fields: ['rulesInput'],
+														name: 'advanced',
+														fields: ['rulesInput', 'minPerImpression'],
 													}
 												)
 											}}
@@ -523,8 +526,8 @@ export const SlotAdultContent = ({
 												},
 											},
 											{
-												name: 'allowAdultContent',
-												fields: ['rulesInput'],
+												name: 'advanced',
+												fields: ['rulesInput', 'minPerImpression'],
 											}
 										)
 									}
