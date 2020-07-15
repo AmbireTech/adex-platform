@@ -56,7 +56,7 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 	const { mediaUrl, mediaMime } = adUnits[0] || {}
 	const status = item.status || {}
 	const { humanFriendlyName } = status
-	const isPaused = ((item.targetingRules || [])[0] || {}).onlyShowIf === true
+	const isPaused = ((item.targetingRules || [])[0] || {}).onlyShowIf === false
 	const pauseAction = isPaused ? 'RESUME' : 'PAUSE'
 
 	const campaignPricingBounds = pricingBounds || { IMPRESSION: {} }
