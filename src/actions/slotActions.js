@@ -451,8 +451,11 @@ export function validateAndUpdateSlot({
 				mediaUrl,
 				mediaMime,
 				targetUrl,
-				rulesInput = { inputs: {} },
+				rulesInput: slotRulesInput,
 			} = item
+
+			// Because of old slot and default value null
+			const rulesInput = slotRulesInput || { version: '1', inputs: {} }
 
 			const { autoSetMinCPM } = rulesInput.inputs
 
