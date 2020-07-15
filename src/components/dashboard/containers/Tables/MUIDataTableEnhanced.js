@@ -1,6 +1,6 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import MUIDataTable from 'mui-datatables'
-import { LinearProgress, Paper } from '@material-ui/core'
+import { LinearProgress, Box } from '@material-ui/core'
 import { t } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -66,7 +66,7 @@ export default function MUIDataTableEnhanced(props) {
 	const { title, data, columns, options, loading } = props
 	const classes = useStyles()
 	return (
-		<Paper variant='outlined'>
+		<Box>
 			<MUIDataTable
 				title={title}
 				data={data}
@@ -85,6 +85,6 @@ export default function MUIDataTableEnhanced(props) {
 				}}
 			/>
 			{loading && <LinearProgress className={classes.progress} />}
-		</Paper>
+		</Box>
 	)
 }
