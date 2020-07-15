@@ -10,7 +10,7 @@ import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
 
 import { WebsiteIssues } from 'components/dashboard/containers/Slot/WebsiteIssues'
 import OutlinedPropView from 'components/common/OutlinedPropView'
-import { SlotEdits } from './SlotEdits'
+import { SlotEdits, SlotAdvancedRules } from './SlotEdits'
 import {
 	ItemTitle,
 	ItemDescription,
@@ -76,15 +76,7 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 								<Typography>{t('SLOT_ADVANCED')}</Typography>
 							</ExpansionPanelSummary>
 							<Box p={1}>
-								<Grid container spacing={2} disa>
-									<Grid item xs={12}>
-										<ItemMinPerImpression item={item} {...hookProps} />
-									</Grid>
-									<Grid item xs={12}>
-										<SlotAdultContent item={item} {...hookProps} />
-									</Grid>
-									<Grid item xs={12}></Grid>
-								</Grid>
+								<SlotAdvancedRules item={item} {...hookProps} />
 							</Box>
 						</ExpansionPanel>
 					</Grid>
