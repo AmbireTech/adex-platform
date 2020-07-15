@@ -1,10 +1,17 @@
 import React, { Fragment } from 'react'
-import { Paper, Grid, Box } from '@material-ui/core'
+import {
+	Grid,
+	Box,
+	ExpansionPanel,
+	ExpansionPanelSummary,
+	Typography,
+} from '@material-ui/core'
+import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
+
 import { WebsiteIssues } from 'components/dashboard/containers/Slot/WebsiteIssues'
 import OutlinedPropView from 'components/common/OutlinedPropView'
 import { SlotEdits } from './SlotEdits'
 import {
-	ChangeControls,
 	ItemTitle,
 	ItemDescription,
 	ItemAdType,
@@ -28,8 +35,6 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 		targetUrl,
 		website,
 		archived,
-		rulesInput,
-		minPerImpression,
 	} = item
 	const { title: errTitle, description: errDescription } = hookProps.validations
 
@@ -62,6 +67,26 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 								/>
 							</Box>
 						)}
+						<ExpansionPanel square={true} variant='outlined' dis>
+							<ExpansionPanelSummary
+								expandIcon={<ExpandMoreIcon />}
+								aria-controls='slot-rules-advanced'
+								id='slot-rules-advanced'
+							>
+								<Typography>{t('SLOT_ADVANCED')}</Typography>
+							</ExpansionPanelSummary>
+							<Box p={1}>
+								<Grid container spacing={2} disa>
+									<Grid item xs={12}>
+										<ItemMinPerImpression item={item} {...hookProps} />
+									</Grid>
+									<Grid item xs={12}>
+										<SlotAdultContent item={item} {...hookProps} />
+									</Grid>
+									<Grid item xs={12}></Grid>
+								</Grid>
+							</Box>
+						</ExpansionPanel>
 					</Grid>
 					<Grid item xs={12} sm={12} md={6} lg={7}>
 						<Box py={1}>
@@ -86,17 +111,6 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 								label={t('WEBSITE_VERIFICATION')}
 								value={<WebsiteIssues website={website} tryAgainBtn />}
 							/>
-						</Box>
-						<Box py={1}>
-							<Grid container spacing={2}>
-								<Grid item xs={12}>
-									<ItemMinPerImpression item={item} {...hookProps} />
-								</Grid>
-								<Grid item xs={12}>
-									<SlotAdultContent item={item} {...hookProps} />
-								</Grid>
-								<Grid item xs={12}></Grid>
-							</Grid>
 						</Box>
 					</Grid>
 					<Grid item xs={12} sm={12} md={12} lg={6}></Grid>

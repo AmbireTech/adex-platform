@@ -399,101 +399,96 @@ export const ItemMinPerImpression = ({
 			: minPerImpression
 
 	return (
-		<OutlinedPropView
-			label={t('MIN_CPM_SLOT_LABEL', { args: [symbol] })}
-			value={
-				<Grid container spacing={2}>
-					<Grid item xs={12}>
-						<TextField
-							fullWidth
-							variant='outlined'
-							type='text'
-							required
-							label={t('MIN_CPM_SLOT_LABEL_MANUAL')}
-							name='minPerImpression'
-							value={minCPM || ''}
-							disabled={!!autoSetMinCPM || !active}
-							onChange={ev => {
-								const value = ev.target.value
-								updateField('minPerImpression', value)
-								execute(
-									validateNumberString({
-										validateId,
-										prop: 'minPerImpression',
-										value,
-										dirty: true,
-									})
-								)
-							}}
-							error={showError}
-							maxLength={120}
-							helperText={
-								showError ? errMin.errMsg : t('SLOT_MANUAL_CPM_MIN_HELPER')
-							}
-							InputProps={
-								!autoSetMinCPM
-									? {
-											endAdornment: (
-												<InputAdornment position='end'>
-													<IconButton
-														// size='small'
-														color='secondary'
-														onClick={() =>
-															active
-																? returnPropToInitialState('minPerImpression')
-																: setActiveFields('minPerImpression', true)
-														}
-													>
-														{active ? <UndoOutlined /> : <Edit />}
-													</IconButton>
-												</InputAdornment>
-											),
-									  }
-									: {}
-							}
-						/>
-					</Grid>
+		<Grid container spacing={2}>
+			<Grid item xs={12}>
+				<TextField
+					fullWidth
+					variant='outlined'
+					type='text'
+					required
+					label={t('MIN_CPM_SLOT_LABEL_MANUAL')}
+					name='minPerImpression'
+					value={minCPM || ''}
+					disabled={!!autoSetMinCPM || !active}
+					onChange={ev => {
+						const value = ev.target.value
+						updateField('minPerImpression', value)
+						execute(
+							validateNumberString({
+								validateId,
+								prop: 'minPerImpression',
+								value,
+								dirty: true,
+							})
+						)
+					}}
+					error={showError}
+					maxLength={120}
+					helperText={
+						showError ? errMin.errMsg : t('SLOT_MANUAL_CPM_MIN_HELPER')
+					}
+					InputProps={
+						!autoSetMinCPM
+							? {
+									endAdornment: (
+										<InputAdornment position='end'>
+											<IconButton
+												// size='small'
+												color='secondary'
+												onClick={() =>
+													active
+														? returnPropToInitialState('minPerImpression')
+														: setActiveFields('minPerImpression', true)
+												}
+											>
+												{active ? <UndoOutlined /> : <Edit />}
+											</IconButton>
+										</InputAdornment>
+									),
+							  }
+							: {}
+					}
+				/>
+			</Grid>
 
-					<Grid item xs={12}>
-						<OutlinedPropView
-							label={t('SLOT_AUTO_MIN_CPM_LABEL')}
-							value={
-								<FormControl>
-									<FormGroup row>
-										<FormControlLabel
-											control={
-												<Checkbox
-													checked={!!autoSetMinCPM}
-													onChange={ev => {
-														const checked = ev.target.checked
-														updateField(
-															'rulesInput',
-															{
-																...rulesInput,
-																inputs: {
-																	...rulesInput.inputs,
-																	autoSetMinCPM: checked,
-																},
-															},
-															{
-																name: 'autoSetMinCPM',
-																fields: ['rulesInput'],
-															}
-														)
-													}}
-													value='autoSetMinCPM'
-												/>
-											}
-											label={t('SLOT_AUTO_MIN_CPM_INFO_LABEL')}
+			<Grid item xs={12}>
+				<OutlinedPropView
+					label={t('SLOT_AUTO_MIN_CPM_LABEL')}
+					value={
+						<FormControl>
+							<FormGroup row>
+								<FormControlLabel
+									control={
+										<Checkbox
+											checked={!!autoSetMinCPM}
+											onChange={ev => {
+												const checked = ev.target.checked
+												updateField(
+													'rulesInput',
+													{
+														...rulesInput,
+														inputs: {
+															...rulesInput.inputs,
+															autoSetMinCPM: checked,
+														},
+													},
+													{
+														name: 'autoSetMinCPM',
+														fields: ['rulesInput'],
+													}
+												)
+											}}
+											value='autoSetMinCPM'
 										/>
-									</FormGroup>
-								</FormControl>
-							}
-						/>
-					</Grid>
-				</Grid>
-			}
-		/>
+									}
+									label={t('SLOT_AUTO_MIN_CPM_INFO_LABEL')}
+								/>
+							</FormGroup>
+						</FormControl>
+					}
+				/>
+			</Grid>
+		</Grid>
 	)
 }
 export const SlotAdultContent = ({
