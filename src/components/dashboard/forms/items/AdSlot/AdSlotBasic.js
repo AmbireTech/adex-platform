@@ -47,9 +47,11 @@ function AdSlotBasic({ validateId }) {
 		description = '',
 		website = '',
 		type = '',
-		rulesInput = {},
+		rulesInput: slotRulesInput,
 		minPerImpression,
 	} = newItem
+
+	const rulesInput = slotRulesInput || { version: '1', inputs: {} }
 
 	const { allowAdultContent, autoSetMinCPM } = rulesInput.inputs
 

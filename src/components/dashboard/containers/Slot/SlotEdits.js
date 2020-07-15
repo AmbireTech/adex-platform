@@ -67,7 +67,8 @@ export const SlotAdvancedRules = ({
 	activeFields = {},
 }) => {
 	const { address, decimals, symbol } = selectMainToken()
-	const { minPerImpression, rulesInput = { inputs: {} } } = item
+	const { minPerImpression, rulesInput: slotRulesInput } = item
+	const rulesInput = slotRulesInput || { version: '1', inputs: {} }
 	const { autoSetMinCPM, allowAdultContent } = rulesInput.inputs
 	const active = !!activeFields.minPerImpression
 	const { minPerImpression: errMin } = validations
