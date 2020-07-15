@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from 'react'
 import PropTypes from 'prop-types'
 import { AdSlot } from 'adex-models'
-import { Box, Tabs, Tab, Paper } from '@material-ui/core'
+import { Tabs, Tab } from '@material-ui/core'
 import {
 	useItem,
 	ChangeControls,
