@@ -25,7 +25,7 @@ export const styles = theme => {
 			overflowY: 'auto',
 			overflowX: 'hidden',
 			height: 0,
-			padding: ds,
+			padding: spacing,
 		},
 		right: {
 			textAlign: 'right',

@@ -89,10 +89,18 @@ export const styles = theme => {
 		},
 		changeControlsPaper: {
 			borderColor: theme.palette.secondary.main,
-			marginBottom: spacing,
+			// marginBottom: spacing,
+			// marginTop: spacing,
 			[theme.breakpoints.down('sm')]: {
 				marginBottom: 0,
 			},
+		},
+		itemTabsBar: {
+			// borderBottom: 0,
+		},
+		itemTabsContainer: {
+			borderTop: 0,
+			backgroundColor: theme.palette.background.default,
 		},
 	}
 }

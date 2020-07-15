@@ -189,7 +189,7 @@ const MaterialStepper = props => {
 			flexDirection='column'
 			alignItems='space-between'
 		>
-			<Box mb={2}>
+			<Box mb={1}>
 				<Paper
 					classes={{
 						root: classes.stepperNav,
@@ -216,7 +216,7 @@ const MaterialStepper = props => {
 			</Paper>
 
 			{!!dirtyErrors.length && (
-				<Box color='error.main' mt={2}>
+				<Box color='error.main' mt={1}>
 					{dirtyErrors.map(err => (
 						<Chip
 							key={err.field}
@@ -231,7 +231,7 @@ const MaterialStepper = props => {
 				</Box>
 			)}
 
-			<Box mt={2}>
+			<Box mt={1}>
 				<div className={classes.left}>
 					{canReverse && (
 						<Button onClick={goToPreviousPage}>{t('BACK')}</Button>

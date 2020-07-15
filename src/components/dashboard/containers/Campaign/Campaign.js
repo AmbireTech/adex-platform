@@ -30,7 +30,12 @@ import MapChart from 'components/dashboard/charts/map/MapChart'
 import { CampaignBasic } from './CampaignBasic'
 import { CampaignAudience } from './CampaignAudience'
 import { validateAndUpdateCampaign, updateMemoryUi, execute } from 'actions'
-import { useItem } from 'components/dashboard/containers/ItemCommon/'
+import {
+	useItem,
+	ChangeControls,
+	ItemTabsBar,
+	ItemTabsContainer,
+} from 'components/dashboard/containers/ItemCommon/'
 import { CampaignStatsByTimeframe } from './CampaignStatsByTimeframe'
 
 function Campaign({ match }) {
@@ -61,7 +66,7 @@ function Campaign({ match }) {
 
 	return (
 		<Fragment>
-			<Paper variant='outlined'>
+			<ItemTabsBar>
 				<Tabs
 					value={tabIndex}
 					onChange={(ev, index) => setTabIndex(index)}
@@ -81,12 +86,21 @@ function Campaign({ match }) {
 						<Tab label={t('RECEIPT')} />
 					)}
 				</Tabs>
-			</Paper>
-			<Box my={1}>
-				{tabIndex === 0 && <CampaignBasic item={item} {...hookProps} />}
-				{tabIndex === 1 && <CampaignAudience item={item} {...hookProps} />}
+			</ItemTabsBar>
+			<ChangeControls {...hookProps} />
+			<ItemTabsContainer>
+				{tabIndex === 0 && (
+					<Box p={1}>
+						<CampaignBasic item={item} {...hookProps} />{' '}
+					</Box>
+				)}
+				{tabIndex === 1 && (
+					<Box p={1}>
+						<CampaignAudience item={item} {...hookProps} />{' '}
+					</Box>
+				)}
 				{tabIndex === 2 && (
-					<Box>
+					<Box p={1}>
 						{!dataLoaded && <LinearProgress />}
 						<Box
 							display='flex'
@@ -96,7 +110,9 @@ function Campaign({ match }) {
 							justifyContent='center'
 						>
 							<Box flexGrow='1' order={{ xs: 2, md: 2, lg: 1 }}>
-								<CampaignStatsBreakdownTable campaignId={campaignId} />
+								<Paper variant='outlined'>
+									<CampaignStatsBreakdownTable campaignId={campaignId} />
+								</Paper>
 							</Box>
 							<Box p={2} order={{ xs: 1, md: 1, lg: 2 }}>
 								<CampaignStatsDoughnut campaignId={campaignId} />
@@ -105,40 +121,46 @@ function Campaign({ match }) {
 					</Box>
 				)}
 				{tabIndex === 3 && (
-					<Grid container spacing={1} alignItems='flex-start'>
-						<Grid item xs={12}>
-							<Paper variant='outlined'>
-								<Box p={2}>
+					<Box p={1}>
+						<Grid container spacing={1} alignItems='flex-start'>
+							<Grid item xs={12}>
+								<Box>
 									<Typography variant='button' align='center'>
 										{t('COUNTRY_STATS_PERIOD', { args: ['30', 'DAYS'] })}
 									</Typography>
 								</Box>
-							</Paper>
-							{!dataLoaded && <LinearProgress />}
+								{!dataLoaded && <LinearProgress />}
+							</Grid>
+							<Grid item xs={12} md={12} lg={6}>
+								<MapChart
+									selector={state =>
+										selectCampaignAnalyticsToCountryMapChartData(state, {
+											campaignId,
+										})
+									}
+								/>
+							</Grid>
+							<Grid item xs={12} md={12} lg={6}>
+								<Paper variant='outlined'>
+									<StatsByCountryTable
+										selector={state =>
+											selectCampaignAnalyticsToCountryTableData(state, {
+												campaignId,
+											})
+										}
+										showEarnings
+									/>
+								</Paper>
+							</Grid>
 						</Grid>
-						<Grid item xs={12} md={12} lg={6}>
-							<MapChart
-								selector={state =>
-									selectCampaignAnalyticsToCountryMapChartData(state, {
-										campaignId,
-									})
-								}
-							/>
-						</Grid>
-						<Grid item xs={12} md={12} lg={6}>
-							<StatsByCountryTable
-								selector={state =>
-									selectCampaignAnalyticsToCountryTableData(state, {
-										campaignId,
-									})
-								}
-								showEarnings
-							/>
-						</Grid>
-					</Grid>
+					</Box>
 				)}
 
-				{tabIndex === 4 && <CampaignStatsByTimeframe item={item} />}
+				{tabIndex === 4 && (
+					<Box p={1}>
+						<CampaignStatsByTimeframe item={item} />
+					</Box>
+				)}
 				{tabIndex === 5 && <AdUnitsTable campaignId={campaignId} noClone />}
 				{tabIndex === 6 && (
 					<List>
@@ -177,7 +199,7 @@ function Campaign({ match }) {
 					</List>
 				)}
 				{tabIndex === 7 && <Receipt itemId={campaignId} />}
-			</Box>
+			</ItemTabsContainer>
 		</Fragment>
 	)
 }

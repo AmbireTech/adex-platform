@@ -15,7 +15,7 @@ import {
 import { isVideoMedia } from 'helpers/mediaHelpers.js'
 import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
-import { PropRow } from 'components/common/dialog/content'
+import OutlinedPropView from 'components/common/OutlinedPropView'
 import { t } from 'selectors'
 
 const useStyles = makeStyles(styles)
@@ -151,13 +151,13 @@ function ImgForm(props) {
 	const videoSrc = isVideoMedia(mime)
 	return (
 		<div className={classes.imgForm}>
-			<PropRow
-				left={
+			<OutlinedPropView
+				label={
 					imgSrc && imgName
 						? `${label || 'Image'}: ${imgName}`
 						: label || 'Upload image'
 				}
-				right={
+				value={
 					<div>
 						<div>
 							{cropMode ? (

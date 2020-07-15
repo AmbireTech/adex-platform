@@ -9,6 +9,10 @@ import {
 	Tabs,
 	LinearProgress,
 } from '@material-ui/core'
+import {
+	ItemTabsBar,
+	ItemTabsContainer,
+} from 'components/dashboard/containers/ItemCommon/'
 import BestEarnersTable from 'components/dashboard/containers/Tables/BestEarnersTable'
 import StatsByCountryTable from 'components/dashboard/containers/Tables/StatsByCountryTable'
 import MapChart from 'components/dashboard/charts/map/MapChart'
@@ -29,7 +33,7 @@ export function PublisherStats() {
 
 	return (
 		<Fragment>
-			<Paper position='static' variant='outlined'>
+			<ItemTabsBar>
 				<Tabs
 					value={tabIndex}
 					onChange={(ev, index) => setTabIndex(index)}
@@ -42,47 +46,51 @@ export function PublisherStats() {
 					<Tab label={t('COUNTRY_DATA')} />
 					<Tab label={t('TABLE_BEST_EARNERS_UNITS_TITLE')} />
 				</Tabs>
-			</Paper>
-			<Box my={1}>
+			</ItemTabsBar>
+			<ItemTabsContainer noBackground>
 				{tabIndex === 0 && (
-					<Paper variant='outlined'>
-						<Box p={1}>
-							<BasicStats side='publisher' />
-						</Box>
-					</Paper>
+					<Box p={1}>
+						<BasicStats side='publisher' />
+					</Box>
 				)}
 				{tabIndex === 1 && (
-					<Grid container spacing={1}>
-						<Grid item xs={12}>
-							<Paper variant='outlined'>
-								<Box p={2}>
+					<Box p={1}>
+						<Grid container spacing={1}>
+							<Grid item xs={12}>
+								<Box>
 									<Typography variant='button' align='center'>
 										{t('COUNTRY_STATS_PERIOD', { args: ['30', 'DAYS'] })}
 									</Typography>
 								</Box>
-							</Paper>
-							{!dataLoaded && <LinearProgress />}
-						</Grid>
-						<Grid item xs={12} md={12} lg={6}>
-							<MapChart selector={selectPublisherStatsByCountryMapChartData} />
-						</Grid>
+								{!dataLoaded && <LinearProgress />}
+							</Grid>
+							<Grid item xs={12} md={12} lg={6}>
+								<MapChart
+									selector={selectPublisherStatsByCountryMapChartData}
+								/>
+							</Grid>
 
-						<Grid item xs={12} md={12} lg={6}>
-							<StatsByCountryTable
-								selector={selectPublisherStatsByCountryTableData}
-								// TODO: uncomment after 26.04.2020
-								// showEarnings
-							/>
+							<Grid item xs={12} md={12} lg={6}>
+								<Paper variant='outlined'>
+									<StatsByCountryTable
+										selector={selectPublisherStatsByCountryTableData}
+										// TODO: uncomment after 26.04.2020
+										// showEarnings
+									/>
+								</Paper>
+							</Grid>
 						</Grid>
-					</Grid>
+					</Box>
 				)}
 				{tabIndex === 2 && (
+					// <Box p={1}>
 					<BestEarnersTable
 						selector={selectBestEarnersTableData}
 						title='TABLE_BEST_EARNERS_UNITS_TITLE'
 					/>
+					// </Box>
 				)}
-			</Box>
+			</ItemTabsContainer>
 		</Fragment>
 	)
 }
