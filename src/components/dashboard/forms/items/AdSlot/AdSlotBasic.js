@@ -7,7 +7,6 @@ import {
 	FormGroup,
 	FormControlLabel,
 	FormControl,
-	FormHelperText,
 	Checkbox,
 	ExpansionPanel,
 	ExpansionPanelSummary,
@@ -18,6 +17,7 @@ import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
 import Dropdown from 'components/common/dropdown'
 import { FullContentSpinner } from 'components/common/dialog/content'
 import { AutocompleteWithCreate } from 'components/common/autocomplete'
+import OutlinedPropView from 'components/common/OutlinedPropView'
 import {
 	t,
 	selectNewAdSlot,
@@ -209,62 +209,66 @@ function AdSlotBasic({ validateId }) {
 									</Grid>
 
 									<Grid item xs={12}>
-										<FormControl>
-											<FormGroup row>
-												<FormControlLabel
-													control={
-														<Checkbox
-															checked={!!autoSetMinCPM}
-															onChange={ev =>
-																execute(
-																	updateNewSlot('rulesInput', {
-																		...rulesInput,
-																		inputs: {
-																			...rulesInput.inputs,
-																			autoSetMinCPM: ev.target.checked,
-																		},
-																	})
-																)
+										<OutlinedPropView
+											label={t('SLOT_AUTO_MIN_CPM_LABEL')}
+											value={
+												<FormControl>
+													<FormGroup row>
+														<FormControlLabel
+															control={
+																<Checkbox
+																	checked={!!autoSetMinCPM}
+																	onChange={ev =>
+																		execute(
+																			updateNewSlot('rulesInput', {
+																				...rulesInput,
+																				inputs: {
+																					...rulesInput.inputs,
+																					autoSetMinCPM: ev.target.checked,
+																				},
+																			})
+																		)
+																	}
+																	value='autoSetMinCPM'
+																/>
 															}
-															value='autoSetMinCPM'
+															label={t('SLOT_AUTO_MIN_CPM_INFO_LABEL')}
 														/>
-													}
-													label={t('SLOT_AUTO_MIN_CPM')}
-												/>
-											</FormGroup>
-											<FormHelperText>
-												{t('SLOT_AUTO_MIN_CPM_INFO')}
-											</FormHelperText>
-										</FormControl>
+													</FormGroup>
+												</FormControl>
+											}
+										/>
 									</Grid>
 									<Grid item xs={12}>
-										<FormControl>
-											<FormGroup row>
-												<FormControlLabel
-													control={
-														<Checkbox
-															checked={!!allowAdultContent}
-															onChange={ev =>
-																execute(
-																	updateNewSlot('rulesInput', {
-																		...rulesInput,
-																		inputs: {
-																			...rulesInput.inputs,
-																			allowAdultContent: ev.target.checked,
-																		},
-																	})
-																)
+										<OutlinedPropView
+											label={t('SLOT_ALLOW_ADULT_CONTENT')}
+											value={
+												<FormControl>
+													<FormGroup row>
+														<FormControlLabel
+															control={
+																<Checkbox
+																	checked={!!allowAdultContent}
+																	onChange={ev =>
+																		execute(
+																			updateNewSlot('rulesInput', {
+																				...rulesInput,
+																				inputs: {
+																					...rulesInput.inputs,
+																					allowAdultContent: ev.target.checked,
+																				},
+																			})
+																		)
+																	}
+																	value='allowAdultContent'
+																/>
 															}
-															value='allowAdultContent'
+															label={t('SLOT_ALLOW_ADULT_CONTENT_INFO')}
 														/>
-													}
-													label={t('SLOT_ALLOW_ADULT_CONTENT')}
-												/>
-											</FormGroup>
-											<FormHelperText>
-												{t('SLOT_ALLOW_ADULT_CONTENT_INFO')}
-											</FormHelperText>
-										</FormControl>
+													</FormGroup>
+												</FormControl>
+											}
+										/>
 									</Grid>
 								</Grid>
 							</Box>
