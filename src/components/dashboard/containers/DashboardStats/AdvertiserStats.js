@@ -1,6 +1,10 @@
 import React, { Fragment, useState } from 'react'
-import { Box, Paper, Tabs, Tab } from '@material-ui/core'
+import { Box, Tabs, Tab } from '@material-ui/core'
 import { BasicStats } from './BasicStats'
+import {
+	ItemTabsBar,
+	ItemTabsContainer,
+} from 'components/dashboard/containers/ItemCommon/'
 import { t } from 'selectors'
 
 export function AdvertiserStats() {
@@ -8,7 +12,7 @@ export function AdvertiserStats() {
 
 	return (
 		<Fragment>
-			<Paper variant='outlined'>
+			<ItemTabsBar>
 				<Tabs
 					value={tabIndex}
 					onChange={(ev, index) => setTabIndex(index)}
@@ -19,16 +23,14 @@ export function AdvertiserStats() {
 				>
 					<Tab label={t('CHARTS')} />
 				</Tabs>
-			</Paper>
-			<Box my={1}>
+			</ItemTabsBar>
+			<ItemTabsContainer>
 				{tabIndex === 0 && (
-					<Paper variant='outlined'>
-						<Box p={1}>
-							<BasicStats side='advertiser' />
-						</Box>
-					</Paper>
+					<Box p={1}>
+						<BasicStats side='advertiser' />
+					</Box>
 				)}
-			</Box>
+			</ItemTabsContainer>
 		</Fragment>
 	)
 }
