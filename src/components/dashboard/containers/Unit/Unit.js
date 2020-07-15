@@ -1,6 +1,6 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useState } from 'react'
 import PropTypes from 'prop-types'
-import { Grid, Paper, Box } from '@material-ui/core'
+import { Grid, Tabs, Tab, Box } from '@material-ui/core'
 import {
 	useItem,
 	ChangeControls,
@@ -10,12 +10,16 @@ import {
 	ItemTargetURL,
 	MediaCard,
 	ArchiveItemBtn,
+	ItemTabsContainer,
+	ItemTabsBar,
 } from 'components/dashboard/containers/ItemCommon/'
 import { AdUnit } from 'adex-models'
 import { validateAndUpdateUnit } from 'actions'
 import { t } from 'selectors'
 
 function Unit({ match }) {
+	const [tabIndex, setTabIndex] = useState(0)
+
 	const { item, validations, validateId, validate, ...hookProps } = useItem({
 		itemType: 'AdUnit',
 		match,
@@ -39,8 +43,20 @@ function Unit({ match }) {
 
 	return (
 		<Fragment>
+			<ItemTabsBar>
+				<Tabs
+					value={tabIndex}
+					onChange={(ev, index) => setTabIndex(index)}
+					variant='scrollable'
+					scrollButtons='auto'
+					indicatorColor='primary'
+					textColor='primary'
+				>
+					<Tab label={t('AUDIENCE_MAIN')} />
+				</Tabs>
+			</ItemTabsBar>
 			<ChangeControls {...hookProps} />
-			<Paper variant='outlined'>
+			<ItemTabsContainer>
 				<Box p={2}>
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={12} md={6} lg={5}>
@@ -83,7 +99,7 @@ function Unit({ match }) {
 						</Grid>
 					</Grid>
 				</Box>
-			</Paper>
+			</ItemTabsContainer>
 		</Fragment>
 	)
 }
