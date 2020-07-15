@@ -1,10 +1,17 @@
 import React, { Fragment } from 'react'
-import { Paper, Grid, Box } from '@material-ui/core'
+import {
+	Grid,
+	Box,
+	ExpansionPanel,
+	ExpansionPanelSummary,
+	Typography,
+} from '@material-ui/core'
+import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
+
 import { WebsiteIssues } from 'components/dashboard/containers/Slot/WebsiteIssues'
 import OutlinedPropView from 'components/common/OutlinedPropView'
-import { SlotEdits } from './SlotEdits'
+import { SlotEdits, SlotAdvancedRules } from './SlotEdits'
 import {
-	ChangeControls,
 	ItemTitle,
 	ItemDescription,
 	ItemAdType,
@@ -12,6 +19,8 @@ import {
 	MediaCard,
 	ItemWebsite,
 	ArchiveItemBtn,
+	ItemMinPerImpression,
+	SlotAdultContent,
 } from 'components/dashboard/containers/ItemCommon/'
 import { t } from 'selectors'
 
@@ -31,68 +40,76 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 
 	return (
 		<Fragment>
-			<ChangeControls {...hookProps} />
-			<Paper elevation={2} variant='outlined'>
-				<Box p={2}>
-					<Grid container spacing={2}>
-						<Grid item xs={12} sm={12} md={6} lg={5}>
+			<Box p={2}>
+				<Grid container spacing={2}>
+					<Grid item xs={12} sm={12} md={6} lg={5}>
+						<Box py={1}>
+							<MediaCard
+								mediaUrl={mediaUrl}
+								mediaMime={mediaMime}
+								label={t('SLOT_FALLBACK_MEDIA_LABEL')}
+							/>
+						</Box>
+						<Box py={1}>
+							<ItemFallbackMediaURL targetUrl={targetUrl} />
+						</Box>
+						<Box py={1}>
+							<SlotEdits item={item} {...hookProps} />
+						</Box>
+						{!archived && (
 							<Box py={1}>
-								<MediaCard
-									mediaUrl={mediaUrl}
-									mediaMime={mediaMime}
-									label={t('SLOT_FALLBACK_MEDIA_LABEL')}
+								<ArchiveItemBtn
+									fullWidth
+									itemType='AdSlot'
+									itemId={id}
+									title={title}
+									goToTableOnSuccess
 								/>
 							</Box>
-							<Box py={1}>
-								<ItemFallbackMediaURL targetUrl={targetUrl} />
-							</Box>
-							<Box py={1}>
-								<SlotEdits item={item} {...hookProps} />
-							</Box>
-							{!archived && (
-								<Box py={1}>
-									<ArchiveItemBtn
-										fullWidth
-										itemType='AdSlot'
-										itemId={id}
-										title={title}
-										goToTableOnSuccess
-									/>
+						)}
+						<Box py={1}>
+							<ExpansionPanel square={true} variant='outlined'>
+								<ExpansionPanelSummary
+									expandIcon={<ExpandMoreIcon />}
+									aria-controls='slot-rules-advanced'
+									id='slot-rules-advanced'
+								>
+									<Typography>{t('SLOT_ADVANCED')}</Typography>
+								</ExpansionPanelSummary>
+								<Box p={1}>
+									<SlotAdvancedRules item={item} {...hookProps} />
 								</Box>
-							)}
-						</Grid>
-						<Grid item xs={12} sm={12} md={6} lg={7}>
-							<Box py={1}>
-								<ItemTitle title={title} errTitle={errTitle} {...hookProps} />
-							</Box>
-							<Box py={1}>
-								<ItemDescription
-									description={description}
-									errDescription={errDescription}
-									{...hookProps}
-								/>
-							</Box>
-							<Grid container spacing={2}>
-								<Grid item xs={12} sm={12} md={6}>
-									<Box py={1}>
-										<ItemAdType type={type} />
-									</Box>
-								</Grid>
-							</Grid>
-							<Box py={1}>
-								<ItemWebsite item={item} {...hookProps} />
-							</Box>
-							<Box>
-								<OutlinedPropView
-									label={t('WEBSITE_VERIFICATION')}
-									value={<WebsiteIssues website={website} tryAgainBtn />}
-								/>
-							</Box>
-						</Grid>
-						<Grid item xs={12} sm={12} md={12} lg={6}></Grid>
+							</ExpansionPanel>
+						</Box>
 					</Grid>
-				</Box>
-			</Paper>
+					<Grid item xs={12} sm={12} md={6} lg={7}>
+						<Box py={1}>
+							<ItemTitle title={title} errTitle={errTitle} {...hookProps} />
+						</Box>
+						<Box py={1}>
+							<ItemDescription
+								description={description}
+								errDescription={errDescription}
+								{...hookProps}
+							/>
+						</Box>
+						<Box py={1}>
+							<ItemAdType type={type} />
+						</Box>
+
+						<Box py={1}>
+							<ItemWebsite item={item} {...hookProps} />
+						</Box>
+						<Box>
+							<OutlinedPropView
+								label={t('WEBSITE_VERIFICATION')}
+								value={<WebsiteIssues website={website} tryAgainBtn />}
+							/>
+						</Box>
+					</Grid>
+					<Grid item xs={12} sm={12} md={12} lg={6}></Grid>
+				</Grid>
+			</Box>
 		</Fragment>
 	)
 }

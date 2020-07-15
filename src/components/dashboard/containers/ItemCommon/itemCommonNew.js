@@ -14,6 +14,12 @@ import {
 	Paper,
 	Collapse,
 	Button,
+	FormControl,
+	FormControlLabel,
+	FormGroup,
+	FormHelperText,
+	Checkbox,
+	Grid,
 } from '@material-ui/core'
 import { Alert } from '@material-ui/lab'
 import {
@@ -24,11 +30,17 @@ import {
 	ArchiveSharp as ArchiveIcon,
 } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
+import OutlinedPropView from 'components/common/OutlinedPropView'
 import { ExternalAnchor } from 'components/common/anchor/anchor'
 import { formatTokenAmount } from 'helpers/formatters'
 import { bigNumberify } from 'ethers/utils'
 import { t, selectMainToken, selectAuthType } from 'selectors'
-import { execute, confirmAction, archiveItem } from 'actions'
+import {
+	execute,
+	confirmAction,
+	archiveItem,
+	validateNumberString,
+} from 'actions'
 import { styles } from './styles'
 import { SaveBtn } from './SaveBtn'
 import { WALLET_ACTIONS_MSGS } from 'constants/misc'
@@ -60,7 +72,7 @@ export const DirtyProps = ({ dirtyProps = [], returnPropToInitialState }) => {
 								size='small'
 								color='secondary'
 								className={classes.changeChip}
-								key={p}
+								key={p.name || p}
 								label={t(p.name || p, { isProp: true })}
 								onDelete={() => {
 									returnPropToInitialState(p)
@@ -107,6 +119,30 @@ export const ChangeControls = hookProps => {
 				)}
 			</Collapse>
 		</div>
+	)
+}
+
+export const ItemTabsContainer = ({ children, noBackground }) => {
+	const classes = useStyles()
+
+	return (
+		<Paper
+			className={classes.itemTabsContainer}
+			style={noBackground ? { background: 0 } : {}}
+			variant='outlined'
+		>
+			{children}
+		</Paper>
+	)
+}
+
+export const ItemTabsBar = ({ children }) => {
+	const classes = useStyles()
+
+	return (
+		<Paper className={classes.itemTabsBar} variant='outlined'>
+			{children}
+		</Paper>
 	)
 }
 
@@ -338,64 +374,6 @@ export const MediaCard = ({ mediaUrl = '', mediaMime = '', label = '' }) => {
 				)}
 			</CardMedia>
 		</Card>
-	)
-}
-
-export const ItemMinPerImpression = ({
-	item = {},
-	validations,
-	updateField,
-	setActiveFields,
-	returnPropToInitialState,
-	activeFields = {},
-}) => {
-	const { address, decimals, symbol } = selectMainToken()
-	const { minPerImpression } = item
-	const active = !!activeFields.minPerImpression
-	const { minPerImpression: error } = validations
-	const showError = !!error && error.dirty
-	const minCPM =
-		typeof minPerImpression === 'object'
-			? formatTokenAmount(
-					bigNumberify((item.minPerImpression || {})[address] || '0').mul(1000),
-					decimals,
-					true
-			  )
-			: minPerImpression
-
-	return (
-		<TextField
-			fullWidth
-			id='item-minPerImpression'
-			label={t('MIN_CPM_SLOT_LABEL', { args: [symbol] })}
-			type='text'
-			name='minPerImpression'
-			value={minCPM || ''}
-			onChange={ev => {
-				updateField('minPerImpression', ev.target.value.trim())
-			}}
-			disabled={!active}
-			error={showError}
-			helperText={showError ? t(error.errMsg, { args: error.errMsgArgs }) : ' '}
-			variant='outlined'
-			InputProps={{
-				endAdornment: (
-					<InputAdornment position='end'>
-						<IconButton
-							// size='small'
-							color='secondary'
-							onClick={() =>
-								active
-									? returnPropToInitialState('minPerImpression')
-									: setActiveFields('minPerImpression', true)
-							}
-						>
-							{active ? <UndoOutlined /> : <Edit />}
-						</IconButton>
-					</InputAdornment>
-				),
-			}}
-		/>
 	)
 }
 

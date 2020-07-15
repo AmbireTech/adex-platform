@@ -7,12 +7,17 @@ import {
 	FormGroup,
 	FormControlLabel,
 	FormControl,
-	FormHelperText,
 	Checkbox,
+	ExpansionPanel,
+	ExpansionPanelSummary,
+	Typography,
+	Box,
 } from '@material-ui/core'
+import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
 import Dropdown from 'components/common/dropdown'
 import { FullContentSpinner } from 'components/common/dialog/content'
 import { AutocompleteWithCreate } from 'components/common/autocomplete'
+import OutlinedPropView from 'components/common/OutlinedPropView'
 import {
 	t,
 	selectNewAdSlot,
@@ -20,21 +25,33 @@ import {
 	selectSpinnerById,
 	selectSlotTypesSourceWithDemands,
 	websitesAutocompleteSrc,
+	selectMainToken,
+	selectMinTargetingCpm,
 } from 'selectors'
 import { UPDATING_SLOTS_DEMAND } from 'constants/spinners'
-import { updateSlotsDemandThrottled, updateNewSlot, execute } from 'actions'
+import {
+	updateSlotsDemandThrottled,
+	updateNewSlot,
+	validateNumberString,
+	execute,
+} from 'actions'
 
 function AdSlotBasic({ validateId }) {
+	const { symbol } = useSelector(selectMainToken)
 	const newItem = useSelector(selectNewAdSlot)
 	const websitesSrc = useSelector(websitesAutocompleteSrc)
 	const adTypesSource = useSelector(selectSlotTypesSourceWithDemands)
+	const minCPM = useSelector(selectMinTargetingCpm)
 	const {
 		title = '',
 		description = '',
 		website = '',
 		type = '',
-		rulesInput = {},
+		rulesInput: slotRulesInput,
+		minPerImpression,
 	} = newItem
+
+	const rulesInput = slotRulesInput || { version: '1', inputs: {} }
 
 	const { allowAdultContent, autoSetMinCPM } = rulesInput.inputs
 
@@ -47,12 +64,17 @@ function AdSlotBasic({ validateId }) {
 		description: errDescription,
 		website: errWebsite,
 		type: errType,
+		minPerImpression: errMin,
 	} = useSelector(state => selectValidationsById(state, validateId) || {})
 
 	useEffect(() => {
 		execute(updateSlotsDemandThrottled())
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+
+		if (!autoSetMinCPM && minPerImpression === null) {
+			execute(updateNewSlot('minPerImpression', minCPM.toFixed(2)))
+		}
+	}, [autoSetMinCPM, minCPM, minPerImpression])
 
 	return (
 		<div>
@@ -146,60 +168,113 @@ function AdSlotBasic({ validateId }) {
 						/>
 					</Grid>
 					<Grid item xs={12}>
-						<FormControl>
-							<FormGroup row>
-								<FormControlLabel
-									control={
-										<Checkbox
-											checked={!!autoSetMinCPM}
-											onChange={ev =>
+						<ExpansionPanel square={true} variant='outlined'>
+							<ExpansionPanelSummary
+								expandIcon={<ExpandMoreIcon />}
+								aria-controls='slot-rules-advanced'
+								id='slot-rules-advanced'
+							>
+								<Typography>{t('SLOT_ADVANCED')}</Typography>
+							</ExpansionPanelSummary>
+							<Box p={1}>
+								<Grid container spacing={2}>
+									<Grid item xs={12}>
+										<TextField
+											fullWidth
+											variant='outlined'
+											type='text'
+											required
+											label={t('MIN_CPM_SLOT_LABEL', { args: [symbol] })}
+											name='minPerImpression'
+											value={minPerImpression || ''}
+											disabled={!!autoSetMinCPM}
+											onChange={ev => {
+												const value = ev.target.value
+												execute(updateNewSlot('minPerImpression', value))
 												execute(
-													updateNewSlot('rulesInput', {
-														...rulesInput,
-														inputs: {
-															...rulesInput.inputs,
-															autoSetMinCPM: ev.target.checked,
-														},
+													validateNumberString({
+														validateId,
+														prop: 'minPerImpression',
+														value,
+														dirty: true,
 													})
 												)
+											}}
+											error={errMin && !!errMin.dirty}
+											maxLength={120}
+											helperText={
+												errMin && !!errMin.dirty
+													? errMin.errMsg
+													: t('SLOT_MIN_CPM_HELPER')
 											}
-											value='autoSetMinCPM'
 										/>
-									}
-									label={t('SLOT_AUTO_MIN_CPM')}
-								/>
-							</FormGroup>
-							<FormHelperText>{t('SLOT_AUTO_MIN_CPM_INFO')}</FormHelperText>
-						</FormControl>
-					</Grid>
-					<Grid item xs={12}>
-						<FormControl>
-							<FormGroup row>
-								<FormControlLabel
-									control={
-										<Checkbox
-											checked={!!allowAdultContent}
-											onChange={ev =>
-												execute(
-													updateNewSlot('rulesInput', {
-														...rulesInput,
-														inputs: {
-															...rulesInput.inputs,
-															allowAdultContent: ev.target.checked,
-														},
-													})
-												)
+									</Grid>
+
+									<Grid item xs={12}>
+										<OutlinedPropView
+											label={t('SLOT_AUTO_MIN_CPM_LABEL')}
+											value={
+												<FormControl>
+													<FormGroup row>
+														<FormControlLabel
+															control={
+																<Checkbox
+																	checked={!!autoSetMinCPM}
+																	onChange={ev =>
+																		execute(
+																			updateNewSlot('rulesInput', {
+																				...rulesInput,
+																				inputs: {
+																					...rulesInput.inputs,
+																					autoSetMinCPM: ev.target.checked,
+																				},
+																			})
+																		)
+																	}
+																	value='autoSetMinCPM'
+																/>
+															}
+															label={t('SLOT_AUTO_MIN_CPM_INFO_LABEL')}
+														/>
+													</FormGroup>
+												</FormControl>
 											}
-											value='allowAdultContent'
 										/>
-									}
-									label={t('SLOT_ALLOW_ADULT_CONTENT')}
-								/>
-							</FormGroup>
-							<FormHelperText>
-								{t('SLOT_ALLOW_ADULT_CONTENT_INFO')}
-							</FormHelperText>
-						</FormControl>
+									</Grid>
+									<Grid item xs={12}>
+										<OutlinedPropView
+											label={t('SLOT_ALLOW_ADULT_CONTENT')}
+											value={
+												<FormControl>
+													<FormGroup row>
+														<FormControlLabel
+															control={
+																<Checkbox
+																	checked={!!allowAdultContent}
+																	onChange={ev =>
+																		execute(
+																			updateNewSlot('rulesInput', {
+																				...rulesInput,
+																				inputs: {
+																					...rulesInput.inputs,
+																					allowAdultContent: ev.target.checked,
+																				},
+																			})
+																		)
+																	}
+																	value='allowAdultContent'
+																/>
+															}
+															label={t('SLOT_ALLOW_ADULT_CONTENT_INFO')}
+														/>
+													</FormGroup>
+												</FormControl>
+											}
+										/>
+									</Grid>
+								</Grid>
+							</Box>
+						</ExpansionPanel>
 					</Grid>
 				</Grid>
 			)}

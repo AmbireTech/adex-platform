@@ -65,8 +65,9 @@ const Campaigns = () => {
 				size='medium'
 				icon={<Add />}
 			/>
-
-			<CampaignsTable />
+			<Paper variant='outlined'>
+				<CampaignsTable />
+			</Paper>
 		</Box>
 	)
 }
@@ -81,7 +82,9 @@ const AdUnits = () => (
 			size='medium'
 			icon={<Add />}
 		/>
-		<AdUnitsTable />
+		<Paper variant='outlined'>
+			<AdUnitsTable />
+		</Paper>
 	</Box>
 )
 
@@ -95,7 +98,9 @@ const AdSlots = () => (
 			size='medium'
 			icon={<Add />}
 		/>
-		<AdSlotsTable />
+		<Paper variant='outlined'>
+			<AdSlotsTable />
+		</Paper>
 	</Box>
 )
 
@@ -109,7 +114,9 @@ const Audiences = () => (
 			size='medium'
 			icon={<Add />}
 		/>
-		<AudiencesTable />
+		<Paper variant='outlined'>
+			<AudiencesTable />
+		</Paper>
 	</Box>
 )
 

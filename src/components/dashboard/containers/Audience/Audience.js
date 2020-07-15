@@ -1,13 +1,15 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
 import { Audience as AudienceModel } from 'adex-models'
-import { Paper, Box } from '@material-ui/core'
+import { Tabs, Tab, Box } from '@material-ui/core'
 import {
 	useItem,
 	ChangeControls,
 	ItemTitle,
 	ArchiveItemBtn,
+	ItemTabsContainer,
+	ItemTabsBar,
 } from 'components/dashboard/containers/ItemCommon/'
 import AudiencePreview from 'components/dashboard/containers/AudiencePreview'
 import FormSteps from 'components/common/stepper/FormSteps'
@@ -25,13 +27,15 @@ import {
 	mapCurrentToNewAudience,
 } from 'actions'
 import { NewAudienceDialog } from 'components/dashboard/forms/items/NewItems'
-
 import { validateAndUpdateAudience as validateAndUpdateFn } from 'actions'
+import { t } from 'selectors'
 
 const useStyles = makeStyles(theme => ({
 	actions: {
+		marginTop: theme.spacing(1),
 		'& > *': {
-			margin: theme.spacing(1),
+			marginRight: theme.spacing(1),
+			marginBottom: theme.spacing(1),
 		},
 	},
 }))
@@ -62,6 +66,8 @@ export const TargetingSteps = ({ updateField, itemId, ...props }) => {
 const TargetingRulesEdit = WithDialog(TargetingSteps)
 
 function Audience({ match }) {
+	const [tabIndex, setTabIndex] = useState(0)
+
 	const classes = useStyles()
 
 	const { item = {}, validations, ...hookProps } = useItem({
@@ -76,69 +82,82 @@ function Audience({ match }) {
 
 	return (
 		<Fragment>
+			<ItemTabsBar>
+				<Tabs
+					value={tabIndex}
+					onChange={(ev, index) => setTabIndex(index)}
+					variant='scrollable'
+					scrollButtons='auto'
+					indicatorColor='primary'
+					textColor='primary'
+				>
+					<Tab label={t('AUDIENCE_MAIN')} />
+				</Tabs>
+			</ItemTabsBar>
 			<ChangeControls {...hookProps} />
-
-			<Paper variant='outlined'>
-				<Box p={1}>
+			<ItemTabsContainer>
+				<Box p={1} pt={2}>
 					<ItemTitle title={title} errTitle={errTitle} {...hookProps} />
-				</Box>
-				<AudiencePreview audienceInput={inputs} />
-				<Box p={1} className={classes.actions}>
-					<TargetingRulesEdit
-						btnLabel='UPDATE_AUDIENCE'
-						title='UPDATE_CAMPAIGN_AUDIENCE'
-						itemId={id}
-						disableBackdropClick
-						updateField={hookProps.updateField}
-						color='secondary'
-						variant='contained'
-						onClick={() =>
-							execute(
-								mapCurrentToNewAudience({
-									itemId: id,
-									dirtyProps: hookProps.dirtyProps,
-								})
-							)
-						}
-					/>
 
-					<NewCampaignFromAudience
-						btnLabel='NEW_CAMPAIGN_FROM_AUDIENCE'
-						color='primary'
-						variant='contained'
-						onBeforeOpen={() =>
-							execute(
-								updateNewCampaign('audienceInput', {
-									...item,
-								})
-							)
-						}
-					/>
+					<AudiencePreview audienceInput={inputs} />
 
-					<NewAudienceDialog
-						btnLabel='NEW_AUDIENCE_FROM_THIS'
-						color='primary'
-						variant='contained'
-						onBeforeOpen={() =>
-							execute(
-								updateNewAudience(null, null, {
-									...item,
-									title: title + ' (2)',
-								})
-							)
-						}
-					/>
-
-					{!archived && (
-						<ArchiveItemBtn
-							itemType='Audience'
+					<Box className={classes.actions}>
+						<TargetingRulesEdit
+							btnLabel='UPDATE_AUDIENCE'
+							title='UPDATE_CAMPAIGN_AUDIENCE'
 							itemId={id}
-							title={title}
-							goToTableOnSuccess
+							disableBackdropClick
+							updateField={hookProps.updateField}
+							color='secondary'
+							variant='contained'
+							onClick={() =>
+								execute(
+									mapCurrentToNewAudience({
+										itemId: id,
+										dirtyProps: hookProps.dirtyProps,
+									})
+								)
+							}
 						/>
-					)}
+
+						<NewCampaignFromAudience
+							btnLabel='NEW_CAMPAIGN_FROM_AUDIENCE'
+							color='primary'
+							variant='contained'
+							onBeforeOpen={() =>
+								execute(
+									updateNewCampaign('audienceInput', {
+										...item,
+									})
+								)
+							}
+						/>
+
+						<NewAudienceDialog
+							btnLabel='NEW_AUDIENCE_FROM_THIS'
+							color='primary'
+							variant='contained'
+							onBeforeOpen={() =>
+								execute(
+									updateNewAudience(null, null, {
+										...item,
+										title: title + ' (2)',
+									})
+								)
+							}
+						/>
+
+						{!archived && (
+							<ArchiveItemBtn
+								itemType='Audience'
+								itemId={id}
+								title={title}
+								goToTableOnSuccess
+							/>
+						)}
+					</Box>
 				</Box>
-			</Paper>
+			</ItemTabsContainer>
 		</Fragment>
 	)
 }

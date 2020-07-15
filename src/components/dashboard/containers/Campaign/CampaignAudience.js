@@ -32,7 +32,8 @@ import { NewAudienceDialog } from 'components/dashboard/forms/items/NewItems'
 const useStyles = makeStyles(theme => ({
 	actions: {
 		'& > *': {
-			margin: theme.spacing(1),
+			marginRight: theme.spacing(1),
+			marginBottom: theme.spacing(1),
 		},
 	},
 }))
@@ -75,14 +76,12 @@ export const CampaignAudience = ({ item, ...hookProps }) => {
 			: campaignAudienceInput
 
 	return (
-		<Fragment>
-			<ChangeControls {...hookProps} />
-
-			<Paper elevation={2} variant='outlined'>
-				<Box p={1}>
+		<Box>
+			<Box>
+				<Box>
 					<AudiencePreview audienceInput={audienceInput.inputs} />
 				</Box>
-				<Box p={1} className={classes.actions}>
+				<Box className={classes.actions}>
 					{['Ready', 'Active', 'Unhealthy'].includes(item.status.name) && (
 						<TargetingRulesEdit
 							btnLabel='UPDATE_AUDIENCE'
@@ -130,8 +129,8 @@ export const CampaignAudience = ({ item, ...hookProps }) => {
 						}
 					/>
 				</Box>
-			</Paper>
-			<Box mt={2}>
+			</Box>
+			<Box>
 				<ExpansionPanel square={true} variant='outlined'>
 					<ExpansionPanelSummary
 						expandIcon={<ExpandMoreIcon />}
@@ -151,6 +150,6 @@ export const CampaignAudience = ({ item, ...hookProps }) => {
 					</Box>
 				</ExpansionPanel>
 			</Box>
-		</Fragment>
+		</Box>
 	)
 }

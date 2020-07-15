@@ -192,36 +192,40 @@ export const selectAdSlotsTableData = createSelector(
 
 export const selectAdUnitsTableData = createSelector(
 	[
-		(state, { side, campaignId, items }) => ({
-			side,
-			items:
-				items ||
-				(campaignId
-					? selectCampaignUnitsById(state, campaignId)
-					: selectAdUnits(state)),
-			impressionsByAdUnit: id =>
-				campaignId
-					? selectCampaignAnalyticsByChannelToAdUnit(state, {
-							type: 'IMPRESSION',
-							campaignId,
-					  })[id]
-					: selectTotalStatsByAdUnits(state, {
-							type: 'IMPRESSION',
-							adUnitId: id,
-					  }),
-			clicksByAdUnit: id =>
-				campaignId
-					? selectCampaignAnalyticsByChannelToAdUnit(state, {
-							type: 'CLICK',
-							campaignId,
-					  })[id]
-					: selectTotalStatsByAdUnits(state, {
-							type: 'CLICK',
-							adUnitId: id,
-					  }),
-		}),
+		(state, { side, campaignId, items }) => {
+			const selectOnImage = !!items
+			return {
+				selectOnImage,
+				side,
+				items:
+					items ||
+					(campaignId
+						? selectCampaignUnitsById(state, campaignId)
+						: selectAdUnits(state)),
+				impressionsByAdUnit: id =>
+					campaignId
+						? selectCampaignAnalyticsByChannelToAdUnit(state, {
+								type: 'IMPRESSION',
+								campaignId,
+						  })[id]
+						: selectTotalStatsByAdUnits(state, {
+								type: 'IMPRESSION',
+								adUnitId: id,
+						  }),
+				clicksByAdUnit: id =>
+					campaignId
+						? selectCampaignAnalyticsByChannelToAdUnit(state, {
+								type: 'CLICK',
+								campaignId,
+						  })[id]
+						: selectTotalStatsByAdUnits(state, {
+								type: 'CLICK',
+								adUnitId: id,
+						  }),
+			}
+		},
 	],
-	({ side, items, impressionsByAdUnit, clicksByAdUnit }) =>
+	({ selectOnImage, side, items, impressionsByAdUnit, clicksByAdUnit }) =>
 		Object.values(items)
 			.filter(x => !x.archived)
 			.map(item => {
@@ -232,6 +236,7 @@ export const selectAdUnitsTableData = createSelector(
 				return {
 					id,
 					media: {
+						selectOnImage,
 						id,
 						mediaUrl,
 						mediaMime,
