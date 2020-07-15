@@ -1,5 +1,5 @@
-import React, { Fragment } from 'react'
-import { Paper, Grid, Box } from '@material-ui/core'
+import React from 'react'
+import { Grid, Box } from '@material-ui/core'
 
 import { ItemSpecProp } from 'components/dashboard/containers/ItemCommon/'
 import { BasicStats } from 'components/dashboard/containers/DashboardStats/BasicStats'
@@ -8,44 +8,40 @@ import { t } from 'selectors'
 
 export const CampaignStatsByTimeframe = ({ item }) => {
 	return (
-		<Fragment>
-			<Paper elevation={2} variant='outlined'>
-				<Box p={1}>
-					<Grid container spacing={0}>
-						<Grid item xs={12} sm={4} md={4} lg={4}>
-							<Box m={1}>
-								<ItemSpecProp
-									prop={'created'}
-									value={formatDateTime(item.created)}
-									label={t('created', { isProp: true })}
-								/>
-							</Box>
-						</Grid>
-						<Grid item xs={12} sm={4} md={4} lg={4}>
-							<Box m={1}>
-								<ItemSpecProp
-									prop={'activeFrom'}
-									value={formatDateTime(item.activeFrom)}
-									label={t('activeFrom', { isProp: true })}
-								/>
-							</Box>
-						</Grid>
-						<Grid item xs={12} sm={4} md={4} lg={4}>
-							<Box m={1}>
-								<ItemSpecProp
-									prop={'activeFrom'}
-									value={formatDateTime(item.activeFrom)}
-									label={t('activeFrom', { isProp: true })}
-								/>
-							</Box>
-						</Grid>
+		<Box>
+			<Grid container spacing={1}>
+				<Grid item xs={12} sm={4} md={4} lg={4}>
+					<Box>
+						<ItemSpecProp
+							prop={'created'}
+							value={formatDateTime(item.created)}
+							label={t('created', { isProp: true })}
+						/>
+					</Box>
+				</Grid>
+				<Grid item xs={12} sm={4} md={4} lg={4}>
+					<Box>
+						<ItemSpecProp
+							prop={'activeFrom'}
+							value={formatDateTime(item.activeFrom)}
+							label={t('activeFrom', { isProp: true })}
+						/>
+					</Box>
+				</Grid>
+				<Grid item xs={12} sm={4} md={4} lg={4}>
+					<Box>
+						<ItemSpecProp
+							prop={'activeFrom'}
+							value={formatDateTime(item.activeFrom)}
+							label={t('activeFrom', { isProp: true })}
+						/>
+					</Box>
+				</Grid>
 
-						<Grid item xs={12}>
-							<BasicStats campaignId={item.id} />
-						</Grid>
-					</Grid>
-				</Box>
-			</Paper>
-		</Fragment>
+				<Grid item xs={12}>
+					<BasicStats campaignId={item.id} />
+				</Grid>
+			</Grid>
+		</Box>
 	)
 }
