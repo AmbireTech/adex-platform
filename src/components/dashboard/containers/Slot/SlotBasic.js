@@ -67,18 +67,20 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 								/>
 							</Box>
 						)}
-						<ExpansionPanel square={true} variant='outlined' dis>
-							<ExpansionPanelSummary
-								expandIcon={<ExpandMoreIcon />}
-								aria-controls='slot-rules-advanced'
-								id='slot-rules-advanced'
-							>
-								<Typography>{t('SLOT_ADVANCED')}</Typography>
-							</ExpansionPanelSummary>
-							<Box p={1}>
-								<SlotAdvancedRules item={item} {...hookProps} />
-							</Box>
-						</ExpansionPanel>
+						<Box py={1}>
+							<ExpansionPanel square={true} variant='outlined'>
+								<ExpansionPanelSummary
+									expandIcon={<ExpandMoreIcon />}
+									aria-controls='slot-rules-advanced'
+									id='slot-rules-advanced'
+								>
+									<Typography>{t('SLOT_ADVANCED')}</Typography>
+								</ExpansionPanelSummary>
+								<Box p={1}>
+									<SlotAdvancedRules item={item} {...hookProps} />
+								</Box>
+							</ExpansionPanel>
+						</Box>
 					</Grid>
 					<Grid item xs={12} sm={12} md={6} lg={7}>
 						<Box py={1}>

@@ -96,7 +96,7 @@ export const SlotAdvancedRules = ({
 					onChange={ev => {
 						const value = ev.target.value
 						updateField('minPerImpression', value, {
-							name: 'advanced',
+							name: 'slotAdvanced',
 							fields: ['rulesInput', 'minPerImpression'],
 						})
 						execute(
@@ -159,7 +159,7 @@ export const SlotAdvancedRules = ({
 														},
 													},
 													{
-														name: 'advanced',
+														name: 'slotAdvanced',
 														fields: ['rulesInput', 'minPerImpression'],
 													}
 												)
@@ -195,7 +195,7 @@ export const SlotAdvancedRules = ({
 														},
 													},
 													{
-														name: 'advanced',
+														name: 'slotAdvanced',
 														fields: ['rulesInput', 'minPerImpression'],
 													}
 												)
