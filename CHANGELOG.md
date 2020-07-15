@@ -1,6 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.29
+##### *2020-07-15*
+
+### Added
+- Ability to manually set and update min CPM for slots
+- Ability enable/disable showing adult content on slots 
+
+### Changed
+- Tabs and charts styles and layout
+
+### Fixed
+- Quality when image is uploaded and cropped
+
 ## 4.20.28
 ##### *2020-07-13*
 
