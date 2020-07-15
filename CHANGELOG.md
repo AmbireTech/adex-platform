@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.30
+##### *2020-07-15*
+
+### Fixed
+- Campaign pause/resume
+
 ## 4.20.29
 ##### *2020-07-15*
 
