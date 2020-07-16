@@ -12,6 +12,8 @@ import {
 	Typography,
 	Select,
 } from '@material-ui/core'
+import { InfoSharp } from '@material-ui/icons'
+
 import { InputLoading } from 'components/common/spinners/'
 import classnames from 'classnames'
 import { t } from 'selectors'
@@ -102,19 +104,6 @@ function Dropdown(props) {
 								>
 									{src.group.name || src.group}
 								</ListSubheader>
-							) : !!src.extraLabel ? (
-								<Tooltip
-									key={src.value.key || src.value.id || src.value}
-									title={<ExtraLabel label={src.extraLabel || ''} />}
-									value={src.value.id || src.value}
-								>
-									<MenuItem
-										className={classes.menuItem}
-										value={src.value.id || src.value}
-									>
-										{src.label}
-									</MenuItem>
-								</Tooltip>
 							) : (
 								<MenuItem
 									key={src.value.key || src.value.id || src.value}
@@ -122,6 +111,15 @@ function Dropdown(props) {
 									value={src.value.id || src.value}
 								>
 									{src.label}
+									{!!src.extraLabel && (
+										<Tooltip title={<ExtraLabel label={src.extraLabel} />}>
+											<InfoSharp
+												className={classes.extraInfo}
+												fontSize='small'
+												color='primary'
+											/>
+										</Tooltip>
+									)}
 								</MenuItem>
 							)
 						})}
