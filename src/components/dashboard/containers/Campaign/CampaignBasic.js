@@ -280,7 +280,6 @@ export const CampaignBasic = ({
 				<Box mt={3} mb={1}>
 					<Divider />
 				</Box>
-
 				<Grid container spacing={2} pt={2}>
 					<Grid item xs={12} sm={12} md={12} lg={6}>
 						<Box my={0}>
@@ -307,7 +306,7 @@ export const CampaignBasic = ({
 							/>
 						</Box>
 						<Box mt={1}>
-							{true && (
+							{isActive && (
 								<TargetingRulesEdit
 									fullWidth
 									advancedOnly
@@ -316,7 +315,7 @@ export const CampaignBasic = ({
 									btnLabel='EDIT_CAMPAIGN_ADVANCED'
 									title='EDIT_CAMPAIGN_ADVANCED_TITLE'
 									itemId={item.id}
-									// disabled={!canSendMsgs}
+									disabled={!canSendMsgs}
 									disableBackdropClick
 									updateField={hookProps.updateField}
 									color='secondary'
