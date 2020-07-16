@@ -210,6 +210,7 @@ export const timeBasedAnalytics = async ({
 	timeframe,
 	eventType,
 	metric,
+	side,
 	start,
 	end,
 	segmentByChannel,
@@ -219,7 +220,7 @@ export const timeBasedAnalytics = async ({
 
 	const result = await requester
 		.fetch({
-			route: `/analytics`,
+			route: `/analytics/${side}`,
 			method: 'GET',
 			queryParams: {
 				limit,

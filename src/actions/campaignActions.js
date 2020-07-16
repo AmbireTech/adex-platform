@@ -226,6 +226,7 @@ function getHumanFriendlyName(campaign) {
 
 export function updateCampaignAudienceInput({
 	updateField,
+	fieldName,
 	itemId,
 	validateId,
 	onValid,
@@ -246,7 +247,15 @@ export function updateCampaignAudienceInput({
 		})(dispatch)
 
 		if (isValid) {
-			await updateField('audienceInput', audienceInput)
+			await updateField(
+				'audienceInput',
+				audienceInput,
+				fieldName
+					? {
+							name: fieldName,
+					  }
+					: null
+			)
 			onValid()
 		}
 	}

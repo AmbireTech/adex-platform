@@ -52,7 +52,7 @@ function Unit({ match }) {
 					indicatorColor='primary'
 					textColor='primary'
 				>
-					<Tab label={t('AUDIENCE_MAIN')} />
+					<Tab label={t('AD_UNIT')} />
 				</Tabs>
 			</ItemTabsBar>
 			<ChangeControls {...hookProps} />
