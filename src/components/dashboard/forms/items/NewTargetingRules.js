@@ -160,6 +160,7 @@ const getMultipleActionsUsedValues = ({ actions, currentAction, target }) => {
 const Targets = ({
 	inputs,
 	source = {},
+	extraInfo = null,
 	collection,
 	placeholder,
 	label,
@@ -316,6 +317,7 @@ const Targets = ({
 						</Box>
 					))}
 			</Box>
+			<Box>{extraInfo}</Box>
 		</Box>
 	)
 }
@@ -328,7 +330,7 @@ const NewTargetingRules = ({ itemType, itemId, validateId }) => {
 		selectAudienceInputsDataByItem(state, itemType, itemId, validateId)
 	)
 
-	const { parameter, source, actions, applyType, disabledValues } =
+	const { parameter, source, actions, applyType, disabledValues, extraInfo } =
 		SOURCES[tabIndex] || {}
 
 	return (
@@ -366,6 +368,7 @@ const NewTargetingRules = ({ itemType, itemId, validateId }) => {
 					label={t(parameter)}
 					placeholder={t(parameter)}
 					source={source || {}}
+					extraInfo={extraInfo}
 					disabledValues={disabledValues || {}}
 					SOURCES={SOURCES}
 					actions={actions}
