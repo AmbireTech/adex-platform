@@ -172,10 +172,10 @@ export const CampaignBasic = ({
 			</Grid>
 
 			<Grid item xs={12} sm={12} md={6} lg={7}>
-				<Box my={1}>
+				<Box mt={1}>
 					<ItemTitle title={title} errTitle={errTitle} {...hookProps} />
 				</Box>
-				<Box my={1}>
+				<Box mt={1}>
 					<ItemSpecProp
 						prop={'id'}
 						value={item.id}
@@ -185,7 +185,7 @@ export const CampaignBasic = ({
 
 				<Grid container spacing={2}>
 					<Grid item xs={12} sm={12} md={6}>
-						<Box my={1}>
+						<Box my={0}>
 							<ItemSpecProp
 								prop={'humanFriendlyName'}
 								value={t(humanFriendlyName, { toUpperCase: true })}
@@ -199,21 +199,21 @@ export const CampaignBasic = ({
 								}}
 							/>
 						</Box>
-						<Box my={1}>
+						<Box my={0}>
 							<ItemSpecProp
 								prop={'created'}
 								value={formatDateTime(item.created)}
 								label={t('created', { isProp: true })}
 							/>
 						</Box>
-						<Box my={1}>
+						<Box my={0}>
 							<ItemSpecProp
 								prop={'activeFrom'}
 								value={formatDateTime(item.activeFrom)}
 								label={t('activeFrom', { isProp: true })}
 							/>
 						</Box>
-						<Box my={1}>
+						<Box my={0}>
 							<ItemSpecProp
 								prop={'withdrawPeriodStart'}
 								value={formatDateTime(item.withdrawPeriodStart)}
@@ -229,14 +229,14 @@ export const CampaignBasic = ({
 									</Box> */}
 					</Grid>
 					<Grid item xs={12} sm={12} md={6}>
-						<Box my={1}>
+						<Box my={0}>
 							<ItemSpecProp
 								prop={'fundsDistributedRatio'}
 								value={((status.fundsDistributedRatio || 0) / 10).toFixed(2)}
 								label={t('PROP_DISTRIBUTED', { args: ['%'] })}
 							/>
 						</Box>
-						<Box my={1}>
+						<Box my={0}>
 							<ItemSpecProp
 								prop={'depositAmount'}
 								value={
@@ -245,7 +245,7 @@ export const CampaignBasic = ({
 								label={t('depositAmount', { isProp: true })}
 							/>
 						</Box>
-						<Box my={1}>
+						<Box my={0}>
 							<ItemSpecProp
 								prop={'CPM_MIN'}
 								value={
@@ -260,7 +260,7 @@ export const CampaignBasic = ({
 								label={t('CPM_MIN')}
 							/>
 						</Box>
-						<Box my={1}>
+						<Box my={0}>
 							<ItemSpecProp
 								prop={'CPM_MAX'}
 								value={
@@ -277,17 +277,20 @@ export const CampaignBasic = ({
 						</Box>
 					</Grid>
 				</Grid>
-				<Divider />
-				<Grid container spacing={2}>
+				<Box mt={3} mb={1}>
+					<Divider />
+				</Box>
+
+				<Grid container spacing={2} pt={2}>
 					<Grid item xs={12} sm={12} md={12} lg={6}>
-						<Box my={1}>
+						<Box my={0}>
 							<ItemSpecProp
 								prop={'INCLUDE_INCENTIVIZED_TRAFFIC_LABEL'}
 								value={t(advanced.includeIncentivized ? 'YES' : 'NO')}
 								label={t('INCLUDE_INCENTIVIZED_TRAFFIC_LABEL')}
 							/>
 						</Box>
-						<Box my={1}>
+						<Box my={0}>
 							<ItemSpecProp
 								prop={'DISABLE_FREQUENCY_CAPPING_LABEL'}
 								value={t(advanced.disableFrequencyCapping ? 'YES' : 'NO')}
@@ -296,15 +299,15 @@ export const CampaignBasic = ({
 						</Box>
 					</Grid>
 					<Grid item xs={12} sm={12} md={12} lg={6}>
-						<Box my={1}>
+						<Box my={0}>
 							<ItemSpecProp
 								prop={'LIMIT_AVERAGE_DAILY_SPENDING_LABEL'}
 								value={t(advanced.limitDailyAverageSpending ? 'YES' : 'NO')}
 								label={t('LIMIT_AVERAGE_DAILY_SPENDING_LABEL')}
 							/>
 						</Box>
-						<Box my={1}>
-							{isActive && (
+						<Box mt={1}>
+							{true && (
 								<TargetingRulesEdit
 									fullWidth
 									advancedOnly
@@ -313,7 +316,7 @@ export const CampaignBasic = ({
 									btnLabel='EDIT_CAMPAIGN_ADVANCED'
 									title='EDIT_CAMPAIGN_ADVANCED_TITLE'
 									itemId={item.id}
-									disabled={!canSendMsgs}
+									// disabled={!canSendMsgs}
 									disableBackdropClick
 									updateField={hookProps.updateField}
 									color='secondary'
