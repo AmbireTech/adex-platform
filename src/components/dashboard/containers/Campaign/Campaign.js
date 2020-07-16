@@ -57,7 +57,9 @@ function Campaign({ match }) {
 	const campaignId = campaign.id
 	const { status = {} } = item
 	const canSendMsgs =
-		status.name && ['Ready', 'Active', 'Unhealthy'].includes(status.name)
+		status.name &&
+		['Ready', 'Active', 'Unhealthy'].includes(status.name) &&
+		status.humanFriendlyName !== 'Closed'
 
 	const isActive = status.humanFriendlyName === 'Active'
 
