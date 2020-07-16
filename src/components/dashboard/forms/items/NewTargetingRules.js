@@ -11,6 +11,8 @@ import {
 	Tab,
 	Tabs,
 	FormControlLabel,
+	FormControl,
+	FormHelperText,
 	RadioGroup,
 	Radio,
 	Typography,
@@ -288,32 +290,35 @@ const Targets = ({
 				{applyType === 'multiple-checkbox' &&
 					actions.map(a => (
 						<Box key={parameter + a.value}>
-							<FormControlLabel
-								control={
-									<Checkbox
-										checked={!!target[a.value]}
-										name={a.value}
-										onChange={ev =>
-											execute(
-												updateTargetRuleInput({
-													index,
-													itemType,
-													itemId,
-													parameter,
-													target: {
-														...target,
-														...{
-															[a.value]: ev.target.checked,
+							<FormControl>
+								<FormControlLabel
+									control={
+										<Checkbox
+											checked={!!target[a.value]}
+											name={a.value}
+											onChange={ev =>
+												execute(
+													updateTargetRuleInput({
+														index,
+														itemType,
+														itemId,
+														parameter,
+														target: {
+															...target,
+															...{
+																[a.value]: ev.target.checked,
+															},
 														},
-													},
-													collection,
-												})
-											)
-										}
-									/>
-								}
-								label={a.label}
-							/>
+														collection,
+													})
+												)
+											}
+										/>
+									}
+									label={a.label}
+								/>
+								<FormHelperText>{a.helper}</FormHelperText>
+							</FormControl>
 						</Box>
 					))}
 			</Box>
@@ -342,32 +347,34 @@ const NewTargetingRules = ({ itemType, itemId, validateId, advancedOnly }) => {
 	return (
 		<Box display='flex' flexDirection='column' width={1} height={1}>
 			{!advancedOnly && (
-				<Paper position='static' variant='outlined'>
-					<Tabs
-						value={tabIndex}
-						onChange={(ev, index) => setTabIndex(index)}
-						variant='scrollable'
-						scrollButtons='auto'
-						indicatorColor='primary'
-						textColor='primary'
-					>
-						{SOURCES.map(({ parameter }, index) => (
-							<Tab
-								key={parameter}
-								label={parameter}
-								icon={
-									errorParameters[parameter] ? (
-										<ErrIcon color='error' />
-									) : (
-										parameterIcon[parameter]
-									)
-								}
-							/>
-						))}
-					</Tabs>
-				</Paper>
+				<Box mb={2}>
+					<Paper position='static' variant='outlined'>
+						<Tabs
+							value={tabIndex}
+							onChange={(ev, index) => setTabIndex(index)}
+							variant='scrollable'
+							scrollButtons='auto'
+							indicatorColor='primary'
+							textColor='primary'
+						>
+							{SOURCES.map(({ parameter }, index) => (
+								<Tab
+									key={parameter}
+									label={parameter}
+									icon={
+										errorParameters[parameter] ? (
+											<ErrIcon color='error' />
+										) : (
+											parameterIcon[parameter]
+										)
+									}
+								/>
+							))}
+						</Tabs>
+					</Paper>
+				</Box>
 			)}
-			<Box mt={2} display='flex' flexGrow='1'>
+			<Box display='flex' flexGrow='1'>
 				<Targets
 					inputs={inputs}
 					target={inputs[parameter]}

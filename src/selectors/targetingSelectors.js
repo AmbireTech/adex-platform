@@ -291,45 +291,42 @@ export const audienceSources = [
 		actions: [
 			{
 				value: 'includeIncentivized',
-				label: t('INCLUDE_INCENTIVIZED_TRAFFIC', {
-					args: [
-						<ExternalAnchor
-							href={
-								'https://help.adex.network/hc/en-us/articles/360014543380-What-is-incentivized-traffic-'
-							}
-						>
-							{t('LEARN_MORE')}
-						</ExternalAnchor>,
-					],
-				}),
+				label: t('INCLUDE_INCENTIVIZED_TRAFFIC'),
+				helper: (
+					<ExternalAnchor
+						href={
+							'https://help.adex.network/hc/en-us/articles/360014543380-What-is-incentivized-traffic-'
+						}
+					>
+						{t('LEARN_MORE')}
+					</ExternalAnchor>
+				),
 			},
 			{
 				value: 'disableFrequencyCapping',
-				label: t('DISABLE_FREQUENCY_CAPPING', {
-					args: [
-						<ExternalAnchor
-							href={
-								'https://help.adex.network/hc/en-us/articles/360014597299-What-is-frequency-capping-'
-							}
-						>
-							{t('LEARN_MORE')}
-						</ExternalAnchor>,
-					],
-				}),
+				label: t('DISABLE_FREQUENCY_CAPPING'),
+				helper: (
+					<ExternalAnchor
+						href={
+							'https://help.adex.network/hc/en-us/articles/360014597299-What-is-frequency-capping-'
+						}
+					>
+						{t('LEARN_MORE')}
+					</ExternalAnchor>
+				),
 			},
 			{
 				value: 'limitDailyAverageSpending',
-				label: t('LIMIT_AVERAGE_DAILY_SPENDING', {
-					args: [
-						<ExternalAnchor
-							href={
-								'https://help.adex.network/hc/en-us/articles/360014597319-How-to-limit-your-average-daily-spend'
-							}
-						>
-							{t('LEARN_MORE')}
-						</ExternalAnchor>,
-					],
-				}),
+				label: t('LIMIT_AVERAGE_DAILY_SPENDING'),
+				helper: (
+					<ExternalAnchor
+						href={
+							'https://help.adex.network/hc/en-us/articles/360014597319-How-to-limit-your-average-daily-spend'
+						}
+					>
+						{t('LEARN_MORE')}
+					</ExternalAnchor>
+				),
 			},
 		],
 	},
