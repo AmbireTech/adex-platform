@@ -65,7 +65,12 @@ export const TargetingSteps = ({ updateField, itemId, ...props }) => {
 
 const TargetingRulesEdit = WithDialog(TargetingSteps)
 
-export const CampaignAudience = ({ item, ...hookProps }) => {
+export const CampaignAudience = ({
+	item,
+	isActive,
+	canSendMsgs,
+	...hookProps
+}) => {
 	const classes = useStyles()
 	const campaignAudienceInput =
 		useSelector(state => selectAudienceByCampaignId(state, item.id)) || {}
@@ -82,11 +87,12 @@ export const CampaignAudience = ({ item, ...hookProps }) => {
 					<AudiencePreview audienceInput={audienceInput.inputs} />
 				</Box>
 				<Box className={classes.actions}>
-					{['Ready', 'Active', 'Unhealthy'].includes(item.status.name) && (
+					{isActive && (
 						<TargetingRulesEdit
 							btnLabel='UPDATE_AUDIENCE'
 							title='UPDATE_CAMPAIGN_AUDIENCE'
 							itemId={item.id}
+							disabled={!canSendMsgs}
 							disableBackdropClick
 							updateField={hookProps.updateField}
 							color='secondary'

@@ -41,7 +41,12 @@ const useStyles = makeStyles(theme => ({
 	},
 }))
 
-export const CampaignBasic = ({ item, ...hookProps }) => {
+export const CampaignBasic = ({
+	item,
+	canSendMsgs,
+	isActive,
+	...hookProps
+}) => {
 	const classes = useStyles()
 	const {
 		title,
@@ -77,7 +82,7 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 				<Box my={1}>
 					<MediaCard mediaUrl={mediaUrl} mediaMime={mediaMime} />
 				</Box>
-				{['Ready', 'Active', 'Unhealthy'].includes(status.name) && (
+				{isActive && (
 					<Grid container spacing={1} alignItems='center'>
 						<Grid item xs={12} sm={6} md={12} lg={6}>
 							<div className={classes.wrapper}>
@@ -104,7 +109,7 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 											)
 										)
 									}}
-									disabled={closeSpinner || humanFriendlyName === 'Closed'}
+									disabled={closeSpinner || !canSendMsgs}
 									endIcon={<StopSharp />}
 								>
 									{t('BTN_CLOSE_CAMPAIGN')}
@@ -146,7 +151,7 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 											)
 										)
 									}}
-									disabled={pauseSpinner || humanFriendlyName === 'Closed'}
+									disabled={pauseSpinner || !canSendMsgs}
 									endIcon={isPaused ? <StarSharp /> : <PauseSharp />}
 								>
 									{t(`BTN_${pauseAction}_CAMPAIGN`)}
