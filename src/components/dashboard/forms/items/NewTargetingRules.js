@@ -322,12 +322,18 @@ const Targets = ({
 	)
 }
 
-const NewTargetingRules = ({ itemType, itemId, validateId }) => {
+const NewTargetingRules = ({ itemType, itemId, validateId, advancedOnly }) => {
 	const [tabIndex, setTabIndex] = useState(0)
 	const classes = useStyles()
 
 	const { SOURCES, inputs, errorParameters } = useSelector(state =>
-		selectAudienceInputsDataByItem(state, itemType, itemId, validateId)
+		selectAudienceInputsDataByItem(
+			state,
+			itemType,
+			itemId,
+			validateId,
+			advancedOnly
+		)
 	)
 
 	const { parameter, source, actions, applyType, disabledValues, extraInfo } =
@@ -335,30 +341,32 @@ const NewTargetingRules = ({ itemType, itemId, validateId }) => {
 
 	return (
 		<Box display='flex' flexDirection='column' width={1} height={1}>
-			<Paper position='static' variant='outlined'>
-				<Tabs
-					value={tabIndex}
-					onChange={(ev, index) => setTabIndex(index)}
-					variant='scrollable'
-					scrollButtons='auto'
-					indicatorColor='primary'
-					textColor='primary'
-				>
-					{SOURCES.map(({ parameter }, index) => (
-						<Tab
-							key={parameter}
-							label={parameter}
-							icon={
-								errorParameters[parameter] ? (
-									<ErrIcon color='error' />
-								) : (
-									parameterIcon[parameter]
-								)
-							}
-						/>
-					))}
-				</Tabs>
-			</Paper>
+			{!advancedOnly && (
+				<Paper position='static' variant='outlined'>
+					<Tabs
+						value={tabIndex}
+						onChange={(ev, index) => setTabIndex(index)}
+						variant='scrollable'
+						scrollButtons='auto'
+						indicatorColor='primary'
+						textColor='primary'
+					>
+						{SOURCES.map(({ parameter }, index) => (
+							<Tab
+								key={parameter}
+								label={parameter}
+								icon={
+									errorParameters[parameter] ? (
+										<ErrIcon color='error' />
+									) : (
+										parameterIcon[parameter]
+									)
+								}
+							/>
+						))}
+					</Tabs>
+				</Paper>
+			)}
 			<Box mt={2} display='flex' flexGrow='1'>
 				<Targets
 					inputs={inputs}
