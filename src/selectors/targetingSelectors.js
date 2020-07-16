@@ -253,6 +253,15 @@ export const audienceSources = [
 			{ type: 'nin', label: t('EXCLUDED_COUNTRIES'), minSelected: 1 },
 			{ type: 'allin', label: t('SHOW_EVERYWHERE'), value: 'ALL' },
 		],
+		extraInfo: t('LOCATION_TIERS_INFO', {
+			args: [
+				<ExternalAnchor
+					href={'https://help.adex.network/hc/en-us/articles/360014629020'}
+				>
+					{t('HERE')}
+				</ExternalAnchor>,
+			],
+		}),
 	},
 	{
 		parameter: 'categories',
