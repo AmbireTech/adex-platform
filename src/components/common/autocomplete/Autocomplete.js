@@ -1,5 +1,6 @@
 import React, { useEffect, Fragment, useState } from 'react'
 import PropTypes from 'prop-types'
+import { makeStyles } from '@material-ui/core/styles'
 import {
 	FormHelperText,
 	TextField,
@@ -11,12 +12,18 @@ import {
 import AutocompleteMUI, {
 	createFilterOptions,
 } from '@material-ui/lab/Autocomplete'
-import { CheckSharp, ErrorSharp } from '@material-ui/icons'
+import { CheckSharp, ErrorSharp, InfoSharp } from '@material-ui/icons'
 
 const StatusIcon = {
 	success: <CheckSharp color='secondary' />,
 	error: <ErrorSharp color='error' />,
 }
+
+const useStyles = makeStyles(theme => ({
+	extraInfo: {
+		marginLeft: theme.spacing(1),
+	},
+}))
 
 const ExtraLabel = ({ label }) =>
 	Array.isArray(label) ? (
@@ -53,6 +60,8 @@ function Autocomplete({
 	disabledSrcValues = [],
 	enableCreate,
 }) {
+	const classes = useStyles()
+
 	useEffect(() => {
 		typeof onInit === 'function' && onInit()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -107,18 +116,25 @@ function Autocomplete({
 						/>
 					)
 				}}
-				renderOption={option =>
-					!!option.extraLabel ? (
-						<Tooltip
-							key={option.label}
-							title={<ExtraLabel label={option.extraLabel || ''} />}
-						>
-							{<Typography>{option.label}</Typography>}
-						</Tooltip>
-					) : (
-						<Typography key={option.label}> {option.label}</Typography>
-					)
-				}
+				renderOption={option => (
+					<Box
+						key={option.label}
+						display='flex'
+						flexDirection='row'
+						alignItems='center'
+					>
+						<Typography display='inline'>{option.label}</Typography>
+						{!!option.extraLabel && (
+							<Tooltip title={<ExtraLabel label={option.extraLabel} />}>
+								<InfoSharp
+									className={classes.extraInfo}
+									fontSize='small'
+									color='primary'
+								/>
+							</Tooltip>
+						)}
+					</Box>
+				)}
 				renderTags={(value, getCustomizedTagProps) =>
 					value.map(
 						(option, index) =>
