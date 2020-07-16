@@ -1,10 +1,10 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import {
-	Paper,
 	Grid,
 	Box,
 	InputAdornment,
 	Button,
+	Divider,
 	CircularProgress,
 } from '@material-ui/core'
 import { StopSharp, PauseSharp, StarSharp } from '@material-ui/icons'
@@ -14,8 +14,8 @@ import {
 	ItemTitle,
 	MediaCard,
 	ItemSpecProp,
-	ChangeControls,
 } from 'components/dashboard/containers/ItemCommon/'
+import { TargetingRulesEdit } from 'components/dashboard/containers/Campaign/CampaignEdits'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
 import { t, selectMainToken, selectSpinnerById } from 'selectors'
@@ -24,6 +24,7 @@ import {
 	closeCampaign,
 	pauseOrResumeCampaign,
 	confirmAction,
+	mapCurrentToNewCampaignAudienceInput,
 } from 'actions'
 import { useSelector } from 'react-redux'
 
@@ -54,7 +55,9 @@ export const CampaignBasic = ({
 		pricingBounds,
 		minPerImpression,
 		maxPerImpression,
+		audienceInput,
 	} = item
+	const { advanced = {} } = audienceInput || {}
 	const { decimals, symbol } = selectMainToken()
 	const { title: errTitle } = hookProps.validations
 
@@ -274,8 +277,61 @@ export const CampaignBasic = ({
 						</Box>
 					</Grid>
 				</Grid>
+				<Divider />
+				<Grid container spacing={2}>
+					<Grid item xs={12} sm={12} md={12} lg={6}>
+						<Box my={1}>
+							<ItemSpecProp
+								prop={'INCLUDE_INCENTIVIZED_TRAFFIC_LABEL'}
+								value={t(advanced.includeIncentivized ? 'YES' : 'NO')}
+								label={t('INCLUDE_INCENTIVIZED_TRAFFIC_LABEL')}
+							/>
+						</Box>
+						<Box my={1}>
+							<ItemSpecProp
+								prop={'DISABLE_FREQUENCY_CAPPING_LABEL'}
+								value={t(advanced.disableFrequencyCapping ? 'YES' : 'NO')}
+								label={t('DISABLE_FREQUENCY_CAPPING_LABEL')}
+							/>
+						</Box>
+					</Grid>
+					<Grid item xs={12} sm={12} md={12} lg={6}>
+						<Box my={1}>
+							<ItemSpecProp
+								prop={'LIMIT_AVERAGE_DAILY_SPENDING_LABEL'}
+								value={t(advanced.limitDailyAverageSpending ? 'YES' : 'NO')}
+								label={t('LIMIT_AVERAGE_DAILY_SPENDING_LABEL')}
+							/>
+						</Box>
+						<Box my={1}>
+							{isActive && (
+								<TargetingRulesEdit
+									fullWidth
+									advancedOnly
+									fieldName='campaignAdvanced'
+									stepTitle='PROP_CAMPAIGN_ADVANCED'
+									btnLabel='EDIT_CAMPAIGN_ADVANCED'
+									title='EDIT_CAMPAIGN_ADVANCED_TITLE'
+									itemId={item.id}
+									disabled={!canSendMsgs}
+									disableBackdropClick
+									updateField={hookProps.updateField}
+									color='secondary'
+									variant='contained'
+									onClick={() =>
+										execute(
+											mapCurrentToNewCampaignAudienceInput({
+												itemId: item.id,
+												dirtyProps: hookProps.dirtyProps,
+											})
+										)
+									}
+								/>
+							)}
+						</Box>
+					</Grid>
+				</Grid>
 			</Grid>
-			<Grid item xs={12} sm={12} md={12} lg={6}></Grid>
 		</Grid>
 	)
 }
