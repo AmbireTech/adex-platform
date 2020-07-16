@@ -449,8 +449,9 @@ export const selectAudienceInputsDataByItem = createSelector(
 		selectAudienceSourcesWithOptions,
 		selectNewItemByTypeAndId,
 		selectAudienceValidations,
+		(_, __, ___, ____, advancedOnly) => advancedOnly,
 	],
-	(allSrcsWithOptions, selectedItem, validations = {}) => {
+	(allSrcsWithOptions, selectedItem, validations = {}, advancedOnly) => {
 		const isCampaignAudienceItem = selectedItem && !!selectedItem.audienceInput
 
 		const errors =
@@ -463,44 +464,48 @@ export const selectAudienceInputsDataByItem = createSelector(
 				? selectedItem.audienceInput.inputs
 				: selectedItem.inputs) || {}
 
-		const SOURCES = allSrcsWithOptions.map(s => {
-			const disabledValues = getDisabledValues(
-				s,
-				//TODO: temp only used for in, so there is no point making it to work with other action types
-				s.source.in,
-				inputs,
-				allSrcsWithOptions
+		const SOURCES = allSrcsWithOptions
+			.filter(s =>
+				!!advancedOnly ? s.parameter === 'advanced' : s.parameter !== 'advanced'
 			)
+			.map(s => {
+				const disabledValues = getDisabledValues(
+					s,
+					//TODO: temp only used for in, so there is no point making it to work with other action types
+					s.source.in,
+					inputs,
+					allSrcsWithOptions
+				)
 
-			const source = { ...s.source }
-			if (
-				!!source.in &&
-				source.in.length &&
-				!!disabledValues.in &&
-				disabledValues.in.length
-			) {
-				source.in = [...source.in].sort((a, b) => {
-					if (
-						disabledValues.in.includes(a.value) &&
-						!disabledValues.in.includes(b.value)
-					) {
-						return 1
-					} else if (
-						!disabledValues.in.includes(a.value) &&
-						disabledValues.in.includes(b.value)
-					) {
-						return -1
-					}
+				const source = { ...s.source }
+				if (
+					!!source.in &&
+					source.in.length &&
+					!!disabledValues.in &&
+					disabledValues.in.length
+				) {
+					source.in = [...source.in].sort((a, b) => {
+						if (
+							disabledValues.in.includes(a.value) &&
+							!disabledValues.in.includes(b.value)
+						) {
+							return 1
+						} else if (
+							!disabledValues.in.includes(a.value) &&
+							disabledValues.in.includes(b.value)
+						) {
+							return -1
+						}
 
-					return 0
-				})
-			}
-			return {
-				...s,
-				source,
-				disabledValues,
-			}
-		})
+						return 0
+					})
+				}
+				return {
+					...s,
+					source,
+					disabledValues,
+				}
+			})
 
 		const audienceInputData = { SOURCES, inputs, errorParameters }
 
