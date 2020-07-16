@@ -180,8 +180,14 @@ const Targets = ({
 	const applyValue = target.apply || actions[0].type
 
 	return (
-		<Grid container spacing={2} alignItems='center'>
-			<Grid item xs={12} md={12}>
+		<Box
+			display='flex'
+			flexDirection='column'
+			width={1}
+			height={1}
+			justifyContent='space-between'
+		>
+			<Box>
 				{applyType === 'single' && (
 					<RadioGroup
 						aria-label={parameter}
@@ -309,8 +315,8 @@ const Targets = ({
 							/>
 						</Box>
 					))}
-			</Grid>
-		</Grid>
+			</Box>
+		</Box>
 	)
 }
 
@@ -326,52 +332,50 @@ const NewTargetingRules = ({ itemType, itemId, validateId }) => {
 		SOURCES[tabIndex] || {}
 
 	return (
-		<Grid container spacing={1}>
-			<Grid item xs={12}>
-				<Paper position='static' variant='outlined'>
-					<Tabs
-						value={tabIndex}
-						onChange={(ev, index) => setTabIndex(index)}
-						variant='scrollable'
-						scrollButtons='auto'
-						indicatorColor='primary'
-						textColor='primary'
-					>
-						{SOURCES.map(({ parameter }, index) => (
-							<Tab
-								key={parameter}
-								label={parameter}
-								icon={
-									errorParameters[parameter] ? (
-										<ErrIcon color='error' />
-									) : (
-										parameterIcon[parameter]
-									)
-								}
-							/>
-						))}
-					</Tabs>
-				</Paper>
-				<Box mt={2}>
-					<Targets
-						inputs={inputs}
-						target={inputs[parameter]}
-						key={parameter}
-						parameter={parameter}
-						label={t(parameter)}
-						placeholder={t(parameter)}
-						source={source || {}}
-						disabledValues={disabledValues || {}}
-						SOURCES={SOURCES}
-						actions={actions}
-						applyType={applyType}
-						itemId={itemId}
-						itemType={itemType}
-						classes={classes}
-					/>
-				</Box>
-			</Grid>
-		</Grid>
+		<Box display='flex' flexDirection='column' width={1} height={1}>
+			<Paper position='static' variant='outlined'>
+				<Tabs
+					value={tabIndex}
+					onChange={(ev, index) => setTabIndex(index)}
+					variant='scrollable'
+					scrollButtons='auto'
+					indicatorColor='primary'
+					textColor='primary'
+				>
+					{SOURCES.map(({ parameter }, index) => (
+						<Tab
+							key={parameter}
+							label={parameter}
+							icon={
+								errorParameters[parameter] ? (
+									<ErrIcon color='error' />
+								) : (
+									parameterIcon[parameter]
+								)
+							}
+						/>
+					))}
+				</Tabs>
+			</Paper>
+			<Box mt={2} display='flex' flexGrow='1'>
+				<Targets
+					inputs={inputs}
+					target={inputs[parameter]}
+					key={parameter}
+					parameter={parameter}
+					label={t(parameter)}
+					placeholder={t(parameter)}
+					source={source || {}}
+					disabledValues={disabledValues || {}}
+					SOURCES={SOURCES}
+					actions={actions}
+					applyType={applyType}
+					itemId={itemId}
+					itemType={itemType}
+					classes={classes}
+				/>
+			</Box>
+		</Box>
 	)
 }
 
