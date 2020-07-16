@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.32
+##### *2020-07-16*
+
+### Changed
+- Update `adex-models` version 
+
 ## 4.20.31
 ##### *2020-07-16*
 
