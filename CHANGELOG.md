@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.31
+##### *2020-07-16*
+
+### Added
+- Info link for targeting country tiers
+
+### Changed
+- Default validator fee from 5% to 7%
+- Advanced targeting tules moved from audience to Campaign parameters
+- Autocomplete/dropdown options tooltips are now with info icon
+
+### Fixed
+- Misc bugs and typos
+
 ## 4.20.30
 ##### *2020-07-15*
 
