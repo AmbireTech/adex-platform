@@ -244,17 +244,14 @@ const getOptions = ({ reloadData, campaignId }) => ({
 	},
 })
 
-function CampaignStatsBreakdownTable({ campaignId }) {
+function CampaignStatsBreakdownTable({ campaignId, isActive, canSendMsgs }) {
 	const { symbol } = useSelector(selectMainToken)
 
 	const { maxClicks, maxImpressions, maxEarnings, maxCTR } = useSelector(
 		state => selectCampaignStatsMaxValues(state, campaignId)
 	)
 
-	const { status } =
-		useSelector(state => selectCampaignById(state, campaignId)) || {}
-
-	const allowActions = ['Ready', 'Active', 'Unhealthy'].includes(status.name)
+	const allowActions = isActive && canSendMsgs
 
 	const { data, columns, reloadData } = useTableData({
 		selector: selectCampaignStatsTableData,
@@ -263,7 +260,7 @@ function CampaignStatsBreakdownTable({ campaignId }) {
 			getCols({ symbol, maxClicks, maxImpressions, maxEarnings, maxCTR }),
 	})
 
-	const options = getOptions({ reloadData, campaignId })
+	const options = getOptions({ reloadData, campaignId, isActive, canSendMsgs })
 
 	return (
 		<MUIDataTableEnhanced

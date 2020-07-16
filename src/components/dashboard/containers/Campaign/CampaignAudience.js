@@ -1,33 +1,24 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux'
 import { makeStyles } from '@material-ui/core/styles'
 import {
-	Paper,
 	Box,
 	ExpansionPanel,
 	ExpansionPanelSummary,
 	Typography,
 } from '@material-ui/core'
-import WithDialog from 'components/common/dialog/WithDialog'
 import { t, selectAudienceByCampaignId } from 'selectors'
 import AudiencePreview from 'components/dashboard/containers/AudiencePreview'
-import FormSteps from 'components/common/stepper/FormSteps'
 import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
-import { ChangeControls } from 'components/dashboard/containers/ItemCommon/'
-import {
-	NewCampaignFromAudience,
-	CampaignTargetingRules,
-} from 'components/dashboard/forms/items/NewItems'
+import { NewCampaignFromAudience } from 'components/dashboard/forms/items/NewItems'
 import {
 	execute,
 	updateNewCampaign,
 	updateNewAudience,
-	resetNewItem,
-	updateCampaignAudienceInput,
 	mapCurrentToNewCampaignAudienceInput,
 } from 'actions'
-import { Campaign } from 'adex-models'
 import { NewAudienceDialog } from 'components/dashboard/forms/items/NewItems'
+import { TargetingRulesEdit } from 'components/dashboard/containers/Campaign/CampaignEdits'
 
 const useStyles = makeStyles(theme => ({
 	actions: {
@@ -38,34 +29,12 @@ const useStyles = makeStyles(theme => ({
 	},
 }))
 
-export const TargetingSteps = ({ updateField, itemId, ...props }) => {
-	return (
-		<FormSteps
-			{...props}
-			cancelFunction={() => execute(resetNewItem('Campaign', itemId))}
-			itemId={itemId}
-			validateIdBase={`update-campaign-${itemId}-`}
-			itemType='Campaign'
-			stepsId={`update-campaign-${itemId}`}
-			steps={[
-				{
-					title: 'CAMPAIGN_AUDIENCE',
-					component: CampaignTargetingRules,
-					completeBtnTitle: 'OK',
-					completeFn: props =>
-						execute(
-							updateCampaignAudienceInput({ updateField, itemId, ...props })
-						),
-				},
-			]}
-			itemModel={Campaign}
-		/>
-	)
-}
-
-const TargetingRulesEdit = WithDialog(TargetingSteps)
-
-export const CampaignAudience = ({ item, ...hookProps }) => {
+export const CampaignAudience = ({
+	item,
+	isActive,
+	canSendMsgs,
+	...hookProps
+}) => {
 	const classes = useStyles()
 	const campaignAudienceInput =
 		useSelector(state => selectAudienceByCampaignId(state, item.id)) || {}
@@ -82,11 +51,12 @@ export const CampaignAudience = ({ item, ...hookProps }) => {
 					<AudiencePreview audienceInput={audienceInput.inputs} />
 				</Box>
 				<Box className={classes.actions}>
-					{['Ready', 'Active', 'Unhealthy'].includes(item.status.name) && (
+					{isActive && (
 						<TargetingRulesEdit
 							btnLabel='UPDATE_AUDIENCE'
 							title='UPDATE_CAMPAIGN_AUDIENCE'
 							itemId={item.id}
+							disabled={!canSendMsgs}
 							disableBackdropClick
 							updateField={hookProps.updateField}
 							color='secondary'

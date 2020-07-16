@@ -1,10 +1,10 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import {
-	Paper,
 	Grid,
 	Box,
 	InputAdornment,
 	Button,
+	Divider,
 	CircularProgress,
 } from '@material-ui/core'
 import { StopSharp, PauseSharp, StarSharp } from '@material-ui/icons'
@@ -14,8 +14,8 @@ import {
 	ItemTitle,
 	MediaCard,
 	ItemSpecProp,
-	ChangeControls,
 } from 'components/dashboard/containers/ItemCommon/'
+import { TargetingRulesEdit } from 'components/dashboard/containers/Campaign/CampaignEdits'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
 import { t, selectMainToken, selectSpinnerById } from 'selectors'
@@ -24,6 +24,7 @@ import {
 	closeCampaign,
 	pauseOrResumeCampaign,
 	confirmAction,
+	mapCurrentToNewCampaignAudienceInput,
 } from 'actions'
 import { useSelector } from 'react-redux'
 
@@ -41,7 +42,12 @@ const useStyles = makeStyles(theme => ({
 	},
 }))
 
-export const CampaignBasic = ({ item, ...hookProps }) => {
+export const CampaignBasic = ({
+	item,
+	canSendMsgs,
+	isActive,
+	...hookProps
+}) => {
 	const classes = useStyles()
 	const {
 		title,
@@ -49,7 +55,9 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 		pricingBounds,
 		minPerImpression,
 		maxPerImpression,
+		audienceInput,
 	} = item
+	const { advanced = {} } = audienceInput || {}
 	const { decimals, symbol } = selectMainToken()
 	const { title: errTitle } = hookProps.validations
 
@@ -77,7 +85,7 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 				<Box my={1}>
 					<MediaCard mediaUrl={mediaUrl} mediaMime={mediaMime} />
 				</Box>
-				{['Ready', 'Active', 'Unhealthy'].includes(status.name) && (
+				{isActive && (
 					<Grid container spacing={1} alignItems='center'>
 						<Grid item xs={12} sm={6} md={12} lg={6}>
 							<div className={classes.wrapper}>
@@ -104,7 +112,7 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 											)
 										)
 									}}
-									disabled={closeSpinner || humanFriendlyName === 'Closed'}
+									disabled={closeSpinner || !canSendMsgs}
 									endIcon={<StopSharp />}
 								>
 									{t('BTN_CLOSE_CAMPAIGN')}
@@ -146,7 +154,7 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 											)
 										)
 									}}
-									disabled={pauseSpinner || humanFriendlyName === 'Closed'}
+									disabled={pauseSpinner || !canSendMsgs}
 									endIcon={isPaused ? <StarSharp /> : <PauseSharp />}
 								>
 									{t(`BTN_${pauseAction}_CAMPAIGN`)}
@@ -164,10 +172,10 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 			</Grid>
 
 			<Grid item xs={12} sm={12} md={6} lg={7}>
-				<Box my={1}>
+				<Box mt={1}>
 					<ItemTitle title={title} errTitle={errTitle} {...hookProps} />
 				</Box>
-				<Box my={1}>
+				<Box mt={1}>
 					<ItemSpecProp
 						prop={'id'}
 						value={item.id}
@@ -177,7 +185,7 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 
 				<Grid container spacing={2}>
 					<Grid item xs={12} sm={12} md={6}>
-						<Box my={1}>
+						<Box my={0}>
 							<ItemSpecProp
 								prop={'humanFriendlyName'}
 								value={t(humanFriendlyName, { toUpperCase: true })}
@@ -191,21 +199,21 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 								}}
 							/>
 						</Box>
-						<Box my={1}>
+						<Box my={0}>
 							<ItemSpecProp
 								prop={'created'}
 								value={formatDateTime(item.created)}
 								label={t('created', { isProp: true })}
 							/>
 						</Box>
-						<Box my={1}>
+						<Box my={0}>
 							<ItemSpecProp
 								prop={'activeFrom'}
 								value={formatDateTime(item.activeFrom)}
 								label={t('activeFrom', { isProp: true })}
 							/>
 						</Box>
-						<Box my={1}>
+						<Box my={0}>
 							<ItemSpecProp
 								prop={'withdrawPeriodStart'}
 								value={formatDateTime(item.withdrawPeriodStart)}
@@ -221,14 +229,14 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 									</Box> */}
 					</Grid>
 					<Grid item xs={12} sm={12} md={6}>
-						<Box my={1}>
+						<Box my={0}>
 							<ItemSpecProp
 								prop={'fundsDistributedRatio'}
 								value={((status.fundsDistributedRatio || 0) / 10).toFixed(2)}
 								label={t('PROP_DISTRIBUTED', { args: ['%'] })}
 							/>
 						</Box>
-						<Box my={1}>
+						<Box my={0}>
 							<ItemSpecProp
 								prop={'depositAmount'}
 								value={
@@ -237,7 +245,7 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 								label={t('depositAmount', { isProp: true })}
 							/>
 						</Box>
-						<Box my={1}>
+						<Box my={0}>
 							<ItemSpecProp
 								prop={'CPM_MIN'}
 								value={
@@ -252,7 +260,7 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 								label={t('CPM_MIN')}
 							/>
 						</Box>
-						<Box my={1}>
+						<Box my={0}>
 							<ItemSpecProp
 								prop={'CPM_MAX'}
 								value={
@@ -269,8 +277,63 @@ export const CampaignBasic = ({ item, ...hookProps }) => {
 						</Box>
 					</Grid>
 				</Grid>
+				<Box mt={3} mb={1}>
+					<Divider />
+				</Box>
+				<Grid container spacing={2} pt={2}>
+					<Grid item xs={12} sm={12} md={12} lg={6}>
+						<Box my={0}>
+							<ItemSpecProp
+								prop={'INCLUDE_INCENTIVIZED_TRAFFIC_LABEL'}
+								value={t(advanced.includeIncentivized ? 'YES' : 'NO')}
+								label={t('INCLUDE_INCENTIVIZED_TRAFFIC_LABEL')}
+							/>
+						</Box>
+						<Box my={0}>
+							<ItemSpecProp
+								prop={'DISABLE_FREQUENCY_CAPPING_LABEL'}
+								value={t(advanced.disableFrequencyCapping ? 'YES' : 'NO')}
+								label={t('DISABLE_FREQUENCY_CAPPING_LABEL')}
+							/>
+						</Box>
+					</Grid>
+					<Grid item xs={12} sm={12} md={12} lg={6}>
+						<Box my={0}>
+							<ItemSpecProp
+								prop={'LIMIT_AVERAGE_DAILY_SPENDING_LABEL'}
+								value={t(advanced.limitDailyAverageSpending ? 'YES' : 'NO')}
+								label={t('LIMIT_AVERAGE_DAILY_SPENDING_LABEL')}
+							/>
+						</Box>
+						<Box mt={1}>
+							{isActive && (
+								<TargetingRulesEdit
+									fullWidth
+									advancedOnly
+									fieldName='campaignAdvanced'
+									stepTitle='PROP_CAMPAIGN_ADVANCED'
+									btnLabel='EDIT_CAMPAIGN_ADVANCED'
+									title='EDIT_CAMPAIGN_ADVANCED_TITLE'
+									itemId={item.id}
+									disabled={!canSendMsgs}
+									disableBackdropClick
+									updateField={hookProps.updateField}
+									color='secondary'
+									variant='contained'
+									onClick={() =>
+										execute(
+											mapCurrentToNewCampaignAudienceInput({
+												itemId: item.id,
+												dirtyProps: hookProps.dirtyProps,
+											})
+										)
+									}
+								/>
+							)}
+						</Box>
+					</Grid>
+				</Grid>
 			</Grid>
-			<Grid item xs={12} sm={12} md={12} lg={6}></Grid>
 		</Grid>
 	)
 }

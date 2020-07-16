@@ -64,6 +64,7 @@ function CampaignFormPreview() {
 
 	const { feesFormatted, totalSpendFormatted } = temp
 	const { IMPRESSION = {} } = pricingBounds || {}
+	const { advanced = {} } = audienceInput
 
 	useEffect(() => {
 		execute(getCampaignActualFees())
@@ -167,6 +168,38 @@ function CampaignFormPreview() {
 									))}
 								</div>
 							}
+						/>
+					</Grid>
+					<Grid item xs={12} md={6}>
+						<PropRow
+							left={t(`CAMPAIGN_AUTO_UTM_TAGS`)}
+							right={t(temp.useUtmTags ? 'YES' : 'NO')}
+						/>
+					</Grid>
+
+					<Grid item xs={12} md={6}>
+						<PropRow
+							left={t(`CAMPAIGN_UTM_SRC_WITH_PUB`)}
+							right={t(advanced.useUtmSrcWithPub ? 'YES' : 'NO')}
+						/>
+					</Grid>
+
+					<Grid item xs={12} md={6}>
+						<PropRow
+							left={t(`INCLUDE_INCENTIVIZED_TRAFFIC_LABEL`)}
+							right={t(advanced.includeIncentivized ? 'YES' : 'NO')}
+						/>
+					</Grid>
+					<Grid item xs={12} md={6}>
+						<PropRow
+							left={t(`DISABLE_FREQUENCY_CAPPING_LABEL`)}
+							right={t(advanced.disableFrequencyCapping ? 'YES' : 'NO')}
+						/>
+					</Grid>
+					<Grid item xs={12} md={6}>
+						<PropRow
+							left={t(`LIMIT_AVERAGE_DAILY_SPENDING_LABEL`)}
+							right={t(advanced.limitDailyAverageSpending ? 'YES' : 'NO')}
 						/>
 					</Grid>
 

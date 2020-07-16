@@ -253,6 +253,15 @@ export const audienceSources = [
 			{ type: 'nin', label: t('EXCLUDED_COUNTRIES'), minSelected: 1 },
 			{ type: 'allin', label: t('SHOW_EVERYWHERE'), value: 'ALL' },
 		],
+		extraInfo: t('LOCATION_TIERS_INFO', {
+			args: [
+				<ExternalAnchor
+					href={'https://help.adex.network/hc/en-us/articles/360014629020'}
+				>
+					{t('HERE')}
+				</ExternalAnchor>,
+			],
+		}),
 	},
 	{
 		parameter: 'categories',
@@ -282,45 +291,42 @@ export const audienceSources = [
 		actions: [
 			{
 				value: 'includeIncentivized',
-				label: t('INCLUDE_INCENTIVIZED_TRAFFIC', {
-					args: [
-						<ExternalAnchor
-							href={
-								'https://help.adex.network/hc/en-us/articles/360014543380-What-is-incentivized-traffic-'
-							}
-						>
-							{t('LEARN_MORE')}
-						</ExternalAnchor>,
-					],
-				}),
+				label: t('INCLUDE_INCENTIVIZED_TRAFFIC'),
+				helper: (
+					<ExternalAnchor
+						href={
+							'https://help.adex.network/hc/en-us/articles/360014543380-What-is-incentivized-traffic-'
+						}
+					>
+						{t('LEARN_MORE')}
+					</ExternalAnchor>
+				),
 			},
 			{
 				value: 'disableFrequencyCapping',
-				label: t('DISABLE_FREQUENCY_CAPPING', {
-					args: [
-						<ExternalAnchor
-							href={
-								'https://help.adex.network/hc/en-us/articles/360014597299-What-is-frequency-capping-'
-							}
-						>
-							{t('LEARN_MORE')}
-						</ExternalAnchor>,
-					],
-				}),
+				label: t('DISABLE_FREQUENCY_CAPPING'),
+				helper: (
+					<ExternalAnchor
+						href={
+							'https://help.adex.network/hc/en-us/articles/360014597299-What-is-frequency-capping-'
+						}
+					>
+						{t('LEARN_MORE')}
+					</ExternalAnchor>
+				),
 			},
 			{
 				value: 'limitDailyAverageSpending',
-				label: t('LIMIT_AVERAGE_DAILY_SPENDING', {
-					args: [
-						<ExternalAnchor
-							href={
-								'https://help.adex.network/hc/en-us/articles/360014597319-How-to-limit-your-average-daily-spend'
-							}
-						>
-							{t('LEARN_MORE')}
-						</ExternalAnchor>,
-					],
-				}),
+				label: t('LIMIT_AVERAGE_DAILY_SPENDING'),
+				helper: (
+					<ExternalAnchor
+						href={
+							'https://help.adex.network/hc/en-us/articles/360014597319-How-to-limit-your-average-daily-spend'
+						}
+					>
+						{t('LEARN_MORE')}
+					</ExternalAnchor>
+				),
 			},
 		],
 	},
@@ -440,8 +446,9 @@ export const selectAudienceInputsDataByItem = createSelector(
 		selectAudienceSourcesWithOptions,
 		selectNewItemByTypeAndId,
 		selectAudienceValidations,
+		(_, __, ___, ____, advancedOnly) => advancedOnly,
 	],
-	(allSrcsWithOptions, selectedItem, validations = {}) => {
+	(allSrcsWithOptions, selectedItem, validations = {}, advancedOnly) => {
 		const isCampaignAudienceItem = selectedItem && !!selectedItem.audienceInput
 
 		const errors =
@@ -454,44 +461,48 @@ export const selectAudienceInputsDataByItem = createSelector(
 				? selectedItem.audienceInput.inputs
 				: selectedItem.inputs) || {}
 
-		const SOURCES = allSrcsWithOptions.map(s => {
-			const disabledValues = getDisabledValues(
-				s,
-				//TODO: temp only used for in, so there is no point making it to work with other action types
-				s.source.in,
-				inputs,
-				allSrcsWithOptions
+		const SOURCES = allSrcsWithOptions
+			.filter(s =>
+				!!advancedOnly ? s.parameter === 'advanced' : s.parameter !== 'advanced'
 			)
+			.map(s => {
+				const disabledValues = getDisabledValues(
+					s,
+					//TODO: temp only used for in, so there is no point making it to work with other action types
+					s.source.in,
+					inputs,
+					allSrcsWithOptions
+				)
 
-			const source = { ...s.source }
-			if (
-				!!source.in &&
-				source.in.length &&
-				!!disabledValues.in &&
-				disabledValues.in.length
-			) {
-				source.in = [...source.in].sort((a, b) => {
-					if (
-						disabledValues.in.includes(a.value) &&
-						!disabledValues.in.includes(b.value)
-					) {
-						return 1
-					} else if (
-						!disabledValues.in.includes(a.value) &&
-						disabledValues.in.includes(b.value)
-					) {
-						return -1
-					}
+				const source = { ...s.source }
+				if (
+					!!source.in &&
+					source.in.length &&
+					!!disabledValues.in &&
+					disabledValues.in.length
+				) {
+					source.in = [...source.in].sort((a, b) => {
+						if (
+							disabledValues.in.includes(a.value) &&
+							!disabledValues.in.includes(b.value)
+						) {
+							return 1
+						} else if (
+							!disabledValues.in.includes(a.value) &&
+							disabledValues.in.includes(b.value)
+						) {
+							return -1
+						}
 
-					return 0
-				})
-			}
-			return {
-				...s,
-				source,
-				disabledValues,
-			}
-		})
+						return 0
+					})
+				}
+				return {
+					...s,
+					source,
+					disabledValues,
+				}
+			})
 
 		const audienceInputData = { SOURCES, inputs, errorParameters }
 

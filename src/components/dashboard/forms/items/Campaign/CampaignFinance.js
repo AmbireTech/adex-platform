@@ -15,6 +15,7 @@ import { FullContentSpinner } from 'components/common/dialog/content'
 import { utils } from 'ethers'
 import MomentUtils from '@date-io/moment'
 import { ItemSpecProp } from 'components/dashboard/containers/ItemCommon/'
+import { CampaignTargetingRules } from 'components/dashboard/forms/items/NewItems'
 import { ExternalAnchor } from 'components/common/anchor/anchor'
 import {
 	selectSpinnerById,
@@ -49,7 +50,7 @@ const getTotalImpressions = ({ depositAmount, min, max }) => {
 	}
 }
 
-function CampaignFinance({ validateId }) {
+function CampaignFinance({ validateId, ...rest }) {
 	const invalidFields = useSelector(
 		state => selectValidationsById(state, validateId) || {}
 	)
@@ -355,6 +356,13 @@ function CampaignFinance({ validateId }) {
 								})}
 							</FormHelperText>
 						</FormControl>
+					</Grid>
+					<Grid item xs={12} sm={12} md={6}>
+						<CampaignTargetingRules
+							{...rest}
+							validateId={validateId}
+							advancedOnly
+						/>
 					</Grid>
 				</Grid>
 			)}

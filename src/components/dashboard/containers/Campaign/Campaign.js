@@ -55,6 +55,13 @@ function Campaign({ match }) {
 	const leader = campaign.spec.validators[0]
 	const follower = campaign.spec.validators[1]
 	const campaignId = campaign.id
+	const { status = {} } = item
+	const canSendMsgs =
+		status.name &&
+		['Ready', 'Active', 'Unhealthy'].includes(status.name) &&
+		status.humanFriendlyName !== 'Closed'
+
+	const isActive = status.humanFriendlyName === 'Active'
 
 	useEffect(() => {
 		execute(updateMemoryUi('campaignId', campaignId))
@@ -91,12 +98,22 @@ function Campaign({ match }) {
 			<ItemTabsContainer>
 				{tabIndex === 0 && (
 					<Box p={1}>
-						<CampaignBasic item={item} {...hookProps} />{' '}
+						<CampaignBasic
+							item={item}
+							{...hookProps}
+							canSendMsgs={canSendMsgs}
+							isActive={isActive}
+						/>
 					</Box>
 				)}
 				{tabIndex === 1 && (
 					<Box p={1}>
-						<CampaignAudience item={item} {...hookProps} />{' '}
+						<CampaignAudience
+							item={item}
+							{...hookProps}
+							canSendMsgs={canSendMsgs}
+							isActive={isActive}
+						/>
 					</Box>
 				)}
 				{tabIndex === 2 && (
@@ -111,7 +128,11 @@ function Campaign({ match }) {
 						>
 							<Box flexGrow='1' order={{ xs: 2, md: 2, lg: 1 }}>
 								<Paper variant='outlined'>
-									<CampaignStatsBreakdownTable campaignId={campaignId} />
+									<CampaignStatsBreakdownTable
+										campaignId={campaignId}
+										canSendMsgs={canSendMsgs}
+										isActive={isActive}
+									/>
 								</Paper>
 							</Box>
 							<Box p={2} order={{ xs: 1, md: 1, lg: 2 }}>

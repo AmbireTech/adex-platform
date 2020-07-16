@@ -11,6 +11,8 @@ import {
 	Tab,
 	Tabs,
 	FormControlLabel,
+	FormControl,
+	FormHelperText,
 	RadioGroup,
 	Radio,
 	Typography,
@@ -160,6 +162,7 @@ const getMultipleActionsUsedValues = ({ actions, currentAction, target }) => {
 const Targets = ({
 	inputs,
 	source = {},
+	extraInfo = null,
 	collection,
 	placeholder,
 	label,
@@ -180,8 +183,14 @@ const Targets = ({
 	const applyValue = target.apply || actions[0].type
 
 	return (
-		<Grid container spacing={2} alignItems='center'>
-			<Grid item xs={12} md={12}>
+		<Box
+			display='flex'
+			flexDirection='column'
+			width={1}
+			height={1}
+			justifyContent='space-between'
+		>
+			<Box>
 				{applyType === 'single' && (
 					<RadioGroup
 						aria-label={parameter}
@@ -281,97 +290,110 @@ const Targets = ({
 				{applyType === 'multiple-checkbox' &&
 					actions.map(a => (
 						<Box key={parameter + a.value}>
-							<FormControlLabel
-								control={
-									<Checkbox
-										checked={!!target[a.value]}
-										name={a.value}
-										onChange={ev =>
-											execute(
-												updateTargetRuleInput({
-													index,
-													itemType,
-													itemId,
-													parameter,
-													target: {
-														...target,
-														...{
-															[a.value]: ev.target.checked,
+							<FormControl>
+								<FormControlLabel
+									control={
+										<Checkbox
+											checked={!!target[a.value]}
+											name={a.value}
+											onChange={ev =>
+												execute(
+													updateTargetRuleInput({
+														index,
+														itemType,
+														itemId,
+														parameter,
+														target: {
+															...target,
+															...{
+																[a.value]: ev.target.checked,
+															},
 														},
-													},
-													collection,
-												})
-											)
-										}
-									/>
-								}
-								label={a.label}
-							/>
+														collection,
+													})
+												)
+											}
+										/>
+									}
+									label={a.label}
+								/>
+								<FormHelperText>{a.helper}</FormHelperText>
+							</FormControl>
 						</Box>
 					))}
-			</Grid>
-		</Grid>
+			</Box>
+			<Box>{extraInfo}</Box>
+		</Box>
 	)
 }
 
-const NewTargetingRules = ({ itemType, itemId, validateId }) => {
+const NewTargetingRules = ({ itemType, itemId, validateId, advancedOnly }) => {
 	const [tabIndex, setTabIndex] = useState(0)
 	const classes = useStyles()
 
 	const { SOURCES, inputs, errorParameters } = useSelector(state =>
-		selectAudienceInputsDataByItem(state, itemType, itemId, validateId)
+		selectAudienceInputsDataByItem(
+			state,
+			itemType,
+			itemId,
+			validateId,
+			advancedOnly
+		)
 	)
 
-	const { parameter, source, actions, applyType, disabledValues } =
+	const { parameter, source, actions, applyType, disabledValues, extraInfo } =
 		SOURCES[tabIndex] || {}
 
 	return (
-		<Grid container spacing={1}>
-			<Grid item xs={12}>
-				<Paper position='static' variant='outlined'>
-					<Tabs
-						value={tabIndex}
-						onChange={(ev, index) => setTabIndex(index)}
-						variant='scrollable'
-						scrollButtons='auto'
-						indicatorColor='primary'
-						textColor='primary'
-					>
-						{SOURCES.map(({ parameter }, index) => (
-							<Tab
-								key={parameter}
-								label={parameter}
-								icon={
-									errorParameters[parameter] ? (
-										<ErrIcon color='error' />
-									) : (
-										parameterIcon[parameter]
-									)
-								}
-							/>
-						))}
-					</Tabs>
-				</Paper>
-				<Box mt={2}>
-					<Targets
-						inputs={inputs}
-						target={inputs[parameter]}
-						key={parameter}
-						parameter={parameter}
-						label={t(parameter)}
-						placeholder={t(parameter)}
-						source={source || {}}
-						disabledValues={disabledValues || {}}
-						SOURCES={SOURCES}
-						actions={actions}
-						applyType={applyType}
-						itemId={itemId}
-						itemType={itemType}
-						classes={classes}
-					/>
+		<Box display='flex' flexDirection='column' width={1} height={1}>
+			{!advancedOnly && (
+				<Box mb={2}>
+					<Paper position='static' variant='outlined'>
+						<Tabs
+							value={tabIndex}
+							onChange={(ev, index) => setTabIndex(index)}
+							variant='scrollable'
+							scrollButtons='auto'
+							indicatorColor='primary'
+							textColor='primary'
+						>
+							{SOURCES.map(({ parameter }, index) => (
+								<Tab
+									key={parameter}
+									label={parameter}
+									icon={
+										errorParameters[parameter] ? (
+											<ErrIcon color='error' />
+										) : (
+											parameterIcon[parameter]
+										)
+									}
+								/>
+							))}
+						</Tabs>
+					</Paper>
 				</Box>
-			</Grid>
-		</Grid>
+			)}
+			<Box display='flex' flexGrow='1'>
+				<Targets
+					inputs={inputs}
+					target={inputs[parameter]}
+					key={parameter}
+					parameter={parameter}
+					label={t(parameter)}
+					placeholder={t(parameter)}
+					source={source || {}}
+					extraInfo={extraInfo}
+					disabledValues={disabledValues || {}}
+					SOURCES={SOURCES}
+					actions={actions}
+					applyType={applyType}
+					itemId={itemId}
+					itemType={itemType}
+					classes={classes}
+				/>
+			</Box>
+		</Box>
 	)
 }
 
