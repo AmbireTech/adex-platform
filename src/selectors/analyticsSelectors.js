@@ -42,15 +42,19 @@ export const selectAnalyticsLiveTimestamp = createSelector(
 	(timeframe, lastChecked) => {
 		switch (timeframe) {
 			case 'hour':
-				return +dateUtils.date(lastChecked).startOf('hour')
+				const hourStart = +dateUtils.addHours(dateUtils.date(lastChecked), -1)
+				return hourStart
 			case 'day':
-				return +dateUtils.date(lastChecked).startOf('day')
+				return +dateUtils
+					.addDays(dateUtils.date(lastChecked), -1)
+					.startOf('hour')
 			case 'week':
 				return +dateUtils
-					.date(lastChecked)
-					.startOf('week')
-					.add(23, 'hours')
-					.utc()
+					.addDays(dateUtils.date(lastChecked), -7)
+					.startOf('hour')
+			case 'month':
+				return +dateUtils
+					.addMonths(dateUtils.date(lastChecked), -1)
 					.startOf('day')
 			default:
 				return +dateUtils.date(lastChecked).startOf('hour')
