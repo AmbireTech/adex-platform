@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.33
+##### *2020-07-17*
+
+### Fixed
+- Misc minor bugs and translations
+
 ## 4.20.32
 ##### *2020-07-16*
 
