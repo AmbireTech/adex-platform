@@ -272,7 +272,9 @@ export function mapCurrentToNewCampaignAudienceInput({ itemId, dirtyProps }) {
 				? item.audienceInput
 				: initialAudienceInput
 
-		const audienceInput = dirtyProps.includes('audienceInput')
+		const audienceInput = dirtyProps.some(p =>
+			['audienceInput', 'campaignAdvanced'].includes(p.name || p)
+		)
 			? campaign.audienceInput
 			: item.audienceInput || itemAudienceInput
 
