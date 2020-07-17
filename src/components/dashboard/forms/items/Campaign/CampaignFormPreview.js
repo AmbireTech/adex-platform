@@ -64,7 +64,7 @@ function CampaignFormPreview() {
 
 	const { feesFormatted, totalSpendFormatted } = temp
 	const { IMPRESSION = {} } = pricingBounds || {}
-	const { advanced = {} } = audienceInput
+	const { advanced = {} } = audienceInput.inputs
 
 	useEffect(() => {
 		execute(getCampaignActualFees())
@@ -180,7 +180,7 @@ function CampaignFormPreview() {
 					<Grid item xs={12} md={6}>
 						<PropRow
 							left={t(`CAMPAIGN_UTM_SRC_WITH_PUB`)}
-							right={t(advanced.useUtmSrcWithPub ? 'YES' : 'NO')}
+							right={t(temp.useUtmSrcWithPub ? 'YES' : 'NO')}
 						/>
 					</Grid>
 
