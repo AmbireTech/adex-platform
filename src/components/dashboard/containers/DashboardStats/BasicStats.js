@@ -63,6 +63,7 @@ const timeoutMap = {
 	hour: min,
 	day: 10 * min,
 	week: 30 * min,
+	month: 30 * min,
 }
 
 const timeFrames = VALIDATOR_ANALYTICS_TIMEFRAMES.map(tf => {

@@ -31,6 +31,9 @@ export const fillEmptyTime = (
 		case 'week':
 			time.step = { ammount: 6, unit: 'hour' }
 			break
+		case 'month':
+			time.step = { ammount: 1, unit: 'day' }
+			break
 		default:
 			return prevAggr
 	}
@@ -104,6 +107,10 @@ export const getTimePeriods = ({ timeframe, start }) => {
 			)
 			end = +dateUtils.addHours(endOfWeek, dateUtils.getUTCOffset(endOfWeek))
 			break
+		case 'month':
+			start = +dateUtils.date(startCopy).startOf('day')
+			end = +dateUtils.addDays(dateUtils.date(startCopy), 30)
+			break
 		default:
 			break
 	}
@@ -126,6 +133,9 @@ export const getBorderPeriodStart = ({ timeframe, start, next = false }) => {
 			break
 		case 'week':
 			start = +dateUtils.addWeeks(dateUtils.date(start), direction)
+			break
+		case 'month':
+			start = +dateUtils.addDays(dateUtils.date(start), 30 * direction)
 			break
 		default:
 			start = +dateUtils.addDays(dateUtils.date(start), direction)
