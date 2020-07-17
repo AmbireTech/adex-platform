@@ -39,6 +39,10 @@ export class DateUtils extends MomentUtils {
 		return date.clone().add(weeks, 'week')
 	}
 
+	addMonths(date, months) {
+		return date.clone().add(months, 'month')
+	}
+
 	getUTCOffset(date = this.moment()) {
 		return this.moment(date).utcOffset() / 60
 	}
