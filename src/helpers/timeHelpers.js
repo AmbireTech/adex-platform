@@ -89,27 +89,22 @@ export const DATETIME_EXPORT_FORMAT = 'YYYY-MM-DD HH:mm:ss'
 export const getTimePeriods = ({ timeframe, start }) => {
 	let end = null
 	const startCopy = start
-	const startOfWeek = dateUtils.date(startCopy).startOf('week')
-	const endOfWeek = dateUtils.date(startCopy).endOf('week')
 	switch (timeframe) {
 		case 'hour':
-			start = +dateUtils.date(startCopy).startOf('hour')
-			end = +dateUtils.date(startCopy).endOf('hour')
+			start = +dateUtils.date(startCopy).startOf('minute')
+			end = +dateUtils.addHours(dateUtils.date(startCopy), 1).startOf('minute')
 			break
 		case 'day':
-			start = +dateUtils.date(startCopy).startOf('day')
-			end = +dateUtils.date(startCopy).endOf('day')
+			start = +dateUtils.date(startCopy).startOf('hour')
+			end = +dateUtils.addDays(dateUtils.date(startCopy), 1).startOf('hour')
 			break
 		case 'week':
-			start = +dateUtils.addHours(
-				startOfWeek,
-				dateUtils.getUTCOffset(startOfWeek)
-			)
-			end = +dateUtils.addHours(endOfWeek, dateUtils.getUTCOffset(endOfWeek))
+			start = +dateUtils.date(startCopy).startOf('hour')
+			end = +dateUtils.addDays(dateUtils.date(startCopy), 7).startOf('hour')
 			break
 		case 'month':
 			start = +dateUtils.date(startCopy).startOf('day')
-			end = +dateUtils.addDays(dateUtils.date(startCopy), 30)
+			end = +dateUtils.addMonths(dateUtils.date(startCopy), 1).startOf('day')
 			break
 		default:
 			break
@@ -135,7 +130,7 @@ export const getBorderPeriodStart = ({ timeframe, start, next = false }) => {
 			start = +dateUtils.addWeeks(dateUtils.date(start), direction)
 			break
 		case 'month':
-			start = +dateUtils.addDays(dateUtils.date(start), 30 * direction)
+			start = +dateUtils.addMonths(dateUtils.date(start), direction)
 			break
 		default:
 			start = +dateUtils.addDays(dateUtils.date(start), direction)
