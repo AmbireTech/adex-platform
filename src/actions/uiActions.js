@@ -9,6 +9,7 @@ import {
 	selectIdentitySideAnalyticsPeriod,
 	selectSide,
 	selectMemoryUi,
+	selectAnalyticsLiveTimestamp,
 	t,
 } from 'selectors'
 import { getTimePeriods, getBorderPeriodStart } from 'helpers/timeHelpers'
@@ -402,11 +403,12 @@ export function updateAnalyticsPeriodPrevNextLive({
 }) {
 	return async function(dispatch, getState) {
 		try {
-			const timeframe = selectIdentitySideAnalyticsTimeframe(getState())
-			let { start } = selectIdentitySideAnalyticsPeriod(getState())
+			const state = getState()
+			const timeframe = selectIdentitySideAnalyticsTimeframe(state)
+			let { start } = selectIdentitySideAnalyticsPeriod(state)
 
 			if (live) {
-				start = +dateUtils.date()
+				start = selectAnalyticsLiveTimestamp(state)
 			} else {
 				start = getBorderPeriodStart({ timeframe, start, next })
 			}
