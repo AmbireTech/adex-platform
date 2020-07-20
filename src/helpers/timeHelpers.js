@@ -157,6 +157,9 @@ export const getBorderPeriodStart = ({ timeframe, start, next = false }) => {
 		case 'month':
 			start = +dateUtils.addMonths(dateUtils.date(start), direction)
 			break
+		case 'year':
+			start = +dateUtils.addYears(dateUtils.date(start), direction)
+			break
 		default:
 			start = +dateUtils.addDays(dateUtils.date(start), direction)
 			break
