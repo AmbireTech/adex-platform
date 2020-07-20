@@ -19,23 +19,23 @@ export const fillEmptyTime = (
 	const now = Date.now()
 	const time = {
 		interval: period,
-		step: { ammount: 1, unit: 'minute' },
+		step: { period: 1, span: 'minute' },
 	}
 	switch (timeframe) {
 		case 'hour':
-			time.step = { ammount: 1, unit: 'minute' }
+			time.step = { period: HOUR, span: MINUTE }
 			break
 		case 'day':
-			time.step = { ammount: 1, unit: 'hour' }
+			time.step = { period: DAY, span: HOUR }
 			break
 		case 'week':
-			time.step = { ammount: 6, unit: 'hour' }
+			time.step = { period: WEEK, span: 6 * HOUR }
 			break
 		case 'month':
-			time.step = { ammount: 1, unit: 'day' }
+			time.step = { period: MONTH, span: DAY }
 			break
 		case 'year':
-			time.step = { ammount: 1, unit: 'month' }
+			time.step = { period: YEAR, span: MONTH }
 			break
 		default:
 			return prevAggr
@@ -43,20 +43,17 @@ export const fillEmptyTime = (
 	const newAggr = []
 
 	for (
-		var m = dateUtils.date(time.interval.start);
-		dateUtils.getDiff(m, time.interval.end) <= 0;
-		dateUtils.add(m, time.step.ammount, time.step.unit)
+		var m = time.interval.start;
+		time.interval.end - m <= 0;
+		m = m + time.step.span
 	) {
-		newAggr.push({ value: defaultValue, time: dateUtils.getUnix(m) * 1000 })
+		newAggr.push({ value: defaultValue, time: m })
 	}
 
 	const prevAggrInInterval = prevAggr
 		.filter(a => {
-			const m = dateUtils.date(a.time)
-			return (
-				dateUtils.getDiff(m, time.interval.start) >= 0 &&
-				dateUtils.getDiff(m, time.interval.end) <= 0
-			)
+			const m = a.time
+			return m - time.interval.start >= 0 && m - time.interval.end <= 0
 		})
 		.sort((a, b) => b.time - a.time)
 
@@ -125,11 +122,11 @@ export const getTimePeriods = ({ timeframe, start }) => {
 			start = +dateUtils
 				.date(startCopy)
 				.utc()
-				.startOf('date')
+				.startOf('day')
 			end = +dateUtils
 				.addMonths(dateUtils.date(startCopy), 12)
 				.utc()
-				.startOf('date')
+				.startOf('day')
 			break
 		default:
 			break
@@ -155,10 +152,16 @@ export const getBorderPeriodStart = ({ timeframe, start, next = false }) => {
 			start = +dateUtils.addWeeks(dateUtils.date(start), direction)
 			break
 		case 'month':
-			start = +dateUtils.addMonths(dateUtils.date(start), direction)
+			start = +dateUtils.addDays(dateUtils.date(start), 30 * direction)
 			break
 		case 'year':
-			start = +dateUtils.addYears(dateUtils.date(start), direction)
+			start = +dateUtils.addDays(
+				dateUtils
+					.date(start)
+					.utc()
+					.startOf('year'),
+				12 * 30 * direction
+			)
 			break
 		default:
 			start = +dateUtils.addDays(dateUtils.date(start), direction)
