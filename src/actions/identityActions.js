@@ -18,7 +18,12 @@ import {
 	generateSalt,
 } from 'services/wallet/wallet'
 import { saveToLocalStorage } from 'helpers/localStorageHelpers'
-import { selectIdentity, selectAuthType, t } from 'selectors'
+import {
+	selectLoginSelectedIdentity,
+	selectIdentity,
+	selectAuthType,
+	t,
+} from 'selectors'
 import { AUTH_TYPES } from 'constants/misc'
 import {
 	validate,
@@ -174,8 +179,17 @@ export function ownerIdentities({ owner, authType }) {
 		try {
 			const { provider } = await getEthers(authType)
 			const identityData = await getOwnerIdentities({ owner })
-			const data = Object.entries(identityData).map(
-				async ([identityAddr, privLevel]) => {
+			const loginSelectedIdentity = selectLoginSelectedIdentity(getState())
+			const data = Object.entries(identityData)
+				.filter(
+					x =>
+						!!x &&
+						!!x[0] &&
+						(!!loginSelectedIdentity
+							? x[0].toLowerCase() === loginSelectedIdentity.toLowerCase()
+							: true)
+				)
+				.map(async ([identityAddr, privLevel]) => {
 					try {
 						const ens = await provider.lookupAddress(identityAddr)
 						return {
@@ -186,8 +200,7 @@ export function ownerIdentities({ owner, authType }) {
 					} catch {
 						return null
 					}
-				}
-			)
+				})
 
 			const ownerIdentities = (await Promise.all(data)).filter(x => !!x)
 
