@@ -316,6 +316,7 @@ export function handleRedirectParams(search) {
 		const identity = searchParams.get('confirm-identity')
 		const grant = searchParams.get('confirm-grant')
 		const side = (searchParams.get('go-to-side') || '').toLowerCase()
+		const selectedIdentity = searchParams.get('login-select-identity')
 
 		if (email && identity && !grant) {
 			addToast({
@@ -337,6 +338,10 @@ export function handleRedirectParams(search) {
 
 		if (['advertiser', 'publisher'].includes(side)) {
 			updateGlobalUi('goToSide', side)(dispatch)
+		}
+
+		if (!!selectedIdentity) {
+			updateMemoryUi('loginSelectedIdentity', selectedIdentity)(dispatch)
 		}
 	}
 }
