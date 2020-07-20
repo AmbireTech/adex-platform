@@ -152,6 +152,22 @@ const DatePickerSwitch = ({ timeframe, ...rest }) => {
 					{...rest}
 				/>
 			)
+		case 'year':
+			return (
+				<DatePicker
+					{...rest}
+					views={['year', 'month']}
+					labelFunc={val =>
+						`${dateUtils.format(
+							dateUtils.date(val),
+							'MMM "YY'
+						)} - ${dateUtils.format(
+							dateUtils.addYears(dateUtils.date(val), 1),
+							'MMM "YY'
+						)}`
+					}
+				/>
+			)
 		default:
 			return <DatePicker {...rest} />
 	}
