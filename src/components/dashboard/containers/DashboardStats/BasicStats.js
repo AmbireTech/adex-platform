@@ -63,7 +63,8 @@ const timeoutMap = {
 	hour: min,
 	day: 10 * min,
 	week: 30 * min,
-	month: 30 * min,
+	month: 60 * 2 * min,
+	year: 60 * 24 * min,
 }
 
 const timeFrames = VALIDATOR_ANALYTICS_TIMEFRAMES.map(tf => {
@@ -144,7 +145,7 @@ const DatePickerSwitch = ({ timeframe, ...rest }) => {
 							dateUtils.date(val),
 							'MMM DD "YY - (HH:mm'
 						)} - ${dateUtils.format(
-							dateUtils.setMinutes(dateUtils.date(val), 59),
+							dateUtils.addHours(dateUtils.date(val), 1),
 							'HH:mm)'
 						)}`
 					}

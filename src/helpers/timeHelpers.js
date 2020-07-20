@@ -34,6 +34,9 @@ export const fillEmptyTime = (
 		case 'month':
 			time.step = { ammount: 1, unit: 'day' }
 			break
+		case 'year':
+			time.step = { ammount: 1, unit: 'month' }
+			break
 		default:
 			return prevAggr
 	}
@@ -99,8 +102,14 @@ export const getTimePeriods = ({ timeframe, start }) => {
 			end = +dateUtils.addDays(dateUtils.date(startCopy), 1).startOf('hour')
 			break
 		case 'week':
-			start = +dateUtils.date(startCopy).startOf('hour')
-			end = +dateUtils.addDays(dateUtils.date(startCopy), 7).startOf('hour')
+			start = +dateUtils
+				.date(startCopy)
+				.utc()
+				.startOf('day')
+			end = +dateUtils
+				.addDays(dateUtils.date(startCopy), 7)
+				.utc()
+				.startOf('day')
 			break
 		case 'month':
 			start = +dateUtils
@@ -111,6 +120,16 @@ export const getTimePeriods = ({ timeframe, start }) => {
 				.addMonths(dateUtils.date(startCopy), 1)
 				.utc()
 				.startOf('day')
+			break
+		case 'year':
+			start = +dateUtils
+				.date(startCopy)
+				.utc()
+				.startOf('date')
+			end = +dateUtils
+				.addMonths(dateUtils.date(startCopy), 12)
+				.utc()
+				.startOf('date')
 			break
 		default:
 			break
