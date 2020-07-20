@@ -103,8 +103,14 @@ export const getTimePeriods = ({ timeframe, start }) => {
 			end = +dateUtils.addDays(dateUtils.date(startCopy), 7).startOf('hour')
 			break
 		case 'month':
-			start = +dateUtils.date(startCopy).startOf('day')
-			end = +dateUtils.addMonths(dateUtils.date(startCopy), 1).startOf('day')
+			start = +dateUtils
+				.date(startCopy)
+				.utc()
+				.startOf('day')
+			end = +dateUtils
+				.addMonths(dateUtils.date(startCopy), 1)
+				.utc()
+				.startOf('day')
 			break
 		default:
 			break

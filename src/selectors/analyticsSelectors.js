@@ -55,6 +55,7 @@ export const selectAnalyticsLiveTimestamp = createSelector(
 			case 'month':
 				return +dateUtils
 					.addMonths(dateUtils.date(lastChecked), -1)
+					.utc()
 					.startOf('day')
 			default:
 				return +dateUtils.date(lastChecked).startOf('hour')
