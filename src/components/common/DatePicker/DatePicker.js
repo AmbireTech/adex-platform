@@ -10,7 +10,7 @@ import {
 	Update,
 } from '@material-ui/icons'
 import InputAdornment from '@material-ui/core/InputAdornment'
-import utils, { makeJSDateObject } from 'helpers/dateUtils'
+import dateUtils, { makeJSDateObject } from 'helpers/dateUtils'
 import clsx from 'clsx'
 
 const CalendarIconAdor = ({
@@ -109,26 +109,32 @@ function WeekSelectDatePicker({ classes, ...rest }) {
 	const formatWeekSelectLabel = (date, invalidLabel) => {
 		let dateClone = makeJSDateObject(date)
 
-		return dateClone && utils.isValid(dateClone)
-			? `${utils.format(dateClone, 'MMM DD "YY')} - ${utils.format(
-					utils.addDays(dateClone, 6),
+		return dateClone && dateUtils.isValid(dateClone)
+			? `${dateUtils.format(dateClone, 'MMM DD "YY')} - ${dateUtils.format(
+					dateUtils.addDays(dateClone, 7),
 					'MMM DD "YY'
 			  )}`
 			: invalidLabel
 	}
 
-	const dayIsFuture = date => utils.isAfter(date, utils.date())
+	const dayIsFuture = date => dateUtils.isAfter(date, dateUtils.date())
 
 	const renderWrappedWeekDay = (date, selectedDate, dayInCurrentMonth) => {
 		let dateClone = makeJSDateObject(date)
 		let selectedDateClone = makeJSDateObject(selectedDate)
 
-		const start = utils.startOfWeek(selectedDateClone)
-		const end = utils.endOfWeek(selectedDateClone)
+		const start = dateUtils
+			.date(selectedDateClone)
+			.utc()
+			.startOf('day')
+		const end = dateUtils
+			.addDays(dateUtils.date(selectedDateClone), 7)
+			.utc()
+			.startOf('day')
 
-		const dayIsBetween = utils.isWithinInterval(dateClone, { start, end })
-		const isFirstDay = utils.isSameDay(dateClone, start)
-		const isLastDay = utils.isSameDay(dateClone, end)
+		const dayIsBetween = dateUtils.isWithinInterval(dateClone, { start, end })
+		const isFirstDay = dateUtils.isSameDay(dateClone, start)
+		const isLastDay = dateUtils.isSameDay(dateClone, end)
 
 		const wrapperClassName = clsx({
 			[classes.highlight]: dayIsBetween,
@@ -145,7 +151,7 @@ function WeekSelectDatePicker({ classes, ...rest }) {
 		return (
 			<div className={wrapperClassName}>
 				<IconButton className={dayClassName}>
-					<span> {utils.format(dateClone, 'D')} </span>
+					<span> {dateUtils.format(dateClone, 'D')} </span>
 				</IconButton>
 			</div>
 		)
@@ -157,6 +163,7 @@ function WeekSelectDatePicker({ classes, ...rest }) {
 			renderDay={renderWrappedWeekDay}
 			labelFunc={formatWeekSelectLabel}
 			shouldDisableDate={date => dayIsFuture(date)}
+			views={['year', 'month']}
 			{...rest}
 		/>
 	)
