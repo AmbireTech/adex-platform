@@ -21,17 +21,17 @@ const CalendarIconAdor = ({
 	onLiveClick,
 }) => (
 	<InputAdornment position='end'>
+		{onNextClick && (
+			<IconButton color={iconColor} onClick={onNextClick} size='small'>
+				<NavigateNextRounded />
+			</IconButton>
+		)}
 		<IconButton color={iconColor} onClick={onIconClick} size='small'>
 			{icon}
 		</IconButton>
 		{onLiveClick && (
 			<IconButton color={iconColor} onClick={onLiveClick} size='small'>
 				<Update />
-			</IconButton>
-		)}
-		{onNextClick && (
-			<IconButton color={iconColor} onClick={onNextClick} size='small'>
-				<NavigateNextRounded />
 			</IconButton>
 		)}
 	</InputAdornment>
