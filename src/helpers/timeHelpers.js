@@ -6,8 +6,8 @@ const MINUTE = 60 * SECOND
 const HOUR = 60 * MINUTE
 const DAY = 24 * HOUR
 const WEEK = 7 * DAY
-const MONTH = 30 * DAY
 const YEAR = 365 * DAY
+const MONTH = Math.floor(YEAR / 12)
 
 export const fillEmptyTime = (
 	prevAggr,
@@ -42,18 +42,17 @@ export const fillEmptyTime = (
 	}
 	const newAggr = []
 
-	for (
-		var m = time.interval.start;
-		time.interval.end - m <= 0;
-		m = m + time.step.span
-	) {
+	let initialTime = time.interval.start - (time.interval.start % time.step.span)
+	let endTime = initialTime + time.step.period
+
+	for (let m = initialTime; m <= endTime; m = m + time.step.span) {
 		newAggr.push({ value: defaultValue, time: m })
 	}
 
 	const prevAggrInInterval = prevAggr
 		.filter(a => {
 			const m = a.time
-			return m - time.interval.start >= 0 && m - time.interval.end <= 0
+			return m - initialTime >= 0 && m - endTime <= 0
 		})
 		.sort((a, b) => b.time - a.time)
 
