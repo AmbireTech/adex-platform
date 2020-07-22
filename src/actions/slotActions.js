@@ -264,10 +264,14 @@ export function saveSlot() {
 			newItem.fallbackUnit = fallbackUnit
 			newItem.created = Date.now()
 
-			if (newItem.minPerImpression) {
+			const minPerImpression = newItem.rulesInput.inputs.autoSetMinCPM
+				? newItem.temp.suggestedMinCPM
+				: newItem.minPerImpression
+
+			if (minPerImpression) {
 				newItem.minPerImpression = {
 					[mainToken.address]: numStringCPMtoImpression({
-						numStr: newItem.minPerImpression,
+						numStr: minPerImpression,
 						decimals: mainToken.decimals,
 					}),
 				}
