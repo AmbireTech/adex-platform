@@ -32,6 +32,7 @@ import { getWidAndHightFromType } from 'helpers/itemsHelpers'
 import { ADD_ITEM, UPDATE_ITEM } from 'constants/actionTypes'
 import { ipfsSrc } from 'helpers/ipfsHelpers'
 import { getImgObjectUrlFromExternalUrl } from 'services/images/blob'
+import { bigNumberify, formatUnits } from 'ethers/utils'
 
 const { adSlotPost, adUnitPost, adSlotPut } = schemas
 const { slotRulesInputToTargetingRules } = helpers
@@ -465,7 +466,10 @@ export function validateAndUpdateSlot({
 				typeof minPerImpression === 'string' && !autoSetMinCPM
 
 			const updateRules = dirtyProps.some(
-				prop => prop && prop.name === 'rulesInput'
+				prop =>
+					prop &&
+					(prop.name === 'rulesInput' ||
+						(prop.fields || []).includes('rulesInput'))
 			)
 
 			const validations = await Promise.all([
@@ -499,10 +503,11 @@ export function validateAndUpdateSlot({
 					  })(dispatch)
 					: true,
 				updateRules
-					? validateNumberString({
+					? validateSchemaProp({
 							validateId,
 							prop: 'rulesInput',
 							value: rulesInput,
+							schema: adSlotPut.rulesInput,
 							dirty,
 					  })(dispatch)
 					: true,
@@ -510,30 +515,49 @@ export function validateAndUpdateSlot({
 
 			let isValid = validations.every(v => v === true)
 
-			let minCPM = minPerImpression
+			let minCPM = null
 			let newRules = null
-			let suggestedMinCPM = null
+			let rulesCPM = null
 
-			if (isValid && updateMinPerImpression && !autoSetMinCPM) {
-				minCPM = {
-					[mainToken.address]: numStringCPMtoImpression({
-						numStr: minPerImpression || null,
-						decimals: mainToken.decimals,
-					}),
+			if (isValid && !autoSetMinCPM && updateMinPerImpression) {
+				if (!minPerImpression || parseFloat(minPerImpression) <= 0) {
+					throw new Error('INVALID_MANUAL_MIN_CPM_VALUE')
 				}
-			}
 
-			if (isValid && autoSetMinCPM) {
-				suggestedMinCPM = (await verifyWebsite({ websiteUrl: website }))
+				rulesCPM = minPerImpression
+			} else if (isValid && autoSetMinCPM) {
+				rulesCPM = (await verifyWebsite({ websiteUrl: website }))
 					.suggestedMinCPM
+
+				if (!rulesCPM) {
+					throw new Error('INVALID_AUTO_CPM_VALUE')
+				}
+			} else if (isValid) {
+				rulesCPM =
+					!!minPerImpression && typeof minPerImpression === 'object'
+						? formatUnits(
+								bigNumberify(Object.values(minPerImpression)[0]).mul(1000),
+								mainToken.decimals
+						  )
+						: minPerImpression
 			}
 
 			if (isValid && (updateMinPerImpression || updateRules)) {
 				newRules = slotRulesInputToTargetingRules({
 					rulesInput,
-					suggestedMinCPM: !!autoSetMinCPM ? suggestedMinCPM : minPerImpression,
+					suggestedMinCPM: rulesCPM,
 					decimals: mainToken.decimals,
 				})
+
+				minCPM = {
+					[mainToken.address]: numStringCPMtoImpression({
+						numStr: rulesCPM || null,
+						decimals: mainToken.decimals,
+					}),
+				}
+
+				newSlot.minPerImpression = minCPM
+				newSlot.rules = newRules
 			}
 
 			const isPassbackUpdated = dirtyProps.some(
@@ -570,13 +594,6 @@ export function validateAndUpdateSlot({
 					fallbackData.mediaUrl = ''
 					fallbackData.targetUrl = ''
 				}
-			}
-
-			newSlot.minPerImpression =
-				updateMinPerImpression && !autoSetMinCPM ? minCPM : null
-
-			if (updateRules) {
-				newSlot.rules = newRules
 			}
 
 			const slot = newSlot.marketUpdate
