@@ -94,7 +94,8 @@ export function validateNewSlotBasics({
 				temp,
 			} = slot
 
-			const { autoSetMinCPM } = temp
+			const { inputs = {} } = rulesInput || {}
+			const { autoSetMinCPM } = inputs
 
 			const validations = await Promise.all([
 				validateSchemaProp({
@@ -148,12 +149,12 @@ export function validateNewSlotBasics({
 				? await verifyWebsite({ websiteUrl: website })
 				: {}
 			const newTemp = { ...temp, hostname, issues, categories, suggestedMinCPM }
+
+			const ruleCPM = !!autoSetMinCPM ? suggestedMinCPM : minPerImpression
+
 			const rules = slotRulesInputToTargetingRules({
 				rulesInput,
-				suggestedMinCPM:
-					!!autoSetMinCPM || minPerImpression === null
-						? suggestedMinCPM
-						: minPerImpression,
+				suggestedMinCPM: ruleCPM,
 				decimals: mainToken.decimals,
 			})
 
