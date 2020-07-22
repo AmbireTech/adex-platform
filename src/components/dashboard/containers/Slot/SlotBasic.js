@@ -81,6 +81,20 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 								</Box>
 							</ExpansionPanel>
 						</Box>
+						<Box py={1}>
+							<ExpansionPanel square={true} variant='outlined'>
+								<ExpansionPanelSummary
+									expandIcon={<ExpandMoreIcon />}
+									aria-controls='slot-rules-content'
+									id='slot-rules-header'
+								>
+									<Typography>{t('SLOT_RULES')}</Typography>
+								</ExpansionPanelSummary>
+								<Box p={1} color='grey.contrastText' bgcolor='grey.main'>
+									<pre>{JSON.stringify(item.rules, null, 2)}</pre>
+								</Box>
+							</ExpansionPanel>
+						</Box>
 					</Grid>
 					<Grid item xs={12} sm={12} md={6} lg={7}>
 						<Box py={1}>
