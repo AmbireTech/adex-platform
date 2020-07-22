@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.35
+##### *2020-07-22*
+
+### Fixed
+- Slot rules on creating and updating
+
 ## 4.20.34
 ##### *2020-07-20*
 
