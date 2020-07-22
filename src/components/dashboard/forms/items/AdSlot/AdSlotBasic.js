@@ -205,7 +205,7 @@ function AdSlotBasic({ validateId }) {
 											helperText={
 												errMin && !!errMin.dirty
 													? errMin.errMsg
-													: t('SLOT_MIN_CPM_HELPER')
+													: t('SLOT_MANUAL_CPM_MIN_HELPER')
 											}
 										/>
 									</Grid>
