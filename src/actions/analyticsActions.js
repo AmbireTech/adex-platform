@@ -176,7 +176,7 @@ export const updateAccountAnalytics = throttle(
 		const side = selectAnalyticsDataSide(state)
 		const timeframe = selectIdentitySideAnalyticsTimeframe(state)
 		const allChannels = selectChannelsWithUserBalancesAll(state)
-		const { start, end } = selectIdentitySideAnalyticsPeriod(state)
+		const { start, end, callEnd } = selectIdentitySideAnalyticsPeriod(state)
 		const feeTokens = selectFeeTokenWhitelist(state)
 		const withdrawTokens = selectRoutineWithdrawTokens(state)
 		try {
@@ -212,7 +212,7 @@ export const updateAccountAnalytics = throttle(
 					identityAnalytics({
 						...opts,
 						start,
-						end,
+						end: callEnd || end,
 						leaderAuth,
 					})
 						.then(({ aggregates, metric }) => {
