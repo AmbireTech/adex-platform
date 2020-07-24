@@ -40,28 +40,26 @@ export const selectAnalyticsLastChecked = createSelector(
 export const selectAnalyticsLiveTimestamp = createSelector(
 	[selectIdentitySideAnalyticsTimeframe, selectAnalyticsLastChecked],
 	(timeframe, lastChecked) => {
+		const currentDate = dateUtils.date(lastChecked)
 		switch (timeframe) {
 			case 'hour':
-				const hourStart = +dateUtils.addHours(dateUtils.date(lastChecked), -1)
+				const hourStart = +dateUtils.addHours(currentDate, -1)
 				return hourStart
 			case 'day':
-				return +dateUtils
-					.addDays(dateUtils.date(lastChecked), -1)
-					.startOf('hour')
+				return +dateUtils.addDays(currentDate, -1).startOf('hour')
 			case 'week':
-				return +dateUtils
-					.addDays(dateUtils.date(lastChecked), -7)
-					.startOf('hour')
+				return +dateUtils.addDays(currentDate, -7).startOf('hour')
 			case 'month':
 				return +dateUtils
-					.addMonths(dateUtils.date(lastChecked), -1)
+					.addMonths(currentDate, -1)
 					.utc()
 					.startOf('day')
 			case 'year':
-				return +dateUtils
-					.addMonths(dateUtils.date(lastChecked), -12)
-					.utc()
-					.startOf('day')
+				const year = dateUtils.addYears(currentDate, -1)
+
+				const start = dateUtils.startOfMonth(year).utc()
+
+				return +start
 			default:
 				return +dateUtils.date(lastChecked).startOf('hour')
 		}
