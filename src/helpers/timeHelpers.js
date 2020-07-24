@@ -95,6 +95,7 @@ export const DATETIME_EXPORT_FORMAT = 'YYYY-MM-DD HH:mm:ss'
 
 export const getTimePeriods = ({ timeframe, start }) => {
 	let end = null
+	let callEnd = null
 	const startCopy = start
 	switch (timeframe) {
 		case 'hour':
@@ -103,6 +104,7 @@ export const getTimePeriods = ({ timeframe, start }) => {
 				.utc()
 				.startOf('minute')
 			end = dateUtils.addMinutes(start, 60)
+			callEnd = dateUtils.addMinutes(end, 1)
 			break
 		case 'day':
 			start = dateUtils
@@ -139,7 +141,7 @@ export const getTimePeriods = ({ timeframe, start }) => {
 	start = +start
 	end = +end
 
-	return { start, end }
+	return { start, end, callEnd }
 }
 
 export const getBorderPeriodStart = ({ timeframe, start, next = false }) => {

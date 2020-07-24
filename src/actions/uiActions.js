@@ -389,8 +389,11 @@ export function updateIdSideAnalyticsChartPeriod(periodStart) {
 	return function(dispatch, getState) {
 		const state = getState()
 		const timeframe = selectIdentitySideAnalyticsTimeframe(state)
-		const { start, end } = getTimePeriods({ timeframe, start: periodStart })
-		updateIdentitySideUi('sideAnalyticsPeriod', { start, end })(
+		const { start, end, callEnd } = getTimePeriods({
+			timeframe,
+			start: periodStart,
+		})
+		updateIdentitySideUi('sideAnalyticsPeriod', { start, end, callEnd })(
 			dispatch,
 			getState
 		)
