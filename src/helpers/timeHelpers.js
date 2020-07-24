@@ -23,32 +23,37 @@ export const fillEmptyTime = (
 	}
 	switch (timeframe) {
 		case 'hour':
-			time.step = { period: HOUR, span: MINUTE }
+			time.step = { startOf: 'minute', period: HOUR, unit: 'minute', amount: 1 }
 			break
 		case 'day':
-			time.step = { period: DAY, span: HOUR }
+			time.step = { startOf: 'hour', period: DAY, unit: 'hour', amount: 1 }
 			break
 		case 'week':
-			time.step = { period: WEEK, span: 6 * HOUR }
+			time.step = { startOf: 'day', period: WEEK, unit: 'hour', amount: 6 }
 			break
 		case 'month':
-			time.step = { period: MONTH, span: DAY }
+			time.step = { startOf: 'day', period: MONTH, unit: 'day', amount: 1 }
 			break
 		case 'year':
-			time.step = { period: YEAR, span: MONTH }
+			time.step = { startOf: 'month', period: YEAR, unit: 'month', amount: 1 }
 			break
 		default:
 			return prevAggr
 	}
 	const newAggr = []
 
-	let initialTime = time.interval.start - (time.interval.start % time.step.span)
-	let endTime = initialTime + time.step.period
-
-	for (let m = initialTime; m <= endTime; m = m + time.step.span) {
+	//NOTE:  All UTC
+	let initialTime = +dateUtils.date(time.interval.start).utc()
+	let endTime = time.interval.end
+	for (
+		let m = +dateUtils.date(initialTime);
+		m <= endTime;
+		m = +dateUtils
+			.add(dateUtils.date(m).utc(), time.step.amount, time.step.unit)
+			.utc()
+	) {
 		newAggr.push({ value: defaultValue, time: m })
 	}
-
 	const prevAggrInInterval = prevAggr
 		.filter(a => {
 			const m = a.time
@@ -121,11 +126,11 @@ export const getTimePeriods = ({ timeframe, start }) => {
 			start = +dateUtils
 				.date(startCopy)
 				.utc()
-				.startOf('day')
+				.startOf('month')
 			end = +dateUtils
 				.addMonths(dateUtils.date(startCopy), 12)
 				.utc()
-				.startOf('day')
+				.startOf('month')
 			break
 		default:
 			break
@@ -137,40 +142,38 @@ export const getTimePeriods = ({ timeframe, start }) => {
 }
 
 export const getBorderPeriodStart = ({ timeframe, start, next = false }) => {
-	const startCopy = start
+	const startCopy = dateUtils.date(start)
 	const direction = next ? 1 : -1
+	let borderStart
 
 	switch (timeframe) {
 		case 'hour':
-			start = +dateUtils.addHours(dateUtils.date(start), direction)
+			borderStart = +dateUtils.addHours(startCopy, direction)
 			break
 		case 'day':
-			start = +dateUtils.addDays(dateUtils.date(start), direction)
+			const day = dateUtils.addDays(startCopy, direction)
+			borderStart = +dateUtils.startOfDay(day).utc()
 			break
 		case 'week':
-			start = +dateUtils.addWeeks(dateUtils.date(start), direction)
+			const week = dateUtils.addWeeks(startCopy, direction)
+			borderStart = +dateUtils.startOfDay(week).utc()
 			break
 		case 'month':
-			start = +dateUtils.addDays(dateUtils.date(start), 30 * direction)
+			const month = dateUtils.addMonths(startCopy, direction)
+			borderStart = +dateUtils.startOfMonth(month).utc()
 			break
 		case 'year':
-			start = +dateUtils.addDays(
-				dateUtils
-					.date(start)
-					.utc()
-					.startOf('year'),
-				12 * 30 * direction
-			)
+			const year = dateUtils.addYears(startCopy, direction)
+			borderStart = +dateUtils.startOfMonth(year).utc()
 			break
 		default:
-			start = +dateUtils.addDays(dateUtils.date(start), direction)
-			break
+			throw new Error('INVALID_TIMEFRAME')
 	}
-	if (dateUtils.isAfter(dateUtils.date(start), dateUtils.date())) {
-		start = startCopy
+	if (dateUtils.isAfter(borderStart, dateUtils.date())) {
+		borderStart = +startCopy
 	}
 
-	return start
+	return borderStart
 }
 
 const TIME_INTERVALS = [
