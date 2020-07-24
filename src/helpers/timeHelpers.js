@@ -23,19 +23,22 @@ export const fillEmptyTime = (
 	}
 	switch (timeframe) {
 		case 'hour':
-			time.step = { startOf: 'minute', period: HOUR, unit: 'minute', amount: 1 }
+			time.step = {
+				unit: 'minute',
+				amount: 1,
+			}
 			break
 		case 'day':
-			time.step = { startOf: 'hour', period: DAY, unit: 'hour', amount: 1 }
+			time.step = { unit: 'hour', amount: 1 }
 			break
 		case 'week':
-			time.step = { startOf: 'day', period: WEEK, unit: 'hour', amount: 6 }
+			time.step = { unit: 'hour', amount: 6 }
 			break
 		case 'month':
-			time.step = { startOf: 'day', period: MONTH, unit: 'day', amount: 1 }
+			time.step = { unit: 'day', amount: 1 }
 			break
 		case 'year':
-			time.step = { startOf: 'month', period: YEAR, unit: 'month', amount: 1 }
+			time.step = { unit: 'month', amount: 1 }
 			break
 		default:
 			return prevAggr
@@ -95,48 +98,46 @@ export const getTimePeriods = ({ timeframe, start }) => {
 	const startCopy = start
 	switch (timeframe) {
 		case 'hour':
-			start = +dateUtils.date(startCopy).startOf('minute')
-			end = +dateUtils.addHours(dateUtils.date(startCopy), 1).startOf('minute')
+			start = dateUtils
+				.date(startCopy)
+				.utc()
+				.startOf('minute')
+			end = dateUtils.addMinutes(start, 60)
 			break
 		case 'day':
-			start = +dateUtils.date(startCopy).startOf('hour')
-			end = +dateUtils.addDays(dateUtils.date(startCopy), 1).startOf('hour')
+			start = dateUtils
+				.date(startCopy)
+				.utc()
+				.startOf('hour')
+			end = dateUtils.addHours(start, 24)
 			break
 		case 'week':
-			start = +dateUtils
+			start = dateUtils
 				.date(startCopy)
 				.utc()
 				.startOf('day')
-			end = +dateUtils
-				.addDays(dateUtils.date(startCopy), 7)
-				.utc()
-				.startOf('day')
+			end = dateUtils.addDays(start, 7)
 			break
 		case 'month':
-			start = +dateUtils
+			start = dateUtils
 				.date(startCopy)
 				.utc()
 				.startOf('day')
-			end = +dateUtils
-				.addMonths(dateUtils.date(startCopy), 1)
-				.utc()
-				.startOf('day')
+			end = dateUtils.addMonths(start, 1)
 			break
 		case 'year':
-			start = +dateUtils
+			start = dateUtils
 				.date(startCopy)
 				.utc()
 				.startOf('month')
-			end = +dateUtils
-				.addMonths(dateUtils.date(startCopy), 12)
-				.utc()
-				.startOf('month')
+			end = dateUtils.addMonths(start, 12)
 			break
 		default:
 			break
 	}
 
 	start = +start
+	end = +end
 
 	return { start, end }
 }
@@ -148,32 +149,32 @@ export const getBorderPeriodStart = ({ timeframe, start, next = false }) => {
 
 	switch (timeframe) {
 		case 'hour':
-			borderStart = +dateUtils.addHours(startCopy, direction)
+			borderStart = dateUtils.addHours(startCopy, direction)
 			break
 		case 'day':
 			const day = dateUtils.addDays(startCopy, direction)
-			borderStart = +dateUtils.startOfDay(day).utc()
+			borderStart = dateUtils.startOfDay(day).utc()
 			break
 		case 'week':
 			const week = dateUtils.addWeeks(startCopy, direction)
-			borderStart = +dateUtils.startOfDay(week).utc()
+			borderStart = dateUtils.startOfDay(week).utc()
 			break
 		case 'month':
 			const month = dateUtils.addMonths(startCopy, direction)
-			borderStart = +dateUtils.startOfMonth(month).utc()
+			borderStart = dateUtils.startOfMonth(month).utc()
 			break
 		case 'year':
 			const year = dateUtils.addYears(startCopy, direction)
-			borderStart = +dateUtils.startOfMonth(year).utc()
+			borderStart = dateUtils.startOfMonth(year).utc()
 			break
 		default:
 			throw new Error('INVALID_TIMEFRAME')
 	}
 	if (dateUtils.isAfter(borderStart, dateUtils.date())) {
-		borderStart = +startCopy
+		borderStart = startCopy
 	}
 
-	return borderStart
+	return +borderStart
 }
 
 const TIME_INTERVALS = [
