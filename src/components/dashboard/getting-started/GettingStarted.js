@@ -33,7 +33,7 @@ import PlaceEddie from 'resources/getting-started/GS-place-ic.png'
 // import BonusEddie from 'resources/getting-started/GS-bonus-ic.png'
 import {
 	t,
-	sectStepsData,
+	selectStepsData,
 	selectHideGettingStarted,
 	selectGettingStartedExpanded,
 } from 'selectors'
@@ -186,7 +186,7 @@ export default function GettingStarted(props) {
 	const { side } = props
 	const classes = useStyles({ side })
 
-	const stepsData = useSelector(sectStepsData)
+	const stepsData = useSelector(selectStepsData)
 
 	const isGettingStartedHidden = useSelector(selectHideGettingStarted)
 	const expanded = useSelector(selectGettingStartedExpanded)
@@ -218,6 +218,18 @@ export default function GettingStarted(props) {
 	useEffect(() => {
 		setSteps(getSteps(stepsData))
 	}, [stepsData])
+
+	useEffect(() => {
+		console.log(side, `step${indexOfFirstIncompleteStep}`)
+
+		if (window.gtag) {
+			const stepIndex = sideSteps.findIndex(step => !step.check)
+
+			// Sends the custom dimension to Google Analytics.
+			window.gtag('event', 'test', { [side]: `step${stepIndex}` })
+		}
+	}, [indexOfFirstIncompleteStep, side, sideSteps])
+
 	useEffect(() => {
 		setActiveStep(
 			indexOfFirstIncompleteStep !== -1
