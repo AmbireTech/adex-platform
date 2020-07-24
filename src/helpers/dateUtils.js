@@ -23,6 +23,10 @@ export class DateUtils extends MomentUtils {
 		return date.add(ammount, unit)
 	}
 
+	addMinutes(date, minutes) {
+		return date.clone().add(minutes, 'minute')
+	}
+
 	addHours(date, hours) {
 		return date.clone().add(hours, 'hour')
 	}
