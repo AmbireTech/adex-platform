@@ -93,27 +93,28 @@ export const DATETIME_EXPORT_FORMAT = 'YYYY-MM-DD HH:mm:ss'
 export const getTimePeriods = ({ timeframe, start }) => {
 	let end = null
 	let callEnd = null
-	const startCopy = start
+	const startCopy = dateUtils.date(start)
+
 	switch (timeframe) {
 		case 'hour':
-			start = dateUtils.date(startCopy).startOf('minute')
+			start = dateUtils.startOfMinute(startCopy)
 			end = dateUtils.addMinutes(start, 60)
 			callEnd = dateUtils.addMinutes(end, 1)
 			break
 		case 'day':
-			start = dateUtils.date(startCopy).startOf('hour')
+			start = dateUtils.startOfHour(startCopy)
 			end = dateUtils.addHours(start, 24)
 			callEnd = dateUtils.addHours(end, 1)
 			break
 		case 'week':
-			start = dateUtils.date(startCopy).startOf('day')
+			start = dateUtils.getHourSpanStart(startCopy, 6)
 			end = dateUtils.addDays(start, 7)
+			callEnd = dateUtils.addHours(end, 6)
 			break
 		case 'month':
-			start = dateUtils.date(startCopy).startOf('day')
+			start = dateUtils.startOfDay(startCopy)
 			end = dateUtils.addMonths(start, 1)
 			callEnd = dateUtils.addDays(end, 1)
-
 			break
 		case 'year':
 			start = dateUtils.date(startCopy).startOf('month')
@@ -126,6 +127,7 @@ export const getTimePeriods = ({ timeframe, start }) => {
 
 	start = +start
 	end = +end
+	callEnd = +callEnd
 
 	return { start, end, callEnd }
 }
