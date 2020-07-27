@@ -41,23 +41,34 @@ export const selectAnalyticsLiveTimestamp = createSelector(
 	[selectIdentitySideAnalyticsTimeframe, selectAnalyticsLastChecked],
 	(timeframe, lastChecked) => {
 		const currentDate = dateUtils.date(lastChecked)
+		let start = dateUtils.date(currentDate)
 		switch (timeframe) {
 			case 'hour':
-				const hourStart = +dateUtils.addHours(currentDate, -1)
-				return hourStart
+				const hourStart = dateUtils.addHours(currentDate, -1)
+				start = dateUtils.startOfMinute(hourStart)
+				break
 			case 'day':
-				return +dateUtils.addDays(currentDate, -1).startOf('hour')
+				const dayStart = dateUtils.addDays(currentDate, -1)
+				start = dateUtils.startOfHour(dayStart)
+				break
 			case 'week':
-				return +dateUtils.addDays(currentDate, -7).startOf('hour')
+				const weekStart = dateUtils.addDays(currentDate, -7)
+				start = dateUtils.getHourSpanStart(weekStart, 6)
+				break
 			case 'month':
-				return +dateUtils.addMonths(currentDate, -1).startOf('day')
+				const monthStart = dateUtils.addMonths(currentDate, -1)
+				start = dateUtils.startOfDay(monthStart)
+				break
 			case 'year':
-				const year = dateUtils.addYears(currentDate, -1)
-				const start = dateUtils.startOfMonth(year)
-				return +start
+				const yearStart = dateUtils.addYears(currentDate, -1)
+				start = dateUtils.startOfMonth(yearStart)
+				break
 			default:
-				return +dateUtils.date(lastChecked).startOf('hour')
+				start = dateUtils.startOfHour(start)
+				break
 		}
+
+		return +start
 	}
 )
 
@@ -647,7 +658,7 @@ export const selectAnalyticsNowLabel = createSelector(
 				)
 			case 'week':
 				return dateUtils.format(
-					dateUtils.getNearestSixHoursUTC(6, lastChecked),
+					dateUtils.getHourSpanStart(lastChecked, 6),
 					DEFAULT_DATETIME_FORMAT
 				)
 			default:
