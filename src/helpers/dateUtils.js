@@ -7,6 +7,14 @@ import 'moment/min/locales'
 // as adding hours and start / end of weeks. This is why I have created an
 // extention class. We use this as MuiPickersUtilsProvider as well
 export class DateUtils extends MomentUtils {
+	startOfMinute(date) {
+		return date.clone().startOf('minute')
+	}
+
+	startOfHour(date) {
+		return date.clone().startOf('hour')
+	}
+
 	startOfWeek(date) {
 		return date.clone().startOf('week')
 	}
@@ -87,14 +95,13 @@ export class DateUtils extends MomentUtils {
 		})
 	}
 
-	getNearestSixHoursUTC(hoursToRound, date) {
-		const now = dateUtils.date(date)
-		const hoursMulti = Math.floor(dateUtils.getHours(now) / hoursToRound)
-		const nearestSix = dateUtils.setHours(
-			now,
-			hoursMulti * hoursToRound + dateUtils.getUTCOffset(now)
-		)
-		return dateUtils.setMinutes(dateUtils.setSeconds(nearestSix, 0), 0)
+	getHourSpanStart(date, span) {
+		const current = dateUtils.date(date)
+		const hour = dateUtils.getHours(current)
+		const spanStartHour = Math.floor(hour - (hour % span))
+		const withSpanStartHour = dateUtils.setHours(current, spanStartHour)
+
+		return dateUtils.startOfHour(withSpanStartHour)
 	}
 }
 
