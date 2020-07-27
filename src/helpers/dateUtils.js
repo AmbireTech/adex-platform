@@ -103,6 +103,10 @@ export class DateUtils extends MomentUtils {
 
 		return dateUtils.startOfHour(withSpanStartHour)
 	}
+
+	format(date, formatString) {
+		return this.moment(date).format(formatString)
+	}
 }
 
 export function makeJSDateObject(date) {
