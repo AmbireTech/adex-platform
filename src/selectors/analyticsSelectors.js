@@ -56,7 +56,10 @@ export const selectAnalyticsLiveTimestamp = createSelector(
 				start = dateUtils.getHourSpanStart(weekStart, 6)
 				break
 			case 'month':
-				const monthStart = dateUtils.addMonths(currentDate, -1)
+				const monthStart = dateUtils.addDays(
+					dateUtils.addMonths(currentDate, -1),
+					1
+				)
 				start = dateUtils.startOfDay(monthStart)
 				break
 			case 'year':
@@ -68,7 +71,7 @@ export const selectAnalyticsLiveTimestamp = createSelector(
 				break
 		}
 
-		return +start
+		return start
 	}
 )
 
