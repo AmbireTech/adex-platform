@@ -443,7 +443,7 @@ export function updateAnalyticsLastChecked() {
 	return async function(dispatch) {
 		return dispatch({
 			type: types.UPDATE_ANALYTICS_LAST_CHECKED,
-			value: Date.now(),
+			value: new Date(),
 		})
 	}
 }
