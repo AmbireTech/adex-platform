@@ -105,35 +105,27 @@ const datePickerStyled = ({ classes, calendarIcon, icon, ...rest }) => {
 
 export const DatePickerContrast = withStyles(styles)(datePickerStyled)
 
+const dayIsFuture = date => dateUtils.isAfter(date, dateUtils.date())
+
 function PeriodSelectDatePicker({ classes, period, ...rest }) {
-	const formatWeekSelectLabel = (date, invalidLabel) => {
-		let dateClone = makeJSDateObject(date)
-
-		return dateClone && dateUtils.isValid(dateClone)
-			? `${dateUtils.format(dateClone, 'MMM DD "YY')} - ${dateUtils.format(
-					dateUtils.addDays(dateClone, 7),
-					'MMM DD "YY'
-			  )}`
-			: invalidLabel
-	}
-
-	const dayIsFuture = date => dateUtils.isAfter(date, dateUtils.date())
-
 	const renderWrappedWeekDay = (date, selectedDate, dayInCurrentMonth) => {
 		let dateClone = makeJSDateObject(date)
 		let selectedDateClone = makeJSDateObject(selectedDate)
 
-		const start = dateUtils.date(selectedDateClone).startOf('day')
-		let end = dateUtils.date(start).endOf('day')
+		const start = dateUtils.startOfDay(selectedDateClone)
+		let end = dateUtils.date(start)
 
 		switch (period) {
 			case 'week':
-				end = dateUtils.addDays(start, 6).endOf('day')
+				end = dateUtils.startOfDay(dateUtils.addDays(start, 6))
+				maxDate = dateUtils.addDays(dateUtils.date(), -6)
 				break
 			case 'month':
-				end = dateUtils
-					.addDays(dateUtils.addMonths(start, 1), -1)
-					.startOf('day')
+				end = dateUtils.startOfDay(
+					dateUtils.addDays(dateUtils.addMonths(start, 1), -1)
+				)
+				maxDate = dateUtils.addDays(dateUtils.addMonths(dateUtils.date(), 1), 1)
+
 				break
 			default:
 				break
@@ -164,13 +156,27 @@ function PeriodSelectDatePicker({ classes, period, ...rest }) {
 		)
 	}
 
+	let maxDate = dateUtils.date()
+
+	switch (period) {
+		case 'week':
+			maxDate = dateUtils.addDays(dateUtils.date(), -6)
+			break
+		case 'month':
+			maxDate = dateUtils.addDays(dateUtils.addMonths(dateUtils.date(), -1), 1)
+
+			break
+		default:
+			break
+	}
+
 	return (
 		<DatePicker
 			label='Week Picker'
 			renderDay={renderWrappedWeekDay}
-			labelFunc={formatWeekSelectLabel}
 			shouldDisableDate={date => dayIsFuture(date)}
 			views={['year', 'month', 'date']}
+			maxDate={maxDate}
 			{...rest}
 		/>
 	)
