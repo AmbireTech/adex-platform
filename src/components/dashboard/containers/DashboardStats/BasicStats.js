@@ -14,7 +14,7 @@ import { VALIDATOR_ANALYTICS_TIMEFRAMES } from 'constants/misc'
 import StatsCard from './StatsCard'
 import { makeStyles } from '@material-ui/core/styles'
 import DateTimePicker from 'components/common/DateTimePicker'
-import { WeeklyDatePicker, DatePicker } from 'components/common/DatePicker'
+import { PeriodDatePicker, DatePicker } from 'components/common/DatePicker'
 import Anchor from 'components/common/anchor/anchor'
 
 import {
@@ -123,10 +123,21 @@ const getDefaultLabels = ({ start, end }) => [
 	formatDateTime(end),
 ]
 
-const DatePickerSwitch = ({ timeframe, ...rest }) => {
+const DatePickerSwitch = ({ timeframe, period: { start, end }, ...rest }) => {
 	switch (timeframe) {
 		case 'week':
-			return <WeeklyDatePicker {...rest} />
+			return (
+				<PeriodDatePicker
+					period='week'
+					labelFunc={val =>
+						`${dateUtils.format(start, 'DD-MMM "YY')} - ${dateUtils.format(
+							end,
+							'DD-MMM "YY'
+						)}`
+					}
+					{...rest}
+				/>
+			)
 		case 'day':
 			return (
 				<DatePicker
@@ -142,21 +153,33 @@ const DatePickerSwitch = ({ timeframe, ...rest }) => {
 					minutesStep={60}
 					labelFunc={val =>
 						`${dateUtils.format(
-							dateUtils.date(val),
+							start,
 							'MMM DD "YY - (HH:mm'
-						)} - ${dateUtils.format(
-							dateUtils.addHours(dateUtils.date(val), 1),
-							'HH:mm)'
-						)}`
+						)} - ${dateUtils.format(end, 'HH:mm)')}`
 					}
 					{...rest}
+				/>
+			)
+		case 'month':
+			return (
+				<PeriodDatePicker
+					{...rest}
+					period='month'
+					labelFunc={val =>
+						`${dateUtils.format(start, 'DD-MMM "YY')} - ${dateUtils.format(
+							end,
+							'DD-MMM "YY'
+						)}`
+					}
 				/>
 			)
 		case 'year':
 			return (
 				<DatePicker
 					{...rest}
+					label={t('ANALYTICS_PERIOD_START_SELECT')}
 					views={['year', 'month']}
+					maxDate={dateUtils.addYears(dateUtils.date(), -1)}
 					labelFunc={val =>
 						`${dateUtils.format(
 							dateUtils.date(val),
@@ -374,6 +397,7 @@ export function BasicStats() {
 						</Box>
 						<Box m={1} ml={0} flexGrow='1'>
 							<DatePickerSwitch
+								period={{ start, end }}
 								timeframe={timeframe}
 								value={start}
 								minutesStep={60}
@@ -385,7 +409,7 @@ export function BasicStats() {
 								fullWidth
 								calendarIcon
 								label={t('ANALYTICS_PERIOD')}
-								max={Date.now()}
+								maxDate={dateUtils.date()}
 								// Only when picking future hours as they can't be disabled
 								maxDateMessage={t('MAX_DATE_ERROR')}
 								strictCompareDates
