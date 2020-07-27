@@ -105,7 +105,7 @@ const datePickerStyled = ({ classes, calendarIcon, icon, ...rest }) => {
 
 export const DatePickerContrast = withStyles(styles)(datePickerStyled)
 
-function WeekSelectDatePicker({ classes, ...rest }) {
+function PeriodSelectDatePicker({ classes, period, ...rest }) {
 	const formatWeekSelectLabel = (date, invalidLabel) => {
 		let dateClone = makeJSDateObject(date)
 
@@ -123,14 +123,21 @@ function WeekSelectDatePicker({ classes, ...rest }) {
 		let dateClone = makeJSDateObject(date)
 		let selectedDateClone = makeJSDateObject(selectedDate)
 
-		const start = dateUtils
-			.date(selectedDateClone)
-			.utc()
-			.startOf('day')
-		const end = dateUtils
-			.addDays(dateUtils.date(selectedDateClone), 7)
-			.utc()
-			.startOf('day')
+		const start = dateUtils.date(selectedDateClone).startOf('day')
+		let end = dateUtils.date(start).endOf('day')
+
+		switch (period) {
+			case 'week':
+				end = dateUtils.addDays(start, 6).endOf('day')
+				break
+			case 'month':
+				end = dateUtils
+					.addDays(dateUtils.addMonths(start, 1), -1)
+					.startOf('day')
+				break
+			default:
+				break
+		}
 
 		const dayIsBetween = dateUtils.isWithinInterval(dateClone, { start, end })
 		const isFirstDay = dateUtils.isSameDay(dateClone, start)
@@ -163,10 +170,10 @@ function WeekSelectDatePicker({ classes, ...rest }) {
 			renderDay={renderWrappedWeekDay}
 			labelFunc={formatWeekSelectLabel}
 			shouldDisableDate={date => dayIsFuture(date)}
-			views={['year', 'month']}
+			views={['year', 'month', 'date']}
 			{...rest}
 		/>
 	)
 }
 
-export const WeeklyDatePicker = withStyles(styles)(WeekSelectDatePicker)
+export const PeriodDatePicker = withStyles(styles)(PeriodSelectDatePicker)
