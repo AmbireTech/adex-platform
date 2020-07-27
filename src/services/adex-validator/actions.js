@@ -1,6 +1,7 @@
 import Requester, { handleRequesterErrorRes } from 'services/requester'
 import { getEthers } from 'services/smart-contracts/ethers'
 import { getSigner } from 'services/smart-contracts/actions/ethers'
+import dateUtils from 'helpers/dateUtils'
 import ewt from './ewt'
 
 const BEARER_PREFIX = 'Bearer '
@@ -159,6 +160,7 @@ export const identityAnalytics = async ({
 				eventType,
 				start,
 				end,
+				timezone: dateUtils.getCurrentTimezone(),
 			},
 			headers: {
 				authorization: BEARER_PREFIX + leaderAuth,
