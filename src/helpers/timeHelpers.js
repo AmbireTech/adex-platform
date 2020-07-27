@@ -45,15 +45,12 @@ export const fillEmptyTime = (
 	}
 	const newAggr = []
 
-	//NOTE:  All UTC
-	let initialTime = +dateUtils.date(time.interval.start).utc()
+	let initialTime = +dateUtils.date(time.interval.start)
 	let endTime = time.interval.end
 	for (
 		let m = +dateUtils.date(initialTime);
 		m <= endTime;
-		m = +dateUtils
-			.add(dateUtils.date(m).utc(), time.step.amount, time.step.unit)
-			.utc()
+		m = +dateUtils.add(dateUtils.date(m), time.step.amount, time.step.unit)
 	) {
 		newAggr.push({ value: defaultValue, time: m })
 	}
@@ -99,39 +96,24 @@ export const getTimePeriods = ({ timeframe, start }) => {
 	const startCopy = start
 	switch (timeframe) {
 		case 'hour':
-			start = dateUtils
-				.date(startCopy)
-				.utc()
-				.startOf('minute')
+			start = dateUtils.date(startCopy).startOf('minute')
 			end = dateUtils.addMinutes(start, 60)
 			callEnd = dateUtils.addMinutes(end, 1)
 			break
 		case 'day':
-			start = dateUtils
-				.date(startCopy)
-				.utc()
-				.startOf('hour')
+			start = dateUtils.date(startCopy).startOf('hour')
 			end = dateUtils.addHours(start, 24)
 			break
 		case 'week':
-			start = dateUtils
-				.date(startCopy)
-				.utc()
-				.startOf('day')
+			start = dateUtils.date(startCopy).startOf('day')
 			end = dateUtils.addDays(start, 7)
 			break
 		case 'month':
-			start = dateUtils
-				.date(startCopy)
-				.utc()
-				.startOf('day')
+			start = dateUtils.date(startCopy).startOf('day')
 			end = dateUtils.addMonths(start, 1)
 			break
 		case 'year':
-			start = dateUtils
-				.date(startCopy)
-				.utc()
-				.startOf('month')
+			start = dateUtils.date(startCopy).startOf('month')
 			end = dateUtils.addMonths(start, 12)
 			break
 		default:
@@ -155,19 +137,19 @@ export const getBorderPeriodStart = ({ timeframe, start, next = false }) => {
 			break
 		case 'day':
 			const day = dateUtils.addDays(startCopy, direction)
-			borderStart = dateUtils.startOfDay(day).utc()
+			borderStart = dateUtils.startOfDay(day)
 			break
 		case 'week':
 			const week = dateUtils.addWeeks(startCopy, direction)
-			borderStart = dateUtils.startOfDay(week).utc()
+			borderStart = dateUtils.startOfDay(week)
 			break
 		case 'month':
 			const month = dateUtils.addMonths(startCopy, direction)
-			borderStart = dateUtils.startOfMonth(month).utc()
+			borderStart = dateUtils.startOfMonth(month)
 			break
 		case 'year':
 			const year = dateUtils.addYears(startCopy, direction)
-			borderStart = dateUtils.startOfMonth(year).utc()
+			borderStart = dateUtils.startOfMonth(year)
 			break
 		default:
 			throw new Error('INVALID_TIMEFRAME')

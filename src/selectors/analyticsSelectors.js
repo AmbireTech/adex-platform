@@ -33,7 +33,7 @@ export const selectAdvancedAnalytics = createSelector(
 export const selectAnalyticsLastChecked = createSelector(
 	selectAnalytics,
 	({ lastChecked }) => {
-		return lastChecked || Date.now()
+		return lastChecked || new Date()
 	}
 )
 
@@ -50,15 +50,10 @@ export const selectAnalyticsLiveTimestamp = createSelector(
 			case 'week':
 				return +dateUtils.addDays(currentDate, -7).startOf('hour')
 			case 'month':
-				return +dateUtils
-					.addMonths(currentDate, -1)
-					.utc()
-					.startOf('day')
+				return +dateUtils.addMonths(currentDate, -1).startOf('day')
 			case 'year':
 				const year = dateUtils.addYears(currentDate, -1)
-
-				const start = dateUtils.startOfMonth(year).utc()
-
+				const start = dateUtils.startOfMonth(year)
 				return +start
 			default:
 				return +dateUtils.date(lastChecked).startOf('hour')
