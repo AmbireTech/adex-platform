@@ -55,6 +55,21 @@ export class DateUtils extends MomentUtils {
 		return this.moment(date).utcOffset() / 60
 	}
 
+	getUTCOffsetFormatted(date = this.moment()) {
+		const offset = this.moment(date).utcOffset()
+		const sign = offset >= 0 ? '+' : '-'
+		const hours = Math.abs(Math.floor(offset / 60)).toString()
+		const minutes = (offset % 60).toString()
+
+		return `${sign}${hours.length === 1 ? '0' + hours : hours}:${
+			minutes.length === 1 ? '0' + minutes : minutes
+		}`
+	}
+
+	getCurrentTimezone(date) {
+		return new window.Intl.DateTimeFormat(date).resolvedOptions().timeZone
+	}
+
 	getUnix(date) {
 		return date.unix()
 	}
