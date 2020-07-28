@@ -217,3 +217,21 @@ export const DATE_TIME_FORMATS_BY_TIMEFRAME = {
 	day: { long: 'YYYY-MM-DD HH:mm', short: 'YYYY-MM-DD HH:mm' },
 	hour: { long: 'YYYY-MM-DD HH:mm', short: 'YYYY-MM-DD HH:mm' },
 }
+
+export const getPeriodLabel = ({ timeframe, start, end }) => {
+	switch (timeframe) {
+		case 'hour':
+		case 'day':
+		case 'week':
+			return `${dateUtils.format(start, 'YYYY/MM/DD HH:mm')} - 
+${dateUtils.format(end, 'YYYY/MM/DD HH:mm')}`
+		case 'month':
+			return `${dateUtils.format(start, 'YYYY/MM/DD')} - 
+${dateUtils.format(end, 'YYYY/MM/DD')}`
+		case 'year':
+			return `${dateUtils.format(start, 'YYYY/MM')} - 
+${dateUtils.format(end, 'YYYY/MM')}`
+		default:
+			throw new Error('INVALID_TIMEFRAME')
+	}
+}
