@@ -13,7 +13,6 @@ import {
 	t,
 } from 'selectors'
 import { getTimePeriods, getBorderPeriodStart } from 'helpers/timeHelpers'
-import dateUtils from 'helpers/dateUtils'
 import { getErrorMsg } from 'helpers/errors'
 
 export function updateSpinner(item, value) {
@@ -413,7 +412,8 @@ export function updateAnalyticsPeriodPrevNextLive({
 			if (live) {
 				start = selectAnalyticsLiveTimestamp(state)
 			} else {
-				start = getBorderPeriodStart({ timeframe, start, next })
+				const startIsLive = start === selectAnalyticsLiveTimestamp(state)
+				start = getBorderPeriodStart({ timeframe, start, next, startIsLive })
 			}
 
 			updateIdSideAnalyticsChartPeriod(start)(dispatch, getState)
