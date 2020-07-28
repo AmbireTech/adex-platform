@@ -56,7 +56,10 @@ import {
 import dateUtils from 'helpers/dateUtils'
 import { useKeyPress } from 'hooks/useKeyPress'
 import { analyticsLoopCustom } from 'services/store-data/analytics'
-import { DATE_TIME_FORMATS_BY_TIMEFRAME } from 'helpers/timeHelpers'
+import {
+	DATE_TIME_FORMATS_BY_TIMEFRAME,
+	getPeriodLabel,
+} from 'helpers/timeHelpers'
 
 const min = 60 * 1000
 
@@ -129,35 +132,31 @@ const DatePickerSwitch = ({ timeframe, period: { start, end }, ...rest }) => {
 		case 'week':
 			return (
 				<PeriodDatePicker
+					multiline
+					margin='dense'
 					period='week'
-					labelFunc={val =>
-						`${dateUtils.format(start, 'DD-MMM "YY')} - ${dateUtils.format(
-							end,
-							'DD-MMM "YY'
-						)}`
-					}
+					labelFunc={val => getPeriodLabel({ timeframe: 'week', start, end })}
 					{...rest}
 				/>
 			)
 		case 'day':
 			return (
 				<DatePicker
-					labelFunc={val => dateUtils.format(dateUtils.date(val), 'MMM DD "YY')}
+					multiline
+					margin='dense'
+					labelFunc={val => getPeriodLabel({ timeframe: 'day', start, end })}
 					{...rest}
 				/>
 			)
 		case 'hour':
 			return (
 				<DateTimePicker
+					multiline
+					margin='dense'
 					views={['date', 'hours']}
 					roundHour
 					minutesStep={60}
-					labelFunc={val =>
-						`${dateUtils.format(
-							start,
-							'MMM DD "YY - (HH:mm'
-						)} - ${dateUtils.format(end, 'HH:mm)')}`
-					}
+					labelFunc={val => getPeriodLabel({ timeframe: 'hour', start, end })}
 					{...rest}
 				/>
 			)
@@ -165,31 +164,22 @@ const DatePickerSwitch = ({ timeframe, period: { start, end }, ...rest }) => {
 			return (
 				<PeriodDatePicker
 					{...rest}
+					multiline
+					margin='dense'
 					period='month'
-					labelFunc={val =>
-						`${dateUtils.format(start, 'DD-MMM "YY')} - ${dateUtils.format(
-							end,
-							'DD-MMM "YY'
-						)}`
-					}
+					labelFunc={val => getPeriodLabel({ timeframe: 'month', start, end })}
 				/>
 			)
 		case 'year':
 			return (
 				<DatePicker
 					{...rest}
+					multiline
+					margin='dense'
 					label={t('ANALYTICS_PERIOD_START_SELECT')}
 					views={['year', 'month']}
-					maxDate={dateUtils.addYears(dateUtils.date(), -1)}
-					labelFunc={val =>
-						`${dateUtils.format(
-							dateUtils.date(val),
-							'MMM "YY'
-						)} - ${dateUtils.format(
-							dateUtils.addYears(dateUtils.date(val), 1),
-							'MMM "YY'
-						)}`
-					}
+					maxDate={dateUtils.addMonths(dateUtils.date(), -11)}
+					labelFunc={val => getPeriodLabel({ timeframe: 'year', start, end })}
 				/>
 			)
 		default:
@@ -379,8 +369,19 @@ export function BasicStats() {
 	return (
 		uiSide && (
 			<Box>
-				<Box display='flex' flexDirection='row' flexWrap='wrap'>
-					<Box display='flex' flexDirection='row' flexWrap='wrap' flexGrow={1}>
+				<Box
+					display='flex'
+					flexDirection='row'
+					flexWrap='wrap'
+					alignItems='center'
+				>
+					<Box
+						display='flex'
+						flexDirection='row'
+						flexWrap='wrap'
+						flexGrow={1}
+						alignItems='center'
+					>
 						<Box m={1} ml={0} flexGrow='1'>
 							<Dropdown
 								fullWidth
