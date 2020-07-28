@@ -19,6 +19,10 @@ export class DateUtils extends MomentUtils {
 		return date.clone().startOf('week')
 	}
 
+	startOfYear(date) {
+		return date.clone().startOf('year')
+	}
+
 	endOfWeek(date) {
 		return date.clone().endOf('week')
 	}
