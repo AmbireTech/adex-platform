@@ -189,3 +189,11 @@ export const timeAgo = (time, since = Date.now()) => {
 		args: [intervalTimes, interval.label + (intervalTimes > 1 ? 'S' : '')],
 	})
 }
+
+export const DATE_TIME_FORMATS_BY_TIMEFRAME = {
+	year: { long: 'YYYY-MM', short: 'YYYY-MM' },
+	month: { long: 'YYYY-MM-DD', short: 'YYYY-MM-DD' },
+	week: { long: 'YYYY-MM-DD HH:mm', short: 'YYYY-MM-DD HH:mm' },
+	day: { long: 'YYYY-MM-DD HH:mm', short: 'YYYY-MM-DD HH:mm' },
+	hour: { long: 'YYYY-MM-DD HH:mm', short: 'YYYY-MM-DD HH:mm' },
+}
