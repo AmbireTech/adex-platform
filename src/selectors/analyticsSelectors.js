@@ -64,7 +64,7 @@ export const selectAnalyticsLiveTimestamp = createSelector(
 				start = dateUtils.startOfDay(monthStart)
 				break
 			case 'year':
-				const yearStart = dateUtils.addMonths(currentDate, -12)
+				const yearStart = dateUtils.addMonths(currentDate, -11)
 				start = dateUtils.startOfMonth(yearStart)
 				break
 			default:
