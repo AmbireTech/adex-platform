@@ -45,16 +45,16 @@ export const selectAnalyticsLiveTimestamp = createSelector(
 		let start = dateUtils.date(currentDate)
 		switch (timeframe) {
 			case 'hour':
-				const hourStart = dateUtils.addHours(currentDate, -1)
+				const hourStart = dateUtils.addMinutes(currentDate, -59)
 				start = dateUtils.startOfMinute(hourStart)
 				break
 			case 'day':
-				const dayStart = dateUtils.addDays(currentDate, -1)
+				const dayStart = dateUtils.addHours(currentDate, -23)
 				start = dateUtils.startOfHour(dayStart)
 				break
 			case 'week':
-				const weekStart = dateUtils.addDays(currentDate, -7)
-				start = dateUtils.getHourSpanStart(weekStart, 6)
+				const weekStart = dateUtils.addDays(currentDate, -6)
+				start = dateUtils.getHourSpanStart(weekStart, 3)
 				break
 			case 'month':
 				const monthStart = dateUtils.addDays(
@@ -64,7 +64,7 @@ export const selectAnalyticsLiveTimestamp = createSelector(
 				start = dateUtils.startOfDay(monthStart)
 				break
 			case 'year':
-				const yearStart = dateUtils.addYears(currentDate, -1)
+				const yearStart = dateUtils.addMonths(currentDate, -12)
 				start = dateUtils.startOfMonth(yearStart)
 				break
 			default:
@@ -72,7 +72,7 @@ export const selectAnalyticsLiveTimestamp = createSelector(
 				break
 		}
 
-		return start
+		return +start
 	}
 )
 
@@ -563,9 +563,22 @@ export const selectStatsChartData = createSelector(
 		return aggr.reduce(
 			(memo, item) => {
 				const { time, value } = item
-				memo.labels.push(
-					formatDateTime(time, DATE_TIME_FORMATS_BY_TIMEFRAME[timeframe].long)
-				)
+				let label = ''
+				if (timeframe === 'week') {
+					const periodEnd = +dateUtils.addHours(dateUtils.date(time), 3)
+					label = `${formatDateTime(
+						time,
+						DATE_TIME_FORMATS_BY_TIMEFRAME[timeframe].long
+					)}-
+${formatDateTime(periodEnd, DATE_TIME_FORMATS_BY_TIMEFRAME[timeframe].long)}`
+				} else {
+					label = formatDateTime(
+						time,
+						DATE_TIME_FORMATS_BY_TIMEFRAME[timeframe].long
+					)
+				}
+
+				memo.labels.push(label)
 				memo.datasets.push(
 					value !== null ? parseValueByMetric({ value, metric }) : value
 				)
@@ -664,7 +677,7 @@ export const selectAnalyticsNowLabel = createSelector(
 				)
 			case 'week':
 				return dateUtils.format(
-					dateUtils.getHourSpanStart(lastChecked, 6),
+					dateUtils.getHourSpanStart(lastChecked, 3),
 					DEFAULT_DATETIME_FORMAT
 				)
 			default:
