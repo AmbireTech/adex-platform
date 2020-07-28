@@ -56,6 +56,7 @@ import {
 import dateUtils from 'helpers/dateUtils'
 import { useKeyPress } from 'hooks/useKeyPress'
 import { analyticsLoopCustom } from 'services/store-data/analytics'
+import { DATE_TIME_FORMATS_BY_TIMEFRAME } from 'helpers/timeHelpers'
 
 const min = 60 * 1000
 
@@ -118,9 +119,9 @@ const metrics = {
 	],
 }
 
-const getDefaultLabels = ({ start, end }) => [
-	formatDateTime(start),
-	formatDateTime(end),
+const getDefaultLabels = ({ timeframe, start, end }) => [
+	formatDateTime(start, DATE_TIME_FORMATS_BY_TIMEFRAME[timeframe].long),
+	formatDateTime(end, DATE_TIME_FORMATS_BY_TIMEFRAME[timeframe].long),
 ]
 
 const DatePickerSwitch = ({ timeframe, period: { start, end }, ...rest }) => {
@@ -257,7 +258,7 @@ export function BasicStats() {
 	const [data3Active, setData3Active] = useState(true)
 	const [data4Active, setData4Active] = useState(true)
 
-	const defaultLabels = getDefaultLabels({ start, end })
+	const defaultLabels = getDefaultLabels({ timeframe, start, end })
 
 	const totalImpressions = useSelector(state =>
 		selectTotalImpressions(state, {
@@ -512,6 +513,7 @@ export function BasicStats() {
 							title:
 								(timeFrames.find(a => a.value === timeframe) || {}).label || '',
 						}}
+						timeFormat={DATE_TIME_FORMATS_BY_TIMEFRAME[timeframe].long}
 						defaultLabels={defaultLabels}
 						data1={impressions}
 						data2={clicks}

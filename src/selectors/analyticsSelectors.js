@@ -5,6 +5,7 @@ import {
 	selectIdentitySideAnalyticsTimeframe,
 } from 'selectors'
 import { formatTokenAmount, formatDateTime } from 'helpers/formatters'
+import { DATE_TIME_FORMATS_BY_TIMEFRAME } from 'helpers/timeHelpers'
 import {
 	selectNewItemByTypeAndId,
 	selectIdentitySideAnalyticsPeriod,
@@ -557,12 +558,14 @@ export const selectStatsChartData = createSelector(
 			return { data: selectAnalyticsDataAggr(state, rest), noLastOne, ...rest }
 		},
 	],
-	({ data = [], noLastOne, metric, ...rest }) => {
+	({ data = [], noLastOne, metric, timeframe, ...rest }) => {
 		const aggr = noLastOne ? data.slice(0, -1) : data
 		return aggr.reduce(
 			(memo, item) => {
 				const { time, value } = item
-				memo.labels.push(formatDateTime(time))
+				memo.labels.push(
+					formatDateTime(time, DATE_TIME_FORMATS_BY_TIMEFRAME[timeframe].long)
+				)
 				memo.datasets.push(
 					value !== null ? parseValueByMetric({ value, metric }) : value
 				)
