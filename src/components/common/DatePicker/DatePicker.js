@@ -43,6 +43,8 @@ export class DatePicker extends Component {
 			calendarIcon,
 			icon,
 			iconColor,
+			multiline,
+			margin,
 			onIconClick,
 			onNextClick,
 			onLiveClick,
@@ -52,6 +54,8 @@ export class DatePicker extends Component {
 		return (
 			<MuiDatePicker
 				InputProps={{
+					margin,
+					multiline,
 					disabled: rest.disabled,
 					endAdornment: calendarIcon ? (
 						<CalendarIconAdor
