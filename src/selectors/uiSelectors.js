@@ -126,8 +126,8 @@ export const selectIdentitySideAnalyticsPeriod = createSelector(
 	[selectIdentitySideUi],
 	({
 		sideAnalyticsPeriod = {
-			start: +dateUtils.startOfDay(dateUtils.date()),
-			end: +dateUtils.endOfDay(dateUtils.date()),
+			start: dateUtils.startOfDay(dateUtils.date()),
+			end: dateUtils.endOfDay(dateUtils.date()),
 		},
 	} = {}) => sideAnalyticsPeriod
 )
