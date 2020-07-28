@@ -46,7 +46,7 @@ export const fillEmptyTime = (
 	const newAggr = []
 
 	let initialTime = +dateUtils.date(time.interval.start)
-	let endTime = time.interval.end
+	let endTime = Math.min(time.interval.end, +dateUtils.date())
 	for (
 		let m = +dateUtils.date(initialTime);
 		m <= endTime;
@@ -98,17 +98,17 @@ export const getTimePeriods = ({ timeframe, start }) => {
 	switch (timeframe) {
 		case 'hour':
 			start = dateUtils.startOfMinute(startCopy)
-			end = dateUtils.addMinutes(start, 60)
+			end = dateUtils.addMinutes(start, 59)
 			callEnd = dateUtils.addMinutes(end, 1)
 			break
 		case 'day':
 			start = dateUtils.startOfHour(startCopy)
-			end = dateUtils.addHours(start, 24)
+			end = dateUtils.addHours(start, 23)
 			callEnd = dateUtils.addHours(end, 1)
 			break
 		case 'week':
-			start = dateUtils.getHourSpanStart(startCopy, 6)
-			end = dateUtils.addDays(start, 7)
+			start = dateUtils.getHourSpanStart(startCopy, 3)
+			end = dateUtils.addDays(start, 6)
 			callEnd = dateUtils.addHours(end, 6)
 			break
 		case 'month':
@@ -118,7 +118,7 @@ export const getTimePeriods = ({ timeframe, start }) => {
 			break
 		case 'year':
 			start = dateUtils.date(startCopy).startOf('month')
-			end = dateUtils.addMonths(start, 12)
+			end = dateUtils.addMonths(start, 11)
 			callEnd = dateUtils.addMonths(end, 1)
 			break
 		default:
@@ -126,35 +126,55 @@ export const getTimePeriods = ({ timeframe, start }) => {
 	}
 
 	start = +start
-	end = +end
+	end = Math.min(+end, +dateUtils.date())
 	callEnd = +callEnd
 
 	return { start, end, callEnd }
 }
 
-export const getBorderPeriodStart = ({ timeframe, start, next = false }) => {
+export const getBorderPeriodStart = ({
+	timeframe,
+	start,
+	next = false,
+	startIsLive = false,
+}) => {
 	const startCopy = dateUtils.date(start)
 	const direction = next ? 1 : -1
 	let borderStart
 
 	switch (timeframe) {
 		case 'hour':
-			borderStart = dateUtils.addHours(startCopy, direction)
+			borderStart =
+				startIsLive && !next
+					? dateUtils.startOfHour(startCopy)
+					: dateUtils.addHours(startCopy, direction)
 			break
 		case 'day':
-			const day = dateUtils.addDays(startCopy, direction)
+			const day =
+				startIsLive && !next
+					? dateUtils.startOfDay(startCopy)
+					: dateUtils.addDays(startCopy, direction)
 			borderStart = dateUtils.startOfDay(day)
 			break
 		case 'week':
-			const week = dateUtils.addWeeks(startCopy, direction)
+			const week =
+				startIsLive && !next
+					? dateUtils.startOfWeek(startCopy)
+					: dateUtils.addWeeks(startCopy, direction)
 			borderStart = dateUtils.startOfDay(week)
 			break
 		case 'month':
-			const month = dateUtils.addMonths(startCopy, direction)
+			const month =
+				startIsLive && !next
+					? dateUtils.startOfMonth(startCopy)
+					: dateUtils.addMonths(startCopy, direction)
 			borderStart = dateUtils.startOfMonth(month)
 			break
 		case 'year':
-			const year = dateUtils.addYears(startCopy, direction)
+			const year =
+				startIsLive && !next
+					? dateUtils.startOfYear(startCopy)
+					: dateUtils.addYears(startCopy, direction)
 			borderStart = dateUtils.startOfMonth(year)
 			break
 		default:
