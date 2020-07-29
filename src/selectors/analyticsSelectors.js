@@ -3,9 +3,8 @@ import { createSelector } from 'reselect'
 import {
 	selectChannelsWithUserBalancesAll,
 	selectIdentitySideAnalyticsTimeframe,
-	selectCampaignById,
-	selectCampaignIdInDetails,
 	selectAccountIdentityCreatedDate,
+	selectCampaignInDetails,
 } from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
 import {
@@ -45,9 +44,17 @@ export const selectAnalyticsLastChecked = createSelector(
 )
 
 export const selectAnalyticsLiveTimestamp = createSelector(
-	[selectIdentitySideAnalyticsTimeframe, selectAnalyticsLastChecked],
-	(timeframe, lastChecked) => {
-		const currentDate = dateUtils.date(lastChecked)
+	[
+		selectIdentitySideAnalyticsTimeframe,
+		selectAnalyticsLastChecked,
+		selectCampaignInDetails,
+	],
+	(timeframe, lastChecked, campaign) => {
+		const currentDate = campaign
+			? dateUtils.date(
+					Math.min(campaign.withdrawPeriodStart, +dateUtils.date())
+			  )
+			: dateUtils.date(lastChecked)
 		let start = dateUtils.date(currentDate)
 		switch (timeframe) {
 			case 'hour':
@@ -681,14 +688,12 @@ export const selectAnalyticsNowLabel = createSelector(
 
 export const selectAnalyticsMinAndMaxDates = createSelector(
 	[
-		selectCampaignIdInDetails,
+		selectCampaignInDetails,
 		selectAccountIdentityCreatedDate,
 		selectIdentitySideAnalyticsTimeframe,
-		state => state,
 	],
-	(campaignId, dateCreated, timeframe, state) => {
-		const { activeFrom, withdrawPeriodStart } =
-			selectCampaignById(state, campaignId) || {}
+	(campaign = {}, dateCreated, timeframe) => {
+		const { activeFrom, withdrawPeriodStart } = campaign
 
 		const minDate = getMinStartDateTimeByTimeframe({
 			timeframe,
