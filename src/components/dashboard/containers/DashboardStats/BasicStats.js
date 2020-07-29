@@ -52,6 +52,7 @@ import {
 	selectAuth,
 	selectInitialDataLoadedByData,
 	selectMissingRevenueDataPointsAccepted,
+	selectAccountIdentityCreatedDate,
 } from 'selectors'
 import dateUtils from 'helpers/dateUtils'
 import { useKeyPress } from 'hooks/useKeyPress'
@@ -166,7 +167,6 @@ const DatePickerSwitch = ({ timeframe, period: { start, end }, ...rest }) => {
 			return (
 				<DatePicker
 					{...rest}
-					label={t('ANALYTICS_PERIOD_START_SELECT')}
 					views={['year', 'month']}
 					maxDate={dateUtils.addMonths(dateUtils.date(), -11)}
 					labelFunc={val => getPeriodLabel({ timeframe, start, end })}
@@ -218,6 +218,7 @@ export function BasicStats() {
 	const timeframe = useSelector(selectIdentitySideAnalyticsTimeframe)
 	const uiSide = useSelector(selectSide)
 	const side = useSelector(selectAnalyticsDataSide)
+	const minDate = useSelector(selectAccountIdentityCreatedDate)
 	const [loop, setLoop] = useState()
 	const allChannelsLoaded = useSelector(state =>
 		selectInitialDataLoadedByData(state, 'allChannels')
@@ -363,14 +364,14 @@ export function BasicStats() {
 					display='flex'
 					flexDirection='row'
 					flexWrap='wrap'
-					alignItems='center'
+					alignItems='stretch'
 				>
 					<Box
 						display='flex'
 						flexDirection='row'
 						flexWrap='wrap'
 						flexGrow={1}
-						alignItems='center'
+						alignItems='start'
 					>
 						<Box m={1} ml={0} flexGrow='1'>
 							<Dropdown
@@ -403,8 +404,10 @@ export function BasicStats() {
 								calendarIcon
 								label={t('ANALYTICS_PERIOD')}
 								maxDate={dateUtils.date()}
+								minDate={minDate}
 								// Only when picking future hours as they can't be disabled
 								maxDateMessage={t('MAX_DATE_ERROR')}
+								minDateMessage='' // we do not need error msgs e.g. for new accounts
 								strictCompareDates
 								onBackClick={e => {
 									e.stopPropagation()
