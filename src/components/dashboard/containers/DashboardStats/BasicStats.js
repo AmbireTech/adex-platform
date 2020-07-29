@@ -221,7 +221,6 @@ export function BasicStats() {
 	// NOTE: side can be: for-publisher, for-advertiser ot current campaign in details Id
 	const side = useSelector(selectAnalyticsDataSide)
 	const { minDate, maxDate } = useSelector(selectAnalyticsMinAndMaxDates)
-	const minDateWithPeriod = getMinDateByTimeframe({ timeframe, minDate })
 	const [loop, setLoop] = useState()
 	const allChannelsLoaded = useSelector(state =>
 		selectInitialDataLoadedByData(state, 'allChannels')
@@ -407,9 +406,9 @@ export function BasicStats() {
 								calendarIcon
 								label={t('ANALYTICS_PERIOD')}
 								maxDate={maxDate}
-								minDate={minDateWithPeriod}
+								minDate={minDate}
 								// Only when picking future hours as they can't be disabled
-								maxDateMessage={t('MAX_DATE_ERROR')}
+								maxDateMessage='' //{t('MAX_DATE_ERROR')}
 								minDateMessage='' // we do not need error msgs e.g. for new accounts
 								strictCompareDates
 								onBackClick={e => {
