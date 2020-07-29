@@ -3,6 +3,9 @@ import { createSelector } from 'reselect'
 import {
 	selectChannelsWithUserBalancesAll,
 	selectIdentitySideAnalyticsTimeframe,
+	selectCampaignById,
+	selectCampaignIdInDetails,
+	selectAccountIdentityCreatedDate,
 } from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
 import { getPeriodDataPointLabel } from 'helpers/timeHelpers'
@@ -669,6 +672,18 @@ export const selectAnalyticsNowLabel = createSelector(
 				)
 			default:
 				return dateUtils.format(dateUtils.date(), DEFAULT_DATETIME_FORMAT)
+		}
+	}
+)
+
+export const selectAnalyticsMinAndMaxDates = createSelector(
+	[selectCampaignIdInDetails, selectAccountIdentityCreatedDate, state => state],
+	(campaignId, dateCreated, state) => {
+		const { activeFrom, withdrawPeriodStart } =
+			selectCampaignById(state, campaignId) || {}
+		return {
+			minDate: dateUtils.date(activeFrom || dateCreated),
+			maxDate: dateUtils.date(withdrawPeriodStart),
 		}
 	}
 )
