@@ -52,7 +52,7 @@ import {
 	selectAuth,
 	selectInitialDataLoadedByData,
 	selectMissingRevenueDataPointsAccepted,
-	selectAccountIdentityCreatedDate,
+	selectAnalyticsMinAndMaxDates,
 } from 'selectors'
 import dateUtils from 'helpers/dateUtils'
 import { useKeyPress } from 'hooks/useKeyPress'
@@ -60,6 +60,7 @@ import { analyticsLoopCustom } from 'services/store-data/analytics'
 import {
 	DATE_TIME_FORMATS_BY_TIMEFRAME,
 	getPeriodLabel,
+	getMinDateByTimeframe,
 } from 'helpers/timeHelpers'
 
 const min = 60 * 1000
@@ -217,8 +218,10 @@ export function BasicStats() {
 	const { start, end } = useSelector(selectIdentitySideAnalyticsPeriod)
 	const timeframe = useSelector(selectIdentitySideAnalyticsTimeframe)
 	const uiSide = useSelector(selectSide)
+	// NOTE: side can be: for-publisher, for-advertiser ot current campaign in details Id
 	const side = useSelector(selectAnalyticsDataSide)
-	const minDate = useSelector(selectAccountIdentityCreatedDate)
+	const { minDate, maxDate } = useSelector(selectAnalyticsMinAndMaxDates)
+	const minDateWithPeriod = getMinDateByTimeframe({ timeframe, minDate })
 	const [loop, setLoop] = useState()
 	const allChannelsLoaded = useSelector(state =>
 		selectInitialDataLoadedByData(state, 'allChannels')
@@ -403,8 +406,8 @@ export function BasicStats() {
 								fullWidth
 								calendarIcon
 								label={t('ANALYTICS_PERIOD')}
-								maxDate={dateUtils.date()}
-								minDate={minDate}
+								maxDate={maxDate}
+								minDate={minDateWithPeriod}
 								// Only when picking future hours as they can't be disabled
 								maxDateMessage={t('MAX_DATE_ERROR')}
 								minDateMessage='' // we do not need error msgs e.g. for new accounts
