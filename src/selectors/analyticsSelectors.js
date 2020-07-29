@@ -8,7 +8,10 @@ import {
 	selectAccountIdentityCreatedDate,
 } from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
-import { getPeriodDataPointLabel } from 'helpers/timeHelpers'
+import {
+	getPeriodDataPointLabel,
+	getMinStartDateTimeByTimeframe,
+} from 'helpers/timeHelpers'
 import {
 	selectNewItemByTypeAndId,
 	selectIdentitySideAnalyticsPeriod,
@@ -677,13 +680,28 @@ export const selectAnalyticsNowLabel = createSelector(
 )
 
 export const selectAnalyticsMinAndMaxDates = createSelector(
-	[selectCampaignIdInDetails, selectAccountIdentityCreatedDate, state => state],
-	(campaignId, dateCreated, state) => {
+	[
+		selectCampaignIdInDetails,
+		selectAccountIdentityCreatedDate,
+		selectIdentitySideAnalyticsTimeframe,
+		state => state,
+	],
+	(campaignId, dateCreated, timeframe, state) => {
 		const { activeFrom, withdrawPeriodStart } =
 			selectCampaignById(state, campaignId) || {}
+
+		const minDate = getMinStartDateTimeByTimeframe({
+			timeframe,
+			time: dateUtils.date(activeFrom || dateCreated),
+		})
+		const maxDate = getMinStartDateTimeByTimeframe({
+			timeframe,
+			time: withdrawPeriodStart || dateUtils.date(),
+		})
+
 		return {
-			minDate: dateUtils.date(activeFrom || dateCreated),
-			maxDate: dateUtils.date(withdrawPeriodStart),
+			minDate: +minDate,
+			maxDate: +maxDate,
 		}
 	}
 )
