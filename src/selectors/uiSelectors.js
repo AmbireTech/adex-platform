@@ -107,13 +107,13 @@ export const selectInitialDataLoaded = createSelector(
 			].every(type => !!initialDataLoaded[type]))
 )
 
-export const selectCampaignInDetails = createSelector(
+export const selectCampaignIdInDetails = createSelector(
 	selectMemoryUi,
 	({ campaignId }) => campaignId
 )
 
 export const selectAnalyticsDataSide = createSelector(
-	[selectSide, selectCampaignInDetails],
+	[selectSide, selectCampaignIdInDetails],
 	(side, campaignId) => (campaignId ? campaignId : side ? `for-${side}` : '')
 )
 
