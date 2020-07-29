@@ -10,6 +10,7 @@ import {
 	selectSide,
 	selectMemoryUi,
 	selectAnalyticsLiveTimestamp,
+	selectAnalyticsMinAndMaxDates,
 	t,
 } from 'selectors'
 import { getTimePeriods, getBorderPeriodStart } from 'helpers/timeHelpers'
@@ -406,6 +407,7 @@ export function updateAnalyticsPeriodPrevNextLive({
 	return async function(dispatch, getState) {
 		try {
 			const state = getState()
+			const { minDate, maxDate } = selectAnalyticsMinAndMaxDates(state)
 			const timeframe = selectIdentitySideAnalyticsTimeframe(state)
 			let { start } = selectIdentitySideAnalyticsPeriod(state)
 
@@ -413,7 +415,14 @@ export function updateAnalyticsPeriodPrevNextLive({
 				start = selectAnalyticsLiveTimestamp(state)
 			} else {
 				const startIsLive = start === selectAnalyticsLiveTimestamp(state)
-				start = getBorderPeriodStart({ timeframe, start, next, startIsLive })
+				start = getBorderPeriodStart({
+					timeframe,
+					start,
+					next,
+					startIsLive,
+					minDate,
+					maxDate,
+				})
 			}
 
 			updateIdSideAnalyticsChartPeriod(start)(dispatch, getState)
