@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect'
-import { selectCampaignEventsCount } from 'selectors'
+import { selectCampaignEventsCount, selectCampaignIdInDetails } from 'selectors'
 import url from 'url'
 export const selectItems = state => state.persist.items
 
@@ -12,7 +12,6 @@ export const selectItemByTypeAndId = createSelector(
 	[selectItems, (_, itemType, id) => ({ itemType, id })],
 	(items, { itemType, id }) => (items[itemType] || {})[id] || {}
 )
-
 export const selectItemsArrayByType = createSelector(
 	[selectItemsByType, (_, itemType) => itemType],
 	(items = {}) => Object.values(items)
@@ -31,6 +30,11 @@ export const selectCampaignById = createSelector(
 export const selectCampaignUnitsById = createSelector(
 	[selectCampaignById, (_, id) => id],
 	({ adUnits } = {}) => adUnits || []
+)
+
+export const selectCampaignInDetails = createSelector(
+	[selectCampaignIdInDetails, state => state],
+	(campaignId, state) => selectCampaignById(state, campaignId)
 )
 
 export const selectCampaignWithAnalyticsById = createSelector(
