@@ -137,23 +137,42 @@ export const getBorderPeriodStart = ({
 	start,
 	next = false,
 	startIsLive = false,
+	minDate,
+	maxDate,
 }) => {
 	const startCopy = dateUtils.date(start)
 	const direction = next ? 1 : -1
 	let borderStart
+	let limitedStart = startCopy
+
+	if (
+		next &&
+		maxDate &&
+		dateUtils.isAfter(startCopy, dateUtils.date(maxDate))
+	) {
+		limitedStart = dateUtils.date(maxDate)
+	}
+
+	if (
+		!next &&
+		minDate &&
+		dateUtils.isBefore(startCopy, dateUtils.date(minDate))
+	) {
+		limitedStart = dateUtils.date(minDate)
+	}
 
 	switch (timeframe) {
 		case 'hour':
 			borderStart =
 				startIsLive && !next
-					? dateUtils.startOfHour(startCopy)
-					: dateUtils.addHours(startCopy, direction)
+					? dateUtils.startOfHour(limitedStart)
+					: dateUtils.addHours(limitedStart, direction)
 			break
 		case 'day':
 			const day =
 				startIsLive && !next
-					? dateUtils.startOfDay(startCopy)
-					: dateUtils.addDays(startCopy, direction)
+					? dateUtils.startOfDay(limitedStart)
+					: dateUtils.addDays(limitedStart, direction)
 			borderStart = dateUtils.startOfDay(day)
 			break
 		case 'week':
@@ -166,15 +185,15 @@ export const getBorderPeriodStart = ({
 		case 'month':
 			const month =
 				startIsLive && !next
-					? dateUtils.startOfMonth(startCopy)
-					: dateUtils.addMonths(startCopy, direction)
+					? dateUtils.startOfMonth(limitedStart)
+					: dateUtils.addMonths(limitedStart, direction)
 			borderStart = dateUtils.startOfMonth(month)
 			break
 		case 'year':
 			const year =
 				startIsLive && !next
-					? dateUtils.startOfYear(startCopy)
-					: dateUtils.addYears(startCopy, direction)
+					? dateUtils.startOfYear(limitedStart)
+					: dateUtils.addYears(limitedStart, direction)
 			borderStart = dateUtils.startOfMonth(year)
 			break
 		default:
@@ -187,19 +206,19 @@ export const getBorderPeriodStart = ({
 	return +borderStart
 }
 
-export const getMinDateByTimeframe = ({ timeframe, minDate }) => {
-	const min = dateUtils.date(minDate)
+export const getMinStartDateTimeByTimeframe = ({ timeframe, time }) => {
+	const min = dateUtils.date(time)
 	switch (timeframe) {
 		case 'hour':
-			return dateUtils.addHours(min, -1)
+			return dateUtils.addMinutes(min, -59)
 		case 'day':
-			return dateUtils.addDays(min, -1)
+			return dateUtils.addHours(min, -23)
 		case 'week':
 			return dateUtils.addDays(min, -6)
 		case 'month':
-			return dateUtils.addMonths(min, -1)
+			return dateUtils.addDays(dateUtils.addMonths(min, -1), 1)
 		case 'year':
-			return dateUtils.addYears(min, -1)
+			return dateUtils.addMonths(min, -11)
 		default:
 			return min
 	}
