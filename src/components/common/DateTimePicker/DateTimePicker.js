@@ -80,7 +80,13 @@ export function DateTimePicker({
 
 export default DateTimePicker
 
-const dateTimePickerStyled = ({ classes, calendarIcon, icon,InputProps = {} ...rest }) => {
+const dateTimePickerStyled = ({
+	classes,
+	calendarIcon,
+	icon,
+	InputProps = {},
+	...rest
+}) => {
 	return (
 		<DateTimePicker
 			InputLabelProps={{
