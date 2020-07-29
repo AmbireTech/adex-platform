@@ -132,8 +132,6 @@ const DatePickerSwitch = ({ timeframe, period: { start, end }, ...rest }) => {
 		case 'week':
 			return (
 				<PeriodDatePicker
-					multiline
-					margin='dense'
 					period='week'
 					labelFunc={val => getPeriodLabel({ timeframe: 'week', start, end })}
 					{...rest}
@@ -142,8 +140,6 @@ const DatePickerSwitch = ({ timeframe, period: { start, end }, ...rest }) => {
 		case 'day':
 			return (
 				<DatePicker
-					multiline
-					margin='dense'
 					labelFunc={val => getPeriodLabel({ timeframe: 'day', start, end })}
 					{...rest}
 				/>
@@ -151,8 +147,6 @@ const DatePickerSwitch = ({ timeframe, period: { start, end }, ...rest }) => {
 		case 'hour':
 			return (
 				<DateTimePicker
-					multiline
-					margin='dense'
 					views={['date', 'hours']}
 					roundHour
 					minutesStep={60}
@@ -164,8 +158,6 @@ const DatePickerSwitch = ({ timeframe, period: { start, end }, ...rest }) => {
 			return (
 				<PeriodDatePicker
 					{...rest}
-					multiline
-					margin='dense'
 					period='month'
 					labelFunc={val => getPeriodLabel({ timeframe: 'month', start, end })}
 				/>
@@ -174,8 +166,6 @@ const DatePickerSwitch = ({ timeframe, period: { start, end }, ...rest }) => {
 			return (
 				<DatePicker
 					{...rest}
-					multiline
-					margin='dense'
 					label={t('ANALYTICS_PERIOD_START_SELECT')}
 					views={['year', 'month']}
 					maxDate={dateUtils.addMonths(dateUtils.date(), -11)}
@@ -406,6 +396,7 @@ export function BasicStats() {
 								onChange={val => {
 									execute(updateIdSideAnalyticsChartPeriod(val))
 								}}
+								InputProps={{ multiline: true, className: classes.datePicker }}
 								disableFuture
 								inputVariant='outlined'
 								fullWidth
