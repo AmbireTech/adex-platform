@@ -43,7 +43,7 @@ export class DatePicker extends Component {
 			calendarIcon,
 			icon,
 			iconColor,
-			InputProps,
+			InputProps = {},
 			onIconClick,
 			onNextClick,
 			onLiveClick,
@@ -53,6 +53,7 @@ export class DatePicker extends Component {
 		return (
 			<MuiDatePicker
 				InputProps={{
+					...InputProps,
 					disabled: rest.disabled,
 					endAdornment: calendarIcon ? (
 						<CalendarIconAdor
@@ -70,7 +71,6 @@ export class DatePicker extends Component {
 							</IconButton>
 						</InputAdornment>
 					) : null,
-					...InputProps,
 				}}
 				{...rest}
 			/>
@@ -80,7 +80,13 @@ export class DatePicker extends Component {
 
 export default DatePicker
 
-const datePickerStyled = ({ classes, calendarIcon, icon, ...rest }) => {
+const datePickerStyled = ({
+	classes,
+	calendarIcon,
+	icon,
+	InputProps = {},
+	...rest
+}) => {
 	return (
 		<DatePicker
 			InputLabelProps={{
@@ -93,6 +99,7 @@ const datePickerStyled = ({ classes, calendarIcon, icon, ...rest }) => {
 				},
 			}}
 			InputProps={{
+				...InputProps,
 				disabled: rest.disabled,
 				classes: {
 					root: classes.datepickerContrastInput,
