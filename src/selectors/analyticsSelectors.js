@@ -4,8 +4,8 @@ import {
 	selectChannelsWithUserBalancesAll,
 	selectIdentitySideAnalyticsTimeframe,
 } from 'selectors'
-import { formatTokenAmount, formatDateTime } from 'helpers/formatters'
-import { DATE_TIME_FORMATS_BY_TIMEFRAME } from 'helpers/timeHelpers'
+import { formatTokenAmount } from 'helpers/formatters'
+import { getPeriodDataPointLabel } from 'helpers/timeHelpers'
 import {
 	selectNewItemByTypeAndId,
 	selectIdentitySideAnalyticsPeriod,
@@ -563,20 +563,7 @@ export const selectStatsChartData = createSelector(
 		return aggr.reduce(
 			(memo, item) => {
 				const { time, value } = item
-				let label = ''
-				if (timeframe === 'week') {
-					const periodEnd = +dateUtils.addHours(dateUtils.date(time), 3)
-					label = `${formatDateTime(
-						time,
-						DATE_TIME_FORMATS_BY_TIMEFRAME[timeframe].long
-					)}-
-${formatDateTime(periodEnd, DATE_TIME_FORMATS_BY_TIMEFRAME[timeframe].long)}`
-				} else {
-					label = formatDateTime(
-						time,
-						DATE_TIME_FORMATS_BY_TIMEFRAME[timeframe].long
-					)
-				}
+				let label = getPeriodDataPointLabel({ timeframe, time })
 
 				memo.labels.push(label)
 				memo.datasets.push(
