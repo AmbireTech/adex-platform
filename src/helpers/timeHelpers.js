@@ -187,6 +187,24 @@ export const getBorderPeriodStart = ({
 	return +borderStart
 }
 
+export const getMinDateByTimeframe = ({ timeframe, minDate }) => {
+	const min = dateUtils.date(minDate)
+	switch (timeframe) {
+		case 'hour':
+			return dateUtils.addHours(min, -1)
+		case 'day':
+			return dateUtils.addDays(min, -1)
+		case 'week':
+			return dateUtils.addDays(min, -6)
+		case 'month':
+			return dateUtils.addMonths(min, -1)
+		case 'year':
+			return dateUtils.addYears(min, -1)
+		default:
+			return min
+	}
+}
+
 const TIME_INTERVALS = [
 	{ label: 'YEAR', ms: YEAR },
 	{ label: 'MONTH', ms: MONTH },
