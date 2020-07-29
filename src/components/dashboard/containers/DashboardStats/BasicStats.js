@@ -132,26 +132,26 @@ const DatePickerSwitch = ({ timeframe, period: { start, end }, ...rest }) => {
 		case 'week':
 			return (
 				<PeriodDatePicker
-					period='week'
-					labelFunc={val => getPeriodLabel({ timeframe: 'week', start, end })}
 					{...rest}
+					period='week'
+					labelFunc={val => getPeriodLabel({ timeframe, start, end })}
 				/>
 			)
 		case 'day':
 			return (
 				<DatePicker
-					labelFunc={val => getPeriodLabel({ timeframe: 'day', start, end })}
 					{...rest}
+					labelFunc={val => getPeriodLabel({ timeframe, start, end })}
 				/>
 			)
 		case 'hour':
 			return (
 				<DateTimePicker
+					{...rest}
 					views={['date', 'hours']}
 					roundHour
 					minutesStep={60}
-					labelFunc={val => getPeriodLabel({ timeframe: 'hour', start, end })}
-					{...rest}
+					labelFunc={val => getPeriodLabel({ timeframe, start, end })}
 				/>
 			)
 		case 'month':
@@ -159,7 +159,7 @@ const DatePickerSwitch = ({ timeframe, period: { start, end }, ...rest }) => {
 				<PeriodDatePicker
 					{...rest}
 					period='month'
-					labelFunc={val => getPeriodLabel({ timeframe: 'month', start, end })}
+					labelFunc={val => getPeriodLabel({ timeframe, start, end })}
 				/>
 			)
 		case 'year':
@@ -169,7 +169,7 @@ const DatePickerSwitch = ({ timeframe, period: { start, end }, ...rest }) => {
 					label={t('ANALYTICS_PERIOD_START_SELECT')}
 					views={['year', 'month']}
 					maxDate={dateUtils.addMonths(dateUtils.date(), -11)}
-					labelFunc={val => getPeriodLabel({ timeframe: 'year', start, end })}
+					labelFunc={val => getPeriodLabel({ timeframe, start, end })}
 				/>
 			)
 		default:

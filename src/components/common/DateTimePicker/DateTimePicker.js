@@ -44,6 +44,7 @@ export function DateTimePicker({
 	onNextClick,
 	onLiveClick,
 	onBackClick,
+	InputProps = {},
 	roundHour,
 	...rest
 }) {
@@ -53,6 +54,7 @@ export function DateTimePicker({
 		<MuiDateTimePicker
 			value={date}
 			InputProps={{
+				...InputProps,
 				disabled: rest.disabled,
 				endAdornment: calendarIcon ? (
 					<CalendarIconAdor
@@ -78,7 +80,7 @@ export function DateTimePicker({
 
 export default DateTimePicker
 
-const dateTimePickerStyled = ({ classes, calendarIcon, icon, ...rest }) => {
+const dateTimePickerStyled = ({ classes, calendarIcon, icon,InputProps = {} ...rest }) => {
 	return (
 		<DateTimePicker
 			InputLabelProps={{
@@ -91,6 +93,7 @@ const dateTimePickerStyled = ({ classes, calendarIcon, icon, ...rest }) => {
 				},
 			}}
 			InputProps={{
+				...InputProps,
 				disabled: rest.disabled,
 				classes: {
 					root: classes.datepickerContrastInput,
