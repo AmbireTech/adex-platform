@@ -9,6 +9,8 @@ const WEEK = 7 * DAY
 const YEAR = 365 * DAY
 const MONTH = Math.floor(YEAR / 12)
 
+export const DEFAULT_WEEK_HOURS_SPAN = 3
+
 export const fillEmptyTime = (
 	prevAggr,
 	timeframe,
@@ -32,7 +34,7 @@ export const fillEmptyTime = (
 			time.step = { unit: 'hour', amount: 1 }
 			break
 		case 'week':
-			time.step = { unit: 'hour', amount: 6 }
+			time.step = { unit: 'hour', amount: DEFAULT_WEEK_HOURS_SPAN }
 			break
 		case 'month':
 			time.step = { unit: 'day', amount: 1 }
@@ -107,7 +109,7 @@ export const getTimePeriods = ({ timeframe, start }) => {
 			callEnd = dateUtils.addHours(end, 1)
 			break
 		case 'week':
-			start = dateUtils.getHourSpanStart(startCopy, 3)
+			start = dateUtils.getHourSpanStart(startCopy, DEFAULT_WEEK_HOURS_SPAN)
 			end = dateUtils.addDays(start, 6)
 			callEnd = dateUtils.addHours(end, 6)
 			break

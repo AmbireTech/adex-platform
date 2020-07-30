@@ -13,7 +13,10 @@ import {
 	selectAnalyticsMinAndMaxDates,
 	t,
 } from 'selectors'
-import { getTimePeriods, getBorderPeriodStart } from 'helpers/timeHelpers'
+import {
+	getTimePeriods,
+	getBorderPeriodStart,
+} from 'helpers/analyticsTimeHelpers'
 import { getErrorMsg } from 'helpers/errors'
 
 export function updateSpinner(item, value) {

@@ -18,7 +18,7 @@ import {
 	UPDATING_TARGETING_DATA,
 } from 'constants/spinners'
 import { getErrorMsg } from 'helpers/errors'
-import { fillEmptyTime } from 'helpers/timeHelpers'
+import { fillEmptyTime } from 'helpers/analyticsTimeHelpers'
 import { getUnitsStatsByType } from 'services/adex-market/aggregates'
 import { getTargetingData } from 'services/adex-market/actions'
 import {
@@ -37,6 +37,7 @@ import {
 import { bigNumberify } from 'ethers/utils'
 import moment from 'moment'
 import { FETCHING_PUBLISHER_RECEIPTS } from 'constants/spinners'
+import { DEFAULT_WEEK_HOURS_SPAN } from 'helpers/analyticsTimeHelpers'
 
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
@@ -50,6 +51,7 @@ const analyticsParams = ({ timeframe, side }) => {
 				timeframe,
 				side,
 				eventType,
+				weekHoursSpan: DEFAULT_WEEK_HOURS_SPAN,
 				...(side === 'for-publisher' &&
 					metric === 'eventPayouts' && { segmentByChannel: true }),
 			})
