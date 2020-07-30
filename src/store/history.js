@@ -4,7 +4,7 @@ const history = createHashHistory()
 
 history.listen(location => {
 	window.gtag &&
-		window.gtag('config', process.env.GA_CODE, {
+		window.gtag('event', 'page_view', {
 			page_path: location.pathname + location.search,
 		})
 })
