@@ -69,12 +69,7 @@ const analyticsCampaignsParams = () => {
 	return callsParams
 }
 
-function aggrByChannelsSegments({
-	aggr,
-	allChannels,
-	feeTokens,
-	withdrawTokens,
-}) {
+function aggrByChannelsSegments({ aggr, allChannels, withdrawTokens }) {
 	if (!Object.keys(allChannels).length) {
 		return []
 	}
@@ -87,15 +82,23 @@ function aggrByChannelsSegments({
 				const { time } = a
 				const { aggregations, channels, all } = data
 				const channelId = a.channelId.toLowerCase()
+				const {
+					depositAmount,
+					balanceNum,
+					//  depositAsset,
+					//  status,
+					// 	balance
+				} = allChannels[channelId] || {}
 
-				const { depositAmount, balanceNum, depositAsset, status } =
-					allChannels[channelId] || {}
+				// NOTE: check if the channel has lifetime min balance e.g. it is in the total balance
+				// - need to be synced with relayer way for auto sweep - only when campaign is complete
 
-				const { minPlatform, minFinal } = withdrawTokens[depositAsset]
-				const { min } = feeTokens[depositAsset]
-				const isExpired = status === 'Expired'
-				const minBalance = isExpired ? minFinal : minPlatform
+				// const { minPlatform, minFinal } = withdrawTokens[depositAsset]
+				// const isExpired = status === 'Expired'
+				// const minBalance = isExpired ? minFinal : minPlatform
+				// const hasMinBalance = bigNumberify(balance).gt(bigNumberify(minBalance))
 
+				// if (hasMinBalance) {
 				const current = channels[channelId] || { aggr: [] }
 
 				const value = bigNumberify(a.value || 0)
@@ -110,43 +113,16 @@ function aggrByChannelsSegments({
 				}
 				const currentChannelValue = bigNumberify(current.value || 0).add(value)
 
-				const hasMinBalance = currentChannelValue.gt(bigNumberify(minBalance))
 				const currentTimeValue = currentAggr.value
 
 				current.value = currentChannelValue
 
-				if (hasMinBalance && !current.feeSubtracted) {
-					current.feeSubtracted = true
-					const currentAvailable = currentChannelValue.sub(bigNumberify(min))
-					const currentAdded = bigNumberify(0)
-					const points = current.aggr
-
-					for (let index = points.length - 1; index >= 0; index--) {
-						const point = points[index]
-						currentAdded.add(point.value)
-
-						const curInnerAggr = aggregations[point.time] || {
-							time,
-							value: bigNumberify(0),
-						}
-
-						if (currentAdded.lt(currentAvailable)) {
-							curInnerAggr.value = curInnerAggr.value.add(point.value)
-							aggregations[point.time] = curInnerAggr
-						} else
-							curInnerAggr.value = curInnerAggr.value.add(
-								currentAdded.sub(currentAvailable)
-							)
-						aggregations[point.time] = curInnerAggr
-						break
-					}
-				} else if (hasMinBalance && current.feeSubtracted) {
-					currentAggr.value = value.add(currentTimeValue)
-				}
+				currentAggr.value = value.add(currentTimeValue)
 
 				channels[channelId] = current
 				aggregations[time] = currentAggr
 				all[time] = a.value || all[time]
+				// }
 
 				return { aggregations, channels, all }
 			},
