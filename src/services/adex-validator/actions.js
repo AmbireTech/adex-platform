@@ -144,6 +144,7 @@ export const identityAnalytics = async ({
 	segmentByChannel,
 	start,
 	end,
+	weekHoursSpan,
 }) => {
 	const baseUrl = ANALYTICS_DATA_VALIDATOR_URL
 	const requester = getValidatorRequester({ baseUrl })
@@ -160,6 +161,7 @@ export const identityAnalytics = async ({
 				eventType,
 				start,
 				end,
+				weekHoursSpan,
 				timezone: dateUtils.getCurrentTimezone(),
 			},
 			headers: {

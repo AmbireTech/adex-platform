@@ -60,8 +60,7 @@ import { analyticsLoopCustom } from 'services/store-data/analytics'
 import {
 	DATE_TIME_FORMATS_BY_TIMEFRAME,
 	getPeriodLabel,
-	getMinDateByTimeframe,
-} from 'helpers/timeHelpers'
+} from 'helpers/analyticsTimeHelpers'
 
 const min = 60 * 1000
 

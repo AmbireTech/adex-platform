@@ -10,7 +10,7 @@ import { formatTokenAmount } from 'helpers/formatters'
 import {
 	getPeriodDataPointLabel,
 	getMinStartDateTimeByTimeframe,
-} from 'helpers/timeHelpers'
+} from 'helpers/analyticsTimeHelpers'
 import {
 	selectNewItemByTypeAndId,
 	selectIdentitySideAnalyticsPeriod,
