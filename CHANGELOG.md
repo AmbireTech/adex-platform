@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.35
+##### *2020-07-22*
+
+### Fixed
+- Slot rules on creating and updating
+
+## 4.20.34
+##### *2020-07-20*
+
+### Added
+- `login-select-identity` query param on login to filter wallet identities
+
 ## 4.20.33
 ##### *2020-07-17*
 
