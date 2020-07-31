@@ -26,7 +26,7 @@ const DASH_WIDTH = 2
 
 const DefaultLabel = ({ label = '', align }) =>
 	label.split('-').map((x, index, all) => (
-		<Typography component='div' variant='caption' align={align}>
+		<Typography key={x + index} component='div' variant='caption' align={align}>
 			{x}
 		</Typography>
 	))
