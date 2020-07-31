@@ -112,6 +112,11 @@ export const selectCampaignIdInDetails = createSelector(
 	({ campaignId }) => campaignId
 )
 
+export const selectLoginSelectedIdentity = createSelector(
+	selectMemoryUi,
+	({ loginSelectedIdentity }) => loginSelectedIdentity
+)
+
 export const selectAnalyticsDataSide = createSelector(
 	[selectSide, selectCampaignIdInDetails],
 	(side, campaignId) => (campaignId ? campaignId : side ? `for-${side}` : '')

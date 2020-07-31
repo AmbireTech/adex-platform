@@ -29,6 +29,9 @@ npm start
 * [ethers.js](https://docs.ethers.io/ethers.js/html/) - Ethereum JavaScript API
 * [React](https://github.com/facebook/react) - The web framework used
 * [Create React App](https://github.com/facebookincubator/create-react-app) - The project bootstrap
-* [MATERIAL-UI](https://material-ui.com/) - React components that implements Google Material Design 
+* [MATERIAL-UI](https://material-ui.com/) - React components that implements Google Material Design
 
 ### [Changelog](CHANGELOG.md)
+
+### Pre-defining an account to log in with
+If you're logging in with an external wallet that controls many accounts (identities), you can append `?login-select-identity=<addr>` to the login link like so: `https://staging.adex.network/#/login/full?external=metamask&login-select-identity=0x033ed90e0fec3f3ea1c9b005c724d704501e0196`
