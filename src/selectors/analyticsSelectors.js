@@ -693,7 +693,7 @@ export const selectAnalyticsMinAndMaxDates = createSelector(
 		selectIdentitySideAnalyticsTimeframe,
 	],
 	(campaign = {}, dateCreated, timeframe) => {
-		const { activeFrom, withdrawPeriodStart } = campaign
+		const { activeFrom, withdrawPeriodStart, status = {} } = campaign
 
 		const minDate = getMinStartDateTimeByTimeframe({
 			timeframe,
@@ -701,7 +701,7 @@ export const selectAnalyticsMinAndMaxDates = createSelector(
 		})
 		const maxDate = getMinStartDateTimeByTimeframe({
 			timeframe,
-			time: withdrawPeriodStart || dateUtils.date(),
+			time: status.closedDate || withdrawPeriodStart || dateUtils.date(),
 		})
 
 		return {
