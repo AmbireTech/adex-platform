@@ -1,3 +1,4 @@
+import dateUtils from 'helpers/dateUtils'
 import { createSelector } from 'reselect'
 import { createDeepEqualSelector } from 'selectors'
 
@@ -107,4 +108,9 @@ export const selectAccountIdentityCurrentPrivileges = createSelector(
 export const selectWalletPrivileges = createSelector(
 	[selectAccountIdentityCurrentPrivileges, selectWalletAddress],
 	(privileges = {}, address) => privileges[address] || 0
+)
+
+export const selectAccountIdentityCreatedDate = createSelector(
+	selectAccountIdentityDeployData,
+	({ created }) => dateUtils.date(created || '2018-10-01')
 )

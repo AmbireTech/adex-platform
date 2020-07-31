@@ -24,6 +24,13 @@ const FONT = 'Roboto'
 const DASH_SIZE = 4
 const DASH_WIDTH = 2
 
+const DefaultLabel = ({ label = '', align }) =>
+	label.split('-').map((x, index, all) => (
+		<Typography key={x + index} component='div' variant='caption' align={align}>
+			{x}
+		</Typography>
+	))
+
 export const SimpleStatistics = ({
 	data1,
 	data2,
@@ -301,15 +308,19 @@ export const SimpleStatistics = ({
 				px={1}
 				flexWrap='wrap'
 			>
-				<Typography component='div' variant='caption' align='left'>
-					{defaultLabels[0]}
-				</Typography>
-				<Typography component='div' variant='caption' align='center'>
-					{t(xLabel || 'TIMEFRAME')}
-				</Typography>
-				<Typography component='div' variant='caption' align='right'>
-					{defaultLabels[1]}
-				</Typography>
+				<Box flexGrow='1'>
+					<DefaultLabel label={defaultLabels[0]} align='left' />
+				</Box>
+
+				<Box flexGrow='1'>
+					<Typography component='div' variant='caption' align='center'>
+						{t(xLabel || 'TIMEFRAME')}
+					</Typography>
+				</Box>
+
+				<Box flexGrow='1'>
+					<DefaultLabel label={defaultLabels[1]} align='right' />
+				</Box>
 			</Box>
 		</Box>
 	)

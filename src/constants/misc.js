@@ -125,7 +125,7 @@ export const VALIDATOR_ANALYTICS_TIMEFRAMES = [
 	{ label: 'LABEL_HOUR', value: 'hour' },
 	{ label: 'LABEL_DAY', value: 'day' },
 	{ label: 'LABEL_WEEK', value: 'week' },
-	// { label: 'LABEL_MONTH', value: 'month' },
+	{ label: 'LABEL_MONTH', value: 'month' },
 	// { label: 'LABEL_YEAR', value: 'year' },
 ]
 
