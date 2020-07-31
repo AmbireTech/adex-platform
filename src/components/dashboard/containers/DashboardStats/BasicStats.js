@@ -181,12 +181,12 @@ const ImpressionsAlert = ({ impressions = 0 }) => (
 	<Alert
 		variant='outlined'
 		severity='info'
-		onClose={() => {
-			execute(updateMissingRevenueDataPointAccepted(true))
-		}}
+		// onClose={() => {
+		// 	execute(updateMissingRevenueDataPointAccepted(true))
+		// }}
 	>
 		<div>
-			{t('IMPRESSIONS_AND_REVINUE_INFO', {
+			{t('IMPRESSIONS_AND_REVENUE_INFO_NO_TAXES', {
 				args: [
 					impressions,
 					<Anchor
@@ -353,10 +353,8 @@ export function BasicStats() {
 		)
 
 	const showRevenueInfo =
-		!missingRevenuePointsAccepted &&
-		uiSide === 'publisher' &&
-		dataSynced &&
-		!!totalImpressions
+		// !missingRevenuePointsAccepted &&
+		uiSide === 'publisher' && dataSynced && !!totalImpressions
 
 	return (
 		uiSide && (
@@ -495,11 +493,6 @@ export function BasicStats() {
 					</StatsCard>
 				</Box>
 
-				{showRevenueInfo && (
-					<Box m={1}>
-						<ImpressionsAlert impressions={totalImpressions} />
-					</Box>
-				)}
 				<Box mt={1}>
 					<SimpleStatistics
 						start={start}
@@ -530,6 +523,11 @@ export function BasicStats() {
 						y4Color={metrics[uiSide][3].color}
 					/>
 				</Box>
+				{showRevenueInfo && (
+					<Box mt={2}>
+						<ImpressionsAlert impressions={totalImpressions} />
+					</Box>
+				)}
 			</Box>
 		)
 	)
