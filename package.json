@@ -13,6 +13,7 @@
     "@material-ui/pickers": "3.2.10",
     "@ramp-network/ramp-instant-sdk": "^1.5.1",
     "@svgr/webpack": "4.1.0",
+    "@transak/transak-sdk": "^1.0.23",
     "@typescript-eslint/eslint-plugin": "1.6.0",
     "@typescript-eslint/parser": "1.6.0",
     "adex-constants": "1.0.10",
