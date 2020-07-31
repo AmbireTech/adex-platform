@@ -25,7 +25,7 @@ import {
 	ALEX_GREY,
 } from 'components/App/themeMUi'
 import { styles } from './styles'
-import { formatNumberWithCommas, formatDateTime } from 'helpers/formatters'
+import { formatNumberWithCommas } from 'helpers/formatters'
 import {
 	execute,
 	updateIdSideAnalyticsChartTimeframe,
@@ -58,8 +58,8 @@ import dateUtils from 'helpers/dateUtils'
 import { useKeyPress } from 'hooks/useKeyPress'
 import { analyticsLoopCustom } from 'services/store-data/analytics'
 import {
-	DATE_TIME_FORMATS_BY_TIMEFRAME,
 	getPeriodLabel,
+	getPeriodDataPointLabel,
 } from 'helpers/analyticsTimeHelpers'
 
 const min = 60 * 1000
@@ -124,8 +124,8 @@ const metrics = {
 }
 
 const getDefaultLabels = ({ timeframe, start, end }) => [
-	formatDateTime(start, DATE_TIME_FORMATS_BY_TIMEFRAME[timeframe].long),
-	formatDateTime(end, DATE_TIME_FORMATS_BY_TIMEFRAME[timeframe].long),
+	getPeriodDataPointLabel({ timeframe, time: start }),
+	getPeriodDataPointLabel({ timeframe, time: end }),
 ]
 
 const DatePickerSwitch = ({ timeframe, period: { start, end }, ...rest }) => {
@@ -502,7 +502,6 @@ export function BasicStats() {
 							title:
 								(timeFrames.find(a => a.value === timeframe) || {}).label || '',
 						}}
-						timeFormat={DATE_TIME_FORMATS_BY_TIMEFRAME[timeframe].long}
 						defaultLabels={defaultLabels}
 						data1={impressions}
 						data2={clicks}
