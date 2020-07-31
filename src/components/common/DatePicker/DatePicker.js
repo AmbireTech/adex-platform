@@ -10,7 +10,7 @@ import {
 	Update,
 } from '@material-ui/icons'
 import InputAdornment from '@material-ui/core/InputAdornment'
-import utils, { makeJSDateObject } from 'helpers/dateUtils'
+import dateUtils, { makeJSDateObject } from 'helpers/dateUtils'
 import clsx from 'clsx'
 
 const CalendarIconAdor = ({
@@ -21,17 +21,17 @@ const CalendarIconAdor = ({
 	onLiveClick,
 }) => (
 	<InputAdornment position='end'>
+		{onNextClick && (
+			<IconButton color={iconColor} onClick={onNextClick} size='small'>
+				<NavigateNextRounded />
+			</IconButton>
+		)}
 		<IconButton color={iconColor} onClick={onIconClick} size='small'>
 			{icon}
 		</IconButton>
 		{onLiveClick && (
 			<IconButton color={iconColor} onClick={onLiveClick} size='small'>
 				<Update />
-			</IconButton>
-		)}
-		{onNextClick && (
-			<IconButton color={iconColor} onClick={onNextClick} size='small'>
-				<NavigateNextRounded />
 			</IconButton>
 		)}
 	</InputAdornment>
@@ -43,6 +43,7 @@ export class DatePicker extends Component {
 			calendarIcon,
 			icon,
 			iconColor,
+			InputProps = {},
 			onIconClick,
 			onNextClick,
 			onLiveClick,
@@ -52,6 +53,7 @@ export class DatePicker extends Component {
 		return (
 			<MuiDatePicker
 				InputProps={{
+					...InputProps,
 					disabled: rest.disabled,
 					endAdornment: calendarIcon ? (
 						<CalendarIconAdor
@@ -78,7 +80,13 @@ export class DatePicker extends Component {
 
 export default DatePicker
 
-const datePickerStyled = ({ classes, calendarIcon, icon, ...rest }) => {
+const datePickerStyled = ({
+	classes,
+	calendarIcon,
+	icon,
+	InputProps = {},
+	...rest
+}) => {
 	return (
 		<DatePicker
 			InputLabelProps={{
@@ -91,6 +99,7 @@ const datePickerStyled = ({ classes, calendarIcon, icon, ...rest }) => {
 				},
 			}}
 			InputProps={{
+				...InputProps,
 				disabled: rest.disabled,
 				classes: {
 					root: classes.datepickerContrastInput,
@@ -105,30 +114,35 @@ const datePickerStyled = ({ classes, calendarIcon, icon, ...rest }) => {
 
 export const DatePickerContrast = withStyles(styles)(datePickerStyled)
 
-function WeekSelectDatePicker({ classes, ...rest }) {
-	const formatWeekSelectLabel = (date, invalidLabel) => {
-		let dateClone = makeJSDateObject(date)
+const dayIsFuture = date => dateUtils.isAfter(date, dateUtils.date())
 
-		return dateClone && utils.isValid(dateClone)
-			? `${utils.format(dateClone, 'MMM DD "YY')} - ${utils.format(
-					utils.addDays(dateClone, 6),
-					'MMM DD "YY'
-			  )}`
-			: invalidLabel
-	}
-
-	const dayIsFuture = date => utils.isAfter(date, utils.date())
-
+function PeriodSelectDatePicker({ classes, period, ...rest }) {
 	const renderWrappedWeekDay = (date, selectedDate, dayInCurrentMonth) => {
 		let dateClone = makeJSDateObject(date)
 		let selectedDateClone = makeJSDateObject(selectedDate)
 
-		const start = utils.startOfWeek(selectedDateClone)
-		const end = utils.endOfWeek(selectedDateClone)
+		const start = dateUtils.startOfDay(selectedDateClone)
+		let end = dateUtils.date(start)
 
-		const dayIsBetween = utils.isWithinInterval(dateClone, { start, end })
-		const isFirstDay = utils.isSameDay(dateClone, start)
-		const isLastDay = utils.isSameDay(dateClone, end)
+		switch (period) {
+			case 'week':
+				end = dateUtils.startOfDay(dateUtils.addDays(start, 6))
+				maxDate = dateUtils.addDays(dateUtils.date(), -6)
+				break
+			case 'month':
+				end = dateUtils.startOfDay(
+					dateUtils.addDays(dateUtils.addMonths(start, 1), -1)
+				)
+				maxDate = dateUtils.addDays(dateUtils.addMonths(dateUtils.date(), 1), 1)
+
+				break
+			default:
+				break
+		}
+
+		const dayIsBetween = dateUtils.isWithinInterval(dateClone, { start, end })
+		const isFirstDay = dateUtils.isSameDay(dateClone, start)
+		const isLastDay = dateUtils.isSameDay(dateClone, end)
 
 		const wrapperClassName = clsx({
 			[classes.highlight]: dayIsBetween,
@@ -145,21 +159,36 @@ function WeekSelectDatePicker({ classes, ...rest }) {
 		return (
 			<div className={wrapperClassName}>
 				<IconButton className={dayClassName}>
-					<span> {utils.format(dateClone, 'D')} </span>
+					<span> {dateUtils.format(dateClone, 'D')} </span>
 				</IconButton>
 			</div>
 		)
+	}
+
+	let maxDate = dateUtils.date()
+
+	switch (period) {
+		case 'week':
+			maxDate = dateUtils.addDays(dateUtils.date(), -6)
+			break
+		case 'month':
+			maxDate = dateUtils.addDays(dateUtils.addMonths(dateUtils.date(), -1), 1)
+
+			break
+		default:
+			break
 	}
 
 	return (
 		<DatePicker
 			label='Week Picker'
 			renderDay={renderWrappedWeekDay}
-			labelFunc={formatWeekSelectLabel}
 			shouldDisableDate={date => dayIsFuture(date)}
+			views={['year', 'month', 'date']}
+			maxDate={maxDate}
 			{...rest}
 		/>
 	)
 }
 
-export const WeeklyDatePicker = withStyles(styles)(WeekSelectDatePicker)
+export const PeriodDatePicker = withStyles(styles)(PeriodSelectDatePicker)

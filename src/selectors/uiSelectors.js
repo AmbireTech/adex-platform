@@ -107,7 +107,7 @@ export const selectInitialDataLoaded = createSelector(
 			].every(type => !!initialDataLoaded[type]))
 )
 
-export const selectCampaignInDetails = createSelector(
+export const selectCampaignIdInDetails = createSelector(
 	selectMemoryUi,
 	({ campaignId }) => campaignId
 )
@@ -118,7 +118,7 @@ export const selectLoginSelectedIdentity = createSelector(
 )
 
 export const selectAnalyticsDataSide = createSelector(
-	[selectSide, selectCampaignInDetails],
+	[selectSide, selectCampaignIdInDetails],
 	(side, campaignId) => (campaignId ? campaignId : side ? `for-${side}` : '')
 )
 
@@ -131,8 +131,8 @@ export const selectIdentitySideAnalyticsPeriod = createSelector(
 	[selectIdentitySideUi],
 	({
 		sideAnalyticsPeriod = {
-			start: +dateUtils.startOfDay(dateUtils.date()),
-			end: +dateUtils.endOfDay(dateUtils.date()),
+			start: dateUtils.startOfDay(dateUtils.date()),
+			end: dateUtils.endOfDay(dateUtils.date()),
 		},
 	} = {}) => sideAnalyticsPeriod
 )

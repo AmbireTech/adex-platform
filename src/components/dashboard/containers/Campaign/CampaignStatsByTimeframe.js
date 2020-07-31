@@ -31,15 +31,15 @@ export const CampaignStatsByTimeframe = ({ item }) => {
 				<Grid item xs={12} sm={4} md={4} lg={4}>
 					<Box>
 						<ItemSpecProp
-							prop={'activeFrom'}
-							value={formatDateTime(item.activeFrom)}
-							label={t('activeFrom', { isProp: true })}
+							prop={'withdrawPeriodStart'}
+							value={formatDateTime(item.withdrawPeriodStart)}
+							label={t('withdrawPeriodStart', { isProp: true })}
 						/>
 					</Box>
 				</Grid>
 
 				<Grid item xs={12}>
-					<BasicStats campaignId={item.id} />
+					<BasicStats />
 				</Grid>
 			</Grid>
 		</Box>

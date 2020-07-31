@@ -23,7 +23,7 @@ import {
 	InfoSharp,
 } from '@material-ui/icons'
 import { useSelector } from 'react-redux'
-import { timeAgo } from 'helpers/timeHelpers'
+import { timeAgo } from 'helpers/analyticsTimeHelpers'
 import { selectWebsiteByWebsite, t } from 'selectors'
 import { execute, updateWebsiteVerification } from 'actions'
 
