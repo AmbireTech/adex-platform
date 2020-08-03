@@ -42,4 +42,10 @@ a, img {
 }
 
 
-
+/* Transak widget fix */
+#transak_modal-overlay {
+  z-index: 1300;
+}
+#transak_modal {
+  z-index: 1400;
+}
