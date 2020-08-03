@@ -1,5 +1,6 @@
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
 import { popupCenter } from 'helpers/popupHelper'
+import transakSDK from '@transak/transak-sdk'
 import url from 'url'
 import { t } from 'selectors'
 
@@ -61,4 +62,35 @@ export const openOnRampNetwork = ({ accountId, symbol }) => {
 	})
 	widget.domNodes.overlay.style.zIndex = 1000
 	widget.show()
+}
+
+export const openTransak = ({ accountId, symbol }) => {
+	const transak = new transakSDK({
+		apiKey: '4fcd6904-706b-4aff-bd9d-77422813bbb7', // Your API Key
+		environment: 'STAGING', // STAGING/PRODUCTION
+		cryptoCurrencyList: symbol,
+		defaultCryptoCurrency: symbol,
+		disableWalletAddressForm: true,
+		walletAddress: accountId, // Your customer's wallet address
+		themeColor: '000000', // App theme color
+		// fiatCurrency: 'GBP', // INR/GBP
+		email: '', // Your customer's email address
+		redirectURL: '',
+		hostURL: window.location.origin,
+		widgetHeight: 'calc(100vh - 180px)',
+		// widgetWidth: '550px',
+	})
+
+	transak.init()
+
+	// To get all the events
+	transak.on(transak.ALL_EVENTS, data => {
+		console.log(data)
+	})
+
+	// This will trigger when the user marks payment is made.
+	transak.on(transak.EVENTS.TRANSAK_ORDER_SUCCESSFUL, orderData => {
+		console.log(orderData)
+		transak.close()
+	})
 }

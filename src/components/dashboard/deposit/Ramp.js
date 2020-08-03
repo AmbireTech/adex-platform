@@ -10,10 +10,16 @@ import {
 import { t } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
 import Img from 'components/common/img/Img'
-import { openWyre, openPayTrie, openOnRampNetwork } from 'services/onramp'
+import {
+	openWyre,
+	openPayTrie,
+	openOnRampNetwork,
+	openTransak,
+} from 'services/onramp'
 import RAMP_LOGO from 'resources/ramp.svg'
 import WYRE_LOGO from 'resources/wyre.svg'
 import PAYTRIE_LOGO from 'resources/paytrie.svg'
+import TRANSAK_LOGO from 'resources/transak.svg'
 import { styles } from './styles'
 
 const useStyles = makeStyles(styles)
@@ -45,6 +51,15 @@ const onRampProvidersDetails = [
 		feeInfo: t('PAYTRIE_FEES'),
 		limitInfo: t('PAYTRIE_LIMITS'),
 		currencies: t('PAYTRIE_CURRENCIES'),
+	},
+	{
+		title: t('BANK_TRANSFER'),
+		onClick: props => openTransak(props),
+		imgSrc: TRANSAK_LOGO,
+		imgAlt: t('TRANSAK'),
+		feeInfo: t('TRANSAK_FEES'),
+		limitInfo: t('TRANSAK_LIMITS'),
+		currencies: t('TRANSAK_CURRENCIES'),
 	},
 ]
 
