@@ -32,7 +32,7 @@ export default function TopUp() {
 						p={2}
 						display='flex'
 						flexDirection='column'
-						justifyContent='space-between'
+						// justifyContent='space-between'
 						height={1}
 					>
 						<Box mb={2}>
@@ -78,7 +78,7 @@ export default function TopUp() {
 						pb={1}
 						display='flex'
 						flexDirection='column'
-						justifyContent='space-between'
+						// justifyContent='space-between'
 						height={1}
 					>
 						<Box mb={2}>
@@ -111,7 +111,7 @@ export default function TopUp() {
 						pb={1}
 						display='flex'
 						flexDirection='column'
-						justifyContent='space-between'
+						// justifyContent='space-between'
 						height={1}
 					>
 						<Box mb={2}>
