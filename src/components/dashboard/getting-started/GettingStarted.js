@@ -184,7 +184,7 @@ const getSteps = ({
 })
 
 export default function GettingStarted(props) {
-	useTraceUpdate(props)
+	// useTraceUpdate(props)
 	const { side } = props
 	const classes = useStyles({ side })
 
