@@ -77,8 +77,8 @@ export const openTransak = ({ accountId, symbol }) => {
 		email: '', // Your customer's email address
 		redirectURL: '',
 		hostURL: window.location.origin,
-		widgetHeight: 'calc(100vh - 180px)',
-		// widgetWidth: '550px',
+		widgetHeight: 'calc(100% - 60px)',
+		widgetWidth: '100%',
 	})
 
 	transak.init()
