@@ -124,6 +124,7 @@ const Audiences = () => (
 const useStyles = makeStyles(styles)
 
 function Dashboard(props) {
+	// This renders two times when location is changed!
 	useTraceUpdate(props)
 	const [mobileOpen, setMobileOpen] = useState(false)
 	const address = useSelector(selectAccountIdentityAddr)
