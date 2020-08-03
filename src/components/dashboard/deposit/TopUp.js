@@ -11,12 +11,9 @@ import {
 import { makeStyles } from '@material-ui/core/styles'
 import { useSelector } from 'react-redux'
 import copy from 'copy-to-clipboard'
-import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import { styles } from './styles'
 import { execute, addToast } from 'actions'
-import RampProviders from './Ramp'
-
-const RRButton = withReactRouterLink(Button)
+import { FiatProviders, CryptoProviders } from './Ramp'
 
 const useStyles = makeStyles(styles)
 
@@ -43,6 +40,13 @@ export default function TopUp() {
 							<Typography className={classes.subtitle} gutterBottom>
 								{t('DIRECT_DEPOSIT')}
 							</Typography>
+							<Box mt={2}>
+								<Typography align='center' component='p' color='textSecondary'>
+									{t('DAI_DIRECT_DEPOSIT_INFO')}
+								</Typography>
+							</Box>
+						</Box>
+						<Box>
 							<Button
 								onClick={() => {
 									copy(accountId)
@@ -63,11 +67,6 @@ export default function TopUp() {
 							>
 								{accountId}
 							</Button>
-							<Box mt={2}>
-								<Typography align='center' component='p' color='textSecondary'>
-									{t('DAI_DIRECT_DEPOSIT_INFO')}
-								</Typography>
-							</Box>
 						</Box>
 					</Box>
 				</Paper>
@@ -96,7 +95,7 @@ export default function TopUp() {
 							</Box>
 						</Box>
 						<Box>
-							<RampProviders
+							<FiatProviders
 								accountId={accountId}
 								symbol={symbol}
 								email={email}
@@ -109,6 +108,7 @@ export default function TopUp() {
 				<Paper variant='outlined' className={classes.paper}>
 					<Box
 						p={2}
+						pb={1}
 						display='flex'
 						flexDirection='column'
 						justifyContent='space-between'
@@ -126,16 +126,12 @@ export default function TopUp() {
 							</Box>
 						</Box>
 						<Box>
-							<RRButton
-								to={`/dashboard/${side}/topup/btc`}
-								size='large'
-								color='primary'
-								variant='contained'
-								fullWidth
-								// disabled
-							>
-								{t('TOPUP_BTC')}
-							</RRButton>
+							<CryptoProviders
+								accountId={accountId}
+								symbol={symbol}
+								email={email}
+								side={side}
+							/>
 						</Box>
 					</Box>
 				</Paper>

@@ -20,11 +20,14 @@ import RAMP_LOGO from 'resources/ramp.svg'
 import WYRE_LOGO from 'resources/wyre.svg'
 import PAYTRIE_LOGO from 'resources/paytrie.svg'
 import TRANSAK_LOGO from 'resources/transak.svg'
+import CHANGELLY_LOGO from 'resources/changelly.svg'
 import { styles } from './styles'
+import { push } from 'connected-react-router'
+import { execute } from 'actions'
 
 const useStyles = makeStyles(styles)
 
-const onRampProvidersDetails = [
+const fiatProvidersDetails = [
 	{
 		title: t('CREDIT_CARD'),
 		onClick: props => openWyre(props),
@@ -63,7 +66,19 @@ const onRampProvidersDetails = [
 	},
 ]
 
-const OnRampListItem = ({
+const cryptoProvidersDetails = [
+	{
+		title: t('BITCOIN_TRANSFER'),
+		onClick: ({ side }) => execute(push(`/dashboard/${side}/topup/btc`)),
+		imgSrc: CHANGELLY_LOGO,
+		imgAlt: t('CHANGELLY'),
+		feeInfo: t('CHANGELLY_FEES'),
+		limitInfo: t('CHANGELLY_LIMITS'),
+		currencies: t('CHANGELLY_CURRENCIES'),
+	},
+]
+
+const ProviderListItem = ({
 	imgSrc,
 	imgAlt,
 	title,
@@ -103,15 +118,15 @@ const OnRampListItem = ({
 	)
 }
 
-const RampProviders = ({ accountId, symbol, email }) => (
+const Providers = ({ providersDetails, accountId, symbol, email, side }) => (
 	<List disablePadding>
-		{onRampProvidersDetails.map((item, key) => (
+		{providersDetails.map((item, key) => (
 			<ListItem
 				disableGutters
 				key={key}
-				onClick={() => item.onClick({ accountId, symbol, email })}
+				onClick={() => item.onClick({ accountId, symbol, email, side })}
 			>
-				<OnRampListItem
+				<ProviderListItem
 					key={key}
 					title={item.title}
 					imgSrc={item.imgSrc}
@@ -125,4 +140,21 @@ const RampProviders = ({ accountId, symbol, email }) => (
 	</List>
 )
 
-export default RampProviders
+export const FiatProviders = ({ accountId, symbol, email }) => (
+	<Providers
+		providersDetails={fiatProvidersDetails}
+		accountId={accountId}
+		symbol={symbol}
+		email={email}
+	/>
+)
+
+export const CryptoProviders = ({ accountId, symbol, email, side }) => (
+	<Providers
+		providersDetails={cryptoProvidersDetails}
+		accountId={accountId}
+		symbol={symbol}
+		email={email}
+		side={side}
+	/>
+)
