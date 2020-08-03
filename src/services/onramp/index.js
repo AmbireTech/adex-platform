@@ -6,7 +6,7 @@ import { t } from 'selectors'
 
 const PAYTRIE_PARTNER_URL = 'https://partner.paytrie.com/?app=876454'
 const WYRE_URL = 'https://pay.sendwyre.com/purchase?'
-const { RAMP_HOST_API_KEY } = process.env
+const { RAMP_HOST_API_KEY, TRANSAK_API_KEY, TRANSAK_ENV } = process.env
 
 //https://docs.sendwyre.com/docs/wyre-widget-v2
 export const openWyre = ({ accountId, symbol, ...rest }) => {
@@ -66,8 +66,8 @@ export const openOnRampNetwork = ({ accountId, symbol }) => {
 
 export const openTransak = ({ accountId, symbol }) => {
 	const transak = new transakSDK({
-		apiKey: '4fcd6904-706b-4aff-bd9d-77422813bbb7', // Your API Key
-		environment: 'STAGING', // STAGING/PRODUCTION
+		apiKey: TRANSAK_API_KEY, // Your API Key
+		environment: TRANSAK_ENV, // STAGING/PRODUCTION
 		cryptoCurrencyList: symbol,
 		defaultCryptoCurrency: symbol,
 		disableWalletAddressForm: true,
