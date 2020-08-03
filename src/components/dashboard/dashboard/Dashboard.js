@@ -50,6 +50,7 @@ import {
 } from 'selectors'
 import { useSelector } from 'react-redux'
 import GettingStarted from '../getting-started/GettingStarted'
+import { useTraceUpdate } from 'hooks/useTraceUpdate'
 
 const Campaigns = () => {
 	const privileges = useSelector(selectWalletPrivileges)
@@ -123,6 +124,7 @@ const Audiences = () => (
 const useStyles = makeStyles(styles)
 
 function Dashboard(props) {
+	useTraceUpdate(props)
 	const [mobileOpen, setMobileOpen] = useState(false)
 	const address = useSelector(selectAccountIdentityAddr)
 	const privileges = useSelector(selectWalletPrivileges)

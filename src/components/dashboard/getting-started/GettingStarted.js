@@ -47,6 +47,7 @@ import {
 	createAdSlot,
 	placeAdSlot,
 } from './Tutorials'
+import { useTraceUpdate } from 'hooks/useTraceUpdate'
 
 const useStyles = makeStyles(theme => {
 	const stepperBackgroundColor = ({ side }) =>
@@ -183,6 +184,7 @@ const getSteps = ({
 })
 
 export default function GettingStarted(props) {
+	useTraceUpdate(props)
 	const { side } = props
 	const classes = useStyles({ side })
 
@@ -220,15 +222,16 @@ export default function GettingStarted(props) {
 	}, [stepsData])
 
 	useEffect(() => {
-		console.log(side, `step${indexOfFirstIncompleteStep}`)
-
+		const eventName = 'tutorial'
+		const step = getSteps(stepsData)[side].findIndex(step => !step.check)
 		if (window.gtag) {
-			const stepIndex = sideSteps.findIndex(step => !step.check)
-
-			// Sends the custom dimension to Google Analytics.
-			window.gtag('event', 'test', { [side]: `step${stepIndex}` })
+			if (step !== -1) {
+				window.gtag('event', eventName, {
+					[side]: `step${step}`,
+				})
+			}
 		}
-	}, [indexOfFirstIncompleteStep, side, sideSteps])
+	})
 
 	useEffect(() => {
 		setActiveStep(
