@@ -115,13 +115,15 @@ export default function TopUp() {
 						height={1}
 					>
 						<Box mb={2}>
-							<Typography className={classes.title}>{t('BTC')}</Typography>
+							<Typography className={classes.title}>
+								{t('CRYPTO_CURRENCY_DEPOSIT')}
+							</Typography>
 							<Typography className={classes.subtitle} gutterBottom>
-								{t('DIRECT_DEPOSIT')}
+								{t('CRYPTO_EXCHANGE')}
 							</Typography>
 							<Box mt={2}>
 								<Typography align='center' component='p' color='textSecondary'>
-									{t('BTC_INFO')}
+									{t('CRYPTO_CURRENCY_DEPOSIT_INFO')}
 								</Typography>
 							</Box>
 						</Box>

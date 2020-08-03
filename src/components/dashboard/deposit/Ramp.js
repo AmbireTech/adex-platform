@@ -56,7 +56,7 @@ const fiatProvidersDetails = [
 		currencies: t('PAYTRIE_CURRENCIES'),
 	},
 	{
-		title: t('BANK_TRANSFER'),
+		title: t('BANK_TRANSFER_AND_CARD_PAYMENTS'),
 		onClick: props => openTransak(props),
 		imgSrc: TRANSAK_LOGO,
 		imgAlt: t('TRANSAK'),
@@ -68,13 +68,13 @@ const fiatProvidersDetails = [
 
 const cryptoProvidersDetails = [
 	{
-		title: t('BITCOIN_TRANSFER'),
-		onClick: ({ side }) => execute(push(`/dashboard/${side}/topup/btc`)),
+		title: t('CHANGELLY_TRANSFER'),
+		onClick: ({ side }) => execute(push(`/dashboard/${side}/topup/changelly`)),
 		imgSrc: CHANGELLY_LOGO,
 		imgAlt: t('CHANGELLY'),
 		feeInfo: t('CHANGELLY_FEES'),
-		limitInfo: t('CHANGELLY_LIMITS'),
-		currencies: t('CHANGELLY_CURRENCIES'),
+		limitInfo: t('CHANGELLY_TIME'),
+		currencies: t('CHANGELLY_CURRENCIES', { args: ['BTC, ETH, XRP'] }),
 	},
 ]
 
