@@ -15,7 +15,6 @@ import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import { styles } from './styles'
 import { execute, addToast } from 'actions'
 import RampProviders from './Ramp'
-import TopUpTransak from './TopUpTransak'
 
 const RRButton = withReactRouterLink(Button)
 
@@ -102,9 +101,6 @@ export default function TopUp() {
 								symbol={symbol}
 								email={email}
 							/>
-						</Box>
-						<Box>
-							<TopUpTransak />
 						</Box>
 					</Box>
 				</Paper>
