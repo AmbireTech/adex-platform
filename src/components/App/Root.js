@@ -96,36 +96,31 @@ const Root = () => {
 	}, [location])
 
 	return (
-		<Router>
-			<Switch>
-				<PrivateRoute
-					auth={auth}
-					path='/dashboard/:side'
-					component={Dashboard}
-				/>
-				<PrivateRoute auth={auth} path='/side-select' component={SideSelect} />
-				<Route exact path='/' component={ConnectedRoot} />
-				<Route
-					exact
-					path='/signup/quick'
-					component={ConnectedCreateQuickIdentity}
-				/>
-				<Route
-					exact
-					path='/login/full'
-					component={ConnectedLoginStandardIdentity}
-				/>
-				<Route
-					exact
-					path='/signup/full'
-					component={ConnectedCreateStandardIdentity}
-				/>
-				<Route exact path='/login/quick' component={ConnectedQuickLogin} />
-				<Route>
-					<PageNotFound />
-				</Route>
-			</Switch>
-		</Router>
+		// <Router> Second router causes everything below to render twice
+		<Switch>
+			<PrivateRoute auth={auth} path='/dashboard/:side' component={Dashboard} />
+			<PrivateRoute auth={auth} path='/side-select' component={SideSelect} />
+			<Route exact path='/' component={ConnectedRoot} />
+			<Route
+				exact
+				path='/signup/quick'
+				component={ConnectedCreateQuickIdentity}
+			/>
+			<Route
+				exact
+				path='/login/full'
+				component={ConnectedLoginStandardIdentity}
+			/>
+			<Route
+				exact
+				path='/signup/full'
+				component={ConnectedCreateStandardIdentity}
+			/>
+			<Route exact path='/login/quick' component={ConnectedQuickLogin} />
+			<Route>
+				<PageNotFound />
+			</Route>
+		</Switch>
 	)
 }
 
