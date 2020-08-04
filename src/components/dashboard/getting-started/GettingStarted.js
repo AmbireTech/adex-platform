@@ -36,16 +36,10 @@ import {
 	selectStepsData,
 	selectHideGettingStarted,
 	selectGettingStartedExpanded,
-	selectGaDimensionsSet,
 } from 'selectors'
 import { useSelector } from 'react-redux'
 import { ColorlibStepIcon, ColorlibConnector } from './Colorlib'
-import {
-	hideGettingStarted,
-	setGettingStartedExpanded,
-	updateMemoryUi,
-	execute,
-} from 'actions'
+import { hideGettingStarted, setGettingStartedExpanded, execute } from 'actions'
 import {
 	createAdUnitTutorial,
 	fundAccountTutorial,
@@ -53,7 +47,7 @@ import {
 	createAdSlot,
 	placeAdSlot,
 } from './Tutorials'
-import { useEffectDebugger } from 'hooks/useEffectDebugger'
+// import { useEffectDebugger } from 'hooks/useEffectDebugger'
 import ReactGA from 'react-ga'
 
 const useStyles = makeStyles(theme => {
@@ -194,7 +188,6 @@ export default function GettingStarted(props) {
 	const { side } = props
 	const classes = useStyles({ side })
 	const stepsData = useSelector(selectStepsData)
-	const gaDimensionsSet = useSelector(selectGaDimensionsSet)
 	const isGettingStartedHidden = useSelector(selectHideGettingStarted)
 	const expanded = useSelector(selectGettingStartedExpanded)
 	const [steps, setSteps] = useState({})
@@ -226,27 +219,20 @@ export default function GettingStarted(props) {
 		setSteps(getSteps(stepsData))
 	}, [stepsData])
 
-	useEffectDebugger(
-		() => {
-			const advertiserStep = getSteps(stepsData).advertiser.findIndex(
-				step => !step.check
-			)
-			const publisherStep = getSteps(stepsData).publisher.findIndex(
-				step => !step.check
-			)
-			if (!gaDimensionsSet) {
-				ReactGA.set({
-					dimension1:
-						advertiserStep === -1 ? 'completed' : `step${advertiserStep + 1}`,
-					dimension2:
-						publisherStep === -1 ? 'completed' : `step${publisherStep + 1}`,
-				})
-				execute(updateMemoryUi('gaDimensionsSet', true))
-			}
-		},
-		[gaDimensionsSet, stepsData],
-		['gaDimensionsSet', 'stepsData']
-	)
+	useEffect(() => {
+		const advertiserStep = getSteps(stepsData).advertiser.findIndex(
+			step => !step.check
+		)
+		const publisherStep = getSteps(stepsData).publisher.findIndex(
+			step => !step.check
+		)
+		ReactGA.set({
+			dimension1:
+				advertiserStep === -1 ? 'completed' : `step${advertiserStep + 1}`,
+			dimension2:
+				publisherStep === -1 ? 'completed' : `step${publisherStep + 1}`,
+		})
+	}, [stepsData])
 
 	useEffect(() => {
 		setActiveStep(
