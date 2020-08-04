@@ -15,6 +15,11 @@ export const selectConfirm = state => state.memory.confirm
 
 export const selectSpinners = state => state.memory.spinners
 
+export const selectGaDimensionsSet = createSelector(
+	[selectMemoryUi],
+	({ gaDimensionsSet = false }) => gaDimensionsSet
+)
+
 export const selectIdentityUi = createSelector(
 	[selectAccountIdentityAddr, selectIdentitiesUi],
 	(identityAddr, identitiesUi) => identitiesUi[identityAddr] || {}
