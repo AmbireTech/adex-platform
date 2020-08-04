@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-import { HashRouter as Router } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import {
 	metamaskChecks,
@@ -96,7 +95,6 @@ const Root = () => {
 	}, [location])
 
 	return (
-		// <Router> Second router causes everything below to render twice
 		<Switch>
 			<PrivateRoute auth={auth} path='/dashboard/:side' component={Dashboard} />
 			<PrivateRoute auth={auth} path='/side-select' component={SideSelect} />
