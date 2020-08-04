@@ -18,11 +18,13 @@ import statsLoop from 'services/store-data/account'
 import { advancedAnalyticsLoop } from 'services/store-data/analytics'
 
 import { push } from 'connected-react-router'
-
+const DIMENSIONS_NOT_SET_OR_LOADING = null
 export const logOut = skipRedirect => {
 	execute(updateMemoryUi('initialDataLoaded', false))
-	execute(updateMemoryUi('gaDimensionsSet', false))
-	ReactGA.set({ dimension1: '', dimension2: '' }) //reset dimensions after logout
+	ReactGA.set({
+		dimension1: DIMENSIONS_NOT_SET_OR_LOADING,
+		dimension2: DIMENSIONS_NOT_SET_OR_LOADING,
+	}) //reset dimensions after logout
 	execute(resetAccount())
 	advancedAnalyticsLoop.stop()
 	campaignsLoop.stop()
