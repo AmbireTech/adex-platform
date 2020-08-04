@@ -41,7 +41,10 @@ const AuthSelect = () => {
 
 	const goTo = (to, confirmLogout, onConfirm) => {
 		const toExecute = () => {
-			logOut()
+			// skip redirect as you are going to be redirected on next line
+			// this resolves an issue of "Same web property ID is tracked twice."
+			// with the google analytics pixel
+			logOut(true)
 			execute(push(to))
 			if (onConfirm && typeof onConfirm === 'function') {
 				onConfirm()
