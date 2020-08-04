@@ -21,6 +21,7 @@ import { push } from 'connected-react-router'
 
 export const logOut = skipRedirect => {
 	execute(updateMemoryUi('initialDataLoaded', false))
+	execute(updateMemoryUi('gaDimensionsSet', false))
 	execute(resetAccount())
 	advancedAnalyticsLoop.stop()
 	campaignsLoop.stop()
