@@ -228,14 +228,12 @@ export default function GettingStarted(props) {
 
 	useEffectDebugger(
 		() => {
-			// event names should be different as they get triggered twice for some reason otherwise
 			const advertiserStep = getSteps(stepsData).advertiser.findIndex(
 				step => !step.check
 			)
 			const publisherStep = getSteps(stepsData).publisher.findIndex(
 				step => !step.check
 			)
-			// console.log('[custom debugging]', advertiserStep, publisherStep)
 			if (!gaDimensionsSet) {
 				ReactGA.set({
 					dimension1: `step${
