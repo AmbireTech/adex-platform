@@ -236,12 +236,10 @@ export default function GettingStarted(props) {
 			)
 			if (!gaDimensionsSet) {
 				ReactGA.set({
-					dimension1: `step${
-						advertiserStep === -1 ? 'completed' : advertiserStep + 1
-					}`,
-					dimension2: `step${
-						publisherStep === -1 ? 'completed' : publisherStep + 1
-					}`,
+					dimension1:
+						advertiserStep === -1 ? 'completed' : `step${advertiserStep + 1}`,
+					dimension2:
+						publisherStep === -1 ? 'completed' : `step${publisherStep + 1}`,
 				})
 				execute(updateMemoryUi('gaDimensionsSet', true))
 			}
