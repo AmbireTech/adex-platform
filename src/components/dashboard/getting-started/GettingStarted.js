@@ -184,7 +184,6 @@ const getSteps = ({
 })
 
 export default function GettingStarted(props) {
-	// useTraceUpdate(props)
 	const { side } = props
 	const classes = useStyles({ side })
 
@@ -222,12 +221,14 @@ export default function GettingStarted(props) {
 	}, [stepsData])
 
 	useEffect(() => {
-		const eventName = 'tutorial'
+		// event names should be different as they get triggered twice for some reason otherwise
+		const eventName = `tutorial-${side}`
 		const step = getSteps(stepsData)[side].findIndex(step => !step.check)
 		if (window.gtag) {
 			if (step !== -1) {
+				const sideStep = `step${step}`
 				window.gtag('event', eventName, {
-					[side]: `step${step}`,
+					[side]: sideStep,
 				})
 			}
 		}
