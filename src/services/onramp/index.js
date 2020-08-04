@@ -59,6 +59,7 @@ export const openOnRampNetwork = ({ accountId, symbol }) => {
 		userAddress: accountId,
 		hostApiKey: RAMP_HOST_API_KEY,
 	})
-	widget.domNodes.overlay.style.zIndex = 1000
+	// This must be on top of everything when opened
+	widget.domNodes.overlay.style.zIndex = 9999
 	widget.show()
 }
