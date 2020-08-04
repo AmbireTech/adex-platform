@@ -36,10 +36,16 @@ import {
 	selectStepsData,
 	selectHideGettingStarted,
 	selectGettingStartedExpanded,
+	selectGaDimensionsSet,
 } from 'selectors'
 import { useSelector } from 'react-redux'
 import { ColorlibStepIcon, ColorlibConnector } from './Colorlib'
-import { hideGettingStarted, setGettingStartedExpanded, execute } from 'actions'
+import {
+	hideGettingStarted,
+	setGettingStartedExpanded,
+	updateMemoryUi,
+	execute,
+} from 'actions'
 import {
 	createAdUnitTutorial,
 	fundAccountTutorial,
@@ -47,7 +53,8 @@ import {
 	createAdSlot,
 	placeAdSlot,
 } from './Tutorials'
-import { useTraceUpdate } from 'hooks/useTraceUpdate'
+import { useEffectDebugger } from 'hooks/useEffectDebugger'
+import ReactGA from 'react-ga'
 
 const useStyles = makeStyles(theme => {
 	const stepperBackgroundColor = ({ side }) =>
@@ -186,9 +193,8 @@ const getSteps = ({
 export default function GettingStarted(props) {
 	const { side } = props
 	const classes = useStyles({ side })
-
 	const stepsData = useSelector(selectStepsData)
-
+	const gaDimensionsSet = useSelector(selectGaDimensionsSet)
 	const isGettingStartedHidden = useSelector(selectHideGettingStarted)
 	const expanded = useSelector(selectGettingStartedExpanded)
 	const [steps, setSteps] = useState({})
@@ -220,19 +226,31 @@ export default function GettingStarted(props) {
 		setSteps(getSteps(stepsData))
 	}, [stepsData])
 
-	useEffect(() => {
-		// event names should be different as they get triggered twice for some reason otherwise
-		const eventName = `tutorial-${side}`
-		const step = getSteps(stepsData)[side].findIndex(step => !step.check)
-		if (window.gtag) {
-			if (step !== -1) {
-				const sideStep = `step${step}`
-				window.gtag('event', eventName, {
-					[side]: sideStep,
+	useEffectDebugger(
+		() => {
+			// event names should be different as they get triggered twice for some reason otherwise
+			const advertiserStep = getSteps(stepsData).advertiser.findIndex(
+				step => !step.check
+			)
+			const publisherStep = getSteps(stepsData).publisher.findIndex(
+				step => !step.check
+			)
+			// console.log('[custom debugging]', advertiserStep, publisherStep)
+			if (!gaDimensionsSet) {
+				ReactGA.set({
+					dimension1: `step${
+						advertiserStep === -1 ? 'completed' : advertiserStep + 1
+					}`,
+					dimension2: `step${
+						publisherStep === -1 ? 'completed' : publisherStep + 1
+					}`,
 				})
+				execute(updateMemoryUi('gaDimensionsSet', true))
 			}
-		}
-	})
+		},
+		[gaDimensionsSet, stepsData],
+		['gaDimensionsSet', 'stepsData']
+	)
 
 	useEffect(() => {
 		setActiveStep(
