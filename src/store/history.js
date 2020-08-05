@@ -8,7 +8,7 @@ const trackPageView = location => {
 
 const initGa = history => {
 	ReactGA.initialize(process.env.GA_CODE, {
-		debug: true,
+		// debug: true,
 	})
 	trackPageView(history.location)
 	history.listen(trackPageView)
