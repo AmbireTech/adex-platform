@@ -47,7 +47,7 @@ const analyticsParams = ({ timeframe, side }) => {
 	VALIDATOR_ANALYTICS_EVENT_TYPES.forEach(eventType =>
 		VALIDATOR_ANALYTICS_METRICS.forEach(metric => {
 			const segmentByChannel =
-				side === 'for-publisher' && metric === 'eventPayouts'
+				side === 'for-publisher' && metric === 'eventPayouts' ? true : undefined
 			const limit = segmentByChannel ? 100 * 25 : 100
 			callsParams.push({
 				metric,
