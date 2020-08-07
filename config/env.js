@@ -116,6 +116,8 @@ function getClientEnvironment(publicUrl) {
 				ADEX_SUPPORT_URL: process.env.ADEX_SUPPORT_URL,
 				GA_CODE: process.env.GA_CODE,
 				RAMP_HOST_API_KEY: process.env.RAMP_HOST_API_KEY,
+				TRANSAK_API_KEY: process.env.TRANSAK_API_KEY,
+				TRANSAK_ENV: process.env.TRANSAK_ENV,
 			}
 		)
 

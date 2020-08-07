@@ -695,7 +695,9 @@ export function validateCampaignAudienceInput({
 		await updateSpinner(validateId, true)(dispatch)
 		try {
 			const state = getState()
-			const { audienceInput = {}, temp } = selectNewCampaign(state)
+			const { audienceInput = {}, pricingBounds, temp } = selectNewCampaign(
+				state
+			)
 			const { inputs } = audienceInput
 
 			const isValid = await validateAudience({
@@ -710,7 +712,7 @@ export function validateCampaignAudienceInput({
 				const countryTiersCoefficients = selectTargetingAnalyticsCountryTiersCoefficients(
 					state
 				)
-				const pricingBounds = getSuggestedPricingBounds({
+				const suggestedPricingBounds = getSuggestedPricingBounds({
 					minByCategory,
 					countryTiersCoefficients,
 					audienceInput,
@@ -718,14 +720,19 @@ export function validateCampaignAudienceInput({
 
 				await updateNewCampaign('temp', {
 					...temp,
-					suggestedPricingBounds: pricingBounds,
+					suggestedPricingBounds,
 				})(dispatch, getState)
 
-				// Update pricingBounds here in order to avoid value check at nex steps
-				await updateNewCampaign('pricingBounds', pricingBounds)(
-					dispatch,
-					getState
+				// Update pricingBounds here in order to avoid value check at next steps
+				// Only if the bounds are not updated (step back or soft closed modal)
+				if (
+					!pricingBounds ||
+					!(pricingBounds['IMPRESSION'] || pricingBounds['CLICK'])
 				)
+					await updateNewCampaign('pricingBounds', suggestedPricingBounds)(
+						dispatch,
+						getState
+					)
 			}
 
 			await handleAfterValidation({ isValid, onValid, onInvalid })
