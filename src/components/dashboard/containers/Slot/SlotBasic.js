@@ -19,8 +19,6 @@ import {
 	MediaCard,
 	ItemWebsite,
 	ArchiveItemBtn,
-	ItemMinPerImpression,
-	SlotAdultContent,
 } from 'components/dashboard/containers/ItemCommon/'
 import { t } from 'selectors'
 
@@ -35,6 +33,7 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 		targetUrl,
 		website,
 		archived,
+		rules,
 	} = item
 	const { title: errTitle, description: errDescription } = hookProps.validations
 
@@ -91,7 +90,7 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 									<Typography>{t('SLOT_RULES')}</Typography>
 								</ExpansionPanelSummary>
 								<Box p={1} color='grey.contrastText' bgcolor='grey.main'>
-									<pre>{JSON.stringify(item.rules, null, 2)}</pre>
+									<pre>{JSON.stringify(rules || [], null, 2)}</pre>
 								</Box>
 							</ExpansionPanel>
 						</Box>
