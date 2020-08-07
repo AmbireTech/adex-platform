@@ -14,7 +14,7 @@ import Audience from 'components/dashboard/containers/Audience'
 import Websites from 'components/dashboard/containers/Websites'
 import Account from 'components/dashboard/account/AccountInfo'
 import TopUp from 'components/dashboard/deposit/TopUp'
-import TopUpBtc from 'components/dashboard/deposit/TopUpBtc'
+import TopUpChangelly from 'components/dashboard/deposit/TopUpChangelly'
 import {
 	NewUnitDialog,
 	NewCampaignDialog,
@@ -284,8 +284,8 @@ function Dashboard(props) {
 							/>
 							<Route
 								exact
-								path={'/dashboard/:side/topup/btc'}
-								component={TopUpBtc}
+								path={'/dashboard/:side/topup/changelly'}
+								component={TopUpChangelly}
 							/>
 							<Route exact path={'/dashboard/:side/topup'} component={TopUp} />
 							{/* <Route
