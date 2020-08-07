@@ -136,28 +136,21 @@ function SideNav(props) {
 	)
 
 	return side !== 'advertiser' && side !== 'publisher' ? null : (
-		<div className={classes.navigation}>
-			<List
-				classes={{
-					padding: classes.sntPadding,
-					root: classes.navListRoot,
-				}}
-				className={classes.navList}
-				component='nav'
-			>
-				<div>
-					<Box
-						bgcolor='background.paper'
-						className={classnames(classes.sideNavToolbar)}
-					>
-						<ListItem>
+		<Box
+			display='flex'
+			flexDirection='column'
+			justifyContent='space-between'
+			flexGrow='1'
+		>
+			<Box>
+				<Box>
+					<ListItem>
+						<Box>
 							<RRAdexIconTxt
 								// @cryptofan
 								to={{ pathname: '/dashboard/' + side }}
 								className={classes.icon}
 							/>
-						</ListItem>
-						<ListItem>
 							<LoadingSection
 								loading={
 									!availableIdentityBalanceMainToken &&
@@ -178,201 +171,217 @@ function SideNav(props) {
 									{t('IDENTITY_BALANCE')}
 								</Typography>
 							</LoadingSection>
-						</ListItem>
+						</Box>
+					</ListItem>
+				</Box>
+				<SideSwitch className={classes.sideSwitch} side={side} t={t} />
+			</Box>
+
+			<Box
+				display='flex'
+				flexDirection='column'
+				justifyContent='space-between'
+				flex='1'
+			>
+				<Box>
+					<List>
+						<ListDivider />
+						<RRListItem
+							button
+							to={{ pathname: '/dashboard/' + side }}
+							className={classnames({ [classes.active]: !location })}
+						>
+							<ListItemIcon>
+								<DashboardIcon />
+							</ListItemIcon>
+							<ListItemText primary={t('DASHBOARD')} />
+						</RRListItem>
+						<ListDivider />
+						<RRListItem
+							button
+							to={{ pathname: '/dashboard/' + side + '/' + items }}
+							className={classnames({
+								[classes.active]: location === items,
+							})}
+						>
+							<ListItemIcon>
+								<ListIcon />
+							</ListItemIcon>
+							<ListItemText primary={t(items.toUpperCase())} />
+						</RRListItem>
+						<ListDivider />
+						{side === 'advertiser' && (
+							<>
+								<RRListItem
+									button
+									to={{ pathname: '/dashboard/advertiser/campaigns' }}
+									className={classnames({
+										[classes.active]: location === 'campaigns',
+									})}
+								>
+									<ListItemIcon>
+										<CampaignIcon />
+									</ListItemIcon>
+									<ListItemText primary={t('CAMPAIGNS')} />
+								</RRListItem>
+								<ListDivider />
+								<RRListItem
+									button
+									to={{ pathname: '/dashboard/advertiser/audiences' }}
+									className={classnames({
+										[classes.active]: location === 'audiences',
+									})}
+								>
+									<ListItemIcon>
+										<AudienceIcon />
+									</ListItemIcon>
+									<ListItemText primary={t('AUDIENCES')} />
+								</RRListItem>
+								<ListDivider />
+							</>
+						)}
+						{side === 'publisher' && (
+							<>
+								<RRListItem
+									button
+									to={{ pathname: '/dashboard/publisher/websites' }}
+									className={classnames({
+										[classes.active]: location === 'websites',
+									})}
+								>
+									<ListItemIcon>
+										<WebsitesIcon />
+									</ListItemIcon>
+									<ListItemText primary={t('WEBSITES')} />
+								</RRListItem>
+								<ListDivider />
+								<RRListItem
+									button
+									to={{ pathname: '/dashboard/publisher/receipts' }}
+									className={classnames({
+										[classes.active]: location === 'receipts',
+									})}
+								>
+									<ListItemIcon>
+										<Receipt />
+									</ListItemIcon>
+									<ListItemText primary={t('RECEIPTS')} />
+								</RRListItem>
+								<ListDivider />
+							</>
+						)}
+					</List>
+				</Box>
+				<Box>
+					<List>
+						<ListDivider />
+						<RRListItem
+							button
+							to={{ pathname: '/dashboard/' + side + '/topup' }}
+							className={classnames({
+								[classes.active]: location === 'topup',
+							})}
+						>
+							<ListItemIcon>
+								<MonetizationOnIcon color='secondary' />
+							</ListItemIcon>
+							<ListItemText primary={t('TOP_UP')} />
+						</RRListItem>
+						<ListDivider />
+						<Anchor target='_blank' href={`${process.env.ADEX_HELP_URL}`}>
+							<ListItem button>
+								<ListItemIcon>
+									<HelpOutlineIcon />
+								</ListItemIcon>
+								<ListItemText primary={t('HELP')} />
+							</ListItem>
+						</Anchor>
+
+						<Anchor target='_blank' href={`${ETH_SCAN_ADDR_HOST + identity}`}>
+							<ListItem button>
+								<ListItemIcon>
+									<SwapHorizontalIcon />
+								</ListItemIcon>
+								<ListItemText primary={t('TRANSACTIONS')} />
+							</ListItem>
+						</Anchor>
+
+						<RRListItem
+							button
+							to={{ pathname: '/dashboard/' + side + '/account' }}
+							className={classnames({
+								[classes.active]: location === 'account',
+							})}
+						>
+							<ListItemIcon>
+								<AccountBoxIcon />
+							</ListItemIcon>
+							<ListItemText primary={t('ACCOUNT')} />
+						</RRListItem>
+					</List>
+				</Box>
+			</Box>
+
+			<Box>
+				<ListDivider />
+				<ListItem>
+					<Box>
+						<div>
+							<small>
+								{' '}
+								&copy; {new Date().getFullYear()} &nbsp;
+								<Anchor target='_blank' href={process.env.ADEX_SITE_HOST}>
+									AdEx Network OÜ
+								</Anchor>
+							</small>
+						</div>
+						<div>
+							<small>
+								<Anchor
+									target='_blank'
+									href={`${process.env.ADEX_SITE_HOST}/tos`}
+								>
+									{t('TOS')}
+								</Anchor>
+							</small>
+						</div>
+						<div>
+							<small>
+								<Anchor
+									target='_blank'
+									href={
+										process.env.ETH_SCAN_ADDR_HOST + process.env.ADX_TOKEN_ADDR
+									}
+								>
+									AdEx (ADX) Token
+								</Anchor>
+							</small>
+							<small> / </small>
+							<small>
+								<Anchor
+									target='_blank'
+									href={
+										process.env.ETH_SCAN_ADDR_HOST + process.env.ADEX_CORE_ADDR
+									}
+								>
+									AdExCore
+								</Anchor>
+							</small>
+						</div>
+						<div>
+							<small>
+								<Anchor
+									target='_blank'
+									href='https://github.com/AdExNetwork/adex-platform/blob/development/CHANGELOG.md.'
+								>
+									v.{packageJson.version}-beta
+								</Anchor>
+							</small>
+						</div>
 					</Box>
-					<SideSwitch className={classes.sideSwitch} side={side} t={t} />
-					<ListDivider />
-					<RRListItem
-						button
-						to={{ pathname: '/dashboard/' + side }}
-						className={classnames({ [classes.active]: !location })}
-					>
-						<ListItemIcon>
-							<DashboardIcon />
-						</ListItemIcon>
-						<ListItemText primary={t('DASHBOARD')} />
-					</RRListItem>
-					<ListDivider />
-					<RRListItem
-						button
-						to={{ pathname: '/dashboard/' + side + '/' + items }}
-						className={classnames({
-							[classes.active]: location === items,
-						})}
-					>
-						<ListItemIcon>
-							<ListIcon />
-						</ListItemIcon>
-						<ListItemText primary={t(items.toUpperCase())} />
-					</RRListItem>
-					<ListDivider />
-					{side === 'advertiser' && (
-						<>
-							<RRListItem
-								button
-								to={{ pathname: '/dashboard/advertiser/campaigns' }}
-								className={classnames({
-									[classes.active]: location === 'campaigns',
-								})}
-							>
-								<ListItemIcon>
-									<CampaignIcon />
-								</ListItemIcon>
-								<ListItemText primary={t('CAMPAIGNS')} />
-							</RRListItem>
-							<ListDivider />
-							<RRListItem
-								button
-								to={{ pathname: '/dashboard/advertiser/audiences' }}
-								className={classnames({
-									[classes.active]: location === 'audiences',
-								})}
-							>
-								<ListItemIcon>
-									<AudienceIcon />
-								</ListItemIcon>
-								<ListItemText primary={t('AUDIENCES')} />
-							</RRListItem>
-							<ListDivider />
-						</>
-					)}
-					{side === 'publisher' && (
-						<>
-							<RRListItem
-								button
-								to={{ pathname: '/dashboard/publisher/websites' }}
-								className={classnames({
-									[classes.active]: location === 'websites',
-								})}
-							>
-								<ListItemIcon>
-									<WebsitesIcon />
-								</ListItemIcon>
-								<ListItemText primary={t('WEBSITES')} />
-							</RRListItem>
-							<ListDivider />
-							<RRListItem
-								button
-								to={{ pathname: '/dashboard/publisher/receipts' }}
-								className={classnames({
-									[classes.active]: location === 'receipts',
-								})}
-							>
-								<ListItemIcon>
-									<Receipt />
-								</ListItemIcon>
-								<ListItemText primary={t('RECEIPTS')} />
-							</RRListItem>
-							<ListDivider />
-						</>
-					)}
-				</div>
-				<div>
-					<ListDivider />
-					<RRListItem
-						button
-						to={{ pathname: '/dashboard/' + side + '/topup' }}
-						className={classnames({
-							[classes.active]: location === 'topup',
-						})}
-					>
-						<ListItemIcon>
-							<MonetizationOnIcon color='secondary' />
-						</ListItemIcon>
-						<ListItemText primary={t('TOP_UP')} />
-					</RRListItem>
-					<ListDivider />
-					<Anchor target='_blank' href={`${process.env.ADEX_HELP_URL}`}>
-						<ListItem button>
-							<ListItemIcon>
-								<HelpOutlineIcon />
-							</ListItemIcon>
-							<ListItemText primary={t('HELP')} />
-						</ListItem>
-					</Anchor>
-
-					<Anchor target='_blank' href={`${ETH_SCAN_ADDR_HOST + identity}`}>
-						<ListItem button>
-							<ListItemIcon>
-								<SwapHorizontalIcon />
-							</ListItemIcon>
-							<ListItemText primary={t('TRANSACTIONS')} />
-						</ListItem>
-					</Anchor>
-
-					<RRListItem
-						button
-						to={{ pathname: '/dashboard/' + side + '/account' }}
-						className={classnames({
-							[classes.active]: location === 'account',
-						})}
-					>
-						<ListItemIcon>
-							<AccountBoxIcon />
-						</ListItemIcon>
-						<ListItemText primary={t('ACCOUNT')} />
-					</RRListItem>
-				</div>
-			</List>
-			<div className={classes.version}>
-				<div className={classes.adxLink}>
-					<small>
-						{' '}
-						&copy; {new Date().getFullYear()} &nbsp;
-						<Anchor
-							className={classes.adxLink}
-							target='_blank'
-							href={process.env.ADEX_SITE_HOST}
-						>
-							AdEx Network OÜ
-						</Anchor>
-					</small>
-				</div>
-				<div className={classes.adxLink}>
-					<small>
-						<Anchor
-							className={classes.adxLink}
-							target='_blank'
-							href={`${process.env.ADEX_SITE_HOST}/tos`}
-						>
-							{t('TOS_CHECK')}
-						</Anchor>
-					</small>
-				</div>
-				<div>
-					<small>
-						<Anchor
-							className={classes.adxLink}
-							target='_blank'
-							href={process.env.ETH_SCAN_ADDR_HOST + process.env.ADX_TOKEN_ADDR}
-						>
-							AdEx (ADX) Token
-						</Anchor>
-					</small>
-					<small> / </small>
-					<small>
-						<Anchor
-							className={classes.adxLink}
-							target='_blank'
-							href={process.env.ETH_SCAN_ADDR_HOST + process.env.ADEX_CORE_ADDR}
-						>
-							AdExCore
-						</Anchor>
-					</small>
-				</div>
-				<div>
-					<small>
-						<Anchor
-							className={classes.adxLink}
-							target='_blank'
-							href='https://github.com/AdExNetwork/adex-platform/blob/development/CHANGELOG.md.'
-						>
-							v.{packageJson.version}-beta
-						</Anchor>
-					</small>
-				</div>
-			</div>
-		</div>
+				</ListItem>
+			</Box>
+		</Box>
 	)
 }
 
