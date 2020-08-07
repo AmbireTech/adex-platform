@@ -28,6 +28,50 @@ import {
 } from 'actions'
 import { useSelector } from 'react-redux'
 
+const getCloseCampaignsFees = ({
+	depositAmount,
+	validators,
+	fundsDistributedRatio,
+	decimals,
+}) => {
+	const deposit = bigNumberify(depositAmount)
+	const totalFees = validators.reduce(
+		(sum, { fee }) => sum.add(bigNumberify(fee)),
+		bigNumberify(0)
+	)
+
+	const feesPercent =
+		totalFees
+			.mul(bigNumberify(10000))
+			.div(deposit)
+			.toNumber() / 100
+
+	const nonDistributedFunds = deposit.sub(
+		deposit
+			.mul(fundsDistributedRatio)
+			.div(bigNumberify(1000))
+			.toString()
+	)
+
+	const feesToPay = totalFees.sub(
+		totalFees
+			.mul(fundsDistributedRatio)
+			.div(bigNumberify(1000))
+			.toString()
+	)
+
+	const percent = feesPercent.toFixed(2) + '%'
+	const toPay = formatTokenAmount(feesToPay, decimals, false, 2)
+	const nonDistributed = formatTokenAmount(
+		nonDistributedFunds,
+		decimals,
+		false,
+		2
+	)
+
+	return { percent, toPay, nonDistributed }
+}
+
 const useStyles = makeStyles(theme => ({
 	wrapper: {
 		margin: theme.spacing(1),
@@ -53,6 +97,8 @@ export const CampaignBasic = ({
 		title,
 		adUnits = [],
 		pricingBounds,
+		depositAmount,
+		validators,
 		minPerImpression,
 		maxPerImpression,
 		audienceInput,
@@ -63,7 +109,7 @@ export const CampaignBasic = ({
 
 	const { mediaUrl, mediaMime } = adUnits[0] || {}
 	const status = item.status || {}
-	const { humanFriendlyName } = status
+	const { humanFriendlyName, fundsDistributedRatio } = status
 	const isPaused = ((item.targetingRules || [])[0] || {}).onlyShowIf === false
 	const pauseAction = isPaused ? 'RESUME' : 'PAUSE'
 
@@ -95,6 +141,15 @@ export const CampaignBasic = ({
 									size='large'
 									fullWidth
 									onClick={() => {
+										const {
+											percent,
+											toPay,
+											nonDistributed,
+										} = getCloseCampaignsFees({
+											depositAmount,
+											validators,
+											fundsDistributedRatio,
+										})
 										execute(
 											confirmAction(
 												() => execute(closeCampaign({ campaign: item })),
@@ -106,7 +161,7 @@ export const CampaignBasic = ({
 														args: [title],
 													}),
 													text: t('CLOSE_CAMPAIGN_CONFIRM_INFO', {
-														args: [],
+														args: [percent, toPay, nonDistributed, symbol],
 													}),
 												}
 											)
@@ -232,7 +287,7 @@ export const CampaignBasic = ({
 						<Box my={0}>
 							<ItemSpecProp
 								prop={'fundsDistributedRatio'}
-								value={((status.fundsDistributedRatio || 0) / 10).toFixed(2)}
+								value={((fundsDistributedRatio || 0) / 10).toFixed(2)}
 								label={t('PROP_DISTRIBUTED', { args: ['%'] })}
 							/>
 						</Box>
