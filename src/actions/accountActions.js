@@ -469,7 +469,7 @@ export function metamaskChecks() {
 			})
 			window.ethereum.on('chainChanged', chainId => {
 				console.log('chainChanged', chainId)
-				onMetamaskNetworkChange({ id: chainId })(_, getState)
+				window.location.reload()
 			})
 		}
 	}
