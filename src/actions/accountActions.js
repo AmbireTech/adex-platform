@@ -467,9 +467,9 @@ export function metamaskChecks() {
 				console.log('acc changed', accounts[0])
 				onMetamaskAccountChange(accounts[0])(_, getState)
 			})
-			window.ethereum.on('networkChanged', network => {
-				console.log('networkChanged', network)
-				onMetamaskNetworkChange({ id: network })(_, getState)
+			window.ethereum.on('chainChanged', chainId => {
+				console.log('chainChanged', chainId)
+				onMetamaskNetworkChange({ id: chainId })(_, getState)
 			})
 		}
 	}
