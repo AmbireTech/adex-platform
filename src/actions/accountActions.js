@@ -34,7 +34,7 @@ import {
 	updateTargetingDataThrottled,
 } from './analyticsActions'
 import {
-	getEthereumProvider,
+	getEthereumProviderName,
 	ethereumNetworkId,
 	getMetamaskSelectedAddress,
 } from 'services/smart-contracts/ethers'
@@ -391,7 +391,7 @@ async function isMetamaskMatters(getState) {
 		authType === AUTH_TYPES.METAMASK.name ||
 		(!authType &&
 			searchParams.get('external') === 'metamask' &&
-			(await getEthereumProvider()) === AUTH_TYPES.METAMASK.name)
+			(await getEthereumProviderName()) === AUTH_TYPES.METAMASK.name)
 
 	return doesItMatter
 }

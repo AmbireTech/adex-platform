@@ -158,7 +158,7 @@ const ethereumNetworkId = async () => {
 	}
 }
 
-const getEthereumProvider = async () => {
+const getEthereumProviderName = async () => {
 	const { ethereum } = await loadInjectedWeb3
 
 	if (!ethereum) {
@@ -185,7 +185,7 @@ const getMetamaskEthereum = async () => {
 export {
 	getEthers,
 	ethereumNetworkId,
-	getEthereumProvider,
+	getEthereumProviderName,
 	getMetamaskEthereum,
 	getMetamaskSelectedAddress,
 }
