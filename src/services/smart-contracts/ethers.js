@@ -67,7 +67,7 @@ const localWeb3 = () => {
 const loadInjectedWeb3 = new Promise(async (resolve, reject) => {
 	const provider = await detectEthereumProvider()
 
-	if (provider !== window.ethereum) {
+	if (!!window.ethereum && provider !== window.ethereum) {
 		console.error('Do you have multiple wallets installed?')
 		reject(new Error('Do you have multiple wallets installed?'))
 
