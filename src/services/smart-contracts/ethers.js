@@ -1,4 +1,5 @@
 import { ethers, Contract } from 'ethers'
+import detectEthereumProvider from '@metamask/detect-provider'
 import { contracts } from './contractsCfg'
 import { AUTH_TYPES } from 'constants/misc'
 import { selectRelayerConfig } from 'selectors'
@@ -63,26 +64,65 @@ const localWeb3 = () => {
 	return getEthersResult(provider)
 }
 
-const loadInjectedWeb3 = new Promise((resolve, reject) => {
-	window.addEventListener('load', () => {
-		const ethereum = window.ethereum
-		const web3 = window.web3
-		return resolve({
-			ethereum,
-			web3,
-		})
+const loadInjectedWeb3 = new Promise(async (resolve, reject) => {
+	const provider = await detectEthereumProvider()
+
+	if (!!window.ethereum && provider !== window.ethereum) {
+		console.error('Do you have multiple wallets installed?')
+		reject(new Error('Do you have multiple wallets installed?'))
+
+		// TODO: error or toast
+	}
+
+	resolve({
+		ethereum: window.ethereum,
 	})
 })
 
-const injectedWeb3 = async () => {
-	const { web3, ethereum } = await loadInjectedWeb3
-	let provider = null
+const getMetamaskSelectedAddress = async () => {
+	const { ethereum } = await loadInjectedWeb3
+
+	if (ethereum && ethereum.isMetaMask) {
+		try {
+			const accounts = await ethereum.request({ method: 'eth_accounts' })
+			return accounts[0]
+		} catch (err) {
+			console.log('(getMetamaskSelectedAddress): Please connect to MetaMask.')
+			throw new Error(err)
+		}
+	}
+}
+
+const connectMetaMask = async ethereum => {
+	try {
+		const selectedAccount = await getMetamaskSelectedAddress()
+
+		if (!selectedAccount) {
+			const requestedAddresses = await ethereum.request({
+				method: 'eth_requestAccounts',
+			})
+			// console.log('requestedAddresses', requestedAddresses)
+		}
+	} catch (err) {
+		if (err.code === 4001) {
+			// EIP-1193 userRejectedRequest error
+			// If this happens, the user rejected the connection request.
+			console.log('Please connect to MetaMask.')
+		} else {
+			console.error(err)
+		}
+		// TODO: error or toast
+	}
+}
+
+const injectedWeb3Provider = async () => {
+	const { ethereum } = await loadInjectedWeb3
 
 	if (ethereum) {
 		try {
-			await ethereum.enable()
+			await connectMetaMask(ethereum)
 
-			provider = new ethers.providers.Web3Provider(ethereum)
+			const provider = new ethers.providers.Web3Provider(ethereum)
 
 			return getEthersResult(provider)
 		} catch (err) {
@@ -90,21 +130,9 @@ const injectedWeb3 = async () => {
 			throw new Error(err.message)
 		}
 	}
-	// Legacy dapp browsers...
-	// TODO: we just have to throw or show notification
-	// At the moment if it throws it will show error toast but not always.
-	else if (web3) {
-		console.error('Legacy web3 browser detected. It is not supported!')
-		console.error('Fallback to local web3 provider')
-		return await localWeb3()
-	} else {
-		console.error('Non-Ethereum browser detected.')
-		console.error('Fallback to local web3 provider')
-		return await localWeb3()
-	}
 }
 
-const getLocalWeb3 = async () => {
+const getLocalWeb3Provider = async () => {
 	// console.log('getLocalWeb3')
 	return localWeb3()
 }
@@ -114,9 +142,9 @@ const getEthers = mode => {
 	 *   and this results in Trezor popup block by the browser
 	 */
 	if (mode === AUTH_TYPES.METAMASK.name) {
-		return injectedWeb3()
+		return injectedWeb3Provider()
 	} else {
-		return getLocalWeb3()
+		return getLocalWeb3Provider()
 	}
 }
 
@@ -130,8 +158,9 @@ const ethereumNetworkId = async () => {
 	}
 }
 
-const getEthereumProvider = async () => {
+const getEthereumProviderName = async () => {
 	const { ethereum } = await loadInjectedWeb3
+
 	if (!ethereum) {
 		return null
 	}
@@ -156,6 +185,7 @@ const getMetamaskEthereum = async () => {
 export {
 	getEthers,
 	ethereumNetworkId,
-	getEthereumProvider,
+	getEthereumProviderName,
 	getMetamaskEthereum,
+	getMetamaskSelectedAddress,
 }

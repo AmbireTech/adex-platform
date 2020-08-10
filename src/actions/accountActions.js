@@ -34,9 +34,9 @@ import {
 	updateTargetingDataThrottled,
 } from './analyticsActions'
 import {
-	getEthereumProvider,
+	getEthereumProviderName,
 	ethereumNetworkId,
-	getMetamaskEthereum,
+	getMetamaskSelectedAddress,
 } from 'services/smart-contracts/ethers'
 import { AUTH_TYPES, ETHEREUM_NETWORKS } from 'constants/misc'
 import {
@@ -391,7 +391,7 @@ async function isMetamaskMatters(getState) {
 		authType === AUTH_TYPES.METAMASK.name ||
 		(!authType &&
 			searchParams.get('external') === 'metamask' &&
-			(await getEthereumProvider()) === AUTH_TYPES.METAMASK.name)
+			(await getEthereumProviderName()) === AUTH_TYPES.METAMASK.name)
 
 	return doesItMatter
 }
@@ -445,25 +445,7 @@ export function metamaskAccountCheck() {
 	return async function(_, getState) {
 		const isMatters = await isMetamaskMatters(getState)
 		if (isMatters) {
-			const mmEthereum = await getMetamaskEthereum()
-			// NOTE:
-			// after refresh if metamask is enabled ethereum.selectedAddress is ok,
-			// but it is open in new tab is undefined and them most secure way is to call enable() again
-			// or just some unknown timeout that may not work
-			// the reason for the timeout for the enable is because if it is not enabled and there is
-			// auth we need to log out
-
-			const selectedAddress =
-				mmEthereum && mmEthereum.selectedAddress
-					? mmEthereum.selectedAddress
-					: (await Promise.race([
-							mmEthereum.enable(),
-							new Promise(resolve => {
-								setTimeout(() => {
-									resolve([null])
-								}, 666)
-							}),
-					  ]))[0]
+			const selectedAddress = await getMetamaskSelectedAddress()
 			onMetamaskAccountChange(selectedAddress)(_, getState)
 		}
 	}
@@ -485,9 +467,9 @@ export function metamaskChecks() {
 				console.log('acc changed', accounts[0])
 				onMetamaskAccountChange(accounts[0])(_, getState)
 			})
-			window.ethereum.on('networkChanged', network => {
-				console.log('networkChanged', network)
-				onMetamaskNetworkChange({ id: network })(_, getState)
+			window.ethereum.on('chainChanged', chainId => {
+				console.log('chainChanged', chainId)
+				window.location.reload()
 			})
 		}
 	}
