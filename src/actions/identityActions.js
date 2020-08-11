@@ -740,7 +740,6 @@ export function checkAuthMetamask() {
 			const address = await metamaskSigner.getAddress()
 			const stats = await getAddressBalances({
 				address: { address },
-				authType,
 				getFullBalances: true,
 			})
 
@@ -786,7 +785,7 @@ export function connectTrezor() {
 				updateSpinner(AUTH_WAITING_ADDRESS_DATA, false)(dispatch)
 
 				const allAddressesData = payload.map(address =>
-					getAddressBalances({ address, authType: AUTH_TYPES.TREZOR.name })
+					getAddressBalances({ address })
 				)
 
 				const results = await Promise.all(allAddressesData)
