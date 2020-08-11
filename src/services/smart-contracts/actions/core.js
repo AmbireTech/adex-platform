@@ -180,7 +180,7 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 	const { authType } = wallet
 	const channels = await getCampaigns({ all: true, byEarner: identityAddr })
 	const { AdExCore } = await getEthers(authType)
-	const feeTokenWhitelist = selectFeeTokenWhitelist()
+	// const feeTokenWhitelist = selectFeeTokenWhitelist()
 	const routineWithdrawTokens = selectRoutineWithdrawTokens()
 
 	const allChannels = await Promise.all(
