@@ -173,11 +173,11 @@ export function onUploadLocalWallet(event) {
 	}
 }
 
-export function ownerIdentities({ owner, authType }) {
+export function updateOwnerIdentities({ owner }) {
 	return async function(dispatch, getState) {
 		updateSpinner(GETTING_OWNER_IDENTITIES, true)(dispatch)
 		try {
-			const { provider } = await getEthers(authType)
+			const { provider } = await getEthers(AUTH_TYPES.READONLY)
 			const identityData = await getOwnerIdentities({ owner })
 			const loginSelectedIdentity = selectLoginSelectedIdentity(getState())
 			const data = Object.entries(identityData)
