@@ -68,8 +68,7 @@ export function checkNetworkCongestion() {
 		const state = getState()
 		const gasPriceCap = selectGasPriceCap(state)
 		const gasPriceCapGwei = formatUnits(gasPriceCap, 'gwei')
-		const authType = selectAuthType(state)
-		const gasPrice = await getGasPrice(authType, 'gwei')
+		const gasPrice = await getGasPrice('gwei')
 		if (+gasPriceCapGwei < +gasPrice) {
 			addToast({
 				type: 'warning',
