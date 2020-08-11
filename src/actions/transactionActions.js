@@ -2,7 +2,6 @@ import * as types from 'constants/actionTypes'
 import {
 	updateSpinner,
 	handleAfterValidation,
-	updateAccountIdentityData,
 	validateEthAddress,
 	validatePrivilegesAddress,
 	validatePrivLevel,
@@ -11,6 +10,7 @@ import {
 	validateFees,
 	validateENS,
 	validateNumberString,
+	beforeWeb3,
 } from 'actions'
 import {
 	selectNewTransactionById,
@@ -33,6 +33,7 @@ import {
 	withdrawOtherTokensFromIdentity,
 } from 'services/smart-contracts/actions/identity'
 import Helper from 'helpers/miscHelpers'
+import { SYNC_WEB3_DATA } from 'constants/spinners'
 
 // MEMORY STORAGE
 export function updateNewTransaction({ tx, key, value }) {
@@ -126,11 +127,9 @@ export function validatePrivilegesChange({
 }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
-		const identityData = updateAccountIdentityData()(dispatch, getState)
-		if (dirty) {
-			await identityData
+		if (!dirty) {
+			await beforeWeb3()(dispatch, getState)
 		}
-
 		const state = getState()
 		const { setAddr, warningAccepted, privLevel } = selectNewTransactionById(
 			state,
@@ -245,8 +244,9 @@ export function validateIdentityWithdraw({
 }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
-		await updateAccountIdentityData()(dispatch, getState)
-
+		if (!dirty) {
+			await beforeWeb3()(dispatch, getState)
+		}
 		const state = getState()
 		const account = selectAccount(state)
 		const { symbol, decimals } = selectMainToken(state)
@@ -330,8 +330,9 @@ export function validateIdentityWithdrawAny({
 }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
-		await updateAccountIdentityData()(dispatch, getState)
-
+		if (!dirty) {
+			await beforeWeb3()(dispatch, getState)
+		}
 		const state = getState()
 		const account = selectAccount(state)
 		const {
@@ -485,11 +486,9 @@ export function validateENSChange({
 }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
-		const identityData = updateAccountIdentityData()(dispatch, getState)
-		if (dirty) {
-			await identityData
+		if (!dirty) {
+			await beforeWeb3()(dispatch, getState)
 		}
-
 		const state = getState()
 		const { username } = selectNewTransactionById(state, stepsId)
 
