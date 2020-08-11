@@ -18,6 +18,7 @@ import {
 	updateSelectedItems,
 	saveAudience,
 	updateNewItem,
+	beforeWeb3,
 } from 'actions'
 import { push } from 'connected-react-router'
 import { schemas, Campaign, helpers } from 'adex-models'
@@ -671,6 +672,9 @@ export function validateNewCampaignAdUnits({
 }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
+		if (!dirty) {
+			await beforeWeb3(validateId)(dispatch, getState)
+		}
 
 		const state = getState()
 		const campaign = selectNewCampaign(state)

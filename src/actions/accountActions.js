@@ -56,6 +56,7 @@ import {
 	CREATING_SESSION,
 	QUICK_WALLET_BACKUP,
 	UPDATING_ACCOUNT_IDENTITY,
+	SYNC_WEB3_DATA,
 } from 'constants/spinners'
 import { campaignsLoop } from 'services/store-data/campaigns'
 import statsLoop from 'services/store-data/account'
@@ -557,10 +558,14 @@ export function stopAccountDataUpdate() {
 }
 
 // NOTE: Need to be executed before each provider write action
-export function beforeWeb3() {
+export function beforeWeb3(validateId = '') {
 	return async function(dispatch, getState) {
+		await updateSpinner(SYNC_WEB3_DATA + validateId, true)(dispatch)
 		await getRelayerConfig()(dispatch, getState)
 		await updateAccountIdentityData()(dispatch, getState)
 		await updateAccountStats()(dispatch, getState)
+
+		await new Promise(resolve => setTimeout(resolve, 300))
+		await updateSpinner(SYNC_WEB3_DATA + validateId, false)(dispatch)
 	}
 }
