@@ -5,8 +5,9 @@ import { bindActionCreators } from 'redux'
 import actions from 'actions'
 import { Snackbar, IconButton } from '@material-ui/core'
 import { Close } from '@material-ui/icons'
-
 import { Alert } from '@material-ui/lab'
+import { isWindowReloading } from 'helpers/miscHelpers'
+
 const typeToSeverity = {
 	accept: 'success',
 	success: 'success',
@@ -35,10 +36,12 @@ export class Toast extends Component {
 			return
 		}
 
-		let isNewToast = !!nextToast && toast.id !== nextToast.id
+		if (!isWindowReloading()) {
+			let isNewToast = !!nextToast && toast.id !== nextToast.id
 
-		if (isNewToast) {
-			this.setState({ active: true, toast: nextToast })
+			if (isNewToast) {
+				this.setState({ active: true, toast: nextToast })
+			}
 		}
 	}
 
