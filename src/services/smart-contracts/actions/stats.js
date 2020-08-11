@@ -146,9 +146,8 @@ export async function getAccountStats({
 	all,
 }) {
 	const { wallet, identity } = account
-	const { authType } = wallet
 	const { address } = identity
-	const { getIdentity } = await getEthers(authType)
+	const { getIdentity } = await getEthers(AUTH_TYPES.READONLY)
 	const { decimals } = selectMainToken()
 
 	const { status = {} } = identity
@@ -162,7 +161,7 @@ export async function getAccountStats({
 	}
 
 	const calls = [
-		getWithdrawTokensBalances({ authType, address }),
+		getWithdrawTokensBalances({ address }),
 		privilegesAction,
 		getTotalAccountRevenue({ all }),
 	]
