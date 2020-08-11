@@ -84,6 +84,7 @@ const MaterialStepper = props => {
 	const classes = useStyles()
 
 	const [currentPage, setCurrentPage] = useState(+initialPage)
+	const [isBack, setIsBack] = useState(false)
 	const canReverse = steps.length > currentPage && currentPage > 0
 
 	const page = steps[currentPage] || {}
@@ -133,10 +134,12 @@ const MaterialStepper = props => {
 	const goToPreviousPage = useCallback(async () => {
 		if (canReverse) {
 			goToPage(currentPage - 1)
+			setIsBack(true)
 		}
 	}, [canReverse, currentPage, goToPage])
 
 	const goToNextPage = useCallback(async () => {
+		setIsBack(false)
 		if (validationFn) {
 			validationFn({
 				stepsId,
@@ -166,10 +169,10 @@ const MaterialStepper = props => {
 	}, [closeDialog, completeFn, stepsId, validateId])
 
 	useEffect(() => {
-		if (validationFn) {
+		if (!isBack && validationFn) {
 			validationFn({ stepsId, validateId, dirty: false })
 		}
-	}, [currentPage, validationFn, stepsId, validateId])
+	}, [currentPage, validationFn, stepsId, validateId, isBack])
 
 	const onKeyPressed = useCallback(
 		async ev => {
