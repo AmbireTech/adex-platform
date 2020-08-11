@@ -171,11 +171,10 @@ export function validateTOS(validateId, accepted, dirty) {
 	}
 }
 
-export function validateENS({ username, dirty, validateId, authType }) {
+export function validateENS({ username, dirty, validateId }) {
 	return async function(dispatch) {
 		const { msg } = await freeAdExENS({
 			username,
-			authType,
 		})
 		const isValid = !msg
 		validate(validateId, 'username', {
