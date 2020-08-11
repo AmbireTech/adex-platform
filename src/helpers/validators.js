@@ -75,13 +75,14 @@ export const validEthAddress = async ({
 	nonZeroAddr,
 	nonERC20,
 	authType,
+	quickCheck = false,
 }) => {
 	let msg = ''
 	try {
 		const notEthAddress = !addr || !isEthAddress(addr)
 		if (notEthAddress) {
 			msg = 'ERR_INVALID_ETH_ADDRESS'
-		} else {
+		} else if (!quickCheck) {
 			const ethAddressZero = isEthAddressZero(addr)
 			if (nonZeroAddr && ethAddressZero) {
 				msg = 'ERR_INVALID_ETH_ADDRESS_ZERO'
