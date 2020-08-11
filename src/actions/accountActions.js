@@ -555,3 +555,12 @@ export function stopAccountDataUpdate() {
 		statsLoop.stop()
 	}
 }
+
+// NOTE: Need to be executed before each provider write action
+export function beforeWeb3() {
+	return async function(dispatch, getState) {
+		await getRelayerConfig()(dispatch, getState)
+		await updateAccountIdentityData()(dispatch, getState)
+		await updateAccountStats()(dispatch, getState)
+	}
+}
