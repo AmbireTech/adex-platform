@@ -493,12 +493,10 @@ export function validateENSChange({
 
 		const state = getState()
 		const { username } = selectNewTransactionById(state, stepsId)
-		const authType = selectAuthType(state)
 
 		const inputValidations = await Promise.all([
 			validateENS({
 				validateId,
-				authType,
 				username,
 				dirty,
 			})(dispatch),
