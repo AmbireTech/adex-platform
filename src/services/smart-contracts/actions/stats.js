@@ -34,9 +34,12 @@ export const getTotalAccountRevenue = async ({ all }) => {
 
 			const token = withdrawTokens[depositAsset]
 
-			const hasMinBalance = bigNumberify(balance).gt(
-				bigNumberify(token.minFinal)
-			)
+			// const hasMinBalance = bigNumberify(balance).gt(
+			// 	bigNumberify(token.minFinal)
+			// )
+
+			// NOTE: Show everything
+			const hasMinBalance = bigNumberify(balance).gt(bigNumberify(0))
 
 			const balanceMainToken = hasMinBalance
 				? await tokenInMainTokenValue({
