@@ -606,6 +606,7 @@ export function validateEthAddress({
 	nonERC20 = true,
 	dirty,
 	authType,
+	quickCheck,
 }) {
 	return async function(dispatch, getState) {
 		const { msg } = await validEthAddress({
@@ -613,6 +614,7 @@ export function validateEthAddress({
 			nonZeroAddr,
 			nonERC20,
 			authType,
+			quickCheck,
 		})
 
 		const isValid = !msg

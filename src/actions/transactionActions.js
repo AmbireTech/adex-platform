@@ -147,6 +147,7 @@ export function validatePrivilegesChange({
 				nonZeroAddr: true,
 				authType,
 				dirty,
+				quickCheck: !dirty,
 			})(dispatch),
 			validatePrivLevel({
 				validateId,
@@ -273,6 +274,7 @@ export function validateIdentityWithdraw({
 				nonZeroAddr: true,
 				authType,
 				dirty,
+				quickCheck: !dirty,
 			})(dispatch),
 			validateWithdrawAmount({
 				validateId,
@@ -352,6 +354,7 @@ export function validateIdentityWithdrawAny({
 				nonZeroAddr: true,
 				authType,
 				dirty,
+				quickCheck: !dirty,
 			})(dispatch),
 			validateEthAddress({
 				validateId,
@@ -361,6 +364,7 @@ export function validateIdentityWithdrawAny({
 				nonZeroAddr: true,
 				authType,
 				dirty,
+				quickCheck: !dirty,
 			})(dispatch),
 			validateNumberString({
 				validateId,
