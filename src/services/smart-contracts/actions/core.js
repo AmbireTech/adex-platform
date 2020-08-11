@@ -239,9 +239,12 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 						identityAddr,
 					})
 
-					const outstandingAvailable = outstanding.sub(
-						bigNumberify(feeTokenWhitelist[channel.depositAsset].min)
-					)
+					// const outstandingAvailable = outstanding.sub(
+					// 	bigNumberify(feeTokenWhitelist[channel.depositAsset].min)
+					// )
+
+					// NOTE: We will show everything - will add this to withdraw fees
+					const outstandingAvailable = outstanding
 
 					const balanceNum = bigNumberify(channel.depositAmount)
 						.sub(bigNumberify(channel.spec.validators[0].fee || 0))
@@ -289,9 +292,10 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 			OUTSTANDING_STATUSES[x.channel.status.name] &&
 			new Date((x.channel.validUntil - EXTRA_PROCESS_TIME) * 1000) >
 				Date.now() &&
-			x.outstanding.gt(
-				bigNumberify(routineWithdrawTokens[x.channel.depositAsset].minPlatform)
-			) &&
+			//NOTE: As we show everything there is no need for minPlatform check
+			// x.outstanding.gt(
+			// 	bigNumberify(routineWithdrawTokens[x.channel.depositAsset].minPlatform)
+			// ) &&
 			x.outstandingAvailable.gt(bigNumberify('0'))
 		)
 	})
