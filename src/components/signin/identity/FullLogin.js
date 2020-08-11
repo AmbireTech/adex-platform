@@ -4,11 +4,7 @@ import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 import { push } from 'connected-react-router'
 import Typography from '@material-ui/core/Typography'
-import {
-	execute,
-	updateIdentity,
-	ownerIdentities as updateOwnerIdentities,
-} from 'actions'
+import { execute, updateIdentity, updateOwnerIdentities } from 'actions'
 import {
 	selectSpinnerById,
 	selectIdentity,
@@ -65,9 +61,7 @@ function FullLogin(props) {
 	const showRegistration = useSelector(selectRegistrationAllowed)
 
 	useEffect(() => {
-		execute(
-			updateOwnerIdentities({ owner: walletAddress, authType: wallet.authType })
-		)
+		execute(updateOwnerIdentities({ owner: walletAddress }))
 		// We need it just once on mount
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
