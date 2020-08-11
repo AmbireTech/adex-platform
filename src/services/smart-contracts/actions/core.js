@@ -20,7 +20,7 @@ import {
 	getAddress,
 } from 'ethers/utils'
 import {
-	selectFeeTokenWhitelist,
+	// selectFeeTokenWhitelist,
 	selectRoutineWithdrawTokens,
 	selectMainFeeToken,
 	selectMainToken,
@@ -30,6 +30,7 @@ import { formatTokenAmount } from 'helpers/formatters'
 import IdentityABI from 'adex-protocol-eth/abi/Identity'
 import { selectChannelsWithUserBalancesEligible } from 'selectors'
 import { getState } from 'store'
+import { AUTH_TYPES } from 'constants/misc'
 
 const { AdExCore } = contracts
 const Core = new Interface(AdExCore.abi)
@@ -166,20 +167,19 @@ function getReadyCampaign(campaign, identity, mainToken) {
 }
 
 const getWithdrawnPerUserOutstanding = async ({
-	AdExCore,
 	channel,
 	balance,
 	identityAddr,
 }) => {
+	const { AdExCore } = await getEthers(AUTH_TYPES.READONLY)
 	return bigNumberify(balance).sub(
 		await AdExCore.functions.withdrawnPerUser(channel.id, identityAddr)
 	)
 }
 
-export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
-	const { authType } = wallet
+export async function getChannelsWithOutstanding({ identityAddr }) {
 	const channels = await getCampaigns({ all: true, byEarner: identityAddr })
-	const { AdExCore } = await getEthers(authType)
+
 	// const feeTokenWhitelist = selectFeeTokenWhitelist()
 	const routineWithdrawTokens = selectRoutineWithdrawTokens()
 
@@ -233,7 +233,6 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 					const balance = bTree.getBalance(identityAddr).toString()
 
 					const outstanding = await getWithdrawnPerUserOutstanding({
-						AdExCore,
 						channel,
 						balance,
 						identityAddr,

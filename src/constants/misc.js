@@ -51,6 +51,7 @@ export const FILTER_PROPERTIES_ITEMS = {
 }
 
 export const AUTH_TYPES = {
+	READONLY: { name: 'readonly' },
 	METAMASK: { name: 'metamask', signType: SignatureModes.GETH, limit: 0 },
 	TREZOR: { name: 'trezor', signType: SignatureModes.GETH, limit: 0 },
 	DEMO: { name: 'demo', signType: SignatureModes.GETH, limit: 0 },

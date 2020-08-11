@@ -168,11 +168,10 @@ export function updateAccountStats() {
 	return async function(dispatch, getState) {
 		const account = selectAccount(getState())
 		try {
-			const { identity, wallet } = account
+			const { identity } = account
 			const { address } = identity
 			const { all, withOutstandingBalance } = await getChannelsWithOutstanding({
 				identityAddr: address,
-				wallet,
 			})
 
 			if (!isAccountChanged(getState, account)) {
@@ -181,8 +180,6 @@ export function updateAccountStats() {
 			}
 
 			const outstandingBalanceMainToken = await getOutstandingBalance({
-				wallet,
-				address,
 				withBalance: withOutstandingBalance,
 			}).catch(err => {
 				console.error('ERR_OUTSTANDING_BALANCES', err)
