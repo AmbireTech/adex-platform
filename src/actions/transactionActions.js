@@ -128,7 +128,7 @@ export function validatePrivilegesChange({
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
 		if (!dirty) {
-			await beforeWeb3()(dispatch, getState)
+			await beforeWeb3(validateId)(dispatch, getState)
 		}
 		const state = getState()
 		const { setAddr, warningAccepted, privLevel } = selectNewTransactionById(
@@ -245,7 +245,7 @@ export function validateIdentityWithdraw({
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
 		if (!dirty) {
-			await beforeWeb3()(dispatch, getState)
+			await beforeWeb3(validateId)(dispatch, getState)
 		}
 		const state = getState()
 		const account = selectAccount(state)
@@ -331,7 +331,7 @@ export function validateIdentityWithdrawAny({
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
 		if (!dirty) {
-			await beforeWeb3()(dispatch, getState)
+			await beforeWeb3(validateId)(dispatch, getState)
 		}
 		const state = getState()
 		const account = selectAccount(state)
@@ -487,7 +487,7 @@ export function validateENSChange({
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
 		if (!dirty) {
-			await beforeWeb3()(dispatch, getState)
+			await beforeWeb3(validateId)(dispatch, getState)
 		}
 		const state = getState()
 		const { username } = selectNewTransactionById(state, stepsId)
