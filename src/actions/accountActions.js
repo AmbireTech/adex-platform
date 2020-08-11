@@ -563,7 +563,9 @@ export function beforeWeb3(validateId = '') {
 		await updateSpinner(SYNC_WEB3_DATA + validateId, true)(dispatch)
 		await getRelayerConfig()(dispatch, getState)
 		await updateAccountIdentityData()(dispatch, getState)
-		await updateAccountStats()(dispatch, getState)
+		// NOTE: the stats are updated on 60 seconds and there is no need to update them
+		// as it took too long time
+		// await updateAccountStats()(dispatch, getState)
 
 		await new Promise(resolve => setTimeout(resolve, 300))
 		await updateSpinner(SYNC_WEB3_DATA + validateId, false)(dispatch)
