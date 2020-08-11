@@ -396,11 +396,11 @@ function hasValidExecuteRoutines(routineAuthTuple) {
 }
 
 export async function getSweepChannelsTxns({ account, amountToSweep }) {
-	const { wallet, identity } = account
+	const { identity } = account
 	// TODO: pass withBalance as prop
 	const withBalance = selectChannelsWithUserBalancesEligible(getState())
 
-	const { AdExCore } = await getEthers(wallet.authType)
+	const { AdExCore } = await getEthers(AUTH_TYPES.READONLY)
 	const identityAddr = identity.address
 	const channelsToSweep = await getChannelsToSweepFrom({
 		amountToSweep,
