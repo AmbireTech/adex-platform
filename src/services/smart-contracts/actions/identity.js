@@ -359,6 +359,7 @@ export async function addIdentityENS({ username = '', account, getFeesOnly }) {
 
 export async function getIdentityTxnsWithNoncesAndFees({
 	amountInMainTokenNeeded = '0',
+	executeAction = 'DEFAULT',
 	txns = [],
 	identityAddr,
 	provider,
@@ -382,7 +383,11 @@ export async function getIdentityTxnsWithNoncesAndFees({
 		? (await identityContract.nonce()).toNumber()
 		: 0
 
-	const feesForMainTxns = txns.length
+	const baseFee = bigNumberify(
+		(mainTokenWithFees.executeBaseFee || {})[executeAction] || '0'
+	)
+
+	const mainTxnsFees = txns.length
 		? bigNumberify(
 				!initialNonce
 					? mainTokenWithFees.minDeploy
@@ -393,6 +398,8 @@ export async function getIdentityTxnsWithNoncesAndFees({
 				)
 		  )
 		: bigNumberify(0)
+
+	const feesForMainTxns = baseFee.add(mainTxnsFees)
 
 	const totalAmountInMainTokenNeeded = feesForMainTxns.add(
 		bigNumberify(amountInMainTokenNeeded)
@@ -465,12 +472,16 @@ export async function getIdentityTxnsWithNoncesAndFees({
 	}, {})
 
 	let currentNonce = initialNonce
+	let baseFeeAdded = false
 
 	Object.keys(txnsByFeeToken).forEach(key => {
 		txnsByFeeToken[key] = txnsByFeeToken[key].map(tx => {
 			const { routinesSweepTxCount = 0, extraTxFeesCount = 0, isSweepTx } = tx
 			const feeToken = feeTokenWhitelist[tx.feeTokenAddr]
 			const txFeeAmount = isSweepTx ? feeToken.min : feeToken.minRecommended
+
+			const addBaseFee =
+				!baseFeeAdded && !isSweepTx && tx.feeTokenAddr === mainToken.address
 
 			const minFeeAmount = bigNumberify(
 				currentNonce === 0 ? feeToken.minDeploy : txFeeAmount
@@ -488,13 +499,15 @@ export async function getIdentityTxnsWithNoncesAndFees({
 			const feeAmount = minFeeAmount
 				.add(sweepRoutinesFeeAmount)
 				.add(extraFeesAmount)
+				.add(addBaseFee ? baseFee : bigNumberify(0))
 				.toString()
 
 			// fees that are not pre calculated with in the total identity balance
+			// There are no pre calculated fees in the balance
 			const nonIdentityBalanceFeeAmount = bigNumberify(feeAmount)
-				.sub(bigNumberify(isSweepTx ? feeToken.min : 0))
-				.sub(bigNumberify(routinesSweepTxCount).mul(bigNumberify(feeToken.min)))
-				.toString()
+			// .sub(bigNumberify(isSweepTx ? feeToken.min : 0))
+			// .sub(bigNumberify(routinesSweepTxCount).mul(bigNumberify(feeToken.min)))
+			// .toString()
 
 			const txWithNonce = {
 				...tx,
@@ -502,6 +515,7 @@ export async function getIdentityTxnsWithNoncesAndFees({
 				feeAmount,
 				nonce: currentNonce,
 				nonIdentityBalanceFeeAmount,
+				baseFee,
 			}
 
 			currentNonce += 1
