@@ -1,9 +1,56 @@
 import React from 'react'
-import ListItemText from '@material-ui/core/ListItemText'
+import { List, ListItem, ListItemText, ListSubheader } from '@material-ui/core'
 import { PropRow } from 'components/common/dialog/content'
+import { t } from 'selectors'
+
+export const FeesBreakdown = ({
+	breakdownFormatted = {},
+	symbol,
+	executeAction,
+}) => (
+	<div>
+		<PropRow
+			key='breakdownFormatted'
+			left={t('breakdownFormatted', { isProp: true })}
+			right={
+				<List
+					disablePadding
+					dense
+					subheader={
+						<ListSubheader component='div'>
+							{t('BD_TOTAL_FEE', {
+								args: [breakdownFormatted.feeAmount, symbol],
+							})}
+						</ListSubheader>
+					}
+				>
+					<ListItem>
+						<ListItemText
+							primary={t('BD_TXNS_FEE', {
+								args: [executeAction, breakdownFormatted.txnsFee, symbol],
+							})}
+						/>
+					</ListItem>
+					{!!breakdownFormatted.routinesSweepTxCount && (
+						<ListItem>
+							<ListItemText
+								primary={t('BD_SWEEP_FEE', {
+									args: [
+										breakdownFormatted.routinesSweepTxCount,
+										breakdownFormatted.sweepRoutinesFeeAmount,
+										symbol,
+									],
+								})}
+							/>
+						</ListItem>
+					)}
+				</List>
+			}
+		/>
+	</div>
+)
 
 export const IdentityWithdrawPreview = ({
-	t,
 	withdrawTo,
 	classes,
 	feesData,
@@ -33,7 +80,6 @@ export const IdentityWithdrawPreview = ({
 )
 
 export const SetPrivilegePreview = ({
-	t,
 	setAddr,
 	classes,
 	feesData,
@@ -63,7 +109,6 @@ export const SetPrivilegePreview = ({
 )
 
 export const SetENSPreview = ({
-	t,
 	username,
 	address,
 	classes,
@@ -97,7 +142,6 @@ export const SetENSPreview = ({
 )
 
 export const IdentityWithdrawAnyPreview = ({
-	t,
 	withdrawTo,
 	tokenAddress,
 	classes,
