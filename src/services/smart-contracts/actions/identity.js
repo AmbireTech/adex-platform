@@ -172,6 +172,7 @@ export async function withdrawFromIdentity({
 			totalBN: fees.totalBN,
 			actualWithdrawAmount,
 			toGet: formatTokenAmount(actualWithdrawAmount, decimals),
+			breakdownFormatted: fees.breakdownFormatted,
 		}
 	}
 
@@ -222,12 +223,17 @@ export async function setIdentityPrivilege({
 	})
 
 	if (getFeesOnly) {
-		const { total, totalBN } = await getIdentityTxnsTotalFees({
+		const {
+			total,
+			totalBN,
+			breakdownFormatted,
+		} = await getIdentityTxnsTotalFees({
 			txnsByFeeToken,
 		})
 		return {
 			fees: total,
 			totalBN,
+			breakdownFormatted,
 		}
 	}
 
@@ -334,14 +340,17 @@ export async function addIdentityENS({ username = '', account, getFeesOnly }) {
 	})
 
 	const { mainToken } = selectRelayerConfig()
-	const { total, totalBN } = await getIdentityTxnsTotalFees({
-		txnsByFeeToken,
-		mainToken,
-	})
+	const { total, totalBN, breakdownFormatted } = await getIdentityTxnsTotalFees(
+		{
+			txnsByFeeToken,
+			mainToken,
+		}
+	)
 	if (getFeesOnly) {
 		return {
 			fees: total,
 			totalBN,
+			breakdownFormatted,
 		}
 	}
 
@@ -687,6 +696,14 @@ export async function getIdentityTxnsTotalFees({
 			false,
 			2
 		),
+		txnsFee: formatTokenAmount(
+			totalBreakdown.feeAmount
+				.sub(totalBreakdown.sweepRoutinesFeeAmount)
+				.toString(),
+			mainToken.decimals || 18,
+			false,
+			2
+		),
 	}
 
 	const fees = {
@@ -781,6 +798,7 @@ export async function withdrawOtherTokensFromIdentity({
 	if (getFeesOnly) {
 		return {
 			fees: fees.total,
+			breakdownFormatted: fees.breakdownFormatted,
 			toGet: formatTokenAmount(toWithdraw, decimals),
 		}
 	}
