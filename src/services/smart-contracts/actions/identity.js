@@ -606,7 +606,7 @@ export async function getIdentityTxnsTotalFees({
 }) {
 	const feeTokenWhitelist = selectFeeTokenWhitelist()
 	const bigZero = bigNumberify('0')
-	const feesData = Object.values(txnsByFeeToken)
+	const { total, byToken, totalBreakdown } = Object.values(txnsByFeeToken)
 		.reduce((all, byFeeToken) => all.concat(byFeeToken), [])
 		.reduce(
 			(result, tx) => {
@@ -646,7 +646,7 @@ export async function getIdentityTxnsTotalFees({
 			{ total: bigZero, byToken: {}, totalBreakdown: { txnsCount: 0 } }
 		)
 
-	const byToken = Object.entries(feesData.byToken).map(([key, value]) => {
+	const byTokenFormatted = Object.entries(byToken).map(([key, value]) => {
 		const { decimals, symbol } = feeTokenWhitelist[key]
 		return {
 			address: key,
@@ -661,16 +661,45 @@ export async function getIdentityTxnsTotalFees({
 		}
 	})
 
-	const fees = {
-		// TODO: change to return total as BN and add totalFormatted
-		total: formatTokenAmount(
-			feesData.total.toString(),
+	const breakdownFormatted = {
+		...totalBreakdown,
+		baseFee: formatTokenAmount(
+			totalBreakdown.baseFee.toString(),
 			mainToken.decimals || 18,
 			false,
 			2
 		),
-		totalBN: feesData.total,
-		byToken,
+		feeAmount: formatTokenAmount(
+			totalBreakdown.feeAmount.toString(),
+			mainToken.decimals || 18,
+			false,
+			2
+		),
+		sweepRoutinesFeeAmount: formatTokenAmount(
+			totalBreakdown.sweepRoutinesFeeAmount.toString(),
+			mainToken.decimals || 18,
+			false,
+			2
+		),
+		extraFeesAmount: formatTokenAmount(
+			totalBreakdown.extraFeesAmount.toString(),
+			mainToken.decimals || 18,
+			false,
+			2
+		),
+	}
+
+	const fees = {
+		// TODO: change to return total as BN and add totalFormatted
+		total: formatTokenAmount(
+			total.toString(),
+			mainToken.decimals || 18,
+			false,
+			2
+		),
+		breakdownFormatted,
+		totalBN: total,
+		byToken: byTokenFormatted,
 	}
 
 	return fees
