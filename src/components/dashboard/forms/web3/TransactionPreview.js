@@ -18,6 +18,7 @@ import {
 	SetPrivilegePreview,
 	SetENSPreview,
 	IdentityWithdrawAnyPreview,
+	FeesBreakdown,
 } from './previews'
 
 import {
@@ -131,6 +132,11 @@ function TransactionPreview(props) {
 								username={username}
 							/>
 						)}
+						<FeesBreakdown
+							breakdownFormatted={feesData.breakdownFormatted}
+							symbol={symbol}
+							executeAction={stepsId} // TODO:
+						/>
 					</ContentBody>
 				</ContentBox>
 			)}
