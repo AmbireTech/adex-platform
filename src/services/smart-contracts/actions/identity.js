@@ -509,13 +509,22 @@ export async function getIdentityTxnsWithNoncesAndFees({
 			// .sub(bigNumberify(routinesSweepTxCount).mul(bigNumberify(feeToken.min)))
 			// .toString()
 
+			const feesBreakdown = {
+				...(addBaseFee ? { baseFee } : {}),
+				routinesSweepTxCount,
+				sweepRoutinesFeeAmount,
+				extraTxFeesCount,
+				extraFeesAmount,
+				feeAmount,
+			}
+
 			const txWithNonce = {
 				...tx,
 				feeTokenAddr: feeToken.address,
 				feeAmount,
 				nonce: currentNonce,
 				nonIdentityBalanceFeeAmount,
-				baseFee,
+				feesBreakdown,
 			}
 
 			currentNonce += 1
@@ -601,16 +610,40 @@ export async function getIdentityTxnsTotalFees({
 		.reduce((all, byFeeToken) => all.concat(byFeeToken), [])
 		.reduce(
 			(result, tx) => {
-				const txFeeAmount = bigNumberify(tx.nonIdentityBalanceFeeAmount)
-				result.total = result.total.add(txFeeAmount)
+				const { feesBreakdown, nonIdentityBalanceFeeAmount, feeTokenAddr } = tx
+				const { total, byToken, totalBreakdown } = result
+				const txFeeAmount = bigNumberify(nonIdentityBalanceFeeAmount)
 
-				result.byToken[tx.feeTokenAddr] = (
-					result.byToken[tx.feeTokenAddr] || bigZero
-				).add(txFeeAmount)
+				result.total = total.add(txFeeAmount)
+				result.byToken[feeTokenAddr] = (byToken[feeTokenAddr] || bigZero).add(
+					txFeeAmount
+				)
+
+				result.totalBreakdown = {
+					baseFee: bigNumberify(totalBreakdown.baseFee || '0').add(
+						bigNumberify(feesBreakdown.baseFee || '0')
+					),
+					sweepRoutinesFeeAmount: bigNumberify(
+						totalBreakdown.sweepRoutinesFeeAmount || '0'
+					).add(bigNumberify(feesBreakdown.sweepRoutinesFeeAmount || '0')),
+					extraFeesAmount: bigNumberify(
+						totalBreakdown.extraFeesAmount || '0'
+					).add(bigNumberify(feesBreakdown.extraFeesAmount || '0')),
+					feeAmount: bigNumberify(totalBreakdown.feeAmount || '0').add(
+						bigNumberify(feesBreakdown.feeAmount || '0')
+					),
+					routinesSweepTxCount:
+						(totalBreakdown.routinesSweepTxCount || 0) +
+						(feesBreakdown.routinesSweepTxCount || 0),
+					extraTxFeesCount:
+						(totalBreakdown.extraTxFeesCount || 0) +
+						(feesBreakdown.extraTxFeesCount || 0),
+					txnsCount: totalBreakdown.txnsCount + 1,
+				}
 
 				return result
 			},
-			{ total: bigZero, byToken: {} }
+			{ total: bigZero, byToken: {}, totalBreakdown: { txnsCount: 0 } }
 		)
 
 	const byToken = Object.entries(feesData.byToken).map(([key, value]) => {
