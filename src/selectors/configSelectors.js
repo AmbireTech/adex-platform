@@ -8,7 +8,24 @@ export const selectRelayerConfig = state => {
 
 // - relayer cfg
 // network,
-// feeTokenWhitelist, // [{ address, symbol, decimals, standard, min, minDeploy, minRecommended }],
+// feeTokenWhitelist:
+// [
+// 	{
+// 		address,
+// 		symbol,
+// 		decimals,
+// 		standard,
+// 		min,
+// 		minDeploy,
+// 		minRecommended,
+// 		executeBaseFee: {
+// 			WITHDRAW: '4200000000000000000',
+// 			PRIVILEGES_CHANGE: '1000000000000000000',
+// 			ENS_CHANGE: '1000000000000000000',
+// 			DEFAULT: '1000000000000000000',
+// 		},
+// 	},
+// ],
 // routineWithdrawTokens, // [{ address, symbol, decimals, standard, minWeekly, minFinal, minPlatform }],
 // coreAddr,
 // baseIdentityAddr,
