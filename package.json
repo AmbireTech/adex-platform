@@ -1,6 +1,6 @@
 {
   "name": "adex-dapp",
-  "version": "4.20.36",
+  "version": "4.20.37",
   "tosVersion": "1.0.0",
   "private": true,
   "dependencies": {
