@@ -4,7 +4,10 @@ import { makeStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
 import ErrorIcon from '@material-ui/icons/Error'
 import WarningIcon from '@material-ui/icons/Warning'
-import { WalletAction } from 'components/dashboard/forms/FormsCommon'
+import {
+	WalletAction,
+	FeesBreakdown,
+} from 'components/dashboard/forms/FormsCommon'
 import {
 	PropRow,
 	ContentBox,
@@ -18,7 +21,6 @@ import {
 	SetPrivilegePreview,
 	SetENSPreview,
 	IdentityWithdrawAnyPreview,
-	FeesBreakdown,
 } from './previews'
 
 import {

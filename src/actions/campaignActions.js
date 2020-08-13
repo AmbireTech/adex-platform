@@ -916,7 +916,7 @@ export function getCampaignActualFees() {
 
 			const account = selectAccount(state)
 
-			const { feesFormatted, fees } = await openChannel({
+			const { feesFormatted, fees, breakdownFormatted } = await openChannel({
 				campaign: { ...campaign },
 				account,
 				getFeesOnly: true,
@@ -934,6 +934,7 @@ export function getCampaignActualFees() {
 			const newTemp = { ...temp }
 			newTemp.feesFormatted = feesFormatted
 			newTemp.totalSpendFormatted = totalSpendFormatted
+			newTemp.breakdownFormatted = breakdownFormatted
 
 			await updateNewCampaign('temp', newTemp)(dispatch, getState)
 		} catch (err) {
