@@ -64,18 +64,22 @@ export function resetNewTransaction({ tx }) {
 	}
 }
 
-export function checkNetworkCongestion() {
+export function checkNetworkCongestion(showToast) {
 	return async function(dispatch, getState) {
 		const state = getState()
 		const gasPriceCap = selectGasPriceCap(state)
 		const gasPriceCapGwei = formatUnits(gasPriceCap, 'gwei')
 		const gasPrice = await getGasPrice('gwei')
 		if (+gasPriceCapGwei < +gasPrice) {
-			addToast({
-				type: 'warning',
-				label: t('WARNING_NETWORK_CONGESTED'),
-				timeout: 20000,
-			})(dispatch)
+			if (showToast) {
+				addToast({
+					type: 'warning',
+					label: t('WARNING_NETWORK_CONGESTED'),
+					timeout: 20000,
+				})(dispatch)
+			}
+
+			return t('WARNING_NETWORK_CONGESTED')
 		}
 	}
 }
