@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.38
+##### *2020-08-13*
+
+### Changed
+- Removed old analytics revenue info alert 
+
 ## 4.20.37
 ##### *2020-08-13*
 
