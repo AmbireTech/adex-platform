@@ -1,10 +1,15 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { makeStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
 import ErrorIcon from '@material-ui/icons/Error'
 import WarningIcon from '@material-ui/icons/Warning'
-import { WalletAction } from 'components/dashboard/forms/FormsCommon'
+import { Alert, AlertTitle } from '@material-ui/lab'
+import { Box } from '@material-ui/core'
+import {
+	WalletAction,
+	FeesBreakdown,
+} from 'components/dashboard/forms/FormsCommon'
 import {
 	PropRow,
 	ContentBox,
@@ -27,6 +32,7 @@ import {
 	selectAccount,
 	selectNewTransactionById,
 } from 'selectors'
+import { execute, checkNetworkCongestion } from 'actions'
 
 const useStyles = makeStyles(styles)
 
@@ -49,6 +55,19 @@ function TransactionPreview(props) {
 		feesData = {},
 		errors = [],
 	} = useSelector(state => selectNewTransactionById(state, txId))
+	const [networkCongested, setNetworkCongested] = useState(false)
+
+	useEffect(() => {
+		async function checkNetwork() {
+			const msg = await execute(checkNetworkCongestion())
+
+			if (msg) {
+				setNetworkCongested(msg)
+			}
+		}
+
+		checkNetwork()
+	}, [])
 
 	return (
 		<div>
@@ -56,9 +75,21 @@ function TransactionPreview(props) {
 				<FullContentSpinner />
 			) : (
 				<ContentBox>
-					{waitingForWalletAction ? (
+					{waitingForWalletAction || networkCongested ? (
 						<ContentStickyTop>
-							<WalletAction t={t} authType={account.wallet.authType} />
+							{waitingForWalletAction && (
+								<Box p={1}>
+									<WalletAction t={t} authType={account.wallet.authType} />
+								</Box>
+							)}
+							{networkCongested && (
+								<Box p={1}>
+									<Alert severity='warning' variant='filled' square>
+										<AlertTitle>{t('NETWORK_WARNING')}</AlertTitle>
+										{networkCongested}
+									</Alert>
+								</Box>
+							)}
 						</ContentStickyTop>
 					) : null}
 					<ContentBody>
@@ -131,6 +162,10 @@ function TransactionPreview(props) {
 								username={username}
 							/>
 						)}
+						<FeesBreakdown
+							breakdownFormatted={feesData.breakdownFormatted}
+							symbol={symbol}
+						/>
 					</ContentBody>
 				</ContentBox>
 			)}

@@ -171,11 +171,10 @@ export function validateTOS(validateId, accepted, dirty) {
 	}
 }
 
-export function validateENS({ username, dirty, validateId, authType }) {
+export function validateENS({ username, dirty, validateId }) {
 	return async function(dispatch) {
 		const { msg } = await freeAdExENS({
 			username,
-			authType,
 		})
 		const isValid = !msg
 		validate(validateId, 'username', {
@@ -607,6 +606,7 @@ export function validateEthAddress({
 	nonERC20 = true,
 	dirty,
 	authType,
+	quickCheck,
 }) {
 	return async function(dispatch, getState) {
 		const { msg } = await validEthAddress({
@@ -614,6 +614,7 @@ export function validateEthAddress({
 			nonZeroAddr,
 			nonERC20,
 			authType,
+			quickCheck,
 		})
 
 		const isValid = !msg

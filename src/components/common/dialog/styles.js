@@ -116,6 +116,10 @@ export const styles = theme => {
 		},
 		contentStickyTop: {
 			marginBottom: '2rem',
+			position: 'sticky',
+			top: 0,
+			zIndex: theme.zIndex.appBar,
+			backgroundColor: theme.palette.appBar.main,
 		},
 		fullContentMessage: {
 			display: 'flex',

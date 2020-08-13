@@ -20,7 +20,7 @@ import {
 	getAddress,
 } from 'ethers/utils'
 import {
-	selectFeeTokenWhitelist,
+	// selectFeeTokenWhitelist,
 	selectRoutineWithdrawTokens,
 	selectMainFeeToken,
 	selectMainToken,
@@ -30,6 +30,7 @@ import { formatTokenAmount } from 'helpers/formatters'
 import IdentityABI from 'adex-protocol-eth/abi/Identity'
 import { selectChannelsWithUserBalancesEligible } from 'selectors'
 import { getState } from 'store'
+import { AUTH_TYPES, EXECUTE_ACTIONS } from 'constants/misc'
 
 const { AdExCore } = contracts
 const Core = new Interface(AdExCore.abi)
@@ -166,21 +167,20 @@ function getReadyCampaign(campaign, identity, mainToken) {
 }
 
 const getWithdrawnPerUserOutstanding = async ({
-	AdExCore,
 	channel,
 	balance,
 	identityAddr,
 }) => {
+	const { AdExCore } = await getEthers(AUTH_TYPES.READONLY)
 	return bigNumberify(balance).sub(
 		await AdExCore.functions.withdrawnPerUser(channel.id, identityAddr)
 	)
 }
 
-export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
-	const { authType } = wallet
+export async function getChannelsWithOutstanding({ identityAddr }) {
 	const channels = await getCampaigns({ all: true, byEarner: identityAddr })
-	const { AdExCore } = await getEthers(authType)
-	const feeTokenWhitelist = selectFeeTokenWhitelist()
+
+	// const feeTokenWhitelist = selectFeeTokenWhitelist()
 	const routineWithdrawTokens = selectRoutineWithdrawTokens()
 
 	const allChannels = await Promise.all(
@@ -233,15 +233,17 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 					const balance = bTree.getBalance(identityAddr).toString()
 
 					const outstanding = await getWithdrawnPerUserOutstanding({
-						AdExCore,
 						channel,
 						balance,
 						identityAddr,
 					})
 
-					const outstandingAvailable = outstanding.sub(
-						bigNumberify(feeTokenWhitelist[channel.depositAsset].min)
-					)
+					// const outstandingAvailable = outstanding.sub(
+					// 	bigNumberify(feeTokenWhitelist[channel.depositAsset].min)
+					// )
+
+					// NOTE: We will show everything - will add this to withdraw fees
+					const outstandingAvailable = outstanding
 
 					const balanceNum = bigNumberify(channel.depositAmount)
 						.sub(bigNumberify(channel.spec.validators[0].fee || 0))
@@ -289,9 +291,10 @@ export async function getChannelsWithOutstanding({ identityAddr, wallet }) {
 			OUTSTANDING_STATUSES[x.channel.status.name] &&
 			new Date((x.channel.validUntil - EXTRA_PROCESS_TIME) * 1000) >
 				Date.now() &&
-			x.outstanding.gt(
-				bigNumberify(routineWithdrawTokens[x.channel.depositAsset].minPlatform)
-			) &&
+			//NOTE: As we show everything there is no need for minPlatform check
+			// x.outstanding.gt(
+			// 	bigNumberify(routineWithdrawTokens[x.channel.depositAsset].minPlatform)
+			// ) &&
 			x.outstandingAvailable.gt(bigNumberify('0'))
 		)
 	})
@@ -393,11 +396,11 @@ function hasValidExecuteRoutines(routineAuthTuple) {
 }
 
 export async function getSweepChannelsTxns({ account, amountToSweep }) {
-	const { wallet, identity } = account
+	const { identity } = account
 	// TODO: pass withBalance as prop
 	const withBalance = selectChannelsWithUserBalancesEligible(getState())
 
-	const { AdExCore } = await getEthers(wallet.authType)
+	const { AdExCore } = await getEthers(AUTH_TYPES.READONLY)
 	const identityAddr = identity.address
 	const channelsToSweep = await getChannelsToSweepFrom({
 		amountToSweep,
@@ -607,9 +610,12 @@ export async function openChannel({
 		Identity,
 		account,
 		getToken,
+		executeAction: EXECUTE_ACTIONS.openCampaign,
 	})
 
-	const { total, totalBN } = await getIdentityTxnsTotalFees({ txnsByFeeToken })
+	const { total, totalBN, breakdownFormatted } = await getIdentityTxnsTotalFees(
+		{ txnsByFeeToken }
+	)
 	const bigZero = bigNumberify(0)
 	const mtBalance = bigNumberify(availableIdentityBalanceMainToken)
 	const maxAvailable = mtBalance.sub(totalBN).lt(bigZero)
@@ -628,6 +634,7 @@ export async function openChannel({
 			fees: totalBN,
 			maxAvailable,
 			maxAvailableFormatted,
+			breakdownFormatted,
 		}
 	}
 

@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect'
 import dateUtils from 'helpers/dateUtils'
-
 import { selectAccountIdentityAddr } from './accountSelectors'
+import { SYNC_WEB3_DATA } from 'constants/spinners'
 
 const REGISTRATION_OPEN = process.env.REGISTRATION_OPEN === 'true'
 
@@ -33,6 +33,11 @@ export const selectCompanyData = createSelector(
 export const selectSpinnerById = createSelector(
 	[selectSpinners, (_, id) => id],
 	(spinners, id) => spinners[id]
+)
+
+export const selectWeb3SyncSpinnerByValidateId = createSelector(
+	[selectSpinners, (_, validateId) => validateId],
+	(spinners, validateId) => spinners[SYNC_WEB3_DATA + validateId]
 )
 
 export const selectMultipleSpinnersByIds = createSelector(

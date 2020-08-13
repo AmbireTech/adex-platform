@@ -2,11 +2,12 @@ import { ethers, constants } from 'ethers'
 import { getEthers } from 'services/smart-contracts/ethers'
 import { isEthAddress } from 'helpers/validators'
 import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
+import { AUTH_TYPES } from 'constants/misc'
 
-export const isEthAddressERC20 = async (addr = '', authType) => {
+export const isEthAddressERC20 = async (addr = '') => {
 	try {
 		if (isEthAddress(addr)) {
-			const { provider } = await getEthers(authType)
+			const { provider } = await getEthers(AUTH_TYPES.READONLY)
 			const contract = new ethers.Contract(addr, ERC20TokenABI, provider)
 			await Promise.all([
 				contract.totalSupply(),
@@ -21,13 +22,9 @@ export const isEthAddressERC20 = async (addr = '', authType) => {
 	}
 }
 
-export const getERC20Balance = async ({
-	addr = '',
-	balanceFor = '',
-	authType,
-}) => {
+export const getERC20Balance = async ({ addr = '', balanceFor = '' }) => {
 	try {
-		const { provider } = await getEthers(authType)
+		const { provider } = await getEthers(AUTH_TYPES.READONLY)
 		const contract = new ethers.Contract(addr, ERC20TokenABI, provider)
 		const balance = await contract.balanceOf(balanceFor)
 
