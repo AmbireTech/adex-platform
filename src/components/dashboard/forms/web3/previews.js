@@ -14,11 +14,7 @@ import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
 import { PropRow } from 'components/common/dialog/content'
 import { t } from 'selectors'
 
-export const FeesBreakdown = ({
-	breakdownFormatted = {},
-	symbol,
-	executeAction,
-}) => (
+export const FeesBreakdown = ({ breakdownFormatted = {}, symbol }) => (
 	<Box p={1}>
 		<ExpansionPanel square={true} variant='outlined'>
 			<ExpansionPanelSummary
@@ -51,7 +47,11 @@ export const FeesBreakdown = ({
 				<ListItem>
 					<ListItemText
 						primary={t('BD_TXNS_FEE', {
-							args: [executeAction, breakdownFormatted.txnsFee, symbol],
+							args: [
+								breakdownFormatted.executeAction,
+								breakdownFormatted.txnsFee,
+								symbol,
+							],
 						})}
 					/>
 				</ListItem>
