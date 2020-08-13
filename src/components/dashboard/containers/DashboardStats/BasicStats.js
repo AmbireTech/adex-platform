@@ -32,7 +32,6 @@ import {
 	updateIdSideAnalyticsChartPeriod,
 	updateAnalyticsPeriodPrevNextLive,
 	updateAccountAnalyticsThrottled,
-	updateMissingRevenueDataPointAccepted,
 } from 'actions'
 import {
 	t,
@@ -177,35 +176,6 @@ const DatePickerSwitch = ({ timeframe, period: { start, end }, ...rest }) => {
 	}
 }
 
-const ImpressionsAlert = ({ impressions = 0 }) => (
-	<Alert
-		variant='outlined'
-		severity='info'
-		// onClose={() => {
-		// 	execute(updateMissingRevenueDataPointAccepted(true))
-		// }}
-	>
-		<div>
-			{t('IMPRESSIONS_AND_REVENUE_INFO_NO_TAXES', {
-				args: [
-					impressions,
-					<Anchor
-						key='publisher-revenue-notice'
-						color='primary'
-						underline='always'
-						target='_blank'
-						href={
-							'https://help.adex.network/hc/en-us/articles/360012130399-Why-are-there-impressions-but-no-revenue-'
-						}
-					>
-						{<strong>{t('LEARN_MORE')}</strong>}
-					</Anchor>,
-				],
-			})}
-		</div>
-	</Alert>
-)
-
 export function BasicStats() {
 	const useStyles = makeStyles(styles)
 	const classes = useStyles()
@@ -232,9 +202,6 @@ export function BasicStats() {
 	)
 	const initialDataLoaded =
 		allChannelsLoaded && advAnalyticsLoaded && itemsLoaded
-	const missingRevenuePointsAccepted = useSelector(
-		selectMissingRevenueDataPointsAccepted
-	)
 	const [data1Active, setData1Active] = useState(true)
 	const [data2Active, setData2Active] = useState(true)
 	const [data3Active, setData3Active] = useState(true)
@@ -351,10 +318,6 @@ export function BasicStats() {
 		[totalImpressions, totalMoney, averageCPM, totalClicks].every(
 			x => x !== null
 		)
-
-	const showRevenueInfo =
-		// !missingRevenuePointsAccepted &&
-		uiSide === 'publisher' && dataSynced && !!totalImpressions
 
 	return (
 		uiSide && (
@@ -522,11 +485,6 @@ export function BasicStats() {
 						y4Color={metrics[uiSide][3].color}
 					/>
 				</Box>
-				{showRevenueInfo && (
-					<Box mt={2}>
-						<ImpressionsAlert impressions={totalImpressions} />
-					</Box>
-				)}
 			</Box>
 		)
 	)
