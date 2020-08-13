@@ -543,6 +543,7 @@ export async function getIdentityTxnsWithNoncesAndFees({
 				nonce: currentNonce,
 				nonIdentityBalanceFeeAmount,
 				feesBreakdown,
+				executeAction,
 			}
 
 			currentNonce += 1
@@ -628,7 +629,12 @@ export async function getIdentityTxnsTotalFees({
 		.reduce((all, byFeeToken) => all.concat(byFeeToken), [])
 		.reduce(
 			(result, tx) => {
-				const { feesBreakdown, nonIdentityBalanceFeeAmount, feeTokenAddr } = tx
+				const {
+					feesBreakdown,
+					nonIdentityBalanceFeeAmount,
+					feeTokenAddr,
+					executeAction,
+				} = tx
 				const { total, byToken, totalBreakdown } = result
 				const txFeeAmount = bigNumberify(nonIdentityBalanceFeeAmount)
 
@@ -674,6 +680,7 @@ export async function getIdentityTxnsTotalFees({
 					deployFee: feesBreakdown.isDeployTx
 						? bigNumberify(feesBreakdown.txFeeAmount)
 						: null,
+					executeAction,
 				}
 
 				return result

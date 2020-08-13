@@ -135,7 +135,6 @@ function TransactionPreview(props) {
 						<FeesBreakdown
 							breakdownFormatted={feesData.breakdownFormatted}
 							symbol={symbol}
-							executeAction={stepsId} // TODO:
 						/>
 					</ContentBody>
 				</ContentBox>
