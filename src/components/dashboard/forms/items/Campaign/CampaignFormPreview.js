@@ -10,7 +10,10 @@ import {
 } from '@material-ui/core'
 import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
 import { AdUnitsTable } from 'components/dashboard/containers/Tables'
-import { WalletAction } from 'components/dashboard/forms/FormsCommon'
+import {
+	WalletAction,
+	FeesBreakdown,
+} from 'components/dashboard/forms/FormsCommon'
 import {
 	PropRow,
 	ContentBox,
@@ -62,7 +65,7 @@ function CampaignFormPreview() {
 		temp = {},
 	} = useSelector(selectNewCampaign)
 
-	const { feesFormatted, totalSpendFormatted } = temp
+	const { feesFormatted, totalSpendFormatted, breakdownFormatted } = temp
 	const { IMPRESSION = {} } = pricingBounds || {}
 	const { advanced = {} } = audienceInput.inputs
 
@@ -134,6 +137,13 @@ function CampaignFormPreview() {
 									<CircularProgress size={42} />
 								)
 							}
+						/>
+					</Grid>
+
+					<Grid item xs={12}>
+						<FeesBreakdown
+							breakdownFormatted={breakdownFormatted}
+							symbol={symbol}
 						/>
 					</Grid>
 
