@@ -1,5 +1,16 @@
 import React from 'react'
-import { List, ListItem, ListItemText, ListSubheader } from '@material-ui/core'
+import {
+	Box,
+	List,
+	ListItem,
+	ListItemText,
+	ListSubheader,
+	ExpansionPanel,
+	ExpansionPanelSummary,
+	Typography,
+} from '@material-ui/core'
+import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
+
 import { PropRow } from 'components/common/dialog/content'
 import { t } from 'selectors'
 
@@ -8,46 +19,58 @@ export const FeesBreakdown = ({
 	symbol,
 	executeAction,
 }) => (
-	<div>
-		<PropRow
-			key='breakdownFormatted'
-			left={t('breakdownFormatted', { isProp: true })}
-			right={
-				<List
-					disablePadding
-					dense
-					subheader={
-						<ListSubheader component='div'>
-							{t('BD_TOTAL_FEE', {
-								args: [breakdownFormatted.feeAmount, symbol],
-							})}
-						</ListSubheader>
-					}
-				>
+	<Box p={1}>
+		<ExpansionPanel square={true} variant='outlined'>
+			<ExpansionPanelSummary
+				expandIcon={<ExpandMoreIcon />}
+				aria-controls='fees-breakdown'
+				id='fees-breakdown'
+			>
+				<Typography>{t('FEES_BREAKDOWN_ADVANCED')}</Typography>
+			</ExpansionPanelSummary>
+			<List
+				disablePadding
+				dense
+				subheader={
+					<ListSubheader component='div'>
+						{t('BD_TOTAL_FEE', {
+							args: [breakdownFormatted.feeAmount, symbol],
+						})}
+					</ListSubheader>
+				}
+			>
+				{!!breakdownFormatted.deployFee && (
 					<ListItem>
 						<ListItemText
-							primary={t('BD_TXNS_FEE', {
-								args: [executeAction, breakdownFormatted.txnsFee, symbol],
+							primary={t('BD_DEPLOY_FEE', {
+								args: [breakdownFormatted.deployFee, symbol],
 							})}
 						/>
 					</ListItem>
-					{!!breakdownFormatted.routinesSweepTxCount && (
-						<ListItem>
-							<ListItemText
-								primary={t('BD_SWEEP_FEE', {
-									args: [
-										breakdownFormatted.routinesSweepTxCount,
-										breakdownFormatted.sweepRoutinesFeeAmount,
-										symbol,
-									],
-								})}
-							/>
-						</ListItem>
-					)}
-				</List>
-			}
-		/>
-	</div>
+				)}
+				<ListItem>
+					<ListItemText
+						primary={t('BD_TXNS_FEE', {
+							args: [executeAction, breakdownFormatted.txnsFee, symbol],
+						})}
+					/>
+				</ListItem>
+				{!!breakdownFormatted.sweepTxnsCount && (
+					<ListItem>
+						<ListItemText
+							primary={t('BD_SWEEP_FEE', {
+								args: [
+									breakdownFormatted.sweepTxnsCount,
+									breakdownFormatted.sweepTxnsFeeAmount,
+									symbol,
+								],
+							})}
+						/>
+					</ListItem>
+				)}
+			</List>
+		</ExpansionPanel>
+	</Box>
 )
 
 export const IdentityWithdrawPreview = ({
@@ -57,7 +80,7 @@ export const IdentityWithdrawPreview = ({
 	amountToWithdraw,
 	symbol,
 }) => (
-	<div>
+	<Box>
 		<PropRow
 			key='withdrawTo'
 			left={t('withdrawTo', { isProp: true })}
@@ -76,7 +99,7 @@ export const IdentityWithdrawPreview = ({
 				/>
 			}
 		/>
-	</div>
+	</Box>
 )
 
 export const SetPrivilegePreview = ({
@@ -86,7 +109,7 @@ export const SetPrivilegePreview = ({
 	privLevel,
 	symbol,
 }) => (
-	<div>
+	<Box>
 		<PropRow
 			key='setAddr'
 			left={t('setAddr', { isProp: true })}
@@ -105,7 +128,7 @@ export const SetPrivilegePreview = ({
 				/>
 			}
 		/>
-	</div>
+	</Box>
 )
 
 export const SetENSPreview = ({
@@ -115,7 +138,7 @@ export const SetENSPreview = ({
 	feesData,
 	symbol,
 }) => (
-	<div>
+	<Box>
 		<PropRow
 			key='addr'
 			left={t('ENS_ADDR_TO_BE_SET')}
@@ -138,7 +161,7 @@ export const SetENSPreview = ({
 				/>
 			}
 		/>
-	</div>
+	</Box>
 )
 
 export const IdentityWithdrawAnyPreview = ({
@@ -148,7 +171,7 @@ export const IdentityWithdrawAnyPreview = ({
 	feesData,
 	amountToWithdraw,
 }) => (
-	<div>
+	<Box>
 		<PropRow
 			key='withdrawTo'
 			left={t('withdrawTo', { isProp: true })}
@@ -172,5 +195,5 @@ export const IdentityWithdrawAnyPreview = ({
 				/>
 			}
 		/>
-	</div>
+	</Box>
 )
