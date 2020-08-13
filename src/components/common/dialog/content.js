@@ -76,7 +76,7 @@ const fullContentMessage = ({
 		{spinner && (
 			<Box p={4}>
 				<CircularProgress
-					color={`${color}.contrastText`}
+					color='inherit'
 					// className={classes.contentTopLoadingCircular}
 					size={69}
 				/>

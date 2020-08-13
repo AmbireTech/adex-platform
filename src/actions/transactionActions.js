@@ -2,7 +2,6 @@ import * as types from 'constants/actionTypes'
 import {
 	updateSpinner,
 	handleAfterValidation,
-	updateAccountIdentityData,
 	validateEthAddress,
 	validatePrivilegesAddress,
 	validatePrivLevel,
@@ -11,6 +10,7 @@ import {
 	validateFees,
 	validateENS,
 	validateNumberString,
+	beforeWeb3,
 } from 'actions'
 import {
 	selectNewTransactionById,
@@ -33,6 +33,7 @@ import {
 	withdrawOtherTokensFromIdentity,
 } from 'services/smart-contracts/actions/identity'
 import Helper from 'helpers/miscHelpers'
+import { SYNC_WEB3_DATA } from 'constants/spinners'
 
 // MEMORY STORAGE
 export function updateNewTransaction({ tx, key, value }) {
@@ -63,19 +64,22 @@ export function resetNewTransaction({ tx }) {
 	}
 }
 
-export function checkNetworkCongestion() {
+export function checkNetworkCongestion(showToast) {
 	return async function(dispatch, getState) {
 		const state = getState()
 		const gasPriceCap = selectGasPriceCap(state)
 		const gasPriceCapGwei = formatUnits(gasPriceCap, 'gwei')
-		const authType = selectAuthType(state)
-		const gasPrice = await getGasPrice(authType, 'gwei')
+		const gasPrice = await getGasPrice('gwei')
 		if (+gasPriceCapGwei < +gasPrice) {
-			addToast({
-				type: 'warning',
-				label: t('WARNING_NETWORK_CONGESTED'),
-				timeout: 20000,
-			})(dispatch)
+			if (showToast) {
+				addToast({
+					type: 'warning',
+					label: t('WARNING_NETWORK_CONGESTED'),
+					timeout: 20000,
+				})(dispatch)
+			}
+
+			return t('WARNING_NETWORK_CONGESTED')
 		}
 	}
 }
@@ -127,11 +131,9 @@ export function validatePrivilegesChange({
 }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
-		const identityData = updateAccountIdentityData()(dispatch, getState)
-		if (dirty) {
-			await identityData
+		if (!dirty) {
+			await beforeWeb3(validateId)(dispatch, getState)
 		}
-
 		const state = getState()
 		const { setAddr, warningAccepted, privLevel } = selectNewTransactionById(
 			state,
@@ -149,6 +151,7 @@ export function validatePrivilegesChange({
 				nonZeroAddr: true,
 				authType,
 				dirty,
+				quickCheck: !dirty,
 			})(dispatch),
 			validatePrivLevel({
 				validateId,
@@ -246,8 +249,9 @@ export function validateIdentityWithdraw({
 }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
-		await updateAccountIdentityData()(dispatch, getState)
-
+		if (!dirty) {
+			await beforeWeb3(validateId)(dispatch, getState)
+		}
 		const state = getState()
 		const account = selectAccount(state)
 		const { symbol, decimals } = selectMainToken(state)
@@ -274,6 +278,7 @@ export function validateIdentityWithdraw({
 				nonZeroAddr: true,
 				authType,
 				dirty,
+				quickCheck: !dirty,
 			})(dispatch),
 			validateWithdrawAmount({
 				validateId,
@@ -312,6 +317,8 @@ export function validateIdentityWithdraw({
 					dirty,
 				})(dispatch, getState)
 			} catch (err) {
+				console.error('validateIdentityWithdraw', err)
+
 				isValid = false
 			}
 		}
@@ -331,8 +338,9 @@ export function validateIdentityWithdrawAny({
 }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
-		await updateAccountIdentityData()(dispatch, getState)
-
+		if (!dirty) {
+			await beforeWeb3(validateId)(dispatch, getState)
+		}
 		const state = getState()
 		const account = selectAccount(state)
 		const {
@@ -352,6 +360,7 @@ export function validateIdentityWithdrawAny({
 				nonZeroAddr: true,
 				authType,
 				dirty,
+				quickCheck: !dirty,
 			})(dispatch),
 			validateEthAddress({
 				validateId,
@@ -361,6 +370,7 @@ export function validateIdentityWithdrawAny({
 				nonZeroAddr: true,
 				authType,
 				dirty,
+				quickCheck: !dirty,
 			})(dispatch),
 			validateNumberString({
 				validateId,
@@ -403,6 +413,7 @@ export function validateIdentityWithdrawAny({
 					dirty,
 				})(dispatch, getState)
 			} catch (err) {
+				console.error('validateIdentityWithdrawAny', err)
 				isValid = false
 			}
 		}
@@ -486,19 +497,15 @@ export function validateENSChange({
 }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
-		const identityData = updateAccountIdentityData()(dispatch, getState)
-		if (dirty) {
-			await identityData
+		if (!dirty) {
+			await beforeWeb3(validateId)(dispatch, getState)
 		}
-
 		const state = getState()
 		const { username } = selectNewTransactionById(state, stepsId)
-		const authType = selectAuthType(state)
 
 		const inputValidations = await Promise.all([
 			validateENS({
 				validateId,
-				authType,
 				username,
 				dirty,
 			})(dispatch),

@@ -51,6 +51,7 @@ export const FILTER_PROPERTIES_ITEMS = {
 }
 
 export const AUTH_TYPES = {
+	READONLY: { name: 'readonly' },
 	METAMASK: { name: 'metamask', signType: SignatureModes.GETH, limit: 0 },
 	TREZOR: { name: 'trezor', signType: SignatureModes.GETH, limit: 0 },
 	DEMO: { name: 'demo', signType: SignatureModes.GETH, limit: 0 },
@@ -157,4 +158,12 @@ export const WALLET_ACTIONS_MSGS = {
 		{ message: 'GRANT_WAITING_MSG_INFO' },
 	],
 	default: [{ message: 'WAITING_FOR_USER_ACTION' }],
+}
+
+export const EXECUTE_ACTIONS = {
+	withdraw: 'WITHDRAW',
+	privilegesChange: 'PRIVILEGES_CHANGE',
+	ensChange: 'ENS_CHANGE',
+	openCampaign: 'OPEN_CAMPAIGN',
+	default: 'DEFAULT',
 }
