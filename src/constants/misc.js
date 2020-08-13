@@ -121,13 +121,12 @@ export const VALIDATOR_ANALYTICS_EVENT_TYPES = [
 	'CLICK',
 ]
 
-// TEMP: disable long periods
 export const VALIDATOR_ANALYTICS_TIMEFRAMES = [
 	{ label: 'LABEL_HOUR', value: 'hour' },
 	{ label: 'LABEL_DAY', value: 'day' },
 	{ label: 'LABEL_WEEK', value: 'week' },
 	{ label: 'LABEL_MONTH', value: 'month' },
-	// { label: 'LABEL_YEAR', value: 'year' },
+	{ label: 'LABEL_YEAR', value: 'year' },
 ]
 
 export const WHERE_YOU_KNOW_US = [
