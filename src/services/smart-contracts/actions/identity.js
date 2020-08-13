@@ -28,6 +28,7 @@ import solc from 'solcBrowser'
 import { RoutineAuthorization } from 'adex-protocol-eth/js/Identity'
 import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
 import ScdMcdMigrationABI from 'services/smart-contracts/abi/ScdMcdMigration'
+import { EXECUTE_ACTIONS } from 'constants/misc'
 import { contracts } from 'services/smart-contracts/contractsCfg'
 const { AdExENSManager, ReverseRegistrar } = contracts
 
@@ -126,6 +127,7 @@ export async function withdrawFromIdentity({
 		Identity,
 		account,
 		getToken,
+		executeAction: EXECUTE_ACTIONS.withdraw,
 	})
 
 	const fees = await getIdentityTxnsTotalFees({ txnsByFeeToken, mainToken })
@@ -220,6 +222,7 @@ export async function setIdentityPrivilege({
 		Identity,
 		account,
 		getToken,
+		executeAction: EXECUTE_ACTIONS.privilegesChange,
 	})
 
 	if (getFeesOnly) {
@@ -337,6 +340,7 @@ export async function addIdentityENS({ username = '', account, getFeesOnly }) {
 		Identity,
 		account,
 		getToken,
+		executeAction: EXECUTE_ACTIONS.ensChange,
 	})
 
 	const { mainToken } = selectRelayerConfig()
@@ -831,6 +835,7 @@ export async function withdrawOtherTokensFromIdentity({
 		Identity,
 		account,
 		getToken,
+		executeAction: EXECUTE_ACTIONS.withdraw,
 	})
 
 	const fees = await getIdentityTxnsTotalFees({ txnsByFeeToken, mainToken })
