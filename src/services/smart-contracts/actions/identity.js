@@ -487,14 +487,16 @@ export async function getIdentityTxnsWithNoncesAndFees({
 		txnsByFeeToken[key] = txnsByFeeToken[key].map(tx => {
 			const { routinesSweepTxCount = 0, extraTxFeesCount = 0, isSweepTx } = tx
 			const feeToken = feeTokenWhitelist[tx.feeTokenAddr]
-			const txFeeAmount = isSweepTx ? feeToken.min : feeToken.minRecommended
+			const isDeployTx = currentNonce === 0
+
+			const txFeeAmount = isDeployTx
+				? feeToken.minDeploy
+				: isSweepTx
+				? feeToken.min
+				: feeToken.minRecommended
 
 			const addBaseFee =
 				!baseFeeAdded && !isSweepTx && tx.feeTokenAddr === mainToken.address
-
-			const minFeeAmount = bigNumberify(
-				currentNonce === 0 ? feeToken.minDeploy : txFeeAmount
-			)
 
 			const sweepRoutinesFeeAmount = bigNumberify(routinesSweepTxCount).mul(
 				bigNumberify(feeToken.min)
@@ -505,7 +507,7 @@ export async function getIdentityTxnsWithNoncesAndFees({
 			)
 
 			// Total relayer fees for the transaction
-			const feeAmount = minFeeAmount
+			const feeAmount = bigNumberify(txFeeAmount)
 				.add(sweepRoutinesFeeAmount)
 				.add(extraFeesAmount)
 				.add(addBaseFee ? baseFee : bigNumberify(0))
@@ -525,6 +527,9 @@ export async function getIdentityTxnsWithNoncesAndFees({
 				extraTxFeesCount,
 				extraFeesAmount,
 				feeAmount,
+				txFeeAmount,
+				isDeployTx,
+				isSweepTx,
 			}
 
 			const txWithNonce = {
@@ -634,12 +639,12 @@ export async function getIdentityTxnsTotalFees({
 					),
 					sweepRoutinesFeeAmount: bigNumberify(
 						totalBreakdown.sweepRoutinesFeeAmount || '0'
-					).add(bigNumberify(feesBreakdown.sweepRoutinesFeeAmount || '0')),
+					).add(bigNumberify(feesBreakdown.sweepRoutinesFeeAmount)),
 					extraFeesAmount: bigNumberify(
 						totalBreakdown.extraFeesAmount || '0'
-					).add(bigNumberify(feesBreakdown.extraFeesAmount || '0')),
+					).add(bigNumberify(feesBreakdown.extraFeesAmount)),
 					feeAmount: bigNumberify(totalBreakdown.feeAmount || '0').add(
-						bigNumberify(feesBreakdown.feeAmount || '0')
+						bigNumberify(feesBreakdown.feeAmount)
 					),
 					routinesSweepTxCount:
 						(totalBreakdown.routinesSweepTxCount || 0) +
@@ -647,12 +652,33 @@ export async function getIdentityTxnsTotalFees({
 					extraTxFeesCount:
 						(totalBreakdown.extraTxFeesCount || 0) +
 						(feesBreakdown.extraTxFeesCount || 0),
-					txnsCount: totalBreakdown.txnsCount + 1,
+					txnsCount:
+						totalBreakdown.txnsCount + (feesBreakdown.isSweepTx ? 0 : 1),
+					sweepTxnsCount:
+						totalBreakdown.sweepTxnsCount +
+						(totalBreakdown.routinesSweepTxCount || 0) +
+						(feesBreakdown.isSweepTx ? 1 : 0),
+					sweepTxnsFeeAmount: bigNumberify(
+						totalBreakdown.sweepTxnsFeeAmount || '0'
+					).add(
+						bigNumberify(
+							feesBreakdown.isSweepTx
+								? feesBreakdown.txFeeAmount
+								: feesBreakdown.sweepRoutinesFeeAmount
+						)
+					),
+					deployFee: feesBreakdown.isDeployTx
+						? bigNumberify(feesBreakdown.txFeeAmount)
+						: null,
 				}
 
 				return result
 			},
-			{ total: bigZero, byToken: {}, totalBreakdown: { txnsCount: 0 } }
+			{
+				total: bigZero,
+				byToken: {},
+				totalBreakdown: { txnsCount: 0, sweepTxnsCount: 0 },
+			}
 		)
 
 	const byTokenFormatted = Object.entries(byToken).map(([key, value]) => {
@@ -698,12 +724,26 @@ export async function getIdentityTxnsTotalFees({
 		),
 		txnsFee: formatTokenAmount(
 			totalBreakdown.feeAmount
-				.sub(totalBreakdown.sweepRoutinesFeeAmount)
+				.sub(totalBreakdown.sweepTxnsFeeAmount)
 				.toString(),
 			mainToken.decimals || 18,
 			false,
 			2
 		),
+		sweepTxnsFeeAmount: formatTokenAmount(
+			totalBreakdown.sweepTxnsFeeAmount.toString(),
+			mainToken.decimals || 18,
+			false,
+			2
+		),
+		deployFee: totalBreakdown.deployFee
+			? formatTokenAmount(
+					totalBreakdown.deployFee.toString(),
+					mainToken.decimals || 18,
+					false,
+					2
+			  )
+			: null,
 	}
 
 	const fees = {
