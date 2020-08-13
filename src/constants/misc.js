@@ -159,3 +159,11 @@ export const WALLET_ACTIONS_MSGS = {
 	],
 	default: [{ message: 'WAITING_FOR_USER_ACTION' }],
 }
+
+export const EXECUTE_ACTIONS = {
+	withdraw: 'WITHDRAW',
+	privilegesChange: 'PRIVILEGES_CHANGE',
+	ensChange: 'ENS_CHANGE',
+	openCampaign: 'OPEN_CAMPAIGN',
+	default: 'DEFAULT',
+}

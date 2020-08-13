@@ -30,7 +30,7 @@ import { formatTokenAmount } from 'helpers/formatters'
 import IdentityABI from 'adex-protocol-eth/abi/Identity'
 import { selectChannelsWithUserBalancesEligible } from 'selectors'
 import { getState } from 'store'
-import { AUTH_TYPES } from 'constants/misc'
+import { AUTH_TYPES, EXECUTE_ACTIONS } from 'constants/misc'
 
 const { AdExCore } = contracts
 const Core = new Interface(AdExCore.abi)
@@ -610,6 +610,7 @@ export async function openChannel({
 		Identity,
 		account,
 		getToken,
+		executeAction: EXECUTE_ACTIONS.openCampaign,
 	})
 
 	const { total, totalBN } = await getIdentityTxnsTotalFees({ txnsByFeeToken })
