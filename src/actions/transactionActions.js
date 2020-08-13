@@ -313,6 +313,8 @@ export function validateIdentityWithdraw({
 					dirty,
 				})(dispatch, getState)
 			} catch (err) {
+				console.error('validateIdentityWithdraw', err)
+
 				isValid = false
 			}
 		}
@@ -407,6 +409,7 @@ export function validateIdentityWithdrawAny({
 					dirty,
 				})(dispatch, getState)
 			} catch (err) {
+				console.error('validateIdentityWithdrawAny', err)
 				isValid = false
 			}
 		}
