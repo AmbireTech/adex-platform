@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import {
 	Grid,
@@ -8,6 +8,7 @@ import {
 	ExpansionPanelSummary,
 	Typography,
 } from '@material-ui/core'
+import { Alert, AlertTitle } from '@material-ui/lab'
 import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
 import { AdUnitsTable } from 'components/dashboard/containers/Tables'
 import {
@@ -46,6 +47,7 @@ function CampaignFormPreview() {
 	const openingSpinner = useSelector(state =>
 		selectSpinnerById(state, OPENING_CAMPAIGN)
 	)
+	const [networkCongested, setNetworkCongested] = useState(false)
 
 	const {
 		title,
@@ -70,17 +72,36 @@ function CampaignFormPreview() {
 	const { advanced = {} } = audienceInput.inputs
 
 	useEffect(() => {
+		async function checkNetwork() {
+			const msg = await execute(checkNetworkCongestion())
+
+			if (msg) {
+				setNetworkCongested(msg)
+			}
+		}
 		execute(getCampaignActualFees())
-		execute(checkNetworkCongestion())
+		checkNetwork()
 	}, [])
 
 	return feesSpinner ? (
 		<FullContentSpinner />
 	) : (
 		<ContentBox>
-			{openingSpinner ? (
+			{openingSpinner || networkCongested ? (
 				<ContentStickyTop>
-					<WalletAction t={t} authType={authType} />
+					{openingSpinner && (
+						<Box p={1}>
+							<WalletAction t={t} authType={authType} />
+						</Box>
+					)}
+					{networkCongested && (
+						<Box p={1}>
+							<Alert severity='warning' variant='filled' square>
+								<AlertTitle>{t('NETWORK_WARNING')}</AlertTitle>
+								{networkCongested}
+							</Alert>
+						</Box>
+					)}
 				</ContentStickyTop>
 			) : null}
 			<ContentBody>
