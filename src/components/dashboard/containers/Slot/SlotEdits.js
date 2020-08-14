@@ -16,7 +16,7 @@ import FormSteps from 'components/common/stepper/FormSteps'
 import AdSlotMedia from 'components/dashboard/forms/items/AdSlot/AdSlotMedia'
 import OutlinedPropView from 'components/common/OutlinedPropView'
 import { formatTokenAmount } from 'helpers/formatters'
-import { bigNumberify } from 'ethers/utils'
+import { BigNumber } from 'ethers'
 
 import {
 	execute,
@@ -76,7 +76,9 @@ export const SlotAdvancedRules = ({
 	const minCPM =
 		typeof minPerImpression === 'object'
 			? formatTokenAmount(
-					bigNumberify((item.minPerImpression || {})[address] || '0').mul(1000),
+					BigNumber.from((item.minPerImpression || {})[address] || '0').mul(
+						1000
+					),
 					decimals,
 					true
 			  )

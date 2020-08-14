@@ -29,7 +29,7 @@ import {
 	formatDate,
 	formatNumberWithCommas,
 } from 'helpers/formatters'
-import { bigNumberify } from 'ethers/utils'
+import { BigNumber } from 'ethers'
 import moment from 'moment'
 import { styles } from './styles'
 const useStyles = makeStyles(styles)
@@ -65,7 +65,7 @@ export function PublisherReceiptTpl({ date } = {}) {
 						args: [
 							//Unique receipt number made from identity address and the month of the receipt
 							formatAddress(
-								`${bigNumberify(
+								`${BigNumber.from(
 									moment(date)
 										.startOf('month')
 										.unix() * 1000

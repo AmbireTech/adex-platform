@@ -22,7 +22,7 @@ import { styles } from './styles'
 import classnames from 'classnames'
 import Paper from '@material-ui/core/Paper'
 import Divider from '@material-ui/core/Divider'
-import { bigNumberify } from 'ethers/utils'
+import { BigNumber } from 'ethers'
 
 const INT_STRING = /^[0-9]+$/
 const PAGE_SIZE = 50
@@ -187,8 +187,8 @@ class ListWithControls extends Component {
 				let propB = b[sortProperty]
 
 				if (INT_STRING.test(propA) && INT_STRING.test(propB)) {
-					propA = bigNumberify(propA)
-					propB = bigNumberify(propB)
+					propA = BigNumber.from(propA)
+					propB = BigNumber.from(propB)
 					return (propA.lt(propB) ? -1 : propA.gt(propB) ? 1 : 0) * sortOrder
 				}
 

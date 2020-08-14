@@ -17,7 +17,7 @@ import {
 	selectInitialDataLoadedByData,
 } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
-import { commify } from 'ethers/utils'
+import { commify } from 'ethers'
 import { execute, handlePrintSelectedReceiptsAdvertiser } from 'actions'
 import { useSelector } from 'react-redux'
 import { styles } from './styles'

@@ -2,7 +2,7 @@ import * as types from 'constants/actionTypes'
 import { validEthAddress, freeAdExENS } from '../helpers/validators'
 import { translate } from 'services/translations/translations'
 import { addToast, updateSpinner } from './uiActions'
-import { bigNumberify, parseUnits } from 'ethers/utils'
+import { BigNumber, parseUnits } from 'ethers'
 import { validations, Joi, schemas, constants } from 'adex-models'
 import { validPassword } from 'helpers/validators'
 import {
@@ -317,7 +317,7 @@ export function validateCampaignValidators({ validateId, validators, dirty }) {
 }
 
 const validateAmounts = ({
-	maxDeposit = bigNumberify(0),
+	maxDeposit = BigNumber.from(0),
 	depositAmount,
 	minPerImpression,
 }) => {
@@ -331,10 +331,10 @@ const validateAmounts = ({
 	if (!depositAmount.isZero() && depositAmount.lt(minPerImpression)) {
 		error = { message: 'ERR_CPM_OVER_DEPOSIT', prop: 'minPerImpression' }
 	}
-	if (depositAmount.lte(bigNumberify(0))) {
+	if (depositAmount.lte(BigNumber.from(0))) {
 		error = { message: 'ERR_ZERO_DEPOSIT', prop: 'depositAmount' }
 	}
-	if (minPerImpression.lte(bigNumberify(0))) {
+	if (minPerImpression.lte(BigNumber.from(0))) {
 		error = { message: 'ERR_ZERO_CPM', prop: 'minPerImpression' }
 	}
 
@@ -360,13 +360,13 @@ export function validateFees({
 		const {
 			availableIdentityBalanceMainToken: availableIdentityBalanceMainTokenFormatted,
 		} = selectAccountStatsFormatted(state)
-		const amountNeeded = bigNumberify(feesAmountBN).add(
-			bigNumberify(amountToSpendBN)
+		const amountNeeded = BigNumber.from(feesAmountBN).add(
+			BigNumber.from(amountToSpendBN)
 		)
 
 		const { symbol, decimals } = selectMainToken(state)
 
-		if (amountNeeded.gt(bigNumberify(availableIdentityBalanceMainTokenRaw))) {
+		if (amountNeeded.gt(BigNumber.from(availableIdentityBalanceMainTokenRaw))) {
 			const amountNeededFormatted = formatTokenAmount(
 				amountNeeded,
 				decimals,
@@ -413,7 +413,7 @@ export function validateWithdrawAmount({
 			msg = 'ERR_ZERO_WITHDRAW_AMOUNT'
 		} else if (
 			isValid &&
-			amount.gt(bigNumberify(availableIdentityBalanceMainTokenRaw))
+			amount.gt(BigNumber.from(availableIdentityBalanceMainTokenRaw))
 		) {
 			isValid = false
 			msg = 'ERR_MAX_AMOUNT_TO_WITHDRAW'

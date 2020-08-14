@@ -22,7 +22,7 @@ import {
 } from 'actions'
 import { push } from 'connected-react-router'
 import { schemas, Campaign, helpers } from 'adex-models'
-import { parseUnits } from 'ethers/utils'
+import { parseUnits } from 'ethers'
 import { getAllValidatorsAuthForIdentity } from 'services/smart-contracts/actions/stats'
 import {
 	openChannel,

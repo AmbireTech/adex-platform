@@ -25,7 +25,7 @@ import {
 	selectAudienceByCampaignId,
 	selectCampaignById,
 } from 'selectors'
-import { formatUnits } from 'ethers/utils'
+import { formatUnits } from 'ethers'
 import chartCountriesData from 'world-atlas/countries-50m.json'
 import { scaleLinear } from 'd3-scale'
 import { formatAbbrNum } from 'helpers/formatters'

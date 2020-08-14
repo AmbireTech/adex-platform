@@ -1,5 +1,5 @@
 import React from 'react'
-import { commify } from 'ethers/utils'
+import { commify } from 'ethers'
 import PropTypes from 'prop-types'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { Box } from '@material-ui/core'
