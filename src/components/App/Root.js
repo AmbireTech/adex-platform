@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-import { HashRouter as Router } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import {
 	metamaskChecks,
@@ -27,8 +26,17 @@ import Home from 'components/signin/Home'
 import JustDialog from 'components/common/dialog/JustDialog'
 import { migrateLegacyWallet, removeLegacyKey } from 'services/wallet/wallet'
 import Translate from 'components/translate/Translate'
-import { selectAuth, selectWallet, selectLocation } from 'selectors'
+import { Button } from '@material-ui/core'
+import {
+	selectAuth,
+	selectWallet,
+	selectLocation,
+	t,
+	selectNewVersionAvailable,
+	selectNewVersionAvailableId,
+} from 'selectors'
 import { getMetamaskEthereum } from 'services/smart-contracts/ethers'
+import { ImportantNotifications } from './ImportantNotifications'
 
 const ConnectedCreateQuickIdentity = ConnectHoc(JustDialog(CreateQuickIdentity))
 const ConnectedQuickLogin = ConnectHoc(JustDialog(LoginQuickIdentity))
@@ -72,6 +80,8 @@ const Root = () => {
 	const auth = useSelector(selectAuth)
 	const wallet = useSelector(selectWallet)
 	const location = useSelector(selectLocation)
+	const showNotification = useSelector(selectNewVersionAvailable)
+	const version = useSelector(selectNewVersionAvailableId)
 
 	useEffect(() => {
 		async function initialChecks() {
@@ -99,7 +109,34 @@ const Root = () => {
 	}, [location])
 
 	return (
-		<Router>
+		<>
+			{showNotification && (
+				<ImportantNotifications
+					title={t('RELOAD_REQUIRED')}
+					message={t('SUCCESS_UPDATING_NEW_APP_VERSION', {
+						args: [version],
+					})}
+					severity='success'
+					action={
+						<Button
+							color='primary'
+							size='large'
+							variant='contained'
+							onClick={() => {
+								if (caches) {
+									// Service worker cache should be cleared with caches.delete()
+									caches.keys().then(async function(names) {
+										await Promise.all(names.map(name => caches.delete(name)))
+									})
+								}
+								window.location.reload(true)
+							}}
+						>
+							{t('RELOAD_NOW')}
+						</Button>
+					}
+				/>
+			)}
 			<Switch>
 				<PrivateRoute
 					auth={auth}
@@ -128,7 +165,7 @@ const Root = () => {
 					<PageNotFound />
 				</Route>
 			</Switch>
-		</Router>
+		</>
 	)
 }
 
