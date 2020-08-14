@@ -1,6 +1,56 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.38
+##### *2020-08-13*
+
+### Changed
+- Removed old analytics revenue info alert 
+
+## 4.20.37
+##### *2020-08-13*
+
+### Fixed
+- Analytics year timeframe
+
+## 4.20.36
+##### *2020-08-13*
+
+### Added
+- Month and year timeframes for the analytics
+- Analytics start and end period limits
+- Transak top-up integration
+- Message for applied fees when closing campaign
+- Fees breakdown
+- Base fees from relayer config
+- Sync user and relayed data before every web3 action
+
+### Changed
+- Analytics data to be displayed for the past timefreame period
+- All analytics time periods in the local timezone instead of UTC
+- Removed analytics revenue cutoff
+- Top-up page
+- ADX token address
+- MetaMask API updated
+- Show balance as is - no min, no fees for outstanding balances
+- No pre calculated fees for outstanding balances
+- Using only our web3 node provider for read actions
+
+### Fixed
+- Misc ui bugs
+- Misc styles
+- Ramp top-up modal
+- Campaign pricing bounds auto update
+- Side nav layout
+- MetaMask log out bug
+
+
+## 4.20.35
+##### *2020-07-22*
+
+### Fixed
+- Slot rules on creating and updating
+
 ## 4.20.34
 ##### *2020-07-20*
 

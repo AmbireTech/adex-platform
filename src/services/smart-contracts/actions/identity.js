@@ -28,6 +28,7 @@ import solc from 'solcBrowser'
 import { RoutineAuthorization } from 'adex-protocol-eth/js/Identity'
 import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
 import ScdMcdMigrationABI from 'services/smart-contracts/abi/ScdMcdMigration'
+import { EXECUTE_ACTIONS } from 'constants/misc'
 import { contracts } from 'services/smart-contracts/contractsCfg'
 const { AdExENSManager, ReverseRegistrar } = contracts
 
@@ -126,6 +127,7 @@ export async function withdrawFromIdentity({
 		Identity,
 		account,
 		getToken,
+		executeAction: EXECUTE_ACTIONS.withdraw,
 	})
 
 	const fees = await getIdentityTxnsTotalFees({ txnsByFeeToken, mainToken })
@@ -172,6 +174,7 @@ export async function withdrawFromIdentity({
 			totalBN: fees.totalBN,
 			actualWithdrawAmount,
 			toGet: formatTokenAmount(actualWithdrawAmount, decimals),
+			breakdownFormatted: fees.breakdownFormatted,
 		}
 	}
 
@@ -219,15 +222,21 @@ export async function setIdentityPrivilege({
 		Identity,
 		account,
 		getToken,
+		executeAction: EXECUTE_ACTIONS.privilegesChange,
 	})
 
 	if (getFeesOnly) {
-		const { total, totalBN } = await getIdentityTxnsTotalFees({
+		const {
+			total,
+			totalBN,
+			breakdownFormatted,
+		} = await getIdentityTxnsTotalFees({
 			txnsByFeeToken,
 		})
 		return {
 			fees: total,
 			totalBN,
+			breakdownFormatted,
 		}
 	}
 
@@ -331,17 +340,21 @@ export async function addIdentityENS({ username = '', account, getFeesOnly }) {
 		Identity,
 		account,
 		getToken,
+		executeAction: EXECUTE_ACTIONS.ensChange,
 	})
 
 	const { mainToken } = selectRelayerConfig()
-	const { total, totalBN } = await getIdentityTxnsTotalFees({
-		txnsByFeeToken,
-		mainToken,
-	})
+	const { total, totalBN, breakdownFormatted } = await getIdentityTxnsTotalFees(
+		{
+			txnsByFeeToken,
+			mainToken,
+		}
+	)
 	if (getFeesOnly) {
 		return {
 			fees: total,
 			totalBN,
+			breakdownFormatted,
 		}
 	}
 
@@ -359,6 +372,7 @@ export async function addIdentityENS({ username = '', account, getFeesOnly }) {
 
 export async function getIdentityTxnsWithNoncesAndFees({
 	amountInMainTokenNeeded = '0',
+	executeAction = 'DEFAULT',
 	txns = [],
 	identityAddr,
 	provider,
@@ -382,7 +396,11 @@ export async function getIdentityTxnsWithNoncesAndFees({
 		? (await identityContract.nonce()).toNumber()
 		: 0
 
-	const feesForMainTxns = txns.length
+	const baseFee = bigNumberify(
+		(mainTokenWithFees.executeBaseFee || {})[executeAction] || '0'
+	)
+
+	const mainTxnsFees = txns.length
 		? bigNumberify(
 				!initialNonce
 					? mainTokenWithFees.minDeploy
@@ -393,6 +411,8 @@ export async function getIdentityTxnsWithNoncesAndFees({
 				)
 		  )
 		: bigNumberify(0)
+
+	const feesForMainTxns = baseFee.add(mainTxnsFees)
 
 	const totalAmountInMainTokenNeeded = feesForMainTxns.add(
 		bigNumberify(amountInMainTokenNeeded)
@@ -465,16 +485,22 @@ export async function getIdentityTxnsWithNoncesAndFees({
 	}, {})
 
 	let currentNonce = initialNonce
+	let baseFeeAdded = false
 
 	Object.keys(txnsByFeeToken).forEach(key => {
 		txnsByFeeToken[key] = txnsByFeeToken[key].map(tx => {
 			const { routinesSweepTxCount = 0, extraTxFeesCount = 0, isSweepTx } = tx
 			const feeToken = feeTokenWhitelist[tx.feeTokenAddr]
-			const txFeeAmount = isSweepTx ? feeToken.min : feeToken.minRecommended
+			const isDeployTx = currentNonce === 0
 
-			const minFeeAmount = bigNumberify(
-				currentNonce === 0 ? feeToken.minDeploy : txFeeAmount
-			)
+			const txFeeAmount = isDeployTx
+				? feeToken.minDeploy
+				: isSweepTx
+				? feeToken.min
+				: feeToken.minRecommended
+
+			const addBaseFee =
+				!baseFeeAdded && !isSweepTx && tx.feeTokenAddr === mainToken.address
 
 			const sweepRoutinesFeeAmount = bigNumberify(routinesSweepTxCount).mul(
 				bigNumberify(feeToken.min)
@@ -485,16 +511,30 @@ export async function getIdentityTxnsWithNoncesAndFees({
 			)
 
 			// Total relayer fees for the transaction
-			const feeAmount = minFeeAmount
+			const feeAmount = bigNumberify(txFeeAmount)
 				.add(sweepRoutinesFeeAmount)
 				.add(extraFeesAmount)
+				.add(addBaseFee ? baseFee : bigNumberify(0))
 				.toString()
 
 			// fees that are not pre calculated with in the total identity balance
+			// There are no pre calculated fees in the balance
 			const nonIdentityBalanceFeeAmount = bigNumberify(feeAmount)
-				.sub(bigNumberify(isSweepTx ? feeToken.min : 0))
-				.sub(bigNumberify(routinesSweepTxCount).mul(bigNumberify(feeToken.min)))
-				.toString()
+			// .sub(bigNumberify(isSweepTx ? feeToken.min : 0))
+			// .sub(bigNumberify(routinesSweepTxCount).mul(bigNumberify(feeToken.min)))
+			// .toString()
+
+			const feesBreakdown = {
+				...(addBaseFee ? { baseFee } : {}),
+				routinesSweepTxCount,
+				sweepRoutinesFeeAmount,
+				extraTxFeesCount,
+				extraFeesAmount,
+				feeAmount,
+				txFeeAmount,
+				isDeployTx,
+				isSweepTx,
+			}
 
 			const txWithNonce = {
 				...tx,
@@ -502,6 +542,8 @@ export async function getIdentityTxnsWithNoncesAndFees({
 				feeAmount,
 				nonce: currentNonce,
 				nonIdentityBalanceFeeAmount,
+				feesBreakdown,
+				executeAction,
 			}
 
 			currentNonce += 1
@@ -583,23 +625,74 @@ export async function getIdentityTxnsTotalFees({
 }) {
 	const feeTokenWhitelist = selectFeeTokenWhitelist()
 	const bigZero = bigNumberify('0')
-	const feesData = Object.values(txnsByFeeToken)
+	const { total, byToken, totalBreakdown } = Object.values(txnsByFeeToken)
 		.reduce((all, byFeeToken) => all.concat(byFeeToken), [])
 		.reduce(
 			(result, tx) => {
-				const txFeeAmount = bigNumberify(tx.nonIdentityBalanceFeeAmount)
-				result.total = result.total.add(txFeeAmount)
+				const {
+					feesBreakdown,
+					nonIdentityBalanceFeeAmount,
+					feeTokenAddr,
+					executeAction,
+				} = tx
+				const { total, byToken, totalBreakdown } = result
+				const txFeeAmount = bigNumberify(nonIdentityBalanceFeeAmount)
 
-				result.byToken[tx.feeTokenAddr] = (
-					result.byToken[tx.feeTokenAddr] || bigZero
-				).add(txFeeAmount)
+				result.total = total.add(txFeeAmount)
+				result.byToken[feeTokenAddr] = (byToken[feeTokenAddr] || bigZero).add(
+					txFeeAmount
+				)
+
+				result.totalBreakdown = {
+					baseFee: bigNumberify(totalBreakdown.baseFee || '0').add(
+						bigNumberify(feesBreakdown.baseFee || '0')
+					),
+					sweepRoutinesFeeAmount: bigNumberify(
+						totalBreakdown.sweepRoutinesFeeAmount || '0'
+					).add(bigNumberify(feesBreakdown.sweepRoutinesFeeAmount)),
+					extraFeesAmount: bigNumberify(
+						totalBreakdown.extraFeesAmount || '0'
+					).add(bigNumberify(feesBreakdown.extraFeesAmount)),
+					feeAmount: bigNumberify(totalBreakdown.feeAmount || '0').add(
+						bigNumberify(feesBreakdown.feeAmount)
+					),
+					routinesSweepTxCount:
+						(totalBreakdown.routinesSweepTxCount || 0) +
+						(feesBreakdown.routinesSweepTxCount || 0),
+					extraTxFeesCount:
+						(totalBreakdown.extraTxFeesCount || 0) +
+						(feesBreakdown.extraTxFeesCount || 0),
+					txnsCount:
+						totalBreakdown.txnsCount + (feesBreakdown.isSweepTx ? 0 : 1),
+					sweepTxnsCount:
+						totalBreakdown.sweepTxnsCount +
+						(totalBreakdown.routinesSweepTxCount || 0) +
+						(feesBreakdown.isSweepTx ? 1 : 0),
+					sweepTxnsFeeAmount: bigNumberify(
+						totalBreakdown.sweepTxnsFeeAmount || '0'
+					).add(
+						bigNumberify(
+							feesBreakdown.isSweepTx
+								? feesBreakdown.txFeeAmount
+								: feesBreakdown.sweepRoutinesFeeAmount
+						)
+					),
+					deployFee: feesBreakdown.isDeployTx
+						? bigNumberify(feesBreakdown.txFeeAmount)
+						: null,
+					executeAction,
+				}
 
 				return result
 			},
-			{ total: bigZero, byToken: {} }
+			{
+				total: bigZero,
+				byToken: {},
+				totalBreakdown: { txnsCount: 0, sweepTxnsCount: 0 },
+			}
 		)
 
-	const byToken = Object.entries(feesData.byToken).map(([key, value]) => {
+	const byTokenFormatted = Object.entries(byToken).map(([key, value]) => {
 		const { decimals, symbol } = feeTokenWhitelist[key]
 		return {
 			address: key,
@@ -614,16 +707,67 @@ export async function getIdentityTxnsTotalFees({
 		}
 	})
 
-	const fees = {
-		// TODO: change to return total as BN and add totalFormatted
-		total: formatTokenAmount(
-			feesData.total.toString(),
+	const breakdownFormatted = {
+		...totalBreakdown,
+		baseFee: formatTokenAmount(
+			totalBreakdown.baseFee.toString(),
 			mainToken.decimals || 18,
 			false,
 			2
 		),
-		totalBN: feesData.total,
-		byToken,
+		feeAmount: formatTokenAmount(
+			totalBreakdown.feeAmount.toString(),
+			mainToken.decimals || 18,
+			false,
+			2
+		),
+		sweepRoutinesFeeAmount: formatTokenAmount(
+			totalBreakdown.sweepRoutinesFeeAmount.toString(),
+			mainToken.decimals || 18,
+			false,
+			2
+		),
+		extraFeesAmount: formatTokenAmount(
+			totalBreakdown.extraFeesAmount.toString(),
+			mainToken.decimals || 18,
+			false,
+			2
+		),
+		txnsFee: formatTokenAmount(
+			totalBreakdown.feeAmount
+				.sub(totalBreakdown.sweepTxnsFeeAmount)
+				.toString(),
+			mainToken.decimals || 18,
+			false,
+			2
+		),
+		sweepTxnsFeeAmount: formatTokenAmount(
+			totalBreakdown.sweepTxnsFeeAmount.toString(),
+			mainToken.decimals || 18,
+			false,
+			2
+		),
+		deployFee: totalBreakdown.deployFee
+			? formatTokenAmount(
+					totalBreakdown.deployFee.toString(),
+					mainToken.decimals || 18,
+					false,
+					2
+			  )
+			: null,
+	}
+
+	const fees = {
+		// TODO: change to return total as BN and add totalFormatted
+		total: formatTokenAmount(
+			total.toString(),
+			mainToken.decimals || 18,
+			false,
+			2
+		),
+		breakdownFormatted,
+		totalBN: total,
+		byToken: byTokenFormatted,
 	}
 
 	return fees
@@ -698,6 +842,7 @@ export async function withdrawOtherTokensFromIdentity({
 		Identity,
 		account,
 		getToken,
+		executeAction: EXECUTE_ACTIONS.withdraw,
 	})
 
 	const fees = await getIdentityTxnsTotalFees({ txnsByFeeToken, mainToken })
@@ -705,6 +850,7 @@ export async function withdrawOtherTokensFromIdentity({
 	if (getFeesOnly) {
 		return {
 			fees: fees.total,
+			breakdownFormatted: fees.breakdownFormatted,
 			toGet: formatTokenAmount(toWithdraw, decimals),
 		}
 	}

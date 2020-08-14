@@ -173,11 +173,11 @@ export function onUploadLocalWallet(event) {
 	}
 }
 
-export function ownerIdentities({ owner, authType }) {
+export function updateOwnerIdentities({ owner }) {
 	return async function(dispatch, getState) {
 		updateSpinner(GETTING_OWNER_IDENTITIES, true)(dispatch)
 		try {
-			const { provider } = await getEthers(authType)
+			const { provider } = await getEthers(AUTH_TYPES.READONLY)
 			const identityData = await getOwnerIdentities({ owner })
 			const loginSelectedIdentity = selectLoginSelectedIdentity(getState())
 			const data = Object.entries(identityData)
@@ -699,12 +699,10 @@ export function handleSignupLink(search) {
 
 export function resolveEnsAddress({ address }) {
 	return async function(dispatch, getState) {
-		const state = getState()
-		const authType = selectAuthType(state)
 		updateSpinner(`ens-${address}`, true)(dispatch)
 
 		try {
-			const { provider } = await getEthers(authType)
+			const { provider } = await getEthers(AUTH_TYPES.READONLY)
 			const name = await provider.lookupAddress(address)
 			return dispatch({
 				type: types.UPDATE_RESOLVE_ENS_ADDRESS,
@@ -733,14 +731,13 @@ export function checkAuthMetamask() {
 			const authType = AUTH_TYPES.METAMASK.name
 			const { provider } = await getEthers(authType)
 			const wallet = {
-				authType: authType,
+				authType,
 			}
 
 			const metamaskSigner = await getSigner({ wallet, provider })
 			const address = await metamaskSigner.getAddress()
 			const stats = await getAddressBalances({
 				address: { address },
-				authType,
 				getFullBalances: true,
 			})
 
@@ -748,7 +745,7 @@ export function checkAuthMetamask() {
 
 			updateIdentityWallet({
 				address,
-				authType: AUTH_TYPES.METAMASK.name,
+				authType,
 				signType: AUTH_TYPES.METAMASK.signType,
 			})(dispatch, getState)
 		} catch (err) {
@@ -786,7 +783,7 @@ export function connectTrezor() {
 				updateSpinner(AUTH_WAITING_ADDRESS_DATA, false)(dispatch)
 
 				const allAddressesData = payload.map(address =>
-					getAddressBalances({ address, authType: AUTH_TYPES.TREZOR.name })
+					getAddressBalances({ address })
 				)
 
 				const results = await Promise.all(allAddressesData)

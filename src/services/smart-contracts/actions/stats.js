@@ -9,6 +9,7 @@ import {
 	selectRoutineWithdrawTokens,
 	selectFeeTokenWhitelist,
 } from 'selectors'
+import { AUTH_TYPES } from 'constants/misc'
 
 const privilegesNames = constants.valueToKey(constants.IdentityPrivilegeLevel)
 
@@ -34,9 +35,12 @@ export const getTotalAccountRevenue = async ({ all }) => {
 
 			const token = withdrawTokens[depositAsset]
 
-			const hasMinBalance = bigNumberify(balance).gt(
-				bigNumberify(token.minFinal)
-			)
+			// const hasMinBalance = bigNumberify(balance).gt(
+			// 	bigNumberify(token.minFinal)
+			// )
+
+			// NOTE: Show everything
+			const hasMinBalance = bigNumberify(balance).gt(bigNumberify(0))
 
 			const balanceMainToken = hasMinBalance
 				? await tokenInMainTokenValue({
@@ -54,11 +58,10 @@ export const getTotalAccountRevenue = async ({ all }) => {
 }
 
 export const getWithdrawTokensBalances = async ({
-	authType,
 	address,
 	getFullBalances,
 }) => {
-	const { getToken } = await getEthers(authType)
+	const { getToken } = await getEthers(AUTH_TYPES.READONLY)
 	const { routineWithdrawTokens, mainToken } = selectRelayerConfig()
 	const balancesCalls = routineWithdrawTokens.map(async token => {
 		const tokenContract = getToken(token)
@@ -107,17 +110,12 @@ export const getWithdrawTokensBalances = async ({
 	}
 }
 
-export async function getAddressBalances({
-	address,
-	authType,
-	getFullBalances,
-}) {
-	const { provider } = await getEthers(authType)
+export async function getAddressBalances({ address, getFullBalances }) {
+	const { provider } = await getEthers(AUTH_TYPES.READONLY)
 
 	const calls = [
 		provider.getBalance(address.address),
 		getWithdrawTokensBalances({
-			authType,
 			address: address.address,
 			getFullBalances,
 		}),
@@ -148,9 +146,8 @@ export async function getAccountStats({
 	all,
 }) {
 	const { wallet, identity } = account
-	const { authType } = wallet
 	const { address } = identity
-	const { getIdentity } = await getEthers(authType)
+	const { getIdentity } = await getEthers(AUTH_TYPES.READONLY)
 	const { decimals } = selectMainToken()
 
 	const { status = {} } = identity
@@ -164,7 +161,7 @@ export async function getAccountStats({
 	}
 
 	const calls = [
-		getWithdrawTokensBalances({ authType, address }),
+		getWithdrawTokensBalances({ address }),
 		privilegesAction,
 		getTotalAccountRevenue({ all }),
 	]

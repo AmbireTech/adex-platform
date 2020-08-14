@@ -14,7 +14,7 @@ import { VALIDATOR_ANALYTICS_TIMEFRAMES } from 'constants/misc'
 import StatsCard from './StatsCard'
 import { makeStyles } from '@material-ui/core/styles'
 import DateTimePicker from 'components/common/DateTimePicker'
-import { WeeklyDatePicker, DatePicker } from 'components/common/DatePicker'
+import { PeriodDatePicker, DatePicker } from 'components/common/DatePicker'
 import Anchor from 'components/common/anchor/anchor'
 
 import {
@@ -25,14 +25,13 @@ import {
 	ALEX_GREY,
 } from 'components/App/themeMUi'
 import { styles } from './styles'
-import { formatNumberWithCommas, formatDateTime } from 'helpers/formatters'
+import { formatNumberWithCommas } from 'helpers/formatters'
 import {
 	execute,
 	updateIdSideAnalyticsChartTimeframe,
 	updateIdSideAnalyticsChartPeriod,
 	updateAnalyticsPeriodPrevNextLive,
 	updateAccountAnalyticsThrottled,
-	updateMissingRevenueDataPointAccepted,
 } from 'actions'
 import {
 	t,
@@ -52,10 +51,15 @@ import {
 	selectAuth,
 	selectInitialDataLoadedByData,
 	selectMissingRevenueDataPointsAccepted,
+	selectAnalyticsMinAndMaxDates,
 } from 'selectors'
 import dateUtils from 'helpers/dateUtils'
 import { useKeyPress } from 'hooks/useKeyPress'
 import { analyticsLoopCustom } from 'services/store-data/analytics'
+import {
+	getPeriodLabel,
+	getPeriodDataPointLabel,
+} from 'helpers/analyticsTimeHelpers'
 
 const min = 60 * 1000
 
@@ -63,6 +67,8 @@ const timeoutMap = {
 	hour: min,
 	day: 10 * min,
 	week: 30 * min,
+	month: 60 * 2 * min,
+	year: 60 * 24 * min,
 }
 
 const timeFrames = VALIDATOR_ANALYTICS_TIMEFRAMES.map(tf => {
@@ -116,73 +122,59 @@ const metrics = {
 	],
 }
 
-const getDefaultLabels = ({ start, end }) => [
-	formatDateTime(start),
-	formatDateTime(end),
+const getDefaultLabels = ({ timeframe, start, end }) => [
+	getPeriodDataPointLabel({ timeframe, time: start }),
+	getPeriodDataPointLabel({ timeframe, time: end }),
 ]
 
-const DatePickerSwitch = ({ timeframe, ...rest }) => {
+const DatePickerSwitch = ({ timeframe, period: { start, end }, ...rest }) => {
 	switch (timeframe) {
 		case 'week':
-			return <WeeklyDatePicker {...rest} />
+			return (
+				<PeriodDatePicker
+					{...rest}
+					period='week'
+					labelFunc={val => getPeriodLabel({ timeframe, start, end })}
+				/>
+			)
 		case 'day':
 			return (
 				<DatePicker
-					labelFunc={val => dateUtils.format(dateUtils.date(val), 'MMM DD "YY')}
 					{...rest}
+					labelFunc={val => getPeriodLabel({ timeframe, start, end })}
 				/>
 			)
 		case 'hour':
 			return (
 				<DateTimePicker
+					{...rest}
 					views={['date', 'hours']}
 					roundHour
 					minutesStep={60}
-					labelFunc={val =>
-						`${dateUtils.format(
-							dateUtils.date(val),
-							'MMM DD "YY - (HH:mm'
-						)} - ${dateUtils.format(
-							dateUtils.setMinutes(dateUtils.date(val), 59),
-							'HH:mm)'
-						)}`
-					}
+					labelFunc={val => getPeriodLabel({ timeframe, start, end })}
+				/>
+			)
+		case 'month':
+			return (
+				<PeriodDatePicker
 					{...rest}
+					period='month'
+					labelFunc={val => getPeriodLabel({ timeframe, start, end })}
+				/>
+			)
+		case 'year':
+			return (
+				<DatePicker
+					{...rest}
+					views={['year', 'month']}
+					maxDate={dateUtils.addMonths(dateUtils.date(), -11)}
+					labelFunc={val => getPeriodLabel({ timeframe, start, end })}
 				/>
 			)
 		default:
 			return <DatePicker {...rest} />
 	}
 }
-
-const ImpressionsAlert = ({ impressions = 0 }) => (
-	<Alert
-		variant='outlined'
-		severity='info'
-		onClose={() => {
-			execute(updateMissingRevenueDataPointAccepted(true))
-		}}
-	>
-		<div>
-			{t('IMPRESSIONS_AND_REVINUE_INFO', {
-				args: [
-					impressions,
-					<Anchor
-						key='publisher-revenue-notice'
-						color='primary'
-						underline='always'
-						target='_blank'
-						href={
-							'https://help.adex.network/hc/en-us/articles/360012130399-Why-are-there-impressions-but-no-revenue-'
-						}
-					>
-						{<strong>{t('LEARN_MORE')}</strong>}
-					</Anchor>,
-				],
-			})}
-		</div>
-	</Alert>
-)
 
 export function BasicStats() {
 	const useStyles = makeStyles(styles)
@@ -195,7 +187,9 @@ export function BasicStats() {
 	const { start, end } = useSelector(selectIdentitySideAnalyticsPeriod)
 	const timeframe = useSelector(selectIdentitySideAnalyticsTimeframe)
 	const uiSide = useSelector(selectSide)
+	// NOTE: side can be: for-publisher, for-advertiser ot current campaign in details Id
 	const side = useSelector(selectAnalyticsDataSide)
+	const { minDate, maxDate } = useSelector(selectAnalyticsMinAndMaxDates)
 	const [loop, setLoop] = useState()
 	const allChannelsLoaded = useSelector(state =>
 		selectInitialDataLoadedByData(state, 'allChannels')
@@ -208,15 +202,12 @@ export function BasicStats() {
 	)
 	const initialDataLoaded =
 		allChannelsLoaded && advAnalyticsLoaded && itemsLoaded
-	const missingRevenuePointsAccepted = useSelector(
-		selectMissingRevenueDataPointsAccepted
-	)
 	const [data1Active, setData1Active] = useState(true)
 	const [data2Active, setData2Active] = useState(true)
 	const [data3Active, setData3Active] = useState(true)
 	const [data4Active, setData4Active] = useState(true)
 
-	const defaultLabels = getDefaultLabels({ start, end })
+	const defaultLabels = getDefaultLabels({ timeframe, start, end })
 
 	const totalImpressions = useSelector(state =>
 		selectTotalImpressions(state, {
@@ -328,17 +319,22 @@ export function BasicStats() {
 			x => x !== null
 		)
 
-	const showRevenueInfo =
-		!missingRevenuePointsAccepted &&
-		uiSide === 'publisher' &&
-		dataSynced &&
-		!!totalImpressions
-
 	return (
 		uiSide && (
 			<Box>
-				<Box display='flex' flexDirection='row' flexWrap='wrap'>
-					<Box display='flex' flexDirection='row' flexWrap='wrap' flexGrow={1}>
+				<Box
+					display='flex'
+					flexDirection='row'
+					flexWrap='wrap'
+					alignItems='stretch'
+				>
+					<Box
+						display='flex'
+						flexDirection='row'
+						flexWrap='wrap'
+						flexGrow={1}
+						alignItems='start'
+					>
 						<Box m={1} ml={0} flexGrow='1'>
 							<Dropdown
 								fullWidth
@@ -356,20 +352,24 @@ export function BasicStats() {
 						</Box>
 						<Box m={1} ml={0} flexGrow='1'>
 							<DatePickerSwitch
+								period={{ start, end }}
 								timeframe={timeframe}
 								value={start}
 								minutesStep={60}
 								onChange={val => {
 									execute(updateIdSideAnalyticsChartPeriod(val))
 								}}
+								InputProps={{ multiline: true, className: classes.datePicker }}
 								disableFuture
 								inputVariant='outlined'
 								fullWidth
 								calendarIcon
 								label={t('ANALYTICS_PERIOD')}
-								max={Date.now()}
+								maxDate={maxDate}
+								minDate={minDate}
 								// Only when picking future hours as they can't be disabled
-								maxDateMessage={t('MAX_DATE_ERROR')}
+								maxDateMessage='' //{t('MAX_DATE_ERROR')}
+								minDateMessage='' // we do not need error msgs e.g. for new accounts
 								strictCompareDates
 								onBackClick={e => {
 									e.stopPropagation()
@@ -456,11 +456,6 @@ export function BasicStats() {
 					</StatsCard>
 				</Box>
 
-				{showRevenueInfo && (
-					<Box m={1}>
-						<ImpressionsAlert impressions={totalImpressions} />
-					</Box>
-				)}
 				<Box mt={1}>
 					<SimpleStatistics
 						start={start}

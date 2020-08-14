@@ -32,5 +32,10 @@ export const styles = theme => {
 			transform: 'rotate(-45deg)',
 			pointerEvents: 'none',
 		},
+		// NOTE: need this to match multilenie datepicker and dropdown heights
+		datePicker: {
+			paddingTop: 9.108,
+			paddingBottom: 9.108,
+		},
 	}
 }

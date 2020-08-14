@@ -18,7 +18,7 @@ import {
 	UPDATING_TARGETING_DATA,
 } from 'constants/spinners'
 import { getErrorMsg } from 'helpers/errors'
-import { fillEmptyTime } from 'helpers/timeHelpers'
+import { fillEmptyTime } from 'helpers/analyticsTimeHelpers'
 import { getUnitsStatsByType } from 'services/adex-market/aggregates'
 import { getTargetingData } from 'services/adex-market/actions'
 import {
@@ -37,6 +37,7 @@ import {
 import { bigNumberify } from 'ethers/utils'
 import moment from 'moment'
 import { FETCHING_PUBLISHER_RECEIPTS } from 'constants/spinners'
+import { DEFAULT_WEEK_HOURS_SPAN } from 'helpers/analyticsTimeHelpers'
 
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
@@ -44,16 +45,20 @@ const analyticsParams = ({ timeframe, side }) => {
 	const callsParams = []
 
 	VALIDATOR_ANALYTICS_EVENT_TYPES.forEach(eventType =>
-		VALIDATOR_ANALYTICS_METRICS.forEach(metric =>
+		VALIDATOR_ANALYTICS_METRICS.forEach(metric => {
+			const segmentByChannel =
+				side === 'for-publisher' && metric === 'eventPayouts' ? true : undefined
+			const limit = segmentByChannel ? 100 * 25 : 100
 			callsParams.push({
 				metric,
 				timeframe,
 				side,
 				eventType,
-				...(side === 'for-publisher' &&
-					metric === 'eventPayouts' && { segmentByChannel: true }),
+				weekHoursSpan: DEFAULT_WEEK_HOURS_SPAN,
+				segmentByChannel,
+				limit,
 			})
-		)
+		})
 	)
 
 	return callsParams
@@ -67,12 +72,7 @@ const analyticsCampaignsParams = () => {
 	return callsParams
 }
 
-function aggrByChannelsSegments({
-	aggr,
-	allChannels,
-	feeTokens,
-	withdrawTokens,
-}) {
+function aggrByChannelsSegments({ aggr, allChannels, withdrawTokens }) {
 	if (!Object.keys(allChannels).length) {
 		return []
 	}
@@ -85,15 +85,23 @@ function aggrByChannelsSegments({
 				const { time } = a
 				const { aggregations, channels, all } = data
 				const channelId = a.channelId.toLowerCase()
+				const {
+					depositAmount,
+					balanceNum,
+					//  depositAsset,
+					//  status,
+					// 	balance
+				} = allChannels[channelId] || {}
 
-				const { depositAmount, balanceNum, depositAsset, status } =
-					allChannels[channelId] || {}
+				// NOTE: check if the channel has lifetime min balance e.g. it is in the total balance
+				// - need to be synced with relayer way for auto sweep - only when campaign is complete
 
-				const { minPlatform, minFinal } = withdrawTokens[depositAsset]
-				const { min } = feeTokens[depositAsset]
-				const isExpired = status === 'Expired'
-				const minBalance = isExpired ? minFinal : minPlatform
+				// const { minPlatform, minFinal } = withdrawTokens[depositAsset]
+				// const isExpired = status === 'Expired'
+				// const minBalance = isExpired ? minFinal : minPlatform
+				// const hasMinBalance = bigNumberify(balance).gt(bigNumberify(minBalance))
 
+				// if (hasMinBalance) {
 				const current = channels[channelId] || { aggr: [] }
 
 				const value = bigNumberify(a.value || 0)
@@ -108,43 +116,16 @@ function aggrByChannelsSegments({
 				}
 				const currentChannelValue = bigNumberify(current.value || 0).add(value)
 
-				const hasMinBalance = currentChannelValue.gt(bigNumberify(minBalance))
 				const currentTimeValue = currentAggr.value
 
 				current.value = currentChannelValue
 
-				if (hasMinBalance && !current.feeSubtracted) {
-					current.feeSubtracted = true
-					const currentAvailable = currentChannelValue.sub(bigNumberify(min))
-					const currentAdded = bigNumberify(0)
-					const points = current.aggr
-
-					for (let index = points.length - 1; index >= 0; index--) {
-						const point = points[index]
-						currentAdded.add(point.value)
-
-						const curInnerAggr = aggregations[point.time] || {
-							time,
-							value: bigNumberify(0),
-						}
-
-						if (currentAdded.lt(currentAvailable)) {
-							curInnerAggr.value = curInnerAggr.value.add(point.value)
-							aggregations[point.time] = curInnerAggr
-						} else
-							curInnerAggr.value = curInnerAggr.value.add(
-								currentAdded.sub(currentAvailable)
-							)
-						aggregations[point.time] = curInnerAggr
-						break
-					}
-				} else if (hasMinBalance && current.feeSubtracted) {
-					currentAggr.value = value.add(currentTimeValue)
-				}
+				currentAggr.value = value.add(currentTimeValue)
 
 				channels[channelId] = current
 				aggregations[time] = currentAggr
 				all[time] = a.value || all[time]
+				// }
 
 				return { aggregations, channels, all }
 			},
@@ -176,7 +157,7 @@ export const updateAccountAnalytics = throttle(
 		const side = selectAnalyticsDataSide(state)
 		const timeframe = selectIdentitySideAnalyticsTimeframe(state)
 		const allChannels = selectChannelsWithUserBalancesAll(state)
-		const { start, end } = selectIdentitySideAnalyticsPeriod(state)
+		const { start, end, callEnd } = selectIdentitySideAnalyticsPeriod(state)
 		const feeTokens = selectFeeTokenWhitelist(state)
 		const withdrawTokens = selectRoutineWithdrawTokens(state)
 		try {
@@ -212,7 +193,7 @@ export const updateAccountAnalytics = throttle(
 					identityAnalytics({
 						...opts,
 						start,
-						end,
+						end: callEnd || end,
 						leaderAuth,
 					})
 						.then(({ aggregates, metric }) => {
@@ -443,7 +424,7 @@ export function updateAnalyticsLastChecked() {
 	return async function(dispatch) {
 		return dispatch({
 			type: types.UPDATE_ANALYTICS_LAST_CHECKED,
-			value: Date.now(),
+			value: new Date(),
 		})
 	}
 }

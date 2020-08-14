@@ -19,8 +19,6 @@ import {
 	MediaCard,
 	ItemWebsite,
 	ArchiveItemBtn,
-	ItemMinPerImpression,
-	SlotAdultContent,
 } from 'components/dashboard/containers/ItemCommon/'
 import { t } from 'selectors'
 
@@ -35,6 +33,7 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 		targetUrl,
 		website,
 		archived,
+		rules,
 	} = item
 	const { title: errTitle, description: errDescription } = hookProps.validations
 
@@ -78,6 +77,20 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 								</ExpansionPanelSummary>
 								<Box p={1}>
 									<SlotAdvancedRules item={item} {...hookProps} />
+								</Box>
+							</ExpansionPanel>
+						</Box>
+						<Box py={1}>
+							<ExpansionPanel square={true} variant='outlined'>
+								<ExpansionPanelSummary
+									expandIcon={<ExpandMoreIcon />}
+									aria-controls='slot-rules-content'
+									id='slot-rules-header'
+								>
+									<Typography>{t('SLOT_RULES')}</Typography>
+								</ExpansionPanelSummary>
+								<Box p={1} color='grey.contrastText' bgcolor='grey.main'>
+									<pre>{JSON.stringify(rules || [], null, 2)}</pre>
 								</Box>
 							</ExpansionPanel>
 						</Box>

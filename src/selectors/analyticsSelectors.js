@@ -3,8 +3,14 @@ import { createSelector } from 'reselect'
 import {
 	selectChannelsWithUserBalancesAll,
 	selectIdentitySideAnalyticsTimeframe,
+	selectAccountIdentityCreatedDate,
+	selectCampaignInDetails,
 } from 'selectors'
-import { formatTokenAmount, formatDateTime } from 'helpers/formatters'
+import { formatTokenAmount } from 'helpers/formatters'
+import {
+	getPeriodDataPointLabel,
+	getMinStartDateTimeByTimeframe,
+} from 'helpers/analyticsTimeHelpers'
 import {
 	selectNewItemByTypeAndId,
 	selectIdentitySideAnalyticsPeriod,
@@ -33,28 +39,53 @@ export const selectAdvancedAnalytics = createSelector(
 export const selectAnalyticsLastChecked = createSelector(
 	selectAnalytics,
 	({ lastChecked }) => {
-		return lastChecked || Date.now()
+		return lastChecked || new Date()
 	}
 )
 
 export const selectAnalyticsLiveTimestamp = createSelector(
-	[selectIdentitySideAnalyticsTimeframe, selectAnalyticsLastChecked],
-	(timeframe, lastChecked) => {
+	[
+		selectIdentitySideAnalyticsTimeframe,
+		selectAnalyticsLastChecked,
+		selectCampaignInDetails,
+	],
+	(timeframe, lastChecked, campaign) => {
+		const currentDate = campaign
+			? dateUtils.date(
+					Math.min(campaign.withdrawPeriodStart, +dateUtils.date())
+			  )
+			: dateUtils.date(lastChecked)
+		let start = dateUtils.date(currentDate)
 		switch (timeframe) {
 			case 'hour':
-				return +dateUtils.date(lastChecked).startOf('hour')
+				const hourStart = dateUtils.addMinutes(currentDate, -59)
+				start = dateUtils.startOfMinute(hourStart)
+				break
 			case 'day':
-				return +dateUtils.date(lastChecked).startOf('day')
+				const dayStart = dateUtils.addHours(currentDate, -23)
+				start = dateUtils.startOfHour(dayStart)
+				break
 			case 'week':
-				return +dateUtils
-					.date(lastChecked)
-					.startOf('week')
-					.add(23, 'hours')
-					.utc()
-					.startOf('day')
+				const weekStart = dateUtils.addDays(currentDate, -6)
+				start = dateUtils.getHourSpanStart(weekStart, 3)
+				break
+			case 'month':
+				const monthStart = dateUtils.addDays(
+					dateUtils.addMonths(currentDate, -1),
+					1
+				)
+				start = dateUtils.startOfDay(monthStart)
+				break
+			case 'year':
+				const yearStart = dateUtils.addMonths(currentDate, -11)
+				start = dateUtils.startOfMonth(yearStart)
+				break
 			default:
-				return +dateUtils.date(lastChecked).startOf('hour')
+				start = dateUtils.startOfHour(start)
+				break
 		}
+
+		return +start
 	}
 )
 
@@ -540,12 +571,14 @@ export const selectStatsChartData = createSelector(
 			return { data: selectAnalyticsDataAggr(state, rest), noLastOne, ...rest }
 		},
 	],
-	({ data = [], noLastOne, metric, ...rest }) => {
+	({ data = [], noLastOne, metric, timeframe, ...rest }) => {
 		const aggr = noLastOne ? data.slice(0, -1) : data
 		return aggr.reduce(
 			(memo, item) => {
 				const { time, value } = item
-				memo.labels.push(formatDateTime(time))
+				let label = getPeriodDataPointLabel({ timeframe, time })
+
+				memo.labels.push(label)
 				memo.datasets.push(
 					value !== null ? parseValueByMetric({ value, metric }) : value
 				)
@@ -644,11 +677,36 @@ export const selectAnalyticsNowLabel = createSelector(
 				)
 			case 'week':
 				return dateUtils.format(
-					dateUtils.getNearestSixHoursUTC(6, lastChecked),
+					dateUtils.getHourSpanStart(lastChecked, 3),
 					DEFAULT_DATETIME_FORMAT
 				)
 			default:
 				return dateUtils.format(dateUtils.date(), DEFAULT_DATETIME_FORMAT)
+		}
+	}
+)
+
+export const selectAnalyticsMinAndMaxDates = createSelector(
+	[
+		selectCampaignInDetails,
+		selectAccountIdentityCreatedDate,
+		selectIdentitySideAnalyticsTimeframe,
+	],
+	(campaign = {}, dateCreated, timeframe) => {
+		const { activeFrom, withdrawPeriodStart, status = {} } = campaign
+
+		const minDate = getMinStartDateTimeByTimeframe({
+			timeframe,
+			time: dateUtils.date(activeFrom || dateCreated),
+		})
+		const maxDate = getMinStartDateTimeByTimeframe({
+			timeframe,
+			time: status.closedDate || withdrawPeriodStart || dateUtils.date(),
+		})
+
+		return {
+			minDate: +minDate,
+			maxDate: +maxDate,
 		}
 	}
 )

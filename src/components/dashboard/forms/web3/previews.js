@@ -1,16 +1,17 @@
 import React from 'react'
-import ListItemText from '@material-ui/core/ListItemText'
+import { Box, ListItemText } from '@material-ui/core'
+
 import { PropRow } from 'components/common/dialog/content'
+import { t } from 'selectors'
 
 export const IdentityWithdrawPreview = ({
-	t,
 	withdrawTo,
 	classes,
 	feesData,
 	amountToWithdraw,
 	symbol,
 }) => (
-	<div>
+	<Box>
 		<PropRow
 			key='withdrawTo'
 			left={t('withdrawTo', { isProp: true })}
@@ -29,18 +30,17 @@ export const IdentityWithdrawPreview = ({
 				/>
 			}
 		/>
-	</div>
+	</Box>
 )
 
 export const SetPrivilegePreview = ({
-	t,
 	setAddr,
 	classes,
 	feesData,
 	privLevel,
 	symbol,
 }) => (
-	<div>
+	<Box>
 		<PropRow
 			key='setAddr'
 			left={t('setAddr', { isProp: true })}
@@ -59,18 +59,17 @@ export const SetPrivilegePreview = ({
 				/>
 			}
 		/>
-	</div>
+	</Box>
 )
 
 export const SetENSPreview = ({
-	t,
 	username,
 	address,
 	classes,
 	feesData,
 	symbol,
 }) => (
-	<div>
+	<Box>
 		<PropRow
 			key='addr'
 			left={t('ENS_ADDR_TO_BE_SET')}
@@ -93,18 +92,17 @@ export const SetENSPreview = ({
 				/>
 			}
 		/>
-	</div>
+	</Box>
 )
 
 export const IdentityWithdrawAnyPreview = ({
-	t,
 	withdrawTo,
 	tokenAddress,
 	classes,
 	feesData,
 	amountToWithdraw,
 }) => (
-	<div>
+	<Box>
 		<PropRow
 			key='withdrawTo'
 			left={t('withdrawTo', { isProp: true })}
@@ -128,5 +126,5 @@ export const IdentityWithdrawAnyPreview = ({
 				/>
 			}
 		/>
-	</div>
+	</Box>
 )

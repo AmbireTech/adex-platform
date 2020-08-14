@@ -7,8 +7,20 @@ import 'moment/min/locales'
 // as adding hours and start / end of weeks. This is why I have created an
 // extention class. We use this as MuiPickersUtilsProvider as well
 export class DateUtils extends MomentUtils {
+	startOfMinute(date) {
+		return date.clone().startOf('minute')
+	}
+
+	startOfHour(date) {
+		return date.clone().startOf('hour')
+	}
+
 	startOfWeek(date) {
 		return date.clone().startOf('week')
+	}
+
+	startOfYear(date) {
+		return date.clone().startOf('year')
 	}
 
 	endOfWeek(date) {
@@ -21,6 +33,10 @@ export class DateUtils extends MomentUtils {
 
 	add(date, ammount, unit) {
 		return date.add(ammount, unit)
+	}
+
+	addMinutes(date, minutes) {
+		return date.clone().add(minutes, 'minute')
 	}
 
 	addHours(date, hours) {
@@ -39,8 +55,31 @@ export class DateUtils extends MomentUtils {
 		return date.clone().add(weeks, 'week')
 	}
 
+	addMonths(date, months) {
+		return date.clone().add(months, 'month')
+	}
+
+	addYears(date, years) {
+		return date.clone().add(years, 'year')
+	}
+
 	getUTCOffset(date = this.moment()) {
 		return this.moment(date).utcOffset() / 60
+	}
+
+	getUTCOffsetFormatted(date = this.moment()) {
+		const offset = this.moment(date).utcOffset()
+		const sign = offset >= 0 ? '+' : '-'
+		const hours = Math.abs(Math.floor(offset / 60)).toString()
+		const minutes = (offset % 60).toString()
+
+		return `${sign}${hours.length === 1 ? '0' + hours : hours}:${
+			minutes.length === 1 ? '0' + minutes : minutes
+		}`
+	}
+
+	getCurrentTimezone(date) {
+		return new window.Intl.DateTimeFormat(date).resolvedOptions().timeZone
 	}
 
 	getUnix(date) {
@@ -60,14 +99,17 @@ export class DateUtils extends MomentUtils {
 		})
 	}
 
-	getNearestSixHoursUTC(hoursToRound, date) {
-		const now = dateUtils.date(date)
-		const hoursMulti = Math.floor(dateUtils.getHours(now) / hoursToRound)
-		const nearestSix = dateUtils.setHours(
-			now,
-			hoursMulti * hoursToRound + dateUtils.getUTCOffset(now)
-		)
-		return dateUtils.setMinutes(dateUtils.setSeconds(nearestSix, 0), 0)
+	getHourSpanStart(date, span) {
+		const current = dateUtils.date(date)
+		const hour = dateUtils.getHours(current)
+		const spanStartHour = Math.floor(hour - (hour % span))
+		const withSpanStartHour = dateUtils.setHours(current, spanStartHour)
+
+		return dateUtils.startOfHour(withSpanStartHour)
+	}
+
+	format(date, formatString) {
+		return this.moment(date).format(formatString)
 	}
 }
 

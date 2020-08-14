@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect'
 import dateUtils from 'helpers/dateUtils'
-
 import { selectAccountIdentityAddr } from './accountSelectors'
+import { SYNC_WEB3_DATA } from 'constants/spinners'
 
 const REGISTRATION_OPEN = process.env.REGISTRATION_OPEN === 'true'
 
@@ -35,6 +35,11 @@ export const selectSpinnerById = createSelector(
 	(spinners, id) => spinners[id]
 )
 
+export const selectWeb3SyncSpinnerByValidateId = createSelector(
+	[selectSpinners, (_, validateId) => validateId],
+	(spinners, validateId) => spinners[SYNC_WEB3_DATA + validateId]
+)
+
 export const selectMultipleSpinnersByIds = createSelector(
 	[selectSpinners, (_, ids) => ids],
 	(spinners, ids) => ids.map(id => spinners[id])
@@ -53,11 +58,6 @@ export const selectEasterEggsAllowed = createSelector(
 export const selectPrivilegesWarningAccepted = createSelector(
 	selectIdentityUi,
 	({ privilegesWarningAccepted }) => !!privilegesWarningAccepted
-)
-
-export const selectMissingRevenueDataPointsAccepted = createSelector(
-	selectIdentityUi,
-	({ missingRevenueDataPointsAccepted }) => !!missingRevenueDataPointsAccepted
 )
 
 export const selectSideSpecificUI = createSelector(
@@ -107,7 +107,7 @@ export const selectInitialDataLoaded = createSelector(
 			].every(type => !!initialDataLoaded[type]))
 )
 
-export const selectCampaignInDetails = createSelector(
+export const selectCampaignIdInDetails = createSelector(
 	selectMemoryUi,
 	({ campaignId }) => campaignId
 )
@@ -118,7 +118,7 @@ export const selectLoginSelectedIdentity = createSelector(
 )
 
 export const selectAnalyticsDataSide = createSelector(
-	[selectSide, selectCampaignInDetails],
+	[selectSide, selectCampaignIdInDetails],
 	(side, campaignId) => (campaignId ? campaignId : side ? `for-${side}` : '')
 )
 
@@ -131,8 +131,8 @@ export const selectIdentitySideAnalyticsPeriod = createSelector(
 	[selectIdentitySideUi],
 	({
 		sideAnalyticsPeriod = {
-			start: +dateUtils.startOfDay(dateUtils.date()),
-			end: +dateUtils.endOfDay(dateUtils.date()),
+			start: dateUtils.startOfDay(dateUtils.date()),
+			end: dateUtils.endOfDay(dateUtils.date()),
 		},
 	} = {}) => sideAnalyticsPeriod
 )

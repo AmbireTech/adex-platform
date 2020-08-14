@@ -18,6 +18,7 @@ import {
 	updateSelectedItems,
 	saveAudience,
 	updateNewItem,
+	beforeWeb3,
 } from 'actions'
 import { push } from 'connected-react-router'
 import { schemas, Campaign, helpers } from 'adex-models'
@@ -671,6 +672,9 @@ export function validateNewCampaignAdUnits({
 }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
+		if (!dirty) {
+			await beforeWeb3(validateId)(dispatch, getState)
+		}
 
 		const state = getState()
 		const campaign = selectNewCampaign(state)
@@ -695,7 +699,9 @@ export function validateCampaignAudienceInput({
 		await updateSpinner(validateId, true)(dispatch)
 		try {
 			const state = getState()
-			const { audienceInput = {}, temp } = selectNewCampaign(state)
+			const { audienceInput = {}, pricingBounds, temp } = selectNewCampaign(
+				state
+			)
 			const { inputs } = audienceInput
 
 			const isValid = await validateAudience({
@@ -710,7 +716,7 @@ export function validateCampaignAudienceInput({
 				const countryTiersCoefficients = selectTargetingAnalyticsCountryTiersCoefficients(
 					state
 				)
-				const pricingBounds = getSuggestedPricingBounds({
+				const suggestedPricingBounds = getSuggestedPricingBounds({
 					minByCategory,
 					countryTiersCoefficients,
 					audienceInput,
@@ -718,14 +724,19 @@ export function validateCampaignAudienceInput({
 
 				await updateNewCampaign('temp', {
 					...temp,
-					suggestedPricingBounds: pricingBounds,
+					suggestedPricingBounds,
 				})(dispatch, getState)
 
-				// Update pricingBounds here in order to avoid value check at nex steps
-				await updateNewCampaign('pricingBounds', pricingBounds)(
-					dispatch,
-					getState
+				// Update pricingBounds here in order to avoid value check at next steps
+				// Only if the bounds are not updated (step back or soft closed modal)
+				if (
+					!pricingBounds ||
+					!(pricingBounds['IMPRESSION'] || pricingBounds['CLICK'])
 				)
+					await updateNewCampaign('pricingBounds', suggestedPricingBounds)(
+						dispatch,
+						getState
+					)
 			}
 
 			await handleAfterValidation({ isValid, onValid, onInvalid })
@@ -905,7 +916,7 @@ export function getCampaignActualFees() {
 
 			const account = selectAccount(state)
 
-			const { feesFormatted, fees } = await openChannel({
+			const { feesFormatted, fees, breakdownFormatted } = await openChannel({
 				campaign: { ...campaign },
 				account,
 				getFeesOnly: true,
@@ -923,6 +934,7 @@ export function getCampaignActualFees() {
 			const newTemp = { ...temp }
 			newTemp.feesFormatted = feesFormatted
 			newTemp.totalSpendFormatted = totalSpendFormatted
+			newTemp.breakdownFormatted = breakdownFormatted
 
 			await updateNewCampaign('temp', newTemp)(dispatch, getState)
 		} catch (err) {

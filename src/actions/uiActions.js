@@ -9,10 +9,14 @@ import {
 	selectIdentitySideAnalyticsPeriod,
 	selectSide,
 	selectMemoryUi,
+	selectAnalyticsLiveTimestamp,
+	selectAnalyticsMinAndMaxDates,
 	t,
 } from 'selectors'
-import { getTimePeriods, getBorderPeriodStart } from 'helpers/timeHelpers'
-import dateUtils from 'helpers/dateUtils'
+import {
+	getTimePeriods,
+	getBorderPeriodStart,
+} from 'helpers/analyticsTimeHelpers'
 import { getErrorMsg } from 'helpers/errors'
 
 export function updateSpinner(item, value) {
@@ -368,15 +372,6 @@ export function updatePrivilegesWarningAccepted(accepted) {
 	}
 }
 
-export function updateMissingRevenueDataPointAccepted(accepted) {
-	return function(dispatch, getState) {
-		updateUiByIdentity('missingRevenueDataPointsAccepted', accepted)(
-			dispatch,
-			getState
-		)
-	}
-}
-
 export function hideGettingStarted(side) {
 	return function(dispatch, getState) {
 		updateUiByIdentity('hideGettingStarted', true, side)(dispatch, getState)
@@ -393,8 +388,11 @@ export function updateIdSideAnalyticsChartPeriod(periodStart) {
 	return function(dispatch, getState) {
 		const state = getState()
 		const timeframe = selectIdentitySideAnalyticsTimeframe(state)
-		const { start, end } = getTimePeriods({ timeframe, start: periodStart })
-		updateIdentitySideUi('sideAnalyticsPeriod', { start, end })(
+		const { start, end, callEnd } = getTimePeriods({
+			timeframe,
+			start: periodStart,
+		})
+		updateIdentitySideUi('sideAnalyticsPeriod', { start, end, callEnd })(
 			dispatch,
 			getState
 		)
@@ -407,13 +405,23 @@ export function updateAnalyticsPeriodPrevNextLive({
 }) {
 	return async function(dispatch, getState) {
 		try {
-			const timeframe = selectIdentitySideAnalyticsTimeframe(getState())
-			let { start } = selectIdentitySideAnalyticsPeriod(getState())
+			const state = getState()
+			const { minDate, maxDate } = selectAnalyticsMinAndMaxDates(state)
+			const timeframe = selectIdentitySideAnalyticsTimeframe(state)
+			let { start } = selectIdentitySideAnalyticsPeriod(state)
 
 			if (live) {
-				start = +dateUtils.date()
+				start = selectAnalyticsLiveTimestamp(state)
 			} else {
-				start = getBorderPeriodStart({ timeframe, start, next })
+				const startIsLive = start === selectAnalyticsLiveTimestamp(state)
+				start = getBorderPeriodStart({
+					timeframe,
+					start,
+					next,
+					startIsLive,
+					minDate,
+					maxDate,
+				})
 			}
 
 			updateIdSideAnalyticsChartPeriod(start)(dispatch, getState)
