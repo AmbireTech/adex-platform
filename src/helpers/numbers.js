@@ -1,4 +1,5 @@
-import { parseUnits, BigNumber } from 'ethers'
+import { utils, BigNumber } from 'ethers'
+const { parseUnits } = utils
 
 export const numStringCPMtoImpression = ({ numStr, decimals }) => {
 	if (numStr === null || numStr === undefined) {

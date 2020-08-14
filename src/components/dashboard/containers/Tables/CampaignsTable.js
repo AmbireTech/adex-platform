@@ -17,7 +17,7 @@ import {
 	selectInitialDataLoadedByData,
 } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
-import { commify } from 'ethers'
+import { utils } from 'ethers'
 import { execute, handlePrintSelectedReceiptsAdvertiser } from 'actions'
 import { useSelector } from 'react-redux'
 import { styles } from './styles'
@@ -138,7 +138,7 @@ const getCols = ({
 		label: t('LABEL_IMPRESSIONS'),
 		options: {
 			sort: true,
-			customBodyRender: impressions => commify(impressions || 0),
+			customBodyRender: impressions => utils.commify(impressions || 0),
 			...sliderFilterOptions({
 				initial: [0, maxImpressions],
 				filterTitle: t('IMPRESSIONS_FILTER'),
@@ -150,7 +150,7 @@ const getCols = ({
 		label: t('CHART_LABEL_CLICKS'),
 		options: {
 			sort: true,
-			customBodyRender: clicks => commify(clicks || 0),
+			customBodyRender: clicks => utils.commify(clicks || 0),
 			...sliderFilterOptions({
 				initial: [0, maxClicks],
 				filterTitle: t('CLICKS_FILTER'),
