@@ -1,7 +1,7 @@
 import React from 'react'
 import classnames from 'classnames'
 import { Box, IconButton, Tooltip } from '@material-ui/core'
-import { commify } from 'ethers'
+import { utils } from 'ethers'
 import { Visibility } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
@@ -83,7 +83,7 @@ const getCols = ({ classes, symbol }) => [
 		options: {
 			filter: false,
 			sort: true,
-			customBodyRender: impressions => commify(impressions || 0),
+			customBodyRender: impressions => utils.commify(impressions || 0),
 		},
 	},
 	{
@@ -92,7 +92,7 @@ const getCols = ({ classes, symbol }) => [
 		options: {
 			filter: false,
 			sort: true,
-			customBodyRender: clicks => commify(clicks || 0),
+			customBodyRender: clicks => utils.commify(clicks || 0),
 		},
 	},
 	{

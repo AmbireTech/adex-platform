@@ -1,5 +1,5 @@
 import React from 'react'
-import { commify } from 'ethers'
+import { utils } from 'ethers'
 import PropTypes from 'prop-types'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { Box } from '@material-ui/core'
@@ -25,7 +25,7 @@ const getCols = ({ showEarnings, symbol }) => [
 			filter: false,
 			sort: true,
 			sortDirection: 'desc',
-			customBodyRender: impressions => commify(impressions || 0),
+			customBodyRender: impressions => utils.commify(impressions || 0),
 		},
 	},
 	{
@@ -44,7 +44,7 @@ const getCols = ({ showEarnings, symbol }) => [
 		options: {
 			filter: false,
 			sort: true,
-			customBodyRender: impressions => commify(impressions || 0),
+			customBodyRender: impressions => utils.commify(impressions || 0),
 		},
 	},
 	{
@@ -65,7 +65,7 @@ const getCols = ({ showEarnings, symbol }) => [
 						filter: false,
 						sort: true,
 						customBodyRender: averageCPM =>
-							`${commify(averageCPM.toFixed(2))} ${symbol}`,
+							`${utils.commify(averageCPM.toFixed(2))} ${symbol}`,
 					},
 				},
 				{
@@ -75,7 +75,7 @@ const getCols = ({ showEarnings, symbol }) => [
 						filter: false,
 						sort: true,
 						customBodyRender: earnings =>
-							`${commify(earnings.toFixed(2))} ${symbol}`,
+							`${utils.commify(earnings.toFixed(2))} ${symbol}`,
 					},
 				},
 		  ]

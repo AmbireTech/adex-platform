@@ -1,6 +1,5 @@
 import { utils } from 'ethers'
 import MomentUtils from '@date-io/moment'
-const { formatUnits, commify } = utils
 
 const moment = new MomentUtils()
 //TODO: use dateUtils
@@ -38,9 +37,9 @@ export const formatTokenAmount = (
 	pretty,
 	toFixed
 ) => {
-	const formatted = formatUnits(amountString, decimals)
+	const formatted = utils.formatUnits(amountString, decimals)
 	if (pretty) {
-		return commify(formatted)
+		return utils.commify(formatted)
 	} else if (typeof toFixed === 'number') {
 		// We want truncated not rounded
 		return parseFloat(formatted)

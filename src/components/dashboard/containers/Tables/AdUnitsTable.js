@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback, Fragment } from 'react'
 import classnames from 'classnames'
 import { Tooltip, IconButton, Box } from '@material-ui/core'
 import { Visibility } from '@material-ui/icons'
-import { commify } from 'ethers'
+import { utils } from 'ethers'
 import { sliderFilterOptions } from './commonFilters'
 import Img from 'components/common/img/Img'
 import { ArchiveItemBtn } from 'components/dashboard/containers/ItemCommon'
@@ -76,7 +76,7 @@ const getCols = ({
 		label: t('LABEL_IMPRESSIONS'),
 		options: {
 			sort: true,
-			customBodyRender: impressions => commify(impressions || 0),
+			customBodyRender: impressions => utils.commify(impressions || 0),
 			...sliderFilterOptions({
 				initial: [0, maxImpressions],
 				filterTitle: t('IMPRESSIONS_FILTER'),
@@ -88,7 +88,7 @@ const getCols = ({
 		label: t('CHART_LABEL_CLICKS'),
 		options: {
 			sort: true,
-			customBodyRender: clicks => commify(clicks || 0),
+			customBodyRender: clicks => utils.commify(clicks || 0),
 			...sliderFilterOptions({
 				initial: [0, maxClicks],
 				filterTitle: t('CLICKS_FILTER'),

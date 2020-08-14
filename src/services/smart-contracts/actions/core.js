@@ -12,7 +12,7 @@ import { contracts } from '../contractsCfg'
 import { closeCampaign } from 'services/adex-validator/actions'
 import { Campaign, AdUnit } from 'adex-models'
 import { getCampaigns } from 'services/adex-market/actions'
-import { BigNumber, randomBytes, parseUnits, utils, getAddress } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import {
 	// selectFeeTokenWhitelist,
 	selectRoutineWithdrawTokens,
@@ -25,10 +25,11 @@ import IdentityABI from 'adex-protocol-eth/abi/Identity'
 import { selectChannelsWithUserBalancesEligible } from 'selectors'
 import { getState } from 'store'
 import { AUTH_TYPES, EXECUTE_ACTIONS } from 'constants/misc'
+const { parseUnits, Interface, randomBytes, getAddress } = utils
 
 const { AdExCore } = contracts
-const Core = new utils.Interface(AdExCore.abi)
-const IdentityInterface = new utils.Interface(IdentityABI)
+const Core = new Interface(AdExCore.abi)
+const IdentityInterface = new Interface(IdentityABI)
 
 const timeframe = 5 * 60 * 1000 // 1 event per 5 minutes
 const VALID_UNTIL_COEFFICIENT = 0.5

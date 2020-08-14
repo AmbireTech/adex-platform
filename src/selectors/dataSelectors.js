@@ -1,4 +1,4 @@
-import { BigNumber, formatUnits } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import {
 	t,
 	selectDemandAnalytics,
@@ -101,7 +101,9 @@ export const selectVerifiedActiveTypes = createSelector(
 			)
 
 			verified.set(key, {
-				revenue: parseFloat(formatUnits(totalRevenue.toString(), decimals)),
+				revenue: parseFloat(
+					utils.formatUnits(totalRevenue.toString(), decimals)
+				),
 			})
 		})
 

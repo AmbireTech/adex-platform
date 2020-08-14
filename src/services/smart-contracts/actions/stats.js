@@ -1,7 +1,7 @@
 import { getEthers } from 'services/smart-contracts/ethers'
 import { constants } from 'adex-models'
 import { getValidatorAuthToken } from 'services/adex-validator/actions'
-import { BigNumber, formatEther } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import { formatTokenAmount } from 'helpers/formatters'
 import {
 	selectRelayerConfig,
@@ -122,10 +122,11 @@ export async function getAddressBalances({ address, getFullBalances }) {
 	]
 
 	const balances = await Promise.all(calls)
+
 	const formatted = {
 		address: address.address,
 		path: address.serializedPath || address.path, // we are going to keep the entire path
-		balanceEth: formatEther(balances[0].toString()),
+		balanceEth: utils.formatEther(balances[0].toString()),
 		tokensBalances: balances[1].balances.map(({ token, balance }) => {
 			return {
 				balance: formatTokenAmount(balance, token.decimals, false, 2),

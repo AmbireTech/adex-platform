@@ -5,7 +5,7 @@ import {
 } from 'services/smart-contracts/actions/ethers'
 import { getSweepingTxnsIfNeeded } from 'services/smart-contracts/actions/core'
 import { Contract } from 'ethers'
-import { BigNumber, parseUnits, getAddress, utils, keccak256, id } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import { generateAddress2 } from 'ethereumjs-util'
 import { executeTx } from 'services/adex-relayer'
 import {
@@ -24,11 +24,12 @@ import ScdMcdMigrationABI from 'services/smart-contracts/abi/ScdMcdMigration'
 import { EXECUTE_ACTIONS } from 'constants/misc'
 import { contracts } from 'services/smart-contracts/contractsCfg'
 const { AdExENSManager, ReverseRegistrar } = contracts
+const { Interface, getAddress, parseUnits, id, keccak256 } = utils
 
-const ERC20 = new utils.Interface(ERC20TokenABI)
-const ScdMcdMigration = new utils.Interface(ScdMcdMigrationABI)
-const AdExENSManagerInterface = new utils.Interface(AdExENSManager.abi)
-const ReverseRegistrarInterface = new utils.Interface(ReverseRegistrar.abi)
+const ERC20 = new Interface(ERC20TokenABI)
+const ScdMcdMigration = new Interface(ScdMcdMigrationABI)
+const AdExENSManagerInterface = new Interface(AdExENSManager.abi)
+const ReverseRegistrarInterface = new Interface(ReverseRegistrar.abi)
 const { SCD_MCD_MIGRATION_ADDR } = process.env
 
 export async function getIdentityDeployData({
@@ -195,7 +196,7 @@ export async function setIdentityPrivilege({
 	)
 	const identityAddr = identity.address
 
-	const identityInterface = new utils.Interface(Identity.abi)
+	const identityInterface = new Interface(Identity.abi)
 
 	const tx1 = {
 		identityContract: identityAddr,

@@ -23,9 +23,8 @@ import {
 	selectPublisherAdvanceStatsToAdSlot,
 	selectSavedAudiences,
 	selectAudienceByCampaignId,
-	selectCampaignById,
 } from 'selectors'
-import { formatUnits } from 'ethers'
+import { utils } from 'ethers'
 import chartCountriesData from 'world-atlas/countries-50m.json'
 import { scaleLinear } from 'd3-scale'
 import { formatAbbrNum } from 'helpers/formatters'
@@ -37,7 +36,6 @@ import {
 } from 'components/App/themeMUi'
 import { grey } from '@material-ui/core/colors'
 import { constants } from 'adex-models'
-import { number } from 'prop-types'
 const { CountryNames, numericToAlpha2 } = constants
 
 export const selectCampaignsTableData = createSelector(
@@ -68,7 +66,7 @@ export const selectCampaignsTableData = createSelector(
 						originalName: item.status.name,
 					},
 					depositAmount: Number(
-						formatUnits(item.depositAmount || '0', decimals)
+						utils.formatUnits(item.depositAmount || '0', decimals)
 					),
 					fundsDistributedRatio: item.status.fundsDistributedRatio || 0,
 					impressions: selectCampaignEventsCount('IMPRESSION', id),
@@ -83,7 +81,7 @@ export const selectCampaignsTableData = createSelector(
 						id,
 						minPerImpression:
 							Number(
-								formatUnits(
+								utils.formatUnits(
 									spec.minPerImpression || item.minPerImpression || '0',
 									decimals
 								)
@@ -137,7 +135,7 @@ export const selectCampaignsMaxDeposit = createSelector(
 			null,
 			campaigns.map(i => {
 				const { decimals = 18 } = tokens[i.depositAsset] || {}
-				return Number(formatUnits(i.depositAmount, decimals) || 0)
+				return Number(utils.formatUnits(i.depositAmount, decimals) || 0)
 			})
 		)
 )
@@ -596,7 +594,7 @@ export const selectPublisherReceiptsStatsByMonthTableData = createSelector(
 			for (let [key, value] of Object.entries(receipts[date])) {
 				result.push({
 					impressions: value.impressions,
-					payouts: Number(formatUnits(value.payouts || '0', decimals)),
+					payouts: Number(utils.formatUnits(value.payouts || '0', decimals)),
 					date: +key,
 				})
 			}

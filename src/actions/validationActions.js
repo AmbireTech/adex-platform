@@ -2,7 +2,7 @@ import * as types from 'constants/actionTypes'
 import { validEthAddress, freeAdExENS } from '../helpers/validators'
 import { translate } from 'services/translations/translations'
 import { addToast, updateSpinner } from './uiActions'
-import { BigNumber, parseUnits } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import { validations, Joi, schemas, constants } from 'adex-models'
 import { validPassword } from 'helpers/validators'
 import {
@@ -407,7 +407,7 @@ export function validateWithdrawAmount({
 
 		let msg = 'ERR_INVALID_AMOUNT_VALUE'
 		let args = []
-		const amount = isValid ? parseUnits(amountToWithdraw, decimals) : null
+		const amount = isValid ? utils.parseUnits(amountToWithdraw, decimals) : null
 		if (isValid && amount.isZero()) {
 			isValid = false
 			msg = 'ERR_ZERO_WITHDRAW_AMOUNT'
@@ -472,7 +472,7 @@ export function validateCampaignAmount({
 }) {
 	return async function(dispatch, getState) {
 		const isValidNumber = isNumberString(value)
-		let isValid = isValidNumber && !!parseUnits(value, decimals)
+		let isValid = isValidNumber && !!utils.parseUnits(value, decimals)
 		let msg = errMsg || 'ERR_INVALID_AMOUNT'
 
 		if (isValid) {
@@ -486,8 +486,8 @@ export function validateCampaignAmount({
 			if (isValidDeposit && isValidMin) {
 				const result = validateAmounts({
 					maxDeposit,
-					depositAmount: parseUnits(deposit, decimals),
-					minPerImpression: parseUnits(min, decimals),
+					depositAmount: utils.parseUnits(deposit, decimals),
+					minPerImpression: utils.parseUnits(min, decimals),
 				})
 
 				isValid = !result.error
