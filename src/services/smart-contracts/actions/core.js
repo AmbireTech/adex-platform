@@ -167,9 +167,16 @@ const getWithdrawnPerUserOutstanding = async ({
 	identityAddr,
 }) => {
 	const { AdExCore } = await getEthers(AUTH_TYPES.READONLY)
-	return BigNumber.from(balance).sub(
-		await AdExCore.functions.withdrawnPerUser(channel.id, identityAddr)
+	const withdrawnPerUser = await AdExCore.functions.withdrawnPerUser(
+		channel.id,
+		identityAddr
 	)
+
+	const outstanding = BigNumber.from(balance.toString()).sub(
+		BigNumber.from(withdrawnPerUser[0])
+	)
+
+	return outstanding
 }
 
 export async function getChannelsWithOutstanding({ identityAddr }) {
