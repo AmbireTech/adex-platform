@@ -43,7 +43,7 @@ export const selectHas5000Impressions = createSelector(
 	totalImpressions => totalImpressions > 5000
 )
 
-export const sectStepsData = createSelector(
+export const selectStepsData = createSelector(
 	[
 		selectHasCreatedAdUnit,
 		selectHasCreatedCampaign,

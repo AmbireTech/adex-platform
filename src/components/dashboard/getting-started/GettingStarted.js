@@ -25,15 +25,15 @@ import {
 	CheckCircleOutline,
 	CheckCircle,
 } from '@material-ui/icons'
-import EmailEddie from 'resources/getting-started/GS-email-ic.png'
-import FundEddie from 'resources/getting-started/GS-fund-ic.png'
-import CreateEddie from 'resources/getting-started/GS-create-ic.png'
-import LaunchEddie from 'resources/getting-started/GS-launch-ic.png'
-import PlaceEddie from 'resources/getting-started/GS-place-ic.png'
-// import BonusEddie from 'resources/getting-started/GS-bonus-ic.png'
+import EmailEddie from 'resources/getting-started/GS-email-ic_80x80.png'
+import FundEddie from 'resources/getting-started/GS-fund-ic_80x80.png'
+import CreateEddie from 'resources/getting-started/GS-create-ic_80x80.png'
+import LaunchEddie from 'resources/getting-started/GS-launch-ic_80x80.png'
+import PlaceEddie from 'resources/getting-started/GS-place-ic_80x80.png'
+// import BonusEddie from 'resources/getting-started/GS-bonus-ic_80x80.png'
 import {
 	t,
-	sectStepsData,
+	selectStepsData,
 	selectHideGettingStarted,
 	selectGettingStartedExpanded,
 } from 'selectors'
@@ -47,6 +47,8 @@ import {
 	createAdSlot,
 	placeAdSlot,
 } from './Tutorials'
+// import { useEffectDebugger } from 'hooks/useEffectDebugger'
+import ReactGA from 'react-ga'
 
 const useStyles = makeStyles(theme => {
 	const stepperBackgroundColor = ({ side }) =>
@@ -185,9 +187,7 @@ const getSteps = ({
 export default function GettingStarted(props) {
 	const { side } = props
 	const classes = useStyles({ side })
-
-	const stepsData = useSelector(sectStepsData)
-
+	const stepsData = useSelector(selectStepsData)
 	const isGettingStartedHidden = useSelector(selectHideGettingStarted)
 	const expanded = useSelector(selectGettingStartedExpanded)
 	const [steps, setSteps] = useState({})
@@ -218,6 +218,22 @@ export default function GettingStarted(props) {
 	useEffect(() => {
 		setSteps(getSteps(stepsData))
 	}, [stepsData])
+
+	useEffect(() => {
+		const advertiserStep = getSteps(stepsData).advertiser.findIndex(
+			step => !step.check
+		)
+		const publisherStep = getSteps(stepsData).publisher.findIndex(
+			step => !step.check
+		)
+		ReactGA.set({
+			dimension1:
+				advertiserStep === -1 ? 'completed' : `step${advertiserStep + 1}`,
+			dimension2:
+				publisherStep === -1 ? 'completed' : `step${publisherStep + 1}`,
+		})
+	}, [stepsData])
+
 	useEffect(() => {
 		setActiveStep(
 			indexOfFirstIncompleteStep !== -1
