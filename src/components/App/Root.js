@@ -73,14 +73,17 @@ const Root = () => {
 	const location = useSelector(selectLocation)
 
 	useEffect(() => {
-		;(async function checkMetamask() {
+		async function initialChecks() {
 			await getMetamaskEthereum()
 			execute(metamaskChecks())
-		})()
 
-		execute(getRelayerConfig())
-		execute(handleRedirectParams(location.search))
-		execute(handleSignupLink(location.search))
+			execute(getRelayerConfig())
+			execute(handleRedirectParams(location.search))
+			execute(handleSignupLink(location.search))
+		}
+
+		initialChecks()
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 

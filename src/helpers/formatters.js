@@ -3,8 +3,8 @@ import MomentUtils from '@date-io/moment'
 const moment = new MomentUtils()
 //TODO: use dateUtils
 
-export const DEFAULT_DATETIME_FORMAT = 'YYYY-MM-DD HH:mm'
-export const DEFAULT_DATE_FORMAT = 'YYYY-MM-DD'
+export const DEFAULT_DATETIME_FORMAT = 'YYYY/MM/DD HH:mm'
+export const DEFAULT_DATE_FORMAT = 'YYYY/MM/DD'
 
 export const formatDateTime = (
 	timestamp,

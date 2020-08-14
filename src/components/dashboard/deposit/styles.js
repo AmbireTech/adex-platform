@@ -4,6 +4,7 @@ export const styles = theme => {
 			backgroundColor: '#E2EAED',
 			overflowWrap: 'anywhere',
 			userSelect: 'text',
+			textTransform: 'none',
 		},
 		title: {
 			fontSize: '2rem',

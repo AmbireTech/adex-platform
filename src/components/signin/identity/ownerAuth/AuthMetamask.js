@@ -16,7 +16,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import Box from '@material-ui/core/Box'
 import { checkAuthMetamask, execute } from 'actions'
-import { getEthereumProvider } from 'services/smart-contracts/ethers'
+import { getEthereumProviderName } from 'services/smart-contracts/ethers'
 import { t, selectIdentity, selectSpinnerById } from 'selectors'
 import { CHECKING_METAMASK_AUTH } from 'constants/spinners'
 
@@ -39,7 +39,7 @@ function AuthMetamask() {
 
 	useEffect(() => {
 		const setEth = async () => {
-			const ethereumProvider = await getEthereumProvider()
+			const ethereumProvider = await getEthereumProviderName()
 			setIsMetamaskEthereumProvider(
 				ethereumProvider === AUTH_TYPES.METAMASK.name
 			)

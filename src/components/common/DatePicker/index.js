@@ -2,5 +2,5 @@ export {
 	default,
 	DatePickerContrast,
 	DatePicker,
-	WeeklyDatePicker,
+	PeriodDatePicker,
 } from './DatePicker'

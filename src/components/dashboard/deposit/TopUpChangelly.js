@@ -18,13 +18,13 @@ at.apply(this, arguments);
 const getChangellyIframe = identityAddress =>
 	`
 	<iframe 
-	src="https://widget.changelly.com?from=btc&to=dai&amount=0.007&address=${identityAddress}&fromDefault=btc&toDefault=dai&theme=aqua&merchant_id=unl7fil0on3x48m1&payment_id=&v=2" 
+	src="https://widget.changelly.com?from=btc,eth,xrp&to=dai&amount=0.007&address=${identityAddress}&fromDefault=btc&toDefault=dai&theme=aqua&merchant_id=unl7fil0on3x48m1&payment_id=&v=2" 
 	width="100%" height="600" class="changelly" scrolling="no" 
 	onLoad="${onloadFunction}" 
 	style="min-width: 100%; width: 100px; overflow-y: hidden; border: none">Can't load widget</iframe>
 `
 
-function TopUpBtc(props) {
+function TopUpChangelly(props) {
 	const identityAddr = useSelector(selectAccountIdentityAddr)
 	const widgetIframeHtml = getChangellyIframe(identityAddr)
 
@@ -39,4 +39,4 @@ function TopUpBtc(props) {
 	)
 }
 
-export default TopUpBtc
+export default TopUpChangelly

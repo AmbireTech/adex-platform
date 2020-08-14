@@ -20,17 +20,17 @@ const CalendarIconAdor = ({
 	onNextClick,
 }) => (
 	<InputAdornment position='end'>
+		{onNextClick && (
+			<IconButton color={iconColor} onClick={onNextClick} size='small'>
+				<NavigateNextRounded />
+			</IconButton>
+		)}
 		<IconButton color={iconColor} onClick={onIconClick} size='small'>
 			{icon}
 		</IconButton>
 		{onLiveClick && (
 			<IconButton color={iconColor} onClick={onLiveClick} size='small'>
 				<Update />
-			</IconButton>
-		)}
-		{onNextClick && (
-			<IconButton color={iconColor} onClick={onNextClick} size='small'>
-				<NavigateNextRounded />
 			</IconButton>
 		)}
 	</InputAdornment>
@@ -44,6 +44,7 @@ export function DateTimePicker({
 	onNextClick,
 	onLiveClick,
 	onBackClick,
+	InputProps = {},
 	roundHour,
 	...rest
 }) {
@@ -53,6 +54,7 @@ export function DateTimePicker({
 		<MuiDateTimePicker
 			value={date}
 			InputProps={{
+				...InputProps,
 				disabled: rest.disabled,
 				endAdornment: calendarIcon ? (
 					<CalendarIconAdor
@@ -78,7 +80,13 @@ export function DateTimePicker({
 
 export default DateTimePicker
 
-const dateTimePickerStyled = ({ classes, calendarIcon, icon, ...rest }) => {
+const dateTimePickerStyled = ({
+	classes,
+	calendarIcon,
+	icon,
+	InputProps = {},
+	...rest
+}) => {
 	return (
 		<DateTimePicker
 			InputLabelProps={{
@@ -91,6 +99,7 @@ const dateTimePickerStyled = ({ classes, calendarIcon, icon, ...rest }) => {
 				},
 			}}
 			InputProps={{
+				...InputProps,
 				disabled: rest.disabled,
 				classes: {
 					root: classes.datepickerContrastInput,
