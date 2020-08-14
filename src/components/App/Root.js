@@ -112,15 +112,15 @@ const Root = () => {
 		<>
 			{showNotification && (
 				<ImportantNotifications
-					title={t('REFRESH')}
+					title={t('RELOAD_REQUIRED')}
 					message={t('SUCCESS_UPDATING_NEW_APP_VERSION', {
 						args: [version],
 					})}
 					severity='success'
-					btn={
+					action={
 						<Button
 							color='primary'
-							size='small'
+							size='large'
 							variant='contained'
 							onClick={() => {
 								if (caches) {
@@ -132,7 +132,7 @@ const Root = () => {
 								window.location.reload(true)
 							}}
 						>
-							{t('REFRESH')}
+							{t('RELOAD_NOW')}
 						</Button>
 					}
 				/>
