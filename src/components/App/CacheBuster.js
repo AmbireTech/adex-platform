@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { selectLocation } from 'selectors'
 import packageJson from '../../../package.json'
-import { refreshCacheAndReload, execute, notifyNewTOS } from 'actions'
+import { updateNewVersion, execute, notifyNewTOS } from 'actions'
 
 const buildMeta = {
 	currentVersion: packageJson.version,
@@ -21,15 +21,15 @@ export default function CacheBuster(props) {
 			.then(meta => {
 				const { latestVersion, latestTOS } = meta
 				const { currentVersion, currentTOS } = buildMeta
-				const shouldForceRefresh = true || latestVersion !== currentVersion
+				const shouldForceRefresh = latestVersion !== currentVersion
 
-				if (shouldForceRefresh) {
-					execute(
-						refreshCacheAndReload({
-							version: latestVersion,
-						})
-					)
-				}
+				execute(
+					updateNewVersion({
+						shouldForceRefresh,
+						version: latestVersion,
+					})
+				)
+
 				const shouldNotifyNewTOS = latestTOS !== currentTOS
 				if (shouldNotifyNewTOS) {
 					execute(notifyNewTOS())

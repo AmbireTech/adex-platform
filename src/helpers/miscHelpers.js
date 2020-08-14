@@ -118,7 +118,8 @@ class Helper {
 export const isWindowReloading = () => {
 	return (
 		window.performance &&
-		performance.navigation.type === performance.navigation.TYPE_RELOAD
+		window.performance.navigation.type ===
+			window.performance.navigation.TYPE_RELOAD
 	)
 }
 

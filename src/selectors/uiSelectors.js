@@ -55,6 +55,16 @@ export const selectEasterEggsAllowed = createSelector(
 	({ allowEasterEggs }) => allowEasterEggs
 )
 
+export const selectNewVersionAvailable = createSelector(
+	selectGlobalUi,
+	({ newVersionAvailable }) => newVersionAvailable
+)
+
+export const selectNewVersionAvailableId = createSelector(
+	selectGlobalUi,
+	({ selectNewVersionAvailableId }) => selectNewVersionAvailableId
+)
+
 export const selectPrivilegesWarningAccepted = createSelector(
 	selectIdentityUi,
 	({ privilegesWarningAccepted }) => !!privilegesWarningAccepted

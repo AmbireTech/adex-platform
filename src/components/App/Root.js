@@ -26,8 +26,17 @@ import Home from 'components/signin/Home'
 import JustDialog from 'components/common/dialog/JustDialog'
 import { migrateLegacyWallet, removeLegacyKey } from 'services/wallet/wallet'
 import Translate from 'components/translate/Translate'
-import { selectAuth, selectWallet, selectLocation } from 'selectors'
+import { Button } from '@material-ui/core'
+import {
+	selectAuth,
+	selectWallet,
+	selectLocation,
+	t,
+	selectNewVersionAvailable,
+	selectNewVersionAvailableId,
+} from 'selectors'
 import { getMetamaskEthereum } from 'services/smart-contracts/ethers'
+import { ImportantNotifications } from './ImportantNotifications'
 
 const ConnectedCreateQuickIdentity = ConnectHoc(JustDialog(CreateQuickIdentity))
 const ConnectedQuickLogin = ConnectHoc(JustDialog(LoginQuickIdentity))
@@ -71,6 +80,8 @@ const Root = () => {
 	const auth = useSelector(selectAuth)
 	const wallet = useSelector(selectWallet)
 	const location = useSelector(selectLocation)
+	const showNotification = useSelector(selectNewVersionAvailable)
+	const version = useSelector(selectNewVersionAvailableId)
 
 	useEffect(() => {
 		async function initialChecks() {
@@ -98,30 +109,63 @@ const Root = () => {
 	}, [location])
 
 	return (
-		<Switch>
-			<PrivateRoute auth={auth} path='/dashboard/:side' component={Dashboard} />
-			<PrivateRoute auth={auth} path='/side-select' component={SideSelect} />
-			<Route exact path='/' component={ConnectedRoot} />
-			<Route
-				exact
-				path='/signup/quick'
-				component={ConnectedCreateQuickIdentity}
-			/>
-			<Route
-				exact
-				path='/login/full'
-				component={ConnectedLoginStandardIdentity}
-			/>
-			<Route
-				exact
-				path='/signup/full'
-				component={ConnectedCreateStandardIdentity}
-			/>
-			<Route exact path='/login/quick' component={ConnectedQuickLogin} />
-			<Route>
-				<PageNotFound />
-			</Route>
-		</Switch>
+		<>
+			{showNotification && (
+				<ImportantNotifications
+					title={t('REFRESH')}
+					message={t('SUCCESS_UPDATING_NEW_APP_VERSION', {
+						args: [version],
+					})}
+					severity='success'
+					btn={
+						<Button
+							color='primary'
+							size='small'
+							variant='contained'
+							onClick={() => {
+								if (caches) {
+									// Service worker cache should be cleared with caches.delete()
+									caches.keys().then(async function(names) {
+										await Promise.all(names.map(name => caches.delete(name)))
+									})
+								}
+								window.location.reload(true)
+							}}
+						>
+							{t('REFRESH')}
+						</Button>
+					}
+				/>
+			)}
+			<Switch>
+				<PrivateRoute
+					auth={auth}
+					path='/dashboard/:side'
+					component={Dashboard}
+				/>
+				<PrivateRoute auth={auth} path='/side-select' component={SideSelect} />
+				<Route exact path='/' component={ConnectedRoot} />
+				<Route
+					exact
+					path='/signup/quick'
+					component={ConnectedCreateQuickIdentity}
+				/>
+				<Route
+					exact
+					path='/login/full'
+					component={ConnectedLoginStandardIdentity}
+				/>
+				<Route
+					exact
+					path='/signup/full'
+					component={ConnectedCreateStandardIdentity}
+				/>
+				<Route exact path='/login/quick' component={ConnectedQuickLogin} />
+				<Route>
+					<PageNotFound />
+				</Route>
+			</Switch>
+		</>
 	)
 }
 

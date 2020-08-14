@@ -236,43 +236,24 @@ export function updateSelectedCampaigns(selectedItems) {
 	}
 }
 
+export function updateNewVersion({ shouldForceRefresh, version }) {
+	return async function(dispatch, getState) {
+		await updateGlobalUi('newVersionAvailable', shouldForceRefresh)(dispatch)
+		await updateGlobalUi('selectNewVersionAvailableId', version)(dispatch)
+	}
+}
+
 export function refreshCacheAndReload({ version }) {
-	return function(dispatch) {
-		try {
-			addToast({
-				type: 'accept',
-				action: (
-					// eslint-disable-next-line react/react-in-jsx-scope
-					<Button
-						color='primary'
-						size='small'
-						variant='contained'
-						onClick={() => {
-							if (caches) {
-								// Service worker cache should be cleared with caches.delete()
-								caches.keys().then(async function(names) {
-									await Promise.all(names.map(name => caches.delete(name)))
-								})
-							}
-							window.location.reload(true)
-						}}
-					>
-						{t('REFRESH')}
-					</Button>
-				),
-				label: t('SUCCESS_UPDATING_NEW_APP_VERSION', {
-					args: [version],
-				}),
-				timeout: 5000,
-			})(dispatch)
-		} catch (err) {
-			console.error('ERR_UPDATING_APP', err)
-			addToast({
-				type: 'cancel',
-				label: t('ERR_UPDATING_APP'),
-				timeout: 20000,
-			})(dispatch)
+	return async function(dispatch, getState) {
+		if (caches) {
+			// Service worker cache should be cleared with caches.delete()
+			caches.keys().then(async function(names) {
+				await Promise.all(names.map(name => caches.delete(name)))
+			})
 		}
+
+		await updateNewVersion({ shouldForceRefresh: false, version })
+		window.location.reload(true)
 	}
 }
 
