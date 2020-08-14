@@ -6,9 +6,11 @@ import { selectRelayerConfig } from 'selectors'
 
 // ethers.errors.setLogLevel('error')
 
-console.log('ethers', providers)
-
 const { AdExCore, Identity, IdentityFactory } = contracts
+
+const LocalProvider = process.env.WEB3_NODE_ADDR.startsWith('wss://')
+	? providers.WebSocketProvider
+	: providers.JsonRpcProvider
 
 const getAdexCore = provider => {
 	const { coreAddr } = selectRelayerConfig()
@@ -60,7 +62,7 @@ const getEthersResult = provider => {
 }
 
 const localWeb3 = () => {
-	const provider = new providers.WebSocketProvider(process.env.WEB3_NODE_ADDR)
+	const provider = new LocalProvider(process.env.WEB3_NODE_ADDR)
 	return getEthersResult(provider)
 }
 
