@@ -1,5 +1,7 @@
-import { formatUnits, commify } from 'ethers/utils'
+import { utils } from 'ethers'
 import MomentUtils from '@date-io/moment'
+const { formatUnits, commify } = utils
+
 const moment = new MomentUtils()
 //TODO: use dateUtils
 

@@ -1,5 +1,5 @@
 import { getEthers } from 'services/smart-contracts/ethers'
-import { formatUnits } from 'ethers/utils'
+import { formatUnits } from 'ethers'
 import { AUTH_TYPES } from 'constants/misc'
 
 export const getGasPrice = async (format = 'wei') => {

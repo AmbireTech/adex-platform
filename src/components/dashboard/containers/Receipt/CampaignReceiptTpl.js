@@ -29,7 +29,7 @@ import {
 	formatDateTime,
 	formatNumberWithCommas,
 } from 'helpers/formatters'
-import { formatUnits, commify } from 'ethers/utils'
+import { formatUnits, commify } from 'ethers'
 import { styles } from './styles'
 const useStyles = makeStyles(styles)
 

@@ -1,4 +1,4 @@
-import { bigNumberify } from 'ethers/utils'
+import { BigNumber } from 'ethers'
 import { selectRoutineWithdrawTokens, selectMainToken } from 'selectors'
 import { tokenInMainTokenValue } from 'services/smart-contracts/actions/stats'
 import { formatTokenAmount } from 'helpers/formatters'
@@ -29,19 +29,19 @@ export async function getUnitsStatsByType() {
 			const stats = await prevStats
 			const channelsByType = unitsByType[key]
 
-			let totalPerImpression = bigNumberify('0')
-			let totalVolume = bigNumberify('0')
+			let totalPerImpression = BigNumber.from('0')
+			let totalVolume = BigNumber.from('0')
 
 			for (let index = 0; index < channelsByType.length; index++) {
 				const channel = channelsByType[index]
 
 				const minPerImpression = await tokenInMainTokenValue({
 					token: withdrawTokens[channel.depositAsset],
-					balance: bigNumberify(channel.spec.minPerImpression),
+					balance: BigNumber.from(channel.spec.minPerImpression),
 				})
 				const depositAmount = await tokenInMainTokenValue({
 					token: withdrawTokens[channel.depositAsset],
-					balance: bigNumberify(channel.depositAmount),
+					balance: BigNumber.from(channel.depositAmount),
 				})
 
 				totalPerImpression = totalPerImpression.add(minPerImpression)
@@ -49,9 +49,9 @@ export async function getUnitsStatsByType() {
 			}
 
 			const avgPerImpression = totalPerImpression.div(
-				bigNumberify(channelsByType.length)
+				BigNumber.from(channelsByType.length)
 			)
-			const avgCPM = avgPerImpression.mul(bigNumberify('1000'))
+			const avgCPM = avgPerImpression.mul(BigNumber.from('1000'))
 
 			const statsByType = { ...stats }
 			statsByType[key] = {}

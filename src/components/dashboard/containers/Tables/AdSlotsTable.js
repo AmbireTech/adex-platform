@@ -1,7 +1,7 @@
 import React from 'react'
 import classnames from 'classnames'
 import { Box, IconButton, Tooltip } from '@material-ui/core'
-import { commify } from 'ethers/utils'
+import { commify } from 'ethers'
 import { Visibility } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'

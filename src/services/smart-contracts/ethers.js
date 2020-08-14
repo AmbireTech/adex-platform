@@ -1,10 +1,12 @@
-import { ethers, Contract } from 'ethers'
+import { providers, Contract } from 'ethers'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { contracts } from './contractsCfg'
 import { AUTH_TYPES } from 'constants/misc'
 import { selectRelayerConfig } from 'selectors'
 
-ethers.errors.setLogLevel('error')
+// ethers.errors.setLogLevel('error')
+
+console.log('ethers', providers)
 
 const { AdExCore, Identity, IdentityFactory } = contracts
 
@@ -58,9 +60,7 @@ const getEthersResult = provider => {
 }
 
 const localWeb3 = () => {
-	const provider = new ethers.providers.JsonRpcProvider(
-		process.env.WEB3_NODE_ADDR
-	)
+	const provider = new providers.WebSocketProvider(process.env.WEB3_NODE_ADDR)
 	return getEthersResult(provider)
 }
 
@@ -122,7 +122,7 @@ const injectedWeb3Provider = async () => {
 		try {
 			await connectMetaMask(ethereum)
 
-			const provider = new ethers.providers.Web3Provider(ethereum)
+			const provider = new providers.Web3Provider(ethereum)
 
 			return getEthersResult(provider)
 		} catch (err) {

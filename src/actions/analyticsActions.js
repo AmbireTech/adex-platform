@@ -34,7 +34,7 @@ import {
 	selectIdentitySideAnalyticsPeriod,
 	selectMonthsRange,
 } from 'selectors'
-import { bigNumberify } from 'ethers/utils'
+import { BigNumber } from 'ethers'
 import moment from 'moment'
 import { FETCHING_PUBLISHER_RECEIPTS } from 'constants/spinners'
 import { DEFAULT_WEEK_HOURS_SPAN } from 'helpers/analyticsTimeHelpers'
@@ -99,22 +99,24 @@ function aggrByChannelsSegments({ aggr, allChannels, withdrawTokens }) {
 				// const { minPlatform, minFinal } = withdrawTokens[depositAsset]
 				// const isExpired = status === 'Expired'
 				// const minBalance = isExpired ? minFinal : minPlatform
-				// const hasMinBalance = bigNumberify(balance).gt(bigNumberify(minBalance))
+				// const hasMinBalance = BigNumber.from(balance).gt(BigNumber.from(minBalance))
 
 				// if (hasMinBalance) {
 				const current = channels[channelId] || { aggr: [] }
 
-				const value = bigNumberify(a.value || 0)
-					.mul(bigNumberify(balanceNum || 1))
-					.div(bigNumberify(depositAmount || 1))
+				const value = BigNumber.from(a.value || 0)
+					.mul(BigNumber.from(balanceNum || 1))
+					.div(BigNumber.from(depositAmount || 1))
 
 				current.aggr.push({ value, time })
 
 				const currentAggr = aggregations[time] || {
 					time,
-					value: bigNumberify(0),
+					value: BigNumber.from(0),
 				}
-				const currentChannelValue = bigNumberify(current.value || 0).add(value)
+				const currentChannelValue = BigNumber.from(current.value || 0).add(
+					value
+				)
 
 				const currentTimeValue = currentAggr.value
 
@@ -137,7 +139,7 @@ function aggrByChannelsSegments({ aggr, allChannels, withdrawTokens }) {
 		({ time, value }) => {
 			const isNull =
 				all[time] === undefined ||
-				(bigNumberify(value).isZero() && all[time] !== '0')
+				(BigNumber.from(value).isZero() && all[time] !== '0')
 			return { time, value: isNull ? null : value }
 		}
 	)

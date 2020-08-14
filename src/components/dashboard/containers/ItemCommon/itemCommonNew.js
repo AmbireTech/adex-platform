@@ -33,7 +33,7 @@ import Img from 'components/common/img/Img'
 import OutlinedPropView from 'components/common/OutlinedPropView'
 import { ExternalAnchor } from 'components/common/anchor/anchor'
 import { formatTokenAmount } from 'helpers/formatters'
-import { bigNumberify } from 'ethers/utils'
+import { BigNumber } from 'ethers'
 import { t, selectMainToken, selectAuthType } from 'selectors'
 import {
 	execute,

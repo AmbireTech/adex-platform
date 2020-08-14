@@ -12,13 +12,7 @@ import { contracts } from '../contractsCfg'
 import { closeCampaign } from 'services/adex-validator/actions'
 import { Campaign, AdUnit } from 'adex-models'
 import { getCampaigns } from 'services/adex-market/actions'
-import {
-	bigNumberify,
-	randomBytes,
-	parseUnits,
-	Interface,
-	getAddress,
-} from 'ethers/utils'
+import { BigNumber, randomBytes, parseUnits, utils, getAddress } from 'ethers'
 import {
 	// selectFeeTokenWhitelist,
 	selectRoutineWithdrawTokens,
@@ -33,8 +27,8 @@ import { getState } from 'store'
 import { AUTH_TYPES, EXECUTE_ACTIONS } from 'constants/misc'
 
 const { AdExCore } = contracts
-const Core = new Interface(AdExCore.abi)
-const IdentityInterface = new Interface(IdentityABI)
+const Core = new utils.Interface(AdExCore.abi)
+const IdentityInterface = new utils.Interface(IdentityABI)
 
 const timeframe = 5 * 60 * 1000 // 1 event per 5 minutes
 const VALID_UNTIL_COEFFICIENT = 0.5
@@ -78,7 +72,7 @@ function getValidUntil(activeFrom, withdrawPeriodStart) {
 
 function userInputToTokenValue({ input, decimals, divider = 1 }) {
 	return parseUnits(input || '0', decimals)
-		.div(bigNumberify(divider))
+		.div(BigNumber.from(divider))
 		.toString()
 }
 
@@ -92,7 +86,7 @@ function getReadyCampaign(campaign, identity, mainToken) {
 		newCampaign.activeFrom,
 		newCampaign.withdrawPeriodStart
 	)
-	newCampaign.nonce = bigNumberify(randomBytes(32)).toString()
+	newCampaign.nonce = BigNumber.from(randomBytes(32)).toString()
 	newCampaign.adUnits = newCampaign.adUnits.map(unit => new AdUnit(unit).spec)
 	newCampaign.depositAmount = userInputToTokenValue({
 		input: newCampaign.depositAmount,
@@ -100,10 +94,10 @@ function getReadyCampaign(campaign, identity, mainToken) {
 	})
 
 	const validators = newCampaign.validators.map(v => {
-		const deposit = bigNumberify(newCampaign.depositAmount || 0)
+		const deposit = BigNumber.from(newCampaign.depositAmount || 0)
 		const fee = deposit
-			.mul(bigNumberify(v.feeNum || 1))
-			.div(bigNumberify(v.feeDen || 1))
+			.mul(BigNumber.from(v.feeNum || 1))
+			.div(BigNumber.from(v.feeDen || 1))
 			.toString()
 
 		const validator = {
@@ -172,7 +166,7 @@ const getWithdrawnPerUserOutstanding = async ({
 	identityAddr,
 }) => {
 	const { AdExCore } = await getEthers(AUTH_TYPES.READONLY)
-	return bigNumberify(balance).sub(
+	return BigNumber.from(balance).sub(
 		await AdExCore.functions.withdrawnPerUser(channel.id, identityAddr)
 	)
 }
@@ -239,15 +233,15 @@ export async function getChannelsWithOutstanding({ identityAddr }) {
 					})
 
 					// const outstandingAvailable = outstanding.sub(
-					// 	bigNumberify(feeTokenWhitelist[channel.depositAsset].min)
+					// 	BigNumber.from(feeTokenWhitelist[channel.depositAsset].min)
 					// )
 
 					// NOTE: We will show everything - will add this to withdraw fees
 					const outstandingAvailable = outstanding
 
-					const balanceNum = bigNumberify(channel.depositAmount)
-						.sub(bigNumberify(channel.spec.validators[0].fee || 0))
-						.sub(bigNumberify(channel.spec.validators[1].fee || 0))
+					const balanceNum = BigNumber.from(channel.depositAmount)
+						.sub(BigNumber.from(channel.spec.validators[0].fee || 0))
+						.sub(BigNumber.from(channel.spec.validators[1].fee || 0))
 
 					return {
 						channel,
@@ -267,9 +261,9 @@ export async function getChannelsWithOutstanding({ identityAddr }) {
 		...allChannels.map(c => {
 			const { channel, balance } = c
 			const { id, depositAmount, depositAsset, status, spec } = channel
-			const balanceNum = bigNumberify(depositAmount)
-				.sub(bigNumberify(c.channel.spec.validators[0].fee))
-				.sub(bigNumberify(c.channel.spec.validators[1].fee))
+			const balanceNum = BigNumber.from(depositAmount)
+				.sub(BigNumber.from(c.channel.spec.validators[0].fee))
+				.sub(BigNumber.from(c.channel.spec.validators[1].fee))
 				.toString()
 
 			return {
@@ -293,9 +287,9 @@ export async function getChannelsWithOutstanding({ identityAddr }) {
 				Date.now() &&
 			//NOTE: As we show everything there is no need for minPlatform check
 			// x.outstanding.gt(
-			// 	bigNumberify(routineWithdrawTokens[x.channel.depositAsset].minPlatform)
+			// 	BigNumber.from(routineWithdrawTokens[x.channel.depositAsset].minPlatform)
 			// ) &&
-			x.outstandingAvailable.gt(bigNumberify('0'))
+			x.outstandingAvailable.gt(BigNumber.from('0'))
 		)
 	})
 
@@ -305,8 +299,8 @@ export async function getChannelsWithOutstanding({ identityAddr }) {
 async function getChannelsToSweepFrom({ amountToSweep, withBalance = [] }) {
 	const { eligible } = withBalance
 		.sort((c1, c2) => {
-			return bigNumberify(c2.outstandingAvailable).gt(
-				bigNumberify(c1.outstandingAvailable)
+			return BigNumber.from(c2.outstandingAvailable).gt(
+				BigNumber.from(c1.outstandingAvailable)
 			)
 		})
 		.reduce(
@@ -314,12 +308,12 @@ async function getChannelsToSweepFrom({ amountToSweep, withBalance = [] }) {
 				const current = { ...data }
 				if (current.sum.lt(amountToSweep)) {
 					current.eligible.push(c)
-					current.sum = current.sum.add(bigNumberify(c.outstandingAvailable))
+					current.sum = current.sum.add(BigNumber.from(c.outstandingAvailable))
 				}
 
 				return current
 			},
-			{ sum: bigNumberify(0), eligible: [] }
+			{ sum: BigNumber.from(0), eligible: [] }
 		)
 
 	return eligible
@@ -347,8 +341,8 @@ function getSweepExecuteRoutineTx({ txns, identityAddr, routineAuthTuple }) {
 			const updated = { ...data }
 			updated.routineOpts.push(RoutineOps.channelWithdraw(tx.data))
 			updated.withdrawAmountByToken[tx.feeTokenAddr] = (
-				data.withdrawAmountByToken[tx.feeTokenAddr] || bigNumberify(0)
-			).add(bigNumberify(tx.withdrawAmountByToken[tx.feeTokenAddr]))
+				data.withdrawAmountByToken[tx.feeTokenAddr] || BigNumber.from(0)
+			).add(BigNumber.from(tx.withdrawAmountByToken[tx.feeTokenAddr]))
 
 			return updated
 		},
@@ -479,7 +473,7 @@ function getSwapAmountsByToken({ balances }) {
 			return swaps
 		},
 		{
-			swapsSumInMainToken: bigNumberify(0),
+			swapsSumInMainToken: BigNumber.from(0),
 			swapsByToken: {},
 		}
 	)
@@ -493,13 +487,13 @@ export async function getSweepingTxnsIfNeeded({
 	amountInMainTokenNeeded,
 	account,
 }) {
-	const needed = bigNumberify(amountInMainTokenNeeded)
+	const needed = BigNumber.from(amountInMainTokenNeeded)
 	const {
 		balances,
 		mainTokenBalance,
 	} = account.stats.raw.identityWithdrawTokensBalancesBalances
 
-	let currentBalanceInUse = bigNumberify(mainTokenBalance)
+	let currentBalanceInUse = BigNumber.from(mainTokenBalance)
 
 	const sweepData = {
 		sweepTxns: [],
@@ -616,8 +610,8 @@ export async function openChannel({
 	const { total, totalBN, breakdownFormatted } = await getIdentityTxnsTotalFees(
 		{ txnsByFeeToken }
 	)
-	const bigZero = bigNumberify(0)
-	const mtBalance = bigNumberify(availableIdentityBalanceMainToken)
+	const bigZero = BigNumber.from(0)
+	const mtBalance = BigNumber.from(availableIdentityBalanceMainToken)
 	const maxAvailable = mtBalance.sub(totalBN).lt(bigZero)
 		? bigZero
 		: mtBalance.sub(totalBN)

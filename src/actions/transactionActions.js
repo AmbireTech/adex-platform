@@ -25,7 +25,7 @@ import {
 } from 'selectors'
 import { getErrorMsg } from 'helpers/errors'
 import { getGasPrice } from 'services/gas/actions'
-import { formatUnits } from 'ethers/utils'
+import { formatUnits } from 'ethers'
 import {
 	withdrawFromIdentity,
 	setIdentityPrivilege,

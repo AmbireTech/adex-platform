@@ -1,7 +1,7 @@
 import { getEthers } from 'services/smart-contracts/ethers'
 import { constants } from 'adex-models'
 import { getValidatorAuthToken } from 'services/adex-validator/actions'
-import { bigNumberify, formatEther } from 'ethers/utils'
+import { BigNumber, formatEther } from 'ethers'
 import { formatTokenAmount } from 'helpers/formatters'
 import {
 	selectRelayerConfig,
@@ -21,10 +21,10 @@ const tokenAvailableBalance = ({ token, balance, mainToken }) => {
 	const feeToken = selectFeeTokenWhitelist()[token.address]
 
 	// approve + swap txns
-	const swapFees = bigNumberify(feeToken.min).mul(bigNumberify(2))
+	const swapFees = BigNumber.from(feeToken.min).mul(BigNumber.from(2))
 
-	const isAvailable = swapFees.mul(bigNumberify(2)).lte(balance)
-	return isAvailable ? balance : bigNumberify(0)
+	const isAvailable = swapFees.mul(BigNumber.from(2)).lte(balance)
+	return isAvailable ? balance : BigNumber.from(0)
 }
 
 export const getTotalAccountRevenue = async ({ all }) => {
@@ -35,23 +35,23 @@ export const getTotalAccountRevenue = async ({ all }) => {
 
 			const token = withdrawTokens[depositAsset]
 
-			// const hasMinBalance = bigNumberify(balance).gt(
-			// 	bigNumberify(token.minFinal)
+			// const hasMinBalance = BigNumber.from(balance).gt(
+			// 	BigNumber.from(token.minFinal)
 			// )
 
 			// NOTE: Show everything
-			const hasMinBalance = bigNumberify(balance).gt(bigNumberify(0))
+			const hasMinBalance = BigNumber.from(balance).gt(BigNumber.from(0))
 
 			const balanceMainToken = hasMinBalance
 				? await tokenInMainTokenValue({
 						token,
 						balance,
 				  })
-				: bigNumberify(0)
+				: BigNumber.from(0)
 
 			return revenue.add(balanceMainToken)
 		},
-		Promise.resolve(bigNumberify(0))
+		Promise.resolve(BigNumber.from(0))
 	)
 
 	return totalRevenue
@@ -98,8 +98,8 @@ export const getWithdrawTokensBalances = async ({
 			return data
 		},
 		{
-			totalBalanceInMainToken: bigNumberify(0),
-			mainTokenBalance: bigNumberify(0),
+			totalBalanceInMainToken: BigNumber.from(0),
+			mainTokenBalance: BigNumber.from(0),
 		}
 	)
 
@@ -140,8 +140,8 @@ export async function getAddressBalances({ address, getFullBalances }) {
 export async function getAccountStats({
 	account,
 	outstandingBalanceMainToken = {
-		total: bigNumberify('0'),
-		available: bigNumberify('0'),
+		total: BigNumber.from('0'),
+		available: BigNumber.from('0'),
 	},
 	all,
 }) {
@@ -182,7 +182,7 @@ export async function getAccountStats({
 
 	const identityBalanceMainToken =
 		identityWithdrawTokensBalancesBalances.totalBalanceInMainToken ||
-		bigNumberify(0)
+		BigNumber.from(0)
 
 	// BigNumber values for balances
 	const raw = {
@@ -252,7 +252,7 @@ export async function getAccountStats({
 // NOTE: currently working because DAI and SAI has the same price and decimals
 // We should use getOutstandingBalanceMainToken if changed
 export async function getOutstandingBalance({ withBalance }) {
-	const bigZero = bigNumberify(0)
+	const bigZero = BigNumber.from(0)
 
 	const initial = { total: bigZero, available: bigZero }
 
@@ -261,7 +261,7 @@ export async function getOutstandingBalance({ withBalance }) {
 		const current = { ...amounts }
 		current.total = current.total.add(outstanding)
 		current.available = current.available.add(
-			bigNumberify(outstandingAvailable)
+			BigNumber.from(outstandingAvailable)
 		)
 
 		return current
@@ -272,7 +272,7 @@ export async function getOutstandingBalance({ withBalance }) {
 
 export async function getOutstandingBalanceMainToken({ withBalance }) {
 	const tokens = selectRoutineWithdrawTokens()
-	const bigZero = bigNumberify(0)
+	const bigZero = BigNumber.from(0)
 
 	const initial = { total: bigZero, available: bigZero }
 
