@@ -357,7 +357,7 @@ function getSweepExecuteRoutineTx({ txns, identityAddr, routineAuthTuple }) {
 		{ routineOpts: [], withdrawAmountByToken: {} }
 	)
 
-	const data = IdentityInterface.functions.executeRoutines.encode([
+	const data = IdentityInterface.encodeFunctionData('executeRoutines', [
 		routineAuthTuple,
 		routineOpts,
 	])
@@ -450,7 +450,7 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 		]
 	} else {
 		encodedTxns = txns.map(tx => {
-			tx.data = Core.functions.channelWithdraw.encode(tx.data)
+			tx.data = Core.encodeFunctionData('channelWithdraw', tx.data)
 			tx.isSweepTx = true
 
 			return tx
@@ -578,7 +578,7 @@ export async function openChannel({
 			identityContract: identityAddr,
 			feeTokenAddr: feeTokenAddr,
 			to: identityAddr,
-			data: IdentityInterface.functions.channelOpen.encode([
+			data: IdentityInterface.encodeFunctionData('channelOpen', [
 				AdExCore.address,
 				ethChannel.toSolidityTuple(),
 			]),
@@ -599,7 +599,9 @@ export async function openChannel({
 			identityContract: identityAddr,
 			feeTokenAddr: feeTokenAddr,
 			to: AdExCore.address,
-			data: Core.functions.channelOpen.encode([ethChannel.toSolidityTuple()]),
+			data: Core.encodeFunctionData('channelOpen', [
+				ethChannel.toSolidityTuple(),
+			]),
 		}
 		txns.push(...approveTxns, channelOpenTx)
 	}
