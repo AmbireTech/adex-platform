@@ -4,8 +4,7 @@ import {
 	getMultipleTxSignatures,
 } from 'services/smart-contracts/actions/ethers'
 import { getSweepingTxnsIfNeeded } from 'services/smart-contracts/actions/core'
-import { Contract } from 'ethers'
-import { BigNumber, utils } from 'ethers'
+import { Contract, BigNumber, utils } from 'ethers'
 import { generateAddress2 } from 'ethereumjs-util'
 import { executeTx } from 'services/adex-relayer'
 import {
