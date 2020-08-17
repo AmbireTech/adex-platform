@@ -30,6 +30,7 @@ const ERC20 = new Interface(ERC20TokenABI)
 const ScdMcdMigration = new Interface(ScdMcdMigrationABI)
 const AdExENSManagerInterface = new Interface(AdExENSManager.abi)
 const ReverseRegistrarInterface = new Interface(ReverseRegistrar.abi)
+
 const { SCD_MCD_MIGRATION_ADDR } = process.env
 
 export async function getIdentityDeployData({
@@ -108,7 +109,7 @@ export async function withdrawFromIdentity({
 		identityContract: identityAddr,
 		feeTokenAddr: tokenAddr,
 		to: tokenAddr,
-		data: ERC20.functions.transfer.encode([withdrawTo, toWithdraw]),
+		data: ERC20.encodeFunctionData('transfer', [withdrawTo, toWithdraw]),
 		withdrawTx: true,
 	}
 	const txns = [withdrawTx]
@@ -152,7 +153,7 @@ export async function withdrawFromIdentity({
 		actualWithdrawAmount = maxWithdraw
 		txnsByFeeToken[tokenAddr] = txnsByFeeToken[tokenAddr].map(tx => {
 			if (tx.withdrawTx) {
-				tx.data = ERC20.functions.transfer.encode([
+				tx.data = ERC20.encodeFunctionData('transfer', [
 					withdrawTo,
 					actualWithdrawAmount.toString(),
 				])
@@ -202,7 +203,7 @@ export async function setIdentityPrivilege({
 		identityContract: identityAddr,
 		feeTokenAddr: MainToken.address,
 		to: identityAddr,
-		data: identityInterface.functions.setAddrPrivilege.encode([
+		data: identityInterface.encodeFunctionData('setAddrPrivilege', [
 			setAddr,
 			privLevel,
 		]),
@@ -309,7 +310,7 @@ export async function addIdentityENS({ username = '', account, getFeesOnly }) {
 		identityContract: identityAddr,
 		feeTokenAddr: MainToken.address,
 		to: AdExENSManager.address,
-		data: AdExENSManagerInterface.functions.registerAndSetup.encode([
+		data: AdExENSManagerInterface.encodeFunctionData('registerAndSetup', [
 			AdExENSManager.publicResolver,
 			id(username),
 			identityAddr,
@@ -320,7 +321,7 @@ export async function addIdentityENS({ username = '', account, getFeesOnly }) {
 		identityContract: identityAddr,
 		feeTokenAddr: MainToken.address,
 		to: ReverseRegistrar.address,
-		data: ReverseRegistrarInterface.functions.setName.encode([
+		data: ReverseRegistrarInterface.encodeFunctionData('setName', [
 			`${username}.${ReverseRegistrar.parentDomain}`,
 		]),
 	}
@@ -571,7 +572,7 @@ export async function getApproveTxns({
 			identityContract: identityAddr,
 			feeTokenAddr: feeTokenAddr,
 			to: token.address,
-			data: ERC20.functions.approve.encode([approveForAddress, 0]),
+			data: ERC20.encodeFunctionData('approve', [approveForAddress, 0]),
 		})
 	}
 
@@ -579,7 +580,10 @@ export async function getApproveTxns({
 		identityContract: identityAddr,
 		feeTokenAddr: feeTokenAddr,
 		to: token.address,
-		data: ERC20.functions.approve.encode([approveForAddress, approveAmount]),
+		data: ERC20.encodeFunctionData('approve', [
+			approveForAddress,
+			approveAmount,
+		]),
 	})
 
 	return approveTxns
@@ -605,7 +609,7 @@ async function swapSaiToDaiTxns({
 		identityContract: identityAddr,
 		feeTokenAddr: daiAddr,
 		to: SCD_MCD_MIGRATION_ADDR,
-		data: ScdMcdMigration.functions.swapSaiToDai.encode([swapAmount]),
+		data: ScdMcdMigration.encodeFunctionData('swapSaiToDai', [swapAmount]),
 	}
 
 	return [...approveTxns, swapTx]
@@ -825,7 +829,7 @@ export async function withdrawOtherTokensFromIdentity({
 		identityContract: identityAddr,
 		feeTokenAddr: mainToken.address,
 		to: tokenAddress,
-		data: ERC20.functions.transfer.encode([withdrawTo, toWithdraw]),
+		data: ERC20.encodeFunctionData('transfer', [withdrawTo, toWithdraw]),
 	}
 	const txns = [withdrawTx]
 
