@@ -1,6 +1,24 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.39
+##### *2020-08-17*
+
+### Added
+- Google analytics dimensions
+- Intrusive notification for new release
+
+### Changed
+- `react-ga` instead google script
+- Cache buster
+- Upgraded `ethers` pkg - migration from v4 to v5
+- Using websocket for our web3 provider
+
+### Fixed
+- Removed react routes used twice
+- Top-up page responsiveness
+- Audience input on campaign details
+
 ## 4.20.38
 ##### *2020-08-13*
 
