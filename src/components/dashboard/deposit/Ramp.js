@@ -89,17 +89,18 @@ const ProviderListItem = ({
 	const classes = useStyles()
 	return (
 		<Button size='large' fullWidth disableElevation className={classes.copyBtn}>
-			<Box p={1} width='100%'>
+			<Box width='100%'>
 				<Grid
 					container
 					direction='row'
 					justify='space-between'
 					alignItems='center'
+					spacing={1}
 				>
-					<Grid item xs={12} sm={4} md={4}>
+					<Grid item xs={5} sm={4} md={4}>
 						<Img className={classes.img} alt={imgAlt} src={imgSrc} />
 					</Grid>
-					<Grid item xs={12} sm={8} md={8} className={classes.infoGrid}>
+					<Grid item xs={7} sm={8} md={8} className={classes.infoGrid}>
 						<Typography className={classes.infoTitle}>{title}</Typography>
 						{[feeInfo, limitInfo, currencies].map((item, key) => (
 							<Typography

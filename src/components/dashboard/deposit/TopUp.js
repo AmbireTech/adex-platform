@@ -26,7 +26,7 @@ export default function TopUp() {
 
 	return (
 		<Grid container spacing={2}>
-			<Grid item lg={4} md={6} xs={12}>
+			<Grid item lg={4} md={6} sm={6} xs={12}>
 				<Paper variant='outlined' className={classes.paper}>
 					<Box
 						p={2}
@@ -71,7 +71,7 @@ export default function TopUp() {
 					</Box>
 				</Paper>
 			</Grid>
-			<Grid item lg={4} md={6} xs={12}>
+			<Grid item lg={4} md={6} sm={6} xs={12}>
 				<Paper variant='outlined' className={classes.paper}>
 					<Box
 						p={2}
@@ -104,7 +104,7 @@ export default function TopUp() {
 					</Box>
 				</Paper>
 			</Grid>
-			<Grid item lg={4} md={6} xs={12}>
+			<Grid item lg={4} md={6} sm={6} xs={12}>
 				<Paper variant='outlined' className={classes.paper}>
 					<Box
 						p={2}
