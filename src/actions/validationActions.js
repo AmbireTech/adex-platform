@@ -2,7 +2,7 @@ import * as types from 'constants/actionTypes'
 import { validEthAddress, freeAdExENS } from '../helpers/validators'
 import { translate } from 'services/translations/translations'
 import { addToast, updateSpinner } from './uiActions'
-import { bigNumberify, parseUnits } from 'ethers/utils'
+import { BigNumber, utils } from 'ethers'
 import { validations, Joi, schemas, constants } from 'adex-models'
 import { validPassword } from 'helpers/validators'
 import {
@@ -317,7 +317,7 @@ export function validateCampaignValidators({ validateId, validators, dirty }) {
 }
 
 const validateAmounts = ({
-	maxDeposit = bigNumberify(0),
+	maxDeposit = BigNumber.from(0),
 	depositAmount,
 	minPerImpression,
 }) => {
@@ -331,10 +331,10 @@ const validateAmounts = ({
 	if (!depositAmount.isZero() && depositAmount.lt(minPerImpression)) {
 		error = { message: 'ERR_CPM_OVER_DEPOSIT', prop: 'minPerImpression' }
 	}
-	if (depositAmount.lte(bigNumberify(0))) {
+	if (depositAmount.lte(BigNumber.from(0))) {
 		error = { message: 'ERR_ZERO_DEPOSIT', prop: 'depositAmount' }
 	}
-	if (minPerImpression.lte(bigNumberify(0))) {
+	if (minPerImpression.lte(BigNumber.from(0))) {
 		error = { message: 'ERR_ZERO_CPM', prop: 'minPerImpression' }
 	}
 
@@ -360,13 +360,13 @@ export function validateFees({
 		const {
 			availableIdentityBalanceMainToken: availableIdentityBalanceMainTokenFormatted,
 		} = selectAccountStatsFormatted(state)
-		const amountNeeded = bigNumberify(feesAmountBN).add(
-			bigNumberify(amountToSpendBN)
+		const amountNeeded = BigNumber.from(feesAmountBN).add(
+			BigNumber.from(amountToSpendBN)
 		)
 
 		const { symbol, decimals } = selectMainToken(state)
 
-		if (amountNeeded.gt(bigNumberify(availableIdentityBalanceMainTokenRaw))) {
+		if (amountNeeded.gt(BigNumber.from(availableIdentityBalanceMainTokenRaw))) {
 			const amountNeededFormatted = formatTokenAmount(
 				amountNeeded,
 				decimals,
@@ -407,13 +407,13 @@ export function validateWithdrawAmount({
 
 		let msg = 'ERR_INVALID_AMOUNT_VALUE'
 		let args = []
-		const amount = isValid ? parseUnits(amountToWithdraw, decimals) : null
+		const amount = isValid ? utils.parseUnits(amountToWithdraw, decimals) : null
 		if (isValid && amount.isZero()) {
 			isValid = false
 			msg = 'ERR_ZERO_WITHDRAW_AMOUNT'
 		} else if (
 			isValid &&
-			amount.gt(bigNumberify(availableIdentityBalanceMainTokenRaw))
+			amount.gt(BigNumber.from(availableIdentityBalanceMainTokenRaw))
 		) {
 			isValid = false
 			msg = 'ERR_MAX_AMOUNT_TO_WITHDRAW'
@@ -472,7 +472,7 @@ export function validateCampaignAmount({
 }) {
 	return async function(dispatch, getState) {
 		const isValidNumber = isNumberString(value)
-		let isValid = isValidNumber && !!parseUnits(value, decimals)
+		let isValid = isValidNumber && !!utils.parseUnits(value, decimals)
 		let msg = errMsg || 'ERR_INVALID_AMOUNT'
 
 		if (isValid) {
@@ -486,8 +486,8 @@ export function validateCampaignAmount({
 			if (isValidDeposit && isValidMin) {
 				const result = validateAmounts({
 					maxDeposit,
-					depositAmount: parseUnits(deposit, decimals),
-					minPerImpression: parseUnits(min, decimals),
+					depositAmount: utils.parseUnits(deposit, decimals),
+					minPerImpression: utils.parseUnits(min, decimals),
 				})
 
 				isValid = !result.error

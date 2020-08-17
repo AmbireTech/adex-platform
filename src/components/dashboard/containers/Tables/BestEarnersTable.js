@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import classnames from 'classnames'
-import { commify } from 'ethers/utils'
+import { utils } from 'ethers'
 import Img from 'components/common/img/Img'
 import { useSelector } from 'react-redux'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
@@ -59,7 +59,7 @@ const getCols = ({ classes, symbol }) => [
 		options: {
 			filter: false,
 			sort: true,
-			customBodyRender: impressions => commify(impressions || 0),
+			customBodyRender: impressions => utils.commify(impressions || 0),
 		},
 	},
 	{
@@ -68,7 +68,7 @@ const getCols = ({ classes, symbol }) => [
 		options: {
 			filter: false,
 			sort: true,
-			customBodyRender: clicks => commify(clicks || 0),
+			customBodyRender: clicks => utils.commify(clicks || 0),
 		},
 	},
 	{

@@ -29,7 +29,7 @@ import {
 	formatDateTime,
 	formatNumberWithCommas,
 } from 'helpers/formatters'
-import { formatUnits, commify } from 'ethers/utils'
+import { utils } from 'ethers'
 import { styles } from './styles'
 const useStyles = makeStyles(styles)
 
@@ -120,7 +120,9 @@ export function CampaignReceiptTpl({ campaignId } = {}) {
 					<Typography variant='h4' align='right'>
 						<strong>{`${formatNumberWithCommas(
 							(
-								Number(formatUnits(campaign.depositAmount || '0', decimals)) *
+								Number(
+									utils.formatUnits(campaign.depositAmount || '0', decimals)
+								) *
 								(campaign.status.fundsDistributedRatio / 1000)
 							).toFixed(2)
 						)} ${symbol}`}</strong>
@@ -149,9 +151,9 @@ export function CampaignReceiptTpl({ campaignId } = {}) {
 					<Typography variant='subtitle2'>
 						<strong>{`${
 							campaign.status.fundsDistributedRatio && campaign.depositAmount
-								? commify(
+								? utils.commify(
 										Number(
-											formatUnits(campaign.depositAmount || '	0', decimals)
+											utils.formatUnits(campaign.depositAmount || '	0', decimals)
 										) *
 											(campaign.status.fundsDistributedRatio / 1000)
 								  )

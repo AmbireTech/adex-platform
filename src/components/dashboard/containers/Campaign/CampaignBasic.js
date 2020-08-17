@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core'
 import { StopSharp, PauseSharp, StarSharp } from '@material-ui/icons'
 import { makeStyles } from '@material-ui/core/styles'
-import { bigNumberify } from 'ethers/utils'
+import { BigNumber } from 'ethers'
 import {
 	ItemTitle,
 	MediaCard,
@@ -34,29 +34,29 @@ const getCloseCampaignsFees = ({
 	fundsDistributedRatio,
 	decimals,
 }) => {
-	const deposit = bigNumberify(depositAmount)
+	const deposit = BigNumber.from(depositAmount)
 	const totalFees = validators.reduce(
-		(sum, { fee }) => sum.add(bigNumberify(fee)),
-		bigNumberify(0)
+		(sum, { fee }) => sum.add(BigNumber.from(fee)),
+		BigNumber.from(0)
 	)
 
 	const feesPercent =
 		totalFees
-			.mul(bigNumberify(10000))
+			.mul(BigNumber.from(10000))
 			.div(deposit)
 			.toNumber() / 100
 
 	const nonDistributedFunds = deposit.sub(
 		deposit
 			.mul(fundsDistributedRatio)
-			.div(bigNumberify(1000))
+			.div(BigNumber.from(1000))
 			.toString()
 	)
 
 	const feesToPay = totalFees.sub(
 		totalFees
 			.mul(fundsDistributedRatio)
-			.div(bigNumberify(1000))
+			.div(BigNumber.from(1000))
 			.toString()
 	)
 
@@ -305,7 +305,7 @@ export const CampaignBasic = ({
 								prop={'CPM_MIN'}
 								value={
 									formatTokenAmount(
-										bigNumberify(cpmMin || 0).mul(1000),
+										BigNumber.from(cpmMin || 0).mul(1000),
 										decimals,
 										true
 									) +
@@ -320,7 +320,7 @@ export const CampaignBasic = ({
 								prop={'CPM_MAX'}
 								value={
 									formatTokenAmount(
-										bigNumberify(cpmMax || 0).mul(1000),
+										BigNumber.from(cpmMax || 0).mul(1000),
 										decimals,
 										true
 									) +

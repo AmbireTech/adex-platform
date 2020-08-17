@@ -1,4 +1,5 @@
-import { parseUnits, bigNumberify } from 'ethers/utils'
+import { utils, BigNumber } from 'ethers'
+const { parseUnits } = utils
 
 export const numStringCPMtoImpression = ({ numStr, decimals }) => {
 	if (numStr === null || numStr === undefined) {
@@ -6,6 +7,6 @@ export const numStringCPMtoImpression = ({ numStr, decimals }) => {
 	}
 
 	return parseUnits(numStr, decimals)
-		.div(bigNumberify(1000))
+		.div(BigNumber.from(1000))
 		.toString()
 }

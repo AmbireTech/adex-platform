@@ -22,7 +22,7 @@ import {
 } from 'actions'
 import { push } from 'connected-react-router'
 import { schemas, Campaign, helpers } from 'adex-models'
-import { parseUnits } from 'ethers/utils'
+import { utils } from 'ethers'
 import { getAllValidatorsAuthForIdentity } from 'services/smart-contracts/actions/stats'
 import {
 	openChannel,
@@ -871,8 +871,8 @@ export function validateNewCampaignFinance({
 				// TODO: make function in models
 				const pricingBoundsInTokenValue = { ...pricingBounds }
 				const impression = { ...pricingBoundsInTokenValue.IMPRESSION }
-				impression.min = parseUnits(impression.min, decimals)
-				impression.max = parseUnits(impression.max, decimals)
+				impression.min = utils.parseUnits(impression.min, decimals)
+				impression.max = utils.parseUnits(impression.max, decimals)
 				pricingBoundsInTokenValue.IMPRESSION = impression
 
 				const targetingRules = audienceInputToTargetingRules({
@@ -922,7 +922,9 @@ export function getCampaignActualFees() {
 				getFeesOnly: true,
 			})
 
-			const totalSpend = parseUnits(depositAmount, mainToken.decimals).add(fees)
+			const totalSpend = utils
+				.parseUnits(depositAmount, mainToken.decimals)
+				.add(fees)
 
 			const totalSpendFormatted = formatTokenAmount(
 				totalSpend.toString(),

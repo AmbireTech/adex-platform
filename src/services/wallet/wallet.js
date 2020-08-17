@@ -51,7 +51,7 @@ function isLegacyCrypto(authType) {
 // Returns 12 random words
 export function getRandomMnemonic() {
 	const randomEntropy = utils.randomBytes(16)
-	const mnemonic = utils.HDNode.entropyToMnemonic(randomEntropy)
+	const mnemonic = utils.entropyToMnemonic(randomEntropy)
 
 	return mnemonic
 }
@@ -60,12 +60,14 @@ export async function generateWallet(mnemonic) {
 	const seed = mnemonic || getRandomMnemonic()
 	const wallet = ethers.Wallet.fromMnemonic(seed)
 
-	return {
-		mnemonic,
+	const walletData = {
+		mnemonic: wallet.mnemonic.phrase,
 		privateKey: wallet.privateKey,
 		address: wallet.address,
-		path: wallet.path,
+		path: wallet.mnemonic.path,
 	}
+
+	return walletData
 }
 
 async function encrKey({ email, password, authType }) {
