@@ -61,10 +61,37 @@ const getEthersResult = provider => {
 	return results
 }
 
-const localWeb3 = () => {
-	const provider = new LocalProvider(process.env.WEB3_NODE_ADDR)
-	return getEthersResult(provider)
+function isProviderRelayerConfigChanged(currentProviderCfg) {
+	const cfg = selectRelayerConfig()
+
+	const isChanged =
+		currentProviderCfg.coreAddr !== cfg.coreAddr ||
+		JSON.stringify(currentProviderCfg.mainToken) !==
+			JSON.stringify(cfg.mainToken) ||
+		currentProviderCfg.identityFactoryAddr !== cfg.identityFactoryAddr
+
+	return isChanged
 }
+
+// NOTE; We need one instance of local provider
+// but it need result to be updated when some relayer cfg props are changed
+const localWeb3 = new (function() {
+	let localProvider
+	let relayerCfg
+	let result
+
+	this.getEthers = () => {
+		if (!localProvider) {
+			localProvider = new LocalProvider(process.env.WEB3_NODE_ADDR)
+			relayerCfg = selectRelayerConfig()
+			result = getEthersResult(localProvider)
+		} else if (relayerCfg && isProviderRelayerConfigChanged(relayerCfg)) {
+			relayerCfg = selectRelayerConfig()
+			result = getEthersResult(localProvider)
+		}
+		return result
+	}
+})()
 
 const loadInjectedWeb3 = new Promise(async (resolve, reject) => {
 	const provider = await detectEthereumProvider()
@@ -135,8 +162,7 @@ const injectedWeb3Provider = async () => {
 }
 
 const getLocalWeb3Provider = async () => {
-	// console.log('getLocalWeb3')
-	return localWeb3()
+	return localWeb3.getEthers()
 }
 
 const getEthers = mode => {
