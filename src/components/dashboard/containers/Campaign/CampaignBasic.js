@@ -103,6 +103,7 @@ export const CampaignBasic = ({
 		maxPerImpression,
 		audienceInput,
 	} = item
+
 	const { advanced = {} } = (audienceInput || {}).inputs || {}
 	const { decimals, symbol } = selectMainToken()
 	const { title: errTitle } = hookProps.validations

@@ -303,6 +303,7 @@ export function updateUserCampaigns() {
 					byCreator: address,
 					cacheBrake: true,
 				})
+
 				let campaignsMapped = campaigns
 					.filter(
 						c =>
@@ -319,6 +320,10 @@ export function updateUserCampaigns() {
 
 						if (!campaign.humanFriendlyName) {
 							campaign.status.humanFriendlyName = getHumanFriendlyName(campaign)
+						}
+
+						if (!campaign.audienceInput) {
+							campaign.audienceInput = selectAudienceByCampaignId(state, c.id)
 						}
 
 						return campaign
