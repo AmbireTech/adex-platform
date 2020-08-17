@@ -1,4 +1,4 @@
-import { bigNumberify, formatUnits } from 'ethers/utils'
+import { BigNumber, utils } from 'ethers'
 import {
 	t,
 	selectDemandAnalytics,
@@ -22,8 +22,8 @@ export const selectSlotTypesSourceWithDemands = createSelector(
 			}
 		})
 			.sort((a, b) => {
-				const dA = bigNumberify(a.demand ? a.demand.raw.avgCPM : 0)
-				const dB = bigNumberify(b.demand ? b.demand.raw.avgCPM : 0)
+				const dA = BigNumber.from(a.demand ? a.demand.raw.avgCPM : 0)
+				const dB = BigNumber.from(b.demand ? b.demand.raw.avgCPM : 0)
 
 				return dA.gt(dB) ? -1 : dB.gt(dA) ? 1 : 0
 			})
@@ -96,12 +96,14 @@ export const selectVerifiedActiveTypes = createSelector(
 
 		verified.forEach((value, key) => {
 			const totalRevenue = Object.values(value.byOwner).reduce(
-				(total, r = {}) => total.add(bigNumberify(r.revenue || '0')),
-				bigNumberify('0')
+				(total, r = {}) => total.add(BigNumber.from(r.revenue || '0')),
+				BigNumber.from('0')
 			)
 
 			verified.set(key, {
-				revenue: parseFloat(formatUnits(totalRevenue.toString(), decimals)),
+				revenue: parseFloat(
+					utils.formatUnits(totalRevenue.toString(), decimals)
+				),
 			})
 		})
 

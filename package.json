@@ -45,7 +45,7 @@
     "dotenv": "6.2.0",
     "dotenv-expand": "4.2.0",
     "ethereumjs-util": "^6.1.0",
-    "ethers": "4.0.47",
+    "ethers": "5.0.8",
     "file-loader": "3.0.1",
     "fork-ts-checker-webpack-plugin-alt": "0.4.14",
     "fs-extra": "7.0.1",

@@ -66,7 +66,7 @@ export const isEthAddress = (addr = '') => {
 
 export const isEthAddressZero = (addr = '') => {
 	return isEthAddress(addr)
-		? utils.bigNumberify(utils.getAddress(addr)).isZero()
+		? utils.BigNumber.from(utils.getAddress(addr)).isZero()
 		: false
 }
 

@@ -25,7 +25,7 @@ import {
 } from 'selectors'
 import { getErrorMsg } from 'helpers/errors'
 import { getGasPrice } from 'services/gas/actions'
-import { formatUnits } from 'ethers/utils'
+import { utils } from 'ethers'
 import {
 	withdrawFromIdentity,
 	setIdentityPrivilege,
@@ -33,7 +33,6 @@ import {
 	withdrawOtherTokensFromIdentity,
 } from 'services/smart-contracts/actions/identity'
 import Helper from 'helpers/miscHelpers'
-import { SYNC_WEB3_DATA } from 'constants/spinners'
 
 // MEMORY STORAGE
 export function updateNewTransaction({ tx, key, value }) {
@@ -68,7 +67,7 @@ export function checkNetworkCongestion(showToast) {
 	return async function(dispatch, getState) {
 		const state = getState()
 		const gasPriceCap = selectGasPriceCap(state)
-		const gasPriceCapGwei = formatUnits(gasPriceCap, 'gwei')
+		const gasPriceCapGwei = utils.formatUnits(gasPriceCap, 'gwei')
 		const gasPrice = await getGasPrice('gwei')
 		if (+gasPriceCapGwei < +gasPrice) {
 			if (showToast) {

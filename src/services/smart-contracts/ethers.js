@@ -1,12 +1,16 @@
-import { ethers, Contract } from 'ethers'
+import { providers, Contract } from 'ethers'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { contracts } from './contractsCfg'
 import { AUTH_TYPES } from 'constants/misc'
 import { selectRelayerConfig } from 'selectors'
 
-ethers.errors.setLogLevel('error')
+// ethers.errors.setLogLevel('error')
 
 const { AdExCore, Identity, IdentityFactory } = contracts
+
+const LocalProvider = process.env.WEB3_NODE_ADDR.startsWith('wss://')
+	? providers.WebSocketProvider
+	: providers.JsonRpcProvider
 
 const getAdexCore = provider => {
 	const { coreAddr } = selectRelayerConfig()
@@ -57,12 +61,37 @@ const getEthersResult = provider => {
 	return results
 }
 
-const localWeb3 = () => {
-	const provider = new ethers.providers.JsonRpcProvider(
-		process.env.WEB3_NODE_ADDR
-	)
-	return getEthersResult(provider)
+function isProviderRelayerConfigChanged(currentProviderCfg) {
+	const cfg = selectRelayerConfig()
+
+	const isChanged =
+		currentProviderCfg.coreAddr !== cfg.coreAddr ||
+		JSON.stringify(currentProviderCfg.mainToken) !==
+			JSON.stringify(cfg.mainToken) ||
+		currentProviderCfg.identityFactoryAddr !== cfg.identityFactoryAddr
+
+	return isChanged
 }
+
+// NOTE; We need one instance of local provider
+// but it need result to be updated when some relayer cfg props are changed
+const localWeb3 = new (function() {
+	let localProvider
+	let relayerCfg
+	let result
+
+	this.getEthers = () => {
+		if (!localProvider) {
+			localProvider = new LocalProvider(process.env.WEB3_NODE_ADDR)
+			relayerCfg = selectRelayerConfig()
+			result = getEthersResult(localProvider)
+		} else if (relayerCfg && isProviderRelayerConfigChanged(relayerCfg)) {
+			relayerCfg = selectRelayerConfig()
+			result = getEthersResult(localProvider)
+		}
+		return result
+	}
+})()
 
 const loadInjectedWeb3 = new Promise(async (resolve, reject) => {
 	const provider = await detectEthereumProvider()
@@ -122,7 +151,7 @@ const injectedWeb3Provider = async () => {
 		try {
 			await connectMetaMask(ethereum)
 
-			const provider = new ethers.providers.Web3Provider(ethereum)
+			const provider = new providers.Web3Provider(ethereum)
 
 			return getEthersResult(provider)
 		} catch (err) {
@@ -133,8 +162,7 @@ const injectedWeb3Provider = async () => {
 }
 
 const getLocalWeb3Provider = async () => {
-	// console.log('getLocalWeb3')
-	return localWeb3()
+	return localWeb3.getEthers()
 }
 
 const getEthers = mode => {

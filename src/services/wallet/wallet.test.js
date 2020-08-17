@@ -21,7 +21,7 @@ describe('generateSalt', () => {
 	})
 })
 
-describe('getWalletHash', async () => {
+describe('getWalletHash', () => {
 	const salt = generateSalt('somepass')
 	const password = 'somepasswordqnkokura'
 
@@ -63,15 +63,18 @@ describe('getWalletHash', async () => {
 })
 
 describe('wallet', () => {
-	const mnemonic = getRandomMnemonic()
-	const wallet = generateWallet(mnemonic)
-	const password = 'somePassWord1282'
-	const email = 'kor@mi.qnko'
-	it('should generate wallet', () => {
+	it('should generate wallet', async () => {
+		const mnemonic = getRandomMnemonic()
+		const wallet = await generateWallet(mnemonic)
+
 		expect(wallet).toHaveProperty('mnemonic', 'privateKey', 'address', 'path')
 	})
 
 	it('can  be encrypted', async () => {
+		const mnemonic = getRandomMnemonic()
+		const wallet = await generateWallet(mnemonic)
+		const password = 'somePassWord1282'
+		const email = 'kor@mi.qnko'
 		expect(wallet).toHaveProperty('mnemonic', 'privateKey', 'address', 'path')
 
 		const encrypted = await encrData({ email, password, data: wallet })

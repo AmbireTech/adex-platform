@@ -32,7 +32,7 @@ import { getWidAndHightFromType } from 'helpers/itemsHelpers'
 import { ADD_ITEM, UPDATE_ITEM } from 'constants/actionTypes'
 import { ipfsSrc } from 'helpers/ipfsHelpers'
 import { getImgObjectUrlFromExternalUrl } from 'services/images/blob'
-import { bigNumberify, formatUnits } from 'ethers/utils'
+import { BigNumber, utils } from 'ethers'
 
 const { adSlotPost, adUnitPost, adSlotPut } = schemas
 const { slotRulesInputToTargetingRules } = helpers
@@ -539,8 +539,8 @@ export function validateAndUpdateSlot({
 			} else if (isValid) {
 				rulesCPM =
 					!!minPerImpression && typeof minPerImpression === 'object'
-						? formatUnits(
-								bigNumberify(Object.values(minPerImpression)[0]).mul(1000),
+						? utils.formatUnits(
+								BigNumber.from(Object.values(minPerImpression)[0]).mul(1000),
 								mainToken.decimals
 						  )
 						: minPerImpression

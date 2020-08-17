@@ -4,15 +4,7 @@ import {
 	getMultipleTxSignatures,
 } from 'services/smart-contracts/actions/ethers'
 import { getSweepingTxnsIfNeeded } from 'services/smart-contracts/actions/core'
-import { Contract } from 'ethers'
-import {
-	bigNumberify,
-	parseUnits,
-	getAddress,
-	Interface,
-	keccak256,
-	id,
-} from 'ethers/utils'
+import { Contract, BigNumber, utils } from 'ethers'
 import { generateAddress2 } from 'ethereumjs-util'
 import { executeTx } from 'services/adex-relayer'
 import {
@@ -31,11 +23,13 @@ import ScdMcdMigrationABI from 'services/smart-contracts/abi/ScdMcdMigration'
 import { EXECUTE_ACTIONS } from 'constants/misc'
 import { contracts } from 'services/smart-contracts/contractsCfg'
 const { AdExENSManager, ReverseRegistrar } = contracts
+const { Interface, getAddress, parseUnits, id, keccak256 } = utils
 
 const ERC20 = new Interface(ERC20TokenABI)
 const ScdMcdMigration = new Interface(ScdMcdMigrationABI)
 const AdExENSManagerInterface = new Interface(AdExENSManager.abi)
 const ReverseRegistrarInterface = new Interface(ReverseRegistrar.abi)
+
 const { SCD_MCD_MIGRATION_ADDR } = process.env
 
 export async function getIdentityDeployData({
@@ -114,7 +108,7 @@ export async function withdrawFromIdentity({
 		identityContract: identityAddr,
 		feeTokenAddr: tokenAddr,
 		to: tokenAddr,
-		data: ERC20.functions.transfer.encode([withdrawTo, toWithdraw]),
+		data: ERC20.encodeFunctionData('transfer', [withdrawTo, toWithdraw]),
 		withdrawTx: true,
 	}
 	const txns = [withdrawTx]
@@ -131,7 +125,7 @@ export async function withdrawFromIdentity({
 	})
 
 	const fees = await getIdentityTxnsTotalFees({ txnsByFeeToken, mainToken })
-	const mtBalance = bigNumberify(availableIdentityBalanceMainToken)
+	const mtBalance = BigNumber.from(availableIdentityBalanceMainToken)
 
 	if (fees.totalBN.gt(mtBalance)) {
 		throw new Error(
@@ -158,7 +152,7 @@ export async function withdrawFromIdentity({
 		actualWithdrawAmount = maxWithdraw
 		txnsByFeeToken[tokenAddr] = txnsByFeeToken[tokenAddr].map(tx => {
 			if (tx.withdrawTx) {
-				tx.data = ERC20.functions.transfer.encode([
+				tx.data = ERC20.encodeFunctionData('transfer', [
 					withdrawTo,
 					actualWithdrawAmount.toString(),
 				])
@@ -208,7 +202,7 @@ export async function setIdentityPrivilege({
 		identityContract: identityAddr,
 		feeTokenAddr: MainToken.address,
 		to: identityAddr,
-		data: identityInterface.functions.setAddrPrivilege.encode([
+		data: identityInterface.encodeFunctionData('setAddrPrivilege', [
 			setAddr,
 			privLevel,
 		]),
@@ -278,7 +272,7 @@ function txnsByTokenWithSaiToDaiSwap({
 
 			if (needSaiToDaiSwap) {
 				current.saiWithdrawAmount = current.saiWithdrawAmount.add(
-					bigNumberify(withdrawAmountByToken[saiAddr])
+					BigNumber.from(withdrawAmountByToken[saiAddr])
 				)
 				feeTokenAddr = daiAddr
 			}
@@ -296,7 +290,7 @@ function txnsByTokenWithSaiToDaiSwap({
 			return current
 		},
 		{
-			saiWithdrawAmount: bigNumberify('0'),
+			saiWithdrawAmount: BigNumber.from('0'),
 			txnsByFeeToken: {},
 		}
 	)
@@ -315,7 +309,7 @@ export async function addIdentityENS({ username = '', account, getFeesOnly }) {
 		identityContract: identityAddr,
 		feeTokenAddr: MainToken.address,
 		to: AdExENSManager.address,
-		data: AdExENSManagerInterface.functions.registerAndSetup.encode([
+		data: AdExENSManagerInterface.encodeFunctionData('registerAndSetup', [
 			AdExENSManager.publicResolver,
 			id(username),
 			identityAddr,
@@ -326,7 +320,7 @@ export async function addIdentityENS({ username = '', account, getFeesOnly }) {
 		identityContract: identityAddr,
 		feeTokenAddr: MainToken.address,
 		to: ReverseRegistrar.address,
-		data: ReverseRegistrarInterface.functions.setName.encode([
+		data: ReverseRegistrarInterface.encodeFunctionData('setName', [
 			`${username}.${ReverseRegistrar.parentDomain}`,
 		]),
 	}
@@ -396,26 +390,26 @@ export async function getIdentityTxnsWithNoncesAndFees({
 		? (await identityContract.nonce()).toNumber()
 		: 0
 
-	const baseFee = bigNumberify(
+	const baseFee = BigNumber.from(
 		(mainTokenWithFees.executeBaseFee || {})[executeAction] || '0'
 	)
 
 	const mainTxnsFees = txns.length
-		? bigNumberify(
+		? BigNumber.from(
 				!initialNonce
 					? mainTokenWithFees.minDeploy
 					: mainTokenWithFees.minRecommended
 		  ).add(
-				bigNumberify(mainTokenWithFees.minRecommended).mul(
-					bigNumberify(txns.length - 1)
+				BigNumber.from(mainTokenWithFees.minRecommended).mul(
+					BigNumber.from(txns.length - 1)
 				)
 		  )
-		: bigNumberify(0)
+		: BigNumber.from(0)
 
 	const feesForMainTxns = baseFee.add(mainTxnsFees)
 
 	const totalAmountInMainTokenNeeded = feesForMainTxns.add(
-		bigNumberify(amountInMainTokenNeeded)
+		BigNumber.from(amountInMainTokenNeeded)
 	)
 
 	const {
@@ -453,7 +447,7 @@ export async function getIdentityTxnsWithNoncesAndFees({
 	// TODO: change getSwapAmountsByToken if more swaps are supported
 	const saiSwapAmount = sweepTxnsByToken.saiWithdrawAmount
 		.add(otherTxnsByToken.saiWithdrawAmount)
-		.add(bigNumberify(swapAmountsByToken[saiAddr] || 0))
+		.add(BigNumber.from(swapAmountsByToken[saiAddr] || 0))
 
 	if (!saiSwapAmount.isZero()) {
 		sweepTxnsByToken.txnsByFeeToken[daiAddr] = [
@@ -502,26 +496,26 @@ export async function getIdentityTxnsWithNoncesAndFees({
 			const addBaseFee =
 				!baseFeeAdded && !isSweepTx && tx.feeTokenAddr === mainToken.address
 
-			const sweepRoutinesFeeAmount = bigNumberify(routinesSweepTxCount).mul(
-				bigNumberify(feeToken.min)
+			const sweepRoutinesFeeAmount = BigNumber.from(routinesSweepTxCount).mul(
+				BigNumber.from(feeToken.min)
 			)
 
-			const extraFeesAmount = bigNumberify(extraTxFeesCount).mul(
-				bigNumberify(feeToken.minRecommended)
+			const extraFeesAmount = BigNumber.from(extraTxFeesCount).mul(
+				BigNumber.from(feeToken.minRecommended)
 			)
 
 			// Total relayer fees for the transaction
-			const feeAmount = bigNumberify(txFeeAmount)
+			const feeAmount = BigNumber.from(txFeeAmount)
 				.add(sweepRoutinesFeeAmount)
 				.add(extraFeesAmount)
-				.add(addBaseFee ? baseFee : bigNumberify(0))
+				.add(addBaseFee ? baseFee : BigNumber.from(0))
 				.toString()
 
 			// fees that are not pre calculated with in the total identity balance
 			// There are no pre calculated fees in the balance
-			const nonIdentityBalanceFeeAmount = bigNumberify(feeAmount)
-			// .sub(bigNumberify(isSweepTx ? feeToken.min : 0))
-			// .sub(bigNumberify(routinesSweepTxCount).mul(bigNumberify(feeToken.min)))
+			const nonIdentityBalanceFeeAmount = BigNumber.from(feeAmount)
+			// .sub(BigNumber.from(isSweepTx ? feeToken.min : 0))
+			// .sub(BigNumber.from(routinesSweepTxCount).mul(BigNumber.from(feeToken.min)))
 			// .toString()
 
 			const feesBreakdown = {
@@ -577,7 +571,7 @@ export async function getApproveTxns({
 			identityContract: identityAddr,
 			feeTokenAddr: feeTokenAddr,
 			to: token.address,
-			data: ERC20.functions.approve.encode([approveForAddress, 0]),
+			data: ERC20.encodeFunctionData('approve', [approveForAddress, 0]),
 		})
 	}
 
@@ -585,7 +579,10 @@ export async function getApproveTxns({
 		identityContract: identityAddr,
 		feeTokenAddr: feeTokenAddr,
 		to: token.address,
-		data: ERC20.functions.approve.encode([approveForAddress, approveAmount]),
+		data: ERC20.encodeFunctionData('approve', [
+			approveForAddress,
+			approveAmount,
+		]),
 	})
 
 	return approveTxns
@@ -611,7 +608,7 @@ async function swapSaiToDaiTxns({
 		identityContract: identityAddr,
 		feeTokenAddr: daiAddr,
 		to: SCD_MCD_MIGRATION_ADDR,
-		data: ScdMcdMigration.functions.swapSaiToDai.encode([swapAmount]),
+		data: ScdMcdMigration.encodeFunctionData('swapSaiToDai', [swapAmount]),
 	}
 
 	return [...approveTxns, swapTx]
@@ -624,7 +621,7 @@ export async function getIdentityTxnsTotalFees({
 	mainToken = {},
 }) {
 	const feeTokenWhitelist = selectFeeTokenWhitelist()
-	const bigZero = bigNumberify('0')
+	const bigZero = BigNumber.from('0')
 	const { total, byToken, totalBreakdown } = Object.values(txnsByFeeToken)
 		.reduce((all, byFeeToken) => all.concat(byFeeToken), [])
 		.reduce(
@@ -636,7 +633,7 @@ export async function getIdentityTxnsTotalFees({
 					executeAction,
 				} = tx
 				const { total, byToken, totalBreakdown } = result
-				const txFeeAmount = bigNumberify(nonIdentityBalanceFeeAmount)
+				const txFeeAmount = BigNumber.from(nonIdentityBalanceFeeAmount)
 
 				result.total = total.add(txFeeAmount)
 				result.byToken[feeTokenAddr] = (byToken[feeTokenAddr] || bigZero).add(
@@ -644,17 +641,17 @@ export async function getIdentityTxnsTotalFees({
 				)
 
 				result.totalBreakdown = {
-					baseFee: bigNumberify(totalBreakdown.baseFee || '0').add(
-						bigNumberify(feesBreakdown.baseFee || '0')
+					baseFee: BigNumber.from(totalBreakdown.baseFee || '0').add(
+						BigNumber.from(feesBreakdown.baseFee || '0')
 					),
-					sweepRoutinesFeeAmount: bigNumberify(
+					sweepRoutinesFeeAmount: BigNumber.from(
 						totalBreakdown.sweepRoutinesFeeAmount || '0'
-					).add(bigNumberify(feesBreakdown.sweepRoutinesFeeAmount)),
-					extraFeesAmount: bigNumberify(
+					).add(BigNumber.from(feesBreakdown.sweepRoutinesFeeAmount)),
+					extraFeesAmount: BigNumber.from(
 						totalBreakdown.extraFeesAmount || '0'
-					).add(bigNumberify(feesBreakdown.extraFeesAmount)),
-					feeAmount: bigNumberify(totalBreakdown.feeAmount || '0').add(
-						bigNumberify(feesBreakdown.feeAmount)
+					).add(BigNumber.from(feesBreakdown.extraFeesAmount)),
+					feeAmount: BigNumber.from(totalBreakdown.feeAmount || '0').add(
+						BigNumber.from(feesBreakdown.feeAmount)
 					),
 					routinesSweepTxCount:
 						(totalBreakdown.routinesSweepTxCount || 0) +
@@ -668,17 +665,17 @@ export async function getIdentityTxnsTotalFees({
 						totalBreakdown.sweepTxnsCount +
 						(totalBreakdown.routinesSweepTxCount || 0) +
 						(feesBreakdown.isSweepTx ? 1 : 0),
-					sweepTxnsFeeAmount: bigNumberify(
+					sweepTxnsFeeAmount: BigNumber.from(
 						totalBreakdown.sweepTxnsFeeAmount || '0'
 					).add(
-						bigNumberify(
+						BigNumber.from(
 							feesBreakdown.isSweepTx
 								? feesBreakdown.txFeeAmount
 								: feesBreakdown.sweepRoutinesFeeAmount
 						)
 					),
 					deployFee: feesBreakdown.isDeployTx
-						? bigNumberify(feesBreakdown.txFeeAmount)
+						? BigNumber.from(feesBreakdown.txFeeAmount)
 						: null,
 					executeAction,
 				}
@@ -831,7 +828,7 @@ export async function withdrawOtherTokensFromIdentity({
 		identityContract: identityAddr,
 		feeTokenAddr: mainToken.address,
 		to: tokenAddress,
-		data: ERC20.functions.transfer.encode([withdrawTo, toWithdraw]),
+		data: ERC20.encodeFunctionData('transfer', [withdrawTo, toWithdraw]),
 	}
 	const txns = [withdrawTx]
 
