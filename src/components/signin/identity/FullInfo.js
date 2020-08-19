@@ -154,7 +154,7 @@ const FulInfo = props => {
 								fullWidth
 								variant='outlined'
 								name='userSide'
-								label={t('userSide', { isProp: true })}
+								label={t('USER_SIDE_SELECT_LABEL')}
 								onChange={val => execute(updateIdentity('userSide', val))}
 								source={userSides}
 								value={identity.userSide || ''}
@@ -163,7 +163,7 @@ const FulInfo = props => {
 								helperText={
 									userSide && !!userSide.dirty
 										? userSide.errMsg
-										: t('USER_SIDE')
+										: t('USER_SIDE_INFO')
 								}
 							/>
 						</Grid>
