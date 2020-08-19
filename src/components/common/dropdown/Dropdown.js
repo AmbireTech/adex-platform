@@ -29,6 +29,9 @@ export const styles = theme => ({
 		whiteSpace: 'break-spaces',
 		wordBreak: 'break-word',
 	},
+	extraInfo: {
+		marginLeft: theme.spacing(1),
+	},
 })
 
 const useStyles = makeStyles(styles)
