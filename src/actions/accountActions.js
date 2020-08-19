@@ -48,6 +48,7 @@ import {
 	selectAuthType,
 	selectAccountIdentity,
 	selectLoginDirectSide,
+	selectUserLastSide,
 } from 'selectors'
 import { logOut } from 'services/store-data/auth'
 import { getErrorMsg } from 'helpers/errors'
@@ -109,8 +110,8 @@ export function updateAccount({ meta, newValues }) {
 	return function(dispatch) {
 		return dispatch({
 			type: types.UPDATE_ACCOUNT,
-			meta: meta,
-			newValues: newValues,
+			meta,
+			newValues,
 		})
 	}
 }
@@ -337,7 +338,7 @@ export function createSession({
 				[VALIDATOR_LEADER_ID]: leaderValidatorAuth,
 			}
 
-			updateAccount({
+			await updateAccount({
 				newValues: { ...account },
 			})(dispatch)
 
@@ -349,11 +350,14 @@ export function createSession({
 			}
 
 			const redirectSide = selectLoginDirectSide(getState())
-			updateMemoryUi('initialDataLoaded', false)(dispatch, getState)
+			await updateMemoryUi('initialDataLoaded', false)(dispatch, getState)
+
+			// getState() - after account is updated
+			const persistUserSide = selectUserLastSide(getState())
 
 			const { userSide } = (identity.relayerData || {}).meta || {}
 
-			const side = userSide || redirectSide
+			const side = persistUserSide || userSide || redirectSide
 
 			const goTo = ['advertiser', 'publisher'].includes(side)
 				? side
