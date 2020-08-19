@@ -12,6 +12,7 @@ import {
 	selectValidationsById,
 	selectSpinnerById,
 	selectKnowUsFromSource,
+	selectUserSides,
 } from 'selectors'
 import Anchor from 'components/common/anchor/anchor'
 import { execute, updateIdentity } from 'actions'
@@ -25,6 +26,7 @@ import { CREATING_SESSION } from 'constants/spinners'
 import { WALLET_ACTIONS_MSGS } from 'constants/misc'
 
 const knowFromSource = selectKnowUsFromSource()
+const userSides = selectUserSides()
 
 const FulInfo = props => {
 	const { validateId } = props
@@ -48,6 +50,7 @@ const FulInfo = props => {
 		tosCheck,
 		accessWarningCheck,
 		knowFrom,
+		userSide,
 		moreInfo,
 	} = validations
 	return (
@@ -145,6 +148,25 @@ const FulInfo = props => {
 								/>
 							</Grid>
 						)}
+						<Grid item xs={12}>
+							<Dropdown
+								required
+								fullWidth
+								variant='outlined'
+								name='userSide'
+								label={t('userSide', { isProp: true })}
+								onChange={val => execute(updateIdentity('userSide', val))}
+								source={userSides}
+								value={identity.userSide || ''}
+								htmlId='timeframe-select'
+								error={userSide && !!userSide.dirty}
+								helperText={
+									userSide && !!userSide.dirty
+										? userSide.errMsg
+										: t('USER_SIDE')
+								}
+							/>
+						</Grid>
 						<Grid item xs={12}>
 							<FormControl
 								required
