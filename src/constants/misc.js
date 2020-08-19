@@ -142,7 +142,6 @@ export const WHERE_YOU_KNOW_US = [
 export const USER_SIDES = [
 	{ label: 'LABEL_PUBLISHER', value: 'publisher' },
 	{ label: 'LABEL_ADVERTISER', value: 'advertiser' },
-	{ label: 'LABEL_BOTH', value: 'both' },
 ]
 
 export const MOON_GRAVITY_ACCELERATION = 1.625
