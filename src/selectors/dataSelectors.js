@@ -206,6 +206,12 @@ export const selectFromSource = createSelector(
 		source.map(data => {
 			const translated = { ...data }
 			translated.label = t(data.label)
+			const extraLabel =
+				data.extraLabel ||
+				(data.extraLabels && data.extraLabels.length
+					? data.extraLabels.join('\r\n')
+					: undefined)
+			translated.extraLabel = extraLabel
 			return translated
 		})
 )
