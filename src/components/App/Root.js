@@ -20,7 +20,6 @@ import {
 	CreateStandardIdentity,
 	LoginQuickIdentity,
 } from 'components/signin/identity/Identity'
-import SideSelect from 'components/signin/side-select/SideSelect'
 import PageNotFound from 'components/page_not_found/PageNotFound'
 import Home from 'components/signin/Home'
 import JustDialog from 'components/common/dialog/JustDialog'
@@ -143,7 +142,6 @@ const Root = () => {
 					path='/dashboard/:side'
 					component={Dashboard}
 				/>
-				<PrivateRoute auth={auth} path='/side-select' component={SideSelect} />
 				<Route exact path='/' component={ConnectedRoot} />
 				<Route
 					exact

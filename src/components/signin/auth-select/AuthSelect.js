@@ -81,25 +81,6 @@ const AuthSelect = () => {
 					{t('SIGN_UP_IN_SELECT')}
 				</Typography>
 			</Box>
-			{auth && (
-				<Box m={1}>
-					<RRButton
-						variant='contained'
-						to='/side-select'
-						size='large'
-						color='default'
-						fullWidth
-						className={classes.limitedWidthBtn}
-					>
-						{t('CONTINUE_AS', {
-							args: [
-								wallet.email || formatAddress(identity.address),
-								wallet.authType,
-							],
-						})}
-					</RRButton>
-				</Box>
-			)}
 			{wallets.map(w => (
 				<Box key={w.name} m={1} display='flex'>
 					<Button
