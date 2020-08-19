@@ -139,6 +139,12 @@ export const WHERE_YOU_KNOW_US = [
 	{ label: 'LABEL_OTHER', value: 'other' },
 ]
 
+export const USER_SIDES = [
+	{ label: 'LABEL_PUBLISHER', value: 'publisher' },
+	{ label: 'LABEL_ADVERTISER', value: 'advertiser' },
+	{ label: 'LABEL_BOTH', value: 'both' },
+]
+
 export const MOON_GRAVITY_ACCELERATION = 1.625
 export const MOON_TO_EARTH_WEIGHT = 0.166
 
