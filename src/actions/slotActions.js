@@ -40,6 +40,9 @@ const { slotRulesInputToTargetingRules } = helpers
 const { VALIDATOR_FOLLOWER_FEE_NUM, VALIDATOR_FOLLOWER_FEE_DEN } = process.env
 
 // in float - CPM
+// NOTE:  `minPerImpression` is used as the value user sees and modifies
+// `minPerImpression` is obsolete in the protocol but this way we can easily
+// manage the user input w/o multiple conversion of the CPM value
 function getRuleMinCPMWithValidatorFeeAdded(cpmInput) {
 	const withFee =
 		+cpmInput / (1 - +VALIDATOR_FOLLOWER_FEE_NUM / +VALIDATOR_FOLLOWER_FEE_DEN)
