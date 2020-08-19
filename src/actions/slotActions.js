@@ -37,6 +37,18 @@ import { BigNumber, utils } from 'ethers'
 const { adSlotPost, adUnitPost, adSlotPut } = schemas
 const { slotRulesInputToTargetingRules } = helpers
 
+const { VALIDATOR_FOLLOWER_FEE_NUM, VALIDATOR_FOLLOWER_FEE_DEN } = process.env
+
+// in float - CPM
+// NOTE:  `minPerImpression` is used as the value user sees and modifies
+// `minPerImpression` is obsolete in the protocol but this way we can easily
+// manage the user input w/o multiple conversion of the CPM value
+function getRuleMinCPMWithValidatorFeeAdded(cpmInput) {
+	const withFee =
+		+cpmInput / (1 - +VALIDATOR_FOLLOWER_FEE_NUM / +VALIDATOR_FOLLOWER_FEE_DEN)
+	return withFee.toString()
+}
+
 async function getFallbackUnit({
 	mediaMime,
 	tempUrl,
@@ -153,9 +165,13 @@ export function validateNewSlotBasics({
 
 			const ruleCPM = !!autoSetMinCPM ? suggestedMinCPM : minPerImpression
 
+			const rulesCPMWithValidatorFee = getRuleMinCPMWithValidatorFeeAdded(
+				ruleCPM
+			)
+
 			const rules = slotRulesInputToTargetingRules({
 				rulesInput,
-				suggestedMinCPM: ruleCPM,
+				suggestedMinCPM: rulesCPMWithValidatorFee,
 				decimals: mainToken.decimals,
 			})
 
@@ -549,7 +565,7 @@ export function validateAndUpdateSlot({
 			if (isValid && (updateMinPerImpression || updateRules)) {
 				newRules = slotRulesInputToTargetingRules({
 					rulesInput,
-					suggestedMinCPM: rulesCPM,
+					suggestedMinCPM: getRuleMinCPMWithValidatorFeeAdded(rulesCPM),
 					decimals: mainToken.decimals,
 				})
 
