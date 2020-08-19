@@ -116,7 +116,7 @@ const FulInfo = props => {
 								onChange={val => execute(updateIdentity('knowFrom', val))}
 								source={knowFromSource}
 								value={identity.knowFrom || ''}
-								htmlId='timeframe-select'
+								htmlId='select-know-from'
 								error={knowFrom && !!knowFrom.dirty}
 								helperText={
 									knowFrom && !!knowFrom.dirty
@@ -158,7 +158,7 @@ const FulInfo = props => {
 								onChange={val => execute(updateIdentity('userSide', val))}
 								source={userSides}
 								value={identity.userSide || ''}
-								htmlId='timeframe-select'
+								htmlId='select-user-side'
 								error={userSide && !!userSide.dirty}
 								helperText={
 									userSide && !!userSide.dirty
