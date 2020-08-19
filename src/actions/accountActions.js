@@ -348,15 +348,21 @@ export function createSession({
 				})
 			}
 
-			const side = selectLoginDirectSide(getState())
+			const redirectSide = selectLoginDirectSide(getState())
 			updateMemoryUi('initialDataLoaded', false)(dispatch, getState)
 
-			if (['advertiser', 'publisher'].includes(side)) {
-				dispatch(push(`/dashboard/${side}`))
-				updateGlobalUi('goToSide', '')(dispatch)
-			} else {
-				dispatch(push('/side-select'))
-			}
+			const { userSide } = (identity.relayerData || {}).meta || {}
+
+			const side = userSide || redirectSide
+
+			const goTo = ['advertiser', 'publisher'].includes(side)
+				? side
+				: 'advertiser'
+
+			dispatch(push(`/dashboard/${goTo}`))
+			updateGlobalUi('goToSide', '')(dispatch)
+
+			// dispatch(push('/side-select'))
 		} catch (err) {
 			console.error('ERR_GETTING_SESSION', err)
 			addToast({
