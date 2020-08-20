@@ -32,6 +32,10 @@ export const styles = theme => ({
 	extraInfo: {
 		marginLeft: theme.spacing(1),
 	},
+	select: {
+		display: 'flex',
+		alignItems: 'center',
+	},
 })
 
 const useStyles = makeStyles(styles)
@@ -98,6 +102,7 @@ function Dropdown(props) {
 						value={value.id || value}
 						onChange={handleChange}
 						IconComponent={IconComponent}
+						classes={{ selectMenu: classes.select }}
 					>
 						{[...source].map(src => {
 							return src.group ? (
@@ -110,7 +115,7 @@ function Dropdown(props) {
 							) : (
 								<MenuItem
 									key={src.value.key || src.value.id || src.value}
-									className={classes.menuItem}
+									classes={{ selected: classes.menuItem }}
 									value={src.value.id || src.value}
 								>
 									{src.label}
