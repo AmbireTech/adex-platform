@@ -9,6 +9,7 @@ import {
 	validate,
 	getImgsIpfsFromBlob,
 	updateNewItem,
+	updateNewWebsite,
 } from 'actions'
 import { numStringCPMtoImpression } from 'helpers/numbers'
 import { getErrorMsg } from 'helpers/errors'
@@ -16,6 +17,7 @@ import {
 	selectMainToken,
 	selectNewAdSlot,
 	selectAuthSig,
+	selectNewWebsite,
 	t,
 	selectNewItemByTypeAndId,
 	selectAdSlotById,
@@ -693,6 +695,58 @@ export function validateAndUpdateSlot({
 			})(dispatch)
 		}
 
+		await updateSpinner(validateId, false)(dispatch)
+	}
+}
+
+export function validateAndSaveNewWebsiteBasics({
+	validateId,
+	dirty,
+	onValid,
+	onInvalid,
+}) {
+	return async function(dispatch, getState) {
+		await updateSpinner(validateId, true)(dispatch)
+		let isValid = false
+		try {
+			const state = getState()
+			const slot = selectNewWebsite(state)
+			const { website, temp } = slot
+
+			const validations = await Promise.all([
+				validateSchemaProp({
+					validateId,
+					value: website,
+					prop: 'website',
+					schema: adSlotPost.website,
+					dirty,
+				})(dispatch),
+			])
+
+			isValid = validations.every(v => v === true)
+
+			if (isValid) {
+				const { hostname, issues, categories, suggestedMinCPM } = isValid
+					? await verifyWebsite({ websiteUrl: website })
+					: {}
+				const newTemp = {
+					...temp,
+					hostname,
+					issues,
+					categories,
+					suggestedMinCPM,
+				}
+
+				updateNewWebsite('temp', newTemp)(dispatch, getState)
+			}
+		} catch (err) {
+			// NOTE: Just log - most probably the error can be from verifyWebsite
+			// bet this doesn't matter at that point
+			console.error('ERR_VALIDATING_WEBSITE_BASIC', err)
+			isValid = false
+		}
+
+		await handleAfterValidation({ isValid, onValid, onInvalid })
 		await updateSpinner(validateId, false)(dispatch)
 	}
 }
