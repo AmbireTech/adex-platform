@@ -21,6 +21,7 @@ import {
 	t,
 	selectNewItemByTypeAndId,
 	selectAdSlotById,
+	selectWebsiteByWebsite,
 } from 'selectors'
 import { schemas, AdSlot, AdUnit, helpers } from 'adex-models'
 import {
@@ -713,17 +714,23 @@ export function validateAndSaveNewWebsiteBasics({
 			const slot = selectNewWebsite(state)
 			const { website, temp } = slot
 
-			const validations = await Promise.all([
-				validateSchemaProp({
-					validateId,
-					value: website,
-					prop: 'website',
-					schema: adSlotPost.website,
-					dirty,
-				})(dispatch),
-			])
+			isValid = await validateSchemaProp({
+				validateId,
+				value: website,
+				prop: 'website',
+				schema: adSlotPost.website,
+				dirty,
+			})(dispatch)
 
-			isValid = validations.every(v => v === true)
+			if (isValid) {
+				isValid = !Object.keys(selectWebsiteByWebsite(state, website)).length
+
+				await validate(validateId, 'website', {
+					isValid,
+					err: { msg: 'ERR_WEBSITE_EXISTS' },
+					dirty,
+				})(dispatch)
+			}
 
 			if (isValid) {
 				const { hostname, issues, categories, suggestedMinCPM } = isValid
