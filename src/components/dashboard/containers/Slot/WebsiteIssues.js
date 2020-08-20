@@ -165,7 +165,11 @@ export function WebsiteIssues({ issues, website, asKeyWords, tryAgainBtn }) {
 							</Tooltip>
 						) : (
 							<Box key={id} my={index !== 0 && index < data.length ? 1 : 0}>
-								<Alert severity='warning' variant='outlined' classes={classes}>
+								<Alert
+									severity='warning'
+									variant='outlined'
+									classes={{ message: classes.message }}
+								>
 									<RenderIssue label={label} args={args} />
 								</Alert>
 							</Box>
