@@ -140,11 +140,12 @@ function Dropdown(props) {
 						fullWidth={fullWidth}
 						type='text'
 						variant={variant}
+						label={label}
 						disabled
 						value={loading ? t('LOADING_DATA') : noSrcLabel}
-						helperText={helperText}
+						helperText={loading ? null : helperText}
 					/>
-					{!!loading && <InputLoading />}
+					{loading && <InputLoading />}
 				</>
 			)}
 		</Fragment>
