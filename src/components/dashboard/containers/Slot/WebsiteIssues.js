@@ -65,6 +65,11 @@ const useStyles = makeStyles(theme => ({
 	message: {
 		display: 'block',
 	},
+	issueChip: {
+		marginRight: theme.spacing(0.5),
+		marginTop: theme.spacing(0.5),
+		marginBottom: theme.spacing(0.5),
+	},
 }))
 
 export function RenderIssue({ label, args }) {
@@ -118,7 +123,12 @@ export const WebsiteVerifyBtn = ({ id, website, issues, updated }) => {
 					{t('TRY_VERIFY')}
 				</Button>
 				{!canUpdate && (
-					<Typography variant='caption' display='block' align='right'>
+					<Typography
+						component='div'
+						variant='caption'
+						display='block'
+						align='right'
+					>
 						{t('VERIFICATION_UPDATED_AGO', {
 							args: [timeAgo(new Date(updated).valueOf())],
 						})}
@@ -147,7 +157,11 @@ export function WebsiteIssues({ issues, website, asKeyWords, tryAgainBtn }) {
 								key={id}
 								title={<RenderIssue label={label} args={args} />}
 							>
-								<Chip size='small' label={ALL_ISSUES[label].shortLabel} />
+								<Chip
+									size='small'
+									label={ALL_ISSUES[label].shortLabel}
+									className={classes.issueChip}
+								/>
 							</Tooltip>
 						) : (
 							<Box key={id} my={index !== 0 && index < data.length ? 1 : 0}>
@@ -159,7 +173,7 @@ export function WebsiteIssues({ issues, website, asKeyWords, tryAgainBtn }) {
 					})}
 				</Fragment>
 			) : !!asKeyWords ? (
-				<Typography variant='caption' color='secondary'>
+				<Typography component='div' variant='caption' color='secondary'>
 					{t('WEBSITE_VERIFIED')}
 				</Typography>
 			) : (

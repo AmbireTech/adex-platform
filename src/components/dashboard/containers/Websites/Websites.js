@@ -61,6 +61,9 @@ export default function Websites() {
 										</ListItemIcon>
 										<ListItemText
 											primary={id}
+											secondaryTypographyProps={{
+												component: 'div',
+											}}
 											secondary={<WebsiteIssues issues={issues} asKeyWords />}
 										/>
 										<ListItemSecondaryAction>
