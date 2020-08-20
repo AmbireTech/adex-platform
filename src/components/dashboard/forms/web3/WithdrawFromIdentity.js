@@ -77,9 +77,11 @@ const WithdrawFromIdentity = ({ stepsId, validateId } = {}) => {
 								)
 							}
 							error={errAddr && !!errAddr.dirty}
-							helperText={errAddr && !!errAddr.dirty ? errAddr.errMsg : ''}
+							helperText={
+								!spinner && errAddr && !!errAddr.dirty ? errAddr.errMsg : ''
+							}
 						/>
-						{spinner ? <InputLoading /> : null}
+						{spinner && <InputLoading />}
 					</Box>
 					<Box mb={2}>
 						<TextField

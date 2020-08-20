@@ -1,12 +1,14 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import Grid from '@material-ui/core/Grid'
-import TextField from '@material-ui/core/TextField'
-import Checkbox from '@material-ui/core/Checkbox'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import FormHelperText from '@material-ui/core/FormHelperText'
-import FormControl from '@material-ui/core/FormControl'
-import Anchor from 'components/common/anchor/anchor'
+import {
+	Grid,
+	TextField,
+	Checkbox,
+	FormControlLabel,
+	FormHelperText,
+	FormControl,
+} from '@material-ui/core'
+import { ExternalAnchor } from 'components/common/anchor'
 import {
 	ContentBox,
 	ContentBody,
@@ -19,12 +21,14 @@ import {
 	selectValidationsById,
 	selectSpinnerById,
 	selectKnowUsFromSource,
+	selectUserSides,
 } from 'selectors'
 import { execute, updateIdentity } from 'actions'
 
 import { CREATING_SESSION } from 'constants/spinners'
 
 const knowFromSource = selectKnowUsFromSource()
+const userSides = selectUserSides()
 
 const QuickInfo = props => {
 	const { validateId } = props
@@ -50,6 +54,7 @@ const QuickInfo = props => {
 		tosCheck,
 		knowFrom,
 		moreInfo,
+		userSide,
 	} = validations
 	return (
 		<ContentBox>
@@ -153,7 +158,7 @@ const QuickInfo = props => {
 								onChange={val => execute(updateIdentity('knowFrom', val))}
 								source={knowFromSource}
 								value={identity.knowFrom || ''}
-								htmlId='timeframe-select'
+								htmlId='select-know-from'
 								error={knowFrom && !!knowFrom.dirty}
 								helperText={
 									knowFrom && !!knowFrom.dirty
@@ -186,6 +191,25 @@ const QuickInfo = props => {
 							</Grid>
 						)}
 						<Grid item xs={12}>
+							<Dropdown
+								required
+								fullWidth
+								variant='outlined'
+								name='userSide'
+								label={t('USER_SIDE_SELECT_LABEL')}
+								onChange={val => execute(updateIdentity('userSide', val))}
+								source={userSides}
+								value={identity.userSide || ''}
+								htmlId='select-user-side'
+								error={userSide && !!userSide.dirty}
+								helperText={
+									userSide && !!userSide.dirty
+										? userSide.errMsg
+										: t('USER_SIDE_INFO')
+								}
+							/>
+						</Grid>
+						<Grid item xs={12}>
 							<FormControl
 								required
 								error={tosCheck && tosCheck.dirty}
@@ -202,14 +226,13 @@ const QuickInfo = props => {
 											color='primary'
 										/>
 									}
-									label={
-										<Anchor
-											target='_blank'
-											href={`${process.env.ADEX_TOS_URL}`}
-										>
-											{t('TOS_CHECK')}
-										</Anchor>
-									}
+									label={t('TOS_CHECK_LABEL', {
+										args: [
+											<ExternalAnchor href={`${process.env.ADEX_TOS_URL}`}>
+												{t('TOS')}
+											</ExternalAnchor>,
+										],
+									})}
 								/>
 								{tosCheck && !!tosCheck.dirty && (
 									<FormHelperText>{tosCheck.errMsg}</FormHelperText>

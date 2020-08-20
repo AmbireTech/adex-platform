@@ -1,6 +1,21 @@
 import React from 'react'
+import { makeStyles } from '@material-ui/core/styles'
 import { Link } from '@material-ui/core'
 import { OpenInNew } from '@material-ui/icons'
+import clsx from 'clsx'
+
+export const styles = theme => ({
+	externalIcon: {
+		marginLeft: theme.spacing(0.5),
+		fontSize: 'small',
+	},
+	link: {
+		display: 'inline-flex',
+		alignItems: 'center',
+	},
+})
+
+const useStyles = makeStyles(styles)
 
 const getUrl = url => {
 	url = (url || '').replace(/^(https?:)?\/\//i, '')
@@ -20,8 +35,11 @@ const Anchor = ({
 	externalIcon,
 	color,
 	component,
+	className,
 	...rest
 }) => {
+	const classes = useStyles()
+
 	const isExternal = target && target === '_blank'
 	const url = isExternal ? getUrl(href) : href
 
@@ -37,10 +55,10 @@ const Anchor = ({
 		...rest,
 	}
 	return (
-		<Link {...linkProps}>
+		<Link {...linkProps} className={clsx(className, classes.link)}>
 			{!component && (children || label)}
 			{!component && externalIcon && (
-				<OpenInNew style={{ fontSize: 'small' }} />
+				<OpenInNew className={classes.externalIcon} />
 			)}
 		</Link>
 	)

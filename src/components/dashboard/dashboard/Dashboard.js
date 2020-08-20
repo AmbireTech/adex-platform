@@ -40,6 +40,7 @@ import {
 	loadAccountData,
 	stopAccountDataUpdate,
 	updateNav,
+	updateUiByIdentity,
 } from 'actions'
 import {
 	t,
@@ -153,6 +154,7 @@ function Dashboard(props) {
 
 	useEffect(() => {
 		execute(updateNav('side', side))
+		execute(updateUiByIdentity('userLastSide', side))
 	}, [side])
 
 	const handleDrawerToggle = () => {
