@@ -15,6 +15,8 @@ import AudienceBasic from './Audience/AudienceBasic'
 import NewAudiencePreview from './Audience/NewAudiencePreview'
 import NewTargetingRules from './NewTargetingRules'
 import AdSlotPreview from './AdSlot/AdSlotPreview'
+import WebsiteBasic from './Website/WebsiteBasic'
+import WebsitePreview from './Website/WebsitePreview'
 
 import {
 	execute,
@@ -27,6 +29,7 @@ import {
 	validateCampaignAudienceInput,
 	validateAudienceBasics,
 	validateAudienceInput,
+	validateAndSaveNewWebsiteBasics,
 	completeItem,
 	resetNewItem,
 	saveUnit,
@@ -288,6 +291,59 @@ export const NewAudienceDialog = props => (
 	<NewAudienceWithDialog
 		btnLabel='NEW_AUDIENCE'
 		title='CREATE_NEW_AUDIENCE'
+		{...props}
+	/>
+)
+
+// Website
+
+export const WebsiteSteps = props => (
+	<FormSteps
+		{...props}
+		cancelFunction={() => execute(resetNewItem('Website'))}
+		validateIdBase='new-Website-'
+		itemType='Website'
+		stepsId='new-website-'
+		steps={[
+			{
+				title: 'WEBSITE_BASIC_STEP',
+				nextBtnTitle: 'SAVE',
+				component: WebsiteBasic,
+				validationFn: ({ validateId, dirty, onValid, onInvalid }) =>
+					execute(
+						validateAndSaveNewWebsiteBasics({
+							validateId,
+							dirty,
+							onValid,
+							onInvalid,
+						})
+					),
+			},
+			{
+				title: 'PREVIEW_AND_SAVE_ITEM',
+				completeBtnTitle: 'OK',
+				component: WebsitePreview,
+				completeFn: props =>
+					execute(
+						completeItem({
+							...props,
+							itemType: 'Website',
+							// Just to close the dialog
+							competeAction: () => {},
+						})
+					),
+			},
+		]}
+		itemModel={Audience}
+	/>
+)
+
+export const NewWebsiteWithDialog = WithDialog(WebsiteSteps)
+
+export const NewWebsiteDialog = props => (
+	<NewWebsiteWithDialog
+		btnLabel='NEW_WEBSITE'
+		title='CREATE_NEW_WEBSITE'
 		{...props}
 	/>
 )
