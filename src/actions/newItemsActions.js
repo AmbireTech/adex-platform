@@ -8,7 +8,15 @@ import { Base, Models } from 'adex-models'
 import { updateSpinner, handleAfterValidation } from 'actions'
 
 export function updateNewItem(item, newValues, itemType, objModel, itemId) {
-	item = Base.updateObject({ item, newValues, objModel })
+	if (objModel) {
+		item = Base.updateObject({ item, newValues, objModel })
+	} else {
+		item = {
+			...item,
+			...newValues,
+		}
+	}
+
 	return function(dispatch) {
 		return dispatch({
 			type: UPDATE_NEW_ITEM,
@@ -81,6 +89,15 @@ export function updateNewCampaign(prop, value, newValues) {
 export function updateNewAudience(prop, value, newValues, itemId) {
 	return async function(dispatch, getState) {
 		await updateNewItemAction('Audience', prop, value, newValues, itemId)(
+			dispatch,
+			getState
+		)
+	}
+}
+
+export function updateNewWebsite(prop, value, newValues, itemId) {
+	return async function(dispatch, getState) {
+		await updateNewItemAction('Website', prop, value, newValues, itemId)(
 			dispatch,
 			getState
 		)
