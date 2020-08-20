@@ -41,3 +41,8 @@ export const selectNewAudience = createSelector(
 	selectNewItems,
 	({ Audience }) => new AudienceModel(Audience)
 )
+
+export const selectNewWebsite = createSelector(
+	selectNewItems,
+	({ Website = {} }) => ({ ...Website })
+)
