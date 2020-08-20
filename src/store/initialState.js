@@ -1,4 +1,4 @@
-import { AdUnit, AdSlot, Campaign, Account } from 'adex-models'
+import { AdUnit, AdSlot, Campaign, Account, Audience } from 'adex-models'
 
 let initialState = {
 	account: new Account(),
@@ -21,6 +21,8 @@ let initialState = {
 		AdSlot: new AdSlot({
 			rulesInput: { version: '1', inputs: { autoSetMinCPM: false } },
 		}).plainObj(),
+		Audience: new Audience().plainObj(),
+		Website: {},
 	},
 	currentItem: {},
 	selectedItems: {
