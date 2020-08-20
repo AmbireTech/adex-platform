@@ -14,7 +14,7 @@ import {
 	selectKnowUsFromSource,
 	selectUserSides,
 } from 'selectors'
-import Anchor from 'components/common/anchor/anchor'
+import { ExternalAnchor } from 'components/common/anchor'
 import { execute, updateIdentity } from 'actions'
 import {
 	ContentBox,
@@ -215,14 +215,16 @@ const FulInfo = props => {
 											color='primary'
 										/>
 									}
-									label={
-										<Anchor
-											target='_blank'
-											href={`${process.env.ADEX_TOS_URL}`}
-										>
-											{t('TOS_CHECK')}
-										</Anchor>
-									}
+									label={t('TOS_CHECK_LABEL', {
+										args: [
+											<ExternalAnchor
+												color='primary'
+												href={`${process.env.ADEX_TOS_URL}`}
+											>
+												{t('TOS')}
+											</ExternalAnchor>,
+										],
+									})}
 								/>
 								{tosCheck && !!tosCheck.dirty && (
 									<FormHelperText>{tosCheck.errMsg}</FormHelperText>

@@ -1,12 +1,14 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import Grid from '@material-ui/core/Grid'
-import TextField from '@material-ui/core/TextField'
-import Checkbox from '@material-ui/core/Checkbox'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import FormHelperText from '@material-ui/core/FormHelperText'
-import FormControl from '@material-ui/core/FormControl'
-import Anchor from 'components/common/anchor/anchor'
+import {
+	Grid,
+	TextField,
+	Checkbox,
+	FormControlLabel,
+	FormHelperText,
+	FormControl,
+} from '@material-ui/core'
+import { ExternalAnchor } from 'components/common/anchor'
 import {
 	ContentBox,
 	ContentBody,
@@ -224,14 +226,13 @@ const QuickInfo = props => {
 											color='primary'
 										/>
 									}
-									label={
-										<Anchor
-											target='_blank'
-											href={`${process.env.ADEX_TOS_URL}`}
-										>
-											{t('TOS_CHECK')}
-										</Anchor>
-									}
+									label={t('TOS_CHECK_LABEL', {
+										args: [
+											<ExternalAnchor href={`${process.env.ADEX_TOS_URL}`}>
+												{t('TOS')}
+											</ExternalAnchor>,
+										],
+									})}
 								/>
 								{tosCheck && !!tosCheck.dirty && (
 									<FormHelperText>{tosCheck.errMsg}</FormHelperText>
