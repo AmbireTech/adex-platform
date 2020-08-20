@@ -36,6 +36,7 @@ import {
 	validateIdentityContractOwner,
 	validateAccessWarning,
 	validateKnowFrom,
+	validateUserSide,
 	validateMoreInfo,
 } from './validationActions'
 import { getErrorMsg } from 'helpers/errors'
@@ -226,6 +227,7 @@ export function login() {
 				wallet,
 				email,
 				knowFrom,
+				userSide,
 				moreInfo,
 				identityData,
 				identityTxData,
@@ -238,6 +240,7 @@ export function login() {
 					owner: wallet.address,
 					email: email.toLowerCase(),
 					knowFrom,
+					userSide,
 					moreInfo,
 					...identityTxData,
 				})
@@ -554,6 +557,7 @@ export function validateQuickInfo({ validateId, dirty, onValid, onInvalid }) {
 			passwordCheck,
 			tosCheck,
 			knowFrom,
+			userSide,
 			moreInfo,
 		} = identity
 
@@ -565,6 +569,7 @@ export function validateQuickInfo({ validateId, dirty, onValid, onInvalid }) {
 				dispatch
 			),
 			validateKnowFrom(validateId, knowFrom, dirty)(dispatch),
+			validateUserSide(validateId, userSide, dirty)(dispatch),
 			validateMoreInfo(validateId, knowFrom, moreInfo, dirty)(dispatch),
 			validateTOS(validateId, tosCheck, dirty)(dispatch),
 		])
@@ -595,6 +600,7 @@ export function validateFullInfo({ validateId, dirty, onValid, onInvalid }) {
 			emailCheck,
 			tosCheck,
 			knowFrom,
+			userSide,
 			moreInfo,
 			accessWarningCheck,
 		} = identity
@@ -610,6 +616,7 @@ export function validateFullInfo({ validateId, dirty, onValid, onInvalid }) {
 			validateEmail(validateId, email, dirty, true)(dispatch),
 			validateEmailCheck(validateId, emailCheck, email, dirty)(dispatch),
 			validateKnowFrom(validateId, knowFrom, dirty)(dispatch),
+			validateUserSide(validateId, userSide, dirty)(dispatch),
 			validateMoreInfo(validateId, knowFrom, moreInfo, dirty)(dispatch),
 			validateTOS(validateId, tosCheck, dirty)(dispatch),
 			validateAccessWarning(validateId, accessWarningCheck, dirty)(dispatch),

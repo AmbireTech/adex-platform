@@ -12,8 +12,9 @@ import {
 	selectValidationsById,
 	selectSpinnerById,
 	selectKnowUsFromSource,
+	selectUserSides,
 } from 'selectors'
-import Anchor from 'components/common/anchor/anchor'
+import { ExternalAnchor } from 'components/common/anchor'
 import { execute, updateIdentity } from 'actions'
 import {
 	ContentBox,
@@ -25,6 +26,7 @@ import { CREATING_SESSION } from 'constants/spinners'
 import { WALLET_ACTIONS_MSGS } from 'constants/misc'
 
 const knowFromSource = selectKnowUsFromSource()
+const userSides = selectUserSides()
 
 const FulInfo = props => {
 	const { validateId } = props
@@ -48,6 +50,7 @@ const FulInfo = props => {
 		tosCheck,
 		accessWarningCheck,
 		knowFrom,
+		userSide,
 		moreInfo,
 	} = validations
 	return (
@@ -113,7 +116,7 @@ const FulInfo = props => {
 								onChange={val => execute(updateIdentity('knowFrom', val))}
 								source={knowFromSource}
 								value={identity.knowFrom || ''}
-								htmlId='timeframe-select'
+								htmlId='select-know-from'
 								error={knowFrom && !!knowFrom.dirty}
 								helperText={
 									knowFrom && !!knowFrom.dirty
@@ -145,6 +148,25 @@ const FulInfo = props => {
 								/>
 							</Grid>
 						)}
+						<Grid item xs={12}>
+							<Dropdown
+								required
+								fullWidth
+								variant='outlined'
+								name='userSide'
+								label={t('USER_SIDE_SELECT_LABEL')}
+								onChange={val => execute(updateIdentity('userSide', val))}
+								source={userSides}
+								value={identity.userSide || ''}
+								htmlId='select-user-side'
+								error={userSide && !!userSide.dirty}
+								helperText={
+									userSide && !!userSide.dirty
+										? userSide.errMsg
+										: t('USER_SIDE_INFO')
+								}
+							/>
+						</Grid>
 						<Grid item xs={12}>
 							<FormControl
 								required
@@ -193,14 +215,16 @@ const FulInfo = props => {
 											color='primary'
 										/>
 									}
-									label={
-										<Anchor
-											target='_blank'
-											href={`${process.env.ADEX_TOS_URL}`}
-										>
-											{t('TOS_CHECK')}
-										</Anchor>
-									}
+									label={t('TOS_CHECK_LABEL', {
+										args: [
+											<ExternalAnchor
+												color='primary'
+												href={`${process.env.ADEX_TOS_URL}`}
+											>
+												{t('TOS')}
+											</ExternalAnchor>,
+										],
+									})}
 								/>
 								{tosCheck && !!tosCheck.dirty && (
 									<FormHelperText>{tosCheck.errMsg}</FormHelperText>

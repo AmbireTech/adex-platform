@@ -30,6 +30,11 @@ export const selectCompanyData = createSelector(
 	({ companyData }) => companyData || {}
 )
 
+export const selectUserLastSide = createSelector(
+	[selectIdentityUi],
+	({ userLastSide }) => userLastSide || ''
+)
+
 export const selectSpinnerById = createSelector(
 	[selectSpinners, (_, id) => id],
 	(spinners, id) => spinners[id]

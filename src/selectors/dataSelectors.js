@@ -8,7 +8,7 @@ import {
 } from 'selectors'
 import { createSelector } from 'reselect'
 import { constants } from 'adex-models'
-import { WHERE_YOU_KNOW_US } from 'constants/misc'
+import { WHERE_YOU_KNOW_US, USER_SIDES } from 'constants/misc'
 import moment from 'moment'
 
 export const selectSlotTypesSourceWithDemands = createSelector(
@@ -206,12 +206,23 @@ export const selectFromSource = createSelector(
 		source.map(data => {
 			const translated = { ...data }
 			translated.label = t(data.label)
+			const extraLabel = data.extraLabel
+				? t(data.extraLabel)
+				: data.extraLabels && data.extraLabels.length
+				? data.extraLabels.map(l => t(l))
+				: undefined
+			translated.extraLabel = extraLabel
 			return translated
 		})
 )
 
 export const selectKnowUsFromSource = createSelector(
 	() => selectFromSource(WHERE_YOU_KNOW_US),
+	source => source
+)
+
+export const selectUserSides = createSelector(
+	() => selectFromSource(USER_SIDES),
 	source => source
 )
 

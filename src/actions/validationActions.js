@@ -228,6 +228,19 @@ export function validateKnowFrom(validateId, knowFrom, dirty) {
 	}
 }
 
+export function validateUserSide(validateId, userSide, dirty) {
+	return async function(dispatch, getState) {
+		const isValid = !!userSide
+		validate(validateId, 'userSide', {
+			isValid,
+			err: { msg: 'ERR_USER_SIDE_SELECT_CHECK' },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
 export function validateMoreInfo(validateId, knowFrom, moreInfo, dirty) {
 	return async function(dispatch, getState) {
 		const isValid =

@@ -29,6 +29,13 @@ export const styles = theme => ({
 		whiteSpace: 'break-spaces',
 		wordBreak: 'break-word',
 	},
+	extraInfo: {
+		marginLeft: theme.spacing(1),
+	},
+	select: {
+		display: 'flex',
+		alignItems: 'center',
+	},
 })
 
 const useStyles = makeStyles(styles)
@@ -95,6 +102,7 @@ function Dropdown(props) {
 						value={value.id || value}
 						onChange={handleChange}
 						IconComponent={IconComponent}
+						classes={{ selectMenu: classes.select }}
 					>
 						{[...source].map(src => {
 							return src.group ? (
@@ -107,7 +115,7 @@ function Dropdown(props) {
 							) : (
 								<MenuItem
 									key={src.value.key || src.value.id || src.value}
-									className={classes.menuItem}
+									classes={{ selected: classes.menuItem }}
 									value={src.value.id || src.value}
 								>
 									{src.label}
@@ -132,11 +140,12 @@ function Dropdown(props) {
 						fullWidth={fullWidth}
 						type='text'
 						variant={variant}
+						label={label}
 						disabled
 						value={loading ? t('LOADING_DATA') : noSrcLabel}
-						helperText={helperText}
+						helperText={loading ? null : helperText}
 					/>
-					{!!loading && <InputLoading />}
+					{loading && <InputLoading />}
 				</>
 			)}
 		</Fragment>
