@@ -11,7 +11,7 @@ import {
 import Unit from 'components/dashboard/containers/Unit'
 import Slot from 'components/dashboard/containers/Slot'
 import Audience from 'components/dashboard/containers/Audience'
-import Websites from 'components/dashboard/containers/Websites'
+import WebsitesPage from 'components/dashboard/containers/Websites'
 import Account from 'components/dashboard/account/AccountInfo'
 import TopUp from 'components/dashboard/deposit/TopUp'
 import TopUpChangelly from 'components/dashboard/deposit/TopUpChangelly'
@@ -20,6 +20,7 @@ import {
 	NewCampaignDialog,
 	NewSlotDialog,
 	NewAudienceDialog,
+	NewWebsiteDialog,
 } from 'components/dashboard/forms/items/NewItems'
 import {
 	CampaignsTable,
@@ -118,6 +119,20 @@ const Audiences = () => (
 		<Paper variant='outlined'>
 			<AudiencesTable />
 		</Paper>
+	</Box>
+)
+
+const Websites = () => (
+	<Box>
+		<NewWebsiteDialog
+			fabButton
+			variant='extended'
+			color='secondary'
+			btnLabel='NEW_WEBSITE'
+			size='medium'
+			icon={<Add />}
+		/>
+		<WebsitesPage />
 	</Box>
 )
 
