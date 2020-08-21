@@ -1,12 +1,10 @@
-import React, { Component, Fragment } from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import actions from 'actions'
+import React, { Fragment, useState, useEffect } from 'react'
+import { useSelector } from 'react-redux'
 import { Snackbar, IconButton } from '@material-ui/core'
 import { Close } from '@material-ui/icons'
 import { Alert } from '@material-ui/lab'
-import { isWindowReloading } from 'helpers/miscHelpers'
+import { selectToasts, selectWindowReloading } from 'selectors'
+import { execute, removeToast } from 'actions'
 
 const typeToSeverity = {
 	accept: 'success',
@@ -17,108 +15,71 @@ const typeToSeverity = {
 	error: 'error',
 }
 
-export class Toast extends Component {
-	constructor(props) {
-		super(props)
+export const Toast = props => {
+	const [active, setActive] = useState(false)
+	const [toast, setToast] = useState({})
 
-		this.state = {
-			active: false,
-			toast: {},
+	const toasts = useSelector(selectToasts)
+	const isReloading = useSelector(selectWindowReloading)
+
+	useEffect(() => {
+		const nextToast = toasts[0]
+
+		if (!nextToast || isReloading) {
+			setActive(false)
+			setToast({})
+		} else if (nextToast.id !== toast.id) {
+			setActive(true)
+			setToast(nextToast)
 		}
+	}, [isReloading, toast.id, toasts])
+
+	const anchorOrigin = toast.anchorOrigin || {
+		vertical: 'bottom',
+		horizontal: 'center',
 	}
 
-	componentWillReceiveProps(nextProps) {
-		let toast = this.state.toast
-		let nextToast = nextProps.toasts[0]
-
-		if (!nextToast) {
-			this.setState({ active: false, toast: {} })
-			return
-		}
-
-		if (!isWindowReloading()) {
-			let isNewToast = !!nextToast && toast.id !== nextToast.id
-
-			if (isNewToast) {
-				this.setState({ active: true, toast: nextToast })
-			}
-		}
+	if (toast.top) {
+		anchorOrigin.horizontal = 'center'
+		anchorOrigin.vertical = 'top'
 	}
 
-	close = id => {
-		this.setState({ active: false })
-		setTimeout(() => this.props.actions.removeToast(id), 100)
+	const close = id => {
+		setActive(false)
+		setTimeout(() => execute(removeToast(id)), 100)
 	}
 
-	render() {
-		const { toast } = this.state
-
-		if (!toast) return null
-
-		const anchorOrigin = toast.anchorOrigin || {
-			vertical: 'bottom',
-			horizontal: 'center',
-		}
-
-		if (toast.top) {
-			anchorOrigin.horizontal = 'center'
-			anchorOrigin.vertical = 'top'
-		}
-
-		return (
-			<Snackbar
-				open={this.state.active}
-				autoHideDuration={toast.timeout || 0}
-				onClose={() => !toast.unclosable && this.close(toast.id)}
-				anchorOrigin={anchorOrigin}
+	return toast ? (
+		<Snackbar
+			open={active}
+			autoHideDuration={toast.timeout || 0}
+			onClose={() => !toast.unclosable && close(toast.id)}
+			anchorOrigin={anchorOrigin}
+		>
+			<Alert
+				severity={typeToSeverity[toast.type]}
+				variant='filled'
+				action={
+					<Fragment>
+						{toast.action && toast.action}
+						{!toast.unclosable && (
+							<IconButton
+								key={`close-${toast.id}`}
+								aria-label='Close'
+								color='inherit'
+								size='small'
+								onClick={() => !toast.unclosable && close(toast.id)}
+							>
+								<Close />
+							</IconButton>
+						)}
+					</Fragment>
+				}
 			>
-				<Alert
-					severity={typeToSeverity[toast.type]}
-					variant='filled'
-					action={
-						<Fragment>
-							{toast.action && toast.action}
-							{!toast.unclosable && (
-								<IconButton
-									key={`close-${toast.id}`}
-									aria-label='Close'
-									color='inherit'
-									size='small'
-									onClick={() => !toast.unclosable && this.close(toast.id)}
-								>
-									<Close />
-								</IconButton>
-							)}
-						</Fragment>
-					}
-				>
-					{(toast.label || '').toString()}
-				</Alert>
-			</Snackbar>
-		)
-	}
+				{(toast.label || '').toString()}
+			</Alert>
+		</Snackbar>
+	) : null
 }
 
-Toast.propTypes = {
-	actions: PropTypes.object.isRequired,
-	toasts: PropTypes.array.isRequired,
-}
-
-function mapStateToProps(state) {
-	// let persist = state.persist
-	let memory = state.memory
-	return {
-		toasts: memory.toasts || [],
-	}
-}
-
-function mapDispatchToProps(dispatch) {
-	return {
-		actions: bindActionCreators(actions, dispatch),
-	}
-}
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(Toast)
+export default Toast
