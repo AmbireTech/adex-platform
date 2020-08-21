@@ -198,6 +198,12 @@ export function WebsiteIssuesLegend() {
 				<ListItemIcon>
 					<InfoSharp />
 				</ListItemIcon>
+				<ListItemText primary={t('NEW_WEBSITE_CREATE_FROM_SLOT_INFO')} />
+			</ListItem>
+			<ListItem>
+				<ListItemIcon>
+					<InfoSharp />
+				</ListItemIcon>
 				<ListItemText
 					primary={t('VERIFICATION_INFO_TEXT', {
 						args: [24, 'HOURS', 2, 'HOURS'],
