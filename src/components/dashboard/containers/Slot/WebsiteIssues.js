@@ -154,6 +154,8 @@ export function WebsiteIssues({ issues, website, asKeyWords, tryAgainBtn }) {
 						const { label, args } = getIssue(id)
 						return !!asKeyWords ? (
 							<Tooltip
+								arrow
+								interactive
 								key={id}
 								title={<RenderIssue label={label} args={args} />}
 							>
