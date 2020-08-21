@@ -137,6 +137,7 @@ const getCols = ({
 			customBodyRender: ({ to, item, id, title }) => (
 				<Box key={id} className={classes.actions}>
 					<Tooltip
+						arrow
 						title={t('LABEL_VIEW')}
 						// placement='top'
 						enterDelay={1000}
@@ -147,6 +148,7 @@ const getCols = ({
 					</Tooltip>
 					{!noClone && (
 						<Tooltip
+							arrow
 							title={t('TOOLTIP_CLONE')}
 							// placement='top'
 							enterDelay={1000}
