@@ -120,7 +120,10 @@ function Dropdown(props) {
 								>
 									{src.label}
 									{!!src.extraLabel && (
-										<Tooltip title={<ExtraLabel label={src.extraLabel} />}>
+										<Tooltip
+											arrow
+											title={<ExtraLabel label={src.extraLabel} />}
+										>
 											<InfoSharp
 												className={classes.extraInfo}
 												fontSize='small'

@@ -18,7 +18,7 @@ import {
 	WebsiteIssuesLegend,
 	WebsiteVerifyBtn,
 } from 'components/dashboard/containers/Slot/WebsiteIssues'
-import { t, selectWebsitesArray } from 'selectors'
+import { t, selectWebsitesList } from 'selectors'
 
 const useStyles = makeStyles(theme => ({
 	list: {
@@ -38,10 +38,15 @@ const useStyles = makeStyles(theme => ({
 
 export default function Websites() {
 	const classes = useStyles()
-	const websites = useSelector(selectWebsitesArray)
+	const websites = useSelector(selectWebsitesList)
 
 	return (
 		<Fragment>
+			<Box mb={1}>
+				<Paper variant='outlined'>
+					<WebsiteIssuesLegend />
+				</Paper>
+			</Box>
 			<Box>
 				<Paper variant='outlined'>
 					<List className={classes.list} dense disablePadding>
@@ -61,6 +66,9 @@ export default function Websites() {
 										</ListItemIcon>
 										<ListItemText
 											primary={id}
+											secondaryTypographyProps={{
+												component: 'div',
+											}}
 											secondary={<WebsiteIssues issues={issues} asKeyWords />}
 										/>
 										<ListItemSecondaryAction>
@@ -76,11 +84,6 @@ export default function Websites() {
 							)
 						})}
 					</List>
-				</Paper>
-			</Box>
-			<Box mt={2}>
-				<Paper variant='outlined'>
-					<WebsiteIssuesLegend />
 				</Paper>
 			</Box>
 		</Fragment>

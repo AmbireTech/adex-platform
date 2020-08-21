@@ -10,6 +10,7 @@ import {
 	updateEasterEggsAllowed,
 	handleRedirectParams,
 	handleSignupLink,
+	refreshCacheAndReload,
 } from 'actions'
 import { Route, Switch, Redirect } from 'react-router'
 import Dashboard from 'components/dashboard/dashboard/Dashboard'
@@ -122,13 +123,7 @@ const Root = () => {
 							size='large'
 							variant='contained'
 							onClick={() => {
-								if (caches) {
-									// Service worker cache should be cleared with caches.delete()
-									caches.keys().then(async function(names) {
-										await Promise.all(names.map(name => caches.delete(name)))
-									})
-								}
-								window.location.reload(true)
+								refreshCacheAndReload({ version })
 							}}
 						>
 							{t('RELOAD_NOW')}
