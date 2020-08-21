@@ -69,12 +69,13 @@ const getCols = ({ classes, symbol }) => [
 			setCellProps: () => ({ style: { textAlign: 'right' } }),
 			customBodyRender: ({ id, audienceInput, to, title }) => (
 				<Box key={id} className={classes.actions}>
-					<Tooltip title={t('LABEL_VIEW')} aria-label='view'>
+					<Tooltip arrow title={t('LABEL_VIEW')} aria-label='view'>
 						<RRIconButton to={to} aria-label='preview'>
 							<Visibility color='primary' />
 						</RRIconButton>
 					</Tooltip>
 					<Tooltip
+						arrow
 						title={t('LABEL_NEW_CAMPAIGN_FROM_AUDIENCE')}
 						aria-label='new-campaign'
 					>

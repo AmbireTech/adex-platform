@@ -125,7 +125,7 @@ function Autocomplete({
 					>
 						<Typography display='inline'>{option.label}</Typography>
 						{!!option.extraLabel && (
-							<Tooltip title={<ExtraLabel label={option.extraLabel} />}>
+							<Tooltip arrow title={<ExtraLabel label={option.extraLabel} />}>
 								<InfoSharp
 									className={classes.extraInfo}
 									fontSize='small'
@@ -141,6 +141,7 @@ function Autocomplete({
 							!(disabled && hideSelectedOnDisable) &&
 							(!!option.extraLabel ? (
 								<Tooltip
+									arrow
 									key={option.value + '' + index}
 									title={<ExtraLabel label={option.extraLabel || ''} />}
 								>

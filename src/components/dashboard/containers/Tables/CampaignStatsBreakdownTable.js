@@ -67,7 +67,7 @@ const getCols = ({
 			sort: true,
 			customBodyRender: (key, tableMeta) => {
 				return tableMeta.rowData[0] ? (
-					<Tooltip key={key} title={t('WEBSITE_IS_EXCLUDED')}>
+					<Tooltip arrow key={key} title={t('WEBSITE_IS_EXCLUDED')}>
 						<Box color='error.main'>{key}</Box>
 					</Tooltip>
 				) : (

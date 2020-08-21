@@ -278,7 +278,7 @@ export default function GettingStarted(props) {
 									const color = ACCENT_TWO
 
 									return (
-										<Tooltip title={label} key={index}>
+										<Tooltip arrow title={label} key={index}>
 											<Icon className={classes.checkmark} />
 										</Tooltip>
 									)

@@ -97,6 +97,7 @@ const MaterialStepper = props => {
 		stepsId,
 		completeFn,
 		completeBtnTitle = '',
+		nextBtnTitle = '',
 	} = page
 
 	const validations = useSelector(state =>
@@ -270,7 +271,7 @@ const MaterialStepper = props => {
 								color='primary'
 								onClick={goToNextPage}
 							>
-								{t('CONTINUE')}
+								{t(nextBtnTitle || 'CONTINUE')}
 							</Button>
 						)}
 						{spinner && (

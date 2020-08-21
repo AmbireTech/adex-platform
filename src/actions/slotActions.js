@@ -9,6 +9,7 @@ import {
 	validate,
 	getImgsIpfsFromBlob,
 	updateNewItem,
+	updateNewWebsite,
 } from 'actions'
 import { numStringCPMtoImpression } from 'helpers/numbers'
 import { getErrorMsg } from 'helpers/errors'
@@ -16,9 +17,11 @@ import {
 	selectMainToken,
 	selectNewAdSlot,
 	selectAuthSig,
+	selectNewWebsite,
 	t,
 	selectNewItemByTypeAndId,
 	selectAdSlotById,
+	selectWebsiteByWebsite,
 } from 'selectors'
 import { schemas, AdSlot, AdUnit, helpers } from 'adex-models'
 import {
@@ -693,6 +696,88 @@ export function validateAndUpdateSlot({
 			})(dispatch)
 		}
 
+		await updateSpinner(validateId, false)(dispatch)
+	}
+}
+
+export function validateAndSaveNewWebsiteBasics({
+	validateId,
+	dirty,
+	onValid,
+	onInvalid,
+}) {
+	return async function(dispatch, getState) {
+		await updateSpinner(validateId, true)(dispatch)
+		let isValid = false
+		try {
+			const state = getState()
+			const slot = selectNewWebsite(state)
+			const { website, temp } = slot
+
+			isValid = await validateSchemaProp({
+				validateId,
+				value: website,
+				prop: 'website',
+				schema: adSlotPost.website,
+				dirty,
+			})(dispatch)
+
+			if (isValid) {
+				isValid = !Object.keys(selectWebsiteByWebsite(state, website)).length
+
+				await validate(validateId, 'website', {
+					isValid,
+					err: { msg: 'ERR_WEBSITE_EXISTS' },
+					dirty,
+				})(dispatch)
+			}
+
+			if (isValid && dirty) {
+				const {
+					hostname,
+					issues,
+					categories,
+					suggestedMinCPM,
+					updated,
+				} = isValid ? await verifyWebsite({ websiteUrl: website }) : {}
+				const newTemp = {
+					...temp,
+					hostname,
+					issues,
+					categories,
+					suggestedMinCPM,
+				}
+
+				const newWebsite = {
+					id: hostname,
+					issues,
+					updated,
+				}
+
+				dispatch({
+					type: ADD_ITEM,
+					item: newWebsite,
+					itemType: 'Website',
+				})
+
+				updateNewWebsite('temp', newTemp)(dispatch, getState)
+
+				addToast({
+					type: 'accept',
+					label: t('SUCCESS_CREATING_ITEM', {
+						args: ['WEBSITE', hostname],
+					}),
+					timeout: 20000,
+				})(dispatch)
+			}
+		} catch (err) {
+			// NOTE: Just log - most probably the error can be from verifyWebsite
+			// bet this doesn't matter at that point
+			console.error('ERR_VALIDATING_WEBSITE_BASIC', err)
+			isValid = false
+		}
+
+		await handleAfterValidation({ isValid, onValid, onInvalid })
 		await updateSpinner(validateId, false)(dispatch)
 	}
 }

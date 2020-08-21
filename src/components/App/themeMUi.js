@@ -1,4 +1,8 @@
-import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles'
+import {
+	createMuiTheme,
+	responsiveFontSizes,
+	fade,
+} from '@material-ui/core/styles'
 import { lime, grey } from '@material-ui/core/colors'
 
 const WHITE = '#fff'
@@ -79,15 +83,18 @@ export const palette = {
 		disabledBackground: grey[200],
 		disabled: grey[500],
 	},
+	tooltipBgColor: fade(ALEX_GREY, 0.98),
 }
 
-const defaultTheme = createMuiTheme()
+const typography = {
+	fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+	fontSize: 13.42,
+}
+
+const defaultTheme = createMuiTheme({ typography: { ...typography } })
 
 export const theme = createMuiTheme({
-	typography: {
-		fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-		fontSize: 13.42,
-	},
+	typography: { ...typography },
 	palette: { ...palette },
 	overrides: {
 		MuiButton: {
@@ -134,7 +141,14 @@ export const theme = createMuiTheme({
 			},
 		},
 		MuiTooltip: {
-			tooltip: { borderRadius: 0 },
+			tooltip: {
+				borderRadius: 0,
+				fontSize: defaultTheme.typography.pxToRem(13),
+				backgroundColor: palette.tooltipBgColor,
+			},
+			arrow: {
+				color: palette.tooltipBgColor,
+			},
 		},
 		MuiSelect: {
 			outlined: {
