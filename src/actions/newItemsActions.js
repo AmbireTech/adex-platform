@@ -191,7 +191,10 @@ export function completeItem({
 		await updateSpinner(validateId, true)(dispatch)
 		let isValid = false
 		try {
-			await competeAction()(dispatch, getState)
+			if (competeAction) {
+				await competeAction()(dispatch, getState)
+			}
+
 			isValid = true
 		} catch (err) {
 			console.error('ERR_ITEM', err)

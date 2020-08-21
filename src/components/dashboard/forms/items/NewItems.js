@@ -329,7 +329,7 @@ export const WebsiteSteps = props => (
 							...props,
 							itemType: 'Website',
 							// Just to close the dialog
-							competeAction: () => {},
+							competeAction: null,
 						})
 					),
 			},
