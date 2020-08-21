@@ -1,6 +1,28 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.40
+##### *2020-08-21*
+
+### Added
+- UserSide prop to identity meta
+- Auto redirect to user side on login - from meta ot last selected by user
+- New websites button with steps on websites page
+
+### Changed
+- Updated trezor-connect
+- Min slots CPM with included validators fee in the rules
+- Tooltips styles
+
+### Fixed
+- Packages update, cleanup and fix
+- Dropdown loading progress
+- Terms and conditions link
+- External link styles
+- Page reloading state check
+- Toast component
+
+
 ## 4.20.39
 ##### *2020-08-17*
 
