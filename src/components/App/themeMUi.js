@@ -81,13 +81,15 @@ export const palette = {
 	},
 }
 
-const defaultTheme = createMuiTheme()
+const typography = {
+	fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+	fontSize: 13.42,
+}
+
+const defaultTheme = createMuiTheme({ typography: { ...typography } })
 
 export const theme = createMuiTheme({
-	typography: {
-		fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-		fontSize: 13.42,
-	},
+	typography: { ...typography },
 	palette: { ...palette },
 	overrides: {
 		MuiButton: {
@@ -134,7 +136,10 @@ export const theme = createMuiTheme({
 			},
 		},
 		MuiTooltip: {
-			tooltip: { borderRadius: 0 },
+			tooltip: {
+				borderRadius: 0,
+				fontSize: defaultTheme.typography.pxToRem(13),
+			},
 		},
 		MuiSelect: {
 			outlined: {
