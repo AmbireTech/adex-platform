@@ -22,7 +22,7 @@ function AdSlotBasic({ validateId }) {
 						variant='outlined'
 						value={website}
 						fullWidth
-						label={t('SLOT_WEBSITE')}
+						label={t('WEBSITE_LABEL')}
 						error={errWebsite && !!errWebsite.dirty}
 						helperText={
 							errWebsite && !!errWebsite.dirty
