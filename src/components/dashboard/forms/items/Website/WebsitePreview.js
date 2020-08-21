@@ -12,7 +12,7 @@ import {
 import { t, selectNewWebsite } from 'selectors'
 
 const WebsitePreview = () => {
-	const { website, temp } = useSelector(selectNewWebsite)
+	const { website, temp = {} } = useSelector(selectNewWebsite)
 
 	const { categories = [], hostname, issues } = temp
 	return (
