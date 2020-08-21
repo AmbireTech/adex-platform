@@ -25,15 +25,9 @@ function AdSlotBasic({ validateId }) {
 						label={t('SLOT_WEBSITE')}
 						error={errWebsite && !!errWebsite.dirty}
 						helperText={
-							errWebsite && !!errWebsite.dirty ? (
-								errWebsite.errMsg
-							) : (
-								<span
-									dangerouslySetInnerHTML={{
-										__html: t('SLOT_WEBSITE_CODE_WARNING'),
-									}}
-								/>
-							)
+							errWebsite && !!errWebsite.dirty
+								? errWebsite.errMsg
+								: t('NEW_WEBSITE_HELPER_TEXT')
 						}
 						onChange={ev => {
 							execute(
