@@ -428,3 +428,9 @@ export function updateIdSideAnalyticsChartTimeframe(timeframe) {
 		updateAnalyticsPeriodPrevNextLive({ live: true })(dispatch, getState)
 	}
 }
+
+export function updateWindowReloading(isReloading) {
+	return function(dispatch, getState) {
+		updateMemoryUi('windowReloading', isReloading)(dispatch, getState)
+	}
+}

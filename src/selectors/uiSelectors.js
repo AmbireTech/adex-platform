@@ -12,6 +12,7 @@ export const selectGlobalUi = state => state.persist.ui.global
 export const selectIdentitiesUi = state => state.persist.ui.byIdentity
 export const selectSelectedItems = state => state.memory.selectedItems
 export const selectConfirm = state => state.memory.confirm
+export const selectToasts = state => state.memory.toasts
 
 export const selectSpinners = state => state.memory.spinners
 
@@ -150,4 +151,9 @@ export const selectIdentitySideAnalyticsPeriod = createSelector(
 			end: dateUtils.endOfDay(dateUtils.date()),
 		},
 	} = {}) => sideAnalyticsPeriod
+)
+
+export const selectWindowReloading = createSelector(
+	selectMemoryUi,
+	({ windowReloading }) => windowReloading
 )
