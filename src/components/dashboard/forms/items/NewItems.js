@@ -320,7 +320,7 @@ export const WebsiteSteps = props => (
 					),
 			},
 			{
-				title: 'PREVIEW_AND_SAVE_ITEM',
+				title: 'WEBSITE_INFO_AND_PREVIEW_STEP',
 				completeBtnTitle: 'OK',
 				component: WebsitePreview,
 				completeFn: props =>
