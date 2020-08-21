@@ -123,6 +123,7 @@ const getCols = ({ classes, symbol }) => [
 			customBodyRender: ({ to, item, id, title }) => (
 				<Box key={id} className={classes.actions}>
 					<Tooltip
+						arrow
 						key={item.id}
 						title={t('LABEL_VIEW')}
 						// placement='top'

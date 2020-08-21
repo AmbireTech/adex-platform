@@ -223,6 +223,7 @@ const getCols = ({
 			customBodyRender: ({ side, id, receiptReady, to, toReceipt }) => (
 				<Fragment key={id}>
 					<Tooltip
+						arrow
 						title={t('LABEL_VIEW')}
 						// placement='top'
 						enterDelay={1000}
@@ -232,6 +233,7 @@ const getCols = ({
 						</RRIconButton>
 					</Tooltip>
 					<Tooltip
+						arrow
 						title={
 							receiptReady
 								? t('RECEIPT_VIEW')
