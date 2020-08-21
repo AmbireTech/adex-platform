@@ -732,10 +732,14 @@ export function validateAndSaveNewWebsiteBasics({
 				})(dispatch)
 			}
 
-			if (isValid) {
-				const { hostname, issues, categories, suggestedMinCPM } = isValid
-					? await verifyWebsite({ websiteUrl: website })
-					: {}
+			if (isValid && dirty) {
+				const {
+					hostname,
+					issues,
+					categories,
+					suggestedMinCPM,
+					updated,
+				} = isValid ? await verifyWebsite({ websiteUrl: website }) : {}
 				const newTemp = {
 					...temp,
 					hostname,
@@ -744,7 +748,27 @@ export function validateAndSaveNewWebsiteBasics({
 					suggestedMinCPM,
 				}
 
+				const newWebsite = {
+					id: hostname,
+					issues,
+					updated,
+				}
+
+				dispatch({
+					type: ADD_ITEM,
+					item: newWebsite,
+					itemType: 'Website',
+				})
+
 				updateNewWebsite('temp', newTemp)(dispatch, getState)
+
+				addToast({
+					type: 'accept',
+					label: t('SUCCESS_CREATING_ITEM', {
+						args: ['WEBSITE', hostname],
+					}),
+					timeout: 20000,
+				})(dispatch)
 			}
 		} catch (err) {
 			// NOTE: Just log - most probably the error can be from verifyWebsite
