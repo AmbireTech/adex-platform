@@ -139,3 +139,11 @@ export const selectSavedAudiences = createSelector(
 	[selectAudiencesArray],
 	items => items.filter(x => x && !x.campaignId && x.title)
 )
+
+export const selectWebsitesList = createSelector(
+	[selectWebsitesArray],
+	websites =>
+		websites.sort(
+			(a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime()
+		)
+)
