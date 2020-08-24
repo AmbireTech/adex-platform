@@ -4,7 +4,7 @@ import WarningIcon from '@material-ui/icons/Warning'
 import HourglassFullIcon from '@material-ui/icons/HourglassFull'
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn'
 
-const mapStatusIcons = (humanFriendlyStatus, status = '', size) => {
+const mapStatusIcons = (status = {}, size) => {
 	const icon = {
 		xs: { fontSize: 10 },
 		md: { fontSize: 15 },
@@ -14,9 +14,10 @@ const mapStatusIcons = (humanFriendlyStatus, status = '', size) => {
 	const doneIcon = <DoneAllIcon style={icon[size]} color={'primary'} />
 	const warningIcon = <WarningIcon style={icon[size]} color={'error'} />
 	const cashIcon = <MonetizationOnIcon style={icon[size]} color={'secondary'} />
-	if (humanFriendlyStatus === 'Closed' && status.toLowerCase() !== 'exhausted')
+	const { name = '', humanFriendlyName = '' } = status
+	if (humanFriendlyName === 'Closed' && name.toLowerCase() !== 'exhausted')
 		return waitIcon
-	switch (status.toLowerCase()) {
+	switch (name.toLowerCase()) {
 		case 'active':
 		case 'ready':
 			return doneIcon
