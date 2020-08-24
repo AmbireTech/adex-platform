@@ -1,8 +1,10 @@
 import React from 'react'
-import DoneAllIcon from '@material-ui/icons/DoneAll'
-import WarningIcon from '@material-ui/icons/Warning'
-import HourglassFullIcon from '@material-ui/icons/HourglassFull'
-import MonetizationOnIcon from '@material-ui/icons/MonetizationOn'
+import {
+	DoneAllSharp as DoneAllIcon,
+	WarningSharp as WarningIcon,
+	HourglassFullSharp as HourglassFullIcon,
+	MonetizationOnSharp as MonetizationOnIcon,
+} from '@material-ui/icons'
 
 const mapStatusIcons = (status = {}, size) => {
 	const icon = {
