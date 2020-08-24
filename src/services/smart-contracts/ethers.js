@@ -179,7 +179,9 @@ const getEthers = mode => {
 const ethereumNetworkId = async () => {
 	const { ethereum } = await loadInjectedWeb3
 	if (ethereum) {
-		const id = parseInt(ethereum.networkVersion, 10)
+		const chainId = await ethereum.request({ method: 'net_version' })
+
+		const id = parseInt(chainId, 10)
 		return id
 	} else {
 		return null
