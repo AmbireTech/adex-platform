@@ -254,7 +254,7 @@ export const CampaignBasic = ({
 								label={t(displayStatus)}
 								InputProps={{
 									endAdornment: (
-										<InputAdornment position='end'>
+										<InputAdornment position='end' disableTypography>
 											{mapStatusIcons(status, 'md')}
 										</InputAdornment>
 									),
