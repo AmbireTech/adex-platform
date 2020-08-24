@@ -45,7 +45,7 @@ export const selectCampaignsTableData = createSelector(
 			.filter(x => !x.archived)
 			.map(item => {
 				const { decimals = 18 } = tokens[item.depositAsset] || {}
-				const { id, spec = {}, adUnits = [] } = item
+				const { id, spec = {}, adUnits = [], status } = item
 
 				const firstUnit = adUnits[0] || {}
 
@@ -62,8 +62,8 @@ export const selectCampaignsTableData = createSelector(
 					},
 					title: item.title,
 					status: {
-						humanFriendlyName: item.status.humanFriendlyName,
-						originalName: item.status.name,
+						status,
+						id,
 					},
 					depositAmount: Number(
 						utils.formatUnits(item.depositAmount || '0', decimals)
