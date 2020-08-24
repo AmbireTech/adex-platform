@@ -1,5 +1,9 @@
 import { createSelector } from 'reselect'
-import { selectCampaignEventsCount, selectCampaignIdInDetails } from 'selectors'
+import {
+	selectCampaignEventsCount,
+	selectCampaignIdInDetails,
+	t,
+} from 'selectors'
 import url from 'url'
 export const selectItems = state => state.persist.items
 
@@ -147,3 +151,11 @@ export const selectWebsitesList = createSelector(
 			(a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime()
 		)
 )
+
+export const selectCampaignDisplayStatus = (status = {}) => {
+	if (status.name === 'waiting') {
+		return 'SCHEDULED'
+	} else {
+		return (status.humanFriendlyName || '').toUpperCase()
+	}
+}
