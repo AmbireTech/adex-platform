@@ -15,6 +15,7 @@ import {
 	selectCampaignsMaxClicks,
 	selectCampaignsMaxDeposit,
 	selectInitialDataLoadedByData,
+	selectCampaignDisplayStatus,
 } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
 import { utils } from 'ethers'
@@ -82,16 +83,17 @@ const getCols = ({
 			filter: true,
 			sort: false,
 			filterOptions: {
-				names: ['Active', 'Closed', 'Completed'],
-				logic: (status, filters) => {
-					if (filters.length) return !filters.includes(status.humanFriendlyName)
+				names: ['ACTIVE', 'SCHEDULED', 'CLOSED', 'COMPLETED'],
+				logic: ({ status }, filters) => {
+					if (filters.length)
+						return !filters.includes(selectCampaignDisplayStatus(status))
 					return false
 				},
 			},
-			customBodyRender: ({ humanFriendlyName, originalName, id }) => (
+			customBodyRender: ({ status, id }) => (
 				<Fragment key={id}>
-					{t(humanFriendlyName, { toUpperCase: true })}{' '}
-					{mapStatusIcons(humanFriendlyName, originalName, 'xs')}
+					{t(selectCampaignDisplayStatus(status))}{' '}
+					{mapStatusIcons(status, 'xs')}
 				</Fragment>
 			),
 			// TODO: Sorting issue

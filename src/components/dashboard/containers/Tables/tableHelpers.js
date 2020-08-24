@@ -1,36 +1,66 @@
 import React from 'react'
-import DoneAllIcon from '@material-ui/icons/DoneAll'
-import WarningIcon from '@material-ui/icons/Warning'
-import HourglassFullIcon from '@material-ui/icons/HourglassFull'
-import MonetizationOnIcon from '@material-ui/icons/MonetizationOn'
+import { Tooltip } from '@material-ui/core'
+import {
+	DoneAllSharp as DoneAllIcon,
+	WarningSharp as WarningIcon,
+	HourglassFullSharp as HourglassFullIcon,
+	MonetizationOnSharp as MonetizationOnIcon,
+} from '@material-ui/icons'
+import { t } from 'selectors'
 
-const mapStatusIcons = (humanFriendlyStatus, status = '', size) => {
+const IconTooltip = ({ children, name }) => (
+	<Tooltip title={t(name, { toUpperCase: true })} aria-label={name}>
+		{children}
+	</Tooltip>
+)
+
+const mapStatusIcons = (status = {}, size) => {
 	const icon = {
 		xs: { fontSize: 10 },
 		md: { fontSize: 15 },
 		ls: { fontSize: 20 },
 	}
-	const waitIcon = <HourglassFullIcon style={icon[size]} color={'secondary'} />
-	const doneIcon = <DoneAllIcon style={icon[size]} color={'primary'} />
-	const warningIcon = <WarningIcon style={icon[size]} color={'error'} />
-	const cashIcon = <MonetizationOnIcon style={icon[size]} color={'secondary'} />
-	if (humanFriendlyStatus === 'Closed' && status.toLowerCase() !== 'exhausted')
-		return waitIcon
-	switch (status.toLowerCase()) {
+
+	const { name = '', humanFriendlyName = '' } = status
+
+	const Wait = (
+		<IconTooltip name={name}>
+			<HourglassFullIcon style={icon[size]} color={'secondary'} />
+		</IconTooltip>
+	)
+	const Done = (
+		<IconTooltip name={name}>
+			<DoneAllIcon style={icon[size]} color={'primary'} />
+		</IconTooltip>
+	)
+	const Warning = (
+		<IconTooltip name={name}>
+			<WarningIcon style={icon[size]} color={'error'} />
+		</IconTooltip>
+	)
+	const Cash = (
+		<IconTooltip name={name}>
+			<MonetizationOnIcon style={icon[size]} color={'secondary'} />
+		</IconTooltip>
+	)
+
+	if (humanFriendlyName === 'Closed' && name.toLowerCase() !== 'exhausted')
+		return Wait
+	switch (name.toLowerCase()) {
 		case 'active':
 		case 'ready':
-			return doneIcon
+			return Done
 		case 'pending':
 		case 'initializing':
 		case 'waiting':
-			return waitIcon
+			return Wait
 		case 'offline':
 		case 'disconnected':
 		case 'unhealthy':
 		case 'invalid':
-			return warningIcon
+			return Warning
 		case 'withdraw':
-			return cashIcon
+			return Cash
 		default:
 			return ''
 	}

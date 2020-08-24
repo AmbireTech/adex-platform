@@ -18,7 +18,12 @@ import {
 import { TargetingRulesEdit } from 'components/dashboard/containers/Campaign/CampaignEdits'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
-import { t, selectMainToken, selectSpinnerById } from 'selectors'
+import {
+	t,
+	selectMainToken,
+	selectSpinnerById,
+	selectCampaignDisplayStatus,
+} from 'selectors'
 import {
 	execute,
 	closeCampaign,
@@ -110,7 +115,8 @@ export const CampaignBasic = ({
 
 	const { mediaUrl, mediaMime } = adUnits[0] || {}
 	const status = item.status || {}
-	const { humanFriendlyName, fundsDistributedRatio } = status
+	const { fundsDistributedRatio } = status
+	const displayStatus = selectCampaignDisplayStatus(status)
 	const isPaused = ((item.targetingRules || [])[0] || {}).onlyShowIf === false
 	const pauseAction = isPaused ? 'RESUME' : 'PAUSE'
 
@@ -243,13 +249,13 @@ export const CampaignBasic = ({
 					<Grid item xs={12} sm={12} md={6}>
 						<Box my={0}>
 							<ItemSpecProp
-								prop={'humanFriendlyName'}
-								value={t(humanFriendlyName, { toUpperCase: true })}
-								label={t('status', { isProp: true })}
+								prop={'displayStatus'}
+								value={displayStatus}
+								label={t(displayStatus)}
 								InputProps={{
 									endAdornment: (
-										<InputAdornment position='end'>
-											{mapStatusIcons(humanFriendlyName, status.name, 'md')}
+										<InputAdornment position='end' disableTypography>
+											{mapStatusIcons(status, 'md')}
 										</InputAdornment>
 									),
 								}}
