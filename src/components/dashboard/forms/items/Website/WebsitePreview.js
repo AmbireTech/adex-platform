@@ -3,7 +3,11 @@ import { useSelector } from 'react-redux'
 import { Grid, Chip } from '@material-ui/core'
 import { IabCategories } from 'adex-models'
 
-import { WebsiteIssues } from 'components/dashboard/containers/Slot/WebsiteIssues'
+import {
+	WebsiteIssues,
+	ALL_ISSUES,
+	WebsiteDSNRecord,
+} from 'components/dashboard/containers/Slot/WebsiteIssues'
 import {
 	PropRow,
 	ContentBox,
@@ -15,6 +19,11 @@ const WebsitePreview = () => {
 	const { website, temp = {} } = useSelector(selectNewWebsite)
 
 	const { categories = [], hostname, issues } = temp
+	const hasIssues = hostname && issues && issues.length
+	const showDnsRecord =
+		hasIssues &&
+		issues.some(i => i === ALL_ISSUES.SLOT_ISSUE_OWNERSHIP_NOT_VERIFIED)
+
 	return (
 		<ContentBox>
 			<ContentBody>
@@ -39,7 +48,16 @@ const WebsitePreview = () => {
 						/>
 					</Grid>
 
-					{hostname && issues && issues.length && (
+					{showDnsRecord && (
+						<Grid item xs={12}>
+							<PropRow
+								left={t('WEBSITE_DNS_RECORD_LABEL')}
+								right={<WebsiteDSNRecord website={website} />}
+							/>
+						</Grid>
+					)}
+
+					{hasIssues && (
 						<Grid item xs={12}>
 							<PropRow
 								left={t('WEBSITE_ISSUES')}
