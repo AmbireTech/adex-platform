@@ -58,6 +58,11 @@ const WithdrawFromIdentity = ({ stepsId, validateId } = {}) => {
 						</Typography>
 					</Box>
 					<Box mb={2}>
+						<Alert variant='filled' severity='warning'>
+							{t('WITHDRAW_ADDRESS_WARNING')}
+						</Alert>
+					</Box>
+					<Box mb={2}>
 						<TextField
 							disabled={spinner}
 							type='text'
