@@ -49,3 +49,9 @@ a, img {
 #transak_modal {
   z-index: 1400;
 }
+
+pre {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
