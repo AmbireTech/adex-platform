@@ -14,7 +14,11 @@ import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
 import { IabCategories } from 'adex-models'
 import Img from 'components/common/img/Img'
 import Anchor from 'components/common/anchor/anchor'
-import { WebsiteIssues } from 'components/dashboard/containers/Slot/WebsiteIssues'
+import {
+	WebsiteIssues,
+	WebsiteDSNRecord,
+	ALL_ISSUES,
+} from 'components/dashboard/containers/Slot/WebsiteIssues'
 import {
 	PropRow,
 	ContentBox,
@@ -82,7 +86,13 @@ const AdSlotPreview = () => {
 		selectDemandAnalyticsByType(state, type)
 	)
 	const { allowAdultContent, autoSetMinCPM } = rulesInput.inputs
-	const { categories = [], suggestedMinCPM } = temp
+	const { categories = [], suggestedMinCPM, hostname, issues } = temp
+
+	const hasIssues = hostname && issues && issues.length
+	const showDnsRecord =
+		hasIssues &&
+		issues.some(i => i === ALL_ISSUES.SLOT_ISSUE_OWNERSHIP_NOT_VERIFIED)
+
 	return (
 		<ContentBox>
 			<ContentBody>
@@ -184,11 +194,20 @@ const AdSlotPreview = () => {
 						</Grid>
 					)}
 
-					{temp.hostname && temp.issues && temp.issues.length && (
+					{showDnsRecord && (
+						<Grid item xs={12}>
+							<PropRow
+								left={t('WEBSITE_DNS_RECORD_LABEL')}
+								right={<WebsiteDSNRecord website={website} />}
+							/>
+						</Grid>
+					)}
+
+					{hasIssues && (
 						<Grid item xs={12}>
 							<PropRow
 								left={t('WEBSITE_ISSUES')}
-								right={<WebsiteIssues issues={temp.issues} />}
+								right={<WebsiteIssues issues={issues} />}
 							/>
 						</Grid>
 					)}
