@@ -21,9 +21,8 @@ const WebsitePreview = () => {
 	const { categories = [], hostname, issues } = temp
 	const hasIssues = hostname && issues && issues.length
 	const showDnsRecord =
-		true ||
-		(hasIssues &&
-			issues.some(i => i === ALL_ISSUES.SLOT_ISSUE_OWNERSHIP_NOT_VERIFIED))
+		hasIssues &&
+		issues.some(i => i === ALL_ISSUES.SLOT_ISSUE_OWNERSHIP_NOT_VERIFIED)
 
 	return (
 		<ContentBox>
