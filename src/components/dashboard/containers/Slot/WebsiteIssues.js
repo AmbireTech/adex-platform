@@ -7,6 +7,7 @@ import {
 	ListItemText,
 	ListItemIcon,
 	ListItem,
+	IconButton,
 	Button,
 	Chip,
 	Typography,
@@ -21,11 +22,13 @@ import {
 	Looks4Sharp,
 	RefreshSharp,
 	InfoSharp,
+	FileCopySharp,
 } from '@material-ui/icons'
 import { useSelector } from 'react-redux'
 import { timeAgo } from 'helpers/analyticsTimeHelpers'
-import { selectWebsiteByWebsite, t } from 'selectors'
-import { execute, updateWebsiteVerification } from 'actions'
+import { selectWebsiteByWebsite, t, selectAccountIdentityAddr } from 'selectors'
+import { execute, updateWebsiteVerification, addToast } from 'actions'
+import copy from 'copy-to-clipboard'
 
 const UPDATE_AGAIN_AFTER = 2 * 60 * 60 * 1000 // 2 h
 
@@ -69,6 +72,9 @@ const useStyles = makeStyles(theme => ({
 		marginRight: theme.spacing(0.5),
 		marginTop: theme.spacing(0.5),
 		marginBottom: theme.spacing(0.5),
+	},
+	copyBtn: {
+		marginLeft: theme.spacing(1),
 	},
 }))
 
@@ -211,5 +217,64 @@ export function WebsiteIssuesLegend() {
 				/>
 			</ListItem>
 		</List>
+	)
+}
+
+export function WebsiteDSNRecord({ website }) {
+	const classes = useStyles()
+	const identityAddr = useSelector(selectAccountIdentityAddr)
+	const dnsRecord = `adex-publisher=${identityAddr}`
+
+	return (
+		<Box display='flex' flexDirection='column' height={1} width={1}>
+			<Box mb={1}>
+				<Typography className={classes.subtitle} component='div' gutterBottom>
+					{t('DNS_RECORD_INFO', { args: [website] })}
+				</Typography>
+			</Box>
+			<Box
+				display='flex'
+				flexDirection='row'
+				component='div'
+				alignItems='center'
+				flexWrap='wrap'
+				width={1}
+				mb={1}
+			>
+				<Box p={1} color='grey.contrastText' bgcolor='grey.main'>
+					<pre>{dnsRecord}</pre>
+				</Box>
+				<IconButton
+					color='default'
+					className={classes.copyBtn}
+					onClick={() => {
+						copy(dnsRecord)
+						execute(
+							addToast({
+								type: 'info',
+								label: t('COPIED_TO_CLIPBOARD'),
+								timeout: 5000,
+							})
+						)
+					}}
+				>
+					<FileCopySharp />
+				</IconButton>
+			</Box>
+			<Box>
+				<Typography className={classes.subtitle} component='div' gutterBottom>
+					{t('WEBSITE_DNS_RECORD_MORE_INFO', {
+						args: [
+							<ExternalAnchor
+								key={1}
+								href='https://help.adex.network/hc/en-us/articles/360012481519-How-to-add-DNS-TXT-record-for-your-publisher-domain'
+							>
+								{` ${t('THIS_TUTORIAL')}`}
+							</ExternalAnchor>,
+						],
+					})}
+				</Typography>
+			</Box>
+		</Box>
 	)
 }
