@@ -1,5 +1,6 @@
 import React from 'react'
 import { Box, ListItemText } from '@material-ui/core'
+import { Alert } from '@material-ui/lab'
 
 import { PropRow } from 'components/common/dialog/content'
 import { t } from 'selectors'
@@ -12,6 +13,11 @@ export const IdentityWithdrawPreview = ({
 	symbol,
 }) => (
 	<Box>
+		<Box p={1}>
+			<Alert variant='filled' severity='warning'>
+				{t('WITHDRAW_ADDRESS_WARNING')}
+			</Alert>
+		</Box>
 		<PropRow
 			key='withdrawTo'
 			left={t('withdrawTo', { isProp: true })}
