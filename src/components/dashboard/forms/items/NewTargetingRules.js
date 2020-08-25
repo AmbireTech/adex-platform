@@ -24,6 +24,7 @@ import {
 	WebAssetSharp as PublisherIcon,
 	MoreHorizSharp as AdvIcon,
 	ErrorSharp as ErrIcon,
+	DevicesSharp as DevicesIcon,
 } from '@material-ui/icons'
 import Autocomplete from 'components/common/autocomplete'
 
@@ -52,6 +53,7 @@ const parameterIcon = {
 	location: <LocationIcon />,
 	categories: <CategoryIcon />,
 	publishers: <PublisherIcon />,
+	devices: <DevicesIcon />,
 	advanced: <AdvIcon />,
 }
 
