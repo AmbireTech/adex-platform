@@ -286,7 +286,16 @@ export const audienceSources = [
 		],
 	},
 	{
-		parameter: 'devices',
+		parameter: 'oss',
+		applyType: 'single',
+		actions: [
+			{ type: 'in', label: t('SHOW_ONLY_IN_SELECTED'), minSelected: 1 },
+			{ type: 'nin', label: t('DONT_SHOW_IN_SELECTED'), minSelected: 1 },
+			{ type: 'allin', label: t('SHOW_EVERYWHERE'), value: 'ALL' },
+		],
+	},
+	{
+		parameter: 'browsers',
 		applyType: 'single',
 		actions: [
 			{ type: 'in', label: t('SHOW_ONLY_IN_SELECTED'), minSelected: 1 },
@@ -342,7 +351,6 @@ export const audienceSources = [
 ]
 
 const BROWSERS = [
-	'ALL_BROWSERS',
 	'2345Explorer',
 	'360 Browser',
 	'Amaya',
@@ -511,6 +519,16 @@ const OS = [
 	'Zenwalk',
 ]
 
+const browsers = BROWSERS.map(b => ({
+	label: b,
+	value: b,
+}))
+
+const oss = OS.map(os => ({
+	label: os,
+	value: os,
+}))
+
 const selectAutocompleteAudienceSources = createSelector(
 	[
 		autocompleteLocationsSingleSelect,
@@ -534,6 +552,12 @@ const selectAutocompleteAudienceSources = createSelector(
 				in: pubIn,
 				nin: pubNin,
 			},
+		},
+		browsers: {
+			singleValuesSrc: browsers,
+		},
+		oss: {
+			singleValuesSrc: oss,
 		},
 	})
 )
@@ -639,6 +663,8 @@ export const selectAudienceInputsDataByItem = createSelector(
 			(isCampaignAudienceItem
 				? selectedItem.audienceInput.inputs
 				: selectedItem.inputs) || {}
+
+		console.log('allSrcsWithOptions', allSrcsWithOptions)
 
 		const SOURCES = allSrcsWithOptions
 			.filter(s =>
