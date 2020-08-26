@@ -3,8 +3,9 @@ import { createSelector } from 'reselect'
 import { selectNewItemByTypeAndId, selectValidations } from 'selectors'
 import { ExternalAnchor } from 'components/common/anchor/anchor'
 import { constants, IabCategories } from 'adex-models'
-
 import { t } from './translationsSelectors'
+
+const { CountryTiers, AllCountries, OsGroups } = constants
 
 export const selectTargeting = state => state.persist.targeting
 
@@ -173,7 +174,7 @@ export const selectAllTargetingPublishers = createSelector(
 const autocompleteLocationsSingleSelect = createSelector(
 	[],
 	() => {
-		const tiers = Object.values(constants.CountryTiers).map(
+		const tiers = Object.values(CountryTiers).map(
 			({ name, ruleValue, countries } = {}) => ({
 				label: t(name),
 				extraLabel: countries.join(', '),
@@ -181,7 +182,7 @@ const autocompleteLocationsSingleSelect = createSelector(
 				group: t('BY_TIER'),
 			})
 		)
-		const all = constants.AllCountries.map(({ name, ruleValue } = {}) => ({
+		const all = AllCountries.map(({ name, ruleValue } = {}) => ({
 			label: t(name),
 			value: ruleValue,
 			group: name[0].toUpperCase(),
@@ -286,21 +287,12 @@ export const audienceSources = [
 		],
 	},
 	{
-		parameter: 'oss',
+		parameter: 'devices',
 		applyType: 'single',
 		actions: [
+			{ type: 'allin', label: t('SHOW_EVERYWHERE'), value: 'ALL' },
 			{ type: 'in', label: t('SHOW_ONLY_IN_SELECTED'), minSelected: 1 },
 			{ type: 'nin', label: t('DONT_SHOW_IN_SELECTED'), minSelected: 1 },
-			{ type: 'allin', label: t('SHOW_EVERYWHERE'), value: 'ALL' },
-		],
-	},
-	{
-		parameter: 'browsers',
-		applyType: 'single',
-		actions: [
-			{ type: 'in', label: t('SHOW_ONLY_IN_SELECTED'), minSelected: 1 },
-			{ type: 'nin', label: t('DONT_SHOW_IN_SELECTED'), minSelected: 1 },
-			{ type: 'allin', label: t('SHOW_EVERYWHERE'), value: 'ALL' },
 		],
 	},
 	{
@@ -350,184 +342,14 @@ export const audienceSources = [
 	},
 ]
 
-const BROWSERS = [
-	'2345Explorer',
-	'360 Browser',
-	'Amaya',
-	'Android Browser',
-	'Arora',
-	'Avant',
-	'Avast',
-	'AVG',
-	'BIDUBrowser',
-	'Baidu',
-	'Basilisk',
-	'Blazer',
-	'Bolt',
-	'Brave',
-	'Bowser',
-	'Camino',
-	'Chimera',
-	'Chrome Headless',
-	'Chrome WebView',
-	'Chrome',
-	'Chromium',
-	'Comodo Dragon',
-	'Dillo',
-	'Dolphin',
-	'Doris',
-	'Edge',
-	'Epiphany',
-	'Facebook',
-	'Falkon',
-	'Fennec',
-	'Firebird',
-	'Firefox',
-	'Flock',
-	'GSA',
-	'GoBrowser',
-	'ICE Browser',
-	'IE',
-	'IEMobile',
-	'IceApe',
-	'IceCat',
-	'IceDragon',
-	'Iceape',
-	'Iceweasel',
-	'Iridium',
-	'Iron',
-	'Jasmine',
-	'K-Meleon',
-	'Kindle',
-	'Konqueror',
-	'LBBROWSER Line',
-	'Links',
-	'Lunascape',
-	'Lynx',
-	'MIUI Browser',
-	'Maemo Browser',
-	'Maemo',
-	'Maxthon',
-	'MetaSr Midori',
-	'Minimo',
-	'Mobile Safari',
-	'Mosaic',
-	'Mozilla',
-	'NetFront',
-	'NetSurf',
-	'Netfront',
-	'Netscape',
-	'NokiaBrowser',
-	'Oculus Browser',
-	'OmniWeb',
-	'Opera Coast',
-	'Opera Mini',
-	'Opera Mobi',
-	'Opera Tablet',
-	'Opera',
-	'PaleMoon',
-	'PhantomJS',
-	'Phoenix',
-	'Polaris',
-	'Puffin',
-	'QQ',
-	'QQBrowser',
-	'QQBrowserLite',
-	'Quark',
-	'QupZilla',
-	'RockMelt',
-	'Safari',
-	'Sailfish Browser',
-	'Samsung Browser',
-	'SeaMonkey',
-	'Silk',
-	'Skyfire',
-	'Sleipnir',
-	'Slim',
-	'SlimBrowser',
-	'Swiftfox',
-	'Tizen Browser',
-	'UCBrowser',
-	'Vivaldi',
-	'Waterfox',
-	'WeChat',
-	'Yandex',
-	'baidu',
-	'iCab',
-	'w3m',
-]
-
-const OS = [
-	'AIX',
-	'Amiga OS',
-	'Android',
-	'Arch',
-	'Bada',
-	'BeOS',
-	'BlackBerry',
-	'CentOS',
-	'Chromium OS',
-	'Contiki',
-	'Fedora',
-	'Firefox OS',
-	'FreeBSD',
-	'Debian',
-	'DragonFly',
-	'Fuchsia',
-	'Gentoo',
-	'GNU',
-	'Haiku',
-	'Hurd',
-	'iOS',
-	'Joli',
-	'KaiOS',
-	'Linpus',
-	'Linux',
-	'Mac OS',
-	'Mageia',
-	'Mandriva',
-	'MeeGo',
-	'Minix',
-	'Mint',
-	'Morph OS',
-	'NetBSD',
-	'Nintendo',
-	'OpenBSD',
-	'OpenVMS',
-	'OS/2',
-	'Palm',
-	'PC-BSD',
-	'PCLinuxOS',
-	'Plan9',
-	'Playstation',
-	'QNX',
-	'RedHat',
-	'RIM Tablet OS',
-	'RISC OS',
-	'Sailfish',
-	'Series40',
-	'Slackware',
-	'Solaris',
-	'SUSE',
-	'Symbian',
-	'Tizen',
-	'Ubuntu',
-	'Unix',
-	'VectorLinux',
-	'WebOS',
-	'Windows [Phone/Mobile]',
-	'Zenwalk',
-]
-
-const browsers = BROWSERS.map(b => ({
-	label: b,
-	value: b,
-}))
-
-const oss = OS.map(os => ({
-	label: os,
-	value: os,
-}))
+const devices = Object.values(OsGroups).map(
+	({ name, ruleValue, oss } = {}) => ({
+		label: t(name),
+		extraLabel: oss.join(', '),
+		value: ruleValue,
+		group: t('POPULAR'),
+	})
+)
 
 const selectAutocompleteAudienceSources = createSelector(
 	[
@@ -553,11 +375,8 @@ const selectAutocompleteAudienceSources = createSelector(
 				nin: pubNin,
 			},
 		},
-		browsers: {
-			singleValuesSrc: browsers,
-		},
-		oss: {
-			singleValuesSrc: oss,
+		devices: {
+			singleValuesSrc: devices,
 		},
 	})
 )
@@ -663,8 +482,6 @@ export const selectAudienceInputsDataByItem = createSelector(
 			(isCampaignAudienceItem
 				? selectedItem.audienceInput.inputs
 				: selectedItem.inputs) || {}
-
-		console.log('allSrcsWithOptions', allSrcsWithOptions)
 
 		const SOURCES = allSrcsWithOptions
 			.filter(s =>
