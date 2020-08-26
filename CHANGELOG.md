@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.41
+##### *2020-08-26*
+
+### Added
+- targeting by device
+- websites DNS TXT fast instructions
+- withdraw address warnings
+- "Scheduled" campaign status
+- Tooltips to campaign status icons
+
+### Fixed
+- styles
+- fixed MeaMask on mobile
+
 ## 4.20.40
 ##### *2020-08-21*
 
