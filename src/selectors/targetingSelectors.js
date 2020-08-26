@@ -3,8 +3,9 @@ import { createSelector } from 'reselect'
 import { selectNewItemByTypeAndId, selectValidations } from 'selectors'
 import { ExternalAnchor } from 'components/common/anchor/anchor'
 import { constants, IabCategories } from 'adex-models'
-
 import { t } from './translationsSelectors'
+
+const { CountryTiers, AllCountries, OsGroups } = constants
 
 export const selectTargeting = state => state.persist.targeting
 
@@ -173,7 +174,7 @@ export const selectAllTargetingPublishers = createSelector(
 const autocompleteLocationsSingleSelect = createSelector(
 	[],
 	() => {
-		const tiers = Object.values(constants.CountryTiers).map(
+		const tiers = Object.values(CountryTiers).map(
 			({ name, ruleValue, countries } = {}) => ({
 				label: t(name),
 				extraLabel: countries.join(', '),
@@ -181,7 +182,7 @@ const autocompleteLocationsSingleSelect = createSelector(
 				group: t('BY_TIER'),
 			})
 		)
-		const all = constants.AllCountries.map(({ name, ruleValue } = {}) => ({
+		const all = AllCountries.map(({ name, ruleValue } = {}) => ({
 			label: t(name),
 			value: ruleValue,
 			group: name[0].toUpperCase(),
@@ -286,6 +287,15 @@ export const audienceSources = [
 		],
 	},
 	{
+		parameter: 'devices',
+		applyType: 'single',
+		actions: [
+			{ type: 'allin', label: t('SHOW_EVERYWHERE'), value: 'ALL' },
+			{ type: 'in', label: t('SHOW_ONLY_IN_SELECTED'), minSelected: 1 },
+			{ type: 'nin', label: t('DONT_SHOW_IN_SELECTED'), minSelected: 1 },
+		],
+	},
+	{
 		parameter: 'advanced',
 		applyType: 'multiple-checkbox',
 		actions: [
@@ -332,6 +342,15 @@ export const audienceSources = [
 	},
 ]
 
+const devices = Object.values(OsGroups).map(
+	({ name, ruleValue, oss } = {}) => ({
+		label: t(name),
+		extraLabel: oss.join(', '),
+		value: ruleValue,
+		group: t('POPULAR'),
+	})
+)
+
 const selectAutocompleteAudienceSources = createSelector(
 	[
 		autocompleteLocationsSingleSelect,
@@ -355,6 +374,9 @@ const selectAutocompleteAudienceSources = createSelector(
 				in: pubIn,
 				nin: pubNin,
 			},
+		},
+		devices: {
+			singleValuesSrc: devices,
 		},
 	})
 )
