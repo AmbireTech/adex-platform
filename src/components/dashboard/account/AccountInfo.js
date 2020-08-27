@@ -24,6 +24,7 @@ import {
 } from '@material-ui/core'
 import { VpnKey, Lock } from '@material-ui/icons'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import { ExternalAnchor } from 'components/common/anchor/anchor'
 import { styles } from './styles.js'
 import { LoadingSection } from 'components/common/spinners'
 import CreditCardIcon from '@material-ui/icons/CreditCard'
@@ -90,6 +91,7 @@ function AccountInfo() {
 		walletAddress,
 		identityBalanceMainToken,
 		availableIdentityBalanceMainToken,
+		availableIdentityBalanceAllMainToken,
 	} = useSelector(selectAccountStatsFormatted)
 
 	const identityEnsName = useSelector(state =>
@@ -167,10 +169,28 @@ function AccountInfo() {
 							>
 								<ListItemText
 									className={classes.address}
-									primary={`${availableIdentityBalanceMainToken ||
+									primary={`${availableIdentityBalanceAllMainToken ||
 										0} ${symbol}`}
-									secondary={t('IDENTITY_MAIN_TOKEN_BALANCE_AVAILABLE_INFO')}
+									secondary={t('IDENTITY_MAIN_TOKEN_BALANCE_INFO')}
 								/>
+								{availableIdentityBalanceAllMainToken !==
+									availableIdentityBalanceMainToken && (
+									<ListItemText
+										className={classes.address}
+										primary={`${availableIdentityBalanceMainToken ||
+											0} ${symbol}`}
+										secondary={t(
+											'IDENTITY_MAIN_TOKEN_BALANCE_WITHDRAW_AVAILABLE_INFO',
+											{
+												args: [
+													<ExternalAnchor href='https://help.adex.network/hc/en-us/articles/360016097580-Why-can-t-I-withdraw-my-entire-balance-'>
+														{t('FIND_MORE')}
+													</ExternalAnchor>,
+												],
+											}
+										)}
+									/>
+								)}
 							</LoadingSection>
 						}
 						right={
