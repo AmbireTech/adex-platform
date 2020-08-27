@@ -78,7 +78,7 @@ function AdUnitBasic({ validateId }) {
 						helperText={
 							errTargetUrl && !!errTargetUrl.dirty
 								? errTargetUrl.errMsg
-								: t('TARGETIRL_HELPER')
+								: t('TARGETURL_HELPER')
 						}
 					/>
 				</Grid>
