@@ -131,7 +131,7 @@ function SideNav(props) {
 	const location = routerLocation.pathname.split('/')[3]
 	const isAdvertiser = side === 'advertiser'
 	const items = isAdvertiser ? 'units' : 'slots'
-	const { availableIdentityBalanceMainToken } = useSelector(
+	const { availableIdentityBalanceAllMainToken } = useSelector(
 		selectAccountStatsFormatted
 	)
 
@@ -153,8 +153,8 @@ function SideNav(props) {
 							/>
 							<LoadingSection
 								loading={
-									!availableIdentityBalanceMainToken &&
-									availableIdentityBalanceMainToken !== 0
+									!availableIdentityBalanceAllMainToken &&
+									availableIdentityBalanceAllMainToken !== 0
 								}
 							>
 								<Typography
@@ -164,7 +164,7 @@ function SideNav(props) {
 									color='textPrimary'
 									classes={{ button: classes.amount }}
 								>
-									<strong>{`${availableIdentityBalanceMainToken ||
+									<strong>{`${availableIdentityBalanceAllMainToken ||
 										0} ${symbol}`}</strong>
 								</Typography>
 								<Typography variant='button' component='div' display='block'>
