@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.44
+##### *2020-08-27*
+
+### Fixed
+- New version reload btn
+
 ## 4.20.43
 ##### *2020-08-27*
 
