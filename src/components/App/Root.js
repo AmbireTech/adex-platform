@@ -123,7 +123,7 @@ const Root = () => {
 							size='large'
 							variant='contained'
 							onClick={() => {
-								refreshCacheAndReload({ version })
+								execute(refreshCacheAndReload({ version }))
 							}}
 						>
 							{t('RELOAD_NOW')}
