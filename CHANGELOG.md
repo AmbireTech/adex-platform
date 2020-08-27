@@ -1,24 +1,35 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.43
+##### *2020-08-27*
+
+### Added
+- Devices targeting preview
+
+### Changed
+- Devices targeting groups
+
+### Fixed
+- Typos
+
 ## 4.20.42
 ##### *2020-08-27*
-- Added total and available balances (Transactions use sweeps from campaigns with sufficient balance for the fees)
-
+- Total and available balances (Transactions use sweeps from campaigns with sufficient balance for the fees)
 
 ## 4.20.41
 ##### *2020-08-26*
 
 ### Added
-- targeting by device
-- websites DNS TXT fast instructions
-- withdraw address warnings
+- Targeting by device
+- Websites DNS TXT fast instructions
+- Withdraw address warnings
 - "Scheduled" campaign status
 - Tooltips to campaign status icons
 
 ### Fixed
-- styles
-- fixed MeaMask on mobile
+- Styles
+- MetaMask on mobile
 
 ## 4.20.40
 ##### *2020-08-21*
@@ -40,7 +51,6 @@ All notable changes to this project will be documented in this file.
 - External link styles
 - Page reloading state check
 - Toast component
-
 
 ## 4.20.39
 ##### *2020-08-17*
