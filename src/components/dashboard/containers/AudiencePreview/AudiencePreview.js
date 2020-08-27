@@ -6,14 +6,15 @@ import OutlinedPropView from 'components/common/OutlinedPropView'
 import { t } from 'selectors'
 import { Box, Chip, Tooltip } from '@material-ui/core'
 
-const { CountryNames, CountryTiers } = constants
+const { CountryNames, CountryTiers, OsGroups } = constants
 
 const AudiencePreview = ({ audienceInput = {}, title, subHeader }) => {
 	const {
 		location = {},
 		categories = {},
 		publishers = {},
-		advanced = {},
+		// advanced = {},
+		devices = {},
 	} = audienceInput
 
 	return (
@@ -108,6 +109,37 @@ const AudiencePreview = ({ audienceInput = {}, title, subHeader }) => {
 				<OutlinedPropView
 					margin='dense'
 					label={t(`PUBLISHERS`)}
+					value={t('NOT_SELECTED')}
+				/>
+			)}
+
+			{!!devices.apply ? (
+				<OutlinedPropView
+					margin='dense'
+					label={t(`DEVICES_${devices.apply.toUpperCase()}`)}
+					value={
+						devices.apply === 'allin' ? (
+							<Chip variant='outlined' size='small' label={t('ALL_DEVICES')} />
+						) : (
+							(devices[devices.apply] || []).map(x => (
+								<Tooltip
+									key={x}
+									title={
+										OsGroups[x]
+											? OsGroups[x].oss.join(', ')
+											: t(OsGroups[x] || x || '')
+									}
+								>
+									<Chip variant='outlined' size='small' label={t(x || '')} />
+								</Tooltip>
+							))
+						)
+					}
+				/>
+			) : (
+				<OutlinedPropView
+					margin='dense'
+					label={t(`DEVICES`)}
 					value={t('NOT_SELECTED')}
 				/>
 			)}
