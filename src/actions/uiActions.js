@@ -252,7 +252,10 @@ export function refreshCacheAndReload({ version }) {
 			})
 		}
 
-		await updateNewVersion({ shouldForceRefresh: false, version })
+		await updateNewVersion({ shouldForceRefresh: false, version })(
+			dispatch,
+			getState
+		)
 		window.location.reload(true)
 	}
 }
