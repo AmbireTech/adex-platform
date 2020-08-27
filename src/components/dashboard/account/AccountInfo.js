@@ -173,21 +173,24 @@ function AccountInfo() {
 										0} ${symbol}`}
 									secondary={t('IDENTITY_MAIN_TOKEN_BALANCE_INFO')}
 								/>
-								<ListItemText
-									className={classes.address}
-									primary={`${availableIdentityBalanceMainToken ||
-										0} ${symbol}`}
-									secondary={t(
-										'IDENTITY_MAIN_TOKEN_BALANCE_WITHDRAW_AVAILABLE_INFO',
-										{
-											args: [
-												<ExternalAnchor href='https://help.adex.network/hc/en-us/articles/360016097580-Why-can-t-I-withdraw-my-entire-balance-'>
-													{t('FIND_MORE')}
-												</ExternalAnchor>,
-											],
-										}
-									)}
-								/>
+								{availableIdentityBalanceAllMainToken !==
+									availableIdentityBalanceMainToken && (
+									<ListItemText
+										className={classes.address}
+										primary={`${availableIdentityBalanceMainToken ||
+											0} ${symbol}`}
+										secondary={t(
+											'IDENTITY_MAIN_TOKEN_BALANCE_WITHDRAW_AVAILABLE_INFO',
+											{
+												args: [
+													<ExternalAnchor href='https://help.adex.network/hc/en-us/articles/360016097580-Why-can-t-I-withdraw-my-entire-balance-'>
+														{t('FIND_MORE')}
+													</ExternalAnchor>,
+												],
+											}
+										)}
+									/>
+								)}
 							</LoadingSection>
 						}
 						right={
