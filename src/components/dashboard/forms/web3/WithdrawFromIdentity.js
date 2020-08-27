@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
-import { TextField, Button, Box, Typography } from '@material-ui/core'
+import { TextField, Button, Box, ListItemText } from '@material-ui/core'
 import {
 	ContentBox,
 	ContentBody,
@@ -19,6 +19,7 @@ import {
 } from 'selectors'
 import { execute, updateNewTransaction } from 'actions'
 import { Alert } from '@material-ui/lab'
+import { ExternalAnchor } from 'components/common/anchor/anchor'
 
 const WithdrawFromIdentity = ({ stepsId, validateId } = {}) => {
 	const { symbol } = useSelector(selectMainToken)
@@ -51,11 +52,19 @@ const WithdrawFromIdentity = ({ stepsId, validateId } = {}) => {
 			) : (
 				<ContentBody>
 					<Box mb={2}>
-						<Typography variant='subtitle1' display='block'>
-							{t('EXCHANGE_CURRENT_MAIN_TOKEN_BALANCE_AVAILABLE_ON_IDENTITY', {
-								args: [max, symbol],
-							})}
-						</Typography>
+						<ListItemText
+							primary={`${max || 0} ${symbol}`}
+							secondary={t(
+								'IDENTITY_MAIN_TOKEN_BALANCE_WITHDRAW_AVAILABLE_INFO',
+								{
+									args: [
+										<ExternalAnchor href='https://help.adex.network/hc/en-us/articles/360016097580-Why-can-t-I-withdraw-my-entire-balance-'>
+											{t('FIND_MORE')}
+										</ExternalAnchor>,
+									],
+								}
+							)}
+						/>
 					</Box>
 					<Box mb={2}>
 						<Alert variant='filled' severity='warning'>
