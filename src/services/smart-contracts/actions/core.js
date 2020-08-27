@@ -288,20 +288,23 @@ export async function getChannelsWithOutstanding({ identityAddr }) {
 		})
 	)
 
-	const withOutstandingBalance = allChannels.filter(x => {
+	const withOutstandingBalanceAll = allChannels.filter(x => {
 		return (
 			OUTSTANDING_STATUSES[x.channel.status.name] &&
 			new Date((x.channel.validUntil - EXTRA_PROCESS_TIME) * 1000) >
 				Date.now() &&
-			//NOTE: As we show everything there is no need for minPlatform check
-			// x.outstanding.gt(
-			// 	BigNumber.from(routineWithdrawTokens[x.channel.depositAsset].minPlatform)
-			// ) &&
 			x.outstandingAvailable.gt(BigNumber.from('0'))
 		)
 	})
 
-	return { all, withOutstandingBalance }
+	const withOutstandingBalance = [...withOutstandingBalanceAll].filter(x =>
+		// Used for withdraw and all functions requiring sweeps
+		x.outstanding.gt(
+			BigNumber.from(routineWithdrawTokens[x.channel.depositAsset].minPlatform)
+		)
+	)
+
+	return { all, withOutstandingBalanceAll, withOutstandingBalance }
 }
 
 async function getChannelsToSweepFrom({ amountToSweep, withBalance = [] }) {
