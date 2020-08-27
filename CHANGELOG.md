@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.42
+##### *2020-08-27*
+- Added total and available balances (Transactions use sweeps from campaigns with sufficient balance for the fees)
+
+
 ## 4.20.41
 ##### *2020-08-26*
 
