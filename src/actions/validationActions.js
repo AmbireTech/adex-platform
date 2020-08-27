@@ -268,26 +268,6 @@ export function validateAccessWarning(validateId, accepted, dirty) {
 	}
 }
 
-// export function validateCampaignMinTargetingScore({
-// 	validateId,
-// 	adUnits,
-// 	minTargetingScore,
-// 	dirty,
-// }) {
-// 	return async function(dispatch, getState) {
-// 		const isValid =
-// 			!minTargetingScore ||
-// 			(adUnits.length && adUnits.every(u => !!u.targeting.length))
-// 		validate(validateId, 'minTargetingScore', {
-// 			isValid,
-// 			err: { msg: 'ERR_MIN_TARGETING_SCORE' },
-// 			dirty,
-// 		})(dispatch)
-
-// 		return isValid
-// 	}
-// }
-
 export function validateCampaignUnits({ validateId, adUnits, dirty }) {
 	return async function(dispatch, getState) {
 		const isValid = !!adUnits && adUnits.length
