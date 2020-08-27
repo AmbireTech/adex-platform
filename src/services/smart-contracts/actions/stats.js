@@ -144,6 +144,10 @@ export async function getAccountStats({
 		total: BigNumber.from('0'),
 		available: BigNumber.from('0'),
 	},
+	outstandingBalanceAllMainToken = {
+		total: BigNumber.from('0'),
+		available: BigNumber.from('0'),
+	},
 	all,
 }) {
 	const { wallet, identity } = account
@@ -198,6 +202,14 @@ export async function getAccountStats({
 		totalIdentityBalanceMainToken: identityBalanceMainToken.add(
 			outstandingBalanceMainToken.total
 		),
+		outstandingBalanceAllMainToken: outstandingBalanceAllMainToken.available,
+		totalOutstandingBalanceAllMainToken: outstandingBalanceAllMainToken.total,
+		availableIdentityBalanceAllMainToken: identityBalanceMainToken.add(
+			outstandingBalanceAllMainToken.available
+		),
+		totalIdentityBalanceAllMainToken: identityBalanceMainToken.add(
+			outstandingBalanceAllMainToken.total
+		),
 		totalRevenue,
 	}
 
@@ -232,6 +244,30 @@ export async function getAccountStats({
 		),
 		totalIdentityBalanceMainToken: formatTokenAmount(
 			raw.totalIdentityBalanceMainToken,
+			decimals,
+			false,
+			2
+		),
+		outstandingBalanceAllMainToken: formatTokenAmount(
+			raw.outstandingBalanceAllMainToken,
+			decimals,
+			false,
+			2
+		),
+		totalOutstandingBalanceAllMainToken: formatTokenAmount(
+			raw.totalOutstandingBalanceAllMainToken,
+			decimals,
+			false,
+			2
+		),
+		availableIdentityBalanceAllMainToken: formatTokenAmount(
+			raw.availableIdentityBalanceAllMainToken,
+			decimals,
+			false,
+			2
+		),
+		totalIdentityBalanceAllMainToken: formatTokenAmount(
+			raw.totalIdentityBalanceAllMainToken,
 			decimals,
 			false,
 			2
