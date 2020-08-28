@@ -87,7 +87,7 @@ export function validate(
 			errors[key] = {
 				errMsg: t(err.msg, { args: err.args }),
 				errFields: err.fields,
-				dirty: dirty,
+				dirty,
 			}
 
 			updateValidationErrors(validateId, errors)(dispatch)
