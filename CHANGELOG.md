@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.46
+##### *2020-08-28*
+
+### Fixed
+- Typo
+
 ## 4.20.45
 ##### *2020-08-28*
 
