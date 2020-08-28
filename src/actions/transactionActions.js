@@ -33,6 +33,7 @@ import {
 	withdrawOtherTokensFromIdentity,
 } from 'services/smart-contracts/actions/identity'
 import Helper from 'helpers/miscHelpers'
+import { validate } from './validationActions'
 
 // MEMORY STORAGE
 export function updateNewTransaction({ tx, key, value }) {
@@ -120,6 +121,45 @@ export function resetWeb3Transaction({ tx, addr }) {
 	}
 }
 
+function handleFeesData({
+	stepsId,
+	validateId,
+	dirty,
+	actionName,
+	feeDataAction,
+}) {
+	return async function(dispatch, getState) {
+		let isValid = false
+		try {
+			const feesData = await feeDataAction()
+
+			await updateNewTransaction({
+				tx: stepsId,
+				key: 'feesData',
+				value: feesData,
+			})(dispatch, getState)
+
+			isValid = await validateFees({
+				validateId,
+				feesAmountBN: feesData.totalBN,
+				amountToSpendBN: feesData.actualWithdrawAmount || '0',
+				dirty,
+			})(dispatch, getState)
+		} catch (err) {
+			console.error(actionName, err)
+
+			isValid = false
+			await validate(validateId, 'fees', {
+				isValid,
+				err: { msg: getErrorMsg(err) },
+				dirty,
+			})(dispatch, getState)
+		}
+
+		return isValid
+	}
+}
+
 export function validatePrivilegesChange({
 	stepsId,
 	validateId,
@@ -183,24 +223,18 @@ export function validatePrivilegesChange({
 
 		if (isValid) {
 			const account = selectAccount(state)
-			const feesData = await setIdentityPrivilege({
-				privLevel,
-				setAddr,
-				getFeesOnly: true,
-				account,
-			})
-
-			await updateNewTransaction({
-				tx: stepsId,
-				key: 'feesData',
-				value: feesData,
-			})(dispatch, getState)
-
-			isValid = await validateFees({
+			isValid = await handleFeesData({
+				stepsId,
 				validateId,
-				feesAmountBN: feesData.totalBN,
-				amountToSpendBN: '0',
 				dirty,
+				actionName: 'validatePrivilegesChange',
+				feeDataAction: () =>
+					setIdentityPrivilege({
+						privLevel,
+						setAddr,
+						getFeesOnly: true,
+						account,
+					}),
 			})(dispatch, getState)
 		}
 
@@ -292,34 +326,20 @@ export function validateIdentityWithdraw({
 
 		let isValid = inputValidations.every(v => v === true)
 
-		let feesData = null
-
 		if (isValid) {
-			try {
-				feesData = await withdrawFromIdentity({
-					account,
-					amountToWithdraw,
-					withdrawTo,
-					getFeesOnly: true,
-				})
-
-				await updateNewTransaction({
-					tx: stepsId,
-					key: 'feesData',
-					value: feesData,
-				})(dispatch, getState)
-
-				isValid = await validateFees({
-					validateId,
-					feesAmountBN: feesData.totalBN,
-					amountToSpendBN: feesData.actualWithdrawAmount,
-					dirty,
-				})(dispatch, getState)
-			} catch (err) {
-				console.error('validateIdentityWithdraw', err)
-
-				isValid = false
-			}
+			isValid = await handleFeesData({
+				stepsId,
+				validateId,
+				dirty,
+				actionName: 'validateIdentityWithdraw',
+				feeDataAction: () =>
+					withdrawFromIdentity({
+						account,
+						amountToWithdraw,
+						withdrawTo,
+						getFeesOnly: true,
+					}),
+			})(dispatch, getState)
 		}
 
 		await handleAfterValidation({ isValid, onValid, onInvalid })
@@ -388,33 +408,20 @@ export function validateIdentityWithdrawAny({
 
 		let isValid = inputValidations.every(v => v === true)
 
-		let feesData = null
-
 		if (isValid) {
-			try {
-				feesData = await withdrawOtherTokensFromIdentity({
-					account,
-					amountToWithdraw,
-					withdrawTo,
-					getFeesOnly: true,
-				})
-
-				await updateNewTransaction({
-					tx: stepsId,
-					key: 'feesData',
-					value: feesData,
-				})(dispatch, getState)
-
-				isValid = await validateFees({
-					validateId,
-					feesAmountBN: feesData.totalBN,
-					amountToSpendBN: feesData.actualWithdrawAmount,
-					dirty,
-				})(dispatch, getState)
-			} catch (err) {
-				console.error('validateIdentityWithdrawAny', err)
-				isValid = false
-			}
+			isValid = await handleFeesData({
+				stepsId,
+				validateId,
+				dirty,
+				actionName: 'validateIdentityWithdrawAny',
+				feeDataAction: () =>
+					withdrawOtherTokensFromIdentity({
+						account,
+						amountToWithdraw,
+						withdrawTo,
+						getFeesOnly: true,
+					}),
+			})(dispatch, getState)
 		}
 
 		await handleAfterValidation({ isValid, onValid, onInvalid })
@@ -514,22 +521,16 @@ export function validateENSChange({
 
 		if (isValid) {
 			const account = selectAccount(state)
-			const feesData = await addIdentityENS({
-				getFeesOnly: true,
-				account,
-			})
-
-			await updateNewTransaction({
-				tx: stepsId,
-				key: 'feesData',
-				value: feesData,
-			})(dispatch, getState)
-
-			isValid = await validateFees({
+			isValid = await handleFeesData({
+				stepsId,
 				validateId,
-				feesAmountBN: feesData.totalBN,
-				amountToSpendBN: '0',
 				dirty,
+				actionName: 'validateENSChange',
+				feeDataAction: () =>
+					addIdentityENS({
+						getFeesOnly: true,
+						account,
+					}),
 			})(dispatch, getState)
 		}
 

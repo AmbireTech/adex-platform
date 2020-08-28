@@ -167,7 +167,7 @@ export async function withdrawFromIdentity({
 			fees: fees.total,
 			totalBN: fees.totalBN,
 			actualWithdrawAmount,
-			toGet: formatTokenAmount(actualWithdrawAmount, decimals),
+			toGet: formatTokenAmount(actualWithdrawAmount, decimals, null, 2),
 			breakdownFormatted: fees.breakdownFormatted,
 		}
 	}
@@ -848,7 +848,7 @@ export async function withdrawOtherTokensFromIdentity({
 		return {
 			fees: fees.total,
 			breakdownFormatted: fees.breakdownFormatted,
-			toGet: formatTokenAmount(toWithdraw, decimals),
+			toGet: formatTokenAmount(toWithdraw, decimals, null, 2),
 		}
 	}
 
