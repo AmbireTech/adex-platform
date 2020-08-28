@@ -41,7 +41,11 @@ export const FeesBreakdown = ({ breakdownFormatted = {}, symbol }) => (
 				aria-controls='fees-breakdown'
 				id='fees-breakdown'
 			>
-				<Typography>{t('FEES_BREAKDOWN_ADVANCED')}</Typography>
+				<Typography>
+					{t('FEES_BREAKDOWN_ADVANCED_LABEL', {
+						args: [breakdownFormatted.feeAmount, symbol],
+					})}
+				</Typography>
 			</ExpansionPanelSummary>
 			<List
 				disablePadding
@@ -54,7 +58,7 @@ export const FeesBreakdown = ({ breakdownFormatted = {}, symbol }) => (
 					</ListSubheader>
 				}
 			>
-				{!!breakdownFormatted.deployFee && (
+				{/* {!!breakdownFormatted.deployFee && (
 					<ListItem>
 						<ListItemText
 							primary={t('BD_DEPLOY_FEE', {
@@ -62,7 +66,7 @@ export const FeesBreakdown = ({ breakdownFormatted = {}, symbol }) => (
 							})}
 						/>
 					</ListItem>
-				)}
+				)} */}
 				<ListItem>
 					<ListItemText
 						primary={t('BD_TXNS_FEE', {

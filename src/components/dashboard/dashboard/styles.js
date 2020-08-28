@@ -80,6 +80,7 @@ export const styles = theme => {
 		contentInner: {
 			maxWidth: 1420,
 			margin: 'auto',
+			marginBottom: theme.spacing(2),
 			// Because of the floating button and table paging
 			[theme.breakpoints.down('sm')]: {
 				paddingBottom: 146 + theme.spacing(2),
