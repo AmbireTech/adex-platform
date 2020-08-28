@@ -153,7 +153,7 @@ export const selectWebsitesList = createSelector(
 )
 
 export const selectCampaignDisplayStatus = (status = {}) => {
-	if (status.name === 'waiting') {
+	if (status.name === 'Waiting') {
 		return 'SCHEDULED'
 	} else {
 		return (status.humanFriendlyName || '').toUpperCase()
