@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.45
+##### *2020-08-28*
+
+###  Fixed
+- Transactions fees validation display
+- Campaign amounts validations deposit/CPMs
+
+### Changed
+- Transactions fees breakdown
+
 ## 4.20.44
 ##### *2020-08-27*
 
