@@ -309,31 +309,6 @@ export function validateCampaignValidators({ validateId, validators, dirty }) {
 	}
 }
 
-const validateAmounts = ({
-	maxDeposit = BigNumber.from(0),
-	depositAmount,
-	minPerImpression,
-}) => {
-	let error = null
-	if (!depositAmount.isZero() && depositAmount.gt(maxDeposit)) {
-		error = {
-			message: 'ERR_INSUFFICIENT_IDENTITY_BALANCE',
-			prop: 'depositAmount',
-		}
-	}
-	if (!depositAmount.isZero() && depositAmount.lt(minPerImpression)) {
-		error = { message: 'ERR_CPM_OVER_DEPOSIT', prop: 'pricingBounds_min' }
-	}
-	if (depositAmount.lte(BigNumber.from(0))) {
-		error = { message: 'ERR_ZERO_DEPOSIT', prop: 'depositAmount' }
-	}
-	if (minPerImpression.lte(BigNumber.from(0))) {
-		error = { message: 'ERR_ZERO_CPM', prop: 'pricingBounds_min' }
-	}
-
-	return { error }
-}
-
 export function validateFees({
 	validateId,
 	feesAmountBN,
@@ -462,50 +437,89 @@ export function validateCampaignAmount({
 	decimals,
 }) {
 	return async function(dispatch, getState) {
-		const min = pricingBounds.IMPRESSION.min
+		const min = pricingBounds.IMPRESSION.min || ''
+		const max = pricingBounds.IMPRESSION.max || ''
 		const isValidNumberDeposit = isNumberString(depositAmount)
 		const isValidNumberMin = isNumberString(min)
+		const isValidNumberMax = isNumberString(max)
 
 		let isValidDeposit = isValidNumberDeposit
 		let isValidMin = isValidNumberMin
+		let isValidMax = isValidNumberMax
 
 		let msgDeposit = errMsg || 'ERR_INVALID_AMOUNT'
 		let msgMin = errMsg || 'ERR_INVALID_AMOUNT'
+		let msgMax = errMsg || 'ERR_INVALID_AMOUNT'
 
-		if (isValidDeposit && isValidMin) {
+		if (isValidDeposit && isValidMin && isValidMax) {
 			const depositBn = utils.parseUnits(depositAmount, decimals)
 			const minBn = utils.parseUnits(min, decimals)
+			const maxBn = utils.parseUnits(max, decimals)
 
-			isValidDeposit = !!depositBn
-			isValidMin = !!minBn
+			if (!depositBn.isZero() && depositBn.gt(maxDeposit)) {
+				isValidDeposit = false
+				msgDeposit = 'ERR_INSUFFICIENT_IDENTITY_BALANCE'
+			}
 
-			if (isValidDeposit && isValidMin) {
-				const result = validateAmounts({
-					maxDeposit,
-					depositAmount: depositBn,
-					minPerImpression: minBn,
-				})
+			if (!depositBn.isZero() && depositBn.lt(minBn)) {
+				isValidDeposit = false
+				msgDeposit = 'ERR_DEPOSIT_UNDER_CPM'
 
-				isValidDeposit = !result.error || result.error.prop !== 'depositAmount'
-				isValidMin = !result.error || result.error.prop !== 'pricingBounds_min'
-				msgDeposit = !isValidDeposit ? result.error.message : ''
-				msgMin = !isValidMin ? result.error.message : ''
+				isValidMin = false
+				msgMin = 'ERR_CPM_OVER_DEPOSIT'
+			}
+
+			if (!depositBn.isZero() && depositBn.lt(maxBn)) {
+				isValidDeposit = false
+				msgDeposit = 'ERR_DEPOSIT_UNDER_MAX_CPM'
+
+				isValidMax = false
+				msgMax = 'ERR_MAX_CPM_OVER_DEPOSIT'
+			}
+
+			if (depositBn.lte(BigNumber.from(0))) {
+				isValidDeposit = false
+				msgDeposit = 'ERR_ZERO_DEPOSIT'
+			}
+
+			if (minBn.lte(BigNumber.from(0))) {
+				isValidMin = false
+				msgMin = 'ERR_ZERO_MIN_CPM'
+			}
+
+			if (maxBn.lte(BigNumber.from(0))) {
+				isValidMax = false
+				msgMax = 'ERR_ZERO_MAX_CPM'
+			}
+
+			if (maxBn.lt(minBn)) {
+				isValidMax = false
+				msgMax = 'ERR_MAX_CPM_LT_MIN_CPM'
+
+				isValidMin = false
+				msgMin = 'ERR_MIN_CPM_GT_MAX_CPM'
 			}
 		}
 
-		validate(validateId, 'depositAmount', {
+		await validate(validateId, 'depositAmount', {
 			isValid: isValidDeposit,
 			err: { msg: msgDeposit },
 			dirty,
 		})(dispatch)
 
-		validate(validateId, 'pricingBounds_min', {
+		await validate(validateId, 'pricingBounds_min', {
 			isValid: isValidMin,
 			err: { msg: msgMin },
 			dirty,
 		})(dispatch)
 
-		return isValidDeposit && isValidMin
+		await validate(validateId, 'pricingBounds_max', {
+			isValid: isValidMax,
+			err: { msg: msgMax },
+			dirty,
+		})(dispatch)
+
+		return isValidDeposit && isValidMin && isValidMax
 	}
 }
 
