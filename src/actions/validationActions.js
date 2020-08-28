@@ -322,13 +322,13 @@ const validateAmounts = ({
 		}
 	}
 	if (!depositAmount.isZero() && depositAmount.lt(minPerImpression)) {
-		error = { message: 'ERR_CPM_OVER_DEPOSIT', prop: 'minPerImpression' }
+		error = { message: 'ERR_CPM_OVER_DEPOSIT', prop: 'pricingBounds_min' }
 	}
 	if (depositAmount.lte(BigNumber.from(0))) {
 		error = { message: 'ERR_ZERO_DEPOSIT', prop: 'depositAmount' }
 	}
 	if (minPerImpression.lte(BigNumber.from(0))) {
-		error = { message: 'ERR_ZERO_CPM', prop: 'minPerImpression' }
+		error = { message: 'ERR_ZERO_CPM', prop: 'pricingBounds_min' }
 	}
 
 	return { error }
@@ -454,47 +454,58 @@ export function validateNumberString({
 
 export function validateCampaignAmount({
 	validateId,
-	prop,
-	value,
 	dirty,
 	errMsg,
 	depositAmount,
-	pricingBounds,
+	pricingBounds = { IMPRESSION: {} },
 	maxDeposit,
 	decimals,
 }) {
 	return async function(dispatch, getState) {
-		const isValidNumber = isNumberString(value)
-		let isValid = isValidNumber && !!utils.parseUnits(value, decimals)
-		let msg = errMsg || 'ERR_INVALID_AMOUNT'
+		const min = pricingBounds.IMPRESSION.min
+		const isValidNumberDeposit = isNumberString(depositAmount)
+		const isValidNumberMin = isNumberString(min)
 
-		if (isValid) {
-			const deposit = prop === 'depositAmount' ? value : depositAmount
-			const min =
-				prop === 'pricingBounds_min' ? value : pricingBounds.IMPRESSION.min
+		let isValidDeposit = isValidNumberDeposit
+		let isValidMin = isValidNumberMin
 
-			const isValidDeposit = isNumberString(deposit)
-			const isValidMin = isNumberString(min)
+		let msgDeposit = errMsg || 'ERR_INVALID_AMOUNT'
+		let msgMin = errMsg || 'ERR_INVALID_AMOUNT'
+
+		if (isValidDeposit && isValidMin) {
+			const depositBn = utils.parseUnits(depositAmount, decimals)
+			const minBn = utils.parseUnits(min, decimals)
+
+			isValidDeposit = !!depositBn
+			isValidMin = !!minBn
 
 			if (isValidDeposit && isValidMin) {
 				const result = validateAmounts({
 					maxDeposit,
-					depositAmount: utils.parseUnits(deposit, decimals),
-					minPerImpression: utils.parseUnits(min, decimals),
+					depositAmount: depositBn,
+					minPerImpression: minBn,
 				})
 
-				isValid = !result.error
-				msg = result.error ? result.error.message : ''
+				isValidDeposit = !result.error || result.error.prop !== 'depositAmount'
+				isValidMin = !result.error || result.error.prop !== 'pricingBounds_min'
+				msgDeposit = !isValidDeposit ? result.error.message : ''
+				msgMin = !isValidMin ? result.error.message : ''
 			}
 		}
 
-		validate(validateId, prop, {
-			isValid,
-			err: { msg },
+		validate(validateId, 'depositAmount', {
+			isValid: isValidDeposit,
+			err: { msg: msgDeposit },
 			dirty,
 		})(dispatch)
 
-		return isValid
+		validate(validateId, 'pricingBounds_min', {
+			isValid: isValidMin,
+			err: { msg: msgMin },
+			dirty,
+		})(dispatch)
+
+		return isValidDeposit && isValidMin
 	}
 }
 
