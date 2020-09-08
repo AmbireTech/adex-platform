@@ -15,7 +15,10 @@ import {
 	MediaCard,
 	ItemSpecProp,
 } from 'components/dashboard/containers/ItemCommon/'
-import { TargetingRulesEdit } from 'components/dashboard/containers/Campaign/CampaignEdits'
+import {
+	TargetingRulesEdit,
+	MinCPM,
+} from 'components/dashboard/containers/Campaign/CampaignEdits'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
 import {
@@ -111,7 +114,7 @@ export const CampaignBasic = ({
 
 	const { advanced = {} } = (audienceInput || {}).inputs || {}
 	const { decimals, symbol } = selectMainToken()
-	const { title: errTitle } = hookProps.validations
+	const { title: errTitle, pricingBounds_min: errMin } = hookProps.validations
 
 	const { mediaUrl, mediaMime } = adUnits[0] || {}
 	const status = item.status || {}
@@ -308,18 +311,12 @@ export const CampaignBasic = ({
 							/>
 						</Box>
 						<Box my={0}>
-							<ItemSpecProp
-								prop={'CPM_MIN'}
-								value={
-									formatTokenAmount(
-										BigNumber.from(cpmMin || 0).mul(1000),
-										decimals,
-										true
-									) +
-									' ' +
-									symbol
-								}
-								label={t('CPM_MIN')}
+							<MinCPM
+								minPerImpression={cpmMin}
+								errMin={errMin}
+								decimals={decimals}
+								symbol={symbol}
+								{...hookProps}
 							/>
 						</Box>
 						<Box my={0}>
