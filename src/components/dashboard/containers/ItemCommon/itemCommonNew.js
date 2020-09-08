@@ -14,12 +14,6 @@ import {
 	Paper,
 	Collapse,
 	Button,
-	FormControl,
-	FormControlLabel,
-	FormGroup,
-	FormHelperText,
-	Checkbox,
-	Grid,
 } from '@material-ui/core'
 import { Alert } from '@material-ui/lab'
 import {
@@ -30,17 +24,9 @@ import {
 	ArchiveSharp as ArchiveIcon,
 } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
-import OutlinedPropView from 'components/common/OutlinedPropView'
 import { ExternalAnchor } from 'components/common/anchor/anchor'
-import { formatTokenAmount } from 'helpers/formatters'
-import { BigNumber } from 'ethers'
-import { t, selectMainToken, selectAuthType } from 'selectors'
-import {
-	execute,
-	confirmAction,
-	archiveItem,
-	validateNumberString,
-} from 'actions'
+import { t, selectAuthType } from 'selectors'
+import { execute, confirmAction, archiveItem } from 'actions'
 import { styles } from './styles'
 import { SaveBtn } from './SaveBtn'
 import { WALLET_ACTIONS_MSGS } from 'constants/misc'
