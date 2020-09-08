@@ -8,15 +8,19 @@ import { Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { getAuthLogo } from 'helpers/logosHelpers'
-import Img from 'components/common/img/Img'
 import classnames from 'classnames'
 import { getAllWallets } from 'services/wallet/wallet'
 import { execute, initIdentity, confirmAction } from 'actions'
-import { selectAuth, selectAccount, selectRegistrationAllowed } from 'selectors'
+import {
+	t,
+	selectAuth,
+	selectAccount,
+	selectRegistrationAllowed,
+	selectUserLastSide,
+} from 'selectors'
 import { logOut } from 'services/store-data/auth'
 import { formatAddress } from 'helpers/formatters'
 import { push } from 'connected-react-router'
-import { t } from 'selectors'
 import { removeFromLocalStorage } from 'helpers/localStorageHelpers'
 
 const RRButton = withReactRouterLink(Button)
@@ -28,6 +32,7 @@ const AuthSelect = () => {
 
 	const showRegistration = useSelector(selectRegistrationAllowed)
 	const auth = useSelector(selectAuth)
+	const userSide = useSelector(selectUserLastSide) || 'publisher'
 	const account = useSelector(selectAccount)
 	const { wallet, identity } = account || {}
 
@@ -81,6 +86,25 @@ const AuthSelect = () => {
 					{t('SIGN_UP_IN_SELECT')}
 				</Typography>
 			</Box>
+			{auth && (
+				<Box m={1}>
+					<RRButton
+						variant='contained'
+						to={`/dashboard/${userSide}`}
+						size='large'
+						color='default'
+						fullWidth
+						className={classes.limitedWidthBtn}
+					>
+						{t('CONTINUE_AS', {
+							args: [
+								wallet.email || formatAddress(identity.address),
+								wallet.authType,
+							],
+						})}
+					</RRButton>
+				</Box>
+			)}
 			{wallets.map(w => (
 				<Box key={w.name} m={1} display='flex'>
 					<Button
