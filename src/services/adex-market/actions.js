@@ -194,9 +194,11 @@ export const getCampaigns = ({
 	byEarner,
 	byCreator,
 	cacheBrake,
+	statusOnly,
 } = {}) => {
 	const queryParams = {
 		...(all && { all: true }),
+		...(statusOnly && { statusOnly: true }),
 		...(statuses && { status: statuses.join(',') }),
 		byEarner,
 		byCreator,
