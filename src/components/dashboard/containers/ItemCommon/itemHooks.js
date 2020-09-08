@@ -26,11 +26,13 @@ export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 	const spinner = useSelector(state => selectSpinnerById(state, validateId))
 
 	useEffect(() => {
-		const initial = new objModel(storeItem)
-		setItem(initial)
-		setInitialItemState(initial)
-		setValidateId(`update-${item.id}`)
-	}, [item.id, objModel, storeItem])
+		if (!Object.keys(activeFields).length && !dirtyProps.length) {
+			const initial = new objModel(storeItem)
+			setItem(initial)
+			setInitialItemState(initial)
+			setValidateId(`update-${item.id}`)
+		}
+	}, [item.id, objModel, storeItem, dirtyProps, activeFields])
 
 	const setActiveFields = useCallback(
 		(field, value) => {
