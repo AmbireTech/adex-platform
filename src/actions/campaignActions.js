@@ -51,6 +51,8 @@ import {
 	selectTargetingAnalytics,
 	selectTargetingAnalyticsMinByCategories,
 	selectTargetingAnalyticsCountryTiersCoefficients,
+	selectInitialDataLoadedByData,
+	selectCampaigns,
 } from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
 import {
@@ -289,34 +291,44 @@ export function mapCurrentToNewCampaignAudienceInput({ itemId, dirtyProps }) {
 	}
 }
 
-export function updateUserCampaigns() {
+export function updateUserCampaigns({ updateAllData = false } = {}) {
 	return async function(dispatch, getState) {
 		const state = getState()
 		const hasAuth = selectAuth(state)
+		const statusOnly =
+			selectInitialDataLoadedByData(state, 'campaigns') || !updateAllData
 		const { identity } = selectAccount(state)
 		const { address } = identity
+		const stateCampaigns = selectCampaigns(state)
 
 		if (hasAuth && address) {
 			try {
 				const campaigns = await getCampaigns({
 					all: true,
+					statusOnly,
 					byCreator: address,
 					cacheBrake: true,
 				})
 
-				let campaignsMapped = campaigns
+				const campaignsMapped = campaigns
 					.filter(
 						c =>
 							c.id &&
 							c.creator &&
-							c.creator.toLowerCase() === address.toLowerCase()
+							c.creator.toLowerCase() === address.toLowerCase() &&
+							(statusOnly || c.spec)
 					)
 					.map(c => {
-						const campaign = {
-							...c.spec,
-							...c,
-							targetingRules: c.targetingRules || c.spec.targetingRules,
-						}
+						const campaign = statusOnly
+							? {
+									...stateCampaigns[c.id],
+									...{ status: c.status },
+							  }
+							: {
+									...c.spec,
+									...c,
+									targetingRules: c.targetingRules || c.spec.targetingRules,
+							  }
 
 						if (!campaign.humanFriendlyName) {
 							campaign.status.humanFriendlyName = getHumanFriendlyName(campaign)
