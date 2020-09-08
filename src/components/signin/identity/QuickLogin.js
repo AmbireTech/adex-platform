@@ -55,12 +55,6 @@ const QuickLogin = props => {
 						<Grid item xs={12}>
 							<Grid container spacing={2}>
 								<Grid item xs={12}>
-									<Typography variant='body2' color='primary' gutterBottom>
-										{t('QUICK_LOGIN_INFO', { args: [identity.email] })}
-									</Typography>
-								</Grid>
-
-								<Grid item xs={12}>
 									<TextField
 										disabled={!!identity.authType}
 										fullWidth
