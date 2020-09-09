@@ -104,7 +104,7 @@ function updateCampaignOnMarket({ updated, toastLabel, toastArgs, toastType }) {
 		})(dispatch)
 
 		// Make sure to update tables
-		await updateUserCampaigns()(dispatch, getState)
+		await updateUserCampaigns({ updateAllData: true })(dispatch, getState)
 	}
 }
 
@@ -296,7 +296,7 @@ export function updateUserCampaigns({ updateAllData = false } = {}) {
 		const state = getState()
 		const hasAuth = selectAuth(state)
 		const statusOnly =
-			selectInitialDataLoadedByData(state, 'campaigns') || !updateAllData
+			!!selectInitialDataLoadedByData(state, 'campaigns') && !updateAllData
 		const { identity } = selectAccount(state)
 		const { address } = identity
 		const stateCampaigns = selectCampaigns(state)
@@ -383,7 +383,7 @@ export function closeCampaign({ campaign }) {
 				dispatch,
 				getState
 			)
-			await updateUserCampaigns()(dispatch, getState)
+			await updateUserCampaigns({ updateAllData: true })(dispatch, getState)
 			execute(push('/dashboard/advertiser/campaigns'))
 			addToast({
 				type: 'accept',
