@@ -17,7 +17,7 @@ import {
 } from 'components/dashboard/containers/ItemCommon/'
 import {
 	TargetingRulesEdit,
-	MinCPM,
+	EditCPM,
 } from 'components/dashboard/containers/Campaign/CampaignEdits'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
@@ -311,27 +311,23 @@ export const CampaignBasic = ({
 							/>
 						</Box>
 						<Box my={0}>
-							<MinCPM
-								minPerImpression={cpmMin}
-								errMin={errMin}
+							<EditCPM
+								prop='minPerImpression'
+								label='CPM_MIN'
+								value={cpmMin}
 								decimals={decimals}
 								symbol={symbol}
 								{...hookProps}
 							/>
 						</Box>
 						<Box my={0}>
-							<ItemSpecProp
-								prop={'CPM_MAX'}
-								value={
-									formatTokenAmount(
-										BigNumber.from(cpmMax || 0).mul(1000),
-										decimals,
-										true
-									) +
-									' ' +
-									symbol
-								}
-								label={t('CPM_MAX')}
+							<EditCPM
+								prop='maxPerImpression'
+								label='CPM_MAX'
+								value={cpmMax}
+								decimals={decimals}
+								symbol={symbol}
+								{...hookProps}
 							/>
 						</Box>
 					</Grid>
