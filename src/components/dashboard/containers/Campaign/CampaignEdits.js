@@ -54,8 +54,10 @@ const TargetingSteps = ({
 
 export const TargetingRulesEdit = WithDialog(TargetingSteps)
 
-export const MinCPM = ({
-	minPerImpression,
+export const EditCPM = ({
+	prop,
+	label,
+	value,
 	decimals,
 	symbol,
 	validations,
@@ -66,33 +68,33 @@ export const MinCPM = ({
 	dirtyProps,
 	validateId,
 }) => {
-	const err = validations['minPerImpression']
-	const active = !!activeFields.minPerImpression
+	const err = validations[prop]
+	const active = !!activeFields[prop]
 	const showError = !!err && err.dirty
-	const isDirty = dirtyProps && dirtyProps.includes('minPerImpression')
+	const isDirty = dirtyProps && dirtyProps.includes(prop)
 	return (
 		<TextField
 			margin='dense'
 			fullWidth
-			id='min-CPM'
-			label={t('CPM_MIN')}
+			id={prop}
+			label={t(label)}
 			type='text'
-			name='minPerImpression'
+			name={prop}
 			value={
-				(!isDirty && validPositiveInt(minPerImpression)
+				(!isDirty && validPositiveInt(value)
 					? formatTokenAmount(
-							BigNumber.from(minPerImpression || 0).mul(1000),
+							BigNumber.from(value || 0).mul(1000),
 							decimals,
 							true
 					  )
-					: minPerImpression) + (active ? '' : ' ' + symbol)
+					: value) + (active ? '' : ' ' + symbol)
 			}
 			onChange={ev => {
-				updateField('minPerImpression', ev.target.value)
+				updateField(prop, ev.target.value)
 				execute(
 					validateNumberString({
 						validateId,
-						prop: `minPerImpression`,
+						prop,
 						value: ev.target.value,
 						dirty: true,
 					})
@@ -110,8 +112,8 @@ export const MinCPM = ({
 							color='secondary'
 							onClick={() =>
 								active
-									? returnPropToInitialState('minPerImpression')
-									: setActiveFields('minPerImpression', true)
+									? returnPropToInitialState(prop)
+									: setActiveFields(prop, true)
 							}
 						>
 							{active ? <UndoOutlined /> : <Edit />}
