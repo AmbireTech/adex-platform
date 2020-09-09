@@ -3,7 +3,6 @@ import {
 	DELETE_ITEM,
 	UPDATE_ITEM,
 	REMOVE_ITEM_FROM_ITEM,
-	ADD_ITEM_TO_ITEM,
 	UPDATE_ALL_ITEMS,
 	RESET_ALL_ITEMS,
 } from 'constants/actionTypes' // eslint-disable-line no-unused-vars
@@ -49,15 +48,6 @@ export default function itemsReducer(state = initialState.items, action) {
 			newState[collectionId] = newCollection
 			return newState
 
-		case ADD_ITEM_TO_ITEM:
-			newItem = Item.addItem(newState[collectionId][item._id], action.toAdd)
-			newCollection = collection(newState[collectionId], {
-				...action,
-				item: newItem,
-			})
-			newState[collectionId] = newCollection
-			return newState
-
 		case DELETE_ITEM:
 			newCollection = removeCollectionProp(newState[collectionId], item._id)
 			newState[collectionId] = newCollection
@@ -88,8 +78,10 @@ export default function itemsReducer(state = initialState.items, action) {
 			newState = { ...state }
 			const newItems = action.items.reduce((items, item) => {
 				const currentItems = { ...items }
-				const newItem = { ...item }
-				currentItems[newItem.id || newItem.ipfs] = newItem
+				if (item.id || item.ipfs) {
+					const newItem = { ...item }
+					currentItems[newItem.id || newItem.ipfs] = newItem
+				}
 				return currentItems
 			}, {})
 
