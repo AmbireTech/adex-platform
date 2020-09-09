@@ -4,11 +4,17 @@ import { Edit, UndoOutlined } from '@material-ui/icons'
 import WithDialog from 'components/common/dialog/WithDialog'
 import FormSteps from 'components/common/stepper/FormSteps'
 import { CampaignTargetingRules } from 'components/dashboard/forms/items/NewItems'
-import { execute, resetNewItem, updateCampaignAudienceInput } from 'actions'
+import {
+	execute,
+	resetNewItem,
+	updateCampaignAudienceInput,
+	validateNumberString,
+} from 'actions'
 import { t } from 'selectors'
 import { Campaign } from 'adex-models'
 import { BigNumber } from 'ethers'
 import { formatTokenAmount } from 'helpers/formatters'
+import { validPositiveInt } from 'helpers/validators'
 
 const TargetingSteps = ({
 	updateField,
@@ -52,15 +58,17 @@ export const MinCPM = ({
 	minPerImpression,
 	decimals,
 	symbol,
-	errMin,
+	validations,
 	updateField,
 	setActiveFields,
 	returnPropToInitialState,
 	activeFields = {},
 	dirtyProps,
+	validateId,
 }) => {
+	const err = validations['minPerImpression']
 	const active = !!activeFields.minPerImpression
-	const showError = !!errMin && errMin.dirty
+	const showError = !!err && err.dirty
 	const isDirty = dirtyProps && dirtyProps.includes('minPerImpression')
 	return (
 		<TextField
@@ -71,7 +79,7 @@ export const MinCPM = ({
 			type='text'
 			name='minPerImpression'
 			value={
-				(!isDirty
+				(!isDirty && validPositiveInt(minPerImpression)
 					? formatTokenAmount(
 							BigNumber.from(minPerImpression || 0).mul(1000),
 							decimals,
@@ -81,12 +89,18 @@ export const MinCPM = ({
 			}
 			onChange={ev => {
 				updateField('minPerImpression', ev.target.value)
+				execute(
+					validateNumberString({
+						validateId,
+						prop: `minPerImpression`,
+						value: ev.target.value,
+						dirty: true,
+					})
+				)
 			}}
 			disabled={!active}
 			error={showError}
-			helperText={
-				showError ? t(errMin.errMsg, { args: errMin.errMsgArgs }) : ''
-			}
+			helperText={showError ? t(err.errMsg, { args: err.errMsgArgs }) : ''}
 			variant='outlined'
 			InputProps={{
 				endAdornment: (
