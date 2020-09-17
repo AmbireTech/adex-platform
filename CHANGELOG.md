@@ -1,5 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+
+## 4.20.48
+##### *2020-09-17*
+
+### Fixed
+- Login label and continue as button
+
+### Changed
+- Ramp top up order and title
+
 ## 4.20.47
 ##### *2020-09-10*
 
