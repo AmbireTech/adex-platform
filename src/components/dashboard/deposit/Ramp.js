@@ -29,6 +29,15 @@ const useStyles = makeStyles(styles)
 
 const fiatProvidersDetails = [
 	{
+		title: t('BANK_TRANSFER_OR_CARD_PAYMENTS'),
+		onClick: props => openOnRampNetwork(props),
+		imgSrc: RAMP_LOGO,
+		imgAlt: t('RAMP'),
+		feeInfo: t('RAMP_FEES'),
+		limitInfo: t('RAMP_LIMITS'),
+		currencies: t('RAMP_CURRENCIES'),
+	},
+	{
 		title: t('CREDIT_CARD'),
 		onClick: props => openWyre(props),
 		imgSrc: WYRE_LOGO,
@@ -36,15 +45,6 @@ const fiatProvidersDetails = [
 		feeInfo: t('WYRE_FEES'),
 		limitInfo: t('WYRE_LIMITS'),
 		currencies: t('WYRE_CURRENCIES'),
-	},
-	{
-		title: t('BANK_TRANSFER'),
-		onClick: props => openOnRampNetwork(props),
-		imgSrc: RAMP_LOGO,
-		imgAlt: t('RAMP'),
-		feeInfo: t('RAMP_FEES'),
-		limitInfo: t('RAMP_LIMITS'),
-		currencies: t('RAMP_CURRENCIES'),
 	},
 	{
 		title: t('BANK_TRANSFER'),

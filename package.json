@@ -18,7 +18,7 @@
     "adex-constants": "1.0.10",
     "adex-models": "git+https://git@github.com/AdExBlockchain/adex-models.git#92e49cbbc5d170dcf8048b18cd6d296e91cd26fe",
     "adex-protocol-eth": "4.2.4",
-    "adex-translations": "git+https://git@github.com/AdExBlockchain/adex-translations.git#74b77d1eac31791e3dccd4ccdab6ea2eb00e7216",
+    "adex-translations": "git+https://git@github.com/AdExBlockchain/adex-translations.git#0x99D162298ffC4ECd949BF574c2959130c8d2D8f8",
     "base64url": "^3.0.1",
     "case-sensitive-paths-webpack-plugin": "2.2.0",
     "chart.js": "^2.7.2",
