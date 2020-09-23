@@ -56,6 +56,7 @@ export const TargetingRulesEdit = WithDialog(TargetingSteps)
 
 export const EditCPM = ({
 	prop,
+	errProp,
 	label,
 	value,
 	decimals,
@@ -69,7 +70,7 @@ export const EditCPM = ({
 	validateId,
 	canSendMsgs,
 }) => {
-	const err = validations[prop]
+	const err = validations[errProp || prop]
 	const active = !!activeFields[prop]
 	const showError = !!err && err.dirty
 	const isDirty = dirtyProps && dirtyProps.includes(prop)
