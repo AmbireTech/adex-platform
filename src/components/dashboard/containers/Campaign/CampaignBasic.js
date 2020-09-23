@@ -114,7 +114,7 @@ export const CampaignBasic = ({
 
 	const { advanced = {} } = (audienceInput || {}).inputs || {}
 	const { decimals, symbol } = selectMainToken()
-	const { title: errTitle, pricingBounds_min: errMin } = hookProps.validations
+	const { title: errTitle } = hookProps.validations
 
 	const { mediaUrl, mediaMime } = adUnits[0] || {}
 	const status = item.status || {}
@@ -318,6 +318,7 @@ export const CampaignBasic = ({
 								value={cpmMin}
 								decimals={decimals}
 								symbol={symbol}
+								errProp={'pricingBounds_min'}
 								{...hookProps}
 							/>
 						</Box>
@@ -329,6 +330,7 @@ export const CampaignBasic = ({
 								value={cpmMax}
 								decimals={decimals}
 								symbol={symbol}
+								errProp={'pricingBounds_max'}
 								{...hookProps}
 							/>
 						</Box>
