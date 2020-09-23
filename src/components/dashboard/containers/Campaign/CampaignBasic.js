@@ -312,6 +312,7 @@ export const CampaignBasic = ({
 						</Box>
 						<Box my={0}>
 							<EditCPM
+								canSendMsgs={canSendMsgs}
 								prop='minPerImpression'
 								label='CPM_MIN'
 								value={cpmMin}
@@ -322,6 +323,7 @@ export const CampaignBasic = ({
 						</Box>
 						<Box my={0}>
 							<EditCPM
+								canSendMsgs={canSendMsgs}
 								prop='maxPerImpression'
 								label='CPM_MAX'
 								value={cpmMax}
