@@ -1021,7 +1021,8 @@ export function validateAndUpdateCampaign({
 				decimals
 			)
 
-			const pricingBoundsBnString = !arePricingBondsUpdated
+			// Per impression
+			const pricingBoundsImpressionBnString = !arePricingBondsUpdated
 				? pricingBounds && pricingBounds.IMPRESSION
 					? pricingBounds
 					: {
@@ -1033,43 +1034,53 @@ export function validateAndUpdateCampaign({
 				: {
 						IMPRESSION: {
 							min: minCPMUpdated
-								? utils.parseUnits(minPerImpression, decimals)
+								? utils
+										.parseUnits(minPerImpression, decimals)
+										.div(1000)
+										.toString()
 								: pricingBounds.min || minPerImpression,
 							max: maxCPMUpdated
-								? utils.parseUnits(maxPerImpression, decimals)
+								? utils
+										.parseUnits(maxPerImpression, decimals)
+										.div(1000)
+										.toString()
 								: pricingBounds.max || maxPerImpression,
 						},
 				  }
 
-			const pricingBoundsUserInputString = {
+			// CPM Per 1000 - for amount validation
+			const pricingBoundsCPMUserInputString = {
 				IMPRESSION: {
 					min: formatTokenAmount(
-						pricingBoundsBnString.IMPRESSION.min,
+						BigNumber.from(pricingBoundsImpressionBnString.IMPRESSION.min).mul(
+							1000
+						),
 						decimals
 					),
 					max: formatTokenAmount(
-						pricingBoundsBnString.IMPRESSION.max,
+						BigNumber.from(pricingBoundsImpressionBnString.IMPRESSION.max).mul(
+							1000
+						),
 						decimals
 					),
 				},
 			}
+
 			const validations = await Promise.all([
 				validateCampaignTitle({
 					validateId,
 					title,
 					dirty,
 				})(dispatch),
-				arePricingBondsUpdated
-					? validateCampaignAmount({
-							validateId,
-							dirty,
-							depositAmount: depositAmountInputString,
-							pricingBounds: pricingBoundsUserInputString,
-							errMsg: !dirty,
-							maxDeposit: BigNumber.from(depositAmount),
-							decimals,
-					  })(dispatch)
-					: () => true,
+				validateCampaignAmount({
+					validateId,
+					dirty,
+					depositAmount: depositAmountInputString,
+					pricingBounds: pricingBoundsCPMUserInputString,
+					errMsg: !dirty,
+					maxDeposit: BigNumber.from(depositAmount),
+					decimals,
+				})(dispatch),
 				validateSchemaProp({
 					validateId,
 					value: updated.marketUpdate,
@@ -1091,7 +1102,7 @@ export function validateAndUpdateCampaign({
 					audienceInput,
 					minByCategory,
 					countryTiersCoefficients,
-					pricingBounds: pricingBoundsBnString,
+					pricingBounds: pricingBoundsImpressionBnString,
 					decimals,
 				})
 			}
@@ -1120,7 +1131,7 @@ export function validateAndUpdateCampaign({
 				addToast({
 					type: 'cancel',
 					label: t('ERR_UPDATING_ITEM', {
-						args: ['CAMPAIGN', getErrorMsg('INVALID_DATA')],
+						args: ['CAMPAIGN', getErrorMsg('INVALID_INPUT_PARAMETERS')],
 					}),
 					timeout: 50000,
 				})(dispatch)
