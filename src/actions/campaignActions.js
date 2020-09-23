@@ -22,7 +22,7 @@ import {
 } from 'actions'
 import { push } from 'connected-react-router'
 import { schemas, Campaign, helpers } from 'adex-models'
-import { utils } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import { getAllValidatorsAuthForIdentity } from 'services/smart-contracts/actions/stats'
 import {
 	openChannel,
@@ -53,6 +53,7 @@ import {
 	selectTargetingAnalyticsCountryTiersCoefficients,
 	selectInitialDataLoadedByData,
 	selectCampaigns,
+	selectRoutineWithdrawTokenByAddress,
 } from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
 import {
@@ -989,6 +990,9 @@ export function validateAndUpdateCampaign({
 }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
+
+		const state = getState()
+
 		try {
 			const {
 				title,
@@ -996,46 +1000,76 @@ export function validateAndUpdateCampaign({
 				pricingBounds,
 				minPerImpression,
 				maxPerImpression,
+				depositAmount,
+				depositAsset,
 			} = item
 
+			const { decimals } = selectRoutineWithdrawTokenByAddress(
+				state,
+				depositAsset
+			)
+
 			const updated = new Campaign(item)
-			const isAudienceUpdated = dirtyProps.includes('audienceInput')
+			const minCPMUpdated = dirtyProps.includes('minPerImpression')
+			const maxCPMUpdated = dirtyProps.includes('maxPerImpression')
+			const arePricingBondsUpdated = minCPMUpdated || maxCPMUpdated
+			const isAudienceUpdated =
+				dirtyProps.includes('audienceInput') || arePricingBondsUpdated
 
-			if (isAudienceUpdated) {
-				const state = getState()
-				const { decimals } = selectMainToken(state)
-				const minByCategory = selectTargetingAnalyticsMinByCategories(state)
-				const countryTiersCoefficients = selectTargetingAnalyticsCountryTiersCoefficients(
-					state
-				)
+			const depositAmountInputString = formatTokenAmount(
+				depositAmount,
+				decimals
+			)
 
-				// TODO: fix it when it is possible to edit pricing bounds
-				// Legacy campaigns shim
-				const campaignPricingBounds =
-					pricingBounds && pricingBounds.IMPRESSION
-						? pricingBounds
-						: {
-								IMPRESSION: {
-									min: pricingBounds.min || minPerImpression,
-									max: pricingBounds.min || maxPerImpression,
-								},
-						  }
+			const pricingBoundsBnString = !arePricingBondsUpdated
+				? pricingBounds && pricingBounds.IMPRESSION
+					? pricingBounds
+					: {
+							IMPRESSION: {
+								min: pricingBounds.min || minPerImpression,
+								max: pricingBounds.max || maxPerImpression,
+							},
+					  }
+				: {
+						IMPRESSION: {
+							min: minCPMUpdated
+								? utils.parseUnits(minPerImpression, decimals)
+								: pricingBounds.min || minPerImpression,
+							max: maxCPMUpdated
+								? utils.parseUnits(maxPerImpression, decimals)
+								: pricingBounds.max || maxPerImpression,
+						},
+				  }
 
-				updated.targetingRules = audienceInputToTargetingRules({
-					audienceInput,
-					minByCategory,
-					countryTiersCoefficients,
-					pricingBounds: campaignPricingBounds,
-					decimals,
-				})
+			const pricingBoundsUserInputString = {
+				IMPRESSION: {
+					min: formatTokenAmount(
+						pricingBoundsBnString.IMPRESSION.min,
+						decimals
+					),
+					max: formatTokenAmount(
+						pricingBoundsBnString.IMPRESSION.max,
+						decimals
+					),
+				},
 			}
-
 			const validations = await Promise.all([
 				validateCampaignTitle({
 					validateId,
 					title,
 					dirty,
 				})(dispatch),
+				arePricingBondsUpdated
+					? validateCampaignAmount({
+							validateId,
+							dirty,
+							depositAmount: depositAmountInputString,
+							pricingBounds: pricingBoundsUserInputString,
+							errMsg: !dirty,
+							maxDeposit: BigNumber.from(depositAmount),
+							decimals,
+					  })(dispatch)
+					: () => true,
 				validateSchemaProp({
 					validateId,
 					value: updated.marketUpdate,
@@ -1045,11 +1079,27 @@ export function validateAndUpdateCampaign({
 				})(dispatch),
 			])
 
+			if (isAudienceUpdated) {
+				const state = getState()
+				const { decimals } = selectMainToken(state)
+				const minByCategory = selectTargetingAnalyticsMinByCategories(state)
+				const countryTiersCoefficients = selectTargetingAnalyticsCountryTiersCoefficients(
+					state
+				)
+
+				updated.targetingRules = audienceInputToTargetingRules({
+					audienceInput,
+					minByCategory,
+					countryTiersCoefficients,
+					pricingBounds: pricingBoundsBnString,
+					decimals,
+				})
+			}
+
 			const isValid = validations.every(v => v === true)
 
 			if (isValid && update) {
 				if (isAudienceUpdated) {
-					const state = getState()
 					const account = selectAccount(state)
 					const { authTokens } = await updateTargeting({
 						account,
