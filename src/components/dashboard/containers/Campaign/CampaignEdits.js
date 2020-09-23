@@ -67,6 +67,7 @@ export const EditCPM = ({
 	activeFields = {},
 	dirtyProps,
 	validateId,
+	canSendMsgs,
 }) => {
 	const err = validations[prop]
 	const active = !!activeFields[prop]
@@ -105,7 +106,7 @@ export const EditCPM = ({
 			helperText={showError ? t(err.errMsg, { args: err.errMsgArgs }) : ''}
 			variant='outlined'
 			InputProps={{
-				endAdornment: (
+				endAdornment: canSendMsgs ? (
 					<InputAdornment position='end'>
 						<IconButton
 							// size='small'
@@ -119,7 +120,7 @@ export const EditCPM = ({
 							{active ? <UndoOutlined /> : <Edit />}
 						</IconButton>
 					</InputAdornment>
-				),
+				) : null,
 			}}
 		/>
 	)
