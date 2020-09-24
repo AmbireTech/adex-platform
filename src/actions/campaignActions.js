@@ -64,7 +64,12 @@ import {
 import Helper from 'helpers/miscHelpers'
 import { addUrlUtmTracking } from 'helpers/utmHelpers'
 
-const { audienceInputToTargetingRules, getSuggestedPricingBounds } = helpers
+const {
+	audienceInputToTargetingRules,
+	getSuggestedPricingBounds,
+	userInputPricingBoundsPerMileToRulesValue,
+	useInputValuePerMileToTokenValue,
+} = helpers
 
 const { campaignPut } = schemas
 
@@ -873,18 +878,16 @@ export function validateNewCampaignFinance({
 					state
 				)
 
-				// TODO: make function in models
-				const pricingBoundsInTokenValue = { ...pricingBounds }
-				const impression = { ...pricingBoundsInTokenValue.IMPRESSION }
-				impression.min = utils.parseUnits(impression.min, decimals)
-				impression.max = utils.parseUnits(impression.max, decimals)
-				pricingBoundsInTokenValue.IMPRESSION = impression
+				const rulesPricingBounds = userInputPricingBoundsPerMileToRulesValue({
+					pricingBounds,
+					decimals,
+				})
 
 				const targetingRules = audienceInputToTargetingRules({
 					audienceInput,
 					minByCategory,
 					countryTiersCoefficients,
-					pricingBounds: pricingBoundsInTokenValue,
+					pricingBounds: rulesPricingBounds,
 					decimals,
 				})
 				await updateNewCampaign('targetingRules', targetingRules)(
@@ -1034,16 +1037,10 @@ export function validateAndUpdateCampaign({
 				: {
 						IMPRESSION: {
 							min: minCPMUpdated
-								? utils
-										.parseUnits(minPerImpression, decimals)
-										.div(1000)
-										.toString()
+								? useInputValuePerMileToTokenValue(minPerImpression, decimals)
 								: pricingBounds.min || minPerImpression,
 							max: maxCPMUpdated
-								? utils
-										.parseUnits(maxPerImpression, decimals)
-										.div(1000)
-										.toString()
+								? useInputValuePerMileToTokenValue(maxPerImpression, decimals)
 								: pricingBounds.max || maxPerImpression,
 						},
 				  }
