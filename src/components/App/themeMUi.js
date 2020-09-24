@@ -91,7 +91,7 @@ const typography = {
 	fontSize: 13.42,
 }
 
-const defaultTheme = createMuiTheme({ typography: { ...typography } })
+const defaultTheme = createMuiTheme({ typography, palette })
 
 export const theme = createMuiTheme({
 	typography: { ...typography },
