@@ -17,6 +17,7 @@ import Typography from '@material-ui/core/Typography'
 import { t } from 'selectors'
 import { selectLocation } from 'selectors'
 import { useSelector } from 'react-redux'
+import ReactGA from 'react-ga'
 
 const textBtn = ({ label, className, classes, style, onClick, ...rest }) => {
 	return (
@@ -116,9 +117,7 @@ export default function WithDialogHoc(Decorated) {
 		}
 
 		const handleClick = async ev => {
-			console.log(ev, title, btnLabel)
-			console.log(location)
-			console.log(eventMap(location.pathname.split('/').join('-'))[btnLabel])
+			ReactGA.event(eventMap(location.pathname.split('/').join('-'))[btnLabel])
 			ev && ev.stopPropagation && ev.stopPropagation()
 			ev && ev.preventDefault && ev.preventDefault()
 			await handleToggle()
