@@ -19,6 +19,7 @@ import {
 	validateENSChange,
 	validateIdentityWithdrawAny,
 } from 'actions'
+import ReactGA from 'react-ga'
 
 const FormStepsWithDialog = WithDialog(FormSteps)
 
@@ -43,7 +44,14 @@ export const WithdrawTokenFromIdentity = props => (
 			{
 				title: 'ACCOUNT_WITHDRAW_FROM_IDENTITY_STEP',
 				component: WithdrawFromIdentity,
-				validationFn: props => execute(validateIdentityWithdraw(props)),
+				validationFn: props => {
+					execute(validateIdentityWithdraw(props))
+					ReactGA.event({
+						action: 'account',
+						category: 'withdraw',
+						label: 'continue',
+					})
+				},
 			},
 			{
 				title: 'PREVIEW_AND_MAKE_TX',
