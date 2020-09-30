@@ -14,6 +14,7 @@ import copy from 'copy-to-clipboard'
 import { styles } from './styles'
 import { execute, addToast } from 'actions'
 import { FiatProviders, CryptoProviders } from './Ramp'
+import ReactGA from 'react-ga'
 
 const useStyles = makeStyles(styles)
 
@@ -50,6 +51,11 @@ export default function TopUp() {
 							<Button
 								onClick={() => {
 									copy(accountId)
+									ReactGA.event({
+										action: 'account',
+										category: 'top_up',
+										label: 'direct',
+									})
 									execute(
 										addToast({
 											type: 'accept',
