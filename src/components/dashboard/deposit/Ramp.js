@@ -24,9 +24,13 @@ import CHANGELLY_LOGO from 'resources/changelly.svg'
 import { styles } from './styles'
 import { push } from 'connected-react-router'
 import { execute } from 'actions'
+import ReactGA from 'react-ga'
 
 const useStyles = makeStyles(styles)
-
+const commonGAEventProps = {
+	action: 'account',
+	category: 'top_up',
+}
 const fiatProvidersDetails = [
 	{
 		title: t('BANK_TRANSFER_OR_CARD_PAYMENTS'),
@@ -125,7 +129,13 @@ const Providers = ({ providersDetails, accountId, symbol, email, side }) => (
 			<ListItem
 				disableGutters
 				key={key}
-				onClick={() => item.onClick({ accountId, symbol, email, side })}
+				onClick={() => {
+					item.onClick({ accountId, symbol, email, side })
+					ReactGA.event({
+						...commonGAEventProps,
+						label: item.imgAlt,
+					})
+				}}
 			>
 				<ProviderListItem
 					key={key}
