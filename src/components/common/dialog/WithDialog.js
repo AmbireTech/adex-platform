@@ -69,6 +69,11 @@ const eventMap = location => ({
 		category: 'add_website',
 		label: `websites${location}`,
 	},
+	ACCOUNT_WITHDRAW_FROM_IDENTITY_BTN: {
+		action: 'account',
+		category: 'withdraw',
+		label: `account`,
+	},
 })
 
 const useStyles = makeStyles(styles)
@@ -117,7 +122,11 @@ export default function WithDialogHoc(Decorated) {
 		}
 
 		const handleClick = async ev => {
-			ReactGA.event(eventMap(location.pathname.split('/').join('-'))[btnLabel])
+			const locationWithDash = location.pathname.split('/').join('-')
+			const eventMapFound = eventMap(locationWithDash)[btnLabel]
+			if (eventMapFound) {
+				ReactGA.event(eventMapFound)
+			}
 			ev && ev.stopPropagation && ev.stopPropagation()
 			ev && ev.preventDefault && ev.preventDefault()
 			await handleToggle()
