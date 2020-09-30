@@ -21,6 +21,7 @@ import Dropdown from 'components/common/dropdown'
 import { FETCHING_PUBLISHER_RECEIPTS } from 'constants/spinners'
 import { LinearProgress } from '@material-ui/core'
 import { styles } from './styles'
+import ReactGA from 'react-ga'
 const useStyles = makeStyles(styles)
 
 function Receipt(props) {
@@ -70,6 +71,11 @@ function Receipt(props) {
 	}, [])
 
 	const getReceipts = () => {
+		ReactGA.event({
+			action: 'publisher',
+			category: 'get_receipts',
+			label: 'receipts',
+		})
 		setDirty(true)
 		if (validateStartDate && validateEndDate) {
 			execute(getReceiptData(startDate, endDate))
