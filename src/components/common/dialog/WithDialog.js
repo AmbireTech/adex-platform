@@ -15,6 +15,8 @@ import CancelIcon from '@material-ui/icons/Cancel'
 import DialogActions from '@material-ui/core/DialogActions'
 import Typography from '@material-ui/core/Typography'
 import { t } from 'selectors'
+import { selectLocation } from 'selectors'
+import { useSelector } from 'react-redux'
 
 const textBtn = ({ label, className, classes, style, onClick, ...rest }) => {
 	return (
@@ -33,6 +35,39 @@ const TextBtn = withStyles(styles)(textBtn)
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction='up' ref={ref} {...props} />
+})
+
+const eventMap = location => ({
+	NEW_UNIT: {
+		action: 'advertiser',
+		category: 'add_unit',
+		label: `units${location}`,
+	},
+	NEW_CAMPAIGN: {
+		action: 'advertiser',
+		category: 'add_campaign',
+		label: `campaigns${location}`,
+	},
+	NEW_AUDIENCE: {
+		action: 'advertiser',
+		category: 'save_audience',
+		label: `audiences${location}`,
+	},
+	NEW_CAMPAIGN_FROM_AUDIENCE: {
+		action: 'advertiser',
+		category: 'add_campaign',
+		label: `audiences${location}`,
+	},
+	NEW_SLOT: {
+		action: 'publisher',
+		category: 'add_slot',
+		label: `slots${location}`,
+	},
+	NEW_WEBSITE: {
+		action: 'publisher',
+		category: 'add_website',
+		label: `websites${location}`,
+	},
 })
 
 const useStyles = makeStyles(styles)
@@ -70,6 +105,7 @@ export default function WithDialogHoc(Decorated) {
 
 		const classes = useStyles()
 		const [open, setOpen] = useState(false)
+		const location = useSelector(selectLocation)
 
 		const handleToggle = async () => {
 			if (typeof onBeforeOpen === 'function' && !open) {
@@ -80,6 +116,9 @@ export default function WithDialogHoc(Decorated) {
 		}
 
 		const handleClick = async ev => {
+			console.log(ev, title, btnLabel)
+			console.log(location)
+			console.log(eventMap(location.pathname.split('/').join('-'))[btnLabel])
 			ev && ev.stopPropagation && ev.stopPropagation()
 			ev && ev.preventDefault && ev.preventDefault()
 			await handleToggle()
