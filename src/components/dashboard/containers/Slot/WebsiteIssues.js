@@ -175,7 +175,7 @@ export function WebsiteIssues({ issues, website, asKeyWords, tryAgainBtn }) {
 							<Box key={id} my={index !== 0 && index < data.length ? 1 : 0}>
 								<Alert
 									severity='warning'
-									variant='outlined'
+									variant='filled'
 									classes={{ message: classes.message }}
 								>
 									<RenderIssue label={label} args={args} />
@@ -189,7 +189,7 @@ export function WebsiteIssues({ issues, website, asKeyWords, tryAgainBtn }) {
 					{t('WEBSITE_VERIFIED')}
 				</Typography>
 			) : (
-				<Alert severity='success' variant='outlined' classes={classes}>
+				<Alert severity='success' variant='filled' classes={classes}>
 					{t('WEBSITE_VERIFIED')}
 				</Alert>
 			)}
