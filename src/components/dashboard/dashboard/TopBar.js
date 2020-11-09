@@ -61,7 +61,7 @@ function TopNav({ handleDrawerToggle, side, t }) {
 					<Hidden mdUp>
 						<Box pl={1}>
 							<IconButton
-								color='inherit'
+								color='default'
 								aria-label='open drawer'
 								onClick={handleDrawerToggle}
 							>
