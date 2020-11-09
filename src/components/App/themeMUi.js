@@ -69,6 +69,15 @@ export const DARK_SECONDARY_LIGHT = '#ffff58'
 export const DARK_SECONDARY_DARK = '#9ecc00'
 
 export const DARK_PAPER = '#333'
+export const DARK_BG_DEFAULT = '#0f1316'
+
+export const DARK_ACCENT_ONE = '#ff7000'
+export const DARK_ACCENT_ONE_LIGHT = '#ffa140'
+export const DARK_ACCENT_ONE_DARK = '#c43f00'
+
+export const DARK_ACCENT_TWO = '#0090dd'
+export const DARK_ACCENT_TWO_LIGHT = '#60c0ff'
+export const DARK_ACCENT_TWO_DARK = '#0063ab'
 
 const darkPrimary = {
 	main: DARK_PRIMARY,
@@ -118,6 +127,18 @@ const paletteDark = {
 	...paletteCommon,
 	primary: darkPrimary,
 	secondary: darkSecondary,
+	accentOne: { main: ACCENT_ONE, light: ACCENT_ONE_LIGHT, contrastText: WHITE },
+	accentTwo: { main: ACCENT_TWO, light: ACCENT_TWO_LIGHT, contrastText: WHITE },
+	// accentOne: {
+	// 	main: DARK_ACCENT_ONE,
+	// 	light: ACCENT_ONE_LIGHT,
+	// 	contrastText: WHITE,
+	// },
+	// accentTwo: {
+	// 	main: DARK_ACCENT_TWO,
+	// 	light: ACCENT_TWO_LIGHT,
+	// 	contrastText: BLACK,
+	// },
 	// special: { main: WARNING, contrastText: BLACK },
 	// text: {
 	// 	main: TEXT_MAIN,
@@ -129,7 +150,7 @@ const paletteDark = {
 	divider: fade(WHITE, 0.13),
 	background: {
 		paper: DARK_PAPER,
-		default: BLACK,
+		default: DARK_BG_DEFAULT,
 	},
 	action: {
 		action: fade(WHITE, 0.46),
@@ -143,7 +164,15 @@ const paletteDark = {
 		focusOpacity: 0.18,
 		activatedOpacity: 0.18,
 	},
-	appBar: { main: grey[200], contrastText: grey[900] },
+	appBar: { main: '#1f1f1f', contrastText: grey[200] },
+	text: {
+		icon: fade(WHITE, 0.42),
+		primary: fade(WHITE, 0.9),
+		secondary: fade(WHITE, 0.42),
+		disabled: fade(WHITE, 0.1948),
+		hint: fade(WHITE, 0.13),
+		solid: grey[200],
+	},
 }
 
 const paletteLight = {
@@ -177,12 +206,19 @@ const paletteLight = {
 	first: lime,
 	contrastThreshold: 3,
 	tonalOffset: 0.2,
-	text: grey,
 	action: {
 		disabledBackground: grey[200],
 		disabled: grey[500],
 	},
 	tooltipBgColor: fade(ALEX_GREY, 0.98),
+	text: {
+		icon: fade(BLACK, 0.69),
+		primary: fade(BLACK, 0.9),
+		secondary: fade(BLACK, 0.69),
+		disabled: fade(BLACK, 0.42),
+		hint: fade(BLACK, 0.13),
+		solid: grey[500],
+	},
 }
 
 export const palette = {
@@ -402,6 +438,8 @@ export const darkTheme = createMuiTheme({
 	shadows: darkShadows,
 	type: 'dark',
 })
+
+console.log('darkTheme', darkTheme)
 
 export const lightTheme = createMuiTheme({
 	...defaultThemeWithOverrides,
