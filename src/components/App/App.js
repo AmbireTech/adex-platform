@@ -9,13 +9,12 @@ import Toast from 'components/toast/Toast'
 import Confirm from 'components/confirm/Confirm'
 import { PersistGate } from 'redux-persist/integration/react'
 import Root from './Root'
-import { MuiThemeProvider } from '@material-ui/core/styles'
-import { themeMUI } from './themeMUi'
 import { DateUtils } from 'helpers/dateUtils'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import CacheBuster from './CacheBuster'
 import { updateWindowReloading, execute } from 'actions'
+import MultiThemeProvider from './MultiThemeProvider'
 
 // console.log('initial store', store.getState())
 
@@ -39,7 +38,7 @@ const App = () => {
 	})
 	return (
 		<React.Fragment>
-			<MuiThemeProvider theme={themeMUI}>
+			<MultiThemeProvider>
 				<CssBaseline />
 				<MuiPickersUtilsProvider utils={DateUtils}>
 					<Provider store={store}>
@@ -56,7 +55,7 @@ const App = () => {
 						</PersistGate>
 					</Provider>
 				</MuiPickersUtilsProvider>
-			</MuiThemeProvider>
+			</MultiThemeProvider>
 		</React.Fragment>
 	)
 }
