@@ -4,7 +4,6 @@ import clsx from 'clsx'
 import { makeStyles, withStyles } from '@material-ui/core/styles'
 import { Box } from '@material-ui/core'
 import { CheckCircle } from '@material-ui/icons'
-import { PRIMARY, ACCENT_TWO } from 'components/App/themeMUi'
 import StepConnector from '@material-ui/core/StepConnector'
 
 const LINES_WIDTH = 3
@@ -20,7 +19,7 @@ const useColorlibStepIconStyles = makeStyles(theme => ({
 		borderRadius: '50%',
 		justifyContent: 'center',
 		alignItems: 'center',
-		border: `${LINES_WIDTH}px solid ${theme.palette.text[500]}`,
+		border: `${LINES_WIDTH}px solid ${theme.palette.text.solid}`,
 		transition: '0.5s',
 		'&:hover': {
 			boxShadow: '0 4px 10px 0 rgba(0,0,0,.25)',
@@ -28,15 +27,15 @@ const useColorlibStepIconStyles = makeStyles(theme => ({
 		},
 	},
 	active: {
-		border: `${LINES_WIDTH}px solid ${PRIMARY} !important`,
+		border: `${LINES_WIDTH}px solid ${theme.palette.primary.main} !important`,
 	},
 	completed: {
-		border: `${LINES_WIDTH}px solid ${ACCENT_TWO}`,
+		border: `${LINES_WIDTH}px solid ${theme.palette.accentTwo.main}`,
 	},
 	star: {
 		position: 'relative',
-		backgroundColor: theme.palette.common.white,
-		color: ACCENT_TWO,
+		backgroundColor: theme.palette.accentTwo.contrastText,
+		color: theme.palette.accentTwo.main,
 		top: '-40%',
 		right: '-32%',
 		borderRadius: '50%',
@@ -52,9 +51,7 @@ export const ColorlibConnector = withStyles(theme => ({
 	line: {
 		height: LINES_WIDTH,
 		border: 0,
-		background: `linear-gradient(to right, transparent 50%, #fff 50%), ${
-			theme.palette.text[500]
-		}`,
+		background: `linear-gradient(to right, transparent 50%, ${theme.palette.background.paper} 50%), ${theme.palette.text.solid}`,
 		backgroundSize: `${LINES_WIDTH * 5}px`,
 	},
 }))(StepConnector)
