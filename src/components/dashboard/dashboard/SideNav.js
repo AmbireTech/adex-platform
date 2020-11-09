@@ -13,6 +13,7 @@ import packageJson from './../../../../package.json'
 import Anchor from 'components/common/anchor/anchor'
 import SideSwitch from './SideSwitch'
 import AdexIconTxt from 'components/common/icons/AdexIconTxt'
+import AdexIconTxtDark from 'components/common/icons/AdexIconTxtDark'
 import DashboardIcon from '@material-ui/icons/Dashboard'
 import SwapHorizontalIcon from '@material-ui/icons/SwapHoriz'
 import { Receipt } from '@material-ui/icons'
@@ -23,7 +24,7 @@ import ListIcon from '@material-ui/icons/List'
 import AudienceIcon from '@material-ui/icons/Group'
 import WebsitesIcon from '@material-ui/icons/WebSharp'
 import Typography from '@material-ui/core/Typography'
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles, useTheme } from '@material-ui/core/styles'
 import { LoadingSection } from 'components/common/spinners'
 import {
 	t,
@@ -36,6 +37,7 @@ import {
 
 const RRListItem = withReactRouterLink(ListItem)
 const RRAdexIconTxt = withReactRouterLink(AdexIconTxt)
+const RRAdexIconTxtDark = withReactRouterLink(AdexIconTxtDark)
 const { ETH_SCAN_ADDR_HOST } = process.env
 
 const useStyles = makeStyles(theme => {
@@ -121,6 +123,8 @@ const useStyles = makeStyles(theme => {
 })
 
 function SideNav(props) {
+	const theme = useTheme()
+
 	const side = useSelector(selectSide)
 	const identity = useSelector(selectAccountIdentityAddr)
 	const classes = useStyles({ side })
@@ -135,6 +139,8 @@ function SideNav(props) {
 		selectAccountStatsFormatted
 	)
 
+	const AdxIcon = theme.type === 'dark' ? RRAdexIconTxtDark : RRAdexIconTxt
+
 	return side !== 'advertiser' && side !== 'publisher' ? null : (
 		<Box
 			display='flex'
@@ -146,7 +152,7 @@ function SideNav(props) {
 				<Box>
 					<ListItem>
 						<Box>
-							<RRAdexIconTxt
+							<AdxIcon
 								// @cryptofan
 								to={{ pathname: '/dashboard/' + side }}
 								className={classes.icon}
