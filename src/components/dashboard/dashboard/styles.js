@@ -18,6 +18,7 @@ export const styles = theme => {
 			right: 0,
 			width: 'auto',
 			position: 'fixed',
+			backgroundColor: theme.palette.appBar.main,
 			// marginLeft: drawerWidth,
 			[theme.breakpoints.up('md')]: {
 				// width: `calc(100% - ${drawerWidth}px)`,
@@ -59,7 +60,7 @@ export const styles = theme => {
 			[theme.breakpoints.up('md')]: {
 				position: 'fixed',
 			},
-			backgroundColor: '#fff',
+			backgroundColor: theme.palette.appBar.main,
 		},
 		content: {
 			flexGrow: 1,
