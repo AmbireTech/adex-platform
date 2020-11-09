@@ -42,6 +42,9 @@ export const ACCENT_TWO = '#FFAC00'
 export const ACCENT_TWO_LIGHT = '#ffde4b'
 export const ACCENT_TWO_DARK = '#c67d00'
 
+export const PAPER = WHITE
+export const BG_DEFAULT = '#efefef'
+
 const primary = {
 	main: PRIMARY,
 	dark: PRIMARY_DARK,
@@ -70,6 +73,7 @@ export const DARK_SECONDARY_DARK = '#9ecc00'
 
 export const DARK_PAPER = '#333'
 export const DARK_BG_DEFAULT = '#0f1316'
+export const DARK_APPBAR = '#1f1f1f'
 
 export const DARK_ACCENT_ONE = '#ff7000'
 export const DARK_ACCENT_ONE_LIGHT = '#ffa140'
@@ -164,7 +168,7 @@ const paletteDark = {
 		focusOpacity: 0.18,
 		activatedOpacity: 0.18,
 	},
-	appBar: { main: '#1f1f1f', contrastText: grey[200] },
+	appBar: { main: DARK_APPBAR, contrastText: grey[200] },
 	text: {
 		icon: fade(WHITE, 0.42),
 		primary: fade(WHITE, 0.9),
@@ -200,6 +204,10 @@ const paletteLight = {
 		light: ERROR_LIGHT,
 		dark: ERROR_DARK,
 		contrastText: WHITE,
+	},
+	background: {
+		default: BG_DEFAULT,
+		paper: WHITE,
 	},
 	info: primary,
 	success: secondary,
