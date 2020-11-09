@@ -7,23 +7,14 @@ import {
 	Equalizer,
 } from '@material-ui/icons'
 import { Box } from '@material-ui/core'
-import { Alert } from '@material-ui/lab'
 import { SimpleStatistics } from 'components/dashboard/charts/simplified'
 import Dropdown from 'components/common/dropdown'
 import { VALIDATOR_ANALYTICS_TIMEFRAMES } from 'constants/misc'
 import StatsCard from './StatsCard'
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles, useTheme } from '@material-ui/core/styles'
 import DateTimePicker from 'components/common/DateTimePicker'
 import { PeriodDatePicker, DatePicker } from 'components/common/DatePicker'
-import Anchor from 'components/common/anchor/anchor'
-
-import {
-	PRIMARY,
-	SECONDARY,
-	ACCENT_ONE,
-	ACCENT_TWO,
-	ALEX_GREY,
-} from 'components/App/themeMUi'
+import { ALEX_GREY } from 'components/App/themeMUi'
 import { styles } from './styles'
 import { formatNumberWithCommas } from 'helpers/formatters'
 import {
@@ -50,7 +41,7 @@ import {
 	selectAnalyticsDataSide,
 	selectAuth,
 	selectInitialDataLoadedByData,
-	selectMissingRevenueDataPointsAccepted,
+	// selectMissingRevenueDataPointsAccepted,
 	selectAnalyticsMinAndMaxDates,
 } from 'selectors'
 import dateUtils from 'helpers/dateUtils'
@@ -77,22 +68,22 @@ const timeFrames = VALIDATOR_ANALYTICS_TIMEFRAMES.map(tf => {
 	return translated
 })
 
-const metrics = {
+const getMetrics = theme => ({
 	publisher: [
 		{
 			label: t('LABEL_IMPRESSIONS'),
 			value: 'eventCounts',
-			color: PRIMARY,
+			color: theme.palette.primary.main,
 		},
 		{
 			label: t('LABEL_CLICKS'),
 			value: 'eventCounts',
-			color: SECONDARY,
+			color: theme.palette.secondary.main,
 		},
 		{
 			label: t('LABEL_REVENUE'),
 			value: 'eventPayouts',
-			color: ACCENT_TWO,
+			color: theme.palette.accentTwo.main,
 		},
 		{
 			label: t('PROP_CPM'),
@@ -103,24 +94,24 @@ const metrics = {
 		{
 			label: t('LABEL_IMPRESSIONS'),
 			value: 'eventCounts',
-			color: PRIMARY,
+			color: theme.palette.primary.main,
 		},
 		{
 			label: t('LABEL_CLICKS'),
 			value: 'eventCounts',
-			color: SECONDARY,
+			color: theme.palette.secondary.main,
 		},
 		{
 			label: t('LABEL_SPEND'),
 			value: 'eventPayouts',
-			color: ACCENT_ONE,
+			color: theme.palette.accentOne.main,
 		},
 		{
 			label: t('PROP_CPM'),
 			color: ALEX_GREY,
 		},
 	],
-}
+})
 
 const getDefaultLabels = ({ timeframe, start, end }) => [
 	getPeriodDataPointLabel({ timeframe, time: start }),
@@ -175,9 +166,10 @@ const DatePickerSwitch = ({ timeframe, period: { start, end }, ...rest }) => {
 			return <DatePicker {...rest} />
 	}
 }
+const useStyles = makeStyles(styles)
 
 export function BasicStats() {
-	const useStyles = makeStyles(styles)
+	const theme = useTheme()
 	const classes = useStyles()
 	const SPACE = useKeyPress(' ')
 	const ARROW_LEFT = useKeyPress('ArrowLeft')
@@ -191,6 +183,7 @@ export function BasicStats() {
 	const side = useSelector(selectAnalyticsDataSide)
 	const { minDate, maxDate } = useSelector(selectAnalyticsMinAndMaxDates)
 	const [loop, setLoop] = useState()
+	const [metrics, setMetrics] = useState(null)
 	const allChannelsLoaded = useSelector(state =>
 		selectInitialDataLoadedByData(state, 'allChannels')
 	)
@@ -266,6 +259,10 @@ export function BasicStats() {
 	}
 
 	useEffect(() => {
+		setMetrics(getMetrics(theme))
+	}, [theme])
+
+	useEffect(() => {
 		SPACE && goLive()
 		ARROW_RIGHT && goNext()
 		ARROW_LEFT && goPrev()
@@ -320,7 +317,8 @@ export function BasicStats() {
 		)
 
 	return (
-		uiSide && (
+		uiSide &&
+		metrics && (
 			<Box>
 				<Box
 					display='flex'
