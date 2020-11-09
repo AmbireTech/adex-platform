@@ -14,7 +14,7 @@ import StatsCard from './StatsCard'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
 import DateTimePicker from 'components/common/DateTimePicker'
 import { PeriodDatePicker, DatePicker } from 'components/common/DatePicker'
-import { ALEX_GREY } from 'components/App/themeMUi'
+import { ALEX_GREY_LIGHT } from 'components/App/themeMUi'
 import { styles } from './styles'
 import { formatNumberWithCommas } from 'helpers/formatters'
 import {
@@ -87,7 +87,7 @@ const getMetrics = theme => ({
 		},
 		{
 			label: t('PROP_CPM'),
-			color: ALEX_GREY,
+			color: ALEX_GREY_LIGHT,
 		},
 	],
 	advertiser: [
@@ -108,7 +108,7 @@ const getMetrics = theme => ({
 		},
 		{
 			label: t('PROP_CPM'),
-			color: ALEX_GREY,
+			color: ALEX_GREY_LIGHT,
 		},
 	],
 })

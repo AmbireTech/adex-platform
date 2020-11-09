@@ -206,8 +206,8 @@ export const SimpleStatistics = ({
 			yAxes: [
 				{
 					// NOTE: this one is just to show constant size grid lines
-					display: true,
-					color: ALEX_GREY_LIGHT,
+					display: false,
+					// color: ALEX_GREY_LIGHT,
 					gridLines: {
 						display: true,
 						drawBorder: false,
