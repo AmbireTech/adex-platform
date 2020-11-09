@@ -288,7 +288,11 @@ function SideNav(props) {
 							<ListItemText primary={t('TOP_UP')} />
 						</RRListItem>
 						<ListDivider />
-						<Anchor target='_blank' href={`${process.env.ADEX_HELP_URL}`}>
+						<Anchor
+							fullWidth
+							target='_blank'
+							href={`${process.env.ADEX_HELP_URL}`}
+						>
 							<ListItem button>
 								<ListItemIcon>
 									<HelpOutlineIcon />
@@ -297,7 +301,11 @@ function SideNav(props) {
 							</ListItem>
 						</Anchor>
 
-						<Anchor target='_blank' href={`${ETH_SCAN_ADDR_HOST + identity}`}>
+						<Anchor
+							fullWidth
+							target='_blank'
+							href={`${ETH_SCAN_ADDR_HOST + identity}`}
+						>
 							<ListItem button>
 								<ListItemIcon>
 									<SwapHorizontalIcon />
