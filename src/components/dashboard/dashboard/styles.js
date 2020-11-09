@@ -14,15 +14,15 @@ export const styles = theme => {
 			height: 'calc(100vh - 69px)',
 			width: '100vw',
 			backgroundColor: theme.palette.background.default,
-			backgroundImage:
-				theme.type === 'dark'
-					? `linear-gradient(
-				335deg,
-				${fade(theme.palette.primary.main, 1)} -46%,
-				${fade(theme.palette.background.default, 1)} 44%
-			)`
-					: 0,
-			backgroundRepeat: 'no-repeat',
+			// backgroundImage:
+			// 	theme.type === 'dark'
+			// 		? `linear-gradient(
+			// 	335deg,
+			// 	${fade(theme.palette.primary.main, 1)} -46%,
+			// 	${fade(theme.palette.background.default, 1)} 44%
+			// )`
+			// 		: 0,
+			// backgroundRepeat: 'no-repeat',
 		},
 		appBar: {
 			top: 0,
