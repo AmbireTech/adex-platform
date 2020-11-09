@@ -55,4 +55,11 @@ export const styles = theme => ({
 		height: '100%',
 		width: '100%',
 	},
+	cellImg: {
+		// Fixed width to avoid col resizing while loading
+		height: 46,
+		width: 69,
+		cursor: 'pointer',
+		display: 'flex',
+	},
 })

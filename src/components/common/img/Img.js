@@ -231,10 +231,16 @@ class Img extends Component {
 			classes,
 			fullScreenOnClick,
 			onClick,
+			isCellImg,
 		} = this.props
+
 		const { imgSrc, videoSrc } = this.state
 		return imgSrc || videoSrc ? (
-			<div className={classnames(className, classes.wrapper)}>
+			<div
+				className={classnames(className, classes.wrapper, {
+					[classes.cellImg]: !!isCellImg,
+				})}
+			>
 				{!!imgSrc ? (
 					<img
 						alt={alt}
