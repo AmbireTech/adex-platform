@@ -22,7 +22,6 @@
     "base64url": "^3.0.1",
     "case-sensitive-paths-webpack-plugin": "2.2.0",
     "chart.js": "^2.7.2",
-    "chartjs-plugin-annotation": "^0.5.7",
     "classnames": "^2.2.5",
     "clsx": "^1.1.1",
     "connected-react-router": "^6.6.1",
