@@ -1,7 +1,7 @@
 export const styles = theme => {
 	return {
 		copyBtn: {
-			backgroundColor: '#E2EAED',
+			backgroundColor: theme.palette.appBar.main,
 			overflowWrap: 'anywhere',
 			userSelect: 'text',
 			textTransform: 'none',
