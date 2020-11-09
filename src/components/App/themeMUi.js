@@ -439,8 +439,6 @@ export const darkTheme = createMuiTheme({
 	type: 'dark',
 })
 
-console.log('darkTheme', darkTheme)
-
 export const lightTheme = createMuiTheme({
 	...defaultThemeWithOverrides,
 	palette: paletteLight,
