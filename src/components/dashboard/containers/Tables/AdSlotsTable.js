@@ -1,5 +1,4 @@
 import React from 'react'
-import classnames from 'classnames'
 import { Box, IconButton, Tooltip } from '@material-ui/core'
 import { utils } from 'ethers'
 import { Visibility } from '@material-ui/icons'
@@ -14,9 +13,7 @@ import {
 	selectMainToken,
 	selectInitialDataLoadedByData,
 } from 'selectors'
-import { makeStyles } from '@material-ui/core/styles'
 import { useSelector } from 'react-redux'
-import { styles } from './styles'
 import { formatDateTime, truncateString } from 'helpers/formatters'
 import { useTableData } from './tableHooks'
 import { ReloadData } from './toolbars'
@@ -24,9 +21,7 @@ import { ReloadData } from './toolbars'
 const RRIconButton = withReactRouterLink(IconButton)
 const RRImg = withReactRouterLink(Img)
 
-const useStyles = makeStyles(styles)
-
-const getCols = ({ classes, symbol }) => [
+const getCols = ({ symbol }) => [
 	{
 		name: 'media',
 		label: t('PROP_MEDIA'),
@@ -39,12 +34,12 @@ const getCols = ({ classes, symbol }) => [
 					<RRImg
 						key={id}
 						fullScreenOnClick={true}
-						className={classnames(classes.cellImg)}
 						src={mediaUrl}
 						alt={id}
 						mediaMime={mediaMime}
 						allowVideo
 						to={to}
+						isCellImg
 					/>
 				)
 			},
@@ -121,7 +116,7 @@ const getCols = ({ classes, symbol }) => [
 			sort: true,
 			download: false,
 			customBodyRender: ({ to, item, id, title }) => (
-				<Box key={id} className={classes.actions}>
+				<Box key={id}>
 					<Tooltip
 						arrow
 						key={item.id}
@@ -168,7 +163,6 @@ const getOptions = ({ reloadData }) => ({
 })
 
 function AdSlotsTable(props) {
-	const classes = useStyles()
 	const side = useSelector(selectSide)
 	const { symbol } = useSelector(selectMainToken)
 	const itemsLoaded = useSelector(state =>
@@ -180,7 +174,6 @@ function AdSlotsTable(props) {
 		selectorArgs: side,
 		getColumns: () =>
 			getCols({
-				classes,
 				symbol,
 			}),
 	})
