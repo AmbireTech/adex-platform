@@ -847,8 +847,10 @@ export async function withdrawOtherTokensFromIdentity({
 	if (getFeesOnly) {
 		return {
 			fees: fees.total,
-			breakdownFormatted: fees.breakdownFormatted,
+			totalBN: fees.totalBN,
+			toWithdraw,
 			toGet: formatTokenAmount(toWithdraw, decimals, null, 2),
+			breakdownFormatted: fees.breakdownFormatted,
 		}
 	}
 
