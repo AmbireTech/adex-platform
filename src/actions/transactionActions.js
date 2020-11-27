@@ -419,6 +419,7 @@ export function validateIdentityWithdrawAny({
 						account,
 						amountToWithdraw,
 						withdrawTo,
+						tokenDecimals,
 						getFeesOnly: true,
 					}),
 			})(dispatch, getState)

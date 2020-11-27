@@ -187,7 +187,7 @@ export function BasicStats() {
 	const { start, end } = useSelector(selectIdentitySideAnalyticsPeriod)
 	const timeframe = useSelector(selectIdentitySideAnalyticsTimeframe)
 	const uiSide = useSelector(selectSide)
-	// NOTE: side can be: for-publisher, for-advertiser ot current campaign in details Id
+	// NOTE: side can be: for-publisher, for-advertiser or current campaign in details Id
 	const side = useSelector(selectAnalyticsDataSide)
 	const { minDate, maxDate } = useSelector(selectAnalyticsMinAndMaxDates)
 	const [loop, setLoop] = useState()
