@@ -722,9 +722,11 @@ export function validateCampaignAudienceInput({
 		await updateSpinner(validateId, true)(dispatch)
 		try {
 			const state = getState()
-			const { audienceInput = {}, pricingBounds, temp } = selectNewCampaign(
-				state
-			)
+			const {
+				audienceInput = {},
+				pricingBoundsCPMUserInput,
+				temp,
+			} = selectNewCampaign(state)
 			const { inputs } = audienceInput
 
 			const isValid = await validateAudience({
@@ -753,13 +755,16 @@ export function validateCampaignAudienceInput({
 				// Update pricingBounds here in order to avoid value check at next steps
 				// Only if the bounds are not updated (step back or soft closed modal)
 				if (
-					!pricingBounds ||
-					!(pricingBounds['IMPRESSION'] || pricingBounds['CLICK'])
-				)
-					await updateNewCampaign('pricingBounds', suggestedPricingBounds)(
-						dispatch,
-						getState
+					!pricingBoundsCPMUserInput ||
+					!(
+						pricingBoundsCPMUserInput['IMPRESSION'] ||
+						pricingBoundsCPMUserInput['CLICK']
 					)
+				)
+					await updateNewCampaign(
+						'pricingBoundsCPMUserInput',
+						suggestedPricingBounds
+					)(dispatch, getState)
 			}
 
 			await handleAfterValidation({ isValid, onValid, onInvalid })
@@ -791,6 +796,7 @@ export function validateNewCampaignFinance({
 				withdrawPeriodStart,
 				created,
 				pricingBounds,
+				pricingBoundsCPMUserInput,
 				audienceInput,
 				// minTargetingScore,
 				// adUnits,
@@ -816,7 +822,7 @@ export function validateNewCampaignFinance({
 					validateId,
 					dirty,
 					depositAmount,
-					pricingBounds,
+					pricingBounds: pricingBoundsCPMUserInput,
 					errMsg: !dirty && 'REQUIRED_FIELD',
 					maxDeposit,
 					decimals,
@@ -879,7 +885,7 @@ export function validateNewCampaignFinance({
 				)
 
 				const rulesPricingBounds = userInputPricingBoundsPerMileToRulesValue({
-					pricingBounds,
+					pricingBounds: pricingBoundsCPMUserInput,
 					decimals,
 				})
 
@@ -1001,6 +1007,7 @@ export function validateAndUpdateCampaign({
 				title,
 				audienceInput,
 				pricingBounds,
+				pricingBoundsCPMUserInput,
 				minPerImpression,
 				maxPerImpression,
 				depositAmount,
@@ -1073,7 +1080,7 @@ export function validateAndUpdateCampaign({
 					validateId,
 					dirty,
 					depositAmount: depositAmountInputString,
-					pricingBounds: pricingBoundsCPMUserInputString,
+					pricingBounds: pricingBoundsCPMUserInput,
 					errMsg: !dirty,
 					maxDeposit: BigNumber.from(depositAmount),
 					decimals,
