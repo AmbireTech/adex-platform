@@ -116,7 +116,7 @@ function getReadyCampaign(campaign, identity, mainToken) {
 
 	newCampaign.validators = validators
 
-	const pricingBounds = { ...newCampaign.pricingBounds }
+	const pricingBounds = { ...newCampaign.pricingBoundsCPMUserInput }
 	const impression = { ...pricingBounds.IMPRESSION }
 
 	impression.min = userInputToTokenValue({
