@@ -105,6 +105,7 @@ export const CampaignBasic = ({
 		title,
 		adUnits = [],
 		pricingBounds,
+		pricingBoundsCPMUserInput,
 		depositAmount,
 		validators,
 		minPerImpression,
@@ -123,7 +124,8 @@ export const CampaignBasic = ({
 	const isPaused = ((item.targetingRules || [])[0] || {}).onlyShowIf === false
 	const pauseAction = isPaused ? 'RESUME' : 'PAUSE'
 
-	const campaignPricingBounds = pricingBounds || { IMPRESSION: {} }
+	const campaignPricingBounds = pricingBoundsCPMUserInput ||
+		pricingBounds || { IMPRESSION: {} }
 	const cpmMin = campaignPricingBounds.min || minPerImpression || 0
 	const cpmMax = campaignPricingBounds.max || maxPerImpression || 0
 
@@ -312,10 +314,13 @@ export const CampaignBasic = ({
 						</Box>
 						<Box my={0}>
 							<EditCPM
+								pricingBoundsCPMUserInput={pricingBoundsCPMUserInput}
+								action='IMPRESSION'
+								actionValue={'min'}
 								canSendMsgs={canSendMsgs}
 								prop='minPerImpression'
 								label='CPM_MIN'
-								value={cpmMin}
+								valuePerAction={cpmMin}
 								decimals={decimals}
 								symbol={symbol}
 								errProp={'pricingBounds_min'}
@@ -324,10 +329,13 @@ export const CampaignBasic = ({
 						</Box>
 						<Box my={0}>
 							<EditCPM
+								pricingBoundsCPMUserInput={pricingBoundsCPMUserInput}
+								action='IMPRESSION'
+								actionValue={'max'}
 								canSendMsgs={canSendMsgs}
 								prop='maxPerImpression'
 								label='CPM_MAX'
-								value={cpmMax}
+								valuePerAction={cpmMax}
 								decimals={decimals}
 								symbol={symbol}
 								errProp={'pricingBounds_max'}

@@ -14,7 +14,6 @@ import { t } from 'selectors'
 import { Campaign } from 'adex-models'
 import { BigNumber } from 'ethers'
 import { formatTokenAmount } from 'helpers/formatters'
-import { validPositiveInt } from 'helpers/validators'
 
 const TargetingSteps = ({
 	updateField,
@@ -58,7 +57,10 @@ export const EditCPM = ({
 	prop,
 	errProp,
 	label,
-	value,
+	pricingBoundsCPMUserInput,
+	action,
+	actionValue,
+	valuePerAction,
 	decimals,
 	symbol,
 	validations,
@@ -74,6 +76,16 @@ export const EditCPM = ({
 	const active = !!activeFields[prop]
 	const showError = !!err && err.dirty
 	const isDirty = dirtyProps && dirtyProps.includes(prop)
+	const value =
+		pricingBoundsCPMUserInput &&
+		pricingBoundsCPMUserInput[action] &&
+		!!pricingBoundsCPMUserInput[action][actionValue]
+			? pricingBoundsCPMUserInput[action][actionValue]
+			: formatTokenAmount(
+					BigNumber.from(valuePerAction || 0).mul(1000),
+					decimals,
+					true
+			  )
 	return (
 		<TextField
 			margin='dense'
@@ -82,17 +94,13 @@ export const EditCPM = ({
 			label={t(label)}
 			type='text'
 			name={prop}
-			value={
-				(!isDirty && validPositiveInt(value)
-					? formatTokenAmount(
-							BigNumber.from(value || 0).mul(1000),
-							decimals,
-							true
-					  )
-					: value) + (active ? '' : ' ' + symbol)
-			}
+			value={value + (active ? '' : ' ' + symbol)}
 			onChange={ev => {
-				updateField(prop, ev.target.value)
+				const newValue = { ...(pricingBoundsCPMUserInput || {}) }
+				newValue[action] = { ...(newValue[action] || {}) }
+
+				newValue[action][actionValue] = ev.target.value
+				updateField('pricingBoundsCPMUserInput', newValue)
 				execute(
 					validateNumberString({
 						validateId,
