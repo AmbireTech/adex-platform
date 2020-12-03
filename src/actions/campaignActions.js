@@ -69,6 +69,7 @@ const {
 	getSuggestedPricingBounds,
 	userInputPricingBoundsPerMileToRulesValue,
 	useInputValuePerMileToTokenValue,
+	pricingBondsToUserInputPerMile,
 } = helpers
 
 const { campaignPut } = schemas
@@ -121,7 +122,18 @@ export function openCampaign() {
 			const state = getState()
 			const selectedCampaign = selectNewCampaign(state)
 			const account = selectAccount(state)
-			const campaign = { ...selectedCampaign }
+
+			// save it in audienceInput as it is not spec prop
+			// and saving/parsinf form targeting rules is harder
+			const campaign = {
+				...selectedCampaign,
+				audienceInput: {
+					...selectedCampaign.audienceInput,
+					pricingBoundsCPMUserInput: {
+						...selectedCampaign.pricingBoundsCPMUserInput,
+					},
+				},
+			}
 
 			if (campaign.temp.useUtmTags) {
 				campaign.adUnits = [...campaign.adUnits].map((unit, index) => ({
@@ -342,6 +354,16 @@ export function updateUserCampaigns({ updateAllData = false } = {}) {
 
 						if (!campaign.audienceInput) {
 							campaign.audienceInput = selectAudienceByCampaignId(state, c.id)
+						}
+
+						if (!campaign.pricingBoundsCPMUserInput) {
+							campaign.pricingBoundsCPMUserInput =
+								(campaign.audienceInput || {}).pricingBoundsCPMUserInput ||
+								(campaign.pricingBounds
+									? pricingBondsToUserInputPerMile({
+											pricingBounds: campaign.pricingBounds,
+									  })
+									: null)
 						}
 
 						return campaign
