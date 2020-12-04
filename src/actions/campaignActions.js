@@ -68,8 +68,9 @@ const {
 	audienceInputToTargetingRules,
 	getSuggestedPricingBounds,
 	userInputPricingBoundsPerMileToRulesValue,
-	useInputValuePerMileToTokenValue,
+	// useInputValuePerMileToTokenValue,
 	pricingBondsToUserInputPerMile,
+	bondPerActionToUserInputPerMileValue,
 } = helpers
 
 const { campaignPut } = schemas
@@ -365,7 +366,6 @@ export function updateUserCampaigns({ updateAllData = false } = {}) {
 									  })
 									: null)
 						}
-
 						return campaign
 					})
 
@@ -1053,44 +1053,35 @@ export function validateAndUpdateCampaign({
 				decimals
 			)
 
-			// Per impression
-			const pricingBoundsImpressionBnString = !arePricingBondsUpdated
-				? pricingBounds && pricingBounds.IMPRESSION
-					? pricingBounds
-					: {
-							IMPRESSION: {
-								min: pricingBounds.min || minPerImpression,
-								max: pricingBounds.max || maxPerImpression,
-							},
-					  }
-				: {
-						IMPRESSION: {
-							min: minCPMUpdated
-								? useInputValuePerMileToTokenValue(minPerImpression, decimals)
-								: pricingBounds.min || minPerImpression,
-							max: maxCPMUpdated
-								? useInputValuePerMileToTokenValue(maxPerImpression, decimals)
-								: pricingBounds.max || maxPerImpression,
-						},
-				  }
-
-			// CPM Per 1000 - for amount validation
 			const pricingBoundsCPMUserInputString = {
-				IMPRESSION: {
-					min: formatTokenAmount(
-						BigNumber.from(pricingBoundsImpressionBnString.IMPRESSION.min).mul(
-							1000
-						),
-						decimals
-					),
-					max: formatTokenAmount(
-						BigNumber.from(pricingBoundsImpressionBnString.IMPRESSION.max).mul(
-							1000
-						),
-						decimals
-					),
-				},
+				...(pricingBoundsCPMUserInput || { IMPRESSION: {} }),
 			}
+
+			if (!pricingBoundsCPMUserInputString.IMPRESSION.min) {
+				pricingBoundsCPMUserInputString.IMPRESSION.min = bondPerActionToUserInputPerMileValue(
+					pricingBounds && pricingBounds.IMPRESSION
+						? pricingBounds.IMPRESSION.min
+						: pricingBounds.min || minPerImpression
+				)
+			}
+
+			if (!pricingBoundsCPMUserInputString.IMPRESSION.max) {
+				pricingBoundsCPMUserInputString.IMPRESSION.max = bondPerActionToUserInputPerMileValue(
+					pricingBounds && pricingBounds.IMPRESSION
+						? pricingBounds.IMPRESSION.max
+						: pricingBounds.max || maxPerImpression
+				)
+			}
+
+			// Per impression
+			const pricingBoundsImpressionBnString = userInputPricingBoundsPerMileToRulesValue(
+				{
+					pricingBounds: pricingBoundsCPMUserInputString,
+					decimals,
+				}
+			)
+
+			updated.pricingBounds = pricingBoundsImpressionBnString
 
 			const validations = await Promise.all([
 				validateCampaignTitle({
@@ -1102,7 +1093,7 @@ export function validateAndUpdateCampaign({
 					validateId,
 					dirty,
 					depositAmount: depositAmountInputString,
-					pricingBounds: pricingBoundsCPMUserInput,
+					pricingBounds: pricingBoundsCPMUserInputString,
 					errMsg: !dirty,
 					maxDeposit: BigNumber.from(depositAmount),
 					decimals,
