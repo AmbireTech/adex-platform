@@ -10,7 +10,7 @@ import {
 } from 'services/smart-contracts/actions/identity'
 import { contracts } from '../contractsCfg'
 import { closeCampaign } from 'services/adex-validator/actions'
-import { Campaign, AdUnit } from 'adex-models'
+import { Campaign, AdUnit, helpers } from 'adex-models'
 import { getCampaigns } from 'services/adex-market/actions'
 import { BigNumber, utils } from 'ethers'
 import {
@@ -26,6 +26,8 @@ import { selectChannelsWithUserBalancesEligible } from 'selectors'
 import { getState } from 'store'
 import { AUTH_TYPES, EXECUTE_ACTIONS } from 'constants/misc'
 const { parseUnits, Interface, randomBytes, getAddress } = utils
+
+const { userInputPricingBoundsPerMileToRulesValue } = helpers
 
 const { AdExCore } = contracts
 const Core = new Interface(AdExCore.abi)
@@ -44,6 +46,12 @@ const OUTSTANDING_STATUSES = {
 }
 
 const EXTRA_PROCESS_TIME = 69 * 60 // 69 min in seconds
+
+// Min/Max that will be the actual bounds
+// e.g. user input min 0.5 max 2
+// spec bounds min 0.25 max 4
+// Usere will be able to change the pricing bounds up to spec values
+const PRICING_BOUNDS_COEFICIENT = 2
 
 function toEthereumChannel(channel) {
 	const specHash = crypto
@@ -116,27 +124,20 @@ function getReadyCampaign(campaign, identity, mainToken) {
 
 	newCampaign.validators = validators
 
-	const pricingBounds = { ...newCampaign.pricingBoundsCPMUserInput }
-	const impression = { ...pricingBounds.IMPRESSION }
-
-	impression.min = userInputToTokenValue({
-		input: impression.min,
+	// spec pricing bounds
+	const pricingBounds = userInputPricingBoundsPerMileToRulesValue({
+		pricingBounds: { ...newCampaign.pricingBoundsCPMUserInput },
 		decimals,
-		divider: 1000, // Input is for CPM (1000)
+		minCoef: PRICING_BOUNDS_COEFICIENT,
+		maxCoef: PRICING_BOUNDS_COEFICIENT,
 	})
-	impression.max = userInputToTokenValue({
-		input: impression.max,
-		decimals,
-		divider: 1000, // Input is for CPM (1000)
-	})
-	pricingBounds.IMPRESSION = impression
 
 	// TODO: CLICK when available
 	newCampaign.pricingBounds = pricingBounds
 
 	// TEMP: legacy compatibility
-	newCampaign.minPerImpression = impression.min
-	newCampaign.maxPerImpression = impression.max
+	newCampaign.minPerImpression = pricingBounds.IMPRESSION.min
+	newCampaign.maxPerImpression = pricingBounds.IMPRESSION.max
 
 	newCampaign.depositAsset = mainToken.address
 	newCampaign.eventSubmission = {
