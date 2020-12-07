@@ -10,6 +10,7 @@ import { Base } from 'adex-models'
 
 export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 	const [item, setItem] = useState({})
+	const [itemPlain, seItemPlain] = useState({})
 	const [initialItemState, setInitialItemState] = useState({})
 	const [activeFields, setFields] = useState({})
 	const [dirtyProps, setDirtyProps] = useState([])
@@ -29,6 +30,7 @@ export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 		if (!Object.keys(activeFields).length && !dirtyProps.length) {
 			const initial = new objModel(storeItem)
 			setItem(initial)
+			seItemPlain(JSON.parse(JSON.stringify(storeItem)))
 			setInitialItemState(initial)
 			setValidateId(`update-${item.id}`)
 		}
@@ -43,8 +45,10 @@ export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 
 	const validate = useCallback(
 		dirty =>
-			execute(validateAndUpdateFn({ item, validateId, dirty, dirtyProps })),
-		[dirtyProps, item, validateAndUpdateFn, validateId]
+			execute(
+				validateAndUpdateFn({ item, itemPlain, validateId, dirty, dirtyProps })
+			),
+		[dirtyProps, item, itemPlain, validateAndUpdateFn, validateId]
 	)
 
 	const save = useCallback(async () => {
@@ -126,6 +130,7 @@ export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 
 	return {
 		item,
+		itemPlain,
 		initialItemState,
 		activeFields,
 		setActiveFields,
