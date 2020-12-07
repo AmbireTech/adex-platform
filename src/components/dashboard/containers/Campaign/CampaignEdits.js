@@ -11,9 +11,10 @@ import {
 	validateNumberString,
 } from 'actions'
 import { t } from 'selectors'
-import { Campaign } from 'adex-models'
+import { Campaign, helpers } from 'adex-models'
 import { BigNumber } from 'ethers'
 import { formatTokenAmount } from 'helpers/formatters'
+const { bondPerActionToUserInputPerMileValue } = helpers
 
 const TargetingSteps = ({
 	updateField,
@@ -71,11 +72,13 @@ export const EditCPM = ({
 	dirtyProps,
 	validateId,
 	canSendMsgs,
+	specPricingBounds,
 }) => {
 	const err = validations[errProp || prop]
 	const active = !!activeFields[prop]
 	const showError = !!err && err.dirty
-	const isDirty = dirtyProps && dirtyProps.includes(prop)
+	// const isDirty = dirtyProps && dirtyProps.includes(prop)
+
 	const value =
 		pricingBoundsCPMUserInput &&
 		pricingBoundsCPMUserInput[action] &&
@@ -112,7 +115,25 @@ export const EditCPM = ({
 			}}
 			disabled={!active}
 			error={showError}
-			helperText={showError ? t(err.errMsg, { args: err.errMsgArgs }) : ''}
+			helperText={
+				showError
+					? t(err.errMsg, { args: err.errMsgArgs })
+					: active && specPricingBounds && specPricingBounds[action]
+					? t(
+							`BOUNDS_${actionValue.toUpperCase()}_EDIT`,
+
+							{
+								args: [
+									bondPerActionToUserInputPerMileValue(
+										specPricingBounds[action][actionValue],
+										decimals
+									),
+									symbol,
+								],
+							}
+					  )
+					: ''
+			}
 			variant='outlined'
 			InputProps={{
 				endAdornment: canSendMsgs ? (

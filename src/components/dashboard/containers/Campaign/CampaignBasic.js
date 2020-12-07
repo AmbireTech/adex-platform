@@ -96,6 +96,7 @@ const useStyles = makeStyles(theme => ({
 
 export const CampaignBasic = ({
 	item,
+	itemPlain,
 	canSendMsgs,
 	isActive,
 	...hookProps
@@ -324,6 +325,7 @@ export const CampaignBasic = ({
 								decimals={decimals}
 								symbol={symbol}
 								errProp={'pricingBounds_min'}
+								specPricingBounds={itemPlain.specPricingBounds}
 								{...hookProps}
 							/>
 						</Box>
@@ -339,6 +341,7 @@ export const CampaignBasic = ({
 								decimals={decimals}
 								symbol={symbol}
 								errProp={'pricingBounds_max'}
+								specPricingBounds={itemPlain.specPricingBounds}
 								{...hookProps}
 							/>
 						</Box>
