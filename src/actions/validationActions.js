@@ -3,7 +3,7 @@ import { validEthAddress, freeAdExENS } from '../helpers/validators'
 import { translate } from 'services/translations/translations'
 import { addToast, updateSpinner } from './uiActions'
 import { BigNumber, utils } from 'ethers'
-import { validations, Joi, schemas, constants } from 'adex-models'
+import { validations, Joi, schemas, constants, helpers } from 'adex-models'
 import { validPassword } from 'helpers/validators'
 import {
 	t,
@@ -16,6 +16,7 @@ import { getErrorMsg } from 'helpers/errors'
 import { getEmail } from 'services/adex-relayer/actions'
 import { formatTokenAmount } from 'helpers/formatters'
 const { IdentityPrivilegeLevel } = constants
+const { bondPerActionToUserInputPerMileValue } = helpers
 
 const { campaignPut, account } = schemas
 const { isNumberString } = validations
@@ -433,6 +434,7 @@ export function validateCampaignAmount({
 	errMsg,
 	depositAmount,
 	pricingBounds = { IMPRESSION: {} },
+	specPricingBounds,
 	maxDeposit,
 	decimals,
 }) {
@@ -443,6 +445,8 @@ export function validateCampaignAmount({
 		const isValidNumberMin = isNumberString(min)
 		const isValidNumberMax = isNumberString(max)
 
+		const checkSpeckBounds = !!specPricingBounds && specPricingBounds.IMPRESSION
+
 		let isValidDeposit = isValidNumberDeposit
 		let isValidMin = isValidNumberMin
 		let isValidMax = isValidNumberMax
@@ -450,6 +454,9 @@ export function validateCampaignAmount({
 		let msgDeposit = errMsg || 'ERR_INVALID_AMOUNT'
 		let msgMin = errMsg || 'ERR_INVALID_AMOUNT'
 		let msgMax = errMsg || 'ERR_INVALID_AMOUNT'
+		let argsMin = []
+		let argsMax = []
+		let argsDeposit = []
 
 		if (isValidDeposit && isValidMin && isValidMax) {
 			const depositBn = utils.parseUnits(depositAmount, decimals)
@@ -499,23 +506,51 @@ export function validateCampaignAmount({
 				isValidMin = false
 				msgMin = 'ERR_MIN_CPM_GT_MAX_CPM'
 			}
+
+			if (
+				checkSpeckBounds &&
+				minBn.div(1000).lt(BigNumber.from(specPricingBounds.IMPRESSION.min))
+			) {
+				isValidMin = false
+				msgMin = 'ERR_MIN_CPM_LESS_THAN_SPEC'
+				argsMin = [
+					bondPerActionToUserInputPerMileValue(
+						specPricingBounds.IMPRESSION.min,
+						decimals
+					),
+				]
+			}
+
+			if (
+				checkSpeckBounds &&
+				maxBn.div(1000).gt(BigNumber.from(specPricingBounds.IMPRESSION.max))
+			) {
+				isValidMax = false
+				msgMax = 'ERR_MAX_CPM_HIGHER_THAN_SPEC'
+				argsMax = [
+					bondPerActionToUserInputPerMileValue(
+						specPricingBounds.IMPRESSION.max,
+						decimals
+					),
+				]
+			}
 		}
 
 		await validate(validateId, 'depositAmount', {
 			isValid: isValidDeposit,
-			err: { msg: msgDeposit },
+			err: { msg: msgDeposit, args: argsDeposit },
 			dirty,
 		})(dispatch)
 
 		await validate(validateId, 'pricingBounds_min', {
 			isValid: isValidMin,
-			err: { msg: msgMin },
+			err: { msg: msgMin, args: argsMin },
 			dirty,
 		})(dispatch)
 
 		await validate(validateId, 'pricingBounds_max', {
 			isValid: isValidMax,
-			err: { msg: msgMax },
+			err: { msg: msgMax, args: argsMax },
 			dirty,
 		})(dispatch)
 
