@@ -319,6 +319,7 @@ export function updateUserCampaigns({ updateAllData = false } = {}) {
 		const { identity } = selectAccount(state)
 		const { address } = identity
 		const stateCampaigns = selectCampaigns(state)
+		const { decimals } = selectMainToken(state)
 
 		if (hasAuth && address) {
 			try {
@@ -347,6 +348,7 @@ export function updateUserCampaigns({ updateAllData = false } = {}) {
 									...c.spec,
 									...c,
 									targetingRules: c.targetingRules || c.spec.targetingRules,
+									specPricingBounds: { ...(c.spec.pricingBounds || {}) },
 							  }
 
 						if (!campaign.humanFriendlyName) {
@@ -363,6 +365,7 @@ export function updateUserCampaigns({ updateAllData = false } = {}) {
 								(campaign.pricingBounds
 									? pricingBondsToUserInputPerMile({
 											pricingBounds: campaign.pricingBounds,
+											decimals,
 									  })
 									: null)
 						}
@@ -1016,6 +1019,7 @@ export function validateAndUpdateCampaign({
 	validateId,
 	dirty,
 	item,
+	itemPlain,
 	update,
 	dirtyProps,
 }) {
@@ -1042,9 +1046,9 @@ export function validateAndUpdateCampaign({
 			)
 
 			const updated = new Campaign(item)
-			const minCPMUpdated = dirtyProps.includes('minPerImpression')
-			const maxCPMUpdated = dirtyProps.includes('maxPerImpression')
-			const arePricingBondsUpdated = minCPMUpdated || maxCPMUpdated
+			const arePricingBondsUpdated = dirtyProps.includes(
+				'pricingBoundsCPMUserInput'
+			)
 			const isAudienceUpdated =
 				dirtyProps.includes('audienceInput') || arePricingBondsUpdated
 
@@ -1061,7 +1065,8 @@ export function validateAndUpdateCampaign({
 				pricingBoundsCPMUserInputString.IMPRESSION.min = bondPerActionToUserInputPerMileValue(
 					pricingBounds && pricingBounds.IMPRESSION
 						? pricingBounds.IMPRESSION.min
-						: pricingBounds.min || minPerImpression
+						: pricingBounds.min || minPerImpression,
+					decimals
 				)
 			}
 
@@ -1069,7 +1074,8 @@ export function validateAndUpdateCampaign({
 				pricingBoundsCPMUserInputString.IMPRESSION.max = bondPerActionToUserInputPerMileValue(
 					pricingBounds && pricingBounds.IMPRESSION
 						? pricingBounds.IMPRESSION.max
-						: pricingBounds.max || maxPerImpression
+						: pricingBounds.max || maxPerImpression,
+					decimals
 				)
 			}
 
@@ -1094,6 +1100,7 @@ export function validateAndUpdateCampaign({
 					dirty,
 					depositAmount: depositAmountInputString,
 					pricingBounds: pricingBoundsCPMUserInputString,
+					specPricingBounds: itemPlain.specPricingBounds,
 					errMsg: !dirty,
 					maxDeposit: BigNumber.from(depositAmount),
 					decimals,
@@ -1125,6 +1132,8 @@ export function validateAndUpdateCampaign({
 			}
 
 			const isValid = validations.every(v => v === true)
+
+			console.log('updated.targetingRules', updated.targetingRules)
 
 			if (isValid && update) {
 				if (isAudienceUpdated) {
