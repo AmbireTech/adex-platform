@@ -50,7 +50,7 @@ export const DirtyProps = ({ dirtyProps = [], returnPropToInitialState }) => {
 					flexWrap='wrap'
 					mr={1}
 				>
-					{/* <Info color='secondary' className={classes.changeChip} /> */}
+					<Info color='ingerit' className={classes.changeChip} />
 					<span className={classes.changeChip}>{t('UNSAVED_CHANGES')}:</span>
 					{dirtyProps.map(p => {
 						return (
@@ -83,19 +83,19 @@ export const ChangeControls = hookProps => {
 		<div className={classes.changeControls}>
 			<Collapse timeout={69} in={!!dirtyProps.length}>
 				<Box className={classes.changeControlsPaper}>
-					<Alert severity='success' variant='filled'>
-						<Box
-							width={1}
-							display='flex'
-							flexDirection='row'
-							alignItems='center'
-							justifyContent='space-between'
-							p={1}
-						>
-							<DirtyProps {...hookProps} />
-							<SaveBtn {...hookProps} />
-						</Box>
-					</Alert>
+					<Box
+						width={1}
+						display='flex'
+						flexDirection='row'
+						alignItems='center'
+						justifyContent='space-between'
+						bgcolor='secondary.main'
+						color='secondary.contrastText'
+						p={1}
+					>
+						<DirtyProps {...hookProps} />
+						<SaveBtn {...hookProps} />
+					</Box>
 				</Box>
 				<Box>
 					<DirtyErrors
