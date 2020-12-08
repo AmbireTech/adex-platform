@@ -1,6 +1,5 @@
 export const styles = theme => {
 	const spacing = theme.spacing(1)
-	const ds = theme.spacing(2)
 	const errColor = theme.palette.error.main
 	return {
 		root: {
@@ -56,15 +55,6 @@ export const styles = theme => {
 			left: '50%',
 			marginTop: -12,
 			marginLeft: -12,
-		},
-		errChip: {
-			color: errColor,
-			borderColor: errColor,
-			'& svg': {
-				color: errColor,
-			},
-			marginRight: spacing,
-			marginBottom: spacing,
 		},
 	}
 }
