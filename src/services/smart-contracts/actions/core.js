@@ -45,6 +45,9 @@ const OUTSTANDING_STATUSES = {
 	Withdraw: true,
 }
 
+// TODO: get it from the market
+const GLOBAL_MIN_CPM = '0.01' // per 1000
+
 const EXTRA_PROCESS_TIME = 69 * 60 // 69 min in seconds
 
 // Min/Max that will be the actual bounds
@@ -124,11 +127,17 @@ function getReadyCampaign(campaign, identity, mainToken) {
 
 	newCampaign.validators = validators
 
+	// NOTE: incomment minCoef if do not set as GLOBAL min CPM
+	const pricingBoundsCPMUserInput = { ...newCampaign.pricingBoundsCPMUserInput }
+
+	pricingBoundsCPMUserInput.IMPRESSION.min = GLOBAL_MIN_CPM
+
 	// spec pricing bounds
 	const pricingBounds = userInputPricingBoundsPerMileToRulesValue({
-		pricingBounds: { ...newCampaign.pricingBoundsCPMUserInput },
+		pricingBounds: { ...pricingBoundsCPMUserInput },
 		decimals,
-		minCoef: PRICING_BOUNDS_COEFICIENT,
+		// No need for min coeficiean as it is the global min
+		// minCoef: PRICING_BOUNDS_COEFICIENT,
 		maxCoef: PRICING_BOUNDS_COEFICIENT,
 	})
 
