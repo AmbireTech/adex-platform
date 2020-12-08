@@ -74,6 +74,7 @@ export const EditCPM = ({
 	canSendMsgs,
 	specPricingBounds,
 }) => {
+	console.log('validations', validations)
 	const err = validations[errProp || prop]
 	const active = !!activeFields[prop]
 	const showError = !!err && err.dirty
@@ -107,7 +108,7 @@ export const EditCPM = ({
 				execute(
 					validateNumberString({
 						validateId,
-						prop,
+						prop: errProp,
 						value: ev.target.value,
 						dirty: true,
 					})
