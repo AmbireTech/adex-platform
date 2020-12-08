@@ -88,9 +88,6 @@ export const styles = theme => {
 			zIndex: theme.zIndex.appBar,
 		},
 		changeControlsPaper: {
-			borderColor: theme.palette.secondary.main,
-			// marginBottom: spacing,
-			// marginTop: spacing,
 			[theme.breakpoints.down('sm')]: {
 				marginBottom: 0,
 			},
