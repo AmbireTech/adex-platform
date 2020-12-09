@@ -50,14 +50,14 @@ export const DirtyProps = ({ dirtyProps = [], returnPropToInitialState }) => {
 					flexWrap='wrap'
 					mr={1}
 				>
-					<Info color='ingerit' className={classes.changeChip} />
+					<Info color='inherit' className={classes.changeChip} />
 					<span className={classes.changeChip}>{t('UNSAVED_CHANGES')}:</span>
 					{dirtyProps.map(p => {
 						return (
 							<Chip
 								variant='default'
 								size='small'
-								color='primary'
+								color='secondary'
 								className={classes.changeChip}
 								key={p.name || p}
 								label={t(p.name || p, { isProp: true })}
@@ -89,8 +89,8 @@ export const ChangeControls = hookProps => {
 						flexDirection='row'
 						alignItems='center'
 						justifyContent='space-between'
-						bgcolor='secondary.main'
-						color='secondary.contrastText'
+						bgcolor='primary.main'
+						color='primary.contrastText'
 						p={1}
 					>
 						<DirtyProps {...hookProps} />
