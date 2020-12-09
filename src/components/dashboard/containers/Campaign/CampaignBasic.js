@@ -125,10 +125,9 @@ export const CampaignBasic = ({
 	const isPaused = ((item.targetingRules || [])[0] || {}).onlyShowIf === false
 	const pauseAction = isPaused ? 'RESUME' : 'PAUSE'
 
-	const campaignPricingBounds = pricingBoundsCPMUserInput ||
-		pricingBounds || { IMPRESSION: {} }
-	const cpmMin = campaignPricingBounds.min || minPerImpression || 0
-	const cpmMax = campaignPricingBounds.max || maxPerImpression || 0
+	const campaignPricingBounds = pricingBounds || { IMPRESSION: {} }
+	const cpmMin = campaignPricingBounds.min || 0
+	const cpmMax = campaignPricingBounds.max || 0
 
 	const closeSpinner = useSelector(state =>
 		selectSpinnerById(state, `closing-campaign-${item.id}`)
@@ -322,6 +321,7 @@ export const CampaignBasic = ({
 								prop='minPerImpression'
 								label='CPM_MIN'
 								valuePerAction={cpmMin}
+								updatedValue={minPerImpression}
 								decimals={decimals}
 								symbol={symbol}
 								errProp={'pricingBounds_min'}
@@ -338,6 +338,7 @@ export const CampaignBasic = ({
 								prop='maxPerImpression'
 								label='CPM_MAX'
 								valuePerAction={cpmMax}
+								updatedValue={maxPerImpression}
 								decimals={decimals}
 								symbol={symbol}
 								errProp={'pricingBounds_max'}

@@ -62,6 +62,7 @@ export const EditCPM = ({
 	action,
 	actionValue,
 	valuePerAction,
+	updatedValue,
 	decimals,
 	symbol,
 	validations,
@@ -77,18 +78,19 @@ export const EditCPM = ({
 	const err = validations[errProp || prop]
 	const active = !!activeFields[prop]
 	const showError = !!err && err.dirty
-	// const isDirty = dirtyProps && dirtyProps.includes(prop)
+	const isDirty = dirtyProps && dirtyProps.includes(prop)
 
-	const value =
-		pricingBoundsCPMUserInput &&
-		pricingBoundsCPMUserInput[action] &&
-		!!pricingBoundsCPMUserInput[action][actionValue]
-			? pricingBoundsCPMUserInput[action][actionValue]
-			: formatTokenAmount(
-					BigNumber.from(valuePerAction || 0).mul(1000),
-					decimals,
-					true
-			  )
+	const value = isDirty
+		? updatedValue
+		: pricingBoundsCPMUserInput &&
+		  pricingBoundsCPMUserInput[action] &&
+		  !!pricingBoundsCPMUserInput[action][actionValue]
+		? pricingBoundsCPMUserInput[action][actionValue]
+		: formatTokenAmount(
+				BigNumber.from(valuePerAction || 0).mul(1000),
+				decimals,
+				true
+		  )
 	return (
 		<TextField
 			margin='dense'
@@ -103,7 +105,8 @@ export const EditCPM = ({
 				newValue[action] = { ...(newValue[action] || {}) }
 
 				newValue[action][actionValue] = ev.target.value
-				updateField('pricingBoundsCPMUserInput', newValue)
+				// updateField('pricingBoundsCPMUserInput', newValue)
+				updateField(prop, ev.target.value)
 				execute(
 					validateNumberString({
 						validateId,
