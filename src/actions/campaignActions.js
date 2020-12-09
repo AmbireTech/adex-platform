@@ -1181,7 +1181,7 @@ export function validateAndUpdateCampaign({
 			addToast({
 				type: 'cancel',
 				label: t('ERR_UPDATING_ITEM', {
-					args: ['CAMPAIGN', Helper.getErrMsg(err)],
+					args: ['CAMPAIGN', getErrorMsg(err)],
 				}),
 				timeout: 50000,
 			})(dispatch)
