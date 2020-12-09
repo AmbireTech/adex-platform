@@ -23,6 +23,7 @@ export const styles = theme => ({
 		top: -5,
 		left: -5,
 		zIndex: 1,
+		color: theme.palette.grey.main,
 	},
 })
 
@@ -32,18 +33,20 @@ export const SaveBtn = ({
 	spinner,
 	success,
 	dirtyProps = [],
+	validations,
 	save,
 	disabled,
 }) => {
 	const classes = useStyles()
+	const hasErrors = !!Object.keys(validations).length
 	return (
 		!!dirtyProps.length && (
 			<div className={classes.wrapper}>
 				<Fab
 					size='medium'
-					color='primary'
+					color='secondary'
 					onClick={save}
-					disabled={disabled || spinner || !dirtyProps.length}
+					disabled={disabled || spinner || !dirtyProps.length || hasErrors}
 				>
 					{/*TODO: Success */}
 					{success ? <Check /> : <Save />}
@@ -52,7 +55,7 @@ export const SaveBtn = ({
 					<CircularProgress
 						size={58}
 						className={classes.fabProgress}
-						color='secondary'
+						color='inherit'
 					/>
 				)}
 			</div>
