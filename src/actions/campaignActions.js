@@ -1046,11 +1046,12 @@ export function validateAndUpdateCampaign({
 			)
 
 			const updated = new Campaign(item)
-			const arePricingBondsUpdated = dirtyProps.includes(
-				'pricingBoundsCPMUserInput'
-			)
+
+			const isMinUpdated = dirtyProps.includes('minPerImpression')
+			const isMaxUpdated = dirtyProps.includes('maxPerImpression')
+
 			const isAudienceUpdated =
-				dirtyProps.includes('audienceInput') || arePricingBondsUpdated
+				dirtyProps.includes('audienceInput') || isMinUpdated || isMaxUpdated
 
 			const depositAmountInputString = formatTokenAmount(
 				depositAmount,
@@ -1059,6 +1060,20 @@ export function validateAndUpdateCampaign({
 
 			const pricingBoundsCPMUserInputString = {
 				...(pricingBoundsCPMUserInput || { IMPRESSION: {} }),
+			}
+
+			if (isMinUpdated) {
+				pricingBoundsCPMUserInputString.IMPRESSION = {
+					...pricingBoundsCPMUserInputString.IMPRESSION,
+					min: minPerImpression,
+				}
+			}
+
+			if (isMaxUpdated) {
+				pricingBoundsCPMUserInputString.IMPRESSION = {
+					...pricingBoundsCPMUserInputString.IMPRESSION,
+					max: maxPerImpression,
+				}
 			}
 
 			if (!pricingBoundsCPMUserInputString.IMPRESSION.min) {
@@ -1087,6 +1102,7 @@ export function validateAndUpdateCampaign({
 				}
 			)
 
+			updated.pricingBoundsCPMUserInput = pricingBoundsCPMUserInputString
 			updated.pricingBounds = pricingBoundsImpressionBnString
 
 			const validations = await Promise.all([
@@ -1132,8 +1148,6 @@ export function validateAndUpdateCampaign({
 			}
 
 			const isValid = validations.every(v => v === true)
-
-			console.log('updated.targetingRules', updated.targetingRules)
 
 			if (isValid && update) {
 				if (isAudienceUpdated) {
