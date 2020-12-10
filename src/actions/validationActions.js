@@ -565,71 +565,74 @@ const getCampaignDatesValidation = ({
 	withdrawPeriodStart,
 	activeFrom,
 }) => {
-	let error = null
+	let errActiveFrom = null
+	let errWithdrawPeriodStart = null
 
 	if (withdrawPeriodStart && activeFrom && withdrawPeriodStart <= activeFrom) {
-		error = { message: 'ERR_END_BEFORE_START', prop: 'withdrawPeriodStart' }
+		errWithdrawPeriodStart = { message: 'ERR_END_BEFORE_START' }
 	} else if (
 		withdrawPeriodStart &&
 		activeFrom &&
 		withdrawPeriodStart - activeFrom < MIN_CAMPAIGN_PERIOD
 	) {
-		error = {
+		errWithdrawPeriodStart = {
 			message: 'ERR_MIN_CAMPAIGN_PERIOD',
 			args: ['1', 'HOUR'],
-			prop: 'withdrawPeriodStart',
 		}
 	} else if (withdrawPeriodStart && withdrawPeriodStart < created) {
-		error = { message: 'ERR_END_BEFORE_NOW', prop: 'withdrawPeriodStart' }
+		errWithdrawPeriodStart = { message: 'ERR_END_BEFORE_NOW' }
 	} else if (activeFrom && activeFrom < created) {
-		error = { message: 'ERR_START_BEFORE_NOW' }
+		errWithdrawPeriodStart = { message: 'ERR_START_BEFORE_NOW' }
 	} else if (activeFrom && !withdrawPeriodStart) {
-		error = { message: 'ERR_NO_END', prop: 'withdrawPeriodStart' }
-	} else if (!(withdrawPeriodStart || activeFrom)) {
-		error = { message: 'ERR_NO_DATE_SET', prop: 'withdrawPeriodStart' }
+		errWithdrawPeriodStart = { message: 'ERR_NO_END' }
 	}
 
-	return { error }
+	if (!withdrawPeriodStart) {
+		errWithdrawPeriodStart = { message: 'ERR_NO_DATE_SET' }
+	}
+
+	if (!activeFrom) {
+		errActiveFrom = { message: 'ERR_NO_DATE_SET' }
+	}
+
+	return { errActiveFrom, errWithdrawPeriodStart }
 }
 
 export function validateCampaignDates({
 	validateId,
-	prop,
-	value,
-	dirty,
-	withdrawPeriodStart,
 	activeFrom,
+	withdrawPeriodStart,
+	dirty,
 	created,
 }) {
 	return async function(dispatch, getState) {
-		const withdraw =
-			prop === 'withdrawPeriodStart' ? value : withdrawPeriodStart
-		const from = prop === 'activeFrom' ? value : activeFrom
-
-		const result = getCampaignDatesValidation({
-			withdrawPeriodStart: withdraw,
-			activeFrom: from,
+		const {
+			errActiveFrom,
+			errWithdrawPeriodStart,
+		} = getCampaignDatesValidation({
+			withdrawPeriodStart,
+			activeFrom,
 			created,
 		})
 
 		validate(validateId, 'activeFrom', {
-			isValid: !!from,
+			isValid: !errActiveFrom,
 			err: {
-				msg: 'ERR_NO_DATE_SET',
+				msg: (errActiveFrom || {}).message,
 			},
 			dirty: dirty,
 		})(dispatch)
 
 		validate(validateId, 'withdrawPeriodStart', {
-			isValid: !(result.error && result.error.prop === 'withdrawPeriodStart'),
+			isValid: !errWithdrawPeriodStart,
 			err: {
-				msg: result.error ? result.error.message : '',
-				args: result.error && (result.error.args || []),
+				msg: errWithdrawPeriodStart ? errWithdrawPeriodStart.message : '',
+				args: errWithdrawPeriodStart && (errWithdrawPeriodStart.args || []),
 			},
 			dirty: dirty,
 		})(dispatch)
 
-		const isValid = !result.error
+		const isValid = !errWithdrawPeriodStart && !errActiveFrom
 
 		return isValid
 	}
