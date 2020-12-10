@@ -460,6 +460,7 @@ export function validateAndUpdateSlot({
 	item,
 	update,
 	dirtyProps,
+	onUpdateSucces,
 }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
@@ -685,6 +686,7 @@ export function validateAndUpdateSlot({
 					timeout: 50000,
 				})(dispatch)
 			}
+			update && onUpdateSucces && onUpdateSucces()
 		} catch (err) {
 			console.error('ERR_UPDATING_ITEM', err)
 			addToast({
