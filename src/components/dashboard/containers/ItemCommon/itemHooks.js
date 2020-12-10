@@ -44,6 +44,11 @@ export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 		[activeFields]
 	)
 
+	const onUpdateSuccess = () => {
+		setDirtyProps([])
+		setFields({})
+	}
+
 	const validate = useCallback(
 		dirty =>
 			execute(
@@ -53,7 +58,7 @@ export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 	)
 
 	const save = useCallback(async () => {
-		await execute(
+		execute(
 			validateAndUpdateFn({
 				item,
 				itemPlain,
@@ -61,10 +66,9 @@ export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 				dirty: true,
 				update: true,
 				dirtyProps,
+				onUpdateSuccess,
 			})
 		)
-		setDirtyProps([])
-		setFields({})
 	}, [dirtyProps, item, itemPlain, validateAndUpdateFn, validateId])
 
 	const returnPropToInitialState = useCallback(
