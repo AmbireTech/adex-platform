@@ -130,8 +130,10 @@ function getReadyCampaign(campaign, identity, mainToken) {
 	// NOTE: incomment minCoef if do not set as GLOBAL min CPM
 	const pricingBoundsCPMUserInput = { ...newCampaign.pricingBoundsCPMUserInput }
 
-	pricingBoundsCPMUserInput.IMPRESSION.min = GLOBAL_MIN_CPM
-
+	pricingBoundsCPMUserInput.IMPRESSION = {
+		...pricingBoundsCPMUserInput.IMPRESSION,
+		min: GLOBAL_MIN_CPM,
+	}
 	// spec pricing bounds
 	const pricingBounds = userInputPricingBoundsPerMileToRulesValue({
 		pricingBounds: { ...pricingBoundsCPMUserInput },
