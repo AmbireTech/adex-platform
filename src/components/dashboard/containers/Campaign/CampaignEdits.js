@@ -101,11 +101,6 @@ export const EditCPM = ({
 			name={prop}
 			value={value + (active ? '' : ' ' + symbol)}
 			onChange={ev => {
-				const newValue = { ...(pricingBoundsCPMUserInput || {}) }
-				newValue[action] = { ...(newValue[action] || {}) }
-
-				newValue[action][actionValue] = ev.target.value
-				// updateField('pricingBoundsCPMUserInput', newValue)
 				updateField(prop, ev.target.value)
 				execute(
 					validateNumberString({

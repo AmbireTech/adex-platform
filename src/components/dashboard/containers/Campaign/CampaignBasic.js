@@ -324,7 +324,7 @@ export const CampaignBasic = ({
 								updatedValue={minPerImpression}
 								decimals={decimals}
 								symbol={symbol}
-								errProp={'pricingBounds_min'}
+								// errProp={'pricingBounds_min'}
 								specPricingBounds={itemPlain.specPricingBounds}
 								{...hookProps}
 							/>
@@ -341,7 +341,7 @@ export const CampaignBasic = ({
 								updatedValue={maxPerImpression}
 								decimals={decimals}
 								symbol={symbol}
-								errProp={'pricingBounds_max'}
+								// errProp={'pricingBounds_max'}
 								specPricingBounds={itemPlain.specPricingBounds}
 								{...hookProps}
 							/>
