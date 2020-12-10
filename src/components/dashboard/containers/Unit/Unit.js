@@ -20,12 +20,14 @@ import { t } from 'selectors'
 function Unit({ match }) {
 	const [tabIndex, setTabIndex] = useState(0)
 
-	const { item, validations, validateId, validate, ...hookProps } = useItem({
+	const { item, ...hookProps } = useItem({
 		itemType: 'AdUnit',
 		match,
 		objModel: AdUnit,
 		validateAndUpdateFn: validateAndUpdateUnit,
 	})
+
+	const { validations } = hookProps
 
 	const {
 		id,
