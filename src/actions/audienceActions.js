@@ -43,7 +43,13 @@ export function updateAudienceInput({
 	}
 }
 
-export function validateAndUpdateAudience({ validateId, dirty, item, update }) {
+export function validateAndUpdateAudience({
+	validateId,
+	dirty,
+	item,
+	update,
+	onUpdateSucces,
+}) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
 		try {
@@ -110,6 +116,7 @@ export function validateAndUpdateAudience({ validateId, dirty, item, update }) {
 					timeout: 50000,
 				})(dispatch)
 			}
+			update && onUpdateSucces && onUpdateSucces()
 		} catch (err) {
 			console.error('ERR_UPDATING_ITEM', err)
 			addToast({
