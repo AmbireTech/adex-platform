@@ -542,13 +542,13 @@ export function validateCampaignAmount({
 			dirty,
 		})(dispatch)
 
-		await validate(validateId, 'pricingBounds_min', {
+		await validate(validateId, 'minPerImpression', {
 			isValid: isValidMin,
 			err: { msg: msgMin, args: argsMin },
 			dirty,
 		})(dispatch)
 
-		await validate(validateId, 'pricingBounds_max', {
+		await validate(validateId, 'maxPerImpression', {
 			isValid: isValidMax,
 			err: { msg: msgMax, args: argsMax },
 			dirty,
