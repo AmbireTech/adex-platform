@@ -15,6 +15,7 @@ export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 	const [activeFields, setFields] = useState({})
 	const [dirtyProps, setDirtyProps] = useState([])
 	const [validateId, setValidateId] = useState('update-default')
+	const [validateAfterReset, setValidateAfterReset] = useState(0)
 
 	const storeItem = useSelector(state =>
 		selectItemByTypeAndId(state, itemType, match.params.itemId)
@@ -89,11 +90,18 @@ export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 				setItem(newItem)
 				setDirtyProps(newDirtyProps)
 				setActiveFields(prop.name || prop, false)
-				validate(false)
+				setValidateAfterReset(true)
 			}
 		},
-		[dirtyProps, initialItemState, item, objModel, setActiveFields, validate]
+		[dirtyProps, initialItemState, item, objModel, setActiveFields]
 	)
+
+	useEffect(() => {
+		if (validateAfterReset) {
+			validate(false)
+		}
+		setValidateAfterReset(false)
+	}, [validateAfterReset, validate])
 
 	const updateField = useCallback(
 		(field, value, dpValue) => {
