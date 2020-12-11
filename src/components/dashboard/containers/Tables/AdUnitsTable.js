@@ -1,5 +1,4 @@
-import React, { useEffect, useState, useCallback, Fragment } from 'react'
-import classnames from 'classnames'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Tooltip, IconButton, Box } from '@material-ui/core'
 import { Visibility } from '@material-ui/icons'
 import { utils } from 'ethers'
@@ -15,9 +14,7 @@ import {
 	selectAdUnitsStatsMaxValues,
 	selectInitialDataLoadedByData,
 } from 'selectors'
-import { makeStyles } from '@material-ui/core/styles'
 import { useSelector } from 'react-redux'
-import { styles } from './styles'
 import { formatDateTime, truncateString } from 'helpers/formatters'
 import { NewCloneUnitDialog } from '../../forms/items/NewItems'
 import { AdUnit } from 'adex-models'
@@ -27,16 +24,7 @@ import { ReloadData } from './toolbars'
 const RRIconButton = withReactRouterLink(IconButton)
 const RRImg = withReactRouterLink(Img)
 
-const useStyles = makeStyles(styles)
-
-const getCols = ({
-	classes,
-	noActions,
-	noClone,
-	maxImpressions,
-	maxClicks,
-	maxCTR,
-}) => [
+const getCols = ({ noActions, noClone, maxImpressions, maxClicks, maxCTR }) => [
 	{
 		name: 'media',
 		label: t('PROP_MEDIA'),
@@ -50,7 +38,7 @@ const getCols = ({
 					<ImgComponent
 						key={id}
 						fullScreenOnClick={true}
-						className={classnames(classes.cellImg)}
+						isCellImg
 						src={mediaUrl}
 						alt={id}
 						mediaMime={mediaMime}
@@ -135,7 +123,7 @@ const getCols = ({
 			sort: true,
 			download: false,
 			customBodyRender: ({ to, item, id, title }) => (
-				<Box key={id} className={classes.actions}>
+				<Box key={id}>
 					<Tooltip
 						arrow
 						title={t('LABEL_VIEW')}
@@ -204,7 +192,6 @@ const getOptions = ({ onRowsSelect, reloadData, selected }) => ({
 })
 
 function AdUnitsTable(props) {
-	const classes = useStyles()
 	const side = useSelector(selectSide)
 	const {
 		noActions,
@@ -229,7 +216,6 @@ function AdUnitsTable(props) {
 		selectorArgs,
 		getColumns: () =>
 			getCols({
-				classes,
 				noActions,
 				noClone,
 				maxImpressions,

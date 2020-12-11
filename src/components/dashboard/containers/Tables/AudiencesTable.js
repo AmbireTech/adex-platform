@@ -13,19 +13,16 @@ import {
 } from 'selectors'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import { ArchiveItemBtn } from 'components/dashboard/containers/ItemCommon'
-import { makeStyles } from '@material-ui/core/styles'
 import { useSelector } from 'react-redux'
-import { styles } from './styles'
 import { useTableData } from './tableHooks'
 import { ReloadData } from './toolbars'
 import { execute, updateNewCampaign } from 'actions'
 import { formatDate } from 'helpers/formatters'
 
-const useStyles = makeStyles(styles)
 const RRIconButton = withReactRouterLink(IconButton)
 const RRTypography = withReactRouterLink(Typography)
 
-const getCols = ({ classes, symbol }) => [
+const getCols = ({ symbol }) => [
 	{
 		name: 'title',
 		label: t('PROP_TITLE'),
@@ -68,7 +65,7 @@ const getCols = ({ classes, symbol }) => [
 			setCellHeaderProps: () => ({ style: { textAlign: 'right' } }),
 			setCellProps: () => ({ style: { textAlign: 'right' } }),
 			customBodyRender: ({ id, audienceInput, to, title }) => (
-				<Box key={id} className={classes.actions}>
+				<Box key={id}>
 					<Tooltip arrow title={t('LABEL_VIEW')} aria-label='view'>
 						<RRIconButton to={to} aria-label='preview'>
 							<Visibility color='primary' />
@@ -112,7 +109,6 @@ const getOptions = ({ reloadData }) => ({
 })
 
 function AudiencesTable(props) {
-	const classes = useStyles()
 	const side = useSelector(selectSide)
 	const { symbol } = useSelector(selectMainToken)
 	const itemsLoaded = useSelector(state =>
@@ -124,7 +120,6 @@ function AudiencesTable(props) {
 		selectorArgs: side,
 		getColumns: () =>
 			getCols({
-				classes,
 				symbol,
 			}),
 	})

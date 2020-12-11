@@ -19,10 +19,11 @@ export const styles = theme => {
 			flexGrow: '1',
 		},
 		actions: {
-			backgroundImage: `url(${require('resources/home-wallpaper.jpg')})`,
+			backgroundImage: `url(${require('resources/home-wallpaper.png')})`,
 			backgroundRepeat: 'no-repeat',
 			backgroundSize: 'cover',
 			backgroundPosition: 'center',
+			backgroundColor: theme.palette.background.paper,
 		},
 		buttons: {
 			backgroundColor: theme.palette.grey[200],

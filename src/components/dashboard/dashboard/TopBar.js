@@ -8,7 +8,7 @@ import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 // import ChangeLang from 'components/translate/ChangeLang'
 import { getAuthLogo } from 'helpers/logosHelpers'
 import { logOut } from 'services/store-data/auth'
-
+import ThemeSwitch from 'components/App/ThemeSwitch'
 import {
 	AppBar,
 	Toolbar,
@@ -61,7 +61,7 @@ function TopNav({ handleDrawerToggle, side, t }) {
 					<Hidden mdUp>
 						<Box pl={1}>
 							<IconButton
-								color='inherit'
+								color='default'
 								aria-label='open drawer'
 								onClick={handleDrawerToggle}
 							>
@@ -96,6 +96,7 @@ function TopNav({ handleDrawerToggle, side, t }) {
 
 					<Box display='flex' flexDirection='row' alignItems='center' pr={1}>
 						{/* <ChangeLang /> */}
+						<ThemeSwitch />
 						<Jazzicon
 							diameter={30}
 							seed={jsNumberForAddress(account.wallet.address)}

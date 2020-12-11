@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react'
-import classnames from 'classnames'
 import { Tooltip, IconButton } from '@material-ui/core'
 import { Visibility, Receipt } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
@@ -17,11 +16,9 @@ import {
 	selectInitialDataLoadedByData,
 	selectCampaignDisplayStatus,
 } from 'selectors'
-import { makeStyles } from '@material-ui/core/styles'
 import { utils } from 'ethers'
 import { execute, handlePrintSelectedReceiptsAdvertiser } from 'actions'
 import { useSelector } from 'react-redux'
-import { styles } from './styles'
 import { formatDateTime, truncateString, formatDate } from 'helpers/formatters'
 import { sliderFilterOptions } from './commonFilters'
 import { useTableData } from './tableHooks'
@@ -30,15 +27,7 @@ import { ReloadData, PrintAllReceipts } from './toolbars'
 const RRIconButton = withReactRouterLink(IconButton)
 const RRImg = withReactRouterLink(Img)
 
-const useStyles = makeStyles(styles)
-
-const getCols = ({
-	classes,
-	symbol,
-	maxImpressions,
-	maxDeposit,
-	maxClicks,
-}) => [
+const getCols = ({ symbol, maxImpressions, maxDeposit, maxClicks }) => [
 	{
 		name: 'id',
 		options: {
@@ -65,7 +54,7 @@ const getCols = ({
 				return (
 					<RRImg
 						key={id}
-						className={classnames(classes.cellImg)}
+						isCellImg
 						src={mediaUrl}
 						alt={id}
 						mediaMime={mediaMime}
@@ -308,7 +297,6 @@ const getOptions = ({ decimals, symbol, reloadData }) => ({
 })
 
 function CampaignsTable(props) {
-	const classes = useStyles()
 	const side = useSelector(selectSide)
 	const maxImpressions = useSelector(selectCampaignsMaxImpressions)
 	const maxClicks = useSelector(selectCampaignsMaxClicks)
@@ -324,7 +312,6 @@ function CampaignsTable(props) {
 		getColumns: () =>
 			getCols({
 				decimals,
-				classes,
 				symbol,
 				maxImpressions,
 				maxClicks,
