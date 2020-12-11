@@ -56,7 +56,6 @@ export const TargetingRulesEdit = WithDialog(TargetingSteps)
 
 export const EditCPM = ({
 	prop,
-	errProp,
 	label,
 	pricingBoundsCPMUserInput,
 	action,
@@ -75,7 +74,7 @@ export const EditCPM = ({
 	canSendMsgs,
 	specPricingBounds,
 }) => {
-	const err = validations[errProp || prop]
+	const err = validations[prop]
 	const active = !!activeFields[prop]
 	const showError = !!err && err.dirty
 	const isDirty = dirtyProps && dirtyProps.includes(prop)
@@ -105,7 +104,7 @@ export const EditCPM = ({
 				execute(
 					validateNumberString({
 						validateId,
-						prop: errProp,
+						prop,
 						value: ev.target.value,
 						dirty: true,
 					})
