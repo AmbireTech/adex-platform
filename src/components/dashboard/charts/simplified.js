@@ -1,13 +1,12 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { Line, Chart } from 'react-chartjs-2'
 import { CHARTS_COLORS } from 'components/dashboard/charts/options'
-import { GANDALF_GREY, ALEX_GREY } from 'components/App/themeMUi'
+import { GANDALF_GREY, ALEX_GREY_LIGHT } from 'components/App/themeMUi'
 import { Box, Typography } from '@material-ui/core'
 import Helper from 'helpers/miscHelpers'
-import { selectMainToken, selectAnalyticsNowLabel } from 'selectors'
+import { selectMainToken } from 'selectors'
 import { formatFloatNumberWithCommas } from 'helpers/formatters'
-import * as ChartAnnotation from 'chartjs-plugin-annotation'
 import { t } from 'selectors'
 import { useWindowSize } from 'hooks/useWindowSize'
 
@@ -54,7 +53,6 @@ export const SimpleStatistics = ({
 	y4Color = CHARTS_COLORS[4],
 }) => {
 	const { symbol } = useSelector(selectMainToken)
-	const nowLabel = useSelector(selectAnalyticsNowLabel)
 	const windowSize = useWindowSize()
 	const chartHeight = Math.min(
 		Math.max(Math.floor((windowSize.height || 0) / 2.2), 240),
@@ -138,29 +136,6 @@ export const SimpleStatistics = ({
 				top: 16,
 			},
 		},
-		annotation: {
-			annotations: [
-				{
-					type: 'line',
-					mode: 'vertical',
-					scaleID: 'x-axis-0',
-
-					value: nowLabel,
-					borderColor: ALEX_GREY,
-					borderWidth: DASH_WIDTH,
-					borderDash: [DASH_SIZE, DASH_SIZE],
-					label: {
-						content: t('NOW'),
-						enabled: true,
-						position: 'center',
-						cornerRadius: 0,
-						backgroundColor: ALEX_GREY,
-						fontSize: DEFAULT_FONT_SIZE,
-						fontFamily: FONT,
-					},
-				},
-			],
-		},
 		// This and fixed height are used for proper mobile display of the chart
 		maintainAspectRatio: false,
 		title: {
@@ -209,6 +184,7 @@ export const SimpleStatistics = ({
 						display: true,
 						drawBorder: true,
 						drawTicks: true,
+						color: ALEX_GREY_LIGHT,
 					},
 					scaleLabel: {
 						display: false,
@@ -230,11 +206,13 @@ export const SimpleStatistics = ({
 			yAxes: [
 				{
 					// NOTE: this one is just to show constant size grid lines
-					display: true,
+					display: false,
+					// color: ALEX_GREY_LIGHT,
 					gridLines: {
 						display: true,
 						drawBorder: false,
 						drawTicks: false,
+						color: ALEX_GREY_LIGHT,
 					},
 					ticks: {
 						beginAtZero: true,
@@ -293,12 +271,7 @@ export const SimpleStatistics = ({
 	return (
 		<Box>
 			<Box height={chartHeight}>
-				<Line
-					height={chartHeight}
-					data={chartData}
-					options={linesOptions}
-					plugins={[ChartAnnotation]}
-				/>
+				<Line height={chartHeight} data={chartData} options={linesOptions} />
 			</Box>
 			<Box
 				display='flex'

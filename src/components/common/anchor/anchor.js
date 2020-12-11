@@ -13,6 +13,9 @@ export const styles = theme => ({
 		display: 'inline-flex',
 		alignItems: 'center',
 	},
+	fullWidth: {
+		width: '100%',
+	},
 })
 
 const useStyles = makeStyles(styles)
@@ -36,6 +39,7 @@ const Anchor = ({
 	color,
 	component,
 	className,
+	fullWidth,
 	...rest
 }) => {
 	const classes = useStyles()
@@ -55,7 +59,12 @@ const Anchor = ({
 		...rest,
 	}
 	return (
-		<Link {...linkProps} className={clsx(className, classes.link)}>
+		<Link
+			{...linkProps}
+			className={clsx(className, classes.link, {
+				[classes.fullWidth]: !!fullWidth,
+			})}
+		>
 			{!component && (children || label)}
 			{!component && externalIcon && (
 				<OpenInNew className={classes.externalIcon} />
