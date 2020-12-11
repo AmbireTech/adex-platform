@@ -80,7 +80,7 @@ export const IntegrationCode = ({ slot = {} }) => {
 
 	// TODO: Add copy to clipboard and tooltip or description how to use it
 
-	// 	<Alert severity='warning' variant='outlined'>
+	// 	<Alert severity='warning' variant='filled'>
 	// 	<AlertTitle>{t('EMAIL_NOT_CONFIRMED_WARNING_TITLE')}</AlertTitle>
 	// 	<div
 	// 		dangerouslySetInnerHTML={{
@@ -139,7 +139,7 @@ export const IntegrationCode = ({ slot = {} }) => {
 			)}
 		</Box>
 	) : (
-		<Alert severity='warning' variant='outlined'>
+		<Alert severity='warning' variant='filled'>
 			<AlertTitle>{t('EMAIL_NOT_CONFIRMED_WARNING_TITLE')}</AlertTitle>
 			<div
 				dangerouslySetInnerHTML={{

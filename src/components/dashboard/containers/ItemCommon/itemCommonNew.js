@@ -110,7 +110,7 @@ export const ChangeControls = hookProps => {
 					<Box>
 						{WALLET_ACTIONS_MSGS[authType || 'default'].map((msg, i) => (
 							<Box my={1} key={msg.message + i}>
-								<Alert key={i} severity='info' variant='outlined'>
+								<Alert key={i} severity='info' variant='filled'>
 									{t(msg.message)}
 								</Alert>
 							</Box>

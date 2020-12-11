@@ -219,7 +219,7 @@ function Dashboard(props) {
 						{showTxPrivLevelWarning && (
 							<Box mb={2}>
 								<Alert
-									variant='outlined'
+									variant='filled'
 									severity='info'
 									onClose={() => {
 										execute(updatePrivilegesWarningAccepted(true))
