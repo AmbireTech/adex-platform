@@ -26,6 +26,7 @@ export const styles = theme => {
 				color: 'inherit',
 			},
 			margin: theme.spacing(0.5),
+			backgroundColor: theme.palette.lightGrey.main,
 		},
 	}
 }

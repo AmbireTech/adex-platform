@@ -31,6 +31,7 @@ export const SECONDARY_DARK = '#009471'
 export const ALEX_GREY = '#3C3C3C'
 export const ALEX_GREY_LIGHT = '#666'
 export const ALEX_GREY_DARK = '#161616'
+export const ALEX_GREY_LIGHTEST = '#ebebeb'
 
 export const GANDALF_GREY = '#C4C4C4'
 
@@ -102,7 +103,7 @@ const paletteCommon = {
 	primary: { main: PRIMARY, contrastText: WHITE },
 	secondary: { main: SECONDARY, contrastText: WHITE },
 	grey: { main: ALEX_GREY, contrastText: WHITE },
-	lightGrey: { main: ALEX_GREY_LIGHT, contrastText: WHITE },
+	lightGrey: { main: ALEX_GREY_LIGHTEST, contrastText: BLACK },
 	warning: {
 		main: WARNING,
 		contrastText: BLACK,
@@ -189,7 +190,7 @@ const paletteLight = {
 	grey: {
 		main: ALEX_GREY,
 		contrastText: WHITE,
-		light: ACCENT_ONE_LIGHT,
+		light: ALEX_GREY_LIGHT,
 		dark: ALEX_GREY_DARK,
 	},
 	appBar: { main: grey[200], contrastText: grey[900] },
@@ -237,7 +238,7 @@ export const palette = {
 	grey: {
 		main: ALEX_GREY,
 		contrastText: WHITE,
-		light: ACCENT_ONE_LIGHT,
+		light: ALEX_GREY_LIGHT,
 		dark: ALEX_GREY_DARK,
 	},
 	appBar: { main: grey[200], contrastText: grey[900] },
