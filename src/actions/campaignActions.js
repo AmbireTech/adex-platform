@@ -1010,7 +1010,7 @@ export function validateAndUpdateCampaign({
 	itemPlain,
 	update,
 	dirtyProps,
-	onUpdateSucces,
+	onUpdateSuccess,
 }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
@@ -1166,7 +1166,7 @@ export function validateAndUpdateCampaign({
 				})(dispatch)
 			}
 
-			update && onUpdateSucces && onUpdateSucces()
+			update && onUpdateSuccess && onUpdateSuccess()
 		} catch (err) {
 			console.error('ERR_UPDATING_ITEM', err)
 			addToast({
