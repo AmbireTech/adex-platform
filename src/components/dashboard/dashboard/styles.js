@@ -1,3 +1,5 @@
+import { fade } from '@material-ui/core/styles/colorManipulator'
+
 const drawerWidth = 250
 const lastRowRightReserved = 169
 
@@ -11,6 +13,16 @@ export const styles = theme => {
 			display: 'flex',
 			height: 'calc(100vh - 69px)',
 			width: '100vw',
+			backgroundColor: theme.palette.background.default,
+			// backgroundImage:
+			// 	theme.type === 'dark'
+			// 		? `linear-gradient(
+			// 	335deg,
+			// 	${fade(theme.palette.primary.main, 1)} -46%,
+			// 	${fade(theme.palette.background.default, 1)} 44%
+			// )`
+			// 		: 0,
+			// backgroundRepeat: 'no-repeat',
 		},
 		appBar: {
 			top: 0,
@@ -18,6 +30,7 @@ export const styles = theme => {
 			right: 0,
 			width: 'auto',
 			position: 'fixed',
+			backgroundColor: theme.palette.appBar.main,
 			// marginLeft: drawerWidth,
 			[theme.breakpoints.up('md')]: {
 				// width: `calc(100% - ${drawerWidth}px)`,
@@ -59,11 +72,10 @@ export const styles = theme => {
 			[theme.breakpoints.up('md')]: {
 				position: 'fixed',
 			},
-			backgroundColor: '#fff',
+			backgroundColor: theme.palette.appBar.main,
 		},
 		content: {
 			flexGrow: 1,
-			backgroundColor: theme.palette.background.default,
 			padding: theme.spacing(2),
 			paddingTop: theme.spacing(2),
 			overflow: 'auto',

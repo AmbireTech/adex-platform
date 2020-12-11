@@ -37,7 +37,6 @@ const useStyles = makeStyles(theme => {
 			position: 'absolute',
 			top: theme.spacing(0.3),
 			right: theme.spacing(0.5),
-			opacity: 0.69,
 		},
 	}
 })
@@ -76,6 +75,7 @@ const StatsCard = props => {
 			flexGrow={1}
 		>
 			<Box>
+				{children}
 				<Box
 					display='flex'
 					flexDirection='row'
@@ -108,7 +108,6 @@ const StatsCard = props => {
 					) : (
 						<Typography component='div'>{subtitle}</Typography>
 					))}
-				{children}
 			</Box>
 
 			{loading && <LinearProgress className={classes.progress} />}
