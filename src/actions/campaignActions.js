@@ -1156,6 +1156,8 @@ export function validateAndUpdateCampaign({
 					updated,
 					toastLabel: 'SUCCESS_UPDATING_ITEM',
 				})(dispatch, getState)
+
+				onUpdateSuccess && onUpdateSuccess()
 			} else if (!isValid && update) {
 				addToast({
 					type: 'cancel',
@@ -1165,8 +1167,6 @@ export function validateAndUpdateCampaign({
 					timeout: 50000,
 				})(dispatch)
 			}
-
-			update && onUpdateSuccess && onUpdateSuccess()
 		} catch (err) {
 			console.error('ERR_UPDATING_ITEM', err)
 			addToast({

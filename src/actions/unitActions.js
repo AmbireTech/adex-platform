@@ -212,8 +212,8 @@ export function validateAndUpdateUnit({
 					}),
 					timeout: 50000,
 				})(dispatch)
+				onUpdateSuccess && onUpdateSuccess()
 			}
-			update && onUpdateSuccess && onUpdateSuccess()
 		} catch (err) {
 			console.error('ERR_UPDATING_ITEM', err)
 			addToast({

@@ -677,6 +677,7 @@ export function validateAndUpdateSlot({
 					}),
 					timeout: 50000,
 				})(dispatch)
+				onUpdateSuccess && onUpdateSuccess()
 			} else if (!isValid && update) {
 				addToast({
 					type: 'error',
@@ -686,7 +687,6 @@ export function validateAndUpdateSlot({
 					timeout: 50000,
 				})(dispatch)
 			}
-			update && onUpdateSuccess && onUpdateSuccess()
 		} catch (err) {
 			console.error('ERR_UPDATING_ITEM', err)
 			addToast({
