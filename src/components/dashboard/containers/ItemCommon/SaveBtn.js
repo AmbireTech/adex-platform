@@ -70,8 +70,8 @@ export const SaveBtn = ({
 	disabled,
 }) => {
 	const classes = useStyles()
-	const hasErrors = !!Object.keys(validations).length
-	const isDisabled = disabled || spinner || !dirtyProps.length || hasErrors
+	// const hasErrors = !!Object.keys(validations).length
+	const isDisabled = disabled || spinner || !dirtyProps.length
 	return (
 		!!dirtyProps.length && (
 			<div className={classes.wrapper}>
