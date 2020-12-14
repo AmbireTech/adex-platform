@@ -93,8 +93,8 @@ function CampaignFinance({ validateId, ...rest }) {
 	const {
 		title: errTitle,
 		depositAmount: errDepAmnt,
-		pricingBounds_min: errMin,
-		pricingBounds_max: errMax,
+		minPerImpression: errMin,
+		maxPerImpression: errMax,
 		activeFrom: errFrom,
 		withdrawPeriodStart: errTo,
 	} = invalidFields
@@ -211,7 +211,7 @@ function CampaignFinance({ validateId, ...rest }) {
 							type='text'
 							required
 							label={t('CPM_MIN_LABEL')}
-							name='pricingBounds_min'
+							name='minPerImpression'
 							value={pricingBounds.IMPRESSION.min}
 							onChange={ev => {
 								const value = ev.target.value
@@ -235,7 +235,7 @@ function CampaignFinance({ validateId, ...rest }) {
 							type='text'
 							required
 							label={t('CPM_MAX_LABEL')}
-							name='pricingBounds_max'
+							name='maxPerImpression'
 							value={pricingBounds.IMPRESSION.max}
 							onChange={ev => {
 								const value = ev.target.value
