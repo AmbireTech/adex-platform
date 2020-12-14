@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, Suspense } from 'react'
 import 'react-image-crop/dist/ReactCrop.css'
 import './App.css'
 import { Provider } from 'react-redux'
@@ -15,6 +15,7 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import CacheBuster from './CacheBuster'
 import { updateWindowReloading, execute } from 'actions'
 import MultiThemeProvider from './MultiThemeProvider'
+import Loading from './Loading'
 
 // console.log('initial store', store.getState())
 
@@ -42,7 +43,11 @@ const App = () => {
 				<CssBaseline />
 				<MuiPickersUtilsProvider utils={DateUtils}>
 					<Provider store={store}>
-						<PersistGate onBeforeLift={onBeforeLift} persistor={persistor}>
+						<PersistGate
+							loading={<Loading />}
+							onBeforeLift={onBeforeLift}
+							persistor={persistor}
+						>
 							<ConnectedRouter history={history}>
 								<CacheBuster>
 									<div className='adex-dapp'>
