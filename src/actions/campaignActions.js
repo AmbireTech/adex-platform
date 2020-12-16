@@ -1069,7 +1069,7 @@ export function validateAndUpdateCampaign({
 				pricingBoundsCPMUserInputString.IMPRESSION.min = bondPerActionToUserInputPerMileValue(
 					pricingBounds && pricingBounds.IMPRESSION
 						? pricingBounds.IMPRESSION.min
-						: pricingBounds.min || minPerImpression,
+						: minPerImpression,
 					decimals
 				)
 			}
@@ -1078,7 +1078,7 @@ export function validateAndUpdateCampaign({
 				pricingBoundsCPMUserInputString.IMPRESSION.max = bondPerActionToUserInputPerMileValue(
 					pricingBounds && pricingBounds.IMPRESSION
 						? pricingBounds.IMPRESSION.max
-						: pricingBounds.max || maxPerImpression,
+						: maxPerImpression,
 					decimals
 				)
 			}
@@ -1092,7 +1092,10 @@ export function validateAndUpdateCampaign({
 			)
 
 			updated.pricingBoundsCPMUserInput = pricingBoundsCPMUserInputString
-			updated.pricingBounds = pricingBoundsImpressionBnString
+			updated.audienceInput = {
+				...audienceInput,
+				...{ pricingBoundsCPMUserInput: updated.pricingBoundsCPMUserInput },
+			}
 
 			const validations = await Promise.all([
 				validateCampaignTitle({
@@ -1104,7 +1107,7 @@ export function validateAndUpdateCampaign({
 					validateId,
 					dirty,
 					depositAmount: depositAmountInputString,
-					pricingBounds: pricingBoundsCPMUserInputString,
+					pricingBounds: updated.audienceInput.pricingBoundsCPMUserInput,
 					specPricingBounds: itemPlain.specPricingBounds,
 					errMsg: !dirty,
 					maxDeposit: BigNumber.from(depositAmount),
@@ -1128,7 +1131,7 @@ export function validateAndUpdateCampaign({
 				)
 
 				updated.targetingRules = audienceInputToTargetingRules({
-					audienceInput,
+					audienceInput: updated.audienceInput,
 					minByCategory,
 					countryTiersCoefficients,
 					pricingBounds: pricingBoundsImpressionBnString,
