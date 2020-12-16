@@ -46,15 +46,10 @@ const OUTSTANDING_STATUSES = {
 }
 
 // TODO: get it from the market
-const GLOBAL_MIN_CPM = '0.01' // per 1000
+const GLOBAL_MIN_CPM = '0.01' // per 1000 user input
+const GLOBAL_MAX_CPM = '15.00' // per 1000 user input
 
 const EXTRA_PROCESS_TIME = 69 * 60 // 69 min in seconds
-
-// Min/Max that will be the actual bounds
-// e.g. user input min 0.5 max 2
-// spec bounds min 0.25 max 4
-// Usere will be able to change the pricing bounds up to spec values
-const PRICING_BOUNDS_COEFICIENT = 2
 
 function toEthereumChannel(channel) {
 	const specHash = crypto
@@ -127,20 +122,15 @@ function getReadyCampaign(campaign, identity, mainToken) {
 
 	newCampaign.validators = validators
 
-	// NOTE: incomment minCoef if do not set as GLOBAL min CPM
-	const pricingBoundsCPMUserInput = { ...newCampaign.pricingBoundsCPMUserInput }
-
-	pricingBoundsCPMUserInput.IMPRESSION = {
-		...pricingBoundsCPMUserInput.IMPRESSION,
-		min: GLOBAL_MIN_CPM,
-	}
 	// spec pricing bounds
 	const pricingBounds = userInputPricingBoundsPerMileToRulesValue({
-		pricingBounds: { ...pricingBoundsCPMUserInput },
+		pricingBounds: {
+			IMPRESSION: {
+				min: GLOBAL_MIN_CPM,
+				max: GLOBAL_MAX_CPM,
+			},
+		},
 		decimals,
-		// No need for min coeficiean as it is the global min
-		// minCoef: PRICING_BOUNDS_COEFICIENT,
-		maxCoef: PRICING_BOUNDS_COEFICIENT,
 	})
 
 	// TODO: CLICK when available
