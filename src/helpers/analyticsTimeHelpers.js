@@ -276,22 +276,25 @@ ${dateUtils.format(end, 'YYYY/MM')}`
 }
 
 export const getPeriodDataPointLabel = ({ timeframe, time }) => {
-	switch (timeframe) {
-		case 'hour':
-		case 'day':
-			return `${dateUtils.format(time, 'YYYY/MM/DD HH:mm')}`
-		case 'week':
-			const periodEnd = +dateUtils.addMinutes(
-				dateUtils.addHours(dateUtils.date(time), 3),
-				-1
-			)
-			return `${dateUtils.format(time, 'YYYY/MM/DD HH:mm')} - 
+	if (timeframe && time) {
+		switch (timeframe) {
+			case 'hour':
+			case 'day':
+				return `${dateUtils.format(time, 'YYYY/MM/DD HH:mm')}`
+			case 'week':
+				const periodEnd = +dateUtils.addMinutes(
+					dateUtils.addHours(dateUtils.date(time), 3),
+					-1
+				)
+				return `${dateUtils.format(time, 'YYYY/MM/DD HH:mm')} - 
 ${dateUtils.format(periodEnd, 'YYYY/MM/DD HH:mm')}`
-		case 'month':
-			return `${dateUtils.format(time, 'YYYY/MM/DD')}`
-		case 'year':
-			return `${dateUtils.format(time, 'YYYY/MM')}`
-		default:
-			throw new Error('INVALID_TIMEFRAME')
+			case 'month':
+				return `${dateUtils.format(time, 'YYYY/MM/DD')}`
+			case 'year':
+				return `${dateUtils.format(time, 'YYYY/MM')}`
+			default:
+				throw new Error('INVALID_TIMEFRAME')
+		}
 	}
+	return ''
 }

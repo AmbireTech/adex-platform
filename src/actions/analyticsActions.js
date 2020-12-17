@@ -155,11 +155,17 @@ export const updateAccountAnalytics = throttle(
 	async function(dispatch, getState) {
 		updateAnalyticsLastChecked()(dispatch)
 		const state = getState()
+		const { start, end, callEnd } = selectIdentitySideAnalyticsPeriod(state)
+
+		if (!start || !end || !callEnd) {
+			console.warn('updateAccountAnalytics - periods no selected')
+			return
+		}
+
 		const account = selectAccount(state)
 		const side = selectAnalyticsDataSide(state)
 		const timeframe = selectIdentitySideAnalyticsTimeframe(state)
 		const allChannels = selectChannelsWithUserBalancesAll(state)
-		const { start, end, callEnd } = selectIdentitySideAnalyticsPeriod(state)
 		const feeTokens = selectFeeTokenWhitelist(state)
 		const withdrawTokens = selectRoutineWithdrawTokens(state)
 		try {

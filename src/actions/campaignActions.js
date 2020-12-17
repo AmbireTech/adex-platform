@@ -22,7 +22,7 @@ import {
 } from 'actions'
 import { push } from 'connected-react-router'
 import { schemas, Campaign, helpers } from 'adex-models'
-import { utils } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import { getAllValidatorsAuthForIdentity } from 'services/smart-contracts/actions/stats'
 import {
 	openChannel,
@@ -51,6 +51,9 @@ import {
 	selectTargetingAnalytics,
 	selectTargetingAnalyticsMinByCategories,
 	selectTargetingAnalyticsCountryTiersCoefficients,
+	selectInitialDataLoadedByData,
+	selectCampaigns,
+	selectRoutineWithdrawTokenByAddress,
 } from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
 import {
@@ -61,7 +64,13 @@ import {
 import Helper from 'helpers/miscHelpers'
 import { addUrlUtmTracking } from 'helpers/utmHelpers'
 
-const { audienceInputToTargetingRules, getSuggestedPricingBounds } = helpers
+const {
+	audienceInputToTargetingRules,
+	getSuggestedPricingBounds,
+	userInputPricingBoundsPerMileToRulesValue,
+	pricingBondsToUserInputPerMile,
+	bondPerActionToUserInputPerMileValue,
+} = helpers
 
 const { campaignPut } = schemas
 
@@ -102,7 +111,7 @@ function updateCampaignOnMarket({ updated, toastLabel, toastArgs, toastType }) {
 		})(dispatch)
 
 		// Make sure to update tables
-		await updateUserCampaigns()(dispatch, getState)
+		await updateUserCampaigns({ updateAllData: true })(dispatch, getState)
 	}
 }
 
@@ -113,7 +122,18 @@ export function openCampaign() {
 			const state = getState()
 			const selectedCampaign = selectNewCampaign(state)
 			const account = selectAccount(state)
-			const campaign = { ...selectedCampaign }
+
+			// save it in audienceInput as it is not spec prop
+			// and saving/parsinf form targeting rules is harder
+			const campaign = {
+				...selectedCampaign,
+				audienceInput: {
+					...selectedCampaign.audienceInput,
+					pricingBoundsCPMUserInput: {
+						...selectedCampaign.pricingBoundsCPMUserInput,
+					},
+				},
+			}
 
 			if (campaign.temp.useUtmTags) {
 				campaign.adUnits = [...campaign.adUnits].map((unit, index) => ({
@@ -289,34 +309,46 @@ export function mapCurrentToNewCampaignAudienceInput({ itemId, dirtyProps }) {
 	}
 }
 
-export function updateUserCampaigns() {
+export function updateUserCampaigns({ updateAllData = false } = {}) {
 	return async function(dispatch, getState) {
 		const state = getState()
 		const hasAuth = selectAuth(state)
+		const statusOnly =
+			!!selectInitialDataLoadedByData(state, 'campaigns') && !updateAllData
 		const { identity } = selectAccount(state)
 		const { address } = identity
+		const stateCampaigns = selectCampaigns(state)
+		const { decimals } = selectMainToken(state)
 
 		if (hasAuth && address) {
 			try {
 				const campaigns = await getCampaigns({
 					all: true,
+					statusOnly,
 					byCreator: address,
 					cacheBrake: true,
 				})
 
-				let campaignsMapped = campaigns
+				const campaignsMapped = campaigns
 					.filter(
 						c =>
 							c.id &&
 							c.creator &&
-							c.creator.toLowerCase() === address.toLowerCase()
+							c.creator.toLowerCase() === address.toLowerCase() &&
+							(statusOnly || c.spec)
 					)
 					.map(c => {
-						const campaign = {
-							...c.spec,
-							...c,
-							targetingRules: c.targetingRules || c.spec.targetingRules,
-						}
+						const campaign = statusOnly
+							? {
+									...stateCampaigns[c.id],
+									...{ status: c.status },
+							  }
+							: {
+									...c.spec,
+									...c,
+									targetingRules: c.targetingRules || c.spec.targetingRules,
+									specPricingBounds: { ...(c.spec.pricingBounds || {}) },
+							  }
 
 						if (!campaign.humanFriendlyName) {
 							campaign.status.humanFriendlyName = getHumanFriendlyName(campaign)
@@ -326,6 +358,16 @@ export function updateUserCampaigns() {
 							campaign.audienceInput = selectAudienceByCampaignId(state, c.id)
 						}
 
+						if (!campaign.pricingBoundsCPMUserInput) {
+							campaign.pricingBoundsCPMUserInput =
+								(campaign.audienceInput || {}).pricingBoundsCPMUserInput ||
+								(campaign.pricingBounds
+									? pricingBondsToUserInputPerMile({
+											pricingBounds: campaign.pricingBounds,
+											decimals,
+									  })
+									: null)
+						}
 						return campaign
 					})
 
@@ -371,7 +413,7 @@ export function closeCampaign({ campaign }) {
 				dispatch,
 				getState
 			)
-			await updateUserCampaigns()(dispatch, getState)
+			await updateUserCampaigns({ updateAllData: true })(dispatch, getState)
 			execute(push('/dashboard/advertiser/campaigns'))
 			addToast({
 				type: 'accept',
@@ -704,9 +746,11 @@ export function validateCampaignAudienceInput({
 		await updateSpinner(validateId, true)(dispatch)
 		try {
 			const state = getState()
-			const { audienceInput = {}, pricingBounds, temp } = selectNewCampaign(
-				state
-			)
+			const {
+				audienceInput = {},
+				pricingBoundsCPMUserInput,
+				temp,
+			} = selectNewCampaign(state)
 			const { inputs } = audienceInput
 
 			const isValid = await validateAudience({
@@ -735,18 +779,21 @@ export function validateCampaignAudienceInput({
 				// Update pricingBounds here in order to avoid value check at next steps
 				// Only if the bounds are not updated (step back or soft closed modal)
 				if (
-					!pricingBounds ||
-					!(pricingBounds['IMPRESSION'] || pricingBounds['CLICK'])
-				)
-					await updateNewCampaign('pricingBounds', suggestedPricingBounds)(
-						dispatch,
-						getState
+					!pricingBoundsCPMUserInput ||
+					!(
+						pricingBoundsCPMUserInput['IMPRESSION'] ||
+						pricingBoundsCPMUserInput['CLICK']
 					)
+				)
+					await updateNewCampaign(
+						'pricingBoundsCPMUserInput',
+						suggestedPricingBounds
+					)(dispatch, getState)
 			}
 
 			await handleAfterValidation({ isValid, onValid, onInvalid })
 		} catch (err) {
-			console.log('err', err)
+			console.error('err', err)
 		}
 
 		await updateSpinner(validateId, false)(dispatch)
@@ -772,7 +819,8 @@ export function validateNewCampaignFinance({
 				activeFrom,
 				withdrawPeriodStart,
 				created,
-				pricingBounds,
+				// pricingBounds,
+				pricingBoundsCPMUserInput,
 				audienceInput,
 				// minTargetingScore,
 				// adUnits,
@@ -798,7 +846,7 @@ export function validateNewCampaignFinance({
 					validateId,
 					dirty,
 					depositAmount,
-					pricingBounds,
+					pricingBounds: pricingBoundsCPMUserInput,
 					errMsg: !dirty && 'REQUIRED_FIELD',
 					maxDeposit,
 					decimals,
@@ -810,20 +858,9 @@ export function validateNewCampaignFinance({
 				})(dispatch),
 				validateCampaignDates({
 					validateId,
-					prop: 'activeFrom',
-					value: activeFrom,
-					dirty,
 					activeFrom,
 					withdrawPeriodStart,
-					created,
-				})(dispatch),
-				validateCampaignDates({
-					validateId,
-					prop: 'withdrawPeriodStart',
-					value: withdrawPeriodStart,
 					dirty,
-					activeFrom,
-					withdrawPeriodStart,
 					created,
 				})(dispatch),
 			])
@@ -860,18 +897,16 @@ export function validateNewCampaignFinance({
 					state
 				)
 
-				// TODO: make function in models
-				const pricingBoundsInTokenValue = { ...pricingBounds }
-				const impression = { ...pricingBoundsInTokenValue.IMPRESSION }
-				impression.min = utils.parseUnits(impression.min, decimals)
-				impression.max = utils.parseUnits(impression.max, decimals)
-				pricingBoundsInTokenValue.IMPRESSION = impression
+				const rulesPricingBounds = userInputPricingBoundsPerMileToRulesValue({
+					pricingBounds: pricingBoundsCPMUserInput,
+					decimals,
+				})
 
 				const targetingRules = audienceInputToTargetingRules({
 					audienceInput,
 					minByCategory,
 					countryTiersCoefficients,
-					pricingBounds: pricingBoundsInTokenValue,
+					pricingBounds: rulesPricingBounds,
 					decimals,
 				})
 				await updateNewCampaign('targetingRules', targetingRules)(
@@ -972,50 +1007,94 @@ export function validateAndUpdateCampaign({
 	validateId,
 	dirty,
 	item,
+	itemPlain,
 	update,
 	dirtyProps,
+	onUpdateSuccess,
 }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
+
+		const state = getState()
+
 		try {
 			const {
 				title,
 				audienceInput,
 				pricingBounds,
+				pricingBoundsCPMUserInput,
 				minPerImpression,
 				maxPerImpression,
+				depositAmount,
+				depositAsset,
 			} = item
 
+			const { decimals } = selectRoutineWithdrawTokenByAddress(
+				state,
+				depositAsset
+			)
+
 			const updated = new Campaign(item)
-			const isAudienceUpdated = dirtyProps.includes('audienceInput')
 
-			if (isAudienceUpdated) {
-				const state = getState()
-				const { decimals } = selectMainToken(state)
-				const minByCategory = selectTargetingAnalyticsMinByCategories(state)
-				const countryTiersCoefficients = selectTargetingAnalyticsCountryTiersCoefficients(
-					state
-				)
+			const isMinUpdated = dirtyProps.includes('minPerImpression')
+			const isMaxUpdated = dirtyProps.includes('maxPerImpression')
 
-				// TODO: fix it when it is possible to edit pricing bounds
-				// Legacy campaigns shim
-				const campaignPricingBounds =
+			const isAudienceUpdated =
+				dirtyProps.includes('audienceInput') || isMinUpdated || isMaxUpdated
+
+			const depositAmountInputString = formatTokenAmount(
+				depositAmount,
+				decimals
+			)
+
+			const pricingBoundsCPMUserInputString = {
+				...(pricingBoundsCPMUserInput || { IMPRESSION: {} }),
+			}
+
+			if (isMinUpdated) {
+				pricingBoundsCPMUserInputString.IMPRESSION = {
+					...pricingBoundsCPMUserInputString.IMPRESSION,
+					min: minPerImpression,
+				}
+			}
+
+			if (isMaxUpdated) {
+				pricingBoundsCPMUserInputString.IMPRESSION = {
+					...pricingBoundsCPMUserInputString.IMPRESSION,
+					max: maxPerImpression,
+				}
+			}
+
+			if (!pricingBoundsCPMUserInputString.IMPRESSION.min) {
+				pricingBoundsCPMUserInputString.IMPRESSION.min = bondPerActionToUserInputPerMileValue(
 					pricingBounds && pricingBounds.IMPRESSION
-						? pricingBounds
-						: {
-								IMPRESSION: {
-									min: pricingBounds.min || minPerImpression,
-									max: pricingBounds.min || maxPerImpression,
-								},
-						  }
+						? pricingBounds.IMPRESSION.min
+						: minPerImpression,
+					decimals
+				)
+			}
 
-				updated.targetingRules = audienceInputToTargetingRules({
-					audienceInput,
-					minByCategory,
-					countryTiersCoefficients,
-					pricingBounds: campaignPricingBounds,
+			if (!pricingBoundsCPMUserInputString.IMPRESSION.max) {
+				pricingBoundsCPMUserInputString.IMPRESSION.max = bondPerActionToUserInputPerMileValue(
+					pricingBounds && pricingBounds.IMPRESSION
+						? pricingBounds.IMPRESSION.max
+						: maxPerImpression,
+					decimals
+				)
+			}
+
+			// Per impression
+			const pricingBoundsImpressionBnString = userInputPricingBoundsPerMileToRulesValue(
+				{
+					pricingBounds: pricingBoundsCPMUserInputString,
 					decimals,
-				})
+				}
+			)
+
+			updated.pricingBoundsCPMUserInput = pricingBoundsCPMUserInputString
+			updated.audienceInput = {
+				...audienceInput,
+				...{ pricingBoundsCPMUserInput: updated.pricingBoundsCPMUserInput },
 			}
 
 			const validations = await Promise.all([
@@ -1023,6 +1102,16 @@ export function validateAndUpdateCampaign({
 					validateId,
 					title,
 					dirty,
+				})(dispatch),
+				validateCampaignAmount({
+					validateId,
+					dirty,
+					depositAmount: depositAmountInputString,
+					pricingBounds: updated.audienceInput.pricingBoundsCPMUserInput,
+					specPricingBounds: itemPlain.specPricingBounds,
+					errMsg: !dirty,
+					maxDeposit: BigNumber.from(depositAmount),
+					decimals,
 				})(dispatch),
 				validateSchemaProp({
 					validateId,
@@ -1033,11 +1122,27 @@ export function validateAndUpdateCampaign({
 				})(dispatch),
 			])
 
+			if (isAudienceUpdated) {
+				const state = getState()
+				const { decimals } = selectMainToken(state)
+				const minByCategory = selectTargetingAnalyticsMinByCategories(state)
+				const countryTiersCoefficients = selectTargetingAnalyticsCountryTiersCoefficients(
+					state
+				)
+
+				updated.targetingRules = audienceInputToTargetingRules({
+					audienceInput: updated.audienceInput,
+					minByCategory,
+					countryTiersCoefficients,
+					pricingBounds: pricingBoundsImpressionBnString,
+					decimals,
+				})
+			}
+
 			const isValid = validations.every(v => v === true)
 
 			if (isValid && update) {
 				if (isAudienceUpdated) {
-					const state = getState()
 					const account = selectAccount(state)
 					const { authTokens } = await updateTargeting({
 						account,
@@ -1054,11 +1159,13 @@ export function validateAndUpdateCampaign({
 					updated,
 					toastLabel: 'SUCCESS_UPDATING_ITEM',
 				})(dispatch, getState)
+
+				onUpdateSuccess && onUpdateSuccess()
 			} else if (!isValid && update) {
 				addToast({
 					type: 'cancel',
 					label: t('ERR_UPDATING_ITEM', {
-						args: ['CAMPAIGN', getErrorMsg('INVALID_DATA')],
+						args: ['CAMPAIGN', getErrorMsg('INVALID_INPUT_PARAMETERS')],
 					}),
 					timeout: 50000,
 				})(dispatch)
@@ -1068,7 +1175,7 @@ export function validateAndUpdateCampaign({
 			addToast({
 				type: 'cancel',
 				label: t('ERR_UPDATING_ITEM', {
-					args: ['CAMPAIGN', Helper.getErrMsg(err)],
+					args: ['CAMPAIGN', getErrorMsg(err)],
 				}),
 				timeout: 50000,
 			})(dispatch)

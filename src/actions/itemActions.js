@@ -54,10 +54,10 @@ export function getAllItems(onDataUpdated) {
 			const slots = getAdSlots({ identity: address })
 			const audiences = getUserAudiences()
 
-			const [resUnits, resSlots, resAudiences] = await Promise.all([
+			const [resAudiences, resUnits, resSlots] = await Promise.all([
+				audiences,
 				units,
 				slots,
-				audiences,
 			])
 			const userSlots = resSlots.slots || []
 			const userPassbackUnits = (resSlots.passbackUnits || []).reduce(
@@ -77,14 +77,14 @@ export function getAllItems(onDataUpdated) {
 
 			const slotWithUnitsRes = await Promise.all(slotsWithUnits)
 			if (selectAuth(getState())) {
+				updateItems({
+					items: resAudiences.audiences,
+					itemType: 'Audience',
+				})(dispatch)
 				updateItems({ items: resUnits, itemType: 'AdUnit' })(dispatch)
 				updateItems({
 					items: slotWithUnitsRes,
 					itemType: 'AdSlot',
-				})(dispatch)
-				updateItems({
-					items: resAudiences.audiences,
-					itemType: 'Audience',
 				})(dispatch)
 				updateItems({ items: resSlots.websites || [], itemType: 'Website' })(
 					dispatch
