@@ -793,7 +793,7 @@ export function validateCampaignAudienceInput({
 
 			await handleAfterValidation({ isValid, onValid, onInvalid })
 		} catch (err) {
-			console.log('err', err)
+			console.error('err', err)
 		}
 
 		await updateSpinner(validateId, false)(dispatch)

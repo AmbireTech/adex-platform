@@ -7,7 +7,6 @@ import {
 	UPDATE_PUBLISHER_RECEIPTS,
 	UPDATE_ADVANCED_ANALYTICS,
 	UPDATE_DEMAND_ANALYTICS,
-	UPDATE_TARGETING_ANALYTICS,
 } from 'constants/actionTypes'
 import initialState from 'store/initialState'
 
