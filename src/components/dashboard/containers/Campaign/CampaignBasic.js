@@ -126,8 +126,8 @@ export const CampaignBasic = ({
 	const pauseAction = isPaused ? 'RESUME' : 'PAUSE'
 
 	const campaignPricingBounds = pricingBounds || { IMPRESSION: {} }
-	const cpmMin = campaignPricingBounds.min || 0
-	const cpmMax = campaignPricingBounds.max || 0
+	const cpmMin = campaignPricingBounds.IMPRESSION.min || minPerImpression || 0
+	const cpmMax = campaignPricingBounds.IMPRESSION.max || maxPerImpression || 0
 
 	const closeSpinner = useSelector(state =>
 		selectSpinnerById(state, `closing-campaign-${item.id}`)
