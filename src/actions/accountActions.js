@@ -543,7 +543,7 @@ export function loadAccountData() {
 				updateInitialDataLoaded('accountIdentityData', true)(dispatch, getState)
 			)(dispatch, getState))
 
-		const items = getAllItems(() =>
+		const items = await getAllItems(() =>
 			updateInitialDataLoaded('allItems', true)(dispatch, getState)
 		)(dispatch, getState)
 

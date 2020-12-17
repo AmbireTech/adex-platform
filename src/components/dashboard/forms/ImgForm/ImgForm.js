@@ -137,7 +137,7 @@ function ImgForm(props) {
 					<span> {t('DRAG_AND_DROP_TO_UPLOAD')} </span>
 				</div>
 				<div>
-					<small> (max 2MB; .jpeg, .jpg) </small>
+					<small> (max 2MB; .jpeg, .jpg, .png, .mp4) </small>
 				</div>
 				<div>
 					<Typography className={classes.errMsg} color='error'>

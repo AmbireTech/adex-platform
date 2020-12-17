@@ -15,8 +15,7 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import CacheBuster from './CacheBuster'
 import { updateWindowReloading, execute } from 'actions'
 import MultiThemeProvider from './MultiThemeProvider'
-
-// console.log('initial store', store.getState())
+import Loading from './Loading'
 
 const onBeforeLift = () => {
 	// take some action before the gate lifts
@@ -42,7 +41,11 @@ const App = () => {
 				<CssBaseline />
 				<MuiPickersUtilsProvider utils={DateUtils}>
 					<Provider store={store}>
-						<PersistGate onBeforeLift={onBeforeLift} persistor={persistor}>
+						<PersistGate
+							loading={<Loading />}
+							onBeforeLift={onBeforeLift}
+							persistor={persistor}
+						>
 							<ConnectedRouter history={history}>
 								<CacheBuster>
 									<div className='adex-dapp'>

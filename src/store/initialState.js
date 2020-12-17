@@ -14,14 +14,16 @@ let initialState = {
 	},
 	newItem: {
 		Campaign: new Campaign({
-			audienceInput: { version: '1', inputs: {} },
+			audienceInput: { version: '1', inputs: { devices: { apply: 'allin' } } },
 			temp: { useUtmTags: true, useUtmSrcWithPub: true },
 		}).plainObj(),
 		AdUnit: new AdUnit({ temp: { addUtmLink: true } }).plainObj(),
 		AdSlot: new AdSlot({
 			rulesInput: { version: '1', inputs: { autoSetMinCPM: false } },
 		}).plainObj(),
-		Audience: new Audience().plainObj(),
+		Audience: new Audience({
+			inputs: { version: '1', devices: { apply: 'allin' } },
+		}).plainObj(),
 		Website: {},
 	},
 	currentItem: {},

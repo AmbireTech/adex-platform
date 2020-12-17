@@ -38,7 +38,8 @@ export const selectCampaignUnitsById = createSelector(
 
 export const selectCampaignInDetails = createSelector(
 	[selectCampaignIdInDetails, state => state],
-	(campaignId, state) => selectCampaignById(state, campaignId)
+	(campaignId, state) =>
+		campaignId ? selectCampaignById(state, campaignId) : undefined
 )
 
 export const selectCampaignWithAnalyticsById = createSelector(

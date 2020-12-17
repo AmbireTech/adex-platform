@@ -10,10 +10,12 @@ import { Base } from 'adex-models'
 
 export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 	const [item, setItem] = useState({})
+	const [itemPlain, seItemPlain] = useState({})
 	const [initialItemState, setInitialItemState] = useState({})
 	const [activeFields, setFields] = useState({})
 	const [dirtyProps, setDirtyProps] = useState([])
 	const [validateId, setValidateId] = useState('update-default')
+	const [validateAfterReset, setValidateAfterReset] = useState(0)
 
 	const storeItem = useSelector(state =>
 		selectItemByTypeAndId(state, itemType, match.params.itemId)
@@ -26,11 +28,14 @@ export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 	const spinner = useSelector(state => selectSpinnerById(state, validateId))
 
 	useEffect(() => {
-		const initial = new objModel(storeItem)
-		setItem(initial)
-		setInitialItemState(initial)
-		setValidateId(`update-${item.id}`)
-	}, [item.id, objModel, storeItem])
+		if (!Object.keys(activeFields).length && !dirtyProps.length) {
+			const initial = new objModel(storeItem)
+			setItem(initial)
+			seItemPlain(JSON.parse(JSON.stringify(storeItem)))
+			setInitialItemState(initial)
+			setValidateId(`update-${item.id}`)
+		}
+	}, [item.id, objModel, storeItem, dirtyProps, activeFields])
 
 	const setActiveFields = useCallback(
 		(field, value) => {
@@ -39,25 +44,32 @@ export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 		[activeFields]
 	)
 
+	const onUpdateSuccess = () => {
+		setDirtyProps([])
+		setFields({})
+	}
+
 	const validate = useCallback(
 		dirty =>
-			execute(validateAndUpdateFn({ item, validateId, dirty, dirtyProps })),
-		[dirtyProps, item, validateAndUpdateFn, validateId]
+			execute(
+				validateAndUpdateFn({ item, itemPlain, validateId, dirty, dirtyProps })
+			),
+		[dirtyProps, item, itemPlain, validateAndUpdateFn, validateId]
 	)
 
 	const save = useCallback(async () => {
-		await execute(
+		execute(
 			validateAndUpdateFn({
 				item,
+				itemPlain,
 				validateId,
 				dirty: true,
 				update: true,
 				dirtyProps,
+				onUpdateSuccess,
 			})
 		)
-		setDirtyProps([])
-		setFields({})
-	}, [dirtyProps, item, validateAndUpdateFn, validateId])
+	}, [dirtyProps, item, itemPlain, validateAndUpdateFn, validateId])
 
 	const returnPropToInitialState = useCallback(
 		prop => {
@@ -82,11 +94,18 @@ export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 				setItem(newItem)
 				setDirtyProps(newDirtyProps)
 				setActiveFields(prop.name || prop, false)
-				validate(false)
+				setValidateAfterReset(true)
 			}
 		},
-		[dirtyProps, initialItemState, item, objModel, setActiveFields, validate]
+		[dirtyProps, initialItemState, item, objModel, setActiveFields]
 	)
+
+	useEffect(() => {
+		if (validateAfterReset) {
+			validate(false)
+		}
+		setValidateAfterReset(false)
+	}, [validateAfterReset, validate])
 
 	const updateField = useCallback(
 		(field, value, dpValue) => {
@@ -124,6 +143,7 @@ export function useItem({ itemType, match, objModel, validateAndUpdateFn }) {
 
 	return {
 		item,
+		itemPlain,
 		initialItemState,
 		activeFields,
 		setActiveFields,

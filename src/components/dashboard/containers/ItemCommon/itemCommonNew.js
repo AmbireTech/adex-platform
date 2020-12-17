@@ -14,12 +14,6 @@ import {
 	Paper,
 	Collapse,
 	Button,
-	FormControl,
-	FormControlLabel,
-	FormGroup,
-	FormHelperText,
-	Checkbox,
-	Grid,
 } from '@material-ui/core'
 import { Alert } from '@material-ui/lab'
 import {
@@ -30,17 +24,10 @@ import {
 	ArchiveSharp as ArchiveIcon,
 } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
-import OutlinedPropView from 'components/common/OutlinedPropView'
 import { ExternalAnchor } from 'components/common/anchor/anchor'
-import { formatTokenAmount } from 'helpers/formatters'
-import { BigNumber } from 'ethers'
-import { t, selectMainToken, selectAuthType } from 'selectors'
-import {
-	execute,
-	confirmAction,
-	archiveItem,
-	validateNumberString,
-} from 'actions'
+import { DirtyErrors } from 'components/common/dirtyErrors'
+import { t, selectAuthType } from 'selectors'
+import { execute, confirmAction, archiveItem } from 'actions'
 import { styles } from './styles'
 import { SaveBtn } from './SaveBtn'
 import { WALLET_ACTIONS_MSGS } from 'constants/misc'
@@ -63,12 +50,12 @@ export const DirtyProps = ({ dirtyProps = [], returnPropToInitialState }) => {
 					flexWrap='wrap'
 					mr={1}
 				>
-					<Info color='secondary' className={classes.changeChip} />
+					<Info color='inherit' className={classes.changeChip} />
 					<span className={classes.changeChip}>{t('UNSAVED_CHANGES')}:</span>
 					{dirtyProps.map(p => {
 						return (
 							<Chip
-								variant='outlined'
+								variant='default'
 								size='small'
 								color='secondary'
 								className={classes.changeChip}
@@ -90,33 +77,47 @@ export const DirtyProps = ({ dirtyProps = [], returnPropToInitialState }) => {
 export const ChangeControls = hookProps => {
 	const classes = useStyles()
 	const authType = useSelector(selectAuthType)
+	const { dirtyProps, spinner, validations } = hookProps
 
 	return (
 		<div className={classes.changeControls}>
-			<Collapse timeout={69} in={!!hookProps.dirtyProps.length}>
-				<Paper variant='outlined' className={classes.changeControlsPaper}>
+			<Collapse timeout={69} in={!!dirtyProps.length}>
+				<Box className={classes.changeControlsPaper}>
 					<Box
+						width={1}
 						display='flex'
 						flexDirection='row'
 						alignItems='center'
 						justifyContent='space-between'
+						bgcolor='primary.main'
+						color='primary.contrastText'
 						p={1}
 					>
 						<DirtyProps {...hookProps} />
 						<SaveBtn {...hookProps} />
 					</Box>
-				</Paper>
-				{hookProps.spinner && hookProps.dirtyProps.includes('audienceInput') && (
-					<Box>
-						{WALLET_ACTIONS_MSGS[authType || 'default'].map((msg, i) => (
-							<Box my={1} key={msg.message + i}>
-								<Alert key={i} severity='info' variant='filled'>
-									{t(msg.message)}
-								</Alert>
-							</Box>
-						))}
-					</Box>
-				)}
+				</Box>
+				<Box>
+					<DirtyErrors
+						validations={validations}
+						chipsProps={{ color: 'default', variant: 'default' }}
+						boxProps={{ mt: 1 }}
+					/>
+				</Box>
+
+				{spinner &&
+					(dirtyProps.includes('audienceInput') ||
+						dirtyProps.includes('pricingBoundsCPMUserInput')) && (
+						<Box>
+							{WALLET_ACTIONS_MSGS[authType || 'default'].map((msg, i) => (
+								<Box mt={1} key={msg.message + i}>
+									<Alert key={i} severity='info' variant='filled'>
+										{t(msg.message)}
+									</Alert>
+								</Box>
+							))}
+						</Box>
+					)}
 			</Collapse>
 		</div>
 	)
