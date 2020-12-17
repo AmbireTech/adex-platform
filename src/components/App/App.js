@@ -1,4 +1,4 @@
-import React, { useEffect, Suspense } from 'react'
+import React, { useEffect } from 'react'
 import 'react-image-crop/dist/ReactCrop.css'
 import './App.css'
 import { Provider } from 'react-redux'
@@ -16,8 +16,6 @@ import CacheBuster from './CacheBuster'
 import { updateWindowReloading, execute } from 'actions'
 import MultiThemeProvider from './MultiThemeProvider'
 import Loading from './Loading'
-
-// console.log('initial store', store.getState())
 
 const onBeforeLift = () => {
 	// take some action before the gate lifts
