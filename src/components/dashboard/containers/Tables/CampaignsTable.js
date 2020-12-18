@@ -72,7 +72,7 @@ const getCols = ({ symbol, maxImpressions, maxDeposit, maxClicks }) => [
 			filter: true,
 			sort: false,
 			filterOptions: {
-				names: ['ACTIVE', 'SCHEDULED', 'CLOSED', 'COMPLETED'],
+				names: ['ACTIVE', 'SCHEDULED', 'CLOSED', 'COMPLETED', 'PAUSED'],
 				logic: ({ status }, filters) => {
 					if (filters.length)
 						return !filters.includes(selectCampaignDisplayStatus(status))

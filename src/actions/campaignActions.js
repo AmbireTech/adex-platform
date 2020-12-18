@@ -224,9 +224,15 @@ export const updateCampaignState = ({ campaign }) => {
 function getHumanFriendlyName(campaign) {
 	if (campaign.status && campaign.status.humanFriendlyName === 'Closed')
 		return 'Closed'
+
+	const isPaused =
+		((campaign.targetingRules || [])[0] || {}).onlyShowIf === false
+
+	let status = 'N/A'
 	switch ((campaign.status || {}).name) {
 		case 'Pending':
-			return 'Pending'
+			status = 'Pending'
+			break
 		case 'Active':
 		case 'Ready':
 		case 'Initializing':
@@ -235,14 +241,23 @@ function getHumanFriendlyName(campaign) {
 		case 'Disconnected':
 		case 'Unhealthy':
 		case 'Invalid':
-			return 'Active'
+			status = 'Active'
+			break
 		case 'Expired':
 		case 'Exhausted':
 		case 'Withdraw':
-			return 'Completed'
+			status = 'Completed'
+			break
 		default:
-			return 'N/A'
+			status = 'N/A'
+			break
 	}
+
+	if (status === 'Active' && isPaused) {
+		status = 'Paused'
+	}
+
+	return status
 }
 
 export function updateCampaignAudienceInput({
