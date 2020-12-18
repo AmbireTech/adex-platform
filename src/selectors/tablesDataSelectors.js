@@ -35,8 +35,9 @@ import {
 	SECONDARY_LIGHT,
 } from 'components/App/themeMUi'
 import { grey } from '@material-ui/core/colors'
-import { constants } from 'adex-models'
+import { constants, helpers } from 'adex-models'
 const { CountryNames, numericToAlpha2 } = constants
+const { pricingBondsToUserInputPerMile } = helpers
 
 export const selectCampaignsTableData = createSelector(
 	[selectCampaignsArray, selectRoutineWithdrawTokens, (_, side) => side],
@@ -45,12 +46,33 @@ export const selectCampaignsTableData = createSelector(
 			.filter(x => !x.archived)
 			.map(item => {
 				const { decimals = 18 } = tokens[item.depositAsset] || {}
-				const { id, spec = {}, adUnits = [], status } = item
+				const {
+					id,
+					spec = {},
+					adUnits = [],
+					status,
+					pricingBoundsCPMUserInput,
+					specPricingBounds,
+				} = item
 
 				const firstUnit = adUnits[0] || {}
 
 				const to = `/dashboard/${side}/campaigns/${id}`
 				const toReceipt = `/dashboard/${side}/receipt/${id}`
+
+				const cpm =
+					pricingBoundsCPMUserInput ||
+					pricingBondsToUserInputPerMile({
+						pricingBounds: specPricingBounds.IMPRESSION
+							? specPricingBounds
+							: {
+									IMPRESSION: {
+										min: item.minPerImpression || spec.minPerImpression,
+										max: item.maxPerImpression || spec.maxPerImpression,
+									},
+							  },
+						decimals,
+					})
 
 				return {
 					media: {
@@ -76,17 +98,9 @@ export const selectCampaignsTableData = createSelector(
 						(selectCampaignEventsCount('CLICK', id) /
 							selectCampaignEventsCount('IMPRESSION', id)) *
 							100 || 0,
+					minPerImpression: Number(cpm.IMPRESSION.min),
 
-					minPerImpression: {
-						id,
-						minPerImpression:
-							Number(
-								utils.formatUnits(
-									spec.minPerImpression || item.minPerImpression || '0',
-									decimals
-								)
-							) * 1000,
-					},
+					maxPerImpression: Number(cpm.IMPRESSION.max),
 					created: item.created,
 					activeFrom: spec.activeFrom || item.activeFrom,
 					withdrawPeriodStart:
