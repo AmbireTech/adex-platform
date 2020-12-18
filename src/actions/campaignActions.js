@@ -224,9 +224,15 @@ export const updateCampaignState = ({ campaign }) => {
 function getHumanFriendlyName(campaign) {
 	if (campaign.status && campaign.status.humanFriendlyName === 'Closed')
 		return 'Closed'
+
+	const isPaused =
+		((campaign.targetingRules || [])[0] || {}).onlyShowIf === false
+
+	let status = 'N/A'
 	switch ((campaign.status || {}).name) {
 		case 'Pending':
-			return 'Pending'
+			status = 'Pending'
+			break
 		case 'Active':
 		case 'Ready':
 		case 'Initializing':
@@ -235,14 +241,23 @@ function getHumanFriendlyName(campaign) {
 		case 'Disconnected':
 		case 'Unhealthy':
 		case 'Invalid':
-			return 'Active'
+			status = 'Active'
+			break
 		case 'Expired':
 		case 'Exhausted':
 		case 'Withdraw':
-			return 'Completed'
+			status = 'Completed'
+			break
 		default:
-			return 'N/A'
+			status = 'N/A'
+			break
 	}
+
+	if (status === 'Active' && isPaused) {
+		status = 'Paused'
+	}
+
+	return status
 }
 
 export function updateCampaignAudienceInput({
@@ -347,7 +362,14 @@ export function updateUserCampaigns({ updateAllData = false } = {}) {
 									...c.spec,
 									...c,
 									targetingRules: c.targetingRules || c.spec.targetingRules,
-									specPricingBounds: { ...(c.spec.pricingBounds || {}) },
+									specPricingBounds: {
+										...(c.spec.pricingBounds || {
+											IMPRESSION: {
+												min: c.spec.minPerImpression || c.minPerImpression,
+												max: c.spec.maxPerImpression || c.maxPerImpression,
+											},
+										}),
+									},
 							  }
 
 						if (!campaign.humanFriendlyName) {
@@ -502,6 +524,9 @@ export function excludeOrIncludeWebsites({
 			const { account } = state.persist
 			const updated = new Campaign(campaign)
 
+			const currentTargetingRules = campaign.targetingRules || []
+			const isPaused = (currentTargetingRules[0] || {}).onlyShowIf === false
+
 			const campaignAudienceInput = selectAudienceByCampaignId(
 				state,
 				campaignId
@@ -639,6 +664,10 @@ export function excludeOrIncludeWebsites({
 				pricingBounds: campaignPricingBounds,
 				decimals,
 			})
+
+			if (isPaused) {
+				newRules.unshift({ onlyShowIf: false })
+			}
 
 			updated.targetingRules = newRules
 			updated.audienceInput = newAudienceInput
@@ -1027,6 +1056,7 @@ export function validateAndUpdateCampaign({
 				maxPerImpression,
 				depositAmount,
 				depositAsset,
+				targetingRules,
 			} = item
 
 			const { decimals } = selectRoutineWithdrawTokenByAddress(
@@ -1035,6 +1065,9 @@ export function validateAndUpdateCampaign({
 			)
 
 			const updated = new Campaign(item)
+
+			const currentTargetingRules = targetingRules || []
+			const isPaused = (currentTargetingRules[0] || {}).onlyShowIf === false
 
 			const isMinUpdated = dirtyProps.includes('minPerImpression')
 			const isMaxUpdated = dirtyProps.includes('maxPerImpression')
@@ -1144,6 +1177,10 @@ export function validateAndUpdateCampaign({
 			if (isValid && update) {
 				if (isAudienceUpdated) {
 					const account = selectAccount(state)
+					if (isPaused) {
+						updated.targetingRules.unshift({ onlyShowIf: false })
+					}
+
 					const { authTokens } = await updateTargeting({
 						account,
 						campaign: updated,

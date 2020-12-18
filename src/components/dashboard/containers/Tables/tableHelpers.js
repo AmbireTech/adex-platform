@@ -5,6 +5,7 @@ import {
 	WarningSharp as WarningIcon,
 	HourglassFullSharp as HourglassFullIcon,
 	MonetizationOnSharp as MonetizationOnIcon,
+	PauseSharp as PauseIcon,
 } from '@material-ui/icons'
 import { t } from 'selectors'
 
@@ -44,8 +45,16 @@ const mapStatusIcons = (status = {}, size) => {
 		</IconTooltip>
 	)
 
+	const Pause = (
+		<IconTooltip name={name}>
+			<PauseIcon style={icon[size]} color={'secondary'} />
+		</IconTooltip>
+	)
+
 	if (humanFriendlyName === 'Closed' && name.toLowerCase() !== 'exhausted')
 		return Wait
+	if (humanFriendlyName === 'Paused') return Pause
+
 	switch (name.toLowerCase()) {
 		case 'active':
 		case 'ready':
