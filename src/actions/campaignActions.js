@@ -347,7 +347,14 @@ export function updateUserCampaigns({ updateAllData = false } = {}) {
 									...c.spec,
 									...c,
 									targetingRules: c.targetingRules || c.spec.targetingRules,
-									specPricingBounds: { ...(c.spec.pricingBounds || {}) },
+									specPricingBounds: {
+										...(c.spec.pricingBounds || {
+											IMPRESSION: {
+												min: c.spec.minPerImpression || c.minPerImpression,
+												max: c.spec.maxPerImpression || c.maxPerImpression,
+											},
+										}),
+									},
 							  }
 
 						if (!campaign.humanFriendlyName) {
