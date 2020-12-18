@@ -162,17 +162,24 @@ const getCols = ({ symbol, maxImpressions, maxDeposit, maxClicks }) => [
 	},
 	{
 		name: 'minPerImpression',
-		label: t('PROP_CPM'),
+		label: t('CPM_MIN'),
 		options: {
 			filter: false,
 			sort: true,
-			customBodyRender: ({ minPerImpression, id }) => (
-				<Fragment key={id}>{`${minPerImpression.toFixed(
-					2
-				)} ${symbol}`}</Fragment>
-			),
+			customBodyRender: minPerImpression =>
+				`${minPerImpression.toFixed(2)} ${symbol}`,
 		},
 	},
+	// {
+	// 	name: 'maxPerImpression',
+	// 	label: t('CPM_MAX'),
+	// 	options: {
+	// 		filter: false,
+	// 		sort: true,
+	// 		customBodyRender: maxPerImpression =>
+	// 			`${maxPerImpression.toFixed(2)} ${symbol}`,
+	// 	},
+	// },
 	{
 		name: 'created',
 		label: t('PROP_CREATED'),
