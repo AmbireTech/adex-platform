@@ -15,7 +15,7 @@ import {
 import { getErrorMsg } from 'helpers/errors'
 import { getEmail } from 'services/adex-relayer/actions'
 import { formatTokenAmount } from 'helpers/formatters'
-const { IdentityPrivilegeLevel } = constants
+const { IdentityPrivilegeLevel, CountryTiers, OsGroups } = constants
 const { bondPerActionToUserInputPerMileValue } = helpers
 
 const { campaignPut, account } = schemas
@@ -779,6 +779,11 @@ export const locationAudienceInputError = ({ apply, ...values } = {}) => {
 		return 'ERR_LOCATION_AUDIENCE_IN_NOT_SELECTED'
 	} else if (apply === 'nin' && !values.nin.length) {
 		return 'ERR_LOCATION_AUDIENCE_NIN_NOT_SELECTED'
+	} else if (
+		apply === 'nin' &&
+		Object.keys(CountryTiers).every(x => values.nin.includes(x))
+	) {
+		return 'ERR_LOCATION_CAN_NOT_EXCLUDE_ALL_COUNTRIES'
 	}
 }
 
@@ -803,14 +808,24 @@ export const categoriesAudienceInputError = ({
 	}
 }
 
+export const devicesAudienceInputError = ({ apply, ...values } = {}) => {
+	if (
+		apply === 'nin' &&
+		Object.keys(OsGroups).every(x => values.nin.includes(x))
+	) {
+		return 'ERR_DEVICES_CAN_NOT_EXCLUDE_ALL_DEVICES'
+	}
+}
+
 export function validateAudience({ validateId, propName, inputs, dirty }) {
 	return async function(dispatch) {
-		const { location, categories, publishers } = inputs
+		const { location, categories, publishers, devices } = inputs
 
 		const errors = [
 			locationAudienceInputError(location),
 			publishersAudienceInputError(publishers),
 			categoriesAudienceInputError(categories),
+			devicesAudienceInputError(devices),
 		]
 
 		const isValid = errors.every(e => !e)
@@ -828,6 +843,7 @@ export function validateAudience({ validateId, propName, inputs, dirty }) {
 					location: !!errors[0],
 					publishers: !!errors[1],
 					categories: !!errors[2],
+					devices: !!errors[3],
 				},
 			},
 			dirty: dirty,
