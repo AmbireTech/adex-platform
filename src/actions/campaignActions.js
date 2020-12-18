@@ -502,6 +502,9 @@ export function excludeOrIncludeWebsites({
 			const { account } = state.persist
 			const updated = new Campaign(campaign)
 
+			const currentTargetingRules = campaign.targetingRules || []
+			const isPaused = (currentTargetingRules[0] || {}).onlyShowIf === false
+
 			const campaignAudienceInput = selectAudienceByCampaignId(
 				state,
 				campaignId
@@ -639,6 +642,10 @@ export function excludeOrIncludeWebsites({
 				pricingBounds: campaignPricingBounds,
 				decimals,
 			})
+
+			if (isPaused) {
+				newRules.unshift({ onlyShowIf: false })
+			}
 
 			updated.targetingRules = newRules
 			updated.audienceInput = newAudienceInput
@@ -1027,6 +1034,7 @@ export function validateAndUpdateCampaign({
 				maxPerImpression,
 				depositAmount,
 				depositAsset,
+				targetingRules,
 			} = item
 
 			const { decimals } = selectRoutineWithdrawTokenByAddress(
@@ -1035,6 +1043,9 @@ export function validateAndUpdateCampaign({
 			)
 
 			const updated = new Campaign(item)
+
+			const currentTargetingRules = targetingRules || []
+			const isPaused = (currentTargetingRules[0] || {}).onlyShowIf === false
 
 			const isMinUpdated = dirtyProps.includes('minPerImpression')
 			const isMaxUpdated = dirtyProps.includes('maxPerImpression')
@@ -1144,6 +1155,10 @@ export function validateAndUpdateCampaign({
 			if (isValid && update) {
 				if (isAudienceUpdated) {
 					const account = selectAccount(state)
+					if (isPaused) {
+						updated.targetingRules.unshift({ onlyShowIf: false })
+					}
+
 					const { authTokens } = await updateTargeting({
 						account,
 						campaign: updated,
