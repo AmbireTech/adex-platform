@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.49
+### Added
+- Dark theme
+- Ability to update min and max CPM of active campaigns
+- Campaigns "Paused" status
+
+### Fixed
+- Targeting rules
+- Password error message on sign-up
+- Campaign date validation
+- Campaigns table sorting by CPM
+- Campaign location and devices targeting validation
+- Misc small bugs
+
 ## 4.20.48
 ##### *2020-09-17*
 
