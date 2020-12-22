@@ -222,11 +222,13 @@ function ImgForm(props) {
 									>
 										<Grid item sm={12} md={8}>
 											<Box className={classes.imgDropzonePreview}>
-												{videoSrc ? (
-													<video controls src={imgSrc} type='video/mp4'></video>
-												) : (
-													<Img src={imgSrc} alt={'name'} />
-												)}
+												<Img
+													src={imgSrc}
+													alt={imgName || 'media'}
+													mediaMime={mime}
+													controls={!!videoSrc}
+													allowVideo={!!videoSrc}
+												/>
 											</Box>
 										</Grid>
 										<Grid item sm={12} md={4}>
