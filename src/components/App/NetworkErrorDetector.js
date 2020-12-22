@@ -16,26 +16,26 @@ import {
 } from '@material-ui/icons'
 import { t } from 'selectors'
 
-const { VALIDATOR_LEADER_URL } = process.env
-
-const DetectAdBlock = () => {
+const DetectNetworkError = () => {
 	const [problemDetected, setProblemDetected] = useState(false)
 
 	useEffect(() => {
 		const testAdBlock = async () => {
 			try {
 				// Just detect for moonicorn which is currently blocked by the adblockers
-				fetch(`${VALIDATOR_LEADER_URL}/channel/list`, {
+				fetch(`https://tom.moonicorn.network/channel/list`, {
 					method: 'HEAD',
 				})
-					.then(res => {
+					.then(() => {
 						setProblemDetected(false)
 					})
 					.catch(err => {
 						setProblemDetected(true)
+						console.error(err)
 					})
 			} catch (err) {
 				setProblemDetected(true)
+				console.error(err)
 			}
 		}
 
@@ -84,4 +84,4 @@ const DetectAdBlock = () => {
 	)
 }
 
-export default DetectAdBlock
+export default DetectNetworkError
