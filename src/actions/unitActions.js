@@ -158,7 +158,13 @@ export function saveUnit() {
 	}
 }
 
-export function validateAndUpdateUnit({ validateId, dirty, item, update }) {
+export function validateAndUpdateUnit({
+	validateId,
+	dirty,
+	item,
+	update,
+	onUpdateSuccess,
+}) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
 		try {
@@ -206,6 +212,7 @@ export function validateAndUpdateUnit({ validateId, dirty, item, update }) {
 					}),
 					timeout: 50000,
 				})(dispatch)
+				onUpdateSuccess && onUpdateSuccess()
 			}
 		} catch (err) {
 			console.error('ERR_UPDATING_ITEM', err)

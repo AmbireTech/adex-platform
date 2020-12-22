@@ -61,7 +61,9 @@ function Campaign({ match }) {
 		['Ready', 'Waiting', 'Active', 'Unhealthy'].includes(status.name) &&
 		status.humanFriendlyName !== 'Closed'
 
-	const isActive = status.humanFriendlyName === 'Active'
+	const isActive =
+		status.humanFriendlyName === 'Active' ||
+		status.humanFriendlyName === 'Paused'
 
 	useEffect(() => {
 		execute(updateMemoryUi('campaignId', campaignId))

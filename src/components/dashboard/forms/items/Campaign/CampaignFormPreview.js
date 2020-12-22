@@ -55,7 +55,8 @@ function CampaignFormPreview() {
 		adUnits,
 		validators,
 		depositAmount,
-		pricingBounds,
+		// pricingBounds,
+		pricingBoundsCPMUserInput,
 		// maxPerImpression,
 		// depositAsset,
 		withdrawPeriodStart,
@@ -68,7 +69,7 @@ function CampaignFormPreview() {
 	} = useSelector(selectNewCampaign)
 
 	const { feesFormatted, totalSpendFormatted, breakdownFormatted } = temp
-	const { IMPRESSION = {} } = pricingBounds || {}
+	const { IMPRESSION = {} } = pricingBoundsCPMUserInput || {}
 	const { advanced = {} } = audienceInput.inputs
 
 	useEffect(() => {

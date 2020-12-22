@@ -10,7 +10,7 @@ import {
 } from 'services/smart-contracts/actions/identity'
 import { contracts } from '../contractsCfg'
 import { closeCampaign } from 'services/adex-validator/actions'
-import { Campaign, AdUnit } from 'adex-models'
+import { Campaign, AdUnit, helpers } from 'adex-models'
 import { getCampaigns } from 'services/adex-market/actions'
 import { BigNumber, utils } from 'ethers'
 import {
@@ -27,6 +27,8 @@ import { getState } from 'store'
 import { AUTH_TYPES, EXECUTE_ACTIONS } from 'constants/misc'
 const { parseUnits, Interface, randomBytes, getAddress } = utils
 
+const { userInputPricingBoundsPerMileToRulesValue } = helpers
+
 const { AdExCore } = contracts
 const Core = new Interface(AdExCore.abi)
 const IdentityInterface = new Interface(IdentityABI)
@@ -42,6 +44,10 @@ const OUTSTANDING_STATUSES = {
 	Unhealthy: true,
 	Withdraw: true,
 }
+
+// TODO: get it from the market
+const GLOBAL_MIN_CPM = '0.01' // per 1000 user input
+const GLOBAL_MAX_CPM = '15.00' // per 1000 user input
 
 const EXTRA_PROCESS_TIME = 69 * 60 // 69 min in seconds
 
@@ -116,27 +122,23 @@ function getReadyCampaign(campaign, identity, mainToken) {
 
 	newCampaign.validators = validators
 
-	const pricingBounds = { ...newCampaign.pricingBounds }
-	const impression = { ...pricingBounds.IMPRESSION }
-
-	impression.min = userInputToTokenValue({
-		input: impression.min,
+	// spec pricing bounds
+	const pricingBounds = userInputPricingBoundsPerMileToRulesValue({
+		pricingBounds: {
+			IMPRESSION: {
+				min: GLOBAL_MIN_CPM,
+				max: GLOBAL_MAX_CPM,
+			},
+		},
 		decimals,
-		divider: 1000, // Input is for CPM (1000)
 	})
-	impression.max = userInputToTokenValue({
-		input: impression.max,
-		decimals,
-		divider: 1000, // Input is for CPM (1000)
-	})
-	pricingBounds.IMPRESSION = impression
 
 	// TODO: CLICK when available
 	newCampaign.pricingBounds = pricingBounds
 
 	// TEMP: legacy compatibility
-	newCampaign.minPerImpression = impression.min
-	newCampaign.maxPerImpression = impression.max
+	newCampaign.minPerImpression = pricingBounds.IMPRESSION.min
+	newCampaign.maxPerImpression = pricingBounds.IMPRESSION.max
 
 	newCampaign.depositAsset = mainToken.address
 	newCampaign.eventSubmission = {

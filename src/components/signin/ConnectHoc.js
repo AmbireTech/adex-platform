@@ -10,6 +10,7 @@ import AuthSelect from 'components/signin/auth-select/AuthSelect'
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import { t } from 'selectors'
 import { Typography } from '@material-ui/core'
+import ThemeSwitch from 'components/App/ThemeSwitch'
 
 export default function ConnectHoc(Decorated) {
 	function Connect({ classes, ...rest }) {
@@ -42,6 +43,7 @@ export default function ConnectHoc(Decorated) {
 							style={{ height: '100%' }}
 						>
 							<Box p={4} alignItems='center'>
+								<ThemeSwitch />
 								<Typography align='center' variant='h3'>
 									{t('SIGN_UP_IN')}
 								</Typography>

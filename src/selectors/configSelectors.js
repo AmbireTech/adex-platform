@@ -64,6 +64,13 @@ export const selectRoutineWithdrawTokens = createSelector(
 	}
 )
 
+export const selectRoutineWithdrawTokenByAddress = createSelector(
+	[selectRelayerConfig, (_, address) => address],
+	({ routineWithdrawTokens }, address) => {
+		return routineWithdrawTokens.find(token => token.address === address)
+	}
+)
+
 export const selectRoutineWithdrawTokensAddresses = createSelector(
 	[selectRelayerConfig],
 	({ routineWithdrawTokens }) => {

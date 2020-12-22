@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react'
-import classnames from 'classnames'
 import { utils } from 'ethers'
 import Img from 'components/common/img/Img'
 import { useSelector } from 'react-redux'
@@ -11,15 +10,11 @@ import {
 	selectInitialDataLoadedByData,
 } from 'selectors'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
-import { makeStyles } from '@material-ui/core/styles'
-import { styles } from './styles'
 import { useTableData } from './tableHooks'
 import { ReloadData } from './toolbars'
 const RRImg = withReactRouterLink(Img)
 
-const useStyles = makeStyles(styles)
-
-const getCols = ({ classes, symbol }) => [
+const getCols = ({ symbol }) => [
 	{
 		name: 'media',
 		label: t('PROP_MEDIA'),
@@ -33,7 +28,7 @@ const getCols = ({ classes, symbol }) => [
 				return (
 					<ImgComponent
 						key={id}
-						className={classnames(classes.cellImg)}
+						isCellImg
 						src={mediaUrl}
 						alt={id}
 						mediaMime={mediaMime}
@@ -119,7 +114,6 @@ function BestEarnersTable(props) {
 		selector = selectBestEarnersTableData,
 		title = '',
 	} = props
-	const classes = useStyles()
 	const { symbol } = useSelector(selectMainToken)
 	const dataLoaded = useSelector(state =>
 		selectInitialDataLoadedByData(state, 'advancedAnalytics')
@@ -129,7 +123,6 @@ function BestEarnersTable(props) {
 		selector,
 		getColumns: () =>
 			getCols({
-				classes,
 				noActions,
 				noClone,
 				symbol,

@@ -79,7 +79,7 @@ const useStyles = makeStyles(theme => {
 			},
 		},
 		checkmark: {
-			color: ACCENT_TWO,
+			color: theme.palette.accentTwo.main,
 		},
 	}
 })
