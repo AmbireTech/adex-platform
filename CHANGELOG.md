@@ -1,7 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.50
+##### *2020-12-22*
+
+### Added
+- Ad blocker and network errors detection
+- ENS username string validation and info
+- GA events on some buttons click
+
+### Fixed
+- Large video upload dropzone styles
+
 ## 4.20.49
+##### *2020-12-21*
+
 ### Added
 - Dark theme
 - Ability to update min and max CPM of active campaigns
