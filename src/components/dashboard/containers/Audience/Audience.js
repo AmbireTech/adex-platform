@@ -70,13 +70,14 @@ function Audience({ match }) {
 
 	const classes = useStyles()
 
-	const { item = {}, validations, ...hookProps } = useItem({
+	const { item = {}, ...hookProps } = useItem({
 		itemType: 'Audience',
 		match,
 		objModel: AudienceModel,
 		validateAndUpdateFn,
 	})
 
+	const { validations } = hookProps
 	const { inputs, title, id, archived } = item
 	const { title: errTitle } = validations
 

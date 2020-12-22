@@ -36,6 +36,7 @@ const useTabStyles = makeStyles(theme => {
 	return {
 		root: {
 			minWidth: 30,
+			backgroundColor: theme.palette.appBar.main,
 			'&$selected': {
 				color: theme.palette.common.white,
 				backgroundColor: activeColor,

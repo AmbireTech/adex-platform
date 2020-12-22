@@ -75,7 +75,7 @@ function SetAccountENSPage({ stepsId, validateId } = {}) {
 						/>
 					</Box>
 					{errFees && errFees.dirty && errFees.errMsg && (
-						<Alert variant='outlined' severity='error'>
+						<Alert variant='filled' severity='error'>
 							{errFees.errMsg}
 						</Alert>
 					)}

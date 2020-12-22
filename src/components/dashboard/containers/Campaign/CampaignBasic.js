@@ -15,7 +15,10 @@ import {
 	MediaCard,
 	ItemSpecProp,
 } from 'components/dashboard/containers/ItemCommon/'
-import { TargetingRulesEdit } from 'components/dashboard/containers/Campaign/CampaignEdits'
+import {
+	TargetingRulesEdit,
+	EditCPM,
+} from 'components/dashboard/containers/Campaign/CampaignEdits'
 import { formatDateTime, formatTokenAmount } from 'helpers/formatters'
 import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
 import {
@@ -93,6 +96,7 @@ const useStyles = makeStyles(theme => ({
 
 export const CampaignBasic = ({
 	item,
+	itemPlain,
 	canSendMsgs,
 	isActive,
 	...hookProps
@@ -102,6 +106,7 @@ export const CampaignBasic = ({
 		title,
 		adUnits = [],
 		pricingBounds,
+		pricingBoundsCPMUserInput,
 		depositAmount,
 		validators,
 		minPerImpression,
@@ -121,8 +126,8 @@ export const CampaignBasic = ({
 	const pauseAction = isPaused ? 'RESUME' : 'PAUSE'
 
 	const campaignPricingBounds = pricingBounds || { IMPRESSION: {} }
-	const cpmMin = campaignPricingBounds.min || minPerImpression || 0
-	const cpmMax = campaignPricingBounds.max || maxPerImpression || 0
+	const cpmMin = campaignPricingBounds.IMPRESSION.min || minPerImpression || 0
+	const cpmMax = campaignPricingBounds.IMPRESSION.max || maxPerImpression || 0
 
 	const closeSpinner = useSelector(state =>
 		selectSpinnerById(state, `closing-campaign-${item.id}`)
@@ -308,33 +313,37 @@ export const CampaignBasic = ({
 							/>
 						</Box>
 						<Box my={0}>
-							<ItemSpecProp
-								prop={'CPM_MIN'}
-								value={
-									formatTokenAmount(
-										BigNumber.from(cpmMin || 0).mul(1000),
-										decimals,
-										true
-									) +
-									' ' +
-									symbol
-								}
-								label={t('CPM_MIN')}
+							<EditCPM
+								pricingBoundsCPMUserInput={pricingBoundsCPMUserInput}
+								action='IMPRESSION'
+								actionValue={'min'}
+								canSendMsgs={canSendMsgs}
+								prop='minPerImpression'
+								label='CPM_MIN'
+								valuePerAction={cpmMin}
+								updatedValue={minPerImpression}
+								decimals={decimals}
+								symbol={symbol}
+								// errProp={'pricingBounds_min'}
+								specPricingBounds={itemPlain.specPricingBounds}
+								{...hookProps}
 							/>
 						</Box>
 						<Box my={0}>
-							<ItemSpecProp
-								prop={'CPM_MAX'}
-								value={
-									formatTokenAmount(
-										BigNumber.from(cpmMax || 0).mul(1000),
-										decimals,
-										true
-									) +
-									' ' +
-									symbol
-								}
-								label={t('CPM_MAX')}
+							<EditCPM
+								pricingBoundsCPMUserInput={pricingBoundsCPMUserInput}
+								action='IMPRESSION'
+								actionValue={'max'}
+								canSendMsgs={canSendMsgs}
+								prop='maxPerImpression'
+								label='CPM_MAX'
+								valuePerAction={cpmMax}
+								updatedValue={maxPerImpression}
+								decimals={decimals}
+								symbol={symbol}
+								// errProp={'pricingBounds_max'}
+								specPricingBounds={itemPlain.specPricingBounds}
+								{...hookProps}
 							/>
 						</Box>
 					</Grid>

@@ -62,7 +62,8 @@ function CampaignFinance({ validateId, ...rest }) {
 		title,
 		validators,
 		depositAmount,
-		pricingBounds: campaignPricingBounds,
+		// pricingBounds: campaignPricingBounds,
+		pricingBoundsCPMUserInput,
 		// depositAsset,
 		activeFrom,
 		withdrawPeriodStart,
@@ -79,7 +80,7 @@ function CampaignFinance({ validateId, ...rest }) {
 	} = temp
 
 	// if pricingBounds is null
-	const pricingBounds = campaignPricingBounds || { IMPRESSION: {} }
+	const pricingBounds = pricingBoundsCPMUserInput || { IMPRESSION: {} } //campaignPricingBounds || { IMPRESSION: {} }
 
 	const spinner = useSelector(state =>
 		selectSpinnerById(state, GETTING_CAMPAIGNS_FEES)
@@ -92,8 +93,8 @@ function CampaignFinance({ validateId, ...rest }) {
 	const {
 		title: errTitle,
 		depositAmount: errDepAmnt,
-		pricingBounds_min: errMin,
-		pricingBounds_max: errMax,
+		minPerImpression: errMin,
+		maxPerImpression: errMax,
 		activeFrom: errFrom,
 		withdrawPeriodStart: errTo,
 	} = invalidFields
@@ -112,7 +113,7 @@ function CampaignFinance({ validateId, ...rest }) {
 		const impression = { ...pricingBounds.IMPRESSION }
 		impression[type] = value
 		newPricingBounds.IMPRESSION = impression
-		execute(updateNewCampaign('pricingBounds', newPricingBounds))
+		execute(updateNewCampaign('pricingBoundsCPMUserInput', newPricingBounds))
 		execute(
 			validateNumberString({
 				validateId,
@@ -210,7 +211,7 @@ function CampaignFinance({ validateId, ...rest }) {
 							type='text'
 							required
 							label={t('CPM_MIN_LABEL')}
-							name='pricingBounds_min'
+							name='minPerImpression'
 							value={pricingBounds.IMPRESSION.min}
 							onChange={ev => {
 								const value = ev.target.value
@@ -234,7 +235,7 @@ function CampaignFinance({ validateId, ...rest }) {
 							type='text'
 							required
 							label={t('CPM_MAX_LABEL')}
-							name='pricingBounds_max'
+							name='maxPerImpression'
 							value={pricingBounds.IMPRESSION.max}
 							onChange={ev => {
 								const value = ev.target.value

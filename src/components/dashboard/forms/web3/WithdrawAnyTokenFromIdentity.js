@@ -139,7 +139,7 @@ const WithdrawAnyTokenFromIdentity = ({ stepsId, validateId } = {}) => {
 						helperText={errAmount && !!errAmount.dirty ? errAmount.errMsg : ''}
 					/>
 					{errFees && errFees.dirty && errFees.errMsg && (
-						<Alert variant='outlined' severity='error'>
+						<Alert variant='filled' severity='error'>
 							{errFees.errMsg}
 						</Alert>
 					)}

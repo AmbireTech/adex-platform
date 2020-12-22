@@ -9,7 +9,6 @@ import {
 	selectCampaignStatsMaxValues,
 	selectMainToken,
 	selectSpinnerById,
-	selectCampaignById,
 } from 'selectors'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { useSelector } from 'react-redux'

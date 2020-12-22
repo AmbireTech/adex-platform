@@ -8,7 +8,7 @@ import { getCampaigns } from './actions'
 export async function getUnitsStatsByType() {
 	const { decimals } = selectMainToken()
 	const withdrawTokens = selectRoutineWithdrawTokens()
-	const allChannels = await getCampaigns()
+	const allChannels = await getCampaigns({ statuses: ['Active'] })
 
 	const channels = allChannels.filter(
 		channel => !!withdrawTokens[channel.depositAsset]

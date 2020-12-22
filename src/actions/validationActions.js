@@ -3,7 +3,7 @@ import { validEthAddress, freeAdExENS } from '../helpers/validators'
 import { translate } from 'services/translations/translations'
 import { addToast, updateSpinner } from './uiActions'
 import { BigNumber, utils } from 'ethers'
-import { validations, Joi, schemas, constants } from 'adex-models'
+import { validations, Joi, schemas, constants, helpers } from 'adex-models'
 import { validPassword } from 'helpers/validators'
 import {
 	t,
@@ -15,7 +15,8 @@ import {
 import { getErrorMsg } from 'helpers/errors'
 import { getEmail } from 'services/adex-relayer/actions'
 import { formatTokenAmount } from 'helpers/formatters'
-const { IdentityPrivilegeLevel } = constants
+const { IdentityPrivilegeLevel, CountryTiers, OsGroups } = constants
+const { bondPerActionToUserInputPerMileValue } = helpers
 
 const { campaignPut, account } = schemas
 const { isNumberString } = validations
@@ -173,9 +174,18 @@ export function validateTOS(validateId, accepted, dirty) {
 
 export function validateENS({ username, dirty, validateId }) {
 	return async function(dispatch) {
-		const { msg } = await freeAdExENS({
-			username,
-		})
+		let msg = !username
+			? 'ERR_NO_ENS_USERNAME_PROVIDED'
+			: /^[a-z0-9]$/.test(username)
+			? null
+			: 'ERR_INVALID_ENS_USER_NAME'
+
+		if (!msg) {
+			msg = (await freeAdExENS({
+				username,
+			})).msg
+		}
+
 		const isValid = !msg
 		validate(validateId, 'username', {
 			isValid,
@@ -433,6 +443,7 @@ export function validateCampaignAmount({
 	errMsg,
 	depositAmount,
 	pricingBounds = { IMPRESSION: {} },
+	specPricingBounds,
 	maxDeposit,
 	decimals,
 }) {
@@ -443,6 +454,8 @@ export function validateCampaignAmount({
 		const isValidNumberMin = isNumberString(min)
 		const isValidNumberMax = isNumberString(max)
 
+		const checkSpeckBounds = !!specPricingBounds && specPricingBounds.IMPRESSION
+
 		let isValidDeposit = isValidNumberDeposit
 		let isValidMin = isValidNumberMin
 		let isValidMax = isValidNumberMax
@@ -450,6 +463,9 @@ export function validateCampaignAmount({
 		let msgDeposit = errMsg || 'ERR_INVALID_AMOUNT'
 		let msgMin = errMsg || 'ERR_INVALID_AMOUNT'
 		let msgMax = errMsg || 'ERR_INVALID_AMOUNT'
+		let argsMin = []
+		let argsMax = []
+		let argsDeposit = []
 
 		if (isValidDeposit && isValidMin && isValidMax) {
 			const depositBn = utils.parseUnits(depositAmount, decimals)
@@ -499,23 +515,51 @@ export function validateCampaignAmount({
 				isValidMin = false
 				msgMin = 'ERR_MIN_CPM_GT_MAX_CPM'
 			}
+
+			if (
+				checkSpeckBounds &&
+				minBn.div(1000).lt(BigNumber.from(specPricingBounds.IMPRESSION.min))
+			) {
+				isValidMin = false
+				msgMin = 'ERR_MIN_CPM_LESS_THAN_SPEC'
+				argsMin = [
+					bondPerActionToUserInputPerMileValue(
+						specPricingBounds.IMPRESSION.min,
+						decimals
+					),
+				]
+			}
+
+			if (
+				checkSpeckBounds &&
+				maxBn.div(1000).gt(BigNumber.from(specPricingBounds.IMPRESSION.max))
+			) {
+				isValidMax = false
+				msgMax = 'ERR_MAX_CPM_HIGHER_THAN_SPEC'
+				argsMax = [
+					bondPerActionToUserInputPerMileValue(
+						specPricingBounds.IMPRESSION.max,
+						decimals
+					),
+				]
+			}
 		}
 
 		await validate(validateId, 'depositAmount', {
 			isValid: isValidDeposit,
-			err: { msg: msgDeposit },
+			err: { msg: msgDeposit, args: argsDeposit },
 			dirty,
 		})(dispatch)
 
-		await validate(validateId, 'pricingBounds_min', {
+		await validate(validateId, 'minPerImpression', {
 			isValid: isValidMin,
-			err: { msg: msgMin },
+			err: { msg: msgMin, args: argsMin },
 			dirty,
 		})(dispatch)
 
-		await validate(validateId, 'pricingBounds_max', {
+		await validate(validateId, 'maxPerImpression', {
 			isValid: isValidMax,
-			err: { msg: msgMax },
+			err: { msg: msgMax, args: argsMax },
 			dirty,
 		})(dispatch)
 
@@ -530,71 +574,74 @@ const getCampaignDatesValidation = ({
 	withdrawPeriodStart,
 	activeFrom,
 }) => {
-	let error = null
+	let errActiveFrom = null
+	let errWithdrawPeriodStart = null
 
 	if (withdrawPeriodStart && activeFrom && withdrawPeriodStart <= activeFrom) {
-		error = { message: 'ERR_END_BEFORE_START', prop: 'withdrawPeriodStart' }
+		errWithdrawPeriodStart = { message: 'ERR_END_BEFORE_START' }
 	} else if (
 		withdrawPeriodStart &&
 		activeFrom &&
 		withdrawPeriodStart - activeFrom < MIN_CAMPAIGN_PERIOD
 	) {
-		error = {
+		errWithdrawPeriodStart = {
 			message: 'ERR_MIN_CAMPAIGN_PERIOD',
 			args: ['1', 'HOUR'],
-			prop: 'withdrawPeriodStart',
 		}
 	} else if (withdrawPeriodStart && withdrawPeriodStart < created) {
-		error = { message: 'ERR_END_BEFORE_NOW', prop: 'withdrawPeriodStart' }
+		errWithdrawPeriodStart = { message: 'ERR_END_BEFORE_NOW' }
 	} else if (activeFrom && activeFrom < created) {
-		error = { message: 'ERR_START_BEFORE_NOW' }
+		errWithdrawPeriodStart = { message: 'ERR_START_BEFORE_NOW' }
 	} else if (activeFrom && !withdrawPeriodStart) {
-		error = { message: 'ERR_NO_END', prop: 'withdrawPeriodStart' }
-	} else if (!(withdrawPeriodStart || activeFrom)) {
-		error = { message: 'ERR_NO_DATE_SET', prop: 'withdrawPeriodStart' }
+		errWithdrawPeriodStart = { message: 'ERR_NO_END' }
 	}
 
-	return { error }
+	if (!withdrawPeriodStart) {
+		errWithdrawPeriodStart = { message: 'ERR_NO_DATE_SET' }
+	}
+
+	if (!activeFrom) {
+		errActiveFrom = { message: 'ERR_NO_DATE_SET' }
+	}
+
+	return { errActiveFrom, errWithdrawPeriodStart }
 }
 
 export function validateCampaignDates({
 	validateId,
-	prop,
-	value,
-	dirty,
-	withdrawPeriodStart,
 	activeFrom,
+	withdrawPeriodStart,
+	dirty,
 	created,
 }) {
 	return async function(dispatch, getState) {
-		const withdraw =
-			prop === 'withdrawPeriodStart' ? value : withdrawPeriodStart
-		const from = prop === 'activeFrom' ? value : activeFrom
-
-		const result = getCampaignDatesValidation({
-			withdrawPeriodStart: withdraw,
-			activeFrom: from,
+		const {
+			errActiveFrom,
+			errWithdrawPeriodStart,
+		} = getCampaignDatesValidation({
+			withdrawPeriodStart,
+			activeFrom,
 			created,
 		})
 
 		validate(validateId, 'activeFrom', {
-			isValid: !!from,
+			isValid: !errActiveFrom,
 			err: {
-				msg: 'ERR_NO_DATE_SET',
+				msg: (errActiveFrom || {}).message,
 			},
 			dirty: dirty,
 		})(dispatch)
 
 		validate(validateId, 'withdrawPeriodStart', {
-			isValid: !(result.error && result.error.prop === 'withdrawPeriodStart'),
+			isValid: !errWithdrawPeriodStart,
 			err: {
-				msg: result.error ? result.error.message : '',
-				args: result.error && (result.error.args || []),
+				msg: errWithdrawPeriodStart ? errWithdrawPeriodStart.message : '',
+				args: errWithdrawPeriodStart && (errWithdrawPeriodStart.args || []),
 			},
 			dirty: dirty,
 		})(dispatch)
 
-		const isValid = !result.error
+		const isValid = !errWithdrawPeriodStart && !errActiveFrom
 
 		return isValid
 	}
@@ -741,6 +788,11 @@ export const locationAudienceInputError = ({ apply, ...values } = {}) => {
 		return 'ERR_LOCATION_AUDIENCE_IN_NOT_SELECTED'
 	} else if (apply === 'nin' && !values.nin.length) {
 		return 'ERR_LOCATION_AUDIENCE_NIN_NOT_SELECTED'
+	} else if (
+		apply === 'nin' &&
+		Object.keys(CountryTiers).every(x => values.nin.includes(x))
+	) {
+		return 'ERR_LOCATION_CAN_NOT_EXCLUDE_ALL_COUNTRIES'
 	}
 }
 
@@ -765,14 +817,24 @@ export const categoriesAudienceInputError = ({
 	}
 }
 
+export const devicesAudienceInputError = ({ apply, ...values } = {}) => {
+	if (
+		apply === 'nin' &&
+		Object.keys(OsGroups).every(x => values.nin.includes(x))
+	) {
+		return 'ERR_DEVICES_CAN_NOT_EXCLUDE_ALL_DEVICES'
+	}
+}
+
 export function validateAudience({ validateId, propName, inputs, dirty }) {
 	return async function(dispatch) {
-		const { location, categories, publishers } = inputs
+		const { location, categories, publishers, devices } = inputs
 
 		const errors = [
 			locationAudienceInputError(location),
 			publishersAudienceInputError(publishers),
 			categoriesAudienceInputError(categories),
+			devicesAudienceInputError(devices),
 		]
 
 		const isValid = errors.every(e => !e)
@@ -790,6 +852,7 @@ export function validateAudience({ validateId, propName, inputs, dirty }) {
 					location: !!errors[0],
 					publishers: !!errors[1],
 					categories: !!errors[2],
+					devices: !!errors[3],
 				},
 			},
 			dirty: dirty,

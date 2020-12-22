@@ -7,6 +7,7 @@ import {
 	FormControlLabel,
 	FormHelperText,
 	FormControl,
+	Box,
 } from '@material-ui/core'
 import { ExternalAnchor } from 'components/common/anchor'
 import {
@@ -121,9 +122,13 @@ const QuickInfo = props => {
 								error={password && !!password.dirty}
 								maxLength={128}
 								helperText={
-									password && !!password.dirty
-										? password.errMsg
-										: t('PASSWORD_RULES')
+									<Box>
+										{password && !!password.dirty ? (
+											<Box> {password.errMsg} </Box>
+										) : null}
+
+										<Box>{t('PASSWORD_RULES')} </Box>
+									</Box>
 								}
 							/>
 						</Grid>
@@ -144,7 +149,7 @@ const QuickInfo = props => {
 								helperText={
 									passwordCheck && !!passwordCheck.dirty
 										? passwordCheck.errMsg
-										: t('PASSWORD_CHECK_RULES')
+										: null
 								}
 							/>
 						</Grid>
