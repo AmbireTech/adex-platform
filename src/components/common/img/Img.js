@@ -68,9 +68,10 @@ class Img extends Component {
 		const nextSrc = ipfsSrc(nextProps.src)
 		const thisSrc = ipfsSrc(this.props.src)
 		const nextFallback = ipfsSrc(nextProps.fallbackSrc)
+		const thisMime = this.props.mediaMime
 		const { mediaMime } = nextProps
 
-		if (nextSrc !== thisSrc) {
+		if (nextSrc !== thisSrc || thisMime !== mediaMime) {
 			const isVideo = !!mediaMime && isVideoMedia(mediaMime)
 
 			if (isVideo) {
@@ -232,6 +233,7 @@ class Img extends Component {
 			fullScreenOnClick,
 			onClick,
 			isCellImg,
+			controls,
 		} = this.props
 
 		const { imgSrc, videoSrc } = this.state
@@ -258,6 +260,7 @@ class Img extends Component {
 					<video
 						src={videoSrc}
 						className={classnames(classes.imgLoading, classes.img)}
+						controls={!!controls}
 						autoPlay
 						muted
 						loop
