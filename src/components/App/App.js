@@ -16,6 +16,7 @@ import CacheBuster from './CacheBuster'
 import { updateWindowReloading, execute } from 'actions'
 import MultiThemeProvider from './MultiThemeProvider'
 import Loading from './Loading'
+import NetworkErrorDetector from './NetworkErrorDetector'
 
 const onBeforeLift = () => {
 	// take some action before the gate lifts
@@ -39,6 +40,7 @@ const App = () => {
 		<React.Fragment>
 			<MultiThemeProvider>
 				<CssBaseline />
+				<NetworkErrorDetector />
 				<MuiPickersUtilsProvider utils={DateUtils}>
 					<Provider store={store}>
 						<PersistGate
