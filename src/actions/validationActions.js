@@ -174,9 +174,18 @@ export function validateTOS(validateId, accepted, dirty) {
 
 export function validateENS({ username, dirty, validateId }) {
 	return async function(dispatch) {
-		const { msg } = await freeAdExENS({
-			username,
-		})
+		let msg = !username
+			? 'ERR_NO_ENS_USERNAME_PROVIDED'
+			: /^[a-z0-9]$/.test(username)
+			? null
+			: 'ERR_INVALID_ENS_USER_NAME'
+
+		if (!msg) {
+			msg = (await freeAdExENS({
+				username,
+			})).msg
+		}
+
 		const isValid = !msg
 		validate(validateId, 'username', {
 			isValid,

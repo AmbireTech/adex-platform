@@ -21,7 +21,9 @@ import {
 	IconButton,
 	Paper,
 	Grid,
+	Tooltip,
 } from '@material-ui/core'
+import { InfoSharp } from '@material-ui/icons'
 import { VpnKey, Lock } from '@material-ui/icons'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { ExternalAnchor } from 'components/common/anchor/anchor'
@@ -124,7 +126,29 @@ function AccountInfo() {
 									})}
 									{...(!identityEnsName && {
 										primary: identityAddress,
-										secondary: t('ENS_NOT_SET'),
+										secondary: (
+											<span className={classes.infoLabel}>
+												{t('ENS_NOT_SET')}
+												<Tooltip
+													interactive
+													arrow
+													title={t('ENS_NOT_SET_INFO', {
+														args: [
+															<ExternalAnchor href='https://help.adex.network/hc/en-us/articles/360017777100-What-is-an-Account-Username-and-how-to-set-it-'>
+																{t('HERE')}
+															</ExternalAnchor>,
+															'',
+														],
+													})}
+												>
+													<InfoSharp
+														className={classes.extraInfo}
+														fontSize='small'
+														color='primary'
+													/>
+												</Tooltip>
+											</span>
+										),
 									})}
 								/>
 								<IconButton

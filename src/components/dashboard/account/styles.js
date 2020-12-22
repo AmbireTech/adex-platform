@@ -18,5 +18,13 @@ export const styles = theme => {
 		iconBtnLeft: {
 			marginRight: theme.spacing(1),
 		},
+		infoLabel: {
+			display: 'flex',
+			flexDirection: 'row',
+			alignItems: 'center',
+		},
+		extraInfo: {
+			marginLeft: spacing,
+		},
 	}
 }
