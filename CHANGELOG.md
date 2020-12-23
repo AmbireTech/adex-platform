@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 
 ## 4.20.50
+##### *2020-12-23*
+
+### Changed
+- Getting started guide fot publishers
+- Network issues detection texts
+
+## 4.20.50
 ##### *2020-12-22*
 
 ### Added
