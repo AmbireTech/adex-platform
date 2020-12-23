@@ -6,6 +6,7 @@ import {
 	selectAccountIdentityDeployData,
 	selectAccountStatsFormatted,
 	selectPublisherTotalImpressions,
+	selectWebsitesList,
 } from 'selectors'
 
 export const selectHasCreatedAdUnit = createSelector(
@@ -34,6 +35,11 @@ export const selectHasCreatedAdSlot = createSelector(
 	adSlotsArray => adSlotsArray.length > 0
 )
 
+export const hasVerifiedSites = createSelector(
+	selectWebsitesList,
+	websites => websites.some(({ issues }) => !issues || !issues.length)
+)
+
 export const selectHasAdSlotImpressions = createSelector(
 	selectPublisherTotalImpressions,
 	totalImpressions => totalImpressions > 0
@@ -52,6 +58,7 @@ export const selectStepsData = createSelector(
 		selectHasFundedAccount,
 		selectHasAdSlotImpressions,
 		selectHas5000Impressions,
+		hasVerifiedSites,
 	],
 	(
 		hasCreatedAdUnit,
@@ -60,7 +67,8 @@ export const selectStepsData = createSelector(
 		hasConfirmedEmail,
 		hasFundedAccount,
 		hasImpressions,
-		has5000Impressions
+		has5000Impressions,
+		hasVerifiedSites
 	) => ({
 		hasCreatedAdUnit,
 		hasCreatedCampaign,
@@ -69,5 +77,6 @@ export const selectStepsData = createSelector(
 		hasFundedAccount,
 		hasImpressions,
 		has5000Impressions,
+		hasVerifiedSites,
 	})
 )
