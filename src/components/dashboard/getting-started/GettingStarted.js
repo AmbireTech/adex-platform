@@ -44,7 +44,8 @@ import {
 	createAdUnitTutorial,
 	fundAccountTutorial,
 	launchFirstCampaign,
-	createAdSlot,
+	// createAdSlot,
+	verifyWebsite,
 	placeAdSlot,
 } from './Tutorials'
 // import { useEffectDebugger } from 'hooks/useEffectDebugger'
@@ -91,7 +92,8 @@ const getSteps = ({
 	hasConfirmedEmail,
 	hasFundedAccount,
 	hasImpressions,
-	has5000Impressions,
+	// has5000Impressions,
+	hasVerifiedSites,
 }) => ({
 	advertiser: [
 		{
@@ -152,20 +154,28 @@ const getSteps = ({
 			icon: EmailEddie,
 			check: hasConfirmedEmail,
 		},
+		// {
+		// 	label: t('TUTORIAL_ADD_SLOT_LABEL'),
+		// 	content: t('TUTORIAL_ADD_SLOT_CONTENT'),
+		// 	contentCompleted: t('TUTORIAL_CREATE_AD_SLOT_COMPLETE'),
+		// 	icon: CreateEddie,
+		// 	check: hasCreatedAdSlot,
+		// 	tutorial: createAdSlot,
+		// },
 		{
-			label: t('TUTORIAL_ADD_SLOT_LABEL'),
-			content: t('TUTORIAL_ADD_SLOT_CONTENT'),
-			contentCompleted: t('TUTORIAL_CREATE_AD_SLOT_COMPLETE'),
+			label: t('TUTORIAL_VERIFY_WEBSITE_LABEL'),
+			content: t('TUTORIAL_VERIFY_WEBSITE_CONTENT'),
+			contentCompleted: t('TUTORIAL_VERIFY_WEBSITE_COMPLETE'),
 			icon: CreateEddie,
-			check: hasCreatedAdSlot,
-			tutorial: createAdSlot,
+			check: hasVerifiedSites,
+			tutorial: verifyWebsite,
 		},
 		{
 			label: t('TUTORIAL_PLACE_SLOT_LABEL'),
-			content: t('TUTORIAL_ADD_SLOT_CONTENT'),
+			content: t('TUTORIAL_PLACE_AD_SLOT_CONTENT'),
 			contentCompleted: t('TUTORIAL_PLACE_AD_SLOT_COMPLETE'),
 			icon: PlaceEddie,
-			check: hasImpressions,
+			check: hasCreatedAdSlot && hasImpressions,
 			tutorial: placeAdSlot,
 		},
 		{
@@ -173,7 +183,7 @@ const getSteps = ({
 			content: t('TUTORIAL_REACH_5000_CONTENT'),
 			contentCompleted: t('TUTORIAL_5000_IMPRESSIONS_COMPLETE'),
 			icon: LaunchEddie,
-			check: has5000Impressions,
+			check: hasImpressions,
 		},
 		// {
 		// 	label: 'Receive your bonus',
