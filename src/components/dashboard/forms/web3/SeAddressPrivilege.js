@@ -79,7 +79,7 @@ function SeAddressPrivilege({ stepsId, validateId } = {}) {
 									updateNewTransaction({
 										tx: stepsId,
 										key: 'setAddr',
-										value: ev.target.value,
+										value: (ev.target.value || '').trim(),
 									})
 								)
 							}

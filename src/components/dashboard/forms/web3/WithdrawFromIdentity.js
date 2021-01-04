@@ -104,7 +104,7 @@ const WithdrawFromIdentity = ({ stepsId, validateId } = {}) => {
 									updateNewTransaction({
 										tx: stepsId,
 										key: 'withdrawTo',
-										value: ev.target.value,
+										value: (ev.target.value || '').trim(),
 									})
 								)
 							}
@@ -130,7 +130,7 @@ const WithdrawFromIdentity = ({ stepsId, validateId } = {}) => {
 									updateNewTransaction({
 										tx: stepsId,
 										key: 'amountToWithdraw',
-										value: ev.target.value,
+										value: (ev.target.value || '').trim(),
 									})
 								)
 							}
