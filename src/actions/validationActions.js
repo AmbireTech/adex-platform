@@ -176,7 +176,7 @@ export function validateENS({ username, dirty, validateId }) {
 	return async function(dispatch) {
 		let msg = !username
 			? 'ERR_NO_ENS_USERNAME_PROVIDED'
-			: /^[a-z0-9]$/.test(username)
+			: /^([a-z0-9]+)$/.test(username)
 			? null
 			: 'ERR_INVALID_ENS_USER_NAME'
 
