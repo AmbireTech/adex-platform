@@ -72,7 +72,9 @@ function AdUnitBasic({ validateId }) {
 						label={t('targetUrl', { isProp: true })}
 						value={targetUrl}
 						onChange={ev =>
-							execute(updateNewUnit('targetUrl', ev.target.value))
+							execute(
+								updateNewUnit('targetUrl', (ev.target.value || '').trim())
+							)
 						}
 						error={errTargetUrl && !!errTargetUrl.dirty}
 						helperText={

@@ -189,7 +189,7 @@ function AdSlotBasic({ validateId }) {
 											value={minPerImpression || ''}
 											disabled={!!autoSetMinCPM}
 											onChange={ev => {
-												const value = ev.target.value
+												const value = (ev.target.value || '').trim()
 												execute(updateNewSlot('minPerImpression', value))
 												execute(
 													validateNumberString({
