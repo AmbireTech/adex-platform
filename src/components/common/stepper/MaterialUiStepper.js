@@ -137,13 +137,13 @@ const MaterialStepper = props => {
 			goToPage(currentPage + 1)
 		}
 	}, [
-		currentPage,
-		goToPage,
-		isValidPage,
-		onValid,
 		validationFn,
+		isValidPage,
 		stepsId,
 		validateId,
+		onValid,
+		goToPage,
+		currentPage,
 	])
 
 	const handleComplete = useCallback(async () => {
@@ -158,7 +158,8 @@ const MaterialStepper = props => {
 		if (!isBack && validationFn) {
 			validationFn({ stepsId, validateId, dirty: false })
 		}
-	}, [currentPage, validationFn, stepsId, validateId, isBack])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentPage, validationFn, stepsId, validateId])
 
 	const onKeyPressed = useCallback(
 		async ev => {
