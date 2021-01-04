@@ -1,7 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 4.20.50
+
+## 4.20.52
+##### *2021-01-04*
+
+### Fixed
+- ENS username validation
+- Stepper steps validation
+
+### Changed
+- Trimmed inputs
+
+## 4.20.51
 ##### *2020-12-23*
 
 ### Changed
