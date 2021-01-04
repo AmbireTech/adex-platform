@@ -57,7 +57,7 @@ function SetAccountENSPage({ stepsId, validateId } = {}) {
 									updateNewTransaction({
 										tx: stepsId,
 										key: 'username',
-										value: ev.target.value,
+										value: (ev.target.value || '').trim(),
 									})
 								)
 							}
