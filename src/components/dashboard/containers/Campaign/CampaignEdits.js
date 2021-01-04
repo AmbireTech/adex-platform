@@ -100,12 +100,13 @@ export const EditCPM = ({
 			name={prop}
 			value={value + (active ? '' : ' ' + symbol)}
 			onChange={ev => {
-				updateField(prop, ev.target.value)
+				const value = (ev.target.value || '').trim()
+				updateField(prop, value)
 				execute(
 					validateNumberString({
 						validateId,
 						prop,
-						value: ev.target.value,
+						value,
 						dirty: true,
 					})
 				)

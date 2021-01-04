@@ -108,7 +108,8 @@ function CampaignFinance({ validateId, ...rest }) {
 		max: pricingBounds.IMPRESSION.max,
 	})
 
-	const updatePricingBoundsImpression = (type, value) => {
+	const updatePricingBoundsImpression = (type, inputValue) => {
+		const value = (inputValue || '').trim()
 		const newPricingBounds = { ...pricingBounds }
 		const impression = { ...pricingBounds.IMPRESSION }
 		impression[type] = value
@@ -184,7 +185,7 @@ function CampaignFinance({ validateId, ...rest }) {
 							name='depositAmount'
 							value={depositAmount}
 							onChange={ev => {
-								const value = ev.target.value
+								const value = (ev.target.value || '').trim()
 								execute(updateNewCampaign('depositAmount', value))
 								execute(
 									validateNumberString({
@@ -214,8 +215,7 @@ function CampaignFinance({ validateId, ...rest }) {
 							name='minPerImpression'
 							value={pricingBounds.IMPRESSION.min}
 							onChange={ev => {
-								const value = ev.target.value
-								updatePricingBoundsImpression('min', value)
+								updatePricingBoundsImpression('min', ev.target.value)
 							}}
 							error={errMin && !!errMin.dirty}
 							maxLength={120}
@@ -238,8 +238,7 @@ function CampaignFinance({ validateId, ...rest }) {
 							name='maxPerImpression'
 							value={pricingBounds.IMPRESSION.max}
 							onChange={ev => {
-								const value = ev.target.value
-								updatePricingBoundsImpression('max', value)
+								updatePricingBoundsImpression('max', ev.target.value)
 							}}
 							error={errMax && !!errMax.dirty}
 							maxLength={120}
