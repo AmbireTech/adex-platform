@@ -46,7 +46,7 @@
     "lodash.merge": "^4.6.2",
     "lodash.throttle": "^4.1.1",
     "mini-css-extract-plugin": "0.5.0",
-    "mui-datatables": "^2.14.0",
+    "mui-datatables": "^3.7.4",
     "object-assign": "^4.1.1",
     "optimize-css-assets-webpack-plugin": "5.0.1",
     "pbkdf2": "^3.0.17",
