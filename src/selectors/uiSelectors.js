@@ -13,6 +13,7 @@ export const selectIdentitiesUi = state => state.persist.ui.byIdentity
 export const selectSelectedItems = state => state.memory.selectedItems
 export const selectConfirm = state => state.memory.confirm
 export const selectToasts = state => state.memory.toasts
+export const selectTablesState = state => state.persist.tablesState
 
 export const selectSpinners = state => state.memory.spinners
 
@@ -156,4 +157,10 @@ export const selectIdentitySideAnalyticsPeriod = createSelector(
 export const selectWindowReloading = createSelector(
 	selectMemoryUi,
 	({ windowReloading }) => windowReloading
+)
+
+export const selectTableState = createSelector(
+	[selectTablesState, selectAccountIdentityAddr, (_, tableId) => tableId],
+	(tablesStates, identityId, tableId) =>
+		((tablesStates || {})[identityId] || {})[tableId] || {}
 )

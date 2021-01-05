@@ -437,3 +437,21 @@ export function updateWindowReloading(isReloading) {
 		updateMemoryUi('windowReloading', isReloading)(dispatch, getState)
 	}
 }
+
+export function updateTableState(tableId, tableState) {
+	return function(dispatch, getState) {
+		// TODO: filter state - only essential stuff
+		const filteredState = (({ activeColumn, page }) => ({
+			activeColumn,
+			page,
+		}))(tableState)
+		const identity = selectAccountIdentityAddr(getState())
+
+		return dispatch({
+			type: types.UPDATE_TABLE_STATE,
+			identity,
+			tableId: tableId,
+			value: filteredState,
+		})
+	}
+}
