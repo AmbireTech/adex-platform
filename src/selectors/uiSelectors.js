@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect'
+import { createCachedSelector } from 're-reselect'
 import dateUtils from 'helpers/dateUtils'
 import { selectAccountIdentityAddr } from './accountSelectors'
 import { SYNC_WEB3_DATA } from 'constants/spinners'
@@ -159,8 +160,10 @@ export const selectWindowReloading = createSelector(
 	({ windowReloading }) => windowReloading
 )
 
-export const selectTableState = createSelector(
-	[selectTablesState, selectAccountIdentityAddr, (_, tableId) => tableId],
+export const selectTableState = createCachedSelector(
+	selectTablesState,
+	selectAccountIdentityAddr,
+	(_state, tableId) => tableId,
 	(tablesStates, identityId, tableId) =>
 		((tablesStates || {})[identityId] || {})[tableId] || {}
-)
+)((_state, tableId) => tableId)

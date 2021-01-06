@@ -23,6 +23,7 @@ import {
 	selectPublisherAdvanceStatsToAdSlot,
 	selectSavedAudiences,
 	selectAudienceByCampaignId,
+	selectSide,
 } from 'selectors'
 import { utils } from 'ethers'
 import chartCountriesData from 'world-atlas/countries-50m.json'
@@ -40,7 +41,7 @@ const { CountryNames, numericToAlpha2 } = constants
 const { pricingBondsToUserInputPerMile } = helpers
 
 export const selectCampaignsTableData = createSelector(
-	[selectCampaignsArray, selectRoutineWithdrawTokens, (_, side) => side],
+	[selectCampaignsArray, selectRoutineWithdrawTokens, selectSide],
 	(campaigns, tokens, side) =>
 		campaigns
 			.filter(x => !x.archived)

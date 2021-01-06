@@ -441,8 +441,8 @@ export function updateWindowReloading(isReloading) {
 export function updateTableState(tableId, tableState) {
 	return function(dispatch, getState) {
 		// TODO: filter state - only essential stuff
-		const filteredState = (({ activeColumn, page }) => ({
-			activeColumn,
+		const filteredState = (({ rowsPerPage, page }) => ({
+			rowsPerPage,
 			page,
 		}))(tableState)
 		const identity = selectAccountIdentityAddr(getState())
