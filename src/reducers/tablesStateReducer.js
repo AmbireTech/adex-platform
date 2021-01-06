@@ -10,9 +10,7 @@ export default function tableStateReducer(
 		case UPDATE_TABLE_STATE:
 			newState = { ...state }
 			newState[action.identity] = { ...(newState[action.identity] || {}) }
-			newState[action.identity][action.tableId] = {
-				...(newState[action.identity][action.tableId] || {}),
-			}
+			newState[action.identity][action.tableId] = action.value || {}
 			return newState
 
 		default:
