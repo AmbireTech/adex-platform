@@ -37,6 +37,7 @@ import {
 	ItemTabsContainer,
 } from 'components/dashboard/containers/ItemCommon/'
 import { CampaignStatsByTimeframe } from './CampaignStatsByTimeframe'
+import PageNotFound from 'components/page_not_found/PageNotFound'
 
 function Campaign({ match }) {
 	const [tabIndex, setTabIndex] = useState(0)
@@ -72,6 +73,16 @@ function Campaign({ match }) {
 			execute(updateMemoryUi('campaignId', undefined))
 		}
 	}, [campaignId])
+
+	if (!campaignId) {
+		return (
+			<PageNotFound
+				title={t('ITEM_NOT_FOUND', {
+					args: ['CAMPAIGN', match.params.itemId || ''],
+				})}
+			/>
+		)
+	}
 
 	return (
 		<Fragment>
