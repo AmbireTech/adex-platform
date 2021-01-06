@@ -1,8 +1,10 @@
 import React from 'react'
 import MUIDataTable from 'mui-datatables'
 import { LinearProgress, Box } from '@material-ui/core'
-import { t } from 'selectors'
+import { t, selectTableState } from 'selectors'
+import { updateTableState, execute } from 'actions'
 import { makeStyles } from '@material-ui/core/styles'
+import { useSelector } from 'react-redux'
 
 const generalTableOptions = {
 	rowsPerPage: 5,
@@ -63,8 +65,10 @@ const useStyles = makeStyles(theme => {
 })
 
 export default function MUIDataTableEnhanced(props) {
-	const { title, data, columns, options, loading } = props
+	const { title, data, columns, options, loading, tableId } = props
 	const classes = useStyles()
+	const tableState = useSelector(state => selectTableState(state, tableId))
+
 	return (
 		<Box>
 			<MUIDataTable
@@ -74,6 +78,7 @@ export default function MUIDataTableEnhanced(props) {
 				options={{
 					...generalTableOptions,
 					...options,
+					...tableState,
 					elevation: 0,
 					variant: 'outlined',
 					search: !props.noSearch,
@@ -81,7 +86,12 @@ export default function MUIDataTableEnhanced(props) {
 					print: !props.noPrint,
 					selectableRows: props.rowSelectable ? 'multiple' : 'none',
 					disableToolbarSelect: props.toolbarEnabled ? false : true,
-					responsive: 'stacked',
+					responsive: 'vertical',
+					onTableChange: (action, tableState) => {
+						if (action !== 'propsUpdate') {
+							execute(updateTableState(tableId, tableState))
+						}
+					},
 				}}
 			/>
 			{loading && <LinearProgress className={classes.progress} />}
