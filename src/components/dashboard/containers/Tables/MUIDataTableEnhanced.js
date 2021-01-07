@@ -1,6 +1,6 @@
 import React from 'react'
 import MUIDataTable from 'mui-datatables'
-import { LinearProgress, Box } from '@material-ui/core'
+import { LinearProgress, Box, Button } from '@material-ui/core'
 import { t, selectTableState } from 'selectors'
 import { updateTableState, execute } from 'actions'
 import { makeStyles } from '@material-ui/core/styles'
@@ -54,6 +54,15 @@ const generalTableOptions = {
 			deleteAria: t('TABLE_DELETE_SELECTED'),
 		},
 	},
+	customFilterDialogFooter: (_currentFilterList, applyNewFilters) => {
+		return (
+			<div style={{ marginTop: '40px' }}>
+				<Button variant='contained' color='secondary' onClick={applyNewFilters}>
+					{t('APPLY_FILTERS')}
+				</Button>
+			</div>
+		)
+	},
 }
 
 const useStyles = makeStyles(theme => {
@@ -67,30 +76,74 @@ const useStyles = makeStyles(theme => {
 export default function MUIDataTableEnhanced(props) {
 	const { title, data, columns, options, loading, tableId } = props
 	const classes = useStyles()
-	const tableState = useSelector(state => selectTableState(state, tableId))
+	const { filterList, ...tableState } = useSelector(state =>
+		selectTableState(state, tableId)
+	)
+
+	const columnsWithFilters = columns.map(({ options, ...col }, i) => ({
+		...col,
+		...{
+			options: {
+				...options,
+				...(filterList && filterList[i] && filterList[i].length
+					? { filterList: filterList[i] }
+					: {}),
+			},
+		},
+	}))
 
 	return (
 		<Box>
 			<MUIDataTable
 				title={title}
 				data={data}
-				columns={columns}
+				columns={columnsWithFilters}
 				options={{
 					...generalTableOptions,
 					...options,
-					...tableState,
 					elevation: 0,
 					variant: 'outlined',
+					confirmFilters: true,
 					search: !props.noSearch,
 					download: !props.noDownload,
 					print: !props.noPrint,
 					selectableRows: props.rowSelectable ? 'multiple' : 'none',
 					disableToolbarSelect: props.toolbarEnabled ? false : true,
 					responsive: 'vertical',
-					onTableChange: (action, tableState) => {
-						if (action !== 'propsUpdate') {
-							execute(updateTableState(tableId, tableState))
+					...tableState,
+					onTableChange: (action, newTableState) => {
+						if (
+							![
+								'onFilterDialogOpen',
+								'onFilterDialogClose',
+								'propsUpdate',
+								'filterChange',
+								'rowSelectionChange',
+							].includes(action)
+						) {
+							execute(
+								updateTableState(tableId, { ...newTableState, filterList })
+							)
 						}
+					},
+					onFilterConfirm: filterList => {
+						execute(updateTableState(tableId, { ...tableState, filterList }))
+					},
+					onFilterChipClose: filterList => {
+						execute(updateTableState(tableId, { ...tableState, filterList }))
+					},
+					onRowSelectionChange: (
+						_currentRowsSelected,
+						_allRowsSelected,
+						rowsSelected
+					) => {
+						execute(
+							updateTableState(tableId, {
+								...tableState,
+								filterList,
+								rowsSelected,
+							})
+						)
 					},
 				}}
 			/>
