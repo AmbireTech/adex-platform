@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useCallback, useEffect, useState } from 'react'
 import { Tooltip, IconButton } from '@material-ui/core'
 import { Visibility, Receipt } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
@@ -186,7 +186,6 @@ const getCols = ({ symbol, maxImpressions, maxDeposit, maxClicks }) => [
 		options: {
 			filter: false,
 			sort: true,
-			sortDirection: 'desc',
 			customBodyRender: created => formatDate(created),
 		},
 	},
@@ -281,12 +280,15 @@ const onDownload = (buildHead, buildBody, columns, data, decimals, symbol) => {
 	return `${buildHead(columns)}${buildBody(mappedData)}`.trim()
 }
 
-const getOptions = ({ decimals, symbol, reloadData }) => ({
+const getOptions = ({ decimals, symbol }) => ({
 	filterType: 'multiselect',
 	selectableRows: 'none',
+	sortOrder: {
+		name: 'created',
+		direction: 'desc',
+	},
 	onDownload: (buildHead, buildBody, columns, data) =>
 		onDownload(buildHead, buildBody, columns, data, decimals, symbol),
-	customToolbar: () => <ReloadData handleReload={reloadData} />,
 	customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {
 		const selectedIndexes = selectedRows.data.map(i => i.dataIndex)
 		const selectedItems = displayData
@@ -312,21 +314,28 @@ function CampaignsTable(props) {
 	const campaignsLoaded = useSelector(state =>
 		selectInitialDataLoadedByData(state, 'campaigns')
 	)
+	const [options, setOptions] = useState({})
 
-	const { data, columns, reloadData } = useTableData({
-		selector: selectCampaignsTableData,
-		selectorArgs: side,
-		getColumns: () =>
+	const getColumns = useCallback(() => {
+		return () =>
 			getCols({
 				decimals,
 				symbol,
 				maxImpressions,
 				maxClicks,
 				maxDeposit,
-			}),
+			})
+	}, [decimals, maxClicks, maxDeposit, maxImpressions, symbol])
+
+	const { data, columns } = useTableData({
+		selector: selectCampaignsTableData,
+		selectorArgs: side,
+		getColumns,
 	})
 
-	const options = getOptions({ decimals, symbol, reloadData })
+	useEffect(() => {
+		setOptions(getOptions({ decimals, symbol }))
+	}, [decimals, symbol])
 
 	return (
 		<MUIDataTableEnhanced

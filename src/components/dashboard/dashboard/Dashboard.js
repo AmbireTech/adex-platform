@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from 'react'
+import React, { useState, useEffect } from 'react'
 import SideNav from './SideNav'
 import TopBar from './TopBar'
 import { Route, Switch } from 'react-router'
@@ -68,7 +68,7 @@ const Campaigns = () => {
 				icon={<Add />}
 			/>
 			<Paper variant='outlined'>
-				<CampaignsTable />
+				<CampaignsTable tableId='dashboardCampaigns' />
 			</Paper>
 		</Box>
 	)
