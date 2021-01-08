@@ -63,6 +63,12 @@ const generalTableOptions = {
 			</div>
 		)
 	},
+	downloadOptions: {
+		filterOptions: {
+			useDisplayedColumnsOnly: true,
+			useDisplayedRowsOnly: true,
+		},
+	},
 }
 
 const useStyles = makeStyles(theme => {
@@ -76,21 +82,27 @@ const useStyles = makeStyles(theme => {
 export default function MUIDataTableEnhanced(props) {
 	const { title, data, columns, options, loading, tableId } = props
 	const classes = useStyles()
-	const { filterList, ...tableState } = useSelector(state =>
+	const { filterList, columnOrder, ...tableState } = useSelector(state =>
 		selectTableState(state, tableId)
 	)
 
-	const columnsWithFilters = columns.map(({ options, ...col }, i) => ({
-		...col,
-		...{
-			options: {
-				...options,
-				...(filterList && filterList[i] && filterList[i].length
-					? { filterList: filterList[i] }
-					: {}),
+	const columnsWithFilters = columns.map(({ options, ...col }, i) => {
+		return {
+			...col,
+			...{
+				options: {
+					...options,
+					...(filterList && filterList[i] && filterList[i].length
+						? { filterList: filterList[i] }
+						: {}),
+					...(!!tableState.viewColumnsState &&
+					tableState.viewColumnsState.hasOwnProperty(col.name)
+						? { display: tableState.viewColumnsState[col.name] }
+						: {}),
+				},
 			},
-		},
-	}))
+		}
+	})
 
 	return (
 		<Box>
@@ -142,6 +154,17 @@ export default function MUIDataTableEnhanced(props) {
 								...tableState,
 								filterList,
 								rowsSelected,
+							})
+						)
+					},
+					onViewColumnsChange: (changedColumn, action) => {
+						const { viewColumnsState = {} } = tableState
+						const newVewColumns = { ...viewColumnsState }
+						newVewColumns[changedColumn] = action === 'add' ? true : false
+						execute(
+							updateTableState(tableId, {
+								...tableState,
+								viewColumnsState: newVewColumns,
 							})
 						)
 					},
