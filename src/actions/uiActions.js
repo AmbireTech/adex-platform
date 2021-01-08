@@ -472,3 +472,11 @@ export function updateTableState(tableId, tableState) {
 		})
 	}
 }
+
+export function resetTableState() {
+	return function(dispatch, _getState) {
+		return dispatch({
+			type: types.RESET_TABLE_STATE,
+		})
+	}
+}
