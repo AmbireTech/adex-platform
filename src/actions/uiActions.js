@@ -450,6 +450,7 @@ export function updateTableState(tableId, tableState) {
 			searchText,
 			rowsSelected,
 			sortOrder,
+			viewColumnsState,
 		}) => ({
 			rowsPerPage,
 			page,
@@ -459,6 +460,7 @@ export function updateTableState(tableId, tableState) {
 			searchText,
 			rowsSelected,
 			sortOrder,
+			viewColumnsState,
 		}))(tableState)
 		const identity = selectAccountIdentityAddr(getState())
 
