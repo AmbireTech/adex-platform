@@ -85,7 +85,7 @@ const AdUnits = () => (
 			icon={<Add />}
 		/>
 		<Paper variant='outlined'>
-			<AdUnitsTable />
+			<AdUnitsTable tableId='DashboardAdUnits' />
 		</Paper>
 	</Box>
 )
