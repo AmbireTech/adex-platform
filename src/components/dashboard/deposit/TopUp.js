@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Paper, Typography, Button, Grid } from '@material-ui/core'
-import { FileCopy } from '@material-ui/icons'
+import { FileCopy, WarningRounded } from '@material-ui/icons'
 import {
 	t,
 	selectAccountIdentityAddr,
@@ -15,11 +15,13 @@ import { styles } from './styles'
 import { execute, addToast } from 'actions'
 import { FiatProviders, CryptoProviders } from './Ramp'
 import ReactGA from 'react-ga'
+import { useTheme } from '@material-ui/core/styles'
 
 const useStyles = makeStyles(styles)
 
 export default function TopUp() {
 	const classes = useStyles()
+	const theme = useTheme()
 	const accountId = useSelector(selectAccountIdentityAddr)
 	const { symbol } = useSelector(selectMainToken)
 	const email = useSelector(selectEmail)
@@ -73,6 +75,34 @@ export default function TopUp() {
 							>
 								{accountId}
 							</Button>
+						</Box>
+						<Box mt={2} px={2} textAlign='center' justifyContent='center'>
+							<Box pr={1} display='inline'>
+								<WarningRounded
+									fontSize='small'
+									style={{
+										color: theme.palette.warning.main,
+										verticalAlign: 'text-bottom',
+									}}
+								/>
+							</Box>
+							<Typography
+								align='center'
+								component='span'
+								color='danger'
+								dangerouslySetInnerHTML={{
+									__html: t('DAI_DIRECT_DEPOSIT_WARNING_1'),
+								}}
+							/>
+							<Typography
+								align='center'
+								component='span'
+								style={{
+									color: theme.palette.warning.dark,
+								}}
+							>
+								{` ${t('DAI_DIRECT_DEPOSIT_WARNING_2')}`}
+							</Typography>
 						</Box>
 					</Box>
 				</Paper>
