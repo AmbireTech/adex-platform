@@ -268,6 +268,30 @@ export const selectAllAdUnitsTableData = createSelector(
 		})
 )
 
+export const selectAdUnitsByCampaign = createCachedSelector(
+	selectCampaignUnitsById,
+	selectSide,
+	(state, campaignId) => id => {
+		return selectCampaignAnalyticsByChannelToAdUnit(state, {
+			type: 'IMPRESSION',
+			campaignId,
+		})[id]
+	},
+	(state, campaignId) => id => {
+		return selectCampaignAnalyticsByChannelToAdUnit(state, {
+			type: 'CLICK',
+			campaignId,
+		})[id]
+	},
+	(items, side, impressionsByAdUnit, clicksByAdUnit) =>
+		getTabledData({
+			items,
+			side,
+			impressionsByAdUnit,
+			clicksByAdUnit,
+		})
+)((_state, campaignId) => campaignId)
+
 export const selectAdUnitsTableData = createSelector(
 	[
 		(state, { side, campaignId, items }) => {
