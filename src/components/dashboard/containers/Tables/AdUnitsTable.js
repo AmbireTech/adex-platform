@@ -10,7 +10,7 @@ import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import {
 	t,
 	selectAdUnitsTableData,
-	selectSide,
+	selectAllAdUnitsTableData,
 	selectAdUnitsStatsMaxValues,
 	selectInitialDataLoadedByData,
 } from 'selectors'
@@ -20,7 +20,7 @@ import { NewCloneUnitDialog } from '../../forms/items/NewItems'
 import { AdUnit } from 'adex-models'
 import { execute, cloneItem } from 'actions'
 import { useTableData } from './tableHooks'
-import { ReloadData } from './toolbars'
+// import { ReloadData } from './toolbars'
 const RRIconButton = withReactRouterLink(IconButton)
 const RRImg = withReactRouterLink(Img)
 
@@ -110,7 +110,6 @@ const getCols = ({ noActions, noClone, maxImpressions, maxClicks, maxCTR }) => [
 		options: {
 			filter: false,
 			sort: true,
-			sortDirection: 'desc',
 			customBodyRender: created => formatDateTime(created),
 		},
 	},
@@ -182,39 +181,45 @@ const onDownload = (buildHead, buildBody, columns, data) => {
 	return `${buildHead(columns)}${buildBody(mappedData)}`.trim()
 }
 
-const getOptions = ({ onRowsSelect, reloadData, selected }) => ({
+const getOptions = ({ onRowsSelect }) => ({
 	filterType: 'multiselect',
-	rowsSelected: selected,
-	customToolbar: () => <ReloadData handleReload={reloadData} />,
+	sortOrder: {
+		name: 'created',
+		direction: 'desc',
+	},
 	onDownload: (buildHead, buildBody, columns, data) =>
 		onDownload(buildHead, buildBody, columns, data),
 	onRowsSelect,
 })
 
 function AdUnitsTable(props) {
-	const side = useSelector(selectSide)
 	const {
 		noActions,
 		noClone,
 		campaignId,
 		handleSelect,
-		selected = [],
+		// selected,
 		items,
 	} = props
 
+	const selector = items
+		? campaignId
+			? selectAdUnitsTableData
+			: selectAllAdUnitsTableData
+		: selectAdUnitsTableData
+
 	const { maxClicks, maxImpressions, maxCTR } = useSelector(state =>
-		selectAdUnitsStatsMaxValues(state, { side, campaignId })
+		selectAdUnitsStatsMaxValues(state, campaignId)
 	)
 	const itemsLoaded = useSelector(state =>
 		selectInitialDataLoadedByData(state, 'allItems')
 	)
 
 	const [selectorArgs, setSelectorArgs] = useState({})
+	const [options, setOptions] = useState({})
 
-	const { data, columns, reloadData } = useTableData({
-		selector: selectAdUnitsTableData,
-		selectorArgs,
-		getColumns: () =>
+	const getColumns = useCallback(
+		() =>
 			getCols({
 				noActions,
 				noClone,
@@ -222,16 +227,18 @@ function AdUnitsTable(props) {
 				maxClicks,
 				maxCTR,
 			}),
+		[maxCTR, maxClicks, maxImpressions, noActions, noClone]
+	)
+
+	const { data, columns } = useTableData({
+		selector,
+		selectorArgs,
+		getColumns,
 	})
 
-	// NOTE: despite useTableData hook the component is updating.
-	// 'selectorArgs' are object and they have new reference on each update
-	// that causes useTableData to update the data on selectorArgs change.
-	// If selectorArgs are reference type we need to use useState fot them
-	// TODO: find why useTableData causing this update
 	useEffect(() => {
-		setSelectorArgs({ side, campaignId, items })
-	}, [side, campaignId, items])
+		setSelectorArgs({ campaignId, items })
+	}, [campaignId, items])
 
 	const onRowsSelect = useCallback(
 		(_, allRowsSelected) => {
@@ -243,7 +250,10 @@ function AdUnitsTable(props) {
 		[data, handleSelect]
 	)
 
-	const options = getOptions({ onRowsSelect, selected, reloadData })
+	useEffect(() => {
+		setOptions(getOptions({ onRowsSelect }))
+	}, [onRowsSelect])
+
 	return (
 		<MUIDataTableEnhanced
 			title={campaignId ? t('CAMPAIGN_AD_UNITS') : t('ALL_UNITS')}
