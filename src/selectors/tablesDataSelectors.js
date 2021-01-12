@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect'
+import { createCachedSelector } from 're-reselect'
 import {
 	t,
 	selectCampaignsArray,
@@ -201,6 +202,70 @@ export const selectAdSlotsTableData = createSelector(
 					},
 				}
 			})
+)
+
+const getTabledData = ({
+	selectOnImage,
+	side,
+	items,
+	impressionsByAdUnit,
+	clicksByAdUnit,
+}) =>
+	Object.values(items)
+		.filter(x => !x.archived)
+		.map(item => {
+			const id = item.id || item.ipfs
+			const to = `/dashboard/${side}/units/${id}`
+			const { title, mediaUrl, mediaMime, type, created } = item
+
+			return {
+				id,
+				media: {
+					selectOnImage,
+					id,
+					mediaUrl,
+					mediaMime,
+					to,
+				},
+				impressions: impressionsByAdUnit(id) || 0,
+				clicks: clicksByAdUnit(id) || 0,
+				ctr: (clicksByAdUnit(id) / impressionsByAdUnit(id)) * 100 || 0,
+				title,
+				type,
+				created,
+				actions: {
+					id,
+					title,
+					to,
+					item,
+				},
+			}
+		})
+
+export const selectAllAdUnitsTableData = createSelector(
+	[
+		selectAdUnits,
+		selectSide,
+		state => id => {
+			return selectTotalStatsByAdUnits(state, {
+				type: 'IMPRESSION',
+				adUnitId: id,
+			})
+		},
+		state => id => {
+			return selectTotalStatsByAdUnits(state, {
+				type: 'CLICK',
+				adUnitId: id,
+			})
+		},
+	],
+	(items, side, impressionsByAdUnit, clicksByAdUnit) =>
+		getTabledData({
+			items,
+			side,
+			impressionsByAdUnit,
+			clicksByAdUnit,
+		})
 )
 
 export const selectAdUnitsTableData = createSelector(
@@ -580,10 +645,13 @@ export const selectCampaignStatsMaxValues = createSelector(
 		)
 )
 
+// TODO: fix it for items
 export const selectAdUnitsStatsMaxValues = createSelector(
-	(state, { side, items, campaignId }) =>
-		selectAdUnitsTableData(state, { side, items, campaignId }),
-	data =>
+	[
+		selectSide,
+		(state, campaignId) => selectAdUnitsTableData(state, { campaignId }),
+	],
+	(side, data) =>
 		data.reduce(
 			(result, current) => {
 				const newResult = { ...result }
