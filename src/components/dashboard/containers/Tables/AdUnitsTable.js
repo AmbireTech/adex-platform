@@ -9,9 +9,7 @@ import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIData
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import {
 	t,
-	selectAdUnitsByCampaign,
 	selectAdUnitsTableData,
-	selectAllAdUnitsTableData,
 	selectAdUnitsStatsMaxValues,
 	selectInitialDataLoadedByData,
 } from 'selectors'
@@ -203,14 +201,10 @@ function AdUnitsTable(props) {
 		items,
 	} = props
 
-	const selector = !items
-		? campaignId
-			? selectAdUnitsByCampaign
-			: selectAllAdUnitsTableData
-		: selectAdUnitsTableData
+	const selector = selectAdUnitsTableData
 
 	const { maxClicks, maxImpressions, maxCTR } = useSelector(state =>
-		selectAdUnitsStatsMaxValues(state, campaignId)
+		selectAdUnitsStatsMaxValues(state, { campaignId, items })
 	)
 	const itemsLoaded = useSelector(state =>
 		selectInitialDataLoadedByData(state, 'allItems')
@@ -244,7 +238,7 @@ function AdUnitsTable(props) {
 		}
 
 		if (items) {
-			setSelectorArgs(campaignId, items)
+			setSelectorArgs({ campaignId, items })
 		}
 	}, [campaignId, items])
 
