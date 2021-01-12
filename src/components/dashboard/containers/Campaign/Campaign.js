@@ -195,7 +195,13 @@ function Campaign({ match }) {
 						<CampaignStatsByTimeframe item={item} />
 					</Box>
 				)}
-				{tabIndex === 5 && <AdUnitsTable campaignId={campaignId} noClone />}
+				{tabIndex === 5 && (
+					<AdUnitsTable
+						tableId={`campaignUnits-${campaignId}`}
+						campaignId={campaignId}
+						noClone
+					/>
+				)}
 				{tabIndex === 6 && (
 					<List>
 						<Anchor

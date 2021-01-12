@@ -179,6 +179,7 @@ export function openCampaign() {
 				}),
 				timeout: 20000,
 			})(dispatch)
+			// TODO: Reset units tables states
 		} catch (err) {
 			console.error('ERR_OPENING_CAMPAIGN', err)
 			addToast({

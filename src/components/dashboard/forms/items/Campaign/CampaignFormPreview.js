@@ -34,6 +34,7 @@ import {
 } from 'selectors'
 import { execute, getCampaignActualFees, checkNetworkCongestion } from 'actions'
 import { GETTING_CAMPAIGNS_FEES, OPENING_CAMPAIGN } from 'constants/spinners'
+import { NEW_CAMPAIGN_UNITS } from 'constants/tables'
 
 function CampaignFormPreview() {
 	const identityAddr = useSelector(selectAccountIdentityAddr)
@@ -247,6 +248,7 @@ function CampaignFormPreview() {
 							left={t('adUnits', { isProp: true })}
 							right={
 								<AdUnitsTable
+									tableId={NEW_CAMPAIGN_UNITS}
 									items={adUnits}
 									noSearch
 									noActions
