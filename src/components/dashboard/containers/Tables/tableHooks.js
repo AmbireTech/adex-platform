@@ -5,7 +5,11 @@ export function useTableData({ selector, selectorArgs, getColumns }) {
 	const [data, setData] = useState([])
 	const [columns, setColumns] = useState([])
 
-	const selectedData = useSelector(state => selector(state, selectorArgs))
+	const selectedData = useSelector(state => {
+		return selector && typeof selector === 'function'
+			? selector(state, selectorArgs)
+			: []
+	})
 
 	const reloadData = useCallback(() => {
 		setData(selectedData)
