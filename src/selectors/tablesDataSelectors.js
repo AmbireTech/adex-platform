@@ -268,7 +268,7 @@ export const selectAllAdUnitsTableData = createSelector(
 		})
 )
 
-export const selectAdUnitsByCampaign = createCachedSelector(
+export const selectAdUnitsByCampaignTableData = createCachedSelector(
 	selectCampaignUnitsById,
 	selectSide,
 	(state, campaignId) => id => {
@@ -292,72 +292,49 @@ export const selectAdUnitsByCampaign = createCachedSelector(
 		})
 )((_state, campaignId) => campaignId)
 
-export const selectAdUnitsTableData = createSelector(
-	[
-		(state, { side, campaignId, items }) => {
-			const selectOnImage = !!items
-			return {
-				selectOnImage,
-				side,
-				items:
-					items ||
-					(campaignId
-						? selectCampaignUnitsById(state, campaignId)
-						: selectAdUnits(state)),
-				impressionsByAdUnit: id =>
-					campaignId
-						? selectCampaignAnalyticsByChannelToAdUnit(state, {
-								type: 'IMPRESSION',
-								campaignId,
-						  })[id]
-						: selectTotalStatsByAdUnits(state, {
-								type: 'IMPRESSION',
-								adUnitId: id,
-						  }),
-				clicksByAdUnit: id =>
-					campaignId
-						? selectCampaignAnalyticsByChannelToAdUnit(state, {
-								type: 'CLICK',
-								campaignId,
-						  })[id]
-						: selectTotalStatsByAdUnits(state, {
-								type: 'CLICK',
-								adUnitId: id,
-						  }),
-			}
-		},
-	],
-	({ selectOnImage, side, items, impressionsByAdUnit, clicksByAdUnit }) =>
-		Object.values(items)
-			.filter(x => !x.archived)
-			.map(item => {
-				const id = item.id || item.ipfs
-				const to = `/dashboard/${side}/units/${id}`
-				const { title, mediaUrl, mediaMime, type, created } = item
+export const selectAdUnitsByItemsTableData = createCachedSelector(
+	(_state, items) => items,
+	selectSide,
+	(state, campaignId) => id => {
+		return selectCampaignAnalyticsByChannelToAdUnit(state, {
+			type: 'IMPRESSION',
+			campaignId,
+		})[id]
+	},
+	state => id => {
+		return selectTotalStatsByAdUnits(state, {
+			type: 'IMPRESSION',
+			adUnitId: id,
+		})
+	},
+	state => id => {
+		return selectTotalStatsByAdUnits(state, {
+			type: 'CLICK',
+			adUnitId: id,
+		})
+	},
+	(items, side, impressionsByAdUnit, clicksByAdUnit) =>
+		getTabledData({
+			selectOnImage: true,
+			items,
+			side,
+			impressionsByAdUnit,
+			clicksByAdUnit,
+		})
+)((_state, items) => items.map(x => x.id).join(':'))
 
-				return {
-					id,
-					media: {
-						selectOnImage,
-						id,
-						mediaUrl,
-						mediaMime,
-						to,
-					},
-					impressions: impressionsByAdUnit(id) || 0,
-					clicks: clicksByAdUnit(id) || 0,
-					ctr: (clicksByAdUnit(id) / impressionsByAdUnit(id)) * 100 || 0,
-					title,
-					type,
-					created,
-					actions: {
-						id,
-						title,
-						to,
-						item,
-					},
-				}
-			})
+export const selectAdUnitsTableData = createCachedSelector(
+	(state, { campaignId, items }) =>
+		!!items
+			? selectAdUnitsByItemsTableData(state, items)
+			: campaignId
+			? selectAdUnitsByCampaignTableData(state, campaignId)
+			: selectAllAdUnitsTableData(state),
+
+	data => data
+)(
+	(_state, { campaignId, items }) =>
+		campaignId || (items || []).map(x => x.id).join(':') || 'all'
 )
 
 export const selectAudiencesTableData = createSelector(
@@ -669,13 +646,14 @@ export const selectCampaignStatsMaxValues = createSelector(
 		)
 )
 
-// TODO: fix it for items
-export const selectAdUnitsStatsMaxValues = createSelector(
-	[
-		selectSide,
-		(state, campaignId) => selectAdUnitsTableData(state, { campaignId }),
-	],
-	(side, data) =>
+export const selectAdUnitsStatsMaxValues = createCachedSelector(
+	(state, { campaignId, items }) =>
+		!!items
+			? selectAdUnitsByItemsTableData(state, items)
+			: campaignId
+			? selectAdUnitsByCampaignTableData(state, campaignId)
+			: selectAllAdUnitsTableData(state),
+	data =>
 		data.reduce(
 			(result, current) => {
 				const newResult = { ...result }
@@ -690,6 +668,9 @@ export const selectAdUnitsStatsMaxValues = createSelector(
 			},
 			{ maxClicks: 0, maxImpressions: 0, maxCTR: 0 }
 		)
+)(
+	(_state, { campaignId, items }) =>
+		campaignId || (items || []).map(x => x.id).join(':') || 'all'
 )
 
 export const selectPublisherReceiptsStatsByMonthTableData = createSelector(
