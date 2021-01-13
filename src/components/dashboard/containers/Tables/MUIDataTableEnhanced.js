@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import MUIDataTable from 'mui-datatables'
 import { LinearProgress, Box, Button } from '@material-ui/core'
 import { t, selectTableState } from 'selectors'
@@ -79,7 +80,7 @@ const useStyles = makeStyles(theme => {
 	}
 })
 
-export default function MUIDataTableEnhanced(props) {
+function MUIDataTableEnhanced(props) {
 	const { title, data, columns, options, loading, tableId } = props
 	const classes = useStyles()
 	const { filterList, columnOrder, ...tableState } = useSelector(state =>
@@ -120,7 +121,7 @@ export default function MUIDataTableEnhanced(props) {
 					download: !props.noDownload,
 					print: !props.noPrint,
 					selectableRows: props.rowSelectable ? 'multiple' : 'none',
-					disableToolbarSelect: props.toolbarEnabled ? false : true,
+					selectToolbarPlacement: props.toolbarEnabled ? 'above' : 'none',
 					responsive: 'vertical',
 					...tableState,
 					onTableChange: (action, newTableState) => {
@@ -174,3 +175,13 @@ export default function MUIDataTableEnhanced(props) {
 		</Box>
 	)
 }
+
+MUIDataTableEnhanced.propTypes = {
+	tableId: PropTypes.string.isRequired,
+	data: PropTypes.array.isRequired,
+	columns: PropTypes.array.isRequired,
+	title: PropTypes.string,
+	options: PropTypes.object,
+}
+
+export default MUIDataTableEnhanced
