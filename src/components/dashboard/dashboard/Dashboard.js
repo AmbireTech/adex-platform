@@ -117,7 +117,7 @@ const Audiences = () => (
 			icon={<Add />}
 		/>
 		<Paper variant='outlined'>
-			<AudiencesTable />
+			<AudiencesTable tableId='dashboardAudiences' />
 		</Paper>
 	</Box>
 )
