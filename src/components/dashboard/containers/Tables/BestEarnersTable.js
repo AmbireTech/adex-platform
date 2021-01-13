@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { utils } from 'ethers'
 import Img from 'components/common/img/Img'
 import { useSelector } from 'react-redux'
@@ -95,13 +95,10 @@ const onDownload = (buildHead, buildBody, columns, data) => {
 	return `${buildHead(columns)}${buildBody(mappedData)}`.trim()
 }
 
-const getOptions = ({ onRowSelectionChange, reloadData, selected }) => ({
+const getOptions = () => ({
 	filterType: 'multiselect',
-	rowsSelected: selected,
-	customToolbar: () => <ReloadData handleReload={reloadData} />,
 	onDownload: (buildHead, buildBody, columns, data) =>
 		onDownload(buildHead, buildBody, columns, data),
-	onRowSelectionChange,
 	rowsPerPage: 5,
 })
 
@@ -110,7 +107,6 @@ function BestEarnersTable(props) {
 		noActions,
 		noClone,
 		handleSelect,
-		selected = [],
 		selector = selectBestEarnersTableData,
 		title = '',
 	} = props
@@ -119,33 +115,35 @@ function BestEarnersTable(props) {
 		selectInitialDataLoadedByData(state, 'advancedAnalytics')
 	)
 
-	const { data, columns, reloadData } = useTableData({
-		selector,
-		getColumns: () =>
+	const [options, setOptions] = useState({})
+
+	const getColumns = useCallback(
+		() =>
 			getCols({
 				noActions,
 				noClone,
 				symbol,
 			}),
-	})
-
-	const onRowSelectionChange = useCallback(
-		(_, allRowsSelected) => {
-			const selectedIndexes = allRowsSelected.map(row => row.dataIndex)
-			const selectedItemsIds = selectedIndexes.map(i => data[i].id)
-
-			handleSelect && handleSelect({ selectedIndexes, selectedItemsIds })
-		},
-		[data, handleSelect]
+		[noActions, noClone, symbol]
 	)
 
-	const options = getOptions({ onRowSelectionChange, selected, reloadData })
+	const { data, columns } = useTableData({
+		selector,
+		getColumns,
+	})
+
+	useEffect(() => {
+		setOptions(getOptions())
+	}, [])
+
 	return (
 		<MUIDataTableEnhanced
+			{...props}
 			title={t(title)}
 			data={data}
 			columns={columns}
 			options={options}
+			handleRowSelectionChange={handleSelect}
 			loading={!dataLoaded}
 			noSearch
 			noDownload
