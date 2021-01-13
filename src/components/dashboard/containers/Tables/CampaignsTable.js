@@ -22,7 +22,7 @@ import { useSelector } from 'react-redux'
 import { formatDateTime, truncateString, formatDate } from 'helpers/formatters'
 import { sliderFilterOptions } from './commonFilters'
 import { useTableData } from './tableHooks'
-import { ReloadData, PrintAllReceipts } from './toolbars'
+import { PrintAllReceipts } from './toolbars'
 
 const RRIconButton = withReactRouterLink(IconButton)
 const RRImg = withReactRouterLink(Img)

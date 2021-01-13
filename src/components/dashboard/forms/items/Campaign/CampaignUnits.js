@@ -15,7 +15,6 @@ import { NEW_CAMPAIGN_UNITS } from 'constants/tables'
 
 function CampaignUnits(props) {
 	const { temp } = useSelector(selectNewCampaign)
-	const { selectedUnits } = temp
 	const allAdUnits = useSelector(selectAdUnits)
 	const allAdUnitsArray = useSelector(selectAdUnitsArray)
 	const hasAdUnits = allAdUnitsArray && allAdUnitsArray.length
