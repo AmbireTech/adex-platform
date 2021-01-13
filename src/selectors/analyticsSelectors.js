@@ -1,5 +1,6 @@
 import { getState } from 'store'
 import { createSelector } from 'reselect'
+import { createCachedSelector } from 're-reselect'
 import {
 	selectChannelsWithUserBalancesAll,
 	selectIdentitySideAnalyticsTimeframe,
@@ -17,19 +18,11 @@ import {
 } from 'selectors'
 import dateUtils from 'helpers/dateUtils'
 import { DEFAULT_DATETIME_FORMAT } from 'helpers/formatters'
-import { t } from './translationsSelectors'
 
 export const selectAnalytics = state => state.memory.analytics
 export const selectTargeting = state => state.persist.targeting
 
 const MIN_SLOTS_FOR_AD_TYPE = 2
-
-export const selectAnalyticsData = createSelector(
-	[selectAnalytics, (_, side) => side],
-	(analytics, side) => {
-		return analytics[side] || {}
-	}
-)
 
 export const selectAdvancedAnalytics = createSelector(
 	[selectAnalytics],
@@ -99,10 +92,11 @@ export const selectDemandAnalytics = createSelector(
 	({ demand }) => demand || {}
 )
 
-export const selectDemandAnalyticsByType = createSelector(
-	[selectDemandAnalytics, (_, type) => type],
+export const selectDemandAnalyticsByType = createCachedSelector(
+	selectDemandAnalytics,
+	(_, type) => type,
 	(demand, type) => demand[type] || {}
-)
+)((_state, type) => type)
 
 export const selectTargetingAnalytics = createSelector(
 	[selectTargeting],
@@ -240,22 +234,21 @@ export const selectAllTargetingPublishers = createSelector(
 	}
 )
 
-export const selectAdvancedAnalyticsByType = createSelector(
-	[selectAdvancedAnalytics, (_, type) => type],
+export const selectAdvancedAnalyticsByType = createCachedSelector(
+	selectAdvancedAnalytics,
+	(_, type) => type,
 	(campaignAnalytics, type) => campaignAnalytics[type] || {}
-)
+)((_state, type) => type)
 
-export const selectTotalStatsByAdUnits = createSelector(
-	(state, { type, adUnitId }) => [
-		selectAdvancedAnalyticsByType(state, type),
-		{ adUnitId },
-	],
-	([analyticsByChannel, { adUnitId }]) =>
+export const selectTotalStatsByAdUnits = createCachedSelector(
+	(state, { type }) => selectAdvancedAnalyticsByType(state, type),
+	(_state, { adUnitId }) => adUnitId,
+	(analyticsByChannel, adUnitId) =>
 		Object.values(analyticsByChannel.byChannelStats || {}).reduce(
 			(acc, curr) => acc + curr.reportChannelToAdUnit[adUnitId] || 0,
 			0
 		)
-)
+)((_state, { type, adUnitId }) => `${type}:${adUnitId}`)
 
 export const selectPublisherStatsByType = createSelector(
 	(state, type) => selectAdvancedAnalyticsByType(state, type),
