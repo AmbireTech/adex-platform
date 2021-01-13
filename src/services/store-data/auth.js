@@ -11,7 +11,7 @@ import {
 	resetChannelsWithOutstandingBalance,
 	resetAllNewTransaction,
 	updateMemoryUi,
-	resetTableState,
+	resetAllTableState,
 } from 'actions'
 import ReactGA from 'react-ga'
 import { campaignsLoop } from 'services/store-data/campaigns'
@@ -41,7 +41,7 @@ export const logOut = skipRedirect => {
 	execute(resetChannelsWithBalanceAll())
 	execute(resetChannelsWithOutstandingBalance())
 	execute(resetAllNewTransaction())
-	execute(resetTableState())
+	execute(resetAllTableState())
 }
 
 export const isDemoMode = () => {
