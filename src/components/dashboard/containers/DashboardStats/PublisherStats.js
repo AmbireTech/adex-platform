@@ -85,6 +85,7 @@ export function PublisherStats() {
 				{tabIndex === 2 && (
 					// <Box p={1}>
 					<BestEarnersTable
+						tableId='publisherBestEarnersStats'
 						selector={selectBestEarnersTableData}
 						title='TABLE_BEST_EARNERS_UNITS_TITLE'
 					/>
