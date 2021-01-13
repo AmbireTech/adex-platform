@@ -95,13 +95,13 @@ const onDownload = (buildHead, buildBody, columns, data) => {
 	return `${buildHead(columns)}${buildBody(mappedData)}`.trim()
 }
 
-const getOptions = ({ onRowsSelect, reloadData, selected }) => ({
+const getOptions = ({ onRowSelectionChange, reloadData, selected }) => ({
 	filterType: 'multiselect',
 	rowsSelected: selected,
 	customToolbar: () => <ReloadData handleReload={reloadData} />,
 	onDownload: (buildHead, buildBody, columns, data) =>
 		onDownload(buildHead, buildBody, columns, data),
-	onRowsSelect,
+	onRowSelectionChange,
 	rowsPerPage: 5,
 })
 
@@ -129,7 +129,7 @@ function BestEarnersTable(props) {
 			}),
 	})
 
-	const onRowsSelect = useCallback(
+	const onRowSelectionChange = useCallback(
 		(_, allRowsSelected) => {
 			const selectedIndexes = allRowsSelected.map(row => row.dataIndex)
 			const selectedItemsIds = selectedIndexes.map(i => data[i].id)
@@ -139,7 +139,7 @@ function BestEarnersTable(props) {
 		[data, handleSelect]
 	)
 
-	const options = getOptions({ onRowsSelect, selected, reloadData })
+	const options = getOptions({ onRowSelectionChange, selected, reloadData })
 	return (
 		<MUIDataTableEnhanced
 			title={t(title)}

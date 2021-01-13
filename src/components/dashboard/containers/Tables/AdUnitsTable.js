@@ -180,7 +180,7 @@ const onDownload = (buildHead, buildBody, columns, data) => {
 	return `${buildHead(columns)}${buildBody(mappedData)}`.trim()
 }
 
-const getOptions = ({ onRowsSelect }) => ({
+const getOptions = ({ onRowSelectionChange }) => ({
 	filterType: 'multiselect',
 	sortOrder: {
 		name: 'created',
@@ -188,7 +188,7 @@ const getOptions = ({ onRowsSelect }) => ({
 	},
 	onDownload: (buildHead, buildBody, columns, data) =>
 		onDownload(buildHead, buildBody, columns, data),
-	onRowsSelect,
+	onRowSelectionChange,
 })
 
 function AdUnitsTable(props) {
@@ -242,7 +242,7 @@ function AdUnitsTable(props) {
 		}
 	}, [campaignId, items])
 
-	const onRowsSelect = useCallback(
+	const onRowSelectionChange = useCallback(
 		(_, allRowsSelected) => {
 			const selectedIndexes = allRowsSelected.map(row => row.dataIndex)
 			const selectedItemsIds = selectedIndexes.map(i => data[i].id)
@@ -253,8 +253,8 @@ function AdUnitsTable(props) {
 	)
 
 	useEffect(() => {
-		setOptions(getOptions({ onRowsSelect }))
-	}, [onRowsSelect])
+		setOptions(getOptions({ onRowSelectionChange }))
+	}, [onRowSelectionChange])
 
 	return (
 		<MUIDataTableEnhanced

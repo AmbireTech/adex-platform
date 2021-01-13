@@ -157,6 +157,12 @@ function MUIDataTableEnhanced(props) {
 								rowsSelected,
 							})
 						)
+						!!options.onRowSelectionChange &&
+							options.onRowSelectionChange(
+								_currentRowsSelected,
+								_allRowsSelected,
+								rowsSelected
+							)
 					},
 					onViewColumnsChange: (changedColumn, action) => {
 						const { viewColumnsState = {} } = tableState
