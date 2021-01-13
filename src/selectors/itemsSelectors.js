@@ -1,11 +1,7 @@
 import { createSelector } from 'reselect'
 import { createCachedSelector } from 're-reselect'
 
-import {
-	selectCampaignEventsCount,
-	selectCampaignIdInDetails,
-	t,
-} from 'selectors'
+import { selectCampaignEventsCount, selectCampaignIdInDetails } from 'selectors'
 import url from 'url'
 export const selectItems = state => state.persist.items
 

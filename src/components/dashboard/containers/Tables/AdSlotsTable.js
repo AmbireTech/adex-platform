@@ -8,7 +8,6 @@ import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import { ArchiveItemBtn } from 'components/dashboard/containers/ItemCommon'
 import {
 	t,
-	selectSide,
 	selectAdSlotsTableData,
 	selectMainToken,
 	selectInitialDataLoadedByData,
@@ -16,7 +15,6 @@ import {
 import { useSelector } from 'react-redux'
 import { formatDateTime, truncateString } from 'helpers/formatters'
 import { useTableData } from './tableHooks'
-import { ReloadData } from './toolbars'
 
 const RRIconButton = withReactRouterLink(IconButton)
 const RRImg = withReactRouterLink(Img)
