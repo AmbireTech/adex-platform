@@ -473,10 +473,21 @@ export function updateTableState(tableId, tableState) {
 	}
 }
 
-export function resetTableState() {
+export function resetAllTableState() {
 	return function(dispatch, _getState) {
 		return dispatch({
-			type: types.RESET_TABLE_STATE,
+			type: types.RESET_ALL_TABLES_STATE,
+		})
+	}
+}
+
+export function resetTableStateById(tableId) {
+	return function(dispatch, getState) {
+		const identity = selectAccountIdentityAddr(getState())
+		return dispatch({
+			type: types.RESET_TABLE_STATE_BY_ID,
+			identity,
+			tableId,
 		})
 	}
 }
