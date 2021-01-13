@@ -1,11 +1,10 @@
-import React from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { utils } from 'ethers'
 import PropTypes from 'prop-types'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { Box } from '@material-ui/core'
 import { t, selectMainToken } from 'selectors'
 import { useTableData } from './tableHooks'
-import { ReloadData } from './toolbars'
 import { useSelector } from 'react-redux'
 
 const getCols = ({ showEarnings, symbol }) => [
@@ -82,37 +81,44 @@ const getCols = ({ showEarnings, symbol }) => [
 		: []),
 ]
 
-const getOptions = ({ reloadData, selected }) => ({
+const getOptions = () => ({
 	filterType: 'multiselect',
-	rowsSelected: selected,
 	rowsPerPage: 10,
-	customToolbar: () => <ReloadData handleReload={reloadData} />,
 })
 
 function StatsByCountryTable(props) {
-	const { selector, selected = [], showEarnings } = props
+	const { selector, showEarnings } = props
 	const { symbol } = useSelector(selectMainToken)
+	const [options, setOptions] = useState({})
 
-	const { data, columns, reloadData } = useTableData({
-		selector,
-		getColumns: () =>
+	const getColumns = useCallback(
+		() =>
 			getCols({
 				symbol,
 				showEarnings,
 			}),
+		[showEarnings, symbol]
+	)
+
+	const { data, columns } = useTableData({
+		selector,
+		getColumns,
 	})
 
-	const options = getOptions({ selected, reloadData })
+	useEffect(() => {
+		setOptions(getOptions())
+	}, [])
+
 	return (
 		<Box>
 			<MUIDataTableEnhanced
+				{...props}
 				data={data}
 				columns={columns}
 				options={options}
 				noSearch
 				noPrint
 				noViewColumns
-				{...props}
 			/>
 		</Box>
 	)

@@ -177,6 +177,7 @@ function Campaign({ match }) {
 							<Grid item xs={12} md={12} lg={6}>
 								<Paper variant='outlined'>
 									<StatsByCountryTable
+										tableId={`CampaignStatsByCountry${campaignId}`}
 										selector={state =>
 											selectCampaignAnalyticsToCountryTableData(state, {
 												campaignId,

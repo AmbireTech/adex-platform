@@ -289,7 +289,7 @@ const getOptions = ({ decimals, symbol }) => ({
 	},
 	onDownload: (buildHead, buildBody, columns, data) =>
 		onDownload(buildHead, buildBody, columns, data, decimals, symbol),
-	customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {
+	customToolbarSelect: (selectedRows, displayData, _setSelectedRows) => {
 		const selectedIndexes = selectedRows.data.map(i => i.dataIndex)
 		const selectedItems = displayData
 			.filter(item => selectedIndexes.includes(item.dataIndex) && item.data[1])
@@ -339,6 +339,7 @@ function CampaignsTable(props) {
 
 	return (
 		<MUIDataTableEnhanced
+			{...props}
 			title={t('ALL_CAMPAIGNS')}
 			data={data}
 			columns={columns}
@@ -346,7 +347,6 @@ function CampaignsTable(props) {
 			rowSelectable
 			toolbarEnabled
 			loading={!campaignsLoaded}
-			{...props}
 		/>
 	)
 }
