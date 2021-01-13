@@ -81,7 +81,15 @@ const useStyles = makeStyles(theme => {
 })
 
 function MUIDataTableEnhanced(props) {
-	const { title, data, columns, options, loading, tableId } = props
+	const {
+		title,
+		data,
+		columns,
+		options,
+		handleRowSelectionChange,
+		loading,
+		tableId,
+	} = props
 	const classes = useStyles()
 	const { filterList, columnOrder, ...tableState } = useSelector(state =>
 		selectTableState(state, tableId)
@@ -147,7 +155,7 @@ function MUIDataTableEnhanced(props) {
 					},
 					onRowSelectionChange: (
 						_currentRowsSelected,
-						_allRowsSelected,
+						allRowsSelected,
 						rowsSelected
 					) => {
 						execute(
@@ -157,12 +165,12 @@ function MUIDataTableEnhanced(props) {
 								rowsSelected,
 							})
 						)
-						!!options.onRowSelectionChange &&
-							options.onRowSelectionChange(
-								_currentRowsSelected,
-								_allRowsSelected,
-								rowsSelected
-							)
+
+						if (handleRowSelectionChange) {
+							const selectedIndexes = allRowsSelected.map(row => row.dataIndex)
+							const selectedItemsIds = selectedIndexes.map(i => data[i].id)
+							handleRowSelectionChange({ selectedIndexes, selectedItemsIds })
+						}
 					},
 					onViewColumnsChange: (changedColumn, action) => {
 						const { viewColumnsState = {} } = tableState
@@ -188,6 +196,7 @@ MUIDataTableEnhanced.propTypes = {
 	columns: PropTypes.array.isRequired,
 	title: PropTypes.string,
 	options: PropTypes.object,
+	handleRowSelectionChange: PropTypes.func,
 }
 
 export default MUIDataTableEnhanced
