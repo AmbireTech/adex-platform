@@ -89,7 +89,7 @@ const getCols = ({ noActions, noClone, maxImpressions, maxClicks, maxCTR }) => [
 			sort: true,
 			customBodyRender: ctr => `${Number(ctr).toFixed(2)} %`,
 			...sliderFilterOptions({
-				initial: [0, maxCTR.toFixed(2)],
+				initial: [0, Number(maxCTR.toFixed(2))],
 				filterTitle: t('CTR_FILTER'),
 			}),
 		},
