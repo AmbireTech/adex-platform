@@ -5,7 +5,13 @@ import {
 } from 'constants/actionTypes'
 import { selectNewItemByTypeAndId } from 'selectors'
 import { Base, Models } from 'adex-models'
-import { updateSpinner, handleAfterValidation } from 'actions'
+import {
+	updateSpinner,
+	handleAfterValidation,
+	resetTableStateById,
+} from 'actions'
+
+import { NEW_CAMPAIGN_UNITS } from 'constants/tables'
 
 export function updateNewItem(item, newValues, itemType, objModel, itemId) {
 	if (objModel) {
@@ -205,6 +211,9 @@ export function completeItem({
 		await handleAfterValidation({ isValid, onValid, onInvalid })
 		if (isValid) {
 			resetNewItem(itemType)(dispatch)
+			if (itemType === 'Campaign') {
+				resetTableStateById(NEW_CAMPAIGN_UNITS)(dispatch, getState)
+			}
 		}
 	}
 }
