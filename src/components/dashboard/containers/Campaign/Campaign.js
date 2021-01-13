@@ -142,6 +142,7 @@ function Campaign({ match }) {
 							<Box flexGrow='1' order={{ xs: 2, md: 2, lg: 1 }}>
 								<Paper variant='outlined'>
 									<CampaignStatsBreakdownTable
+										tableId={`campaignStatsBreakdown${campaignId}`}
 										campaignId={campaignId}
 										canSendMsgs={canSendMsgs}
 										isActive={isActive}

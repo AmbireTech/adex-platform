@@ -636,7 +636,7 @@ export const selectCampaignStatsMaxValues = createCachedSelector(
 			},
 			{ maxClicks: 0, maxImpressions: 0, maxEarnings: 0, maxCTR: 0 }
 		)
-)((_state, { campaignId }) => campaignId)
+)((_state, campaignId) => campaignId)
 
 export const selectAdUnitsStatsMaxValues = createCachedSelector(
 	(state, { campaignId, items }) =>

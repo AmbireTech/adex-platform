@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { makeStyles } from '@material-ui/core/styles'
 import { Grid, Button, CircularProgress, Box, Tooltip } from '@material-ui/core'
@@ -79,7 +79,7 @@ const getCols = ({
 		name: 'impressions',
 		label: t('LABEL_IMPRESSIONS'),
 		options: {
-			sortDirection: 'desc',
+			sort: true,
 			customBodyRender: impressions => formatNumberWithCommas(impressions || 0),
 			...sliderFilterOptions({
 				initial: [0, maxImpressions],
@@ -224,8 +224,11 @@ const WebsitesActions = ({ campaignId, hostnames = [], onSuccess }) => {
 
 const getOptions = ({ reloadData, campaignId }) => ({
 	filterType: 'multiselect',
+	sortOrder: {
+		name: 'impressions',
+		direction: 'desc',
+	},
 	selectableRows: 'none',
-	customToolbar: () => <ReloadData handleReload={reloadData} />,
 	rowsPerPage: 25,
 	customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {
 		const selectedIndexes = selectedRows.data.map(i => i.dataIndex)
@@ -243,26 +246,40 @@ const getOptions = ({ reloadData, campaignId }) => ({
 	},
 })
 
-function CampaignStatsBreakdownTable({ campaignId, isActive, canSendMsgs }) {
+function CampaignStatsBreakdownTable({
+	campaignId,
+	isActive,
+	canSendMsgs,
+	tableId,
+}) {
 	const { symbol } = useSelector(selectMainToken)
 
 	const { maxClicks, maxImpressions, maxEarnings, maxCTR } = useSelector(
 		state => selectCampaignStatsMaxValues(state, campaignId)
 	)
 
+	const [options, setOptions] = useState({})
+
+	const getColumns = useCallback(
+		() => getCols({ symbol, maxClicks, maxImpressions, maxEarnings, maxCTR }),
+		[maxCTR, maxClicks, maxEarnings, maxImpressions, symbol]
+	)
+
 	const allowActions = isActive && canSendMsgs
 
-	const { data, columns, reloadData } = useTableData({
+	const { data, columns } = useTableData({
 		selector: selectCampaignStatsTableData,
 		selectorArgs: campaignId,
-		getColumns: () =>
-			getCols({ symbol, maxClicks, maxImpressions, maxEarnings, maxCTR }),
+		getColumns,
 	})
 
-	const options = getOptions({ reloadData, campaignId, isActive, canSendMsgs })
+	useEffect(() => {
+		setOptions(getOptions({ campaignId, isActive, canSendMsgs }))
+	}, [campaignId, canSendMsgs, isActive])
 
 	return (
 		<MUIDataTableEnhanced
+			tableId={tableId}
 			title={t('CAMPAIGN_STATS_BREAKDOWN')}
 			data={data}
 			columns={columns}
