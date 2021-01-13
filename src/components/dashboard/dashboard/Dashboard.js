@@ -101,7 +101,7 @@ const AdSlots = () => (
 			icon={<Add />}
 		/>
 		<Paper variant='outlined'>
-			<AdSlotsTable />
+			<AdSlotsTable tableId='dashboardSlots' />
 		</Paper>
 	</Box>
 )
