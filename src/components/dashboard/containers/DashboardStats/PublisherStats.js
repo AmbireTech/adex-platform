@@ -73,6 +73,7 @@ export function PublisherStats() {
 							<Grid item xs={12} md={12} lg={6}>
 								<Paper variant='outlined'>
 									<StatsByCountryTable
+										tableId='publisherStatsByCountry'
 										selector={selectPublisherStatsByCountryTableData}
 										// TODO: uncomment after 26.04.2020
 										// showEarnings
@@ -86,7 +87,6 @@ export function PublisherStats() {
 					// <Box p={1}>
 					<BestEarnersTable
 						tableId='publisherBestEarnersStats'
-						selector={selectBestEarnersTableData}
 						title='TABLE_BEST_EARNERS_UNITS_TITLE'
 					/>
 					// </Box>
