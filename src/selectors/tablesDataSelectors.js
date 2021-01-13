@@ -420,8 +420,8 @@ export const selectPublisherStatsByCountryData = createSelector(
 	})
 )
 
-export const selectCampaignAnalyticsToCountryData = createSelector(
-	(state, { campaignId }) => {
+export const selectCampaignAnalyticsToCountryData = createCachedSelector(
+	(state, { campaignId } = {}) => {
 		return [
 			selectCampaignAnalyticsByChannelToCountry(state, {
 				type: 'IMPRESSION',
@@ -460,21 +460,17 @@ export const selectCampaignAnalyticsToCountryData = createSelector(
 			clicksPayByCountry,
 		}
 	}
-)
+)((_state, { campaignId } = {}) => campaignId)
 
 export const selectPublisherStatsByCountryTableData = createSelector(
 	selectPublisherStatsByCountryData,
 	data => mapByCountryTableData(data)
 )
 
-export const selectCampaignAnalyticsToCountryTableData = createSelector(
-	[
-		(state, { campaignId }) => {
-			return selectCampaignAnalyticsToCountryData(state, { campaignId })
-		},
-	],
+export const selectCampaignAnalyticsToCountryTableData = createCachedSelector(
+	selectCampaignAnalyticsToCountryData,
 	data => mapByCountryTableData(data)
-)
+)((_state, { campaignId } = {}) => campaignId)
 
 const mapByCountryMapChartData = ({
 	impressionsByCountry,
@@ -526,13 +522,10 @@ export const selectPublisherStatsByCountryMapChartData = createSelector(
 	data => mapByCountryMapChartData(data)
 )
 
-export const selectCampaignAnalyticsToCountryMapChartData = createSelector(
-	[
-		(state, { campaignId }) =>
-			selectCampaignAnalyticsToCountryData(state, { campaignId }),
-	],
+export const selectCampaignAnalyticsToCountryMapChartData = createCachedSelector(
+	selectCampaignAnalyticsToCountryData,
 	data => mapByCountryMapChartData(data)
-)
+)((_state, { campaignId }) => campaignId)
 
 export const selectBestEarnersTableData = createSelector(
 	selectPublisherAdvanceStatsToAdUnit,
@@ -564,22 +557,21 @@ export const selectBestEarnersTableData = createSelector(
 		})
 )
 
-export const selectCampaignStatsTableData = createSelector(
-	[
-		selectAudienceByCampaignId,
-		(state, campaignId) => {
-			return {
-				impressions: selectCampaignAnalyticsByChannelStats(state, {
-					type: 'IMPRESSION',
-					campaignId,
-				}),
-				clicks: selectCampaignAnalyticsByChannelStats(state, {
-					type: 'CLICK',
-					campaignId,
-				}),
-			}
-		},
-	],
+export const selectCampaignStatsTableData = createCachedSelector(
+	selectAudienceByCampaignId,
+	(state, campaignId) => {
+		return {
+			impressions: selectCampaignAnalyticsByChannelStats(state, {
+				type: 'IMPRESSION',
+				campaignId,
+			}),
+			clicks: selectCampaignAnalyticsByChannelStats(state, {
+				type: 'CLICK',
+				campaignId,
+			}),
+		}
+	},
+
 	(campaignAudienceInput, { impressions, clicks }) => {
 		const imprStats = impressions.reportChannelToHostname || {}
 		const clickStats = clicks.reportChannelToHostname || {}
@@ -606,10 +598,10 @@ export const selectCampaignStatsTableData = createSelector(
 			clicks: clickStats[key] || 0,
 		}))
 	}
-)
+)((_state, campaignId) => campaignId)
 
-export const selectCampaignTotalValues = createSelector(
-	(state, channelId) => selectCampaignStatsTableData(state, channelId),
+export const selectCampaignTotalValues = createCachedSelector(
+	selectCampaignStatsTableData,
 	data =>
 		data.reduce(
 			(result, current) => {
@@ -621,10 +613,10 @@ export const selectCampaignTotalValues = createSelector(
 			},
 			{ totalClicks: 0, totalImpressions: 0, totalEarnings: 0 }
 		)
-)
+)((_state, { campaignId }) => campaignId)
 
-export const selectCampaignStatsMaxValues = createSelector(
-	(state, channelId) => selectCampaignStatsTableData(state, channelId),
+export const selectCampaignStatsMaxValues = createCachedSelector(
+	selectCampaignStatsTableData,
 	data =>
 		data.reduce(
 			(result, current) => {
@@ -644,7 +636,7 @@ export const selectCampaignStatsMaxValues = createSelector(
 			},
 			{ maxClicks: 0, maxImpressions: 0, maxEarnings: 0, maxCTR: 0 }
 		)
-)
+)((_state, { campaignId }) => campaignId)
 
 export const selectAdUnitsStatsMaxValues = createCachedSelector(
 	(state, { campaignId, items }) =>
@@ -673,8 +665,10 @@ export const selectAdUnitsStatsMaxValues = createCachedSelector(
 		campaignId || (items || []).map(x => x.id).join(':') || 'all'
 )
 
-export const selectPublisherReceiptsStatsByMonthTableData = createSelector(
-	[selectAnalytics, selectMainToken, (_, date) => date],
+export const selectPublisherReceiptsStatsByMonthTableData = createCachedSelector(
+	selectAnalytics,
+	selectMainToken,
+	(_state, date) => date,
 	({ receipts }, token, date) => {
 		const result = []
 		if (receipts && receipts[date]) {
@@ -689,7 +683,7 @@ export const selectPublisherReceiptsStatsByMonthTableData = createSelector(
 		}
 		return result
 	}
-)
+)((_state, date) => date)
 
 export const selectPublisherReceiptsStatsByMonthTotalValues = createSelector(
 	[selectPublisherReceiptsStatsByMonthTableData],
