@@ -157,7 +157,7 @@ export const selectCampaignsMaxDeposit = createSelector(
 )
 
 export const selectAdSlotsTableData = createSelector(
-	[selectAdSlotsArray, selectPublisherAdvanceStatsToAdSlot, (_, side) => side],
+	[selectAdSlotsArray, selectPublisherAdvanceStatsToAdSlot, selectSide],
 	(
 		slots,
 		{
