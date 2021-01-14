@@ -421,7 +421,7 @@ export const selectPublisherStatsByCountryData = createSelector(
 )
 
 export const selectCampaignAnalyticsToCountryData = createCachedSelector(
-	(state, { campaignId } = {}) => {
+	(state, campaignId) => {
 		return [
 			selectCampaignAnalyticsByChannelToCountry(state, {
 				type: 'IMPRESSION',
@@ -460,7 +460,7 @@ export const selectCampaignAnalyticsToCountryData = createCachedSelector(
 			clicksPayByCountry,
 		}
 	}
-)((_state, { campaignId } = {}) => campaignId)
+)((_state, campaignId) => campaignId)
 
 export const selectPublisherStatsByCountryTableData = createSelector(
 	selectPublisherStatsByCountryData,
@@ -470,7 +470,7 @@ export const selectPublisherStatsByCountryTableData = createSelector(
 export const selectCampaignAnalyticsToCountryTableData = createCachedSelector(
 	selectCampaignAnalyticsToCountryData,
 	data => mapByCountryTableData(data)
-)((_state, { campaignId } = {}) => campaignId)
+)((_state, campaignId) => campaignId)
 
 const mapByCountryMapChartData = ({
 	impressionsByCountry,
@@ -525,7 +525,7 @@ export const selectPublisherStatsByCountryMapChartData = createSelector(
 export const selectCampaignAnalyticsToCountryMapChartData = createCachedSelector(
 	selectCampaignAnalyticsToCountryData,
 	data => mapByCountryMapChartData(data)
-)((_state, { campaignId }) => campaignId)
+)((_state, campaignId) => campaignId)
 
 export const selectBestEarnersTableData = createSelector(
 	selectPublisherAdvanceStatsToAdUnit,

@@ -87,9 +87,10 @@ const getOptions = () => ({
 })
 
 function StatsByCountryTable(props) {
-	const { selector, showEarnings } = props
+	const { selector, selectorData, showEarnings } = props
 	const { symbol } = useSelector(selectMainToken)
 	const [options, setOptions] = useState({})
+	const [selectorArgs, setSelectorArgs] = useState(null)
 
 	const getColumns = useCallback(
 		() =>
@@ -102,12 +103,17 @@ function StatsByCountryTable(props) {
 
 	const { data, columns } = useTableData({
 		selector,
+		selectorArgs,
 		getColumns,
 	})
 
 	useEffect(() => {
 		setOptions(getOptions())
 	}, [])
+
+	useEffect(() => {
+		setSelectorArgs(selectorData)
+	}, [selectorData])
 
 	return (
 		<Box>

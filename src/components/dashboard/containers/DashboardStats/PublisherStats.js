@@ -76,7 +76,7 @@ export function PublisherStats() {
 										tableId='publisherStatsByCountry'
 										selector={selectPublisherStatsByCountryTableData}
 										// TODO: uncomment after 26.04.2020
-										// showEarnings
+										showEarnings
 									/>
 								</Paper>
 							</Grid>
