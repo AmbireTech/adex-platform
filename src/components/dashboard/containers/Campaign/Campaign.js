@@ -169,21 +169,19 @@ function Campaign({ match }) {
 							<Grid item xs={12} md={12} lg={6}>
 								<MapChart
 									selector={state =>
-										selectCampaignAnalyticsToCountryMapChartData(state, {
-											campaignId,
-										})
+										selectCampaignAnalyticsToCountryMapChartData(
+											state,
+											campaignId
+										)
 									}
 								/>
 							</Grid>
 							<Grid item xs={12} md={12} lg={6}>
 								<Paper variant='outlined'>
 									<StatsByCountryTable
+										selector={selectCampaignAnalyticsToCountryTableData}
+										selectorData={campaignId}
 										tableId={`CampaignStatsByCountry${campaignId}`}
-										selector={state =>
-											selectCampaignAnalyticsToCountryTableData(state, {
-												campaignId,
-											})
-										}
 										showEarnings
 									/>
 								</Paper>
