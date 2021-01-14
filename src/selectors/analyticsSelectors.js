@@ -545,9 +545,12 @@ const parseValueByMetric = ({ value, metric }) => {
 }
 
 export const selectStatsChartData = createCachedSelector(
-	(state, { noLastOne, ...rest } = {}) => {
-		return { data: selectAnalyticsDataAggr(state, rest), noLastOne, ...rest }
-	},
+	(state, { noLastOne, ...rest } = {}) => selectAnalyticsDataAggr(state, rest),
+	(_state, { noLastOne, metric, timeframe } = {}) => ({
+		noLastOne,
+		metric,
+		timeframe,
+	}),
 	(data = [], { noLastOne, metric, timeframe }) => {
 		const aggr = noLastOne ? data.slice(0, -1) : data
 		return aggr.reduce(
@@ -573,7 +576,7 @@ export const selectStatsChartData = createCachedSelector(
 )
 
 export const selectChartDatapointsImpressions = createCachedSelector(
-	(state, { side, timeframe } = {}) => [
+	(state, { side, timeframe } = {}) =>
 		selectStatsChartData(state, {
 			side,
 			timeframe,
@@ -581,12 +584,12 @@ export const selectChartDatapointsImpressions = createCachedSelector(
 			metric: 'eventCounts',
 			noLastOne: false,
 		}),
-	],
-	([impressions]) => impressions
+
+	impressions => impressions
 )((_state, { side, timeframe }) => `${side}:${timeframe}`)
 
 export const selectChartDatapointsClicks = createCachedSelector(
-	(state, { side, timeframe } = {}) => [
+	(state, { side, timeframe } = {}) =>
 		selectStatsChartData(state, {
 			side,
 			timeframe,
@@ -594,12 +597,12 @@ export const selectChartDatapointsClicks = createCachedSelector(
 			metric: 'eventCounts',
 			noLastOne: false,
 		}),
-	],
-	([clicks]) => clicks
+
+	clicks => clicks
 )((_state, { side, timeframe }) => `${side}:${timeframe}`)
 
 export const selectChartDatapointsPayouts = createCachedSelector(
-	(state, { side, timeframe } = {}) => [
+	(state, { side, timeframe } = {}) =>
 		selectStatsChartData(state, {
 			side,
 			timeframe,
@@ -607,8 +610,7 @@ export const selectChartDatapointsPayouts = createCachedSelector(
 			metric: 'eventPayouts',
 			noLastOne: false,
 		}),
-	],
-	([payouts]) => payouts
+	payouts => payouts
 )((_state, { side, timeframe }) => `${side}:${timeframe}`)
 
 export const selectChartDatapointsCPM = createCachedSelector(
