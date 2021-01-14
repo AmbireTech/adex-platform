@@ -7,20 +7,23 @@ import {
 import initialState from 'store/initialState'
 
 import { createSelector } from 'reselect'
+import { createCachedSelector } from 're-reselect'
 
 export const selectNewItems = state => state.memory.newItem
 
-export const selectNewItemByType = createSelector(
-	[selectNewItems, (_, type) => type],
+export const selectNewItemByType = createCachedSelector(
+	selectNewItems,
+	(_, type) => type,
 	(items, type) => items[type]
-)
+)((_state, type) => type)
 
 // NOTE: currently used only for existing items update
-export const selectNewItemByTypeAndId = createSelector(
-	[selectNewItems, (_, type, itemId) => ({ type, itemId })],
+export const selectNewItemByTypeAndId = createCachedSelector(
+	selectNewItems,
+	(_, type, itemId) => ({ type, itemId }),
 	(items, { type, itemId }) =>
 		(itemId ? items[itemId] : items[type]) || { ...initialState.newItem[type] }
-)
+)((_state, type, itemId) => `${type}:${itemId}`)
 
 export const selectNewCampaign = createSelector(
 	selectNewItems,

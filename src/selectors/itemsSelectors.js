@@ -40,15 +40,16 @@ export const selectCampaignInDetails = createSelector(
 		campaignId ? selectCampaignById(state, campaignId) : undefined
 )
 
-export const selectCampaignWithAnalyticsById = createSelector(
-	[selectCampaigns, (_, id) => id],
+export const selectCampaignWithAnalyticsById = createCachedSelector(
+	selectCampaigns,
+	(_, id) => id,
 	(campaigns, id) => {
 		const campaign = { ...(campaigns[id] || {}) }
 		campaign.clicks = selectCampaignEventsCount('CLICK', id)
 		campaign.impressions = selectCampaignEventsCount('IMPRESSION', id)
 		return campaign
 	}
-)
+)((_state, id) => id)
 
 export const selectAdUnits = state => selectItemsByType(state, 'AdUnit')
 
