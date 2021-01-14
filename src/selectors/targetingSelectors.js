@@ -1,4 +1,5 @@
 import React from 'react'
+import { createCachedSelector } from 're-reselect'
 import { createSelector } from 'reselect'
 import { selectNewItemByTypeAndId, selectValidations } from 'selectors'
 import { ExternalAnchor } from 'components/common/anchor/anchor'
@@ -458,18 +459,18 @@ export const selectAudienceSourcesWithOptions = createSelector(
 		})
 )
 
-export const selectAudienceValidations = createSelector(
-	[selectValidations, (_, __, ___, validateId) => validateId],
+export const selectAudienceValidations = createCachedSelector(
+	selectValidations,
+	(_, __, ___, validateId) => validateId,
 	(validations, id) => validations[id]
-)
+)((_, __, ___, validateId) => validateId)
 
-export const selectAudienceInputsDataByItem = createSelector(
-	[
-		selectAudienceSourcesWithOptions,
-		selectNewItemByTypeAndId,
-		selectAudienceValidations,
-		(_, __, ___, ____, advancedOnly) => advancedOnly,
-	],
+export const selectAudienceInputsDataByItem = createCachedSelector(
+	selectAudienceSourcesWithOptions,
+	selectNewItemByTypeAndId,
+	selectAudienceValidations,
+	(_, __, ___, ____, advancedOnly) => advancedOnly,
+
 	(allSrcsWithOptions, selectedItem, validations = {}, advancedOnly) => {
 		const isCampaignAudienceItem = selectedItem && !!selectedItem.audienceInput
 
@@ -530,4 +531,4 @@ export const selectAudienceInputsDataByItem = createSelector(
 
 		return audienceInputData
 	}
-)
+)((_, __, ___, ____, advancedOnly) => advancedOnly)
