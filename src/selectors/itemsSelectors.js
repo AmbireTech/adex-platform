@@ -74,10 +74,11 @@ export const selectWebsitesArray = state =>
 export const selectWebsiteById = (state, id) =>
 	selectItemByTypeAndId(state, 'Website', id)
 
-export const selectWebsiteByWebsite = createSelector(
-	[selectWebsites, (_, ws) => ws],
+export const selectWebsiteByWebsite = createCachedSelector(
+	selectWebsites,
+	(_, ws) => ws,
 	(items, ws) => (ws ? items[url.parse(ws).hostname] || {} : {})
-)
+)((_state, ws) => ws)
 
 export const selectAudiences = state => selectItemsByType(state, 'Audience')
 
@@ -87,8 +88,10 @@ export const selectAudiencesArray = state =>
 export const selectAudienceById = (state, id) =>
 	selectItemByTypeAndId(state, 'Audience', id)
 
-export const selectAudienceByCampaignId = createSelector(
-	[selectCampaignById, selectAudiencesArray, (_, id) => id],
+export const selectAudienceByCampaignId = createCachedSelector(
+	selectCampaignById,
+	selectAudiencesArray,
+	(_, id) => id,
 	(campaign, items, id) => {
 		const hasCampaignAudienceUpdated =
 			campaign &&
@@ -103,7 +106,7 @@ export const selectAudienceByCampaignId = createSelector(
 			? campaign.audienceInput
 			: items.find(x => x && x.campaignId === id)
 	}
-)
+)((_state, campaignId) => campaignId)
 
 export const selectSavedAudiences = createSelector(
 	[selectAudiencesArray],
