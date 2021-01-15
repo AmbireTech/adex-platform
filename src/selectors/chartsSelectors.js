@@ -1,8 +1,8 @@
-import { createSelector } from 'reselect'
 import { t, selectCampaignAnalyticsByChannelStats } from 'selectors'
+import { createCachedSelector } from 're-reselect'
 
-export const selectCampaignDoughnutStats = createSelector(
-	(state, { campaignId, chartColors, maxDataSets }) => {
+export const selectCampaignDoughnutStats = createCachedSelector(
+	(state, { campaignId, chartColors, maxDataSets } = {}) => {
 		const analytics = {
 			impressions: selectCampaignAnalyticsByChannelStats(state, {
 				type: 'IMPRESSION',
@@ -66,4 +66,4 @@ export const selectCampaignDoughnutStats = createSelector(
 
 		return data
 	}
-)
+)((_state, { campaignId } = {}) => campaignId)
