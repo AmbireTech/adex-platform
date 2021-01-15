@@ -21,7 +21,6 @@ import {
 	t,
 	selectPublisherStatsByCountryTableData,
 	selectPublisherStatsByCountryMapChartData,
-	selectBestEarnersTableData,
 	selectInitialDataLoadedByData,
 } from 'selectors'
 
