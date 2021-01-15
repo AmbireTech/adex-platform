@@ -71,7 +71,6 @@ const getCols = ({ symbol }) => [
 		options: {
 			filter: false,
 			sort: true,
-			sortDirection: 'desc',
 			customBodyRender: ctr => `${ctr.toFixed(4)} %`,
 		},
 	},
@@ -96,6 +95,10 @@ const onDownload = (buildHead, buildBody, columns, data) => {
 
 const getOptions = () => ({
 	filterType: 'multiselect',
+	sortOrder: {
+		name: 'ctr',
+		direction: 'desc',
+	},
 	onDownload: (buildHead, buildBody, columns, data) =>
 		onDownload(buildHead, buildBody, columns, data),
 	rowsPerPage: 5,

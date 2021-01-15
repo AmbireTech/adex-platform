@@ -9,7 +9,6 @@ import {
 	t,
 	selectCampaignsTableData,
 	selectMainToken,
-	selectSide,
 	selectCampaignsMaxImpressions,
 	selectCampaignsMaxClicks,
 	selectCampaignsMaxDeposit,
