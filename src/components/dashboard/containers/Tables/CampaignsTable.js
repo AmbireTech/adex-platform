@@ -306,7 +306,6 @@ const getOptions = ({ decimals, symbol }) => ({
 })
 
 function CampaignsTable(props) {
-	const side = useSelector(selectSide)
 	const maxImpressions = useSelector(selectCampaignsMaxImpressions)
 	const maxClicks = useSelector(selectCampaignsMaxClicks)
 	const maxDeposit = useSelector(selectCampaignsMaxDeposit)
@@ -329,7 +328,6 @@ function CampaignsTable(props) {
 
 	const { data, columns } = useTableData({
 		selector: selectCampaignsTableData,
-		selectorArgs: side,
 		getColumns,
 	})
 
