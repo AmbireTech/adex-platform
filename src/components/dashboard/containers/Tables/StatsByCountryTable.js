@@ -23,7 +23,6 @@ const getCols = ({ showEarnings, symbol }) => [
 		options: {
 			filter: false,
 			sort: true,
-			sortDirection: 'desc',
 			customBodyRender: impressions => utils.commify(impressions || 0),
 		},
 	},
@@ -83,6 +82,10 @@ const getCols = ({ showEarnings, symbol }) => [
 
 const getOptions = () => ({
 	filterType: 'multiselect',
+	sortOrder: {
+		name: 'impressions',
+		direction: 'desc',
+	},
 	rowsPerPage: 10,
 })
 
