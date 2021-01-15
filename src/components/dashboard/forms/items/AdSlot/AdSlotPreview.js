@@ -5,8 +5,8 @@ import {
 	Typography,
 	Grid,
 	Box,
-	ExpansionPanel,
-	ExpansionPanelSummary,
+	Accordion,
+	AccordionSummary,
 	Chip,
 } from '@material-ui/core'
 import { Alert } from '@material-ui/lab'
@@ -220,18 +220,18 @@ const AdSlotPreview = () => {
 					</Grid>
 					<Grid item xs={12}>
 						<Box p={1}>
-							<ExpansionPanel square={true} variant='outlined'>
-								<ExpansionPanelSummary
+							<Accordion square={true} variant='outlined'>
+								<AccordionSummary
 									expandIcon={<ExpandMoreIcon />}
 									aria-controls='slot-rules-content'
 									id='slot-rules-header'
 								>
 									<Typography>{t('SLOT_RULES')}</Typography>
-								</ExpansionPanelSummary>
+								</AccordionSummary>
 								<Box p={1} color='grey.contrastText' bgcolor='grey.main'>
 									<pre>{JSON.stringify(rules || [], null, 2)}</pre>
 								</Box>
-							</ExpansionPanel>
+							</Accordion>
 						</Box>
 					</Grid>
 				</Grid>

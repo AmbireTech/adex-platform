@@ -4,8 +4,8 @@ import {
 	Grid,
 	Box,
 	CircularProgress,
-	ExpansionPanel,
-	ExpansionPanelSummary,
+	Accordion,
+	AccordionSummary,
 	Typography,
 } from '@material-ui/core'
 import { Alert, AlertTitle } from '@material-ui/lab'
@@ -260,18 +260,18 @@ function CampaignFormPreview() {
 					</Grid>
 
 					<Grid item xs={12}>
-						<ExpansionPanel square={true} variant='outlined'>
-							<ExpansionPanelSummary
+						<Accordion square={true} variant='outlined'>
+							<AccordionSummary
 								expandIcon={<ExpandMoreIcon />}
 								aria-controls='targeting-rules-content'
 								id='targeting-rules-header'
 							>
 								<Typography>{t('TARGETING_RULES')}</Typography>
-							</ExpansionPanelSummary>
+							</AccordionSummary>
 							<Box p={1} color='grey.contrastText' bgcolor='grey.main'>
 								<pre>{JSON.stringify(targetingRules || [], null, 2)}</pre>
 							</Box>
-						</ExpansionPanel>
+						</Accordion>
 					</Grid>
 				</Grid>
 			</ContentBody>
