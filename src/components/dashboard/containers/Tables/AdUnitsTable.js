@@ -232,7 +232,7 @@ function AdUnitsTable(props) {
 
 	useEffect(() => {
 		if (campaignId) {
-			setSelectorArgs(campaignId)
+			setSelectorArgs({ campaignId })
 			return
 		}
 
