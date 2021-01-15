@@ -15,7 +15,6 @@ import { useSelector } from 'react-redux'
 import { sliderFilterOptions } from './commonFilters'
 import { formatNumberWithCommas } from 'helpers/formatters'
 import { useTableData } from './tableHooks'
-import { ReloadData } from './toolbars'
 import { execute, excludeOrIncludeWebsites, confirmAction } from 'actions'
 
 const useStyles = makeStyles(theme => ({

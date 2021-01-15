@@ -11,7 +11,6 @@ import {
 } from 'selectors'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import { useTableData } from './tableHooks'
-import { ReloadData } from './toolbars'
 const RRImg = withReactRouterLink(Img)
 
 const getCols = ({ symbol }) => [
