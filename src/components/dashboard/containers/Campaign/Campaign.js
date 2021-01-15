@@ -180,7 +180,7 @@ function Campaign({ match }) {
 								<Paper variant='outlined'>
 									<StatsByCountryTable
 										selector={selectCampaignAnalyticsToCountryTableData}
-										selectorData={campaignId}
+										selectorArgs={campaignId}
 										tableId={`CampaignStatsByCountry${campaignId}`}
 										showEarnings
 									/>
