@@ -10,6 +10,7 @@ import { createSelector } from 'reselect'
 import { constants } from 'adex-models'
 import { WHERE_YOU_KNOW_US, USER_SIDES } from 'constants/misc'
 import moment from 'moment'
+import { createCachedSelector } from 're-reselect'
 
 export const selectSlotTypesSourceWithDemands = createSelector(
 	[selectDemandAnalytics, selectMainToken],
@@ -167,13 +168,11 @@ export const selectUnitTypesSourceWithRecommendations = createSelector(
 	}
 )
 
-export const selectMonthsRange = createSelector(
-	[
-		(startDate, endDate) => ({
-			startDate,
-			endDate,
-		}),
-	],
+export const selectMonthsRange = createCachedSelector(
+	(startDate, endDate) => ({
+		startDate,
+		endDate,
+	}),
 	({ startDate, endDate }) => {
 		const months = []
 		for (
@@ -185,10 +184,11 @@ export const selectMonthsRange = createSelector(
 		}
 		return months
 	}
-)
+)((startDate, endDate) => `${startDate}:${endDate}`)
 
-export const selectReceiptMonths = createSelector(
-	[selectMonthsRange, (_, __, monthsEnd) => monthsEnd],
+export const selectReceiptMonths = createCachedSelector(
+	selectMonthsRange,
+	(_, __, monthsEnd) => monthsEnd,
 	(months, monthsEnd) =>
 		months.map(monthTimestamp => ({
 			value: monthTimestamp,
@@ -198,7 +198,7 @@ export const selectReceiptMonths = createSelector(
 						.format('Do MMMM, YYYY')
 				: moment(monthTimestamp).format('Do MMMM, YYYY'),
 		}))
-)
+)((startDate, endDate, monthsEnd) => `${startDate}:${endDate}:${monthsEnd}`)
 
 export const selectFromSource = createSelector(
 	labelValueMapping => labelValueMapping,
