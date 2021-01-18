@@ -15,6 +15,7 @@ import {
 import {
 	selectNewItemByTypeAndId,
 	selectIdentitySideAnalyticsPeriod,
+	selectAdUnits,
 } from 'selectors'
 import dateUtils from 'helpers/dateUtils'
 import { DEFAULT_DATETIME_FORMAT } from 'helpers/formatters'
@@ -240,15 +241,36 @@ export const selectAdvancedAnalyticsByType = createCachedSelector(
 	(campaignAnalytics, type) => campaignAnalytics[type] || {}
 )((_state, type) => type)
 
-export const selectTotalStatsByAdUnits = createCachedSelector(
-	(state, { type }) => selectAdvancedAnalyticsByType(state, type),
-	(_state, { adUnitId }) => adUnitId,
-	(analyticsByChannel, adUnitId) =>
-		Object.values(analyticsByChannel.byChannelStats || {}).reduce(
-			(acc, curr) => acc + curr.reportChannelToAdUnit[adUnitId] || 0,
-			0
-		)
-)((_state, { type, adUnitId }) => `${type}:${adUnitId}`)
+const mapTotalChanelToAdUnitData = (adUnits, advancedAnalytics) => {
+	const totalByAdUnit = Object.values(
+		advancedAnalytics.byChannelStats || {}
+	).reduce((byUnit, curr) => {
+		Object.entries(curr.reportChannelToAdUnit || {}).forEach(([key, value]) => {
+			if (adUnits[key]) {
+				byUnit[key] = (byUnit[key] || 0) + value
+			}
+		})
+
+		return byUnit
+	}, {})
+
+	return totalByAdUnit
+}
+
+export const selectAdUnitsTotalStats = createSelector(
+	[selectAdUnits, selectAdvancedAnalytics],
+	(adUnits, advancedAnalytics) => {
+		const stats = {
+			IMPRESSION: mapTotalChanelToAdUnitData(
+				adUnits,
+				advancedAnalytics.IMPRESSION || {}
+			),
+			CLICK: mapTotalChanelToAdUnitData(adUnits, advancedAnalytics.CLICK || {}),
+		}
+
+		return stats
+	}
+)
 
 export const selectPublisherStatsByType = createCachedSelector(
 	selectAdvancedAnalyticsByType,
