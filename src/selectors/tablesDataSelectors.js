@@ -10,7 +10,6 @@ import {
 	selectCampaignAnalyticsByChannelStats,
 	selectCampaignEventsCount,
 	selectCampaignAnalyticsByChannelToAdUnit,
-	selectTotalStatsByAdUnits,
 	selectCampaignUnitsById,
 	selectMainToken,
 	selectAnalytics,
@@ -25,6 +24,7 @@ import {
 	selectSavedAudiences,
 	selectAudienceByCampaignId,
 	selectSide,
+	selectAdUnitsTotalStats,
 } from 'selectors'
 import { utils } from 'ethers'
 import chartCountriesData from 'world-atlas/countries-50m.json'
@@ -210,14 +210,16 @@ const getTabledData = ({
 	items,
 	impressionsByAdUnit,
 	clicksByAdUnit,
-}) =>
-	Object.values(items)
+}) => {
+	return Object.values(items)
 		.filter(x => !x.archived)
 		.map(item => {
 			const id = item.id || item.ipfs
 			const to = `/dashboard/${side}/units/${id}`
 			const { title, mediaUrl, mediaMime, type, created } = item
 
+			const impressions = impressionsByAdUnit(id)
+			const clicks = clicksByAdUnit(id) || 0
 			return {
 				id,
 				media: {
@@ -227,9 +229,9 @@ const getTabledData = ({
 					mediaMime,
 					to,
 				},
-				impressions: impressionsByAdUnit(id) || 0,
-				clicks: clicksByAdUnit(id) || 0,
-				ctr: (clicksByAdUnit(id) / impressionsByAdUnit(id)) * 100 || 0,
+				impressions,
+				clicks,
+				ctr: (clicks / (impressions || 1)) * 100 || 0,
 				title,
 				type,
 				created,
@@ -241,30 +243,16 @@ const getTabledData = ({
 				},
 			}
 		})
+}
 
 export const selectAllAdUnitsTableData = createSelector(
-	[
-		selectAdUnits,
-		selectSide,
-		state => id => {
-			return selectTotalStatsByAdUnits(state, {
-				type: 'IMPRESSION',
-				adUnitId: id,
-			})
-		},
-		state => id => {
-			return selectTotalStatsByAdUnits(state, {
-				type: 'CLICK',
-				adUnitId: id,
-			})
-		},
-	],
-	(items, side, impressionsByAdUnit, clicksByAdUnit) =>
+	[selectAdUnits, selectSide, selectAdUnitsTotalStats],
+	(items, side, adUnitsToatalStats) =>
 		getTabledData({
 			items,
 			side,
-			impressionsByAdUnit,
-			clicksByAdUnit,
+			impressionsByAdUnit: id => adUnitsToatalStats.IMPRESSION[id],
+			clicksByAdUnit: id => adUnitsToatalStats.CLICK[id],
 		})
 )
 
@@ -295,31 +283,14 @@ export const selectAdUnitsByCampaignTableData = createCachedSelector(
 export const selectAdUnitsByItemsTableData = createCachedSelector(
 	(_state, items) => items,
 	selectSide,
-	(state, campaignId) => id => {
-		return selectCampaignAnalyticsByChannelToAdUnit(state, {
-			type: 'IMPRESSION',
-			campaignId,
-		})[id]
-	},
-	state => id => {
-		return selectTotalStatsByAdUnits(state, {
-			type: 'IMPRESSION',
-			adUnitId: id,
-		})
-	},
-	state => id => {
-		return selectTotalStatsByAdUnits(state, {
-			type: 'CLICK',
-			adUnitId: id,
-		})
-	},
-	(items, side, impressionsByAdUnit, clicksByAdUnit) =>
+	selectAdUnitsTotalStats,
+	(items, side, adUnitsToatalStats) =>
 		getTabledData({
 			selectOnImage: true,
 			items,
 			side,
-			impressionsByAdUnit,
-			clicksByAdUnit,
+			impressionsByAdUnit: id => adUnitsToatalStats.IMPRESSION[id],
+			clicksByAdUnit: id => adUnitsToatalStats.CLICK[id],
 		})
 )((_state, items) => items.map(x => x.id).join(':'))
 
