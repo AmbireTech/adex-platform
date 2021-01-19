@@ -79,7 +79,7 @@ export const selectWebsiteByWebsite = createCachedSelector(
 	selectWebsites,
 	(_, ws) => ws,
 	(items, ws) => (ws ? items[url.parse(ws).hostname] || {} : {})
-)((_state, ws) => ws)
+)((_state, ws = 'all') => ws)
 
 export const selectAudiences = state => selectItemsByType(state, 'Audience')
 
