@@ -67,6 +67,7 @@ export function PublisherStats() {
 							<Grid item xs={12} md={12} lg={6}>
 								<MapChart
 									selector={selectPublisherStatsByCountryMapChartData}
+									chartId='publisher-stats'
 								/>
 							</Grid>
 

@@ -168,6 +168,7 @@ function Campaign({ match }) {
 							</Grid>
 							<Grid item xs={12} md={12} lg={6}>
 								<MapChart
+									chartId={`campaign-${campaignId}`}
 									selector={state =>
 										selectCampaignAnalyticsToCountryMapChartData(
 											state,
