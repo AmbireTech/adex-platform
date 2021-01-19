@@ -33,7 +33,7 @@ const commonGAEventProps = {
 }
 const fiatProvidersDetails = [
 	{
-		title: t('BANK_TRANSFER_OR_CARD_PAYMENTS'),
+		title: t('RAMP_PAYMENT_METHODS'),
 		onClick: props => openOnRampNetwork(props),
 		imgSrc: RAMP_LOGO,
 		imgAlt: t('RAMP'),
