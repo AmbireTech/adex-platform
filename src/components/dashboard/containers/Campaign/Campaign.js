@@ -159,11 +159,11 @@ function Campaign({ match }) {
 					<Box p={1}>
 						<Grid container spacing={1} alignItems='flex-start'>
 							<Grid item xs={12}>
-								<Box>
+								{/* <Box>
 									<Typography variant='button' align='center'>
 										{t('COUNTRY_STATS_PERIOD', { args: ['30', 'DAYS'] })}
 									</Typography>
-								</Box>
+								</Box> */}
 								{!dataLoaded && <LinearProgress />}
 							</Grid>
 							<Grid item xs={12} md={12} lg={6}>
