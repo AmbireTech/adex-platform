@@ -23,6 +23,7 @@ import {
 	selectPublisherStatsByCountryMapChartData,
 	selectInitialDataLoadedByData,
 } from 'selectors'
+import { timeSinceEpoch } from 'helpers/formatters'
 
 export function PublisherStats() {
 	const [tabIndex, setTabIndex] = useState(0)
@@ -58,7 +59,7 @@ export function PublisherStats() {
 							<Grid item xs={12}>
 								<Box>
 									<Typography variant='button' align='center'>
-										{t('COUNTRY_STATS_PERIOD', { args: ['30', 'DAYS'] })}
+										{t('COUNTRY_STATS_PERIOD', { args: timeSinceEpoch() })}
 									</Typography>
 								</Box>
 								{!dataLoaded && <LinearProgress />}
