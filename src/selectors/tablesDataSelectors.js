@@ -25,6 +25,7 @@ import {
 	selectAudienceByCampaignId,
 	selectSide,
 	selectAdUnitsTotalStats,
+	selectAdvancedAnalytics,
 } from 'selectors'
 import { utils } from 'ethers'
 import chartCountriesData from 'world-atlas/countries-50m.json'
@@ -260,16 +261,16 @@ export const selectAdUnitsByCampaignTableData = createCachedSelector(
 	selectCampaignUnitsById,
 	selectSide,
 	(state, campaignId) => id => {
-		return selectCampaignAnalyticsByChannelToAdUnit(state, {
-			type: 'IMPRESSION',
-			campaignId,
-		})[id]
+		return selectCampaignAnalyticsByChannelToAdUnit(
+			state,
+			'IMPRESSION',
+			campaignId
+		)[id]
 	},
 	(state, campaignId) => id => {
-		return selectCampaignAnalyticsByChannelToAdUnit(state, {
-			type: 'CLICK',
-			campaignId,
-		})[id]
+		return selectCampaignAnalyticsByChannelToAdUnit(state, 'CLICK', campaignId)[
+			id
+		]
 	},
 	(items, side, impressionsByAdUnit, clicksByAdUnit) =>
 		getTabledData({
@@ -394,26 +395,19 @@ export const selectPublisherStatsByCountryData = createSelector(
 export const selectCampaignAnalyticsToCountryData = createCachedSelector(
 	(state, campaignId) => {
 		return [
-			selectCampaignAnalyticsByChannelToCountry(state, {
-				type: 'IMPRESSION',
-				campaignId,
-			}),
-			selectCampaignAnalyticsByChannelToCountry(state, {
-				type: 'CLICK',
-				campaignId,
-			}),
-			selectCampaignAggrStatsByCountry(state, {
-				campaignId,
-				type: 'IMPRESSION',
-			}),
-			selectCampaignAnalyticsByChannelToCountryPay(state, {
-				type: 'IMPRESSION',
-				campaignId,
-			}),
-			selectCampaignAnalyticsByChannelToCountryPay(state, {
-				type: 'CLICK',
-				campaignId,
-			}),
+			selectCampaignAnalyticsByChannelToCountry(
+				state,
+				'IMPRESSION',
+				campaignId
+			),
+			selectCampaignAnalyticsByChannelToCountry(state, 'CLICK', campaignId),
+			selectCampaignAggrStatsByCountry(state, campaignId, 'IMPRESSION'),
+			selectCampaignAnalyticsByChannelToCountryPay(
+				state,
+				'IMPRESSION',
+				campaignId
+			),
+			selectCampaignAnalyticsByChannelToCountryPay(state, 'CLICK', campaignId),
 		]
 	},
 	([
@@ -529,21 +523,20 @@ export const selectBestEarnersTableData = createSelector(
 )
 
 export const selectCampaignStatsTableData = createCachedSelector(
+	selectAdvancedAnalytics,
 	selectAudienceByCampaignId,
 	(state, campaignId) => {
 		return {
-			impressions: selectCampaignAnalyticsByChannelStats(state, {
-				type: 'IMPRESSION',
-				campaignId,
-			}),
-			clicks: selectCampaignAnalyticsByChannelStats(state, {
-				type: 'CLICK',
-				campaignId,
-			}),
+			impressions: selectCampaignAnalyticsByChannelStats(
+				state,
+				'IMPRESSION',
+				campaignId
+			),
+			clicks: selectCampaignAnalyticsByChannelStats(state, 'CLICK', campaignId),
 		}
 	},
 
-	(campaignAudienceInput, { impressions, clicks }) => {
+	(_advanced, campaignAudienceInput, { impressions, clicks }) => {
 		const imprStats = impressions.reportChannelToHostname || {}
 		const clickStats = clicks.reportChannelToHostname || {}
 		const earnStats = impressions.reportChannelToHostnamePay || {}

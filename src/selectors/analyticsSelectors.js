@@ -380,28 +380,28 @@ export const selectPublisherTotalImpressions = createCachedSelector(
 	}
 )(_state => 'IMPRESSION')
 
-export const selectCampaignAnalyticsByChannelStats = createCachedSelector(
-	(state, { type }) => selectAdvancedAnalyticsByType(state, type),
-	(_state, { campaignId }) => campaignId,
-	(analyticsByType, campaignId) =>
-		(analyticsByType.byChannelStats || {})[campaignId] || {}
-)((_state, { type, campaignId }) => `${type}:${campaignId}`)
+export const selectCampaignAnalyticsByChannelStats = (
+	state,
+	type,
+	campaignId
+) => {
+	const { byChannelStats = {} } = selectAdvancedAnalyticsByType(state, type)
+
+	return byChannelStats[campaignId] || {}
+}
 
 export const selectCampaignAnalyticsByChannelToCountry = createCachedSelector(
-	(state, { type, campaignId } = {}) =>
-		selectCampaignAnalyticsByChannelStats(state, { type, campaignId }),
+	selectCampaignAnalyticsByChannelStats,
 	({ reportChannelToCountry }) => reportChannelToCountry || {}
-)((_state, { type, campaignId }) => `${type}:${campaignId}`)
+)((_state, type, campaignId) => `${type}:${campaignId}`)
 
 export const selectCampaignAnalyticsByChannelToCountryPay = createCachedSelector(
-	(state, { type, campaignId } = {}) =>
-		selectCampaignAnalyticsByChannelStats(state, { type, campaignId }),
+	selectCampaignAnalyticsByChannelStats,
 	({ reportChannelToCountryPay }) => reportChannelToCountryPay || {}
-)((_state, { type, campaignId }) => `${type}:${campaignId}`)
+)((_state, type, campaignId) => `${type}:${campaignId}`)
 
 export const selectCampaignAggrStatsByCountry = createCachedSelector(
-	(state, { type, campaignId } = {}) =>
-		selectCampaignAnalyticsByChannelToCountry(state, { type, campaignId }),
+	selectCampaignAnalyticsByChannelToCountry,
 	(byCountry = {}) => ({
 		max: Math.max.apply(null, Object.values(byCountry)),
 		total: Object.values(byCountry).reduce(
@@ -409,23 +409,21 @@ export const selectCampaignAggrStatsByCountry = createCachedSelector(
 			0
 		),
 	})
-)((_state, { type, campaignId }) => `${type}:${campaignId}`)
+)((_state, type, campaignId) => `${type}:${campaignId}`)
 
 export const selectCampaignAnalyticsByChannelToAdUnit = createCachedSelector(
-	(state, { type, campaignId } = {}) =>
-		selectCampaignAnalyticsByChannelStats(state, { type, campaignId }),
+	selectCampaignAnalyticsByChannelStats,
 
 	({ reportChannelToAdUnit }) => reportChannelToAdUnit || {}
-)((_state, { type, campaignId }) => `${type}:${campaignId}`)
+)((_state, type, campaignId) => `${type}:${campaignId}`)
 
 export const selectMaxAdUnitStatByChannel = createCachedSelector(
-	(state, { type, campaignId } = {}) =>
-		selectCampaignAnalyticsByChannelStats(state, { type, campaignId }),
+	selectCampaignAnalyticsByChannelStats,
 	({ reportChannelToAdUnit }) =>
 		reportChannelToAdUnit
 			? Math.max.apply(null, Object.values(reportChannelToAdUnit))
 			: 0
-)((_state, { type, campaignId }) => `${type}:${campaignId}`)
+)((_state, type, campaignId) => `${type}:${campaignId}`)
 
 export const selectAnalyticsDataAggr = createCachedSelector(
 	selectAnalytics,
@@ -465,10 +463,7 @@ export const selectAnalyticsDataAggr = createCachedSelector(
 export function selectCampaignEventsCount(type, campaignId) {
 	return Object.values(
 		// TODO: fix this selector w/o using getState
-		selectCampaignAnalyticsByChannelToAdUnit(getState(), {
-			type,
-			campaignId,
-		})
+		selectCampaignAnalyticsByChannelToAdUnit(getState(), type, campaignId)
 	).reduce((a, b) => a + b, 0)
 }
 

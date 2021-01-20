@@ -4,14 +4,12 @@ import { createCachedSelector } from 're-reselect'
 export const selectCampaignDoughnutStats = createCachedSelector(
 	(state, { campaignId, chartColors, maxDataSets } = {}) => {
 		const analytics = {
-			impressions: selectCampaignAnalyticsByChannelStats(state, {
-				type: 'IMPRESSION',
-				campaignId,
-			}),
-			clicks: selectCampaignAnalyticsByChannelStats(state, {
-				type: 'CLICK',
-				campaignId,
-			}),
+			impressions: selectCampaignAnalyticsByChannelStats(
+				state,
+				'IMPRESSION',
+				campaignId
+			),
+			clicks: selectCampaignAnalyticsByChannelStats(state, 'CLICK', campaignId),
 		}
 
 		return { ...analytics, chartColors, maxDataSets }
