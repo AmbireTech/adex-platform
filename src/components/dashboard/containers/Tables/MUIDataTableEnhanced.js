@@ -6,8 +6,12 @@ import {
 	Box,
 	Button,
 } from '@material-ui/core'
-import { t, selectTableState } from 'selectors'
-import { updateTableState, execute } from 'actions'
+import { t, selectTableState, selectTableStateSelectedRows } from 'selectors'
+import {
+	updateTableState,
+	updateTableStateSelectedRows,
+	execute,
+} from 'actions'
 import { makeStyles } from '@material-ui/core/styles'
 import { useSelector } from 'react-redux'
 
@@ -99,6 +103,10 @@ function MUIDataTableEnhanced(props) {
 		selectTableState(state, tableId)
 	)
 
+	const rowsSelected = useSelector(state =>
+		selectTableStateSelectedRows(state, tableId)
+	)
+
 	const columnsWithFilters = columns.map(({ options, ...col }, i) => {
 		return {
 			...col,
@@ -137,6 +145,7 @@ function MUIDataTableEnhanced(props) {
 					selectToolbarPlacement: props.toolbarEnabled ? 'above' : 'none',
 					responsive: 'vertical',
 					...tableState,
+					rowsSelected,
 					onTableChange: (action, newTableState) => {
 						if (
 							![
@@ -161,15 +170,9 @@ function MUIDataTableEnhanced(props) {
 					onRowSelectionChange: (
 						_currentRowsSelected,
 						allRowsSelected,
-						rowsSelected
+						selected
 					) => {
-						execute(
-							updateTableState(tableId, {
-								...tableState,
-								filterList,
-								rowsSelected,
-							})
-						)
+						execute(updateTableStateSelectedRows(tableId, selected))
 
 						if (handleRowSelectionChange) {
 							const selectedIndexes = allRowsSelected.map(row => row.dataIndex)

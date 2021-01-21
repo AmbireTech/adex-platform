@@ -448,7 +448,7 @@ export function updateTableState(tableId, tableState) {
 			filterList,
 			searchProps,
 			searchText,
-			rowsSelected,
+			// rowsSelected, -
 			sortOrder,
 			viewColumnsState,
 		}) => ({
@@ -458,7 +458,7 @@ export function updateTableState(tableId, tableState) {
 			filterList,
 			searchProps,
 			searchText,
-			rowsSelected,
+			// rowsSelected,
 			sortOrder,
 			viewColumnsState,
 		}))(tableState)
@@ -473,6 +473,15 @@ export function updateTableState(tableId, tableState) {
 	}
 }
 
+export function updateTableStateSelectedRows(tableId, selectedRows) {
+	return function(dispatch, getState) {
+		return updateMemoryUi(`selectedRows${tableId}`, selectedRows)(
+			dispatch,
+			getState
+		)
+	}
+}
+
 export function resetAllTableState() {
 	return function(dispatch, _getState) {
 		return dispatch({
@@ -484,10 +493,11 @@ export function resetAllTableState() {
 export function resetTableStateById(tableId) {
 	return function(dispatch, getState) {
 		const identity = selectAccountIdentityAddr(getState())
-		return dispatch({
+		dispatch({
 			type: types.RESET_TABLE_STATE_BY_ID,
 			identity,
 			tableId,
 		})
+		updateMemoryUi(`selectedRows${tableId}`, undefined)(dispatch, getState)
 	}
 }
