@@ -1,7 +1,8 @@
 import { createSelector } from 'reselect'
 import { createCachedSelector } from 're-reselect'
 
-import { selectCampaignEventsCount, selectCampaignIdInDetails } from 'selectors'
+import { selectCampaignIdInDetails } from 'selectors'
+
 import url from 'url'
 export const selectItems = state => state.persist.items
 
@@ -39,17 +40,6 @@ export const selectCampaignInDetails = createSelector(
 	(campaignId, state) =>
 		campaignId ? selectCampaignById(state, campaignId) : undefined
 )
-
-export const selectCampaignWithAnalyticsById = createCachedSelector(
-	selectCampaigns,
-	(_, id) => id,
-	(campaigns, id) => {
-		const campaign = { ...(campaigns[id] || {}) }
-		campaign.clicks = selectCampaignEventsCount('CLICK', id)
-		campaign.impressions = selectCampaignEventsCount('IMPRESSION', id)
-		return campaign
-	}
-)((_state, id) => id)
 
 export const selectAdUnits = state => selectItemsByType(state, 'AdUnit')
 
