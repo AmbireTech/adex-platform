@@ -172,3 +172,10 @@ export const selectTableState = createCachedSelector(
 	(tablesStates, identityId, tableId) =>
 		((tablesStates || {})[identityId] || {})[tableId] || {}
 )((_state, tableId) => tableId)
+
+//memory
+export const selectTableStateSelectedRows = createCachedSelector(
+	selectMemoryUi,
+	(_state, tableId) => tableId,
+	(memoryUI, tableId) => memoryUI[`selectedRows${tableId}`]
+)((_state, tableId) => tableId)
