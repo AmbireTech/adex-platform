@@ -1,14 +1,5 @@
 import React, { Fragment, useState } from 'react'
-import { useSelector } from 'react-redux'
-import {
-	Box,
-	Grid,
-	Paper,
-	Typography,
-	Tab,
-	Tabs,
-	LinearProgress,
-} from '@material-ui/core'
+import { Box, Grid, Paper, Typography, Tab, Tabs } from '@material-ui/core'
 import {
 	ItemTabsBar,
 	ItemTabsContainer,
@@ -21,15 +12,11 @@ import {
 	t,
 	selectPublisherStatsByCountryTableData,
 	selectPublisherStatsByCountryMapChartData,
-	selectInitialDataLoadedByData,
 } from 'selectors'
 import { timeSinceEpoch } from 'helpers/formatters'
 
 export function PublisherStats() {
 	const [tabIndex, setTabIndex] = useState(0)
-	const dataLoaded = useSelector(state =>
-		selectInitialDataLoadedByData(state, 'advancedAnalytics')
-	)
 
 	return (
 		<Fragment>
@@ -62,7 +49,6 @@ export function PublisherStats() {
 										{t('COUNTRY_STATS_PERIOD', { args: timeSinceEpoch() })}
 									</Typography>
 								</Box>
-								{!dataLoaded && <LinearProgress />}
 							</Grid>
 							<Grid item xs={12} md={12} lg={6}>
 								<MapChart

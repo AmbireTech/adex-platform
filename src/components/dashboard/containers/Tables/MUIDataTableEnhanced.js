@@ -1,7 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import MUIDataTable from 'mui-datatables'
-import { LinearProgress, Box, Button } from '@material-ui/core'
+import {
+	//  LinearProgress,
+	Box,
+	Button,
+} from '@material-ui/core'
 import { t, selectTableState } from 'selectors'
 import { updateTableState, execute } from 'actions'
 import { makeStyles } from '@material-ui/core/styles'
@@ -87,10 +91,10 @@ function MUIDataTableEnhanced(props) {
 		columns,
 		options,
 		handleRowSelectionChange,
-		loading,
+		// loading,
 		tableId,
 	} = props
-	const classes = useStyles()
+	// const classes = useStyles()
 	const { filterList, columnOrder, ...tableState } = useSelector(state =>
 		selectTableState(state, tableId)
 	)
@@ -115,6 +119,7 @@ function MUIDataTableEnhanced(props) {
 
 	return (
 		<Box>
+			{/* {loading && <LinearProgress className={classes.progress} />} */}
 			<MUIDataTable
 				title={title}
 				data={data}
@@ -185,7 +190,6 @@ function MUIDataTableEnhanced(props) {
 					},
 				}}
 			/>
-			{loading && <LinearProgress className={classes.progress} />}
 		</Box>
 	)
 }

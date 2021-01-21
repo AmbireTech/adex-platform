@@ -1,6 +1,5 @@
 import React, { useState, Fragment, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { useSelector } from 'react-redux'
 import {
 	Grid,
 	Box,
@@ -10,7 +9,6 @@ import {
 	ListItemText,
 	Tabs,
 	Tab,
-	LinearProgress,
 } from '@material-ui/core'
 import { AdUnitsTable } from 'components/dashboard/containers/Tables'
 import { Campaign as CampaignModel } from 'adex-models'
@@ -21,7 +19,6 @@ import { Receipt } from 'components/dashboard/containers/Receipt'
 import {
 	selectCampaignAnalyticsToCountryTableData,
 	selectCampaignAnalyticsToCountryMapChartData,
-	selectInitialDataLoadedByData,
 	t,
 } from 'selectors'
 import StatsByCountryTable from 'components/dashboard/containers/Tables/StatsByCountryTable'
@@ -46,9 +43,6 @@ function Campaign({ match }) {
 		objModel: CampaignModel,
 		validateAndUpdateFn: validateAndUpdateCampaign,
 	})
-	const dataLoaded = useSelector(state =>
-		selectInitialDataLoadedByData(state, 'advancedAnalytics')
-	)
 
 	const campaign = new CampaignModel(item)
 	const { humanFriendlyName } = campaign.status || {}
@@ -130,7 +124,6 @@ function Campaign({ match }) {
 				)}
 				{tabIndex === 2 && (
 					<Box p={1}>
-						{!dataLoaded && <LinearProgress />}
 						<Box
 							display='flex'
 							flexDirection='row'
@@ -157,9 +150,6 @@ function Campaign({ match }) {
 				{tabIndex === 3 && (
 					<Box p={1}>
 						<Grid container spacing={1} alignItems='flex-start'>
-							<Grid item xs={12}>
-								{!dataLoaded && <LinearProgress />}
-							</Grid>
 							<Grid item xs={12} md={12} lg={6}>
 								<MapChart
 									chartId={`campaign-${campaignId}`}
