@@ -8,7 +8,6 @@ import {
 	selectAdUnits,
 	creatArrayOnlyLengthChangeSelector,
 	selectCampaignAnalyticsByChannelStats,
-	selectCampaignEventsCount,
 	selectCampaignAnalyticsByChannelToAdUnit,
 	selectCampaignUnitsById,
 	selectMainToken,
@@ -25,7 +24,7 @@ import {
 	selectAudienceByCampaignId,
 	selectSide,
 	selectAdUnitsTotalStats,
-	selectAdvancedAnalytics,
+	selectCampaignsEventCountsStats,
 } from 'selectors'
 import { utils } from 'ethers'
 import chartCountriesData from 'world-atlas/countries-50m.json'
@@ -43,9 +42,14 @@ const { CountryNames, numericToAlpha2 } = constants
 const { pricingBondsToUserInputPerMile } = helpers
 
 export const selectCampaignsTableData = createSelector(
-	[selectCampaignsArray, selectRoutineWithdrawTokens, selectSide],
-	(campaigns, tokens, side) =>
-		campaigns
+	[
+		selectCampaignsEventCountsStats,
+		selectCampaignsArray,
+		selectRoutineWithdrawTokens,
+		selectSide,
+	],
+	(eventCounts, campaigns, tokens, side) => {
+		return campaigns
 			.filter(x => !x.archived)
 			.map(item => {
 				const { decimals = 18 } = tokens[item.depositAsset] || {}
@@ -77,6 +81,8 @@ export const selectCampaignsTableData = createSelector(
 						decimals,
 					})
 
+				const { impressions = 0, clicks = 0 } = eventCounts[id] || {}
+
 				return {
 					media: {
 						side,
@@ -94,13 +100,10 @@ export const selectCampaignsTableData = createSelector(
 						utils.formatUnits(item.depositAmount || '0', decimals)
 					),
 					fundsDistributedRatio: item.status.fundsDistributedRatio || 0,
-					impressions: selectCampaignEventsCount('IMPRESSION', id),
-					clicks: selectCampaignEventsCount('CLICK', id),
+					impressions,
+					clicks,
 
-					ctr:
-						(selectCampaignEventsCount('CLICK', id) /
-							selectCampaignEventsCount('IMPRESSION', id)) *
-							100 || 0,
+					ctr: (clicks / impressions) * 100 || 0,
 					minPerImpression: Number(cpm.IMPRESSION.min),
 
 					maxPerImpression: Number(cpm.IMPRESSION.max),
@@ -126,6 +129,7 @@ export const selectCampaignsTableData = createSelector(
 						item.status.humanFriendlyName === 'Completed',
 				}
 			})
+	}
 )
 
 export const selectCampaignsTableDataOnLengthChange = creatArrayOnlyLengthChangeSelector(
@@ -248,12 +252,12 @@ const getTabledData = ({
 
 export const selectAllAdUnitsTableData = createSelector(
 	[selectAdUnits, selectSide, selectAdUnitsTotalStats],
-	(items, side, adUnitsToatalStats) =>
+	(items, side, adUnitsTotalStats) =>
 		getTabledData({
 			items,
 			side,
-			impressionsByAdUnit: id => adUnitsToatalStats.IMPRESSION[id],
-			clicksByAdUnit: id => adUnitsToatalStats.CLICK[id],
+			impressionsByAdUnit: id => adUnitsTotalStats.IMPRESSION[id],
+			clicksByAdUnit: id => adUnitsTotalStats.CLICK[id],
 		})
 )
 
@@ -523,20 +527,13 @@ export const selectBestEarnersTableData = createSelector(
 )
 
 export const selectCampaignStatsTableData = createCachedSelector(
-	selectAdvancedAnalytics,
+	selectAnalytics, // temp fix to update campaign analytics daat
 	selectAudienceByCampaignId,
-	(state, campaignId) => {
-		return {
-			impressions: selectCampaignAnalyticsByChannelStats(
-				state,
-				'IMPRESSION',
-				campaignId
-			),
-			clicks: selectCampaignAnalyticsByChannelStats(state, 'CLICK', campaignId),
-		}
-	},
-
-	(_advanced, campaignAudienceInput, { impressions, clicks }) => {
+	(state, campaignId) =>
+		selectCampaignAnalyticsByChannelStats(state, 'IMPRESSION', campaignId),
+	(state, campaignId) =>
+		selectCampaignAnalyticsByChannelStats(state, 'CLICK', campaignId),
+	(_advanced, campaignAudienceInput, impressions, clicks) => {
 		const imprStats = impressions.reportChannelToHostname || {}
 		const clickStats = clicks.reportChannelToHostname || {}
 		const earnStats = impressions.reportChannelToHostnamePay || {}
