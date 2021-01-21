@@ -5,18 +5,18 @@ import {
 	selectChannelsWithUserBalancesAll,
 	selectIdentitySideAnalyticsTimeframe,
 	selectAccountIdentityCreatedDate,
+	selectNewItemByTypeAndId,
+	selectIdentitySideAnalyticsPeriod,
 	selectCampaignInDetails,
 } from 'selectors'
+import { selectAdUnits } from './itemsSelectors'
+
 import { formatTokenAmount } from 'helpers/formatters'
 import {
 	getPeriodDataPointLabel,
 	getMinStartDateTimeByTimeframe,
 } from 'helpers/analyticsTimeHelpers'
-import {
-	selectNewItemByTypeAndId,
-	selectIdentitySideAnalyticsPeriod,
-	selectAdUnits,
-} from 'selectors'
+
 import dateUtils from 'helpers/dateUtils'
 import { DEFAULT_DATETIME_FORMAT } from 'helpers/formatters'
 
@@ -466,6 +466,41 @@ export function selectCampaignEventsCount(type, campaignId) {
 		selectCampaignAnalyticsByChannelToAdUnit(getState(), type, campaignId)
 	).reduce((a, b) => a + b, 0)
 }
+
+const mapEventCounts = (data = {}) => {
+	return Object.values(data).reduce((a, b) => a + b, 0)
+}
+
+const getChannelToAdUnitData = (advancedAnalytics, campaignId, eventType) => {
+	const { byChannelStats = {} } = advancedAnalytics[eventType] || {}
+	const { reportChannelToAdUnit = {} } = byChannelStats[campaignId] || {}
+	return reportChannelToAdUnit
+}
+
+export const selectCampaignsEventCountsStats = createSelector(
+	selectAdvancedAnalytics,
+	advancedAnalytics => {
+		const { byChannelStats = {} } = advancedAnalytics.IMPRESSION || {}
+		return Object.keys(byChannelStats).reduce((stats, key) => {
+			stats[key] = {
+				impressions: mapEventCounts(
+					getChannelToAdUnitData(advancedAnalytics, key, 'IMPRESSION')
+				),
+				clicks: mapEventCounts(
+					getChannelToAdUnitData(advancedAnalytics, key, 'CLICK')
+				),
+			}
+
+			return stats
+		}, {})
+	}
+)
+
+export const selectCampaignsEventCountsStatsById = createCachedSelector(
+	selectCampaignsEventCountsStats,
+	(_state, id) => id,
+	(eventCounts, id) => eventCounts[id] || { impressions: 0, clicks: 0 }
+)((_state, id) => id)
 
 export const selectTotalImpressions = createCachedSelector(
 	(state, { side, timeframe } = {}) =>
