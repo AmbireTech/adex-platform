@@ -531,4 +531,4 @@ export const selectAudienceInputsDataByItem = createCachedSelector(
 
 		return audienceInputData
 	}
-)((_, __, ___, ____, advancedOnly) => advancedOnly)
+)((_, __, ___, ____, advancedOnly) => (!!advancedOnly).toString())
