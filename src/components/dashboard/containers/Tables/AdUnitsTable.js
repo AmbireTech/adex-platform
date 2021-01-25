@@ -3,7 +3,7 @@ import { Tooltip, IconButton, Box } from '@material-ui/core'
 import { Visibility } from '@material-ui/icons'
 import { utils } from 'ethers'
 import { sliderFilterOptions } from './commonFilters'
-import Img from 'components/common/img/Img'
+import Media from 'components/common/media'
 import { ArchiveItemBtn } from 'components/dashboard/containers/ItemCommon'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
@@ -19,9 +19,8 @@ import { NewCloneUnitDialog } from '../../forms/items/NewItems'
 import { AdUnit } from 'adex-models'
 import { execute, cloneItem } from 'actions'
 import { useTableData } from './tableHooks'
-// import { ReloadData } from './toolbars'
 const RRIconButton = withReactRouterLink(IconButton)
-const RRImg = withReactRouterLink(Img)
+const RRIMedia = withReactRouterLink(Media)
 
 const getCols = ({ noActions, noClone, maxImpressions, maxClicks, maxCTR }) => [
 	{
@@ -32,7 +31,7 @@ const getCols = ({ noActions, noClone, maxImpressions, maxClicks, maxCTR }) => [
 			sort: false,
 			download: false,
 			customBodyRender: ({ selectOnImage, id, mediaUrl, mediaMime, to }) => {
-				const ImgComponent = selectOnImage ? Img : RRImg
+				const ImgComponent = selectOnImage ? Media : RRIMedia
 				return (
 					<ImgComponent
 						key={id}
