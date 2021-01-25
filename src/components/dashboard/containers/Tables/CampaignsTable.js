@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react'
 import { Tooltip, IconButton } from '@material-ui/core'
 import { Visibility, Receipt } from '@material-ui/icons'
-import Img from 'components/common/img/Img'
+import Media from 'components/common/media'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
@@ -24,7 +24,7 @@ import { useTableData } from './tableHooks'
 import { PrintAllReceipts } from './toolbars'
 
 const RRIconButton = withReactRouterLink(IconButton)
-const RRImg = withReactRouterLink(Img)
+const RRMedia = withReactRouterLink(Media)
 
 const getCols = ({ symbol, maxImpressions, maxDeposit, maxClicks }) => [
 	{
@@ -51,7 +51,7 @@ const getCols = ({ symbol, maxImpressions, maxDeposit, maxClicks }) => [
 			download: false,
 			customBodyRender: ({ side, id, mediaUrl, mediaMime, to }) => {
 				return (
-					<RRImg
+					<RRMedia
 						key={id}
 						isCellImg
 						src={mediaUrl}

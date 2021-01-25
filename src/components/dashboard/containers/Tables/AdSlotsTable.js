@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react'
 import { Box, IconButton, Tooltip } from '@material-ui/core'
 import { utils } from 'ethers'
 import { Visibility } from '@material-ui/icons'
-import Img from 'components/common/img/Img'
+import Media from 'components/common/media'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import { ArchiveItemBtn } from 'components/dashboard/containers/ItemCommon'
@@ -17,7 +17,7 @@ import { formatDateTime, truncateString } from 'helpers/formatters'
 import { useTableData } from './tableHooks'
 
 const RRIconButton = withReactRouterLink(IconButton)
-const RRImg = withReactRouterLink(Img)
+const RRMedia = withReactRouterLink(Media)
 
 const getCols = ({ symbol }) => [
 	{
@@ -29,7 +29,7 @@ const getCols = ({ symbol }) => [
 			download: false,
 			customBodyRender: ({ id, mediaUrl, mediaMime, to }) => {
 				return (
-					<RRImg
+					<RRMedia
 						key={id}
 						fullScreenOnClick={true}
 						src={mediaUrl}
