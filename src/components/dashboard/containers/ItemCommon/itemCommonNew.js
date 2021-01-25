@@ -359,7 +359,6 @@ export const ItemFallbackMediaURL = ({ targetUrl = '' }) => {
 
 export const MediaCard = ({ mediaUrl = '', mediaMime = '', label = '' }) => {
 	const classes = useStyles()
-	console.log('mediaUrl', mediaUrl)
 	return (
 		<Card className={classes.card} raised={false} variant='outlined'>
 			<CardMedia classes={{ root: classes.mediaRoot }}>
