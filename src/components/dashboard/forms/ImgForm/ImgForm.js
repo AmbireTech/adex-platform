@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import PropTypes from 'prop-types'
-import Img from 'components/common/img/Img'
+import Media from 'components/common/media'
+
 // import debounce from 'debounce'
 import Dropzone from 'react-dropzone'
 import { Button, Typography, Grid, Box } from '@material-ui/core'
@@ -31,6 +32,7 @@ function ImgForm(props) {
 	const [imgName, setImgName] = useState('')
 	const [mime, setMime] = useState(props.mime)
 	const [imgSrc, setImgSrc] = useState(props.imgSrc)
+	const [isVideoSrc, setIsVideoSrc] = useState(isVideoMedia(props.mime))
 
 	useEffect(() => {
 		setCrop({ aspect })
@@ -39,6 +41,7 @@ function ImgForm(props) {
 	useEffect(() => {
 		setMime(props.mime)
 		setImgSrc(props.imgSrc)
+		setIsVideoSrc(isVideoMedia(props.mime))
 	}, [props.mime, props.imgSrc])
 
 	const onLoad = useCallback(img => {
@@ -49,9 +52,10 @@ function ImgForm(props) {
 		const file = acceptedFiles[0]
 		if (!file) return
 		const objectUrl = URL.createObjectURL(file)
-		setImgSrc(objectUrl)
-		setImgName(file.name)
 		setMime(file.type)
+		setImgName(file.name)
+		setIsVideoSrc(isVideoMedia(file.mime))
+		setImgSrc(objectUrl)
 
 		// TODO: Maybe get width and height here instead on ing validation hoc
 		onChange({
@@ -89,6 +93,7 @@ function ImgForm(props) {
 				size
 			)
 			URL.revokeObjectURL(imgSrc)
+			setIsVideoSrc(false)
 			setImgSrc(croppedBlob)
 			setCropMode(false)
 			onChange({
@@ -148,7 +153,6 @@ function ImgForm(props) {
 		)
 	}
 
-	const videoSrc = isVideoMedia(mime)
 	return (
 		<div className={classes.imgForm}>
 			<OutlinedPropView
@@ -222,12 +226,12 @@ function ImgForm(props) {
 									>
 										<Grid item sm={12} md={8}>
 											<Box className={classes.imgDropzonePreview}>
-												<Img
+												<Media
 													src={imgSrc}
 													alt={imgName || 'media'}
 													mediaMime={mime}
-													controls={!!videoSrc}
-													allowVideo={!!videoSrc}
+													controls={isVideoSrc}
+													allowVideo={isVideoSrc}
 												/>
 											</Box>
 										</Grid>
