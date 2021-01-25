@@ -106,9 +106,11 @@ const Media = ({
 	const displayImage = useRef(null)
 	const displayVideo = useRef(null)
 	const [active, setActive] = useState(false)
-	const [imgSrc, setImgSrc] = useState(null)
-	const [videoSrc, setVideoSrc] = useState(null)
-	const isVideo = !!mediaMime && isVideoMedia(mediaMime)
+
+	const [media, setMedia] = useState({
+		src: null,
+		isVideo: !!mediaMime && isVideoMedia(mediaMime),
+	})
 
 	const handleToggle = ev => {
 		ev && ev.stopPropagation && ev.stopPropagation()
@@ -138,12 +140,19 @@ const Media = ({
 	const onFail = useCallback(fallback => {
 		clearLoadTimeout()
 		clearEvents()
-		setImgSrc(fallback || null)
+		setMedia({
+			src: fallback,
+			isVideo: false,
+		})
 	}, [])
 
 	useEffect(() => {
+		const isVideo = !!mediaMime && isVideoMedia(mediaMime)
 		if (isVideo && !allowVideo) {
-			setImgSrc(VIDEO_IMAGE)
+			setMedia({
+				src: VIDEO_IMAGE,
+				isVideo: false,
+			})
 		}
 
 		clearLoadTimeout()
@@ -166,8 +175,10 @@ const Media = ({
 
 			displayVideo.current.onloadedmetadata = () => {
 				clearLoadTimeout()
-				setVideoSrc(mediaSrc)
-				setImgSrc(null)
+				setMedia({
+					src: mediaSrc,
+					isVideo: true,
+				})
 			}
 		} else {
 			if (!displayImage.current) {
@@ -181,8 +192,10 @@ const Media = ({
 
 			displayImage.current.onload = () => {
 				clearLoadTimeout()
-				setVideoSrc(null)
-				setImgSrc(mediaSrc)
+				setMedia({
+					src: mediaSrc,
+					isVideo: false,
+				})
 			}
 		}
 
@@ -190,7 +203,34 @@ const Media = ({
 			clearLoadTimeout()
 			clearEvents()
 		}
-	}, [allowVideo, fallbackSrc, isVideo, onFail, src])
+	}, [allowVideo, fallbackSrc, mediaMime, onFail, src])
+
+	const renderMedia = ({ onclick, imgClasses, videoClasses, controls }) => {
+		if (!media.isVideo) {
+			return (
+				<img
+					alt={alt}
+					src={media.src}
+					draggable='false'
+					className={imgClasses}
+					onDragStart={event => event.preventDefault() /*Firefox*/}
+					onClick={onclick}
+				/>
+			)
+		} else {
+			return (
+				<video
+					src={media.src}
+					autoPlay
+					muted
+					loop
+					className={videoClasses}
+					onClick={onclick}
+					controls={controls}
+				></video>
+			)
+		}
+	}
 
 	const renderFullscreenDialog = () => {
 		return (
@@ -202,24 +242,10 @@ const Media = ({
 				classes={{ paper: classes.dialog }}
 			>
 				<DialogContent className={classes.dialogImageParent}>
-					{imgSrc ? (
-						<img
-							alt={alt}
-							src={imgSrc}
-							draggable='false'
-							className={classnames(classes.dialogImage, classes.imgLoading)}
-							onDragStart={event => event.preventDefault() /*Firefox*/}
-						/>
-					) : (
-						<video
-							src={videoSrc}
-							autoPlay
-							muted
-							loop
-							controls
-							className={classnames(classes.dialogImage, classes.imgLoading)}
-						></video>
-					)}
+					{renderMedia({
+						imgClasses: classnames(classes.dialogImage, classes.imgLoading),
+						videoClasses: classnames(classes.dialogImage, classes.imgLoading),
+					})}
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleToggle} color='primary'>
@@ -248,32 +274,18 @@ const Media = ({
 		)
 	}
 
-	return imgSrc || videoSrc ? (
+	return media && media.src ? (
 		<div
 			className={classnames(className, classes.wrapper, {
 				[classes.cellImg]: !!isCellImg,
 			})}
 		>
-			{!!imgSrc ? (
-				<img
-					alt={alt}
-					src={imgSrc}
-					draggable='false'
-					className={classnames(classes.imgLoading, classes.img, classNameImg)}
-					onDragStart={event => event.preventDefault() /*Firefox*/}
-					onClick={onClick || (fullScreenOnClick && handleToggle)}
-				/>
-			) : (
-				<video
-					src={videoSrc}
-					className={classnames(classes.imgLoading, classes.img)}
-					controls={!!controls}
-					autoPlay
-					muted
-					loop
-					onClick={onClick || (fullScreenOnClick && handleToggle)}
-				></video>
-			)}
+			{renderMedia({
+				onclick: onClick || (fullScreenOnClick && handleToggle),
+				imgClasses: classnames(classes.imgLoading, classes.img, classNameImg),
+				videoClasses: classnames(classes.imgLoading, classes.img),
+				controls: !!controls,
+			})}
 			{allowFullscreen && fullScreenBtn()}
 			{fullScreenOnClick && renderFullscreenDialog()}
 		</div>
