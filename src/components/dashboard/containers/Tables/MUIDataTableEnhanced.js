@@ -17,7 +17,7 @@ import { useSelector } from 'react-redux'
 
 const generalTableOptions = {
 	rowsPerPage: 5,
-	rowsPerPageOptions: [5, 10, 25, 50, 100],
+	rowsPerPageOptions: [5, 10, 25, 50],
 	setTableProps: () => {
 		return {
 			padding: 'default',
