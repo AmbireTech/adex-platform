@@ -12,7 +12,7 @@ import {
 import { Alert } from '@material-ui/lab'
 import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
 import { IabCategories } from 'adex-models'
-import Img from 'components/common/img/Img'
+import Media from 'components/common/media'
 import Anchor from 'components/common/anchor/anchor'
 import {
 	WebsiteIssues,
@@ -50,7 +50,7 @@ const SlotFallback = ({ img, targetUrl }) => {
 			<PropRow
 				left={t('SLOT_FALLBACK_IMG_LABEL')}
 				right={
-					<Img
+					<Media
 						allowFullscreen={true}
 						classes={{
 							img: classes.imgPreview,

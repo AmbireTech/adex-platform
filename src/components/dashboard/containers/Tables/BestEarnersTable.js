@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { utils } from 'ethers'
-import Img from 'components/common/img/Img'
+import Media from 'components/common/media'
 import { useSelector } from 'react-redux'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import {
@@ -11,7 +11,7 @@ import {
 } from 'selectors'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import { useTableData } from './tableHooks'
-const RRImg = withReactRouterLink(Img)
+const RRMedia = withReactRouterLink(Media)
 
 const getCols = ({ symbol }) => [
 	{
@@ -22,7 +22,7 @@ const getCols = ({ symbol }) => [
 			sort: false,
 			download: true,
 			customBodyRender: ({ id, mediaUrl, mediaMime, to }) => {
-				const ImgComponent = to ? RRImg : Img
+				const ImgComponent = to ? RRMedia : Media
 				const imgProps = to ? { to } : { fullScreenOnClick: true }
 				return (
 					<ImgComponent

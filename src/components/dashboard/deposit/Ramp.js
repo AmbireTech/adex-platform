@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core'
 import { t } from 'selectors'
 import { makeStyles } from '@material-ui/core/styles'
-import Img from 'components/common/img/Img'
+import Media from 'components/common/media'
 import {
 	openWyre,
 	openPayTrie,
@@ -102,7 +102,7 @@ const ProviderListItem = ({
 					spacing={1}
 				>
 					<Grid item xs={5} sm={4} md={4}>
-						<Img className={classes.img} alt={imgAlt} src={imgSrc} />
+						<Media className={classes.img} alt={imgAlt} src={imgSrc} />
 					</Grid>
 					<Grid item xs={7} sm={8} md={8} className={classes.infoGrid}>
 						<Typography className={classes.infoTitle}>{title}</Typography>
