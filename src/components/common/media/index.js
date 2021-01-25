@@ -113,7 +113,7 @@ const Media = ({
 	const handleToggle = ev => {
 		ev && ev.stopPropagation && ev.stopPropagation()
 		ev && ev.preventDefault && ev.preventDefault()
-		setActive({ active: !active })
+		setActive(!active)
 	}
 
 	const clearLoadTimeout = () => {
@@ -124,14 +124,14 @@ const Media = ({
 	}
 
 	const clearEvents = () => {
-		if (displayImage) {
-			displayImage.onerror = null
-			displayImage.onload = null
-			displayImage.onabort = null
+		if (displayImage.current) {
+			displayImage.current.onerror = null
+			displayImage.current.onload = null
+			displayImage.current.onabort = null
 		}
 
-		if (displayVideo) {
-			displayVideo.onloadedmetadata = null
+		if (displayVideo.current) {
+			displayVideo.current.onloadedmetadata = null
 		}
 	}
 
@@ -141,75 +141,56 @@ const Media = ({
 		setImgSrc(fallback || null)
 	}, [])
 
-	const updateDisplayVideo = useCallback(
-		({ src, fallback }) => {
-			clearLoadTimeout()
-			clearEvents()
-			displayVideo.scr = src
-
-			loadTimeout.current = setTimeout(() => {
-				onFail(fallback)
-			}, MAX_IMG_LOAD_TIME)
-
-			displayVideo.onloadedmetadata = () => {
-				clearLoadTimeout()
-				setVideoSrc(src)
-				setImgSrc(null)
-			}
-		},
-		[onFail]
-	)
-
-	const updateDisplayImage = useCallback(
-		({ image, src, fallback }) => {
-			clearLoadTimeout()
-			clearEvents()
-			displayImage.src = image
-
-			loadTimeout.current = setTimeout(() => {
-				onFail(fallback)
-			}, MAX_IMG_LOAD_TIME)
-
-			displayImage.onerror = displayImage.onabort = () => onFail(fallback)
-
-			displayImage.onload = () => {
-				clearLoadTimeout()
-				setVideoSrc(null)
-				setImgSrc(src)
-			}
-		},
-		[onFail]
-	)
-
 	useEffect(() => {
 		if (isVideo && !allowVideo) {
 			setImgSrc(VIDEO_IMAGE)
 		}
 
+		clearLoadTimeout()
+		clearEvents()
+
+		const fallback = ipfsSrc(fallbackSrc) || NO_IMAGE
+		const mediaSrc = ipfsSrc(src)
+
+		loadTimeout.current = setTimeout(() => {
+			onFail(fallback)
+		}, MAX_IMG_LOAD_TIME)
+
 		if (isVideo) {
-			const video = document.createElement('video')
-			displayVideo.current = video
-			updateDisplayVideo({
-				video: displayVideo.current,
-				src: ipfsSrc(src),
-				fallback: ipfsSrc(fallbackSrc) || NO_IMAGE,
-			})
+			if (!displayVideo.current) {
+				const video = document.createElement('video')
+				displayVideo.current = video
+			}
+
+			displayVideo.current.src = mediaSrc
+
+			displayVideo.current.onloadedmetadata = () => {
+				clearLoadTimeout()
+				setVideoSrc(mediaSrc)
+				setImgSrc(null)
+			}
 		} else {
-			displayImage.current = new Image()
-			updateDisplayImage({
-				image: ipfsSrc(src),
-				src,
-				fallback: ipfsSrc(fallbackSrc) || NO_IMAGE,
-			})
+			if (!displayImage.current) {
+				displayImage.current = new Image()
+			}
+
+			displayImage.current.src = mediaSrc
+
+			displayImage.current.onerror = displayImage.current.onabort = () =>
+				onFail(fallback)
+
+			displayImage.current.onload = () => {
+				clearLoadTimeout()
+				setVideoSrc(null)
+				setImgSrc(mediaSrc)
+			}
 		}
-	}, [
-		allowVideo,
-		fallbackSrc,
-		isVideo,
-		src,
-		updateDisplayImage,
-		updateDisplayVideo,
-	])
+
+		return () => {
+			clearLoadTimeout()
+			clearEvents()
+		}
+	}, [allowVideo, fallbackSrc, isVideo, onFail, src])
 
 	const renderFullscreenDialog = () => {
 		return (
