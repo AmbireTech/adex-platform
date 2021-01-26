@@ -6,7 +6,6 @@ import {
 	selectRoutineWithdrawTokens,
 	selectAdSlotsArray,
 	selectAdUnits,
-	creatArrayOnlyLengthChangeSelector,
 	selectCampaignAnalyticsByChannelStats,
 	selectCampaignAnalyticsByChannelToAdUnit,
 	selectCampaignUnitsById,
@@ -400,7 +399,7 @@ export const selectCampaignAnalyticsToCountryData = createCachedSelector(
 				campaignId
 			),
 			selectCampaignAnalyticsByChannelToCountry(state, 'CLICK', campaignId),
-			selectCampaignAggrStatsByCountry(state, campaignId, 'IMPRESSION'),
+			selectCampaignAggrStatsByCountry(state, 'IMPRESSION', campaignId),
 			selectCampaignAnalyticsByChannelToCountryPay(
 				state,
 				'IMPRESSION',
@@ -448,6 +447,8 @@ const mapByCountryMapChartData = ({
 	const hoverColor = SECONDARY
 	const pressedColor = SECONDARY_LIGHT
 	const chartData = { ...chartCountriesData }
+
+	console.log('impressionsAggrByCountry', impressionsAggrByCountry)
 
 	chartData.objects.countries.geometries = chartCountriesData.objects.countries.geometries.map(
 		data => {
