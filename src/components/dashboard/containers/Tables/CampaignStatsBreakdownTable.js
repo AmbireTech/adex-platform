@@ -13,7 +13,7 @@ import {
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { useSelector } from 'react-redux'
 import { sliderFilterOptions } from './commonFilters'
-import { formatNumberWithCommas } from 'helpers/formatters'
+import { formatNumberWithCommas, toFixedFloat } from 'helpers/formatters'
 import { useTableData } from './tableHooks'
 import { execute, excludeOrIncludeWebsites, confirmAction } from 'actions'
 
@@ -93,7 +93,7 @@ const getCols = ({
 			customBodyRender: earnings =>
 				`${formatNumberWithCommas((earnings || 0).toFixed(2))} ${symbol}`,
 			...sliderFilterOptions({
-				initial: [0, maxEarnings],
+				initial: [0, toFixedFloat(maxEarnings, 2)],
 				filterTitle: t('EARNINGS_FILTER'),
 			}),
 		},
@@ -126,7 +126,7 @@ const getCols = ({
 			sort: true,
 			customBodyRender: ctr => `${ctr.toFixed(4)} %`,
 			...sliderFilterOptions({
-				initial: [0, maxCTR],
+				initial: [0, toFixedFloat(maxCTR, 4)],
 				filterTitle: t('CTR_FILTER'),
 				stepsCount: 20,
 				stepsPrecision: 4,
