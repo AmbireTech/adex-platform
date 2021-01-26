@@ -64,4 +64,4 @@ export const selectCampaignDoughnutStats = createCachedSelector(
 
 		return data
 	}
-)((_state, { campaignId } = {}) => campaignId)
+)((_state, { campaignId = '-' } = {}) => campaignId)

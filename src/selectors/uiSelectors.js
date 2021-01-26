@@ -42,19 +42,19 @@ export const selectSpinnerById = createCachedSelector(
 	selectSpinners,
 	(_, id) => id,
 	(spinners, id) => spinners[id]
-)((_state, id) => id)
+)((_state, id = '-') => id)
 
 export const selectWeb3SyncSpinnerByValidateId = createCachedSelector(
 	selectSpinners,
 	(_, validateId) => validateId,
 	(spinners, validateId) => spinners[SYNC_WEB3_DATA + validateId]
-)((_state, validateId) => validateId)
+)((_state, validateId = '-') => validateId)
 
 export const selectMultipleSpinnersByIds = createCachedSelector(
 	selectSpinners,
 	(_, ids) => ids,
 	(spinners, ids) => ids.map(id => spinners[id])
-)((_state, ids) => ids.join(':'))
+)((_state, ids = '-') => ids.join(':'))
 
 export const selectRegistrationAllowed = createSelector(
 	selectGlobalUi,
@@ -114,7 +114,7 @@ export const selectInitialDataLoadedByData = createCachedSelector(
 	({ initialDataLoaded }, dataType) =>
 		initialDataLoaded === true ||
 		(typeof initialDataLoaded === 'object' && initialDataLoaded[dataType])
-)((_state, dataType) => dataType)
+)((_state, dataType = '-') => dataType)
 
 export const selectInitialDataLoaded = createSelector(
 	selectMemoryUi,
@@ -171,11 +171,11 @@ export const selectTableState = createCachedSelector(
 	(_state, tableId) => tableId,
 	(tablesStates, identityId, tableId) =>
 		((tablesStates || {})[identityId] || {})[tableId] || {}
-)((_state, tableId) => tableId)
+)((_state, tableId = '-') => tableId)
 
 //memory
 export const selectTableStateSelectedRows = createCachedSelector(
 	selectMemoryUi,
 	(_state, tableId) => tableId,
 	(memoryUI, tableId) => memoryUI[`selectedRows${tableId}`]
-)((_state, tableId) => tableId)
+)((_state, tableId = '-') => tableId)

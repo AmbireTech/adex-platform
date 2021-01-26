@@ -15,4 +15,4 @@ export const selectCampaignWithAnalyticsById = createCachedSelector(
 
 		return withAnalytics
 	}
-)((_state, id) => id)
+)((_state, id = '-') => id)

@@ -184,7 +184,7 @@ export const selectMonthsRange = createCachedSelector(
 		}
 		return months
 	}
-)((startDate, endDate) => `${startDate}:${endDate}`)
+)((startDate = '-', endDate = '-') => `${startDate}:${endDate}`)
 
 export const selectReceiptMonths = createCachedSelector(
 	selectMonthsRange,
@@ -198,7 +198,10 @@ export const selectReceiptMonths = createCachedSelector(
 						.format('Do MMMM, YYYY')
 				: moment(monthTimestamp).format('Do MMMM, YYYY'),
 		}))
-)((startDate, endDate, monthsEnd) => `${startDate}:${endDate}:${monthsEnd}`)
+)(
+	(startDate = '-', endDate = '-', monthsEnd = '-') =>
+		`${startDate}:${endDate}:${monthsEnd}`
+)
 
 export const selectFromSource = createSelector(
 	labelValueMapping => labelValueMapping,

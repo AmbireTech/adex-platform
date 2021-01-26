@@ -97,7 +97,7 @@ export const selectDemandAnalyticsByType = createCachedSelector(
 	selectDemandAnalytics,
 	(_, type) => type,
 	(demand, type) => demand[type] || {}
-)((_state, type) => type)
+)((_state, type = '-') => type)
 
 export const selectTargetingAnalytics = createSelector(
 	[selectTargeting],
@@ -239,7 +239,7 @@ export const selectAdvancedAnalyticsByType = createCachedSelector(
 	selectAdvancedAnalytics,
 	(_, type) => type,
 	(campaignAnalytics, type) => campaignAnalytics[type] || {}
-)((_state, type) => type)
+)((_state, type = '-') => type)
 
 const mapTotalChanelToAdUnitData = (adUnits, advancedAnalytics) => {
 	const totalByAdUnit = Object.values(
@@ -275,7 +275,7 @@ export const selectAdUnitsTotalStats = createSelector(
 export const selectPublisherStatsByType = createCachedSelector(
 	selectAdvancedAnalyticsByType,
 	({ publisherStats }) => publisherStats || {}
-)((_state, type) => type)
+)((_state, type = '-') => type)
 
 export const selectPublisherStatsByCountry = (state, type) =>
 	selectPublisherStatsByType(state, type).reportPublisherToCountry || {}
@@ -304,7 +304,7 @@ export const selectPublisherAggrStatsByCountry = createCachedSelector(
 			0
 		),
 	})
-)((_state, type) => type)
+)((_state, type = '-') => type)
 
 export const selectAllAdUnitsInChannels = createSelector(
 	[selectChannelsWithUserBalancesAll],
@@ -398,7 +398,7 @@ export const selectCampaignAnalyticsByChannelToCountry = createCachedSelector(
 export const selectCampaignAnalyticsByChannelToCountryPay = createCachedSelector(
 	selectCampaignAnalyticsByChannelStats,
 	({ reportChannelToCountryPay }) => reportChannelToCountryPay || {}
-)((_state, type, campaignId) => `${type}:${campaignId}`)
+)((_state, type = '-', campaignId = '-') => `${type}:${campaignId}`)
 
 export const selectCampaignAggrStatsByCountry = createCachedSelector(
 	selectCampaignAnalyticsByChannelToCountry,
@@ -409,7 +409,7 @@ export const selectCampaignAggrStatsByCountry = createCachedSelector(
 			0
 		),
 	})
-)((_state, type, campaignId) => `${type}:${campaignId}`)
+)((_state, type = '-', campaignId = '-') => `${type}:${campaignId}`)
 
 export const selectCampaignAnalyticsByChannelToAdUnit = createCachedSelector(
 	selectCampaignAnalyticsByChannelStats,
@@ -421,9 +421,9 @@ export const selectMaxAdUnitStatByChannel = createCachedSelector(
 	selectCampaignAnalyticsByChannelStats,
 	({ reportChannelToAdUnit }) =>
 		reportChannelToAdUnit
-			? Math.max.apply(null, Object.values(reportChannelToAdUnit))
+			? Math.max.apply(null, [0, ...Object.values(reportChannelToAdUnit)])
 			: 0
-)((_state, type, campaignId) => `${type}:${campaignId}`)
+)((_state, type = '-', campaignId = '-') => `${type}:${campaignId}`)
 
 export const selectAnalyticsDataAggr = createCachedSelector(
 	selectAnalytics,
@@ -456,7 +456,7 @@ export const selectAnalyticsDataAggr = createCachedSelector(
 		return aggr
 	}
 )(
-	(_state, { side, eventType, metric, timeframe }) =>
+	(_state, { side = '-', eventType = '-', metric = '-', timeframe = '-' }) =>
 		`${side}:${eventType}:${metric}:${timeframe}`
 )
 
@@ -514,7 +514,7 @@ export const selectTotalImpressions = createCachedSelector(
 		eventCounts
 			? eventCounts.reduce((a, { value }) => a + Number(value) || 0, 0)
 			: null
-)((_state, { side, timeframe }) => `${side}:${timeframe}`)
+)((_state, { side = '-', timeframe = '-' }) => `${side}:${timeframe}`)
 
 export const selectTotalClicks = createCachedSelector(
 	(state, { side, timeframe } = {}) =>
@@ -528,7 +528,7 @@ export const selectTotalClicks = createCachedSelector(
 		eventCounts
 			? eventCounts.reduce((a, { value }) => a + Number(value) || 0, 0)
 			: null
-)((_state, { side, timeframe }) => `${side}:${timeframe}`)
+)((_state, { side = '-', timeframe = '-' }) => `${side}:${timeframe}`)
 
 export const selectTotalMoney = createCachedSelector(
 	(state, { side, timeframe } = {}) =>
@@ -545,7 +545,7 @@ export const selectTotalMoney = createCachedSelector(
 					0
 			  )
 			: null
-)((_state, { side, timeframe }) => `${side}:${timeframe}`)
+)((_state, { side = '-', timeframe = '-' }) => `${side}:${timeframe}`)
 
 export const selectTotalImpressionsWithPayouts = createCachedSelector(
 	(state, { side, timeframe } = {}) =>
@@ -572,7 +572,7 @@ export const selectTotalImpressionsWithPayouts = createCachedSelector(
 					)
 					.reduce((a, { time, value }) => a + Number(value) || 0, 0)
 			: null
-)((_state, { side, timeframe }) => `${side}:${timeframe}`)
+)((_state, { side = '-', timeframe = '-' }) => `${side}:${timeframe}`)
 
 export const selectAverageCPM = createCachedSelector(
 	(state, { side, timeframe } = {}) =>
@@ -583,7 +583,7 @@ export const selectAverageCPM = createCachedSelector(
 		totalMoney !== null && totalImpressions !== null
 			? (1000 * Number(totalMoney)) / Number(totalImpressions)
 			: null
-)((_state, { side, timeframe }) => `${side}:${timeframe}`)
+)((_state, { side = '-', timeframe = '-' }) => `${side}:${timeframe}`)
 
 const parseValueByMetric = ({ value, metric }) => {
 	switch (metric) {
@@ -623,7 +623,7 @@ export const selectStatsChartData = createCachedSelector(
 		)
 	}
 )(
-	(_state, { noLastOne, metric, timeframe }) =>
+	(_state, { noLastOne = '-', metric = '-', timeframe = '-' }) =>
 		`${metric}:${timeframe}:${noLastOne}`
 )
 
@@ -638,7 +638,7 @@ export const selectChartDatapointsImpressions = createCachedSelector(
 		}),
 
 	impressions => impressions
-)((_state, { side, timeframe }) => `${side}:${timeframe}`)
+)((_state, { side = '-', timeframe = '-' }) => `${side}:${timeframe}`)
 
 export const selectChartDatapointsClicks = createCachedSelector(
 	(state, { side, timeframe } = {}) =>
@@ -651,7 +651,7 @@ export const selectChartDatapointsClicks = createCachedSelector(
 		}),
 
 	clicks => clicks
-)((_state, { side, timeframe }) => `${side}:${timeframe}`)
+)((_state, { side = '-', timeframe = '-' }) => `${side}:${timeframe}`)
 
 export const selectChartDatapointsPayouts = createCachedSelector(
 	(state, { side, timeframe } = {}) =>
@@ -663,7 +663,7 @@ export const selectChartDatapointsPayouts = createCachedSelector(
 			noLastOne: false,
 		}),
 	payouts => payouts
-)((_state, { side, timeframe }) => `${side}:${timeframe}`)
+)((_state, { side = '-', timeframe = '-' }) => `${side}:${timeframe}`)
 
 export const selectChartDatapointsCPM = createCachedSelector(
 	(state, { side, timeframe } = {}) =>
@@ -684,7 +684,7 @@ export const selectChartDatapointsCPM = createCachedSelector(
 		})
 		return result
 	}
-)((_state, { side, timeframe }) => `${side}:${timeframe}`)
+)((_state, { side = '-', timeframe = '-' }) => `${side}:${timeframe}`)
 
 export const selectPublisherReceipts = createSelector(
 	[selectAnalytics],

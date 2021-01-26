@@ -10,18 +10,18 @@ export const selectItemsByType = createCachedSelector(
 	selectItems,
 	(_state, itemType) => itemType,
 	(items, itemType) => items[itemType] || {}
-)((_state, itemType) => itemType)
+)((_state, itemType = '-') => itemType)
 
 export const selectItemsArrayByType = createCachedSelector(
 	selectItemsByType,
 	items => Object.values(items || {})
-)((_state, itemType) => itemType)
+)((_state, itemType = '-') => itemType)
 
 export const selectItemByTypeAndId = createCachedSelector(
 	selectItemsByType,
 	(_state, _itemType, id) => id,
 	(items, id) => items[id] || {}
-)((_state, _itemType, id) => id) // all items has unique id so they are good for cache
+)((_state, _itemType, id = '-') => id) // all items has unique id so they are good for cache
 
 export const selectCampaigns = state => selectItemsByType(state, 'Campaign')
 export const selectCampaignsArray = state =>
@@ -97,7 +97,7 @@ export const selectAudienceByCampaignId = createCachedSelector(
 			? campaign.audienceInput
 			: items.find(x => x && x.campaignId === id)
 	}
-)((_state, campaignId) => campaignId)
+)((_state, campaignId = '-') => campaignId)
 
 export const selectSavedAudiences = createSelector(
 	[selectAudiencesArray],

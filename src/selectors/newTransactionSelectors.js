@@ -6,4 +6,4 @@ export const selectNewTransactionById = createCachedSelector(
 	selectNewTransactions,
 	(_, id) => id,
 	(txns, id) => txns[id] || {}
-)((_state, id) => id)
+)((_state, id = '-') => id)

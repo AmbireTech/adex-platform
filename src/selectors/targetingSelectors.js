@@ -463,7 +463,7 @@ export const selectAudienceValidations = createCachedSelector(
 	selectValidations,
 	(_, __, ___, validateId) => validateId,
 	(validations, id) => validations[id]
-)((_, __, ___, validateId) => validateId)
+)((_, __, ___, validateId = '-') => validateId)
 
 export const selectAudienceInputsDataByItem = createCachedSelector(
 	selectAudienceSourcesWithOptions,
@@ -531,4 +531,4 @@ export const selectAudienceInputsDataByItem = createCachedSelector(
 
 		return audienceInputData
 	}
-)((_, __, ___, ____, advancedOnly) => (!!advancedOnly).toString())
+)((_, __, ___, ____, advancedOnly = '-') => (!!advancedOnly).toString())
