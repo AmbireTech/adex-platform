@@ -74,6 +74,12 @@ export const formatNumberWithoutCommas = x => {
 		.join('')
 }
 
+export const toFixedFloat = (number, decimals = 2) => {
+	const num = parseFloat(parseFloat(number).toFixed(decimals))
+
+	return num
+}
+
 export const formatAbbrNum = (number, decPlaces) => {
 	// 2 decimal places => 100, 3 => 1000, etc
 	decPlaces = Math.pow(10, decPlaces)
