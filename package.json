@@ -12,7 +12,7 @@
     "@metamask/detect-provider": "^1.1.0",
     "@ramp-network/ramp-instant-sdk": "^1.5.1",
     "@svgr/webpack": "4.1.0",
-    "@transak/transak-sdk": "^1.0.23",
+    "@transak/transak-sdk": "^1.0.28",
     "@typescript-eslint/eslint-plugin": "1.6.0",
     "@typescript-eslint/parser": "1.6.0",
     "adex-constants": "1.0.10",
