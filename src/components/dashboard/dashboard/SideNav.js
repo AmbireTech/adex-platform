@@ -386,7 +386,7 @@ function SideNav(props) {
 							<small>
 								<Anchor
 									target='_blank'
-									href='https://github.com/AdExNetwork/adex-platform/blob/development/CHANGELOG.md.'
+									href='https://github.com/AdExNetwork/adex-platform/blob/development/CHANGELOG.md'
 								>
 									v.{packageJson.version}-beta
 								</Anchor>
