@@ -8,4 +8,4 @@ export const selectEnsAddressByAddr = createCachedSelector(
 	selectEnsAddresses,
 	(_, address) => address,
 	(ensAddresses, address) => ensAddresses[address] || ''
-)((_state, address) => address)
+)((_state, address = '-') => address)

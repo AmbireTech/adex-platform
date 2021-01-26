@@ -71,7 +71,7 @@ export const selectRoutineWithdrawTokenByAddress = createCachedSelector(
 	({ routineWithdrawTokens }, address) => {
 		return routineWithdrawTokens.find(token => token.address === address)
 	}
-)((_state, address) => address)
+)((_state, address = '-') => address)
 
 export const selectRoutineWithdrawTokensAddresses = createSelector(
 	[selectRelayerConfig],

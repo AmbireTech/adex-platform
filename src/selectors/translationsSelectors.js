@@ -14,7 +14,7 @@ export const selectTranslations = createCachedSelector(
 		const { isProp = false, args = [''], components = [] } = opts
 		return translate(val, { isProp, args, components }, lang)
 	}
-)((_state, val) => val)
+)((_state, val = '-') => val)
 
 // Need to useSelector for language in top component where this will be used
 // Now this is don by using Translate Hoc on Root

@@ -23,7 +23,7 @@ export const selectNewItemByTypeAndId = createCachedSelector(
 	(_, type, itemId) => ({ type, itemId }),
 	(items, { type, itemId }) =>
 		(itemId ? items[itemId] : items[type]) || { ...initialState.newItem[type] }
-)((_state, type, itemId) => `${type}:${itemId}`)
+)((_state, type = '-', itemId = '-') => `${type}:${itemId}`)
 
 export const selectNewCampaign = createSelector(
 	selectNewItems,
