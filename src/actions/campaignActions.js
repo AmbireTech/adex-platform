@@ -1074,7 +1074,11 @@ export function validateAndUpdateCampaign({
 			const isMaxUpdated = dirtyProps.includes('maxPerImpression')
 
 			const isAudienceUpdated =
-				dirtyProps.includes('audienceInput') || isMinUpdated || isMaxUpdated
+				dirtyProps.some(p =>
+					['audienceInput', 'campaignAdvanced'].includes(p.name || p)
+				) ||
+				isMinUpdated ||
+				isMaxUpdated
 
 			const depositAmountInputString = formatTokenAmount(
 				depositAmount,
