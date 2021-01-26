@@ -132,19 +132,14 @@ export const selectCampaignsTableData = createSelector(
 	}
 )
 
-export const selectCampaignsTableDataOnLengthChange = creatArrayOnlyLengthChangeSelector(
-	selectCampaignsTableData,
-	data => data
-)
-
 export const selectCampaignsMaxImpressions = createSelector(
-	selectCampaignsArray,
+	selectCampaignsTableData,
 	campaigns =>
 		Math.max.apply(null, campaigns.map(i => Number(i.impressions || 0))) || 1
 )
 
 export const selectCampaignsMaxClicks = createSelector(
-	selectCampaignsArray,
+	selectCampaignsTableData,
 	campaigns =>
 		Math.max.apply(null, campaigns.map(i => Number(i.clicks || 0))) || 1
 )
