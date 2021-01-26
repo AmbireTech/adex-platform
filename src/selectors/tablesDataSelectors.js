@@ -577,14 +577,14 @@ export const selectCampaignStatsMaxValues = createCachedSelector(
 			(result, current) => {
 				const newResult = { ...result }
 
-				newResult.maxClicks = Math.max(current.clicks, newResult.maxClicks)
-				newResult.maxCTR = Math.max(current.ctr, newResult.maxCTR)
+				newResult.maxClicks = Math.max(current.clicks || 0, newResult.maxClicks)
+				newResult.maxCTR = Math.max(current.ctr || 0, newResult.maxCTR)
 				newResult.maxImpressions = Math.max(
-					current.impressions,
+					current.impressions || 0,
 					newResult.maxImpressions
 				)
 				newResult.maxEarnings = Math.max(
-					current.earnings,
+					current.earnings || 0,
 					newResult.maxEarnings
 				)
 				return newResult
@@ -594,27 +594,23 @@ export const selectCampaignStatsMaxValues = createCachedSelector(
 )((_state, campaignId = '-') => campaignId)
 
 export const selectAdUnitsStatsMaxValues = createCachedSelector(
-	(state, { campaignId, items }) =>
-		!!items
-			? selectAdUnitsByItemsTableData(state, items)
-			: campaignId
-			? selectAdUnitsByCampaignTableData(state, campaignId)
-			: selectAllAdUnitsTableData(state),
-	data =>
-		data.reduce(
+	selectAdUnitsTableData,
+	data => {
+		return data.reduce(
 			(result, current) => {
 				const newResult = { ...result }
 
-				newResult.maxClicks = Math.max(current.clicks, newResult.maxClicks)
-				newResult.maxCTR = Math.max(current.ctr, newResult.maxCTR)
+				newResult.maxClicks = Math.max(current.clicks || 0, newResult.maxClicks)
+				newResult.maxCTR = Math.max(current.ctr || 0, newResult.maxCTR)
 				newResult.maxImpressions = Math.max(
-					current.impressions,
+					current.impressions || 0,
 					newResult.maxImpressions
 				)
 				return newResult
 			},
 			{ maxClicks: 0, maxImpressions: 0, maxCTR: 0 }
 		)
+	}
 )(
 	(_state, { campaignId, items }) =>
 		campaignId || (items || []).map(x => x.id).join(':') || 'all'
