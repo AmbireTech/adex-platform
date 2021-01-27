@@ -189,7 +189,7 @@ function MediaForm({
 	}
 
 	return (
-		<Box className={classes.imgForm}>
+		<Box>
 			<OutlinedPropView
 				autoFocus={false}
 				label={
@@ -249,101 +249,99 @@ function MediaForm({
 									</Grid>
 								</Grid>
 							) : (
-								<>
-									<Grid
-										container
-										spacing={2}
-										alignContent='center'
-										alignItems='center'
-									>
-										<Grid item sm={12} md={8}>
-											<Box {...getRootProps({ className: classes.dropzone })}>
-												<Box className={classes.imgDropzonePreview}>
-													{mediaSrc ? (
-														<Media
-															src={mediaSrc}
-															alt={mediaName || 'media'}
-															mediaMime={mime}
-															// controls={isVideoSrc}
-															allowVideo={isVideoSrc}
-														/>
-													) : (
-														<Box
-															display='flex'
-															alignItems='center'
-															flexDirection='column'
-														>
-															<FileUploadIcon />
-															<Box>
-																<Typography>
-																	{t('DRAG_AND_DROP_TO_UPLOAD')}{' '}
-																</Typography>
-															</Box>
-															<Box>
-																<Typography>
-																	(max 1MB; .jpeg, .jpg, .png, .mp4){' '}
-																</Typography>
-															</Box>
+								<Grid
+									container
+									spacing={2}
+									alignContent='center'
+									alignItems='center'
+								>
+									<Grid item sm={12} md={8}>
+										<Box {...getRootProps({ className: classes.dropzone })}>
+											<Box className={classes.imgDropzonePreview}>
+												{mediaSrc ? (
+													<Media
+														src={mediaSrc}
+														alt={mediaName || 'media'}
+														mediaMime={mime}
+														// controls={isVideoSrc}
+														allowVideo={isVideoSrc}
+													/>
+												) : (
+													<Box
+														display='flex'
+														alignItems='center'
+														flexDirection='column'
+													>
+														<FileUploadIcon />
+														<Box>
+															<Typography>
+																{t('DRAG_AND_DROP_TO_UPLOAD')}{' '}
+															</Typography>
 														</Box>
-													)}
-												</Box>
-												<input {...getInputProps()} />
-											</Box>
-										</Grid>
-										<Grid item sm={12} md={4}>
-											<Box>
-												{mediaSrc && !isVideoMedia(mime) && (
-													<Box className={classes.uploadActions}>
-														{/* TEMP: make size required */}
-														{!!size && (
-															<Button
-																variant='contained'
-																color='primary'
-																onClick={() => {
-																	setCropMode(true)
-																}}
-																className={classes.dropzoneBtn}
-															>
-																<CropIcon className={classes.leftIcon} />
-																{t('IMG_FORM_CROP')}
-															</Button>
-														)}
-														&nbsp;
-														<Button
-															variant='contained'
-															onClick={clearMedia}
-															className={classes.dropzoneBtn}
-														>
-															<ClearIcon className={classes.leftIcon} />
-															{t('IMG_FORM_CLEAR')}
-														</Button>
+														<Box>
+															<Typography>
+																(max 1MB; .jpeg, .jpg, .png, .mp4){' '}
+															</Typography>
+														</Box>
 													</Box>
 												)}
-
-												<Box>
-													{fileRejections.map(({ file, errors }) => (
-														<Alert key={file.path} severity='error'>
-															<AlertTitle>
-																{file.path} - {file.size} bytes
-															</AlertTitle>
-															{errors.map(e => (
-																// TODO: translate errors
-																<Box key={e.code}>{e.message}</Box>
-															))}
-														</Alert>
-													))}
-													<Typography className={classes.errMsg} color='error'>
-														{errMsg}
-													</Typography>
-												</Box>
 											</Box>
-										</Grid>
+											<input {...getInputProps()} />
+										</Box>
 									</Grid>
-								</>
+									<Grid item sm={12} md={4}>
+										<Box>
+											{mediaSrc && !isVideoMedia(mime) && (
+												<Box className={classes.uploadActions}>
+													{/* TEMP: make size required */}
+													{!!size && (
+														<Button
+															variant='contained'
+															color='primary'
+															onClick={() => {
+																setCropMode(true)
+															}}
+															className={classes.dropzoneBtn}
+														>
+															<CropIcon className={classes.leftIcon} />
+															{t('IMG_FORM_CROP')}
+														</Button>
+													)}
+													&nbsp;
+													<Button
+														variant='contained'
+														onClick={clearMedia}
+														className={classes.dropzoneBtn}
+													>
+														<ClearIcon className={classes.leftIcon} />
+														{t('IMG_FORM_CLEAR')}
+													</Button>
+												</Box>
+											)}
+
+											<Box>
+												{fileRejections.map(({ file, errors }) => (
+													<Alert key={file.path} severity='error'>
+														<AlertTitle>
+															{file.path} - {file.size} bytes
+														</AlertTitle>
+														{errors.map(e => (
+															// TODO: translate errors
+															<Box key={e.code}>{e.message}</Box>
+														))}
+													</Alert>
+												))}
+												<Typography className={classes.errMsg} color='error'>
+													{errMsg}
+												</Typography>
+											</Box>
+										</Box>
+									</Grid>
+								</Grid>
 							)}
 						</Box>
 						<Box>
-							<small> {additionalInfo} </small>
+							<Typography variant='caption'> {additionalInfo} </Typography>
 						</Box>
 					</Box>
 				}
