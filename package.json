@@ -64,7 +64,7 @@
     "react-chartjs-2": "2.9.0",
     "react-dev-utils": "^9.0.1",
     "react-dom": "^16.8.6",
-    "react-dropzone": "^4.2.1",
+    "react-dropzone": "^11.2.4",
     "react-flag-icon-css": "^1.0.19",
     "react-ga": "^3.1.2",
     "react-image-crop": "^8.6.2",
