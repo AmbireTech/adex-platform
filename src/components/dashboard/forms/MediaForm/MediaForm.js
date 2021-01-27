@@ -189,7 +189,7 @@ function MediaForm({
 	}
 
 	return (
-		<div className={classes.imgForm}>
+		<Box className={classes.imgForm}>
 			<OutlinedPropView
 				autoFocus={false}
 				label={
@@ -198,8 +198,8 @@ function MediaForm({
 						: label || 'Upload media'
 				}
 				value={
-					<div>
-						<div>
+					<Box>
+						<Box>
 							{cropMode ? (
 								<Grid
 									container
@@ -208,7 +208,7 @@ function MediaForm({
 									alignItems='center'
 								>
 									<Grid item sm={12} md={8}>
-										<div className={classes.cropzone}>
+										<Box className={classes.cropzone}>
 											<Box className={classes.imgDropzonePreview}>
 												<ReactCrop
 													imageStyle={{
@@ -221,7 +221,7 @@ function MediaForm({
 													onChange={c => setCrop(c)}
 												/>
 											</Box>
-										</div>
+										</Box>
 									</Grid>
 
 									<Grid item sm={12} md={4}>
@@ -257,40 +257,43 @@ function MediaForm({
 										alignItems='center'
 									>
 										<Grid item sm={12} md={8}>
-											<section className='container'>
-												<div {...getRootProps({ className: classes.dropzone })}>
-													<Box className={classes.imgDropzonePreview}>
-														{mediaSrc ? (
-															<Media
-																src={mediaSrc}
-																alt={mediaName || 'media'}
-																mediaMime={mime}
-																controls={isVideoSrc}
-																allowVideo={isVideoSrc}
-															/>
-														) : (
-															<>
-																<FileUploadIcon />
-																<div>
-																	<span> {t('DRAG_AND_DROP_TO_UPLOAD')} </span>
-																</div>
-																<div>
-																	<small>
-																		{' '}
-																		(max 1MB; .jpeg, .jpg, .png, .mp4){' '}
-																	</small>
-																</div>
-															</>
-														)}
-													</Box>
-													<input {...getInputProps()} />
-												</div>
-											</section>
+											<Box {...getRootProps({ className: classes.dropzone })}>
+												<Box className={classes.imgDropzonePreview}>
+													{mediaSrc ? (
+														<Media
+															src={mediaSrc}
+															alt={mediaName || 'media'}
+															mediaMime={mime}
+															// controls={isVideoSrc}
+															allowVideo={isVideoSrc}
+														/>
+													) : (
+														<Box
+															display='flex'
+															alignItems='center'
+															flexDirection='column'
+														>
+															<FileUploadIcon />
+															<Box>
+																<Typography>
+																	{t('DRAG_AND_DROP_TO_UPLOAD')}{' '}
+																</Typography>
+															</Box>
+															<Box>
+																<Typography>
+																	(max 1MB; .jpeg, .jpg, .png, .mp4){' '}
+																</Typography>
+															</Box>
+														</Box>
+													)}
+												</Box>
+												<input {...getInputProps()} />
+											</Box>
 										</Grid>
 										<Grid item sm={12} md={4}>
-											<div>
+											<Box>
 												{mediaSrc && !isVideoMedia(mime) && (
-													<div className={classes.uploadActions}>
+													<Box className={classes.uploadActions}>
 														{/* TEMP: make size required */}
 														{!!size && (
 															<Button
@@ -314,37 +317,38 @@ function MediaForm({
 															<ClearIcon className={classes.leftIcon} />
 															{t('IMG_FORM_CLEAR')}
 														</Button>
-													</div>
+													</Box>
 												)}
 
-												<div>
+												<Box>
 													{fileRejections.map(({ file, errors }) => (
 														<Alert key={file.path} severity='error'>
 															<AlertTitle>
 																{file.path} - {file.size} bytes
 															</AlertTitle>
 															{errors.map(e => (
-																<li key={e.code}>{e.message}</li>
+																// TODO: translate errors
+																<Box key={e.code}>{e.message}</Box>
 															))}
 														</Alert>
 													))}
 													<Typography className={classes.errMsg} color='error'>
 														{errMsg}
 													</Typography>
-												</div>
-											</div>
+												</Box>
+											</Box>
 										</Grid>
 									</Grid>
 								</>
 							)}
-						</div>
-						<div>
+						</Box>
+						<Box>
 							<small> {additionalInfo} </small>
-						</div>
-					</div>
+						</Box>
+					</Box>
 				}
 			/>
-		</div>
+		</Box>
 	)
 }
 
