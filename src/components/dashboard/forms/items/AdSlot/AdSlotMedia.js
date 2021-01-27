@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
-import ImgForm from 'components/dashboard/forms/ImgForm'
+import MediaForm from 'components/dashboard/forms/MediaForm'
 import {
 	Grid,
 	TextField,
@@ -83,9 +83,9 @@ function AdSlotMedia({ validateId, itemId }) {
 								/>
 							</Grid>
 							<Grid item xs={12}>
-								<ImgForm
+								<MediaForm
 									label={t('SLOT_FALLBACK_MEDIA_LABEL')}
-									imgSrc={tempUrl || ''}
+									src={tempUrl || ''}
 									mime={mime || ''}
 									onChange={mediaProps =>
 										execute(
