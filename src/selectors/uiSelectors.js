@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect'
+import { createCachedSelector } from 're-reselect'
 import dateUtils from 'helpers/dateUtils'
 import { selectAccountIdentityAddr } from './accountSelectors'
 import { SYNC_WEB3_DATA } from 'constants/spinners'
@@ -13,6 +14,7 @@ export const selectIdentitiesUi = state => state.persist.ui.byIdentity
 export const selectSelectedItems = state => state.memory.selectedItems
 export const selectConfirm = state => state.memory.confirm
 export const selectToasts = state => state.memory.toasts
+export const selectTablesState = state => state.persist.tablesState
 
 export const selectSpinners = state => state.memory.spinners
 
@@ -36,20 +38,23 @@ export const selectUserLastSide = createSelector(
 	({ userLastSide }) => userLastSide || ''
 )
 
-export const selectSpinnerById = createSelector(
-	[selectSpinners, (_, id) => id],
+export const selectSpinnerById = createCachedSelector(
+	selectSpinners,
+	(_, id) => id,
 	(spinners, id) => spinners[id]
-)
+)((_state, id = '-') => id)
 
-export const selectWeb3SyncSpinnerByValidateId = createSelector(
-	[selectSpinners, (_, validateId) => validateId],
+export const selectWeb3SyncSpinnerByValidateId = createCachedSelector(
+	selectSpinners,
+	(_, validateId) => validateId,
 	(spinners, validateId) => spinners[SYNC_WEB3_DATA + validateId]
-)
+)((_state, validateId = '-') => validateId)
 
-export const selectMultipleSpinnersByIds = createSelector(
-	[selectSpinners, (_, ids) => ids],
+export const selectMultipleSpinnersByIds = createCachedSelector(
+	selectSpinners,
+	(_, ids) => ids,
 	(spinners, ids) => ids.map(id => spinners[id])
-)
+)((_state, ids = '-') => ids.join(':'))
 
 export const selectRegistrationAllowed = createSelector(
 	selectGlobalUi,
@@ -103,12 +108,14 @@ export const selectLoginDirectSide = createSelector(
 	({ goToSide }) => goToSide || ''
 )
 
-export const selectInitialDataLoadedByData = createSelector(
-	[selectMemoryUi, (_, dataType) => dataType],
+export const selectInitialDataLoadedByData = createCachedSelector(
+	selectMemoryUi,
+	(_, dataType) => dataType,
 	({ initialDataLoaded }, dataType) =>
 		initialDataLoaded === true ||
 		(typeof initialDataLoaded === 'object' && initialDataLoaded[dataType])
-)
+)((_state, dataType = '-') => dataType)
+
 export const selectInitialDataLoaded = createSelector(
 	selectMemoryUi,
 	({ initialDataLoaded = false }) =>
@@ -157,3 +164,18 @@ export const selectWindowReloading = createSelector(
 	selectMemoryUi,
 	({ windowReloading }) => windowReloading
 )
+
+export const selectTableState = createCachedSelector(
+	selectTablesState,
+	selectAccountIdentityAddr,
+	(_state, tableId) => tableId,
+	(tablesStates, identityId, tableId) =>
+		((tablesStates || {})[identityId] || {})[tableId] || {}
+)((_state, tableId = '-') => tableId)
+
+//memory
+export const selectTableStateSelectedRows = createCachedSelector(
+	selectMemoryUi,
+	(_state, tableId) => tableId,
+	(memoryUI, tableId) => memoryUI[`selectedRows${tableId}`]
+)((_state, tableId = '-') => tableId)

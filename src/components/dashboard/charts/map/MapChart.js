@@ -10,7 +10,7 @@ import { Paper } from '@material-ui/core'
 import ReactTooltip from 'react-tooltip'
 import { ALEX_GREY } from 'components/App/themeMUi'
 
-const MapChart = ({ selector }) => {
+const MapChart = ({ selector, chartId }) => {
 	const { chartData, hoverColor, pressedColor } = useSelector(selector)
 
 	const [content, setContent] = useState('')
@@ -18,6 +18,7 @@ const MapChart = ({ selector }) => {
 	return (
 		<Paper elevation={2} variant='outlined' square>
 			<ComposableMap
+				id={chartId}
 				data-tip='chart-map'
 				projection='geoMercator'
 				projectionConfig={{

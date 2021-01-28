@@ -4,8 +4,8 @@ import {
 	Grid,
 	Box,
 	CircularProgress,
-	ExpansionPanel,
-	ExpansionPanelSummary,
+	Accordion,
+	AccordionSummary,
 	Typography,
 } from '@material-ui/core'
 import { Alert, AlertTitle } from '@material-ui/lab'
@@ -34,6 +34,7 @@ import {
 } from 'selectors'
 import { execute, getCampaignActualFees, checkNetworkCongestion } from 'actions'
 import { GETTING_CAMPAIGNS_FEES, OPENING_CAMPAIGN } from 'constants/spinners'
+import { NEW_CAMPAIGN_UNITS } from 'constants/tables'
 
 function CampaignFormPreview() {
 	const identityAddr = useSelector(selectAccountIdentityAddr)
@@ -247,6 +248,7 @@ function CampaignFormPreview() {
 							left={t('adUnits', { isProp: true })}
 							right={
 								<AdUnitsTable
+									tableId={NEW_CAMPAIGN_UNITS}
 									items={adUnits}
 									noSearch
 									noActions
@@ -258,18 +260,18 @@ function CampaignFormPreview() {
 					</Grid>
 
 					<Grid item xs={12}>
-						<ExpansionPanel square={true} variant='outlined'>
-							<ExpansionPanelSummary
+						<Accordion square={true} variant='outlined'>
+							<AccordionSummary
 								expandIcon={<ExpandMoreIcon />}
 								aria-controls='targeting-rules-content'
 								id='targeting-rules-header'
 							>
 								<Typography>{t('TARGETING_RULES')}</Typography>
-							</ExpansionPanelSummary>
+							</AccordionSummary>
 							<Box p={1} color='grey.contrastText' bgcolor='grey.main'>
 								<pre>{JSON.stringify(targetingRules || [], null, 2)}</pre>
 							</Box>
-						</ExpansionPanel>
+						</Accordion>
 					</Grid>
 				</Grid>
 			</ContentBody>

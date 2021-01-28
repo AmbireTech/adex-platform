@@ -21,6 +21,7 @@ import {
 	MenuItem,
 	Box,
 	Hidden,
+	LinearProgress,
 } from '@material-ui/core'
 
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
@@ -28,7 +29,11 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import MenuIcon from '@material-ui/icons/Menu'
 import { makeStyles } from '@material-ui/core/styles'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import { selectAccount, selectDashboardBreadcrumbs } from 'selectors'
+import {
+	selectAccount,
+	selectDashboardBreadcrumbs,
+	selectInitialDataLoaded,
+} from 'selectors'
 import { styles } from './styles'
 import { formatAddress } from 'helpers/formatters'
 
@@ -39,6 +44,7 @@ const useStyles = makeStyles(styles)
 function TopNav({ handleDrawerToggle, side, t }) {
 	const classes = useStyles()
 	const account = useSelector(selectAccount)
+	const loaded = useSelector(selectInitialDataLoaded)
 	const imgSrc = getAuthLogo(account.wallet.authType)
 	const breadcrumbs = useSelector(selectDashboardBreadcrumbs)
 	const btnMenuLabel =
@@ -139,6 +145,7 @@ function TopNav({ handleDrawerToggle, side, t }) {
 					</Box>
 				</Box>
 			</Toolbar>
+			<Box>{!loaded && <LinearProgress />}</Box>
 		</AppBar>
 	)
 }

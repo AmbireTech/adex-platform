@@ -1,5 +1,6 @@
 import { getState } from 'store'
 import { createSelector } from 'reselect'
+import { createCachedSelector } from 're-reselect'
 
 // can be used outside  components
 export const selectRelayerConfig = state => {
@@ -64,12 +65,13 @@ export const selectRoutineWithdrawTokens = createSelector(
 	}
 )
 
-export const selectRoutineWithdrawTokenByAddress = createSelector(
-	[selectRelayerConfig, (_, address) => address],
+export const selectRoutineWithdrawTokenByAddress = createCachedSelector(
+	selectRelayerConfig,
+	(_, address) => address,
 	({ routineWithdrawTokens }, address) => {
 		return routineWithdrawTokens.find(token => token.address === address)
 	}
-)
+)((_state, address = '-') => address)
 
 export const selectRoutineWithdrawTokensAddresses = createSelector(
 	[selectRelayerConfig],

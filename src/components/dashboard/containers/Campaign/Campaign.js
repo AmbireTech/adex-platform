@@ -1,6 +1,5 @@
 import React, { useState, Fragment, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { useSelector } from 'react-redux'
 import {
 	Grid,
 	Box,
@@ -8,10 +7,8 @@ import {
 	List,
 	ListItem,
 	ListItemText,
-	Typography,
 	Tabs,
 	Tab,
-	LinearProgress,
 } from '@material-ui/core'
 import { AdUnitsTable } from 'components/dashboard/containers/Tables'
 import { Campaign as CampaignModel } from 'adex-models'
@@ -22,7 +19,6 @@ import { Receipt } from 'components/dashboard/containers/Receipt'
 import {
 	selectCampaignAnalyticsToCountryTableData,
 	selectCampaignAnalyticsToCountryMapChartData,
-	selectInitialDataLoadedByData,
 	t,
 } from 'selectors'
 import StatsByCountryTable from 'components/dashboard/containers/Tables/StatsByCountryTable'
@@ -37,6 +33,7 @@ import {
 	ItemTabsContainer,
 } from 'components/dashboard/containers/ItemCommon/'
 import { CampaignStatsByTimeframe } from './CampaignStatsByTimeframe'
+import PageNotFound from 'components/page_not_found/PageNotFound'
 
 function Campaign({ match }) {
 	const [tabIndex, setTabIndex] = useState(0)
@@ -46,9 +43,6 @@ function Campaign({ match }) {
 		objModel: CampaignModel,
 		validateAndUpdateFn: validateAndUpdateCampaign,
 	})
-	const dataLoaded = useSelector(state =>
-		selectInitialDataLoadedByData(state, 'advancedAnalytics')
-	)
 
 	const campaign = new CampaignModel(item)
 	const { humanFriendlyName } = campaign.status || {}
@@ -72,6 +66,16 @@ function Campaign({ match }) {
 			execute(updateMemoryUi('campaignId', undefined))
 		}
 	}, [campaignId])
+
+	if (!campaignId) {
+		return (
+			<PageNotFound
+				title={t('ITEM_NOT_FOUND', {
+					args: ['CAMPAIGN', match.params.itemId || ''],
+				})}
+			/>
+		)
+	}
 
 	return (
 		<Fragment>
@@ -120,7 +124,6 @@ function Campaign({ match }) {
 				)}
 				{tabIndex === 2 && (
 					<Box p={1}>
-						{!dataLoaded && <LinearProgress />}
 						<Box
 							display='flex'
 							flexDirection='row'
@@ -131,6 +134,7 @@ function Campaign({ match }) {
 							<Box flexGrow='1' order={{ xs: 2, md: 2, lg: 1 }}>
 								<Paper variant='outlined'>
 									<CampaignStatsBreakdownTable
+										tableId={`campaignStatsBreakdown${campaignId}`}
 										campaignId={campaignId}
 										canSendMsgs={canSendMsgs}
 										isActive={isActive}
@@ -146,31 +150,23 @@ function Campaign({ match }) {
 				{tabIndex === 3 && (
 					<Box p={1}>
 						<Grid container spacing={1} alignItems='flex-start'>
-							<Grid item xs={12}>
-								<Box>
-									<Typography variant='button' align='center'>
-										{t('COUNTRY_STATS_PERIOD', { args: ['30', 'DAYS'] })}
-									</Typography>
-								</Box>
-								{!dataLoaded && <LinearProgress />}
-							</Grid>
 							<Grid item xs={12} md={12} lg={6}>
 								<MapChart
+									chartId={`campaign-${campaignId}`}
 									selector={state =>
-										selectCampaignAnalyticsToCountryMapChartData(state, {
-											campaignId,
-										})
+										selectCampaignAnalyticsToCountryMapChartData(
+											state,
+											campaignId
+										)
 									}
 								/>
 							</Grid>
 							<Grid item xs={12} md={12} lg={6}>
 								<Paper variant='outlined'>
 									<StatsByCountryTable
-										selector={state =>
-											selectCampaignAnalyticsToCountryTableData(state, {
-												campaignId,
-											})
-										}
+										selector={selectCampaignAnalyticsToCountryTableData}
+										selectorArgs={campaignId}
+										tableId={`CampaignStatsByCountry${campaignId}`}
 										showEarnings
 									/>
 								</Paper>
@@ -184,7 +180,13 @@ function Campaign({ match }) {
 						<CampaignStatsByTimeframe item={item} />
 					</Box>
 				)}
-				{tabIndex === 5 && <AdUnitsTable campaignId={campaignId} noClone />}
+				{tabIndex === 5 && (
+					<AdUnitsTable
+						tableId={`campaignUnits-${campaignId}`}
+						campaignId={campaignId}
+						noClone
+					/>
+				)}
 				{tabIndex === 6 && (
 					<List>
 						<Anchor

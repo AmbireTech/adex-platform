@@ -1,14 +1,5 @@
 import React, { Fragment, useState } from 'react'
-import { useSelector } from 'react-redux'
-import {
-	Box,
-	Grid,
-	Paper,
-	Typography,
-	Tab,
-	Tabs,
-	LinearProgress,
-} from '@material-ui/core'
+import { Box, Grid, Paper, Typography, Tab, Tabs } from '@material-ui/core'
 import {
 	ItemTabsBar,
 	ItemTabsContainer,
@@ -21,15 +12,11 @@ import {
 	t,
 	selectPublisherStatsByCountryTableData,
 	selectPublisherStatsByCountryMapChartData,
-	selectBestEarnersTableData,
-	selectInitialDataLoadedByData,
 } from 'selectors'
+import { timeSinceEpoch } from 'helpers/formatters'
 
 export function PublisherStats() {
 	const [tabIndex, setTabIndex] = useState(0)
-	const dataLoaded = useSelector(state =>
-		selectInitialDataLoadedByData(state, 'advancedAnalytics')
-	)
 
 	return (
 		<Fragment>
@@ -59,23 +46,24 @@ export function PublisherStats() {
 							<Grid item xs={12}>
 								<Box>
 									<Typography variant='button' align='center'>
-										{t('COUNTRY_STATS_PERIOD', { args: ['30', 'DAYS'] })}
+										{t('COUNTRY_STATS_PERIOD', { args: timeSinceEpoch() })}
 									</Typography>
 								</Box>
-								{!dataLoaded && <LinearProgress />}
 							</Grid>
 							<Grid item xs={12} md={12} lg={6}>
 								<MapChart
 									selector={selectPublisherStatsByCountryMapChartData}
+									chartId='publisher-stats'
 								/>
 							</Grid>
 
 							<Grid item xs={12} md={12} lg={6}>
 								<Paper variant='outlined'>
 									<StatsByCountryTable
+										tableId='publisherStatsByCountry'
 										selector={selectPublisherStatsByCountryTableData}
 										// TODO: uncomment after 26.04.2020
-										// showEarnings
+										showEarnings
 									/>
 								</Paper>
 							</Grid>
@@ -85,7 +73,7 @@ export function PublisherStats() {
 				{tabIndex === 2 && (
 					// <Box p={1}>
 					<BestEarnersTable
-						selector={selectBestEarnersTableData}
+						tableId='publisherBestEarnersStats'
 						title='TABLE_BEST_EARNERS_UNITS_TITLE'
 					/>
 					// </Box>

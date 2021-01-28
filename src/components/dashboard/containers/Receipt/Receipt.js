@@ -37,9 +37,7 @@ function Receipt(props) {
 		: selectedCampaigns
 
 	// Publisher Receipt variables
-	const { created } = useSelector(state =>
-		selectAccountIdentityDeployData(state)
-	)
+	const { created } = useSelector(selectAccountIdentityDeployData)
 	const [startDate, setStartDate] = useState('')
 	const [endDate, setEndDate] = useState('')
 	const [dirty, setDirty] = useState(false)

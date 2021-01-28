@@ -5,14 +5,14 @@ import {
 	Typography,
 	Grid,
 	Box,
-	ExpansionPanel,
-	ExpansionPanelSummary,
+	Accordion,
+	AccordionSummary,
 	Chip,
 } from '@material-ui/core'
 import { Alert } from '@material-ui/lab'
 import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
 import { IabCategories } from 'adex-models'
-import Img from 'components/common/img/Img'
+import Media from 'components/common/media'
 import Anchor from 'components/common/anchor/anchor'
 import {
 	WebsiteIssues,
@@ -50,7 +50,7 @@ const SlotFallback = ({ img, targetUrl }) => {
 			<PropRow
 				left={t('SLOT_FALLBACK_IMG_LABEL')}
 				right={
-					<Img
+					<Media
 						allowFullscreen={true}
 						classes={{
 							img: classes.imgPreview,
@@ -220,18 +220,18 @@ const AdSlotPreview = () => {
 					</Grid>
 					<Grid item xs={12}>
 						<Box p={1}>
-							<ExpansionPanel square={true} variant='outlined'>
-								<ExpansionPanelSummary
+							<Accordion square={true} variant='outlined'>
+								<AccordionSummary
 									expandIcon={<ExpandMoreIcon />}
 									aria-controls='slot-rules-content'
 									id='slot-rules-header'
 								>
 									<Typography>{t('SLOT_RULES')}</Typography>
-								</ExpansionPanelSummary>
+								</AccordionSummary>
 								<Box p={1} color='grey.contrastText' bgcolor='grey.main'>
 									<pre>{JSON.stringify(rules || [], null, 2)}</pre>
 								</Box>
-							</ExpansionPanel>
+							</Accordion>
 						</Box>
 					</Grid>
 				</Grid>

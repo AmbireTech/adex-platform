@@ -2,8 +2,8 @@ import React, { Fragment } from 'react'
 import {
 	Grid,
 	Box,
-	ExpansionPanel,
-	ExpansionPanelSummary,
+	Accordion,
+	AccordionSummary,
 	Typography,
 } from '@material-ui/core'
 import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
@@ -67,32 +67,32 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 							</Box>
 						)}
 						<Box py={1}>
-							<ExpansionPanel square={true} variant='outlined'>
-								<ExpansionPanelSummary
+							<Accordion square={true} variant='outlined'>
+								<AccordionSummary
 									expandIcon={<ExpandMoreIcon />}
 									aria-controls='slot-rules-advanced'
 									id='slot-rules-advanced'
 								>
 									<Typography>{t('SLOT_ADVANCED')}</Typography>
-								</ExpansionPanelSummary>
+								</AccordionSummary>
 								<Box p={1}>
 									<SlotAdvancedRules item={item} {...hookProps} />
 								</Box>
-							</ExpansionPanel>
+							</Accordion>
 						</Box>
 						<Box py={1}>
-							<ExpansionPanel square={true} variant='outlined'>
-								<ExpansionPanelSummary
+							<Accordion square={true} variant='outlined'>
+								<AccordionSummary
 									expandIcon={<ExpandMoreIcon />}
 									aria-controls='slot-rules-content'
 									id='slot-rules-header'
 								>
 									<Typography>{t('SLOT_RULES')}</Typography>
-								</ExpansionPanelSummary>
+								</AccordionSummary>
 								<Box p={1} color='grey.contrastText' bgcolor='grey.main'>
 									<pre>{JSON.stringify(rules || [], null, 2)}</pre>
 								</Box>
-							</ExpansionPanel>
+							</Accordion>
 						</Box>
 					</Grid>
 					<Grid item xs={12} sm={12} md={6} lg={7}>

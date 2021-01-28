@@ -23,7 +23,7 @@ import {
 	OpenInNew,
 	ArchiveSharp as ArchiveIcon,
 } from '@material-ui/icons'
-import Img from 'components/common/img/Img'
+import Media from 'components/common/media'
 import { ExternalAnchor } from 'components/common/anchor/anchor'
 import { DirtyErrors } from 'components/common/dirtyErrors'
 import { t, selectAuthType } from 'selectors'
@@ -362,7 +362,7 @@ export const MediaCard = ({ mediaUrl = '', mediaMime = '', label = '' }) => {
 	return (
 		<Card className={classes.card} raised={false} variant='outlined'>
 			<CardMedia classes={{ root: classes.mediaRoot }}>
-				<Img
+				<Media
 					allowFullscreen={true}
 					src={mediaUrl}
 					alt={label || t('MEDIA')}

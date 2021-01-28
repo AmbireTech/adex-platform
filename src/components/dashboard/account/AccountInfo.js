@@ -15,8 +15,8 @@ import {
 	ListSubheader,
 	Button,
 	Box,
-	ExpansionPanel,
-	ExpansionPanelSummary,
+	Accordion,
+	AccordionSummary,
 	Typography,
 	IconButton,
 	Paper,
@@ -250,13 +250,13 @@ function AccountInfo() {
 				</List>
 			</Paper>
 			<Box mt={1}>
-				<ExpansionPanel
+				<Accordion
 					expanded={expanded}
 					onChange={handleExpandChange}
 					square={true}
 					variant='outlined'
 				>
-					<ExpansionPanelSummary
+					<AccordionSummary
 						expandIcon={<ExpandMoreIcon />}
 						aria-controls='panel1bh-content'
 						id='panel1bh-header'
@@ -264,7 +264,7 @@ function AccountInfo() {
 						<Typography className={classes.heading}>
 							{t('ACCOUNT_ADVANCED_INFO_AND_ACTIONS')}
 						</Typography>
-					</ExpansionPanelSummary>
+					</AccordionSummary>
 					<Box>
 						<ListDivider />
 						<AccountItem
@@ -360,7 +360,7 @@ function AccountInfo() {
 							)}
 						</List>
 					</Box>
-				</ExpansionPanel>
+				</Accordion>
 			</Box>
 		</Fragment>
 	)
