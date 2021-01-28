@@ -44,6 +44,7 @@ let initialState = {
 		global: {},
 		byIdentity: {},
 	},
+	tablesState: {},
 	uiMemory: {},
 	toasts: [],
 	confirm: {

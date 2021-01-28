@@ -5,8 +5,8 @@ import {
 	ListItem,
 	ListItemText,
 	ListSubheader,
-	ExpansionPanel,
-	ExpansionPanelSummary,
+	Accordion,
+	AccordionSummary,
 	Typography,
 } from '@material-ui/core'
 import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
@@ -35,8 +35,8 @@ export const WalletAction = ({ t, authType }) => {
 
 export const FeesBreakdown = ({ breakdownFormatted = {}, symbol }) => (
 	<Box p={1}>
-		<ExpansionPanel square={true} variant='outlined'>
-			<ExpansionPanelSummary
+		<Accordion square={true} variant='outlined'>
+			<AccordionSummary
 				expandIcon={<ExpandMoreIcon />}
 				aria-controls='fees-breakdown'
 				id='fees-breakdown'
@@ -46,7 +46,7 @@ export const FeesBreakdown = ({ breakdownFormatted = {}, symbol }) => (
 						args: [breakdownFormatted.feeAmount, symbol],
 					})}
 				</Typography>
-			</ExpansionPanelSummary>
+			</AccordionSummary>
 			<List
 				disablePadding
 				dense
@@ -92,6 +92,6 @@ export const FeesBreakdown = ({ breakdownFormatted = {}, symbol }) => (
 					</ListItem>
 				)}
 			</List>
-		</ExpansionPanel>
+		</Accordion>
 	</Box>
 )

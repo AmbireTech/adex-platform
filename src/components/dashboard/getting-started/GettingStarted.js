@@ -12,9 +12,9 @@ import {
 	Typography,
 	Hidden,
 	Link,
-	ExpansionPanel,
-	ExpansionPanelDetails,
-	ExpansionPanelSummary,
+	Accordion,
+	AccordionDetails,
+	AccordionSummary,
 	Tooltip,
 } from '@material-ui/core'
 import {
@@ -72,12 +72,12 @@ const useStyles = makeStyles(theme => {
 			marginTop: theme.spacing(1),
 			marginBottom: theme.spacing(1),
 		},
-		expansionPanel: {
+		accordion: {
 			color: theme.palette.primary.main,
 			backgroundColor: stepperBackgroundColor,
-			'& .MuiExpansionPanelSummary-expandIcon': {
-				color: theme.palette.primary.main,
-			},
+		},
+		expandIcon: {
+			color: theme.palette.primary.main,
 		},
 		checkmark: {
 			color: theme.palette.accentTwo.main,
@@ -257,15 +257,18 @@ export default function GettingStarted(props) {
 		!isGettingStartedHidden &&
 		!!sideSteps.length && (
 			<Box mb={1}>
-				<ExpansionPanel
+				<Accordion
 					expanded={expanded}
 					onChange={() => execute(setGettingStartedExpanded(!expanded))}
 					square={true}
 					variant='outlined'
 				>
-					<ExpansionPanelSummary
+					<AccordionSummary
 						expandIcon={<ExpandMore />}
-						classes={{ root: classes.expansionPanel }}
+						classes={{
+							root: classes.accordion,
+							expandIcon: classes.expandIcon,
+						}}
 						aria-controls='expand-getting-started'
 						id='getting-started-header'
 					>
@@ -295,9 +298,9 @@ export default function GettingStarted(props) {
 								})}
 							</Box>
 						</Box>
-					</ExpansionPanelSummary>
+					</AccordionSummary>
 
-					<ExpansionPanelDetails>
+					<AccordionDetails>
 						<Box width={1}>
 							<Hidden mdUp>
 								<Box p={2} justifyContent={'center'} display='flex'>
@@ -420,8 +423,8 @@ export default function GettingStarted(props) {
 								)}
 							</Box>
 						</Box>
-					</ExpansionPanelDetails>
-				</ExpansionPanel>
+					</AccordionDetails>
+				</Accordion>
 			</Box>
 		)
 	)

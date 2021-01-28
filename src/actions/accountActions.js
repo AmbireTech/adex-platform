@@ -471,20 +471,20 @@ export function metamaskAccountCheck() {
 }
 
 export function metamaskNetworkCheck() {
-	return async function(_, getState) {
+	return async function(dispatch, getState) {
 		const id = await ethereumNetworkId()
-		onMetamaskNetworkChange({ id })(_, getState)
+		onMetamaskNetworkChange({ id })(dispatch, getState)
 	}
 }
 
 export function metamaskChecks() {
-	return async function(_, getState) {
-		metamaskNetworkCheck()(_, getState)
-		metamaskAccountCheck()(_, getState)
+	return async function(dispatch, getState) {
+		metamaskNetworkCheck()(dispatch, getState)
+		metamaskAccountCheck()(dispatch, getState)
 		if (window.ethereum) {
 			window.ethereum.on('accountsChanged', accounts => {
 				console.log('acc changed', accounts[0])
-				onMetamaskAccountChange(accounts[0])(_, getState)
+				onMetamaskAccountChange(accounts[0])(dispatch, getState)
 			})
 			window.ethereum.on('chainChanged', chainId => {
 				console.log('chainChanged', chainId)

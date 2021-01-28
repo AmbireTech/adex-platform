@@ -1,38 +1,37 @@
 import { createSelector } from 'reselect'
-import {
-	selectCampaignEventsCount,
-	selectCampaignIdInDetails,
-	t,
-} from 'selectors'
+import { createCachedSelector } from 're-reselect'
+
+import { selectCampaignIdInDetails } from 'selectors'
+
 import url from 'url'
 export const selectItems = state => state.persist.items
 
-export const selectItemsByType = createSelector(
-	[selectItems, (_, itemType) => itemType],
+export const selectItemsByType = createCachedSelector(
+	selectItems,
+	(_state, itemType) => itemType,
 	(items, itemType) => items[itemType] || {}
-)
+)((_state, itemType = '-') => itemType)
 
-export const selectItemByTypeAndId = createSelector(
-	[selectItems, (_, itemType, id) => ({ itemType, id })],
-	(items, { itemType, id }) => (items[itemType] || {})[id] || {}
-)
-export const selectItemsArrayByType = createSelector(
-	[selectItemsByType, (_, itemType) => itemType],
-	(items = {}) => Object.values(items)
-)
+export const selectItemsArrayByType = createCachedSelector(
+	selectItemsByType,
+	items => Object.values(items || {})
+)((_state, itemType = '-') => itemType)
 
-export const selectCampaigns = createSelector(
-	state => selectItemsByType(state, 'Campaign'),
-	campaigns => campaigns
-)
+export const selectItemByTypeAndId = createCachedSelector(
+	selectItemsByType,
+	(_state, _itemType, id) => id,
+	(items, id) => items[id] || {}
+)((_state, _itemType, id = '-') => id) // all items has unique id so they are good for cache
 
-export const selectCampaignById = createSelector(
-	[selectCampaigns, (_, id) => id],
-	(campaigns, id) => campaigns[id]
-)
+export const selectCampaigns = state => selectItemsByType(state, 'Campaign')
+export const selectCampaignsArray = state =>
+	selectItemsArrayByType(state, 'Campaign')
+
+export const selectCampaignById = (state, id) =>
+	selectItemByTypeAndId(state, 'Campaign', id)
 
 export const selectCampaignUnitsById = createSelector(
-	[selectCampaignById, (_, id) => id],
+	selectCampaignById,
 	({ adUnits } = {}) => adUnits || []
 )
 
@@ -42,88 +41,48 @@ export const selectCampaignInDetails = createSelector(
 		campaignId ? selectCampaignById(state, campaignId) : undefined
 )
 
-export const selectCampaignWithAnalyticsById = createSelector(
-	[selectCampaigns, (_, id) => id],
-	(campaigns, id) => {
-		const campaign = { ...(campaigns[id] || {}) }
-		campaign.clicks = selectCampaignEventsCount('CLICK', id)
-		campaign.impressions = selectCampaignEventsCount('IMPRESSION', id)
-		return campaign
-	}
-)
+export const selectAdUnits = state => selectItemsByType(state, 'AdUnit')
 
-export const selectCampaignsArray = createSelector(
-	state => selectItemsArrayByType(state, 'Campaign'),
-	campaigns => campaigns
-)
+export const selectAdUnitsArray = state =>
+	selectItemsArrayByType(state, 'AdUnit')
 
-export const selectAdUnits = createSelector(
-	state => selectItemsByType(state, 'AdUnit'),
-	adUnits => adUnits
-)
+export const selectAdUnitById = (state, id) =>
+	selectItemByTypeAndId(state, 'AdUnit', id)
 
-export const selectAdUnitById = createSelector(
-	[selectAdUnits, (_, id) => id],
-	(items, id) => items[id]
-)
+export const selectAdSlots = state => selectItemsByType(state, 'AdSlot')
 
-export const selectAdUnitsArray = createSelector(
-	state => selectItemsArrayByType(state, 'AdUnit'),
-	adUnits => adUnits
-)
+export const selectAdSlotsArray = state =>
+	selectItemsArrayByType(state, 'AdSlot')
 
-export const selectAdSlots = createSelector(
-	state => selectItemsByType(state, 'AdSlot'),
-	adSlots => adSlots
-)
+export const selectAdSlotById = (state, id) =>
+	selectItemByTypeAndId(state, 'AdSlot', id)
 
-export const selectAdSlotsArray = createSelector(
-	state => selectItemsArrayByType(state, 'AdSlot'),
-	adSlots => adSlots
-)
+export const selectWebsites = state => selectItemsByType(state, 'Website')
 
-export const selectAdSlotById = createSelector(
-	[selectAdSlots, (_, id) => id],
-	(items, id) => items[id]
-)
+export const selectWebsitesArray = state =>
+	selectItemsArrayByType(state, 'Website')
 
-export const selectWebsites = createSelector(
-	state => selectItemsByType(state, 'Website'),
-	websites => websites
-)
+export const selectWebsiteById = (state, id) =>
+	selectItemByTypeAndId(state, 'Website', id)
 
-export const selectWebsitesArray = createSelector(
-	state => selectItemsArrayByType(state, 'Website'),
-	websites => websites
-)
-
-export const selectWebsiteById = createSelector(
-	[selectWebsites, (_, id) => id],
-	(items, id) => items[id]
-)
-
-export const selectWebsiteByWebsite = createSelector(
-	[selectWebsites, (_, ws) => ws],
+export const selectWebsiteByWebsite = createCachedSelector(
+	selectWebsites,
+	(_, ws) => ws,
 	(items, ws) => (ws ? items[url.parse(ws).hostname] || {} : {})
-)
+)((_state, ws = 'all') => ws)
 
-export const selectAudiences = createSelector(
-	state => selectItemsByType(state, 'Audience'),
-	audiences => audiences
-)
+export const selectAudiences = state => selectItemsByType(state, 'Audience')
 
-export const selectAudiencesArray = createSelector(
-	state => selectItemsArrayByType(state, 'Audience'),
-	audiences => audiences
-)
+export const selectAudiencesArray = state =>
+	selectItemsArrayByType(state, 'Audience')
 
-export const selectAudienceById = createSelector(
-	[selectAudiences, (_, id) => id],
-	(items, id) => items[id]
-)
+export const selectAudienceById = (state, id) =>
+	selectItemByTypeAndId(state, 'Audience', id)
 
-export const selectAudienceByCampaignId = createSelector(
-	[selectCampaignById, selectAudiencesArray, (_, id) => id],
+export const selectAudienceByCampaignId = createCachedSelector(
+	selectCampaignById,
+	selectAudiencesArray,
+	(_, id) => id,
 	(campaign, items, id) => {
 		const hasCampaignAudienceUpdated =
 			campaign &&
@@ -138,7 +97,7 @@ export const selectAudienceByCampaignId = createSelector(
 			? campaign.audienceInput
 			: items.find(x => x && x.campaignId === id)
 	}
-)
+)((_state, campaignId = '-') => campaignId)
 
 export const selectSavedAudiences = createSelector(
 	[selectAudiencesArray],

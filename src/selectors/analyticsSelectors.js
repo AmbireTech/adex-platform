@@ -1,35 +1,29 @@
 import { getState } from 'store'
 import { createSelector } from 'reselect'
+import { createCachedSelector } from 're-reselect'
 import {
 	selectChannelsWithUserBalancesAll,
 	selectIdentitySideAnalyticsTimeframe,
 	selectAccountIdentityCreatedDate,
+	selectNewItemByTypeAndId,
+	selectIdentitySideAnalyticsPeriod,
 	selectCampaignInDetails,
 } from 'selectors'
+import { selectAdUnits } from './itemsSelectors'
+
 import { formatTokenAmount } from 'helpers/formatters'
 import {
 	getPeriodDataPointLabel,
 	getMinStartDateTimeByTimeframe,
 } from 'helpers/analyticsTimeHelpers'
-import {
-	selectNewItemByTypeAndId,
-	selectIdentitySideAnalyticsPeriod,
-} from 'selectors'
+
 import dateUtils from 'helpers/dateUtils'
 import { DEFAULT_DATETIME_FORMAT } from 'helpers/formatters'
-import { t } from './translationsSelectors'
 
 export const selectAnalytics = state => state.memory.analytics
 export const selectTargeting = state => state.persist.targeting
 
 const MIN_SLOTS_FOR_AD_TYPE = 2
-
-export const selectAnalyticsData = createSelector(
-	[selectAnalytics, (_, side) => side],
-	(analytics, side) => {
-		return analytics[side] || {}
-	}
-)
 
 export const selectAdvancedAnalytics = createSelector(
 	[selectAnalytics],
@@ -99,10 +93,11 @@ export const selectDemandAnalytics = createSelector(
 	({ demand }) => demand || {}
 )
 
-export const selectDemandAnalyticsByType = createSelector(
-	[selectDemandAnalytics, (_, type) => type],
+export const selectDemandAnalyticsByType = createCachedSelector(
+	selectDemandAnalytics,
+	(_, type) => type,
 	(demand, type) => demand[type] || {}
-)
+)((_state, type = '-') => type)
 
 export const selectTargetingAnalytics = createSelector(
 	[selectTargeting],
@@ -240,59 +235,68 @@ export const selectAllTargetingPublishers = createSelector(
 	}
 )
 
-export const selectAdvancedAnalyticsByType = createSelector(
-	[selectAdvancedAnalytics, (_, type) => type],
+export const selectAdvancedAnalyticsByType = createCachedSelector(
+	selectAdvancedAnalytics,
+	(_, type) => type,
 	(campaignAnalytics, type) => campaignAnalytics[type] || {}
+)((_state, type = '-') => type)
+
+const mapTotalChanelToAdUnitData = (adUnits, advancedAnalytics) => {
+	const totalByAdUnit = Object.values(
+		advancedAnalytics.byChannelStats || {}
+	).reduce((byUnit, curr) => {
+		Object.entries(curr.reportChannelToAdUnit || {}).forEach(([key, value]) => {
+			if (adUnits[key]) {
+				byUnit[key] = (byUnit[key] || 0) + value
+			}
+		})
+
+		return byUnit
+	}, {})
+
+	return totalByAdUnit
+}
+
+export const selectAdUnitsTotalStats = createSelector(
+	[selectAdUnits, selectAdvancedAnalytics],
+	(adUnits, advancedAnalytics) => {
+		const stats = {
+			IMPRESSION: mapTotalChanelToAdUnitData(
+				adUnits,
+				advancedAnalytics.IMPRESSION || {}
+			),
+			CLICK: mapTotalChanelToAdUnitData(adUnits, advancedAnalytics.CLICK || {}),
+		}
+
+		return stats
+	}
 )
 
-export const selectTotalStatsByAdUnits = createSelector(
-	(state, { type, adUnitId }) => [
-		selectAdvancedAnalyticsByType(state, type),
-		{ adUnitId },
-	],
-	([analyticsByChannel, { adUnitId }]) =>
-		Object.values(analyticsByChannel.byChannelStats || {}).reduce(
-			(acc, curr) => acc + curr.reportChannelToAdUnit[adUnitId] || 0,
-			0
-		)
-)
-
-export const selectPublisherStatsByType = createSelector(
-	(state, type) => selectAdvancedAnalyticsByType(state, type),
+export const selectPublisherStatsByType = createCachedSelector(
+	selectAdvancedAnalyticsByType,
 	({ publisherStats }) => publisherStats || {}
-)
-export const selectPublisherStatsByCountry = createSelector(
-	(state, type) => selectPublisherStatsByType(state, type),
-	({ reportPublisherToCountry }) => reportPublisherToCountry || {}
-)
+)((_state, type = '-') => type)
 
-export const selectPublisherPayStatsByCountry = createSelector(
-	(state, type) => selectPublisherStatsByType(state, type),
-	({ reportPublisherToCountryPay }) => reportPublisherToCountryPay || {}
-)
+export const selectPublisherStatsByCountry = (state, type) =>
+	selectPublisherStatsByType(state, type).reportPublisherToCountry || {}
 
-export const selectPublisherStatsAdUnit = createSelector(
-	(state, type) => selectPublisherStatsByType(state, type),
-	({ reportPublisherToAdUnit }) => reportPublisherToAdUnit || {}
-)
+export const selectPublisherPayStatsByCountry = (state, type) =>
+	selectPublisherStatsByType(state, type).reportPublisherToCountryPay || {}
 
-export const selectPublisherStatsAdUnitPay = createSelector(
-	(state, type) => selectPublisherStatsByType(state, type),
-	({ reportPublisherToAdUnitPay }) => reportPublisherToAdUnitPay || {}
-)
+export const selectPublisherStatsAdUnit = (state, type) =>
+	selectPublisherStatsByType(state, type).reportPublisherToAdUnit || {}
 
-export const selectPublisherStatsAdSlot = createSelector(
-	(state, type) => selectPublisherStatsByType(state, type),
-	({ reportPublisherToAdSlot }) => reportPublisherToAdSlot || {}
-)
+export const selectPublisherStatsAdUnitPay = (state, type) =>
+	selectPublisherStatsByType(state, type).reportPublisherToAdUnitPay || {}
 
-export const selectPublisherStatsAdSlotPay = createSelector(
-	(state, type) => selectPublisherStatsByType(state, type),
-	({ reportPublisherToAdSlotPay }) => reportPublisherToAdSlotPay || {}
-)
+export const selectPublisherStatsAdSlot = (state, type) =>
+	selectPublisherStatsByType(state, type).reportPublisherToAdSlot || {}
 
-export const selectPublisherAggrStatsByCountry = createSelector(
-	(state, type) => selectPublisherStatsByCountry(state, type),
+export const selectPublisherStatsAdSlotPay = (state, type) =>
+	selectPublisherStatsByType(state, type).reportPublisherToAdSlotPay || {}
+
+export const selectPublisherAggrStatsByCountry = createCachedSelector(
+	selectPublisherStatsByCountry,
 	(byCountry = {}) => ({
 		max: Math.max.apply(null, Object.values(byCountry)),
 		total: Object.values(byCountry).reduce(
@@ -300,10 +304,10 @@ export const selectPublisherAggrStatsByCountry = createSelector(
 			0
 		),
 	})
-)
+)((_state, type = '-') => type)
 
 export const selectAllAdUnitsInChannels = createSelector(
-	state => selectChannelsWithUserBalancesAll(state),
+	[selectChannelsWithUserBalancesAll],
 	withBalanceAll =>
 		Object.values(withBalanceAll).reduce((units, { adUnits = [] } = {}) => {
 			adUnits.forEach(u => {
@@ -362,7 +366,7 @@ export const selectPublisherAdvanceStatsToAdSlot = createSelector(
 	})
 )
 
-export const selectPublisherTotalImpressions = createSelector(
+export const selectPublisherTotalImpressions = createCachedSelector(
 	state => selectPublisherStatsByType(state, 'IMPRESSION'),
 	({ reportPublisherToAdUnit }) => {
 		const totalImpressions = reportPublisherToAdUnit
@@ -374,32 +378,30 @@ export const selectPublisherTotalImpressions = createSelector(
 
 		return totalImpressions
 	}
-)
+)(_state => 'IMPRESSION')
 
-export const selectCampaignAnalyticsByChannelStats = createSelector(
-	(state, { type, campaignId } = {}) => [
-		selectAdvancedAnalyticsByType(state, type),
-		campaignId,
-	],
-	([analyticsByType, campaignId]) =>
-		(analyticsByType.byChannelStats || {})[campaignId] || {}
-)
+export const selectCampaignAnalyticsByChannelStats = (
+	state,
+	type,
+	campaignId
+) => {
+	const { byChannelStats = {} } = selectAdvancedAnalyticsByType(state, type)
 
-export const selectCampaignAnalyticsByChannelToCountry = createSelector(
-	(state, { type, campaignId } = {}) =>
-		selectCampaignAnalyticsByChannelStats(state, { type, campaignId }),
+	return byChannelStats[campaignId] || {}
+}
+
+export const selectCampaignAnalyticsByChannelToCountry = createCachedSelector(
+	selectCampaignAnalyticsByChannelStats,
 	({ reportChannelToCountry }) => reportChannelToCountry || {}
-)
+)((_state, type, campaignId) => `${type}:${campaignId}`)
 
-export const selectCampaignAnalyticsByChannelToCountryPay = createSelector(
-	(state, { type, campaignId } = {}) =>
-		selectCampaignAnalyticsByChannelStats(state, { type, campaignId }),
+export const selectCampaignAnalyticsByChannelToCountryPay = createCachedSelector(
+	selectCampaignAnalyticsByChannelStats,
 	({ reportChannelToCountryPay }) => reportChannelToCountryPay || {}
-)
+)((_state, type = '-', campaignId = '-') => `${type}:${campaignId}`)
 
-export const selectCampaignAggrStatsByCountry = createSelector(
-	(state, { type, campaignId } = {}) =>
-		selectCampaignAnalyticsByChannelToCountry(state, { type, campaignId }),
+export const selectCampaignAggrStatsByCountry = createCachedSelector(
+	selectCampaignAnalyticsByChannelToCountry,
 	(byCountry = {}) => ({
 		max: Math.max.apply(null, Object.values(byCountry)),
 		total: Object.values(byCountry).reduce(
@@ -407,36 +409,32 @@ export const selectCampaignAggrStatsByCountry = createSelector(
 			0
 		),
 	})
-)
+)((_state, type = '-', campaignId = '-') => `${type}:${campaignId}`)
 
-export const selectCampaignAnalyticsByChannelToAdUnit = createSelector(
-	(state, { type, campaignId } = {}) =>
-		selectCampaignAnalyticsByChannelStats(state, { type, campaignId }),
+export const selectCampaignAnalyticsByChannelToAdUnit = createCachedSelector(
+	selectCampaignAnalyticsByChannelStats,
 
 	({ reportChannelToAdUnit }) => reportChannelToAdUnit || {}
-)
+)((_state, type, campaignId) => `${type}:${campaignId}`)
 
-export const selectMaxAdUnitStatByChannel = createSelector(
-	(state, { type, campaignId } = {}) =>
-		selectCampaignAnalyticsByChannelStats(state, { type, campaignId }),
+export const selectMaxAdUnitStatByChannel = createCachedSelector(
+	selectCampaignAnalyticsByChannelStats,
 	({ reportChannelToAdUnit }) =>
 		reportChannelToAdUnit
-			? Math.max.apply(null, Object.values(reportChannelToAdUnit))
+			? Math.max.apply(null, [0, ...Object.values(reportChannelToAdUnit)])
 			: 0
-)
+)((_state, type = '-', campaignId = '-') => `${type}:${campaignId}`)
 
-export const selectAnalyticsDataAggr = createSelector(
-	[
-		selectAnalytics,
-		selectIdentitySideAnalyticsPeriod,
-		(_, opts = {}) => opts,
-		selectAnalyticsLiveTimestamp,
-	],
+export const selectAnalyticsDataAggr = createCachedSelector(
+	selectAnalytics,
+	selectIdentitySideAnalyticsPeriod,
+	selectAnalyticsLiveTimestamp,
+	(_, opts = {}) => opts,
 	(
 		analytics = {},
 		{ start },
-		{ side, eventType, metric, timeframe },
-		liveTimestamp
+		liveTimestamp,
+		{ side, eventType, metric, timeframe }
 	) => {
 		// return analytics[side]['eventType'][metric][timeframe].aggr
 		// NOTE: It was working fine with default initial state but
@@ -457,19 +455,54 @@ export const selectAnalyticsDataAggr = createSelector(
 
 		return aggr
 	}
+)(
+	(_state, { side = '-', eventType = '-', metric = '-', timeframe = '-' }) =>
+		`${side}:${eventType}:${metric}:${timeframe}`
 )
 
 export function selectCampaignEventsCount(type, campaignId) {
 	return Object.values(
 		// TODO: fix this selector w/o using getState
-		selectCampaignAnalyticsByChannelToAdUnit(getState(), {
-			type,
-			campaignId,
-		})
+		selectCampaignAnalyticsByChannelToAdUnit(getState(), type, campaignId)
 	).reduce((a, b) => a + b, 0)
 }
 
-export const selectTotalImpressions = createSelector(
+const mapEventCounts = (data = {}) => {
+	return Object.values(data).reduce((a, b) => a + b, 0)
+}
+
+const getChannelToAdUnitData = (advancedAnalytics, campaignId, eventType) => {
+	const { byChannelStats = {} } = advancedAnalytics[eventType] || {}
+	const { reportChannelToAdUnit = {} } = byChannelStats[campaignId] || {}
+	return reportChannelToAdUnit
+}
+
+export const selectCampaignsEventCountsStats = createSelector(
+	selectAdvancedAnalytics,
+	advancedAnalytics => {
+		const { byChannelStats = {} } = advancedAnalytics.IMPRESSION || {}
+		return Object.keys(byChannelStats).reduce((stats, key) => {
+			stats[key] = {
+				impressions: mapEventCounts(
+					getChannelToAdUnitData(advancedAnalytics, key, 'IMPRESSION')
+				),
+				clicks: mapEventCounts(
+					getChannelToAdUnitData(advancedAnalytics, key, 'CLICK')
+				),
+			}
+
+			return stats
+		}, {})
+	}
+)
+
+export const selectCampaignsEventCountsStatsById = createCachedSelector(
+	selectCampaignsEventCountsStats,
+	(_state, id) => id,
+	(eventCounts, id) => eventCounts[id] || { impressions: 0, clicks: 0 }
+)((_state, id) => id)
+
+export const selectTotalImpressions = createCachedSelector(
 	(state, { side, timeframe } = {}) =>
 		selectAnalyticsDataAggr(state, {
 			side,
@@ -481,9 +514,9 @@ export const selectTotalImpressions = createSelector(
 		eventCounts
 			? eventCounts.reduce((a, { value }) => a + Number(value) || 0, 0)
 			: null
-)
+)((_state, { side = '-', timeframe = '-' }) => `${side}:${timeframe}`)
 
-export const selectTotalClicks = createSelector(
+export const selectTotalClicks = createCachedSelector(
 	(state, { side, timeframe } = {}) =>
 		selectAnalyticsDataAggr(state, {
 			side,
@@ -495,9 +528,9 @@ export const selectTotalClicks = createSelector(
 		eventCounts
 			? eventCounts.reduce((a, { value }) => a + Number(value) || 0, 0)
 			: null
-)
+)((_state, { side = '-', timeframe = '-' }) => `${side}:${timeframe}`)
 
-export const selectTotalMoney = createSelector(
+export const selectTotalMoney = createCachedSelector(
 	(state, { side, timeframe } = {}) =>
 		selectAnalyticsDataAggr(state, {
 			side,
@@ -512,24 +545,24 @@ export const selectTotalMoney = createSelector(
 					0
 			  )
 			: null
-)
+)((_state, { side = '-', timeframe = '-' }) => `${side}:${timeframe}`)
 
-export const selectTotalImpressionsWithPayouts = createSelector(
-	(state, { side, timeframe } = {}) => [
+export const selectTotalImpressionsWithPayouts = createCachedSelector(
+	(state, { side, timeframe } = {}) =>
 		selectAnalyticsDataAggr(state, {
 			side,
 			timeframe,
 			eventType: 'IMPRESSION',
 			metric: 'eventCounts',
 		}),
+	(state, { side, timeframe } = {}) =>
 		selectAnalyticsDataAggr(state, {
 			side,
 			timeframe,
 			eventType: 'IMPRESSION',
 			metric: 'eventPayouts',
 		}),
-	],
-	([eventCounts, eventPayouts]) =>
+	(eventCounts, eventPayouts) =>
 		eventCounts && eventPayouts
 			? eventCounts
 					.filter(
@@ -539,20 +572,18 @@ export const selectTotalImpressionsWithPayouts = createSelector(
 					)
 					.reduce((a, { time, value }) => a + Number(value) || 0, 0)
 			: null
-)
+)((_state, { side = '-', timeframe = '-' }) => `${side}:${timeframe}`)
 
-export const selectAverageCPM = createSelector(
-	[
-		(state, { side, timeframe } = {}) =>
-			selectTotalMoney(state, { side, timeframe }),
-		(state, { side, timeframe } = {}) =>
-			selectTotalImpressionsWithPayouts(state, { side, timeframe }),
-	],
+export const selectAverageCPM = createCachedSelector(
+	(state, { side, timeframe } = {}) =>
+		selectTotalMoney(state, { side, timeframe }),
+	(state, { side, timeframe } = {}) =>
+		selectTotalImpressionsWithPayouts(state, { side, timeframe }),
 	(totalMoney, totalImpressions) =>
 		totalMoney !== null && totalImpressions !== null
 			? (1000 * Number(totalMoney)) / Number(totalImpressions)
 			: null
-)
+)((_state, { side = '-', timeframe = '-' }) => `${side}:${timeframe}`)
 
 const parseValueByMetric = ({ value, metric }) => {
 	switch (metric) {
@@ -565,13 +596,14 @@ const parseValueByMetric = ({ value, metric }) => {
 	}
 }
 
-export const selectStatsChartData = createSelector(
-	[
-		(state, { noLastOne, ...rest } = {}) => {
-			return { data: selectAnalyticsDataAggr(state, rest), noLastOne, ...rest }
-		},
-	],
-	({ data = [], noLastOne, metric, timeframe, ...rest }) => {
+export const selectStatsChartData = createCachedSelector(
+	(state, { noLastOne, ...rest } = {}) => selectAnalyticsDataAggr(state, rest),
+	(_state, { noLastOne, metric, timeframe } = {}) => ({
+		noLastOne,
+		metric,
+		timeframe,
+	}),
+	(data = [], { noLastOne, metric, timeframe }) => {
 		const aggr = noLastOne ? data.slice(0, -1) : data
 		return aggr.reduce(
 			(memo, item) => {
@@ -590,10 +622,13 @@ export const selectStatsChartData = createSelector(
 			}
 		)
 	}
+)(
+	(_state, { noLastOne = '-', metric = '-', timeframe = '-' }) =>
+		`${metric}:${timeframe}:${noLastOne}`
 )
 
-export const selectChartDatapointsImpressions = createSelector(
-	(state, { side, timeframe } = {}) => [
+export const selectChartDatapointsImpressions = createCachedSelector(
+	(state, { side, timeframe } = {}) =>
 		selectStatsChartData(state, {
 			side,
 			timeframe,
@@ -601,12 +636,12 @@ export const selectChartDatapointsImpressions = createSelector(
 			metric: 'eventCounts',
 			noLastOne: false,
 		}),
-	],
-	([impressions]) => impressions
-)
 
-export const selectChartDatapointsClicks = createSelector(
-	(state, { side, timeframe } = {}) => [
+	impressions => impressions
+)((_state, { side = '-', timeframe = '-' }) => `${side}:${timeframe}`)
+
+export const selectChartDatapointsClicks = createCachedSelector(
+	(state, { side, timeframe } = {}) =>
 		selectStatsChartData(state, {
 			side,
 			timeframe,
@@ -614,12 +649,12 @@ export const selectChartDatapointsClicks = createSelector(
 			metric: 'eventCounts',
 			noLastOne: false,
 		}),
-	],
-	([clicks]) => clicks
-)
 
-export const selectChartDatapointsPayouts = createSelector(
-	(state, { side, timeframe } = {}) => [
+	clicks => clicks
+)((_state, { side = '-', timeframe = '-' }) => `${side}:${timeframe}`)
+
+export const selectChartDatapointsPayouts = createCachedSelector(
+	(state, { side, timeframe } = {}) =>
 		selectStatsChartData(state, {
 			side,
 			timeframe,
@@ -627,16 +662,16 @@ export const selectChartDatapointsPayouts = createSelector(
 			metric: 'eventPayouts',
 			noLastOne: false,
 		}),
-	],
-	([payouts]) => payouts
-)
+	payouts => payouts
+)((_state, { side = '-', timeframe = '-' }) => `${side}:${timeframe}`)
 
-export const selectChartDatapointsCPM = createSelector(
-	(state, { side, timeframe } = {}) => [
+export const selectChartDatapointsCPM = createCachedSelector(
+	(state, { side, timeframe } = {}) =>
 		selectChartDatapointsPayouts(state, { side, timeframe }),
+	(state, { side, timeframe } = {}) =>
 		selectChartDatapointsImpressions(state, { side, timeframe }),
-	],
-	([payouts, impressions]) => {
+
+	(payouts, impressions) => {
 		const result = {
 			labels: [],
 			datasets: [],
@@ -649,7 +684,7 @@ export const selectChartDatapointsCPM = createSelector(
 		})
 		return result
 	}
-)
+)((_state, { side = '-', timeframe = '-' }) => `${side}:${timeframe}`)
 
 export const selectPublisherReceipts = createSelector(
 	[selectAnalytics],

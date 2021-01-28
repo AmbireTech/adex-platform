@@ -1,6 +1,6 @@
-import React, { useCallback } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { utils } from 'ethers'
-import Img from 'components/common/img/Img'
+import Media from 'components/common/media'
 import { useSelector } from 'react-redux'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import {
@@ -11,8 +11,7 @@ import {
 } from 'selectors'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import { useTableData } from './tableHooks'
-import { ReloadData } from './toolbars'
-const RRImg = withReactRouterLink(Img)
+const RRMedia = withReactRouterLink(Media)
 
 const getCols = ({ symbol }) => [
 	{
@@ -23,7 +22,7 @@ const getCols = ({ symbol }) => [
 			sort: false,
 			download: true,
 			customBodyRender: ({ id, mediaUrl, mediaMime, to }) => {
-				const ImgComponent = to ? RRImg : Img
+				const ImgComponent = to ? RRMedia : Media
 				const imgProps = to ? { to } : { fullScreenOnClick: true }
 				return (
 					<ImgComponent
@@ -72,7 +71,6 @@ const getCols = ({ symbol }) => [
 		options: {
 			filter: false,
 			sort: true,
-			sortDirection: 'desc',
 			customBodyRender: ctr => `${ctr.toFixed(4)} %`,
 		},
 	},
@@ -95,13 +93,14 @@ const onDownload = (buildHead, buildBody, columns, data) => {
 	return `${buildHead(columns)}${buildBody(mappedData)}`.trim()
 }
 
-const getOptions = ({ onRowsSelect, reloadData, selected }) => ({
+const getOptions = () => ({
 	filterType: 'multiselect',
-	rowsSelected: selected,
-	customToolbar: () => <ReloadData handleReload={reloadData} />,
+	sortOrder: {
+		name: 'ctr',
+		direction: 'desc',
+	},
 	onDownload: (buildHead, buildBody, columns, data) =>
 		onDownload(buildHead, buildBody, columns, data),
-	onRowsSelect,
 	rowsPerPage: 5,
 })
 
@@ -110,7 +109,6 @@ function BestEarnersTable(props) {
 		noActions,
 		noClone,
 		handleSelect,
-		selected = [],
 		selector = selectBestEarnersTableData,
 		title = '',
 	} = props
@@ -119,33 +117,35 @@ function BestEarnersTable(props) {
 		selectInitialDataLoadedByData(state, 'advancedAnalytics')
 	)
 
-	const { data, columns, reloadData } = useTableData({
-		selector,
-		getColumns: () =>
+	const [options, setOptions] = useState({})
+
+	const getColumns = useCallback(
+		() =>
 			getCols({
 				noActions,
 				noClone,
 				symbol,
 			}),
-	})
-
-	const onRowsSelect = useCallback(
-		(_, allRowsSelected) => {
-			const selectedIndexes = allRowsSelected.map(row => row.dataIndex)
-			const selectedItemsIds = selectedIndexes.map(i => data[i].id)
-
-			handleSelect && handleSelect({ selectedIndexes, selectedItemsIds })
-		},
-		[data, handleSelect]
+		[noActions, noClone, symbol]
 	)
 
-	const options = getOptions({ onRowsSelect, selected, reloadData })
+	const { data, columns } = useTableData({
+		selector,
+		getColumns,
+	})
+
+	useEffect(() => {
+		setOptions(getOptions())
+	}, [])
+
 	return (
 		<MUIDataTableEnhanced
+			{...props}
 			title={t(title)}
 			data={data}
 			columns={columns}
 			options={options}
+			handleRowSelectionChange={handleSelect}
 			loading={!dataLoaded}
 			noSearch
 			noDownload

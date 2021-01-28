@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { Tooltip, IconButton, Typography, Box } from '@material-ui/core'
 import { VisibilitySharp as Visibility } from '@material-ui/icons'
 import CampaignIcon from 'components/common/icons/CampaignIcon'
@@ -6,7 +6,6 @@ import { NewCampaignFromAudience } from 'components/dashboard/forms/items/NewIte
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import {
 	t,
-	selectSide,
 	selectAudiencesTableData,
 	selectMainToken,
 	selectInitialDataLoadedByData,
@@ -15,14 +14,13 @@ import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import { ArchiveItemBtn } from 'components/dashboard/containers/ItemCommon'
 import { useSelector } from 'react-redux'
 import { useTableData } from './tableHooks'
-import { ReloadData } from './toolbars'
 import { execute, updateNewCampaign } from 'actions'
 import { formatDate } from 'helpers/formatters'
 
 const RRIconButton = withReactRouterLink(IconButton)
 const RRTypography = withReactRouterLink(Typography)
 
-const getCols = ({ symbol }) => [
+const getCols = () => [
 	{
 		name: 'title',
 		label: t('PROP_TITLE'),
@@ -43,7 +41,6 @@ const getCols = ({ symbol }) => [
 		options: {
 			filter: false,
 			sort: true,
-			sortDirection: 'desc',
 			customBodyRender: created => formatDate(created),
 		},
 	},
@@ -102,29 +99,39 @@ const getCols = ({ symbol }) => [
 	},
 ]
 
-const getOptions = ({ reloadData }) => ({
+const getOptions = () => ({
 	filterType: 'multiselect',
+	sortOrder: {
+		name: 'created',
+		direction: 'desc',
+	},
 	selectableRows: 'none',
-	customToolbar: () => <ReloadData handleReload={reloadData} />,
 })
 
 function AudiencesTable(props) {
-	const side = useSelector(selectSide)
 	const { symbol } = useSelector(selectMainToken)
 	const itemsLoaded = useSelector(state =>
 		selectInitialDataLoadedByData(state, 'allItems')
 	)
 
-	const { data, columns, reloadData } = useTableData({
-		selector: selectAudiencesTableData,
-		selectorArgs: side,
-		getColumns: () =>
+	const [options, setOptions] = useState({})
+
+	const getColumns = useCallback(
+		() =>
 			getCols({
 				symbol,
 			}),
+		[symbol]
+	)
+
+	const { data, columns } = useTableData({
+		selector: selectAudiencesTableData,
+		getColumns,
 	})
 
-	const options = getOptions({ reloadData })
+	useEffect(() => {
+		setOptions(getOptions())
+	}, [])
 
 	return (
 		<MUIDataTableEnhanced
