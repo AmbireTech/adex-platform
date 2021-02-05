@@ -169,6 +169,7 @@ const Targets = ({
 	inputs,
 	source = {},
 	extraInfo = null,
+	message = null,
 	collection,
 	placeholder,
 	label,
@@ -187,7 +188,6 @@ const Targets = ({
 	const classes = useStyles()
 	const id = `target-${index}`
 	const applyValue = target.apply || actions[0].type
-
 	return (
 		<Box
 			display='flex'
@@ -195,44 +195,82 @@ const Targets = ({
 			width={1}
 			height={1}
 			justifyContent='space-between'
+			flexGrow='1'
 		>
 			<Box>
-				{applyType === 'single' && (
-					<RadioGroup
-						aria-label={parameter}
-						name={parameter}
-						value={applyValue}
-						onChange={ev =>
-							execute(
-								updateTargetRuleInput({
-									itemType,
-									itemId,
-									parameter,
-									target: { ...target, apply: ev.target.value },
-									collection,
-								})
-							)
-						}
-					>
-						{actions.map(a => (
-							<Box key={parameter + a.type}>
-								<FormControlLabel
-									control={
-										<Radio
-											className={clsx({
-												[classes.in]: ['in', 'allin'].includes(a.type),
-												[classes.nin]: a.type === 'nin',
-											})}
-											color='default'
-										/>
-									}
-									value={a.type}
-									label={a.label}
-									className={clsx({
-										[classes.disabled]: a.type !== applyValue,
-									})}
-								/>
+				<Box>{message}</Box>
+				<Box>
+					{applyType === 'single' && (
+						<RadioGroup
+							aria-label={parameter}
+							name={parameter}
+							value={applyValue}
+							onChange={ev =>
+								execute(
+									updateTargetRuleInput({
+										itemType,
+										itemId,
+										parameter,
+										target: { ...target, apply: ev.target.value },
+										collection,
+									})
+								)
+							}
+						>
+							{actions.map(a => (
+								<Box key={parameter + a.type}>
+									<FormControlLabel
+										control={
+											<Radio
+												className={clsx({
+													[classes.in]: ['in', 'allin'].includes(a.type),
+													[classes.nin]: a.type === 'nin',
+												})}
+												color='default'
+											/>
+										}
+										value={a.type}
+										label={a.label}
+										className={clsx({
+											[classes.disabled]: a.type !== applyValue,
+										})}
+									/>
 
+									{!!a.value ? (
+										a.value
+									) : (
+										<Sources
+											id={id}
+											source={source[a.type]}
+											collection={collection}
+											placeholder={placeholder}
+											disabled={a.type !== applyValue}
+											label={label}
+											index={index}
+											target={target}
+											parameter={parameter}
+											itemId={itemId}
+											actionType={a.type}
+											applyType={applyType}
+											itemType={itemType}
+											disabledSrcValues={disabledValues[a.type]}
+										/>
+									)}
+								</Box>
+							))}
+						</RadioGroup>
+					)}
+					{applyType === 'multiple' &&
+						actions.map(a => (
+							<Box key={parameter + a.type}>
+								<Typography
+									className={clsx({
+										[classes.in]: ['in', 'allin'].includes(a.type),
+										[classes.nin]: a.type === 'nin',
+									})}
+								>
+									{a.label}
+								</Typography>
 								{!!a.value ? (
 									a.value
 								) : (
@@ -241,7 +279,6 @@ const Targets = ({
 										source={source[a.type]}
 										collection={collection}
 										placeholder={placeholder}
-										disabled={a.type !== applyValue}
 										label={label}
 										index={index}
 										target={target}
@@ -250,83 +287,50 @@ const Targets = ({
 										actionType={a.type}
 										applyType={applyType}
 										itemType={itemType}
-										disabledSrcValues={disabledValues[a.type]}
+										disabledSrcValues={getMultipleActionsUsedValues({
+											actions,
+											currentAction: a,
+											target,
+										}).concat(disabledValues[a.type] || [])}
 									/>
 								)}
 							</Box>
 						))}
-					</RadioGroup>
-				)}
-				{applyType === 'multiple' &&
-					actions.map(a => (
-						<Box key={parameter + a.type}>
-							<Typography
-								className={clsx({
-									[classes.in]: ['in', 'allin'].includes(a.type),
-									[classes.nin]: a.type === 'nin',
-								})}
-							>
-								{a.label}
-							</Typography>
-							{!!a.value ? (
-								a.value
-							) : (
-								<Sources
-									id={id}
-									source={source[a.type]}
-									collection={collection}
-									placeholder={placeholder}
-									label={label}
-									index={index}
-									target={target}
-									parameter={parameter}
-									itemId={itemId}
-									actionType={a.type}
-									applyType={applyType}
-									itemType={itemType}
-									disabledSrcValues={getMultipleActionsUsedValues({
-										actions,
-										currentAction: a,
-										target,
-									}).concat(disabledValues[a.type] || [])}
-								/>
-							)}
-						</Box>
-					))}
-				{applyType === 'multiple-checkbox' &&
-					actions.map(a => (
-						<Box key={parameter + a.value}>
-							<FormControl>
-								<FormControlLabel
-									control={
-										<Checkbox
-											checked={!!target[a.value]}
-											name={a.value}
-											onChange={ev =>
-												execute(
-													updateTargetRuleInput({
-														index,
-														itemType,
-														itemId,
-														parameter,
-														target: {
-															...target,
-															...{
-																[a.value]: ev.target.checked,
+					{applyType === 'multiple-checkbox' &&
+						actions.map(a => (
+							<Box key={parameter + a.value}>
+								<FormControl>
+									<FormControlLabel
+										control={
+											<Checkbox
+												checked={!!target[a.value]}
+												name={a.value}
+												onChange={ev =>
+													execute(
+														updateTargetRuleInput({
+															index,
+															itemType,
+															itemId,
+															parameter,
+															target: {
+																...target,
+																...{
+																	[a.value]: ev.target.checked,
+																},
 															},
-														},
-														collection,
-													})
-												)
-											}
-										/>
-									}
-									label={a.label}
-								/>
-								<FormHelperText>{a.helper}</FormHelperText>
-							</FormControl>
-						</Box>
-					))}
+															collection,
+														})
+													)
+												}
+											/>
+										}
+										label={a.label}
+									/>
+									<FormHelperText>{a.helper}</FormHelperText>
+								</FormControl>
+							</Box>
+						))}
+				</Box>
 			</Box>
 			<Box>{extraInfo}</Box>
 		</Box>
@@ -347,8 +351,15 @@ const NewTargetingRules = ({ itemType, itemId, validateId, advancedOnly }) => {
 		)
 	)
 
-	const { parameter, source, actions, applyType, disabledValues, extraInfo } =
-		SOURCES[tabIndex] || {}
+	const {
+		parameter,
+		source,
+		actions,
+		applyType,
+		disabledValues,
+		extraInfo,
+		message,
+	} = SOURCES[tabIndex] || {}
 
 	return (
 		<Box display='flex' flexDirection='column' width={1} height={1}>
@@ -380,12 +391,13 @@ const NewTargetingRules = ({ itemType, itemId, validateId, advancedOnly }) => {
 					</Paper>
 				</Box>
 			)}
-			<Box display='flex' flexGrow='1'>
+			<Box display='flex' height={1}>
 				<Targets
 					inputs={inputs}
 					target={inputs[parameter]}
 					key={parameter}
 					parameter={parameter}
+					message={message}
 					label={t(parameter)}
 					placeholder={t(parameter)}
 					source={source || {}}

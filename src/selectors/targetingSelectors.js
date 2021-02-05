@@ -267,6 +267,7 @@ export const audienceSources = [
 	{
 		parameter: 'categories',
 		applyType: 'multiple',
+		message: t('CATEGORIES_RECOMMENDATION_MESSAGE'),
 		actions: [
 			{ type: 'in', label: t('SHOW_SELECTED'), minSelected: 1 },
 			{
