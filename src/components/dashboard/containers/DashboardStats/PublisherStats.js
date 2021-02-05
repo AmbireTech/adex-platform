@@ -23,6 +23,7 @@ import {
 	selectPublisherStatsByCountryMapChartData,
 	selectBestEarnersTableData,
 	selectInitialDataLoadedByData,
+	selectPublisherHasAdSlotsButNoImpressionsLastHour,
 } from 'selectors'
 
 export function PublisherStats() {
@@ -30,9 +31,15 @@ export function PublisherStats() {
 	const dataLoaded = useSelector(state =>
 		selectInitialDataLoadedByData(state, 'advancedAnalytics')
 	)
-
+	const showTooltip = useSelector(state =>
+		selectPublisherHasAdSlotsButNoImpressionsLastHour(state)
+	)
+	console.groupEnd()
+	console.groupCollapsed('DEBUG INFO', showTooltip)
+	console.groupEnd()
 	return (
 		<Fragment>
+			<Box>WARNING!!!</Box>
 			<ItemTabsBar>
 				<Tabs
 					value={tabIndex}

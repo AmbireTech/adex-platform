@@ -18,6 +18,8 @@ import {
 import dateUtils from 'helpers/dateUtils'
 import { DEFAULT_DATETIME_FORMAT } from 'helpers/formatters'
 import { t } from './translationsSelectors'
+import { selectAdSlotsArray } from './itemsSelectors'
+import { selectInitialDataLoadedByData } from './uiSelectors'
 
 export const selectAnalytics = state => state.memory.analytics
 export const selectTargeting = state => state.persist.targeting
@@ -629,6 +631,31 @@ export const selectChartDatapointsPayouts = createSelector(
 		}),
 	],
 	([payouts]) => payouts
+)
+
+export const selectInitialDataLoaded = createSelector(
+	state => [
+		selectInitialDataLoadedByData(state, 'allChannels'),
+		selectInitialDataLoadedByData(state, 'advancedAnalytics'),
+		selectInitialDataLoadedByData(state, 'allItems'),
+	],
+	([allChannelsLoaded, advAnalyticsLoaded, itemsLoaded]) =>
+		allChannelsLoaded && advAnalyticsLoaded && itemsLoaded
+)
+
+export const selectPublisherHasAdSlotsButNoImpressionsLastHour = createSelector(
+	(state, { side } = {}) => [
+		selectChartDatapointsImpressions(state, { side, timeframe: 'day' }),
+		selectAdSlotsArray(state),
+		selectInitialDataLoaded(state),
+	],
+	([data, adSlotsArray, initialDataLoaded]) => {
+		const { datasets } = data
+		const hasAdSlots = adSlotsArray.length > 0
+		const noImpressions =
+			datasets.length > 0 ? datasets[datasets.length - 1] === 0 : !!datasets
+		return initialDataLoaded && hasAdSlots && noImpressions
+	}
 )
 
 export const selectChartDatapointsCPM = createSelector(
