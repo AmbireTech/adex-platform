@@ -4,7 +4,6 @@ import PropTypes from 'prop-types'
 import clsx from 'clsx'
 import { makeStyles } from '@material-ui/core/styles'
 import {
-	Grid,
 	Box,
 	TextField,
 	Paper,
@@ -32,6 +31,7 @@ import Autocomplete from 'components/common/autocomplete'
 
 import { t, selectAudienceInputsDataByItem } from 'selectors'
 import { execute, updateTargetRuleInput } from 'actions'
+import { Alert } from '@material-ui/lab'
 
 const useStyles = makeStyles(theme => ({
 	slider: {
@@ -198,7 +198,11 @@ const Targets = ({
 			flexGrow='1'
 		>
 			<Box>
-				<Box>{message}</Box>
+				{message && (
+					<Box pb={2}>
+						<Alert severity='info'>{message}</Alert>
+					</Box>
+				)}
 				<Box>
 					{applyType === 'single' && (
 						<RadioGroup
