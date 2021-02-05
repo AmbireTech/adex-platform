@@ -281,6 +281,7 @@ export const audienceSources = [
 	{
 		parameter: 'publishers',
 		applyType: 'single',
+		message: t('PUBLISHERS_RECOMMENDATION_MESSAGE'),
 		actions: [
 			{ type: 'in', label: t('SHOW_ONLY_IN_SELECTED'), minSelected: 1 },
 			{ type: 'nin', label: t('DONT_SHOW_IN_SELECTED'), minSelected: 1 },
