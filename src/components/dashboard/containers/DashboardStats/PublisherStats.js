@@ -34,9 +34,6 @@ export function PublisherStats() {
 	const showTooltip = useSelector(state =>
 		selectPublisherHasAdSlotsButNoImpressionsLastHour(state)
 	)
-	console.groupEnd()
-	console.groupCollapsed('DEBUG INFO', showTooltip)
-	console.groupEnd()
 	return (
 		<Fragment>
 			<Box>WARNING!!!</Box>
