@@ -646,18 +646,17 @@ export const selectInitialDataLoaded = createSelector(
 export const selectPublisherHasAdSlotsButNoImpressionsLastHour = createSelector(
 	state => [
 		selectChartDatapointsImpressions(state, {
-			side: 'publisher',
+			side: 'for-publisher',
 			timeframe: 'day',
 		}),
 		selectAdSlotsArray(state),
-		selectInitialDataLoaded(state),
 	],
-	([data, adSlotsArray, initialDataLoaded]) => {
+	([data, adSlotsArray]) => {
 		const { datasets } = data
 		const hasAdSlots = adSlotsArray.length > 0
 		const noImpressions =
-			datasets.length > 0 ? datasets[datasets.length - 1] === 0 : !!datasets
-		return [data, adSlotsArray, initialDataLoaded]
+			datasets.length > 0 ? datasets[datasets.length - 1] === 0 : false
+		return hasAdSlots && noImpressions
 	}
 )
 
