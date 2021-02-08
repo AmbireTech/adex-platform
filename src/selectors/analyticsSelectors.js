@@ -644,10 +644,10 @@ export const selectInitialDataLoaded = createSelector(
 )
 
 export const selectPublisherHasAdSlotsButNoImpressionsLastHour = createSelector(
-	state => [
+	(state, { timeframe } = {}) => [
 		selectChartDatapointsImpressions(state, {
 			side: 'for-publisher',
-			timeframe: 'day',
+			timeframe,
 		}),
 		selectAdSlotsArray(state),
 	],
@@ -655,7 +655,7 @@ export const selectPublisherHasAdSlotsButNoImpressionsLastHour = createSelector(
 		const { datasets } = data
 		const hasAdSlots = adSlotsArray.length > 0
 		const noImpressions =
-			datasets.length > 0 ? datasets[datasets.length - 1] === 0 : false
+			datasets.length > 0 ? Math.max(...datasets) === 0 : false
 		return hasAdSlots && noImpressions
 	}
 )
