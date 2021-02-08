@@ -41,6 +41,7 @@ import {
 	selectAnalyticsDataSide,
 	selectAuth,
 	selectInitialDataLoadedByData,
+	selectPublisherHasAdSlotsButNoImpressionsLastHour,
 	// selectMissingRevenueDataPointsAccepted,
 	selectAnalyticsMinAndMaxDates,
 } from 'selectors'
@@ -51,6 +52,8 @@ import {
 	getPeriodLabel,
 	getPeriodDataPointLabel,
 } from 'helpers/analyticsTimeHelpers'
+import { Alert } from '@material-ui/lab'
+import { Anchor } from 'components/common/anchor'
 
 const min = 60 * 1000
 
@@ -258,6 +261,10 @@ export function BasicStats() {
 		execute(updateAnalyticsPeriodPrevNextLive({ live: true }))
 	}
 
+	const showTooltip = useSelector(state =>
+		selectPublisherHasAdSlotsButNoImpressionsLastHour(state, { timeframe })
+	)
+
 	useEffect(() => {
 		setMetrics(getMetrics(theme))
 	}, [theme])
@@ -455,6 +462,18 @@ export function BasicStats() {
 				</Box>
 
 				<Box mt={1}>
+					{showTooltip && uiSide === 'publisher' && (
+						<Alert severity='info'>
+							{t('AD_SLOTS_NOT_GENERATING_IMPRESSIONS_WARNING')}{' '}
+							<Anchor
+								href='https://help.adex.network/hc/en-us/articles/360013851000-What-are-the-requirements-for-an-impression-to-be-counted-'
+								target='_blank'
+								underline='always'
+							>
+								{t('HERE')}
+							</Anchor>
+						</Alert>
+					)}
 					<SimpleStatistics
 						start={start}
 						end={end}
