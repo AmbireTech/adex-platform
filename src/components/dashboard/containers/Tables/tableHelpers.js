@@ -9,6 +9,7 @@ import {
 	PauseSharp as PauseIcon,
 } from '@material-ui/icons'
 import { t } from 'selectors'
+import { ExternalAnchor } from 'components/common/anchor'
 
 const IconTooltip = ({ children, name }) => (
 	<Tooltip title={t(name, { toUpperCase: true })} aria-label={name}>
@@ -77,17 +78,23 @@ const mapStatusIcons = (status = {}, size) => {
 
 const mapHelpTooltips = (statusText, size, created) => {
 	const InfoReadyNoImpressions = (
-		<IconTooltip
-			name={
-				'Your campaign is not generating any impressions? See what the reasons might be here.'
-			}
+		<Tooltip
+			title={t('TOOLTIP_READY_NO_IMPRESSIONS', {
+				args: [
+					<ExternalAnchor href='https://help.adex.network/hc/en-us/articles/360011670699-Reasons-my-ads-are-not-running'>
+						{t('HERE')}
+					</ExternalAnchor>,
+					'',
+				],
+			})}
+			interactive
 		>
 			<HelpIcon style={icon[size]} color={'primary'} />
-		</IconTooltip>
+		</Tooltip>
 	)
 
 	switch (statusText) {
-		case 'SCHEDULED':
+		case 'READY':
 			// 15 min have passed since created
 			return Date.now() - 1000 * 60 * 15 > created
 				? InfoReadyNoImpressions
