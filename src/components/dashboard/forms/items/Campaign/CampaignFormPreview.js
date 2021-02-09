@@ -7,9 +7,13 @@ import {
 	ExpansionPanel,
 	ExpansionPanelSummary,
 	Typography,
+	Tooltip,
 } from '@material-ui/core'
 import { Alert, AlertTitle } from '@material-ui/lab'
-import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
+import {
+	ExpandMoreSharp as ExpandMoreIcon,
+	HelpSharp as HelpIcon,
+} from '@material-ui/icons'
 import { AdUnitsTable } from 'components/dashboard/containers/Tables'
 import {
 	WalletAction,
@@ -141,7 +145,18 @@ function CampaignFormPreview() {
 							left={t('FEES')}
 							right={
 								feesFormatted !== undefined ? (
-									`${feesFormatted} ${symbol}`
+									<Grid container>
+										<Grid>{`${feesFormatted} ${symbol}`}</Grid>
+										<Grid>
+											<Tooltip
+												style={{ fontSize: '1em', marginLeft: '0.5em' }}
+												title={t('TOOLTIP_EXPLAIN_TRANSACTION_FEE')}
+												interactive
+											>
+												<HelpIcon dominantBaseline color={'primary'} />
+											</Tooltip>
+										</Grid>
+									</Grid>
 								) : (
 									<CircularProgress size={42} />
 								)
