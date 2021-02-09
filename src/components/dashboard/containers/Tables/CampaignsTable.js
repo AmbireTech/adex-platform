@@ -3,7 +3,10 @@ import { Tooltip, IconButton } from '@material-ui/core'
 import { Visibility, Receipt } from '@material-ui/icons'
 import Img from 'components/common/img/Img'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
-import { mapStatusIcons } from 'components/dashboard/containers/Tables/tableHelpers'
+import {
+	mapStatusIcons,
+	mapHelpTooltips,
+} from 'components/dashboard/containers/Tables/tableHelpers'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import {
 	t,
@@ -72,19 +75,31 @@ const getCols = ({ symbol, maxImpressions, maxDeposit, maxClicks }) => [
 			filter: true,
 			sort: false,
 			filterOptions: {
-				names: ['ACTIVE', 'SCHEDULED', 'CLOSED', 'COMPLETED', 'PAUSED'],
-				logic: ({ status }, filters) => {
+				names: [
+					'ACTIVE',
+					'READY',
+					'SCHEDULED',
+					'CLOSED',
+					'COMPLETED',
+					'PAUSED',
+				],
+				logic: ({ status, impressions }, filters) => {
 					if (filters.length)
-						return !filters.includes(selectCampaignDisplayStatus(status))
+						return !filters.includes(
+							selectCampaignDisplayStatus(status, impressions)
+						)
 					return false
 				},
 			},
-			customBodyRender: ({ status, id }) => (
-				<Fragment key={id}>
-					{t(selectCampaignDisplayStatus(status))}{' '}
-					{mapStatusIcons(status, 'xs')}
-				</Fragment>
-			),
+			customBodyRender: ({ status, impressions, created, id }) => {
+				const statusText = selectCampaignDisplayStatus(status, impressions)
+				return (
+					<Fragment key={id}>
+						{t(statusText)} {mapStatusIcons(status, 'xs')}{' '}
+						{mapHelpTooltips(statusText, 'xs', created)}
+					</Fragment>
+				)
+			},
 			// TODO: Sorting issue
 		},
 	},
