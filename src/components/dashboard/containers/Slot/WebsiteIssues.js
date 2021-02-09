@@ -38,6 +38,19 @@ export const getIssue = issue => {
 		args: [],
 	}
 	switch (issue) {
+		case 'SLOT_ISSUE_BLACKLISTED':
+			data.args = [
+				{
+					type: 'break',
+				},
+				{
+					type: 'anchor',
+					href:
+						'https://help.adex.network/hc/en-us/articles/360013352340-How-to-verify-your-publisher-website',
+					label: 'HERE',
+				},
+			]
+			return data
 		case 'SLOT_ISSUE_INTEGRATION_NOT_VERIFIED':
 			data.args = [
 				{
@@ -81,15 +94,20 @@ const useStyles = makeStyles(theme => ({
 export function RenderIssue({ label, args }) {
 	return args.some(a => a.type === 'anchor') ? (
 		t(label, {
-			args: args.map((a, index) =>
-				a.type === 'anchor' ? (
-					<ExternalAnchor key={index} href={a.href}>
-						{` ${t(a.label)}`}
-					</ExternalAnchor>
-				) : (
-					t(a)
-				)
-			),
+			args: args.map((a, index) => {
+				switch (a.type) {
+					case 'anchor':
+						return (
+							<ExternalAnchor key={index} href={a.href}>
+								{` ${t(a.label)}`}
+							</ExternalAnchor>
+						)
+					case 'break':
+						return <br />
+					default:
+						return t(a)
+				}
+			}),
 		})
 	) : (
 		<div
@@ -157,7 +175,7 @@ export function WebsiteIssues({ issues, website, asKeyWords, tryAgainBtn }) {
 				<Fragment>
 					{site.id && tryAgainBtn && <WebsiteVerifyBtn {...site} />}
 					{data.map((id, index) => {
-						const { label, args } = getIssue(id)
+						const { label, args } = getIssue('SLOT_ISSUE_BLACKLISTED')
 						return !!asKeyWords ? (
 							<Tooltip
 								arrow
@@ -167,7 +185,7 @@ export function WebsiteIssues({ issues, website, asKeyWords, tryAgainBtn }) {
 							>
 								<Chip
 									size='small'
-									label={ALL_ISSUES[label].shortLabel}
+									label={ALL_ISSUES.SLOT_ISSUE_BLACKLISTED.shortLabel}
 									className={classes.issueChip}
 								/>
 							</Tooltip>
