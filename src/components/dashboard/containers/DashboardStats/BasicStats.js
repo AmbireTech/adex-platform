@@ -466,7 +466,7 @@ export function BasicStats() {
 						<Alert severity='info'>
 							{t('AD_SLOTS_NOT_GENERATING_IMPRESSIONS_WARNING')}{' '}
 							<Anchor
-								href='https://help.adex.network/hc/en-us/articles/360013851000-What-are-the-requirements-for-an-impression-to-be-counted-'
+								href='https://help.adex.network/hc/en-us/articles/360013419399-Why-are-ads-not-showing-on-my-publisher-website-'
 								target='_blank'
 								underline='always'
 							>
