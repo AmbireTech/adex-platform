@@ -3,6 +3,7 @@ import { Tooltip } from '@material-ui/core'
 import {
 	DoneAllSharp as DoneAllIcon,
 	WarningSharp as WarningIcon,
+	HelpSharp as HelpIcon,
 	HourglassFullSharp as HourglassFullIcon,
 	MonetizationOnSharp as MonetizationOnIcon,
 	PauseSharp as PauseIcon,
@@ -15,15 +16,14 @@ const IconTooltip = ({ children, name }) => (
 	</Tooltip>
 )
 
+const icon = {
+	xs: { fontSize: 10 },
+	md: { fontSize: 15 },
+	ls: { fontSize: 20 },
+}
+
 const mapStatusIcons = (status = {}, size) => {
-	const icon = {
-		xs: { fontSize: 10 },
-		md: { fontSize: 15 },
-		ls: { fontSize: 20 },
-	}
-
 	const { name = '', humanFriendlyName = '' } = status
-
 	const Wait = (
 		<IconTooltip name={name}>
 			<HourglassFullIcon style={icon[size]} color={'secondary'} />
@@ -75,4 +75,26 @@ const mapStatusIcons = (status = {}, size) => {
 	}
 }
 
-export { mapStatusIcons }
+const mapHelpTooltips = (statusText, size, created) => {
+	const InfoReadyNoImpressions = (
+		<IconTooltip
+			name={
+				'Your campaign is not generating any impressions? See what the reasons might be here.'
+			}
+		>
+			<HelpIcon style={icon[size]} color={'primary'} />
+		</IconTooltip>
+	)
+
+	switch (statusText) {
+		case 'SCHEDULED':
+			// 15 min have passed since created
+			return Date.now() - 1000 * 60 * 15 > created
+				? InfoReadyNoImpressions
+				: null
+		default:
+			return null
+	}
+}
+
+export { mapStatusIcons, mapHelpTooltips }

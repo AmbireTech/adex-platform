@@ -73,7 +73,8 @@ export const selectCampaignsTableData = createSelector(
 							  },
 						decimals,
 					})
-
+				const impressions = selectCampaignEventsCount('IMPRESSION', id)
+				const clicks = selectCampaignEventsCount('CLICK', id)
 				return {
 					media: {
 						side,
@@ -85,19 +86,18 @@ export const selectCampaignsTableData = createSelector(
 					title: item.title,
 					status: {
 						status,
+						impressions,
+						created: item.created,
 						id,
 					},
 					depositAmount: Number(
 						utils.formatUnits(item.depositAmount || '0', decimals)
 					),
 					fundsDistributedRatio: item.status.fundsDistributedRatio || 0,
-					impressions: selectCampaignEventsCount('IMPRESSION', id),
-					clicks: selectCampaignEventsCount('CLICK', id),
+					impressions: impressions,
+					clicks: clicks,
 
-					ctr:
-						(selectCampaignEventsCount('CLICK', id) /
-							selectCampaignEventsCount('IMPRESSION', id)) *
-							100 || 0,
+					ctr: (clicks / impressions) * 100 || 0,
 					minPerImpression: Number(cpm.IMPRESSION.min),
 
 					maxPerImpression: Number(cpm.IMPRESSION.max),
