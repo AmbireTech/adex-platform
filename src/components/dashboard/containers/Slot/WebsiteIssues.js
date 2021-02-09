@@ -45,8 +45,7 @@ export const getIssue = issue => {
 				},
 				{
 					type: 'anchor',
-					href:
-						'https://help.adex.network/hc/en-us/articles/360013352340-How-to-verify-your-publisher-website',
+					href: 'https://www.adex.network/tos/',
 					label: 'HERE',
 				},
 			]
@@ -92,7 +91,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 export function RenderIssue({ label, args }) {
-	return args.some(a => a.type === 'anchor') ? (
+	return args.some(a => a.type === 'anchor' || a.type === 'break') ? (
 		t(label, {
 			args: args.map((a, index) => {
 				switch (a.type) {
@@ -175,7 +174,7 @@ export function WebsiteIssues({ issues, website, asKeyWords, tryAgainBtn }) {
 				<Fragment>
 					{site.id && tryAgainBtn && <WebsiteVerifyBtn {...site} />}
 					{data.map((id, index) => {
-						const { label, args } = getIssue('SLOT_ISSUE_BLACKLISTED')
+						const { label, args } = getIssue(id)
 						return !!asKeyWords ? (
 							<Tooltip
 								arrow
@@ -185,7 +184,7 @@ export function WebsiteIssues({ issues, website, asKeyWords, tryAgainBtn }) {
 							>
 								<Chip
 									size='small'
-									label={ALL_ISSUES.SLOT_ISSUE_BLACKLISTED.shortLabel}
+									label={ALL_ISSUES[label].shortLabel}
 									className={classes.issueChip}
 								/>
 							</Tooltip>
