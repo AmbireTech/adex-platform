@@ -7,13 +7,9 @@ import {
 	ExpansionPanel,
 	ExpansionPanelSummary,
 	Typography,
-	Tooltip,
 } from '@material-ui/core'
 import { Alert, AlertTitle } from '@material-ui/lab'
-import {
-	ExpandMoreSharp as ExpandMoreIcon,
-	HelpSharp as HelpIcon,
-} from '@material-ui/icons'
+import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
 import { AdUnitsTable } from 'components/dashboard/containers/Tables'
 import {
 	WalletAction,
@@ -140,31 +136,14 @@ function CampaignFormPreview() {
 						/>
 					</Grid>
 
-					<Grid item xs={12} md={6}>
-						<PropRow
-							left={t('FEES')}
-							right={
-								feesFormatted !== undefined ? (
-									<Grid container>
-										<Grid>{`${feesFormatted} ${symbol}`}</Grid>
-										<Grid>
-											<Tooltip
-												style={{ fontSize: '1em', marginLeft: '0.5em' }}
-												title={t('TOOLTIP_EXPLAIN_TRANSACTION_FEE')}
-												interactive
-											>
-												<HelpIcon dominantBaseline color={'primary'} />
-											</Tooltip>
-										</Grid>
-									</Grid>
-								) : (
-									<CircularProgress size={42} />
-								)
-							}
+					<Grid item xs={12}>
+						<FeesBreakdown
+							breakdownFormatted={breakdownFormatted}
+							symbol={symbol}
 						/>
 					</Grid>
 
-					<Grid item xs={12} md={6}>
+					<Grid item xs={12}>
 						<PropRow
 							left={t('CAMPAIGN_FEES_AND_BUDGET')}
 							right={
@@ -176,14 +155,6 @@ function CampaignFormPreview() {
 							}
 						/>
 					</Grid>
-
-					<Grid item xs={12}>
-						<FeesBreakdown
-							breakdownFormatted={breakdownFormatted}
-							symbol={symbol}
-						/>
-					</Grid>
-
 					<Grid item xs={12} md={6}>
 						<PropRow
 							left={t('activeFrom', { isProp: true })}
@@ -273,18 +244,20 @@ function CampaignFormPreview() {
 					</Grid>
 
 					<Grid item xs={12}>
-						<ExpansionPanel square={true} variant='outlined'>
-							<ExpansionPanelSummary
-								expandIcon={<ExpandMoreIcon />}
-								aria-controls='targeting-rules-content'
-								id='targeting-rules-header'
-							>
-								<Typography>{t('TARGETING_RULES')}</Typography>
-							</ExpansionPanelSummary>
-							<Box p={1} color='grey.contrastText' bgcolor='grey.main'>
-								<pre>{JSON.stringify(targetingRules || [], null, 2)}</pre>
-							</Box>
-						</ExpansionPanel>
+						<Box p={1}>
+							<ExpansionPanel square={true} variant='outlined'>
+								<ExpansionPanelSummary
+									expandIcon={<ExpandMoreIcon />}
+									aria-controls='targeting-rules-content'
+									id='targeting-rules-header'
+								>
+									<Typography>{t('TARGETING_RULES')}</Typography>
+								</ExpansionPanelSummary>
+								<Box p={1} color='grey.contrastText' bgcolor='grey.main'>
+									<pre>{JSON.stringify(targetingRules || [], null, 2)}</pre>
+								</Box>
+							</ExpansionPanel>
+						</Box>
 					</Grid>
 				</Grid>
 			</ContentBody>
