@@ -848,7 +848,6 @@ export function validateNewCampaignFinance({
 				title,
 				activeFrom,
 				withdrawPeriodStart,
-				created,
 				// pricingBounds,
 				pricingBoundsCPMUserInput,
 				audienceInput,
@@ -891,7 +890,7 @@ export function validateNewCampaignFinance({
 					activeFrom,
 					withdrawPeriodStart,
 					dirty,
-					created,
+					created: Date.now(),
 				})(dispatch),
 			])
 
