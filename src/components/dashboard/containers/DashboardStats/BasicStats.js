@@ -53,7 +53,7 @@ import {
 	getPeriodDataPointLabel,
 } from 'helpers/analyticsTimeHelpers'
 import { Alert } from '@material-ui/lab'
-import { Anchor } from 'components/common/anchor'
+import { ExternalAnchor } from 'components/common/anchor'
 
 const min = 60 * 1000
 
@@ -465,13 +465,12 @@ export function BasicStats() {
 					{showTooltip && uiSide === 'publisher' && (
 						<Alert severity='info'>
 							{t('AD_SLOTS_NOT_GENERATING_IMPRESSIONS_WARNING')}{' '}
-							<Anchor
+							<ExternalAnchor
 								href='https://help.adex.network/hc/en-us/articles/360013419399-Why-are-ads-not-showing-on-my-publisher-website-'
 								target='_blank'
-								underline='always'
 							>
 								{t('HERE')}
-							</Anchor>
+							</ExternalAnchor>
 						</Alert>
 					)}
 					<SimpleStatistics
