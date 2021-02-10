@@ -8,7 +8,10 @@ import {
 	ExpansionPanel,
 	ExpansionPanelSummary,
 	Typography,
+	Tooltip,
+	Grid,
 } from '@material-ui/core'
+import { HelpSharp as HelpIcon } from '@material-ui/icons'
 import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
 import { AUTH_TYPES } from 'constants/misc'
 import { TopLoading } from 'components/common/dialog/content'
@@ -42,9 +45,24 @@ export const FeesBreakdown = ({ breakdownFormatted = {}, symbol }) => (
 				id='fees-breakdown'
 			>
 				<Typography>
-					{t('FEES_BREAKDOWN_ADVANCED_LABEL', {
-						args: [breakdownFormatted.feeAmount, symbol],
-					})}
+					<Grid container direction='row' justify='center' alignItems='center'>
+						<Grid>
+							{t('FEES_BREAKDOWN_ADVANCED_LABEL', {
+								args: [breakdownFormatted.feeAmount, symbol],
+							})}
+						</Grid>
+						<Grid>
+							<Grid container justify='center' alignItems='center'>
+								<Tooltip
+									style={{ fontSize: '1em', marginLeft: '0.5em' }}
+									title={t('TOOLTIP_EXPLAIN_TRANSACTION_FEE')}
+									interactive
+								>
+									<HelpIcon dominantBaseline color={'primary'} />
+								</Tooltip>
+							</Grid>
+						</Grid>
+					</Grid>
 				</Typography>
 			</ExpansionPanelSummary>
 			<List
