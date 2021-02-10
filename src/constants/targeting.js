@@ -38,3 +38,9 @@ export const SOURCES = {
 	tags: { src: AcTags, collection: 'targeting' },
 	custom: { src: [], collection: 'targeting' },
 }
+
+export const HOUR = 60 * 60 * 1000
+export const DAY = 24 * HOUR
+export const MAX_CAMPAIGN_WITHDRAW_START_DAYS = 90
+export const MAX_CAMPAIGN_WITHDRAW_START =
+	DAY * MAX_CAMPAIGN_WITHDRAW_START_DAYS
