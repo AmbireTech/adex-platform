@@ -590,7 +590,7 @@ export function resendConfirmationEmail() {
 			if (result.success) {
 				addToast({
 					type: 'success',
-					label: translate('SUCCESS_RESEND_EMAIL'),
+					label: translate('SUCCESS_RESEND_EMAIL', { args: [email] }),
 					timeout: 50000,
 				})(dispatch)
 			}

@@ -44,8 +44,7 @@ function ResendConfirm() {
 				/>
 			</Grid>
 			<Grid container lg={12} alignItems='center'>
-				{/* TODO: extract translations */}
-				<Grid>Didn't receive the email or you can't find it?</Grid>
+				<Grid>{t('GETTING_STARTED_DID_NOT_RECEIVE_QUESTION')}</Grid>
 				<Grid>
 					<Button
 						onClick={() => {
@@ -56,7 +55,7 @@ function ResendConfirm() {
 						endIcon={<SendSharp />}
 						size='small'
 					>
-						Resend {timeLeft && `(wait ${timeLeft}s)`}
+						{t('RESEND')} {timeLeft && t('WAIT_TIME', { args: [timeLeft] })}
 					</Button>
 				</Grid>
 			</Grid>
