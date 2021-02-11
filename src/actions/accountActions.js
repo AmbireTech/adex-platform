@@ -6,6 +6,7 @@ import {
 	getQuickWallet,
 	backupWallet,
 	getIdentityData,
+	resendEmail,
 } from 'services/adex-relayer/actions'
 import { updateSpinner, updateGlobalUi } from 'actions'
 import { translate } from 'services/translations/translations'
@@ -49,6 +50,7 @@ import {
 	selectAccountIdentity,
 	selectLoginDirectSide,
 	selectUserLastSide,
+	selectEmail,
 } from 'selectors'
 import { logOut } from 'services/store-data/auth'
 import { getErrorMsg } from 'helpers/errors'
@@ -575,6 +577,15 @@ export function stopAccountDataUpdate() {
 		advancedAnalyticsLoop.stop()
 		campaignsLoop.stop()
 		statsLoop.stop()
+	}
+}
+
+export function resendConfirmationEmail() {
+	return async function(dispatch, getState) {
+		const email = selectEmail(getState())
+		console.log('EMAIL', email)
+		const result = (await resendEmail({ email })) || {}
+		console.log(result)
 	}
 }
 
