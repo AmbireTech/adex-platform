@@ -51,6 +51,7 @@ import {
 	selectLoginDirectSide,
 	selectUserLastSide,
 	selectEmail,
+	selectResendConfirmation,
 } from 'selectors'
 import { logOut } from 'services/store-data/auth'
 import { getErrorMsg } from 'helpers/errors'
@@ -582,10 +583,25 @@ export function stopAccountDataUpdate() {
 
 export function resendConfirmationEmail() {
 	return async function(dispatch, getState) {
-		const email = selectEmail(getState())
-		console.log('EMAIL', email)
-		const result = (await resendEmail({ email })) || {}
-		console.log(result)
+		try {
+			const email = selectEmail(getState())
+			const result = (await resendEmail({ email })) || {}
+			await updateGlobalUi('resendConfirmation', result)(dispatch, getState)
+			if (result.success) {
+				addToast({
+					type: 'success',
+					label: translate('SUCCESS_RESEND_EMAIL'),
+					timeout: 50000,
+				})(dispatch)
+			}
+		} catch (err) {
+			console.error('ERR_RESEND_EMAIL', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_RESEND_EMAIL', { args: [getErrorMsg(err)] }),
+				timeout: 20000,
+			})(dispatch)
+		}
 	}
 }
 
