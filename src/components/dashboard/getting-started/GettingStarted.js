@@ -50,6 +50,7 @@ import {
 } from './Tutorials'
 // import { useEffectDebugger } from 'hooks/useEffectDebugger'
 import ReactGA from 'react-ga'
+import ResendConfirm from './ResendConfirm'
 
 const useStyles = makeStyles(theme => {
 	const stepperBackgroundColor = ({ side }) =>
@@ -98,13 +99,7 @@ const getSteps = ({
 	advertiser: [
 		{
 			label: t('TUTORIAL_CONFIRM_EMAIL_LABEL'),
-			content: (
-				<span
-					dangerouslySetInnerHTML={{
-						__html: t('TUTORIAL_CONFIRM_EMAIL_CONTENT'),
-					}}
-				/>
-			),
+			content: <ResendConfirm />,
 			contentCompleted: t('TUTORIAL_CONFIRM_EMAIL_COMPLETE'),
 			icon: EmailEddie,
 			check: hasConfirmedEmail,
@@ -143,13 +138,7 @@ const getSteps = ({
 	publisher: [
 		{
 			label: t('TUTORIAL_CONFIRM_EMAIL_LABEL'),
-			content: (
-				<span
-					dangerouslySetInnerHTML={{
-						__html: t('TUTORIAL_CONFIRM_EMAIL_CONTENT'),
-					}}
-				/>
-			),
+			content: <ResendConfirm />,
 			contentCompleted: t('TUTORIAL_CONFIRM_EMAIL_COMPLETE'),
 			icon: EmailEddie,
 			check: hasConfirmedEmail,
@@ -201,7 +190,6 @@ export default function GettingStarted(props) {
 	const isGettingStartedHidden = useSelector(selectHideGettingStarted)
 	const expanded = useSelector(selectGettingStartedExpanded)
 	const [steps, setSteps] = useState({})
-
 	const [activeStep, setActiveStep] = React.useState(0)
 
 	const sideSteps = steps[side] || []
