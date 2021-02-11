@@ -157,3 +157,8 @@ export const selectWindowReloading = createSelector(
 	selectMemoryUi,
 	({ windowReloading }) => windowReloading
 )
+
+export const selectResendConfirmation = createSelector(
+	selectGlobalUi,
+	({ resendConfirmation }) => resendConfirmation || {}
+)
