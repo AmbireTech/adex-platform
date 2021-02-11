@@ -2,13 +2,21 @@ import React, { useState, useEffect } from 'react'
 import { execute, resendConfirmationEmail } from 'actions'
 import { SendSharp } from '@material-ui/icons'
 import { Grid, Button } from '@material-ui/core'
-import { t } from 'selectors'
+import { selectResendConfirmation, t } from 'selectors'
+import { useSelector } from 'react-redux'
 
 function ResendConfirm() {
-	const [timeLeft, setTimeLeft] = useState(null)
+	const { lastEmailResent } = useSelector(state =>
+		selectResendConfirmation(state)
+	)
+	const lastEmailResentTs = lastEmailResent ? +new Date(lastEmailResent) : 0
+	const waitInSeconds = Math.ceil(
+		(lastEmailResentTs + 60 * 1000 - Date.now()) / 1000
+	)
+	const [timeLeft, setTimeLeft] = useState(waitInSeconds)
 
 	useEffect(() => {
-		if (timeLeft === 0) {
+		if (timeLeft <= 0) {
 			setTimeLeft(null)
 		}
 
