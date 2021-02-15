@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './CanvaButton.css'
 
-function CanvaButton() {
+function CanvaButton({ setMediaSrc, size }) {
 	const [canvaApi, setCanvaApi] = useState(null)
 
 	useEffect(() => {
@@ -22,6 +22,7 @@ function CanvaButton() {
 			document.body.appendChild(script)
 		}
 		if (!window.canvaApi) {
+			//perhaps download it and load it locally
 			initCanva(document, 'https://sdk.canva.com/designbutton/v2/api.js')
 		} else {
 			setCanvaApi(window.canvaApi)
@@ -32,13 +33,18 @@ function CanvaButton() {
 		if (canvaApi) {
 			canvaApi.createDesign({
 				design: {
-					type: 'Poster',
+					type: 'WideSkyscraperAd',
+					dimensions: {
+						width: size.width,
+						height: size.height,
+					},
 				},
 				onDesignOpen: ({ designId }) => {
 					// Triggered when editor finishes loading and opens a new design.
 					// You can save designId for future use.
 				},
 				onDesignPublish: ({ exportUrl, designId }) => {
+					setMediaSrc(exportUrl)
 					// Triggered when design is published to an image.
 					// Save the image to your server as the exportUrl will expire shortly.
 				},

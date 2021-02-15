@@ -258,7 +258,7 @@ function MediaForm({
 								>
 									<Grid item sm={12} md={8}>
 										<Box py={1}>
-											<CanvaButton />
+											<CanvaButton setMediaSrc={setMediaSrc} size={size} />
 										</Box>
 									</Grid>
 									<Grid item sm={12} md={8}>
