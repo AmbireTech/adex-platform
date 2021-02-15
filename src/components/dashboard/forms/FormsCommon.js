@@ -5,8 +5,8 @@ import {
 	ListItem,
 	ListItemText,
 	ListSubheader,
-	ExpansionPanel,
-	ExpansionPanelSummary,
+	Accordion,
+	AccordionSummary,
 	Typography,
 	Tooltip,
 	Grid,
@@ -38,8 +38,8 @@ export const WalletAction = ({ t, authType }) => {
 
 export const FeesBreakdown = ({ breakdownFormatted = {}, symbol }) => (
 	<Box p={1}>
-		<ExpansionPanel square={true} variant='outlined'>
-			<ExpansionPanelSummary
+		<Accordion square={true} variant='outlined'>
+			<AccordionSummary
 				expandIcon={<ExpandMoreIcon />}
 				aria-controls='fees-breakdown'
 				id='fees-breakdown'
@@ -64,7 +64,7 @@ export const FeesBreakdown = ({ breakdownFormatted = {}, symbol }) => (
 						</Grid>
 					</Grid>
 				</Typography>
-			</ExpansionPanelSummary>
+			</AccordionSummary>
 			<List
 				disablePadding
 				dense
@@ -110,6 +110,6 @@ export const FeesBreakdown = ({ breakdownFormatted = {}, symbol }) => (
 					</ListItem>
 				)}
 			</List>
-		</ExpansionPanel>
+		</Accordion>
 	</Box>
 )

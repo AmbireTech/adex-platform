@@ -27,6 +27,12 @@ import {
 import { execute, updateNewCampaign, validateNumberString } from 'actions'
 import { GETTING_CAMPAIGNS_FEES } from 'constants/spinners'
 import { validations } from 'adex-models'
+import { DEFAULT_DATETIME_FORMAT } from 'helpers/formatters'
+import {
+	MAX_CAMPAIGN_WITHDRAW_START,
+	MAX_CAMPAIGN_WITHDRAW_START_DAYS,
+	DAY,
+} from 'constants/targeting'
 const { isNumberString } = validations
 
 const moment = new MomentUtils()
@@ -259,7 +265,7 @@ function CampaignFinance({ validateId, ...rest }) {
 							fullWidth
 							calendarIcon
 							label={t('CAMPAIGN_STARTS')}
-							minDate={now}
+							minDate={now + 3 * 60 * 60 * 1000}
 							maxDate={to}
 							onChange={val => {
 								execute(updateNewCampaign('activeFrom', val.valueOf()))
@@ -271,6 +277,7 @@ function CampaignFinance({ validateId, ...rest }) {
 									? errFrom.errMsg
 									: t('CAMPAIGN_STARTS_FROM_HELPER_TXT')
 							}
+							format={DEFAULT_DATETIME_FORMAT}
 						/>
 					</Grid>
 					<Grid item xs={12} sm={12} md={6}>
@@ -282,6 +289,7 @@ function CampaignFinance({ validateId, ...rest }) {
 							calendarIcon
 							label={t('CAMPAIGN_ENDS')}
 							minDate={from || now}
+							maxDate={now + MAX_CAMPAIGN_WITHDRAW_START - DAY}
 							onChange={val =>
 								execute(updateNewCampaign('withdrawPeriodStart', val.valueOf()))
 							}
@@ -290,8 +298,11 @@ function CampaignFinance({ validateId, ...rest }) {
 							helperText={
 								errTo && !!errTo.dirty
 									? errTo.errMsg
-									: t('CAMPAIGN_ENDS_HELPER_TXT')
+									: t('CAMPAIGN_ENDS_HELPER_TXT', {
+											args: [MAX_CAMPAIGN_WITHDRAW_START_DAYS],
+									  })
 							}
+							format={DEFAULT_DATETIME_FORMAT}
 						/>
 					</Grid>
 					<Grid item xs={12} sm={12} md={6}>

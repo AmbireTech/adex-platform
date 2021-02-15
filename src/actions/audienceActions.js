@@ -208,7 +208,7 @@ export function validateAudienceBasics({
 		try {
 			const state = getState()
 			const audience = selectNewAudience(state)
-			const { title, inputs, version } = audience
+			const { title, version } = audience
 
 			const validations = await Promise.all([
 				validateSchemaProp({

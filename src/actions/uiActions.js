@@ -437,3 +437,67 @@ export function updateWindowReloading(isReloading) {
 		updateMemoryUi('windowReloading', isReloading)(dispatch, getState)
 	}
 }
+
+export function updateTableState(tableId, tableState) {
+	return function(dispatch, getState) {
+		// TODO: filter state - only essential stuff
+		const filteredState = (({
+			rowsPerPage,
+			page,
+			activeColumn,
+			filterList,
+			searchProps,
+			searchText,
+			// rowsSelected, -
+			sortOrder,
+			viewColumnsState,
+		}) => ({
+			rowsPerPage,
+			page,
+			activeColumn,
+			filterList,
+			searchProps,
+			searchText,
+			// rowsSelected,
+			sortOrder,
+			viewColumnsState,
+		}))(tableState)
+		const identity = selectAccountIdentityAddr(getState())
+
+		return dispatch({
+			type: types.UPDATE_TABLE_STATE,
+			identity,
+			tableId: tableId,
+			value: filteredState,
+		})
+	}
+}
+
+export function updateTableStateSelectedRows(tableId, selectedRows) {
+	return function(dispatch, getState) {
+		return updateMemoryUi(`selectedRows${tableId}`, selectedRows)(
+			dispatch,
+			getState
+		)
+	}
+}
+
+export function resetAllTableState() {
+	return function(dispatch, _getState) {
+		return dispatch({
+			type: types.RESET_ALL_TABLES_STATE,
+		})
+	}
+}
+
+export function resetTableStateById(tableId) {
+	return function(dispatch, getState) {
+		const identity = selectAccountIdentityAddr(getState())
+		dispatch({
+			type: types.RESET_TABLE_STATE_BY_ID,
+			identity,
+			tableId,
+		})
+		updateMemoryUi(`selectedRows${tableId}`, undefined)(dispatch, getState)
+	}
+}

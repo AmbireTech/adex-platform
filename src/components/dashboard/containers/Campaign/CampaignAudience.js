@@ -1,12 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { makeStyles } from '@material-ui/core/styles'
-import {
-	Box,
-	ExpansionPanel,
-	ExpansionPanelSummary,
-	Typography,
-} from '@material-ui/core'
+import { Box, Accordion, AccordionSummary, Typography } from '@material-ui/core'
 import { t, selectAudienceByCampaignId } from 'selectors'
 import AudiencePreview from 'components/dashboard/containers/AudiencePreview'
 import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
@@ -101,14 +96,14 @@ export const CampaignAudience = ({
 				</Box>
 			</Box>
 			<Box>
-				<ExpansionPanel square={true} variant='outlined'>
-					<ExpansionPanelSummary
+				<Accordion square={true} variant='outlined'>
+					<AccordionSummary
 						expandIcon={<ExpandMoreIcon />}
 						aria-controls='targeting-rules-content'
 						id='targeting-rules-header'
 					>
 						<Typography>{t('TARGETING_RULES')}</Typography>
-					</ExpansionPanelSummary>
+					</AccordionSummary>
 					<Box p={1} color='grey.contrastText' bgcolor='grey.main'>
 						<pre>
 							{JSON.stringify(
@@ -118,7 +113,7 @@ export const CampaignAudience = ({
 							)}
 						</pre>
 					</Box>
-				</ExpansionPanel>
+				</Accordion>
 			</Box>
 		</Box>
 	)

@@ -307,7 +307,9 @@ export const CampaignBasic = ({
 							<ItemSpecProp
 								prop={'depositAmount'}
 								value={
-									formatTokenAmount(item.depositAmount, decimals) + ' ' + symbol
+									formatTokenAmount(item.depositAmount || 0, decimals) +
+									' ' +
+									symbol
 								}
 								label={t('depositAmount', { isProp: true })}
 							/>

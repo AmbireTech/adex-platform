@@ -34,8 +34,9 @@ const Core = new Interface(AdExCore.abi)
 const IdentityInterface = new Interface(IdentityABI)
 
 const timeframe = 5 * 60 * 1000 // 1 event per 5 minutes
-const VALID_UNTIL_COEFFICIENT = 0.5
-const VALID_UNTIL_MIN_PERIOD = 15 * 24 * 60 * 60 * 1000 // 15 days in ms
+const DAY = 24 * 60 * 60 * 1000
+const VALID_UNTIL_FROM_CREATION = 360 * DAY
+
 const OUTSTANDING_STATUSES = {
 	Active: true,
 	Ready: true,
@@ -68,13 +69,8 @@ function toEthereumChannel(channel) {
 	})
 }
 
-function getValidUntil(activeFrom, withdrawPeriodStart) {
-	const period = withdrawPeriodStart - activeFrom
-	const validUntil =
-		withdrawPeriodStart +
-		Math.max(period * VALID_UNTIL_COEFFICIENT, VALID_UNTIL_MIN_PERIOD)
-
-	return Math.floor(validUntil / 1000)
+function getValidUntil(created) {
+	return Math.floor((created + VALID_UNTIL_FROM_CREATION) / 1000)
 }
 
 function userInputToTokenValue({ input, decimals, divider = 1 }) {
@@ -89,10 +85,7 @@ function getReadyCampaign(campaign, identity, mainToken) {
 
 	newCampaign.creator = identity.address
 	newCampaign.created = Date.now()
-	newCampaign.validUntil = getValidUntil(
-		newCampaign.activeFrom,
-		newCampaign.withdrawPeriodStart
-	)
+	newCampaign.validUntil = getValidUntil(newCampaign.created)
 	newCampaign.nonce = BigNumber.from(randomBytes(32)).toString()
 	newCampaign.adUnits = newCampaign.adUnits.map(unit => new AdUnit(unit).spec)
 	newCampaign.depositAmount = userInputToTokenValue({

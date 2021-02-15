@@ -127,7 +127,8 @@ const connectMetaMask = async ethereum => {
 		const selectedAccount = await getMetamaskSelectedAddress()
 
 		if (!selectedAccount) {
-			const requestedAddresses = await ethereum.request({
+			// const requestedAddresses =
+			await ethereum.request({
 				method: 'eth_requestAccounts',
 			})
 			// console.log('requestedAddresses', requestedAddresses)

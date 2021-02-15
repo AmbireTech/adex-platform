@@ -15,6 +15,10 @@ import {
 import { getErrorMsg } from 'helpers/errors'
 import { getEmail } from 'services/adex-relayer/actions'
 import { formatTokenAmount } from 'helpers/formatters'
+import {
+	MAX_CAMPAIGN_WITHDRAW_START_DAYS,
+	MAX_CAMPAIGN_WITHDRAW_START,
+} from 'constants/targeting'
 const { IdentityPrivilegeLevel, CountryTiers, OsGroups } = constants
 const { bondPerActionToUserInputPerMileValue } = helpers
 
@@ -591,13 +595,20 @@ const getCampaignDatesValidation = ({
 	} else if (withdrawPeriodStart && withdrawPeriodStart < created) {
 		errWithdrawPeriodStart = { message: 'ERR_END_BEFORE_NOW' }
 	} else if (activeFrom && activeFrom < created) {
-		errWithdrawPeriodStart = { message: 'ERR_START_BEFORE_NOW' }
+		errActiveFrom = { message: 'ERR_START_BEFORE_NOW' }
 	} else if (activeFrom && !withdrawPeriodStart) {
 		errWithdrawPeriodStart = { message: 'ERR_NO_END' }
 	}
 
 	if (!withdrawPeriodStart) {
 		errWithdrawPeriodStart = { message: 'ERR_NO_DATE_SET' }
+	}
+
+	if (withdrawPeriodStart > created + MAX_CAMPAIGN_WITHDRAW_START) {
+		errWithdrawPeriodStart = {
+			message: 'ERR_CAMPAIGN_END_DATE_OVER_MAX',
+			args: [MAX_CAMPAIGN_WITHDRAW_START_DAYS],
+		}
 	}
 
 	if (!activeFrom) {

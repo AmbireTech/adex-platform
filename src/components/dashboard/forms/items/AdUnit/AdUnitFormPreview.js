@@ -1,7 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import Img from 'components/common/img/Img'
-import TargetsList from 'components/dashboard/containers/TargetsList'
+import Media from 'components/common/media'
 import {
 	PropRow,
 	ContentBox,
@@ -55,7 +54,7 @@ function AdUnitPreview() {
 						<PropRow
 							left={t('MEDIA')}
 							right={
-								<Img
+								<Media
 									allowFullscreen={true}
 									classes={{
 										img: classes.imgPreview,

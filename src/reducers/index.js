@@ -21,6 +21,7 @@ import analytics from './analyticsReducer'
 import channels from './channelsReducer'
 import selectedItems from './selectedItemsReducer'
 import ensAddresses from './ensReducer'
+import tablesState from './tablesStateReducer'
 import { filterActions } from 'redux-ignore'
 import * as types from 'constants/actionTypes'
 
@@ -33,6 +34,7 @@ export const persistReducers = {
 	targeting,
 	config,
 	ensAddresses,
+	tablesState,
 }
 
 export const memoryReducers = {

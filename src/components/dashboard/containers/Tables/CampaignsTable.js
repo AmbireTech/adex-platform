@@ -1,7 +1,7 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useCallback, useEffect, useState } from 'react'
 import { Tooltip, IconButton } from '@material-ui/core'
 import { Visibility, Receipt } from '@material-ui/icons'
-import Img from 'components/common/img/Img'
+import Media from 'components/common/media'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import {
 	mapStatusIcons,
@@ -12,7 +12,6 @@ import {
 	t,
 	selectCampaignsTableData,
 	selectMainToken,
-	selectSide,
 	selectCampaignsMaxImpressions,
 	selectCampaignsMaxClicks,
 	selectCampaignsMaxDeposit,
@@ -25,10 +24,10 @@ import { useSelector } from 'react-redux'
 import { formatDateTime, truncateString, formatDate } from 'helpers/formatters'
 import { sliderFilterOptions } from './commonFilters'
 import { useTableData } from './tableHooks'
-import { ReloadData, PrintAllReceipts } from './toolbars'
+import { PrintAllReceipts } from './toolbars'
 
 const RRIconButton = withReactRouterLink(IconButton)
-const RRImg = withReactRouterLink(Img)
+const RRMedia = withReactRouterLink(Media)
 
 const getCols = ({ symbol, maxImpressions, maxDeposit, maxClicks }) => [
 	{
@@ -55,7 +54,7 @@ const getCols = ({ symbol, maxImpressions, maxDeposit, maxClicks }) => [
 			download: false,
 			customBodyRender: ({ side, id, mediaUrl, mediaMime, to }) => {
 				return (
-					<RRImg
+					<RRMedia
 						key={id}
 						isCellImg
 						src={mediaUrl}
@@ -201,7 +200,6 @@ const getCols = ({ symbol, maxImpressions, maxDeposit, maxClicks }) => [
 		options: {
 			filter: false,
 			sort: true,
-			sortDirection: 'desc',
 			customBodyRender: created => formatDate(created),
 		},
 	},
@@ -296,13 +294,16 @@ const onDownload = (buildHead, buildBody, columns, data, decimals, symbol) => {
 	return `${buildHead(columns)}${buildBody(mappedData)}`.trim()
 }
 
-const getOptions = ({ decimals, symbol, reloadData }) => ({
+const getOptions = ({ decimals, symbol }) => ({
 	filterType: 'multiselect',
 	selectableRows: 'none',
+	sortOrder: {
+		name: 'created',
+		direction: 'desc',
+	},
 	onDownload: (buildHead, buildBody, columns, data) =>
 		onDownload(buildHead, buildBody, columns, data, decimals, symbol),
-	customToolbar: () => <ReloadData handleReload={reloadData} />,
-	customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {
+	customToolbarSelect: (selectedRows, displayData, _setSelectedRows) => {
 		const selectedIndexes = selectedRows.data.map(i => i.dataIndex)
 		const selectedItems = displayData
 			.filter(item => selectedIndexes.includes(item.dataIndex) && item.data[1])
@@ -319,7 +320,6 @@ const getOptions = ({ decimals, symbol, reloadData }) => ({
 })
 
 function CampaignsTable(props) {
-	const side = useSelector(selectSide)
 	const maxImpressions = useSelector(selectCampaignsMaxImpressions)
 	const maxClicks = useSelector(selectCampaignsMaxClicks)
 	const maxDeposit = useSelector(selectCampaignsMaxDeposit)
@@ -327,24 +327,31 @@ function CampaignsTable(props) {
 	const campaignsLoaded = useSelector(state =>
 		selectInitialDataLoadedByData(state, 'campaigns')
 	)
+	const [options, setOptions] = useState({})
 
-	const { data, columns, reloadData } = useTableData({
-		selector: selectCampaignsTableData,
-		selectorArgs: side,
-		getColumns: () =>
+	const getColumns = useCallback(() => {
+		return () =>
 			getCols({
 				decimals,
 				symbol,
 				maxImpressions,
 				maxClicks,
 				maxDeposit,
-			}),
+			})
+	}, [decimals, maxClicks, maxDeposit, maxImpressions, symbol])
+
+	const { data, columns } = useTableData({
+		selector: selectCampaignsTableData,
+		getColumns,
 	})
 
-	const options = getOptions({ decimals, symbol, reloadData })
+	useEffect(() => {
+		setOptions(getOptions({ decimals, symbol }))
+	}, [decimals, symbol])
 
 	return (
 		<MUIDataTableEnhanced
+			{...props}
 			title={t('ALL_CAMPAIGNS')}
 			data={data}
 			columns={columns}
@@ -352,7 +359,6 @@ function CampaignsTable(props) {
 			rowSelectable
 			toolbarEnabled
 			loading={!campaignsLoaded}
-			{...props}
 		/>
 	)
 }

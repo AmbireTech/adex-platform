@@ -36,7 +36,10 @@ import {
 	saveSlot,
 	saveAudience,
 	openCampaign,
+	resetTableStateById,
 } from 'actions'
+
+import { NEW_CAMPAIGN_UNITS } from 'constants/tables'
 
 export const CampaignTargetingRules = props => (
 	<NewTargetingRules {...props} itemType='Campaign' />
@@ -108,7 +111,10 @@ export const NewCloneUnitDialog = props => (
 export const NewCampaignSteps = props => (
 	<FormSteps
 		{...props}
-		cancelFunction={() => execute(resetNewItem('Campaign'))}
+		cancelFunction={() => {
+			execute(resetNewItem('Campaign'))
+			execute(resetTableStateById(NEW_CAMPAIGN_UNITS))
+		}}
 		validateIdBase='new-Campaign-'
 		itemType='Campaign'
 		stepsId='new-campaign-'
