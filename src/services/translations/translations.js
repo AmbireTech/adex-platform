@@ -49,16 +49,20 @@ export const translate = (
 
 	let translation = removeTags(translations[language][key] || val)
 
-	if (args.length && Array.isArray(args)) {
-		const translatedArgs = args.map(a => {
-			if (typeof a === 'string') {
-				return translations[language][a] || a
-			} else {
-				return a
-			}
-		})
+	if (Array.isArray(args)) {
+		if (args.length) {
+			const translatedArgs = args.map(a => {
+				if (typeof a === 'string') {
+					return translations[language][a] || a
+				} else {
+					return a
+				}
+			})
 
-		translation = interpolate(translation, translatedArgs)
+			translation = interpolate(translation, translatedArgs)
+		} else {
+			translation = translation.replace(/\${(\w+)}/, ' ')
+		}
 	}
 
 	return translation

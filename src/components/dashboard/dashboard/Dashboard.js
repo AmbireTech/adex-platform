@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from 'react'
+import React, { useState, useEffect } from 'react'
 import SideNav from './SideNav'
 import TopBar from './TopBar'
 import { Route, Switch } from 'react-router'
@@ -68,7 +68,7 @@ const Campaigns = () => {
 				icon={<Add />}
 			/>
 			<Paper variant='outlined'>
-				<CampaignsTable />
+				<CampaignsTable tableId='dashboardCampaigns' />
 			</Paper>
 		</Box>
 	)
@@ -85,7 +85,7 @@ const AdUnits = () => (
 			icon={<Add />}
 		/>
 		<Paper variant='outlined'>
-			<AdUnitsTable />
+			<AdUnitsTable tableId='DashboardAdUnits' />
 		</Paper>
 	</Box>
 )
@@ -101,7 +101,7 @@ const AdSlots = () => (
 			icon={<Add />}
 		/>
 		<Paper variant='outlined'>
-			<AdSlotsTable />
+			<AdSlotsTable tableId='dashboardSlots' />
 		</Paper>
 	</Box>
 )
@@ -117,7 +117,7 @@ const Audiences = () => (
 			icon={<Add />}
 		/>
 		<Paper variant='outlined'>
-			<AudiencesTable />
+			<AudiencesTable tableId='dashboardAudiences' />
 		</Paper>
 	</Box>
 )

@@ -11,10 +11,10 @@ import {
 	selectNewCampaign,
 } from 'selectors'
 import { updateNewCampaign, execute } from 'actions'
+import { NEW_CAMPAIGN_UNITS } from 'constants/tables'
 
 function CampaignUnits(props) {
 	const { temp } = useSelector(selectNewCampaign)
-	const { selectedUnits } = temp
 	const allAdUnits = useSelector(selectAdUnits)
 	const allAdUnitsArray = useSelector(selectAdUnitsArray)
 	const hasAdUnits = allAdUnitsArray && allAdUnitsArray.length
@@ -43,10 +43,10 @@ function CampaignUnits(props) {
 					<ContentBody>
 						{hasAdUnits ? (
 							<AdUnitsTable
-								selected={selectedUnits}
 								items={allAdUnitsArray}
 								validate={props.validate}
 								handleSelect={handleSelect}
+								tableId={NEW_CAMPAIGN_UNITS}
 								noClone
 								noDownload
 								rowSelectable

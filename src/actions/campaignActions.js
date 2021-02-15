@@ -179,6 +179,7 @@ export function openCampaign() {
 				}),
 				timeout: 20000,
 			})(dispatch)
+			// TODO: Reset units tables states
 		} catch (err) {
 			console.error('ERR_OPENING_CAMPAIGN', err)
 			addToast({
@@ -847,7 +848,6 @@ export function validateNewCampaignFinance({
 				title,
 				activeFrom,
 				withdrawPeriodStart,
-				created,
 				// pricingBounds,
 				pricingBoundsCPMUserInput,
 				audienceInput,
@@ -890,7 +890,7 @@ export function validateNewCampaignFinance({
 					activeFrom,
 					withdrawPeriodStart,
 					dirty,
-					created,
+					created: Date.now(),
 				})(dispatch),
 			])
 
@@ -1073,7 +1073,11 @@ export function validateAndUpdateCampaign({
 			const isMaxUpdated = dirtyProps.includes('maxPerImpression')
 
 			const isAudienceUpdated =
-				dirtyProps.includes('audienceInput') || isMinUpdated || isMaxUpdated
+				dirtyProps.some(p =>
+					['audienceInput', 'campaignAdvanced'].includes(p.name || p)
+				) ||
+				isMinUpdated ||
+				isMaxUpdated
 
 			const depositAmountInputString = formatTokenAmount(
 				depositAmount,

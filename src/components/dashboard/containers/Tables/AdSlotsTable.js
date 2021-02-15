@@ -1,14 +1,13 @@
-import React from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { Box, IconButton, Tooltip } from '@material-ui/core'
 import { utils } from 'ethers'
 import { Visibility } from '@material-ui/icons'
-import Img from 'components/common/img/Img'
+import Media from 'components/common/media'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import { ArchiveItemBtn } from 'components/dashboard/containers/ItemCommon'
 import {
 	t,
-	selectSide,
 	selectAdSlotsTableData,
 	selectMainToken,
 	selectInitialDataLoadedByData,
@@ -16,10 +15,9 @@ import {
 import { useSelector } from 'react-redux'
 import { formatDateTime, truncateString } from 'helpers/formatters'
 import { useTableData } from './tableHooks'
-import { ReloadData } from './toolbars'
 
 const RRIconButton = withReactRouterLink(IconButton)
-const RRImg = withReactRouterLink(Img)
+const RRMedia = withReactRouterLink(Media)
 
 const getCols = ({ symbol }) => [
 	{
@@ -31,7 +29,7 @@ const getCols = ({ symbol }) => [
 			download: false,
 			customBodyRender: ({ id, mediaUrl, mediaMime, to }) => {
 				return (
-					<RRImg
+					<RRMedia
 						key={id}
 						fullScreenOnClick={true}
 						src={mediaUrl}
@@ -68,7 +66,6 @@ const getCols = ({ symbol }) => [
 		options: {
 			filter: false,
 			sort: true,
-			sortDirection: 'desc',
 			customBodyRender: created => formatDateTime(created),
 		},
 	},
@@ -154,31 +151,41 @@ const onDownload = (buildHead, buildBody, columns, data) => {
 	return `${buildHead(columns)}${buildBody(mappedData)}`.trim()
 }
 
-const getOptions = ({ reloadData }) => ({
+const getOptions = () => ({
 	filterType: 'multiselect',
+	sortOrder: {
+		name: 'created',
+		direction: 'desc',
+	},
 	selectableRows: 'none',
-	customToolbar: () => <ReloadData handleReload={reloadData} />,
 	onDownload: (buildHead, buildBody, columns, data) =>
 		onDownload(buildHead, buildBody, columns, data),
 })
 
 function AdSlotsTable(props) {
-	const side = useSelector(selectSide)
 	const { symbol } = useSelector(selectMainToken)
 	const itemsLoaded = useSelector(state =>
 		selectInitialDataLoadedByData(state, 'allItems')
 	)
 
-	const { data, columns, reloadData } = useTableData({
-		selector: selectAdSlotsTableData,
-		selectorArgs: side,
-		getColumns: () =>
+	const [options, setOptions] = useState({})
+
+	const getColumns = useCallback(
+		() =>
 			getCols({
 				symbol,
 			}),
+		[symbol]
+	)
+
+	const { data, columns } = useTableData({
+		selector: selectAdSlotsTableData,
+		getColumns,
 	})
 
-	const options = getOptions({ reloadData })
+	useEffect(() => {
+		setOptions(getOptions())
+	}, [])
 
 	return (
 		<MUIDataTableEnhanced

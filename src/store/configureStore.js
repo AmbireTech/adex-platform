@@ -13,6 +13,9 @@ const reduxRouterMiddleware = routerMiddleware(history)
 const persistConfig = {
 	key: 'persist',
 	storage: localStorage,
+	version: 2,
+	debug: process.env.NODE_ENV === 'production' ? false : true,
+	throttle: 1000,
 }
 
 // const configSession = {

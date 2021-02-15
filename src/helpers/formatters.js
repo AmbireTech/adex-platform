@@ -1,6 +1,9 @@
 import { utils } from 'ethers'
 import MomentUtils from '@date-io/moment'
 
+const HOUR = 60 * 60 * 1000
+const DAY = 24 * HOUR
+
 const moment = new MomentUtils()
 //TODO: use dateUtils
 
@@ -71,6 +74,12 @@ export const formatNumberWithoutCommas = x => {
 		.join('')
 }
 
+export const toFixedFloat = (number, decimals = 2) => {
+	const num = parseFloat(parseFloat(number).toFixed(decimals))
+
+	return num
+}
+
 export const formatAbbrNum = (number, decPlaces) => {
 	// 2 decimal places => 100, 3 => 1000, etc
 	decPlaces = Math.pow(10, decPlaces)
@@ -110,4 +119,25 @@ export const truncateString = (string, maxLength = 50) => {
 	if (!string) return ''
 	if (string.length <= maxLength) return string
 	return `${string.substring(0, maxLength).trim()}...`
+}
+
+export const timeSinceEpoch = (
+	epochDivider = 2628000000,
+	start = Date.now(),
+	end = Date.now()
+) => {
+	const epoch = Math.floor(start / epochDivider)
+	const epochStart = Math.floor(epoch * epochDivider)
+
+	const period = end - epochStart
+
+	const periodDays = period / DAY
+
+	if (periodDays < 1) {
+		const hours = Math.floor(periodDays * 24)
+		return [hours, hours > 1 ? 'HOURS' : 'HOUR']
+	} else {
+		const days = Math.floor(periodDays)
+		return [days, days > 1 ? 'DAYS' : 'DAY']
+	}
 }

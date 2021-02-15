@@ -1,6 +1,31 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.54
+##### *2021-02-10*
+
+### Changed
+- Campaigns expiry date (`validUntil`) - now 360 from creation
+- Campaigns end max 90 form time of creation
+- Translations interpolation - return `_` instead `{0}` when no args provided
+
+### 
+- Campaigns dates validation
+
+## 4.20.53
+##### *2021-01-28*
+
+### Added
+- Cached selectors - improved performance
+- Persisted tables controls (filter, selections, page, page size, etc.) - no more filters reset
+
+### Changed
+- Media components - only hooks and better events handling
+
+### Fixed
+- Campaigns/units advanced stats on tables
+- transak
+- misc bug and styles 
 
 ## 4.20.52
 ##### *2021-01-04*

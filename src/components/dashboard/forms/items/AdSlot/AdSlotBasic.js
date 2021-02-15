@@ -8,8 +8,8 @@ import {
 	FormControlLabel,
 	FormControl,
 	Checkbox,
-	ExpansionPanel,
-	ExpansionPanelSummary,
+	Accordion,
+	AccordionSummary,
 	Typography,
 	Box,
 } from '@material-ui/core'
@@ -168,14 +168,14 @@ function AdSlotBasic({ validateId }) {
 						/>
 					</Grid>
 					<Grid item xs={12}>
-						<ExpansionPanel square={true} variant='outlined'>
-							<ExpansionPanelSummary
+						<Accordion square={true} variant='outlined'>
+							<AccordionSummary
 								expandIcon={<ExpandMoreIcon />}
 								aria-controls='slot-rules-advanced'
 								id='slot-rules-advanced'
 							>
 								<Typography>{t('SLOT_ADVANCED')}</Typography>
-							</ExpansionPanelSummary>
+							</AccordionSummary>
 							<Box p={1}>
 								<Grid container spacing={2}>
 									<Grid item xs={12}>
@@ -274,7 +274,7 @@ function AdSlotBasic({ validateId }) {
 									</Grid>
 								</Grid>
 							</Box>
-						</ExpansionPanel>
+						</Accordion>
 					</Grid>
 				</Grid>
 			)}
