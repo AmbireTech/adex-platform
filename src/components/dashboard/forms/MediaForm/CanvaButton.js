@@ -12,7 +12,7 @@ function CanvaButton({ setMediaSrc, size }) {
 			script.onload = function() {
 				if (window.Canva && window.Canva.DesignButton) {
 					window.Canva.DesignButton.initialize({
-						apiKey: 'hJWa9jV3224Iq2B54I5RuB3d',
+						apiKey: 'hJWa9jV3224Iq2B54I5RuB3d', //test api key only for localhost and test
 					}).then(api => {
 						setCanvaApi(api)
 						window.canvaApi = api
