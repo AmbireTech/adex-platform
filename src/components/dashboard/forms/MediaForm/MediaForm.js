@@ -16,6 +16,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import OutlinedPropView from 'components/common/OutlinedPropView'
 import { t } from 'selectors'
 import { useDropzone } from 'react-dropzone'
+import CanvaButton from './CanvaButton'
 
 const styles = theme => {
 	const spacing = theme.spacing(1)
@@ -255,6 +256,11 @@ function MediaForm({
 									alignContent='center'
 									alignItems='center'
 								>
+									<Grid item sm={12} md={8}>
+										<Box py={1}>
+											<CanvaButton />
+										</Box>
+									</Grid>
 									<Grid item sm={12} md={8}>
 										<Box {...getRootProps({ className: classes.dropzone })}>
 											<Box className={classes.imgDropzonePreview}>
