@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import Media from 'components/common/media'
-import { Button, Typography, Grid, Box } from '@material-ui/core'
+import { Button, Typography, Grid, Box, Hidden } from '@material-ui/core'
 import { Alert, AlertTitle } from '@material-ui/lab'
 import ReactCrop from 'react-image-crop'
 import { getCroppedImgUrl } from 'services/images/crop'
@@ -256,11 +256,14 @@ function MediaForm({
 									alignContent='center'
 									alignItems='center'
 								>
-									<Grid item sm={12} md={8}>
-										<Box py={1}>
-											<CanvaButton setMediaSrc={setMediaSrc} size={size} />
-										</Box>
-									</Grid>
+									{/* Canva not working on mobile currently */}
+									<Hidden mdDown>
+										<Grid item sm={12} md={8}>
+											<Box py={1}>
+												<CanvaButton setMediaSrc={setMediaSrc} size={size} />
+											</Box>
+										</Grid>
+									</Hidden>
 									<Grid item sm={12} md={8}>
 										<Box {...getRootProps({ className: classes.dropzone })}>
 											<Box className={classes.imgDropzonePreview}>
