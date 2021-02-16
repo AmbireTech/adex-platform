@@ -118,6 +118,7 @@ function getClientEnvironment(publicUrl) {
 				RAMP_HOST_API_KEY: process.env.RAMP_HOST_API_KEY,
 				TRANSAK_API_KEY: process.env.TRANSAK_API_KEY,
 				TRANSAK_ENV: process.env.TRANSAK_ENV,
+				CANVA_API: process.env.CANVA_API,
 			}
 		)
 
