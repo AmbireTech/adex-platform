@@ -154,19 +154,22 @@ function MediaForm({
 	useEffect(() => {
 		const file = acceptedFiles[0]
 		if (!file) return
+		saveFileObjectToState(file)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [acceptedFiles])
+
+	const saveFileObjectToState = file => {
 		const objectUrl = URL.createObjectURL(file)
 		setMime(file.type)
 		setMediaName(file.name)
 		setIsVideoSrc(isVideoMedia(file.mime))
 		setMediaSrc(objectUrl)
-
 		// TODO: Maybe get width and height here instead on ing validation hoc
 		onChange({
 			tempUrl: objectUrl,
 			mime: file.type,
 		})
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [acceptedFiles])
+	}
 
 	const saveCropped = async () => {
 		if (imgRef && crop.width > 1 && crop.height > 1) {
@@ -260,7 +263,10 @@ function MediaForm({
 									<Hidden mdDown>
 										<Grid item sm={12} md={8}>
 											<Box py={1}>
-												<CanvaButton setMediaSrc={setMediaSrc} size={size} />
+												<CanvaButton
+													saveFileObjectToState={saveFileObjectToState}
+													size={size}
+												/>
 											</Box>
 										</Grid>
 									</Hidden>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './CanvaButton.css'
 
-function CanvaButton({ setMediaSrc, size }) {
+function CanvaButton({ saveFileObjectToState, size }) {
 	const [canvaApi, setCanvaApi] = useState(null)
 
 	useEffect(() => {
@@ -12,7 +12,7 @@ function CanvaButton({ setMediaSrc, size }) {
 			script.onload = function() {
 				if (window.Canva && window.Canva.DesignButton) {
 					window.Canva.DesignButton.initialize({
-						apiKey: 'hJWa9jV3224Iq2B54I5RuB3d', //test api key only for localhost and test
+						apiKey: process.env.CANVA_API, //test api key only for localhost and test
 					}).then(api => {
 						setCanvaApi(api)
 						window.canvaApi = api
@@ -43,10 +43,15 @@ function CanvaButton({ setMediaSrc, size }) {
 					// Triggered when editor finishes loading and opens a new design.
 					// You can save designId for future use.
 				},
-				onDesignPublish: ({ exportUrl, designId }) => {
-					setMediaSrc(exportUrl)
+				onDesignPublish: async ({ exportUrl, designId }) => {
 					// Triggered when design is published to an image.
 					// Save the image to your server as the exportUrl will expire shortly.
+					const res = await fetch(exportUrl)
+					const blob = await res.blob()
+					const file = new File([blob], `${designId}.png`, {
+						type: 'image/png',
+					})
+					saveFileObjectToState(file)
 				},
 				onDesignClose: () => {
 					// Triggered when editor is closed.
