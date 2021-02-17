@@ -157,6 +157,7 @@ function MediaForm({
 		saveFileObjectToState(file)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [acceptedFiles])
+
 	const saveFileObjectToState = useCallback(file => {
 		const objectUrl = URL.createObjectURL(file)
 		setMime(file.type)
@@ -174,7 +175,7 @@ function MediaForm({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	const saveCropped = async () => {
+	const saveCropped = useCallback(async () => {
 		if (imgRef && crop.width > 1 && crop.height > 1) {
 			const croppedBlob = await getCroppedImgUrl(
 				imgRef,
@@ -193,7 +194,8 @@ function MediaForm({
 		} else {
 			// TODO: Error
 		}
-	}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	return (
 		<Box>
