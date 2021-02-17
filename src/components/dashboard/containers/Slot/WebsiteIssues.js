@@ -36,6 +36,18 @@ export const getIssue = issue => {
 		args: [],
 	}
 	switch (issue) {
+		case 'SLOT_ISSUE_BLACKLISTED':
+			data.args = [
+				{
+					type: 'break',
+				},
+				{
+					type: 'anchor',
+					href: 'https://www.adex.network/tos/',
+					label: 'HERE',
+				},
+			]
+			return data
 		case 'SLOT_ISSUE_INTEGRATION_NOT_VERIFIED':
 			data.args = [
 				{
@@ -77,17 +89,22 @@ const useStyles = makeStyles(theme => ({
 }))
 
 export function RenderIssue({ label, args }) {
-	return args.some(a => a.type === 'anchor') ? (
+	return args.some(a => a.type === 'anchor' || a.type === 'break') ? (
 		t(label, {
-			args: args.map((a, index) =>
-				a.type === 'anchor' ? (
-					<ExternalAnchor key={index} href={a.href}>
-						{` ${t(a.label)}`}
-					</ExternalAnchor>
-				) : (
-					t(a)
-				)
-			),
+			args: args.map((a, index) => {
+				switch (a.type) {
+					case 'anchor':
+						return (
+							<ExternalAnchor key={index} href={a.href}>
+								{` ${t(a.label)}`}
+							</ExternalAnchor>
+						)
+					case 'break':
+						return <br />
+					default:
+						return t(a)
+				}
+			}),
 		})
 	) : (
 		<div

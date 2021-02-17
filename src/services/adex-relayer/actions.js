@@ -126,3 +126,12 @@ export const getEmail = ({ email }) => {
 		})
 		.then(processResponse)
 }
+
+export const resendEmail = ({ email }) => {
+	return requester
+		.fetch({
+			route: `identity/email/${encodeURIComponent(email)}/resend`,
+			method: 'GET',
+		})
+		.then(processResponse)
+}

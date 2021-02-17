@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import Media from 'components/common/media'
-import { Button, Typography, Grid, Box } from '@material-ui/core'
+import { Button, Typography, Grid, Box, Hidden } from '@material-ui/core'
 import { Alert, AlertTitle } from '@material-ui/lab'
 import ReactCrop from 'react-image-crop'
 import { getCroppedImgUrl } from 'services/images/crop'
@@ -16,6 +16,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import OutlinedPropView from 'components/common/OutlinedPropView'
 import { t } from 'selectors'
 import { useDropzone } from 'react-dropzone'
+import CanvaButton from './CanvaButton'
 
 const styles = theme => {
 	const spacing = theme.spacing(1)
@@ -153,6 +154,11 @@ function MediaForm({
 	useEffect(() => {
 		const file = acceptedFiles[0]
 		if (!file) return
+		saveFileObjectToState(file)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [acceptedFiles])
+
+	const saveFileObjectToState = useCallback(file => {
 		const objectUrl = URL.createObjectURL(file)
 		setMime(file.type)
 		setMediaName(file.name)
@@ -160,14 +166,16 @@ function MediaForm({
 		setMediaSrc(objectUrl)
 
 		// TODO: Maybe get width and height here instead on ing validation hoc
+
 		onChange({
 			tempUrl: objectUrl,
 			mime: file.type,
 		})
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [acceptedFiles])
 
-	const saveCropped = async () => {
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
+
+	const saveCropped = useCallback(async () => {
 		if (imgRef && crop.width > 1 && crop.height > 1) {
 			const croppedBlob = await getCroppedImgUrl(
 				imgRef,
@@ -186,7 +194,8 @@ function MediaForm({
 		} else {
 			// TODO: Error
 		}
-	}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [crop, imgRef, mediaName, mediaSrc, mime, size])
 
 	return (
 		<Box>
@@ -255,6 +264,17 @@ function MediaForm({
 									alignContent='center'
 									alignItems='center'
 								>
+									{/* Canva not working on mobile currently */}
+									<Hidden mdDown>
+										<Grid item sm={12} md={8}>
+											<Box py={1}>
+												<CanvaButton
+													saveFileObjectToState={saveFileObjectToState}
+													size={size}
+												/>
+											</Box>
+										</Grid>
+									</Hidden>
 									<Grid item sm={12} md={8}>
 										<Box {...getRootProps({ className: classes.dropzone })}>
 											<Box className={classes.imgDropzonePreview}>

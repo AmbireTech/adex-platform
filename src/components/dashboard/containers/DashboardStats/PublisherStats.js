@@ -17,7 +17,6 @@ import { timeSinceEpoch } from 'helpers/formatters'
 
 export function PublisherStats() {
 	const [tabIndex, setTabIndex] = useState(0)
-
 	return (
 		<Fragment>
 			<ItemTabsBar>

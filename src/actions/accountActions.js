@@ -6,6 +6,7 @@ import {
 	getQuickWallet,
 	backupWallet,
 	getIdentityData,
+	resendEmail,
 } from 'services/adex-relayer/actions'
 import { updateSpinner, updateGlobalUi } from 'actions'
 import { translate } from 'services/translations/translations'
@@ -49,6 +50,8 @@ import {
 	selectAccountIdentity,
 	selectLoginDirectSide,
 	selectUserLastSide,
+	selectEmail,
+	selectResendConfirmation,
 } from 'selectors'
 import { logOut } from 'services/store-data/auth'
 import { getErrorMsg } from 'helpers/errors'
@@ -575,6 +578,30 @@ export function stopAccountDataUpdate() {
 		advancedAnalyticsLoop.stop()
 		campaignsLoop.stop()
 		statsLoop.stop()
+	}
+}
+
+export function resendConfirmationEmail() {
+	return async function(dispatch, getState) {
+		try {
+			const email = selectEmail(getState())
+			const result = (await resendEmail({ email })) || {}
+			await updateGlobalUi('resendConfirmation', result)(dispatch, getState)
+			if (result.success) {
+				addToast({
+					type: 'success',
+					label: translate('SUCCESS_RESEND_EMAIL', { args: [email] }),
+					timeout: 50000,
+				})(dispatch)
+			}
+		} catch (err) {
+			console.error('ERR_RESEND_EMAIL', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_RESEND_EMAIL', { args: [getErrorMsg(err)] }),
+				timeout: 20000,
+			})(dispatch)
+		}
 	}
 }
 

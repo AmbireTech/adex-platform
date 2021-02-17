@@ -137,20 +137,14 @@ function CampaignFormPreview() {
 						/>
 					</Grid>
 
-					<Grid item xs={12} md={6}>
-						<PropRow
-							left={t('FEES')}
-							right={
-								feesFormatted !== undefined ? (
-									`${feesFormatted} ${symbol}`
-								) : (
-									<CircularProgress size={42} />
-								)
-							}
+					<Grid item xs={12}>
+						<FeesBreakdown
+							breakdownFormatted={breakdownFormatted}
+							symbol={symbol}
 						/>
 					</Grid>
 
-					<Grid item xs={12} md={6}>
+					<Grid item xs={12}>
 						<PropRow
 							left={t('CAMPAIGN_FEES_AND_BUDGET')}
 							right={
@@ -162,14 +156,6 @@ function CampaignFormPreview() {
 							}
 						/>
 					</Grid>
-
-					<Grid item xs={12}>
-						<FeesBreakdown
-							breakdownFormatted={breakdownFormatted}
-							symbol={symbol}
-						/>
-					</Grid>
-
 					<Grid item xs={12} md={6}>
 						<PropRow
 							left={t('activeFrom', { isProp: true })}

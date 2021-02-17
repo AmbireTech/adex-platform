@@ -165,6 +165,10 @@ export const selectWindowReloading = createSelector(
 	({ windowReloading }) => windowReloading
 )
 
+export const selectResendConfirmation = createSelector(
+	selectGlobalUi,
+	({ resendConfirmation }) => resendConfirmation || {}
+)
 export const selectTableState = createCachedSelector(
 	selectTablesState,
 	selectAccountIdentityAddr,

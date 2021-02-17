@@ -41,6 +41,7 @@ import {
 	selectAnalyticsDataSide,
 	selectAuth,
 	selectInitialDataLoadedByData,
+	selectPublisherHasAdSlotsButNoImpressionsLastHour,
 	// selectMissingRevenueDataPointsAccepted,
 	selectAnalyticsMinAndMaxDates,
 } from 'selectors'
@@ -51,6 +52,8 @@ import {
 	getPeriodLabel,
 	getPeriodDataPointLabel,
 } from 'helpers/analyticsTimeHelpers'
+import { Alert } from '@material-ui/lab'
+import { ExternalAnchor } from 'components/common/anchor'
 
 const min = 60 * 1000
 
@@ -258,6 +261,10 @@ export function BasicStats() {
 		execute(updateAnalyticsPeriodPrevNextLive({ live: true }))
 	}
 
+	const showTooltip = useSelector(state =>
+		selectPublisherHasAdSlotsButNoImpressionsLastHour(state, { timeframe })
+	)
+
 	useEffect(() => {
 		setMetrics(getMetrics(theme))
 	}, [theme])
@@ -455,6 +462,17 @@ export function BasicStats() {
 				</Box>
 
 				<Box mt={1}>
+					{showTooltip && uiSide === 'publisher' && (
+						<Alert severity='info'>
+							{t('AD_SLOTS_NOT_GENERATING_IMPRESSIONS_WARNING')}{' '}
+							<ExternalAnchor
+								href='https://help.adex.network/hc/en-us/articles/360013419399-Why-are-ads-not-showing-on-my-publisher-website-'
+								target='_blank'
+							>
+								{t('HERE')}
+							</ExternalAnchor>
+						</Alert>
+					)}
 					<SimpleStatistics
 						start={start}
 						end={end}
