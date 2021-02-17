@@ -19,6 +19,9 @@ import {
 
 import dateUtils from 'helpers/dateUtils'
 import { DEFAULT_DATETIME_FORMAT } from 'helpers/formatters'
+import { t } from './translationsSelectors'
+import { selectAdSlotsArray } from './itemsSelectors'
+import { selectInitialDataLoadedByData } from './uiSelectors'
 
 export const selectAnalytics = state => state.memory.analytics
 export const selectTargeting = state => state.persist.targeting
@@ -664,6 +667,33 @@ export const selectChartDatapointsPayouts = createCachedSelector(
 		}),
 	payouts => payouts
 )((_state, { side = '-', timeframe = '-' }) => `${side}:${timeframe}`)
+
+export const selectInitialDataLoaded = createSelector(
+	state => [
+		selectInitialDataLoadedByData(state, 'allChannels'),
+		selectInitialDataLoadedByData(state, 'advancedAnalytics'),
+		selectInitialDataLoadedByData(state, 'allItems'),
+	],
+	([allChannelsLoaded, advAnalyticsLoaded, itemsLoaded]) =>
+		allChannelsLoaded && advAnalyticsLoaded && itemsLoaded
+)
+
+export const selectPublisherHasAdSlotsButNoImpressionsLastHour = createSelector(
+	(state, { timeframe } = {}) => [
+		selectChartDatapointsImpressions(state, {
+			side: 'for-publisher',
+			timeframe,
+		}),
+		selectAdSlotsArray(state),
+	],
+	([data, adSlotsArray]) => {
+		const { datasets } = data
+		const hasAdSlots = adSlotsArray.length > 0
+		const noImpressions =
+			datasets.length > 0 ? Math.max(...datasets) === 0 : false
+		return hasAdSlots && noImpressions
+	}
+)
 
 export const selectChartDatapointsCPM = createCachedSelector(
 	(state, { side, timeframe } = {}) =>

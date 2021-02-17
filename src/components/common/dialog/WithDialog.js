@@ -173,6 +173,8 @@ export default function WithDialogHoc(Decorated) {
 					{!iconButton && btnLabelTranslated}
 				</ButtonComponent>
 				<Dialog
+					disableAutoFocus
+					disableEnforceFocus // must use both of those to prevent from autofocus away from canva iframe
 					disableBackdropClick={disableBackdropClick}
 					// disableEscapeKeyDown
 					// maxWidth="xs"

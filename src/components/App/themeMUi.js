@@ -384,6 +384,11 @@ const commonTheme = createMuiTheme({
 		//         color: 'yellow'
 		//     }
 		// },
+		MuiExpansionPanel: {
+			root: {
+				borderColor: 'threedface',
+			},
+		},
 		MuiTableFooter: {
 			root: {
 				display: 'flex',

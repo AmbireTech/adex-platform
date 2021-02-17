@@ -112,10 +112,13 @@ export const selectWebsitesList = createSelector(
 		)
 )
 
-export const selectCampaignDisplayStatus = (status = {}) => {
-	if (status.name === 'Waiting') {
-		return 'SCHEDULED'
-	} else {
-		return (status.humanFriendlyName || '').toUpperCase()
+export const selectCampaignDisplayStatus = (status = {}, impressions) => {
+	switch (status.name) {
+		case 'Waiting':
+			return 'SCHEDULED'
+		case 'Active':
+			return impressions > 0 ? 'ACTIVE' : 'READY'
+		default:
+			return (status.humanFriendlyName || '').toUpperCase()
 	}
 }

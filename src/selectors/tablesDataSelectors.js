@@ -93,6 +93,8 @@ export const selectCampaignsTableData = createSelector(
 					title: item.title,
 					status: {
 						status,
+						impressions,
+						created: item.created,
 						id,
 					},
 					depositAmount: Number(
