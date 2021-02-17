@@ -195,7 +195,7 @@ function MediaForm({
 			// TODO: Error
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	}, [crop, imgRef, mediaName, mediaSrc, mime, size])
 
 	return (
 		<Box>
