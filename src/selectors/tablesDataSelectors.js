@@ -629,7 +629,9 @@ export const selectPublisherReceiptsStatsByMonthTableData = createCachedSelector
 			for (let [key, value] of Object.entries(receipts[date])) {
 				result.push({
 					impressions: value.impressions,
-					payouts: Number(utils.formatUnits(value.payouts || '0', decimals)),
+					payouts:
+						// TODO: temp solution until v5 - sun 7% validator fees
+						Number(utils.formatUnits(value.payouts || '0', decimals)) * 0.93,
 					date: +key,
 				})
 			}
