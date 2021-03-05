@@ -13,7 +13,7 @@ import { DateUtils } from 'helpers/dateUtils'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import CacheBuster from './CacheBuster'
-import { updateWindowReloading, execute } from 'actions'
+import { updateWindowReloading, updateProject, execute } from 'actions'
 import MultiThemeProvider from './MultiThemeProvider'
 import Loading from './Loading'
 import NetworkErrorDetector from './NetworkErrorDetector'
@@ -36,19 +36,24 @@ const App = () => {
 			window.removeEventListener('beforeunload', onReload)
 		}
 	})
+
+	useEffect(() => {
+		execute(updateProject(window.location.hostname))
+	}, [])
+
 	return (
 		<React.Fragment>
-			<MultiThemeProvider>
-				<CssBaseline />
-				<NetworkErrorDetector />
-				<MuiPickersUtilsProvider utils={DateUtils}>
-					<Provider store={store}>
-						<PersistGate
-							loading={<Loading />}
-							onBeforeLift={onBeforeLift}
-							persistor={persistor}
-						>
-							<ConnectedRouter history={history}>
+			<Provider store={store}>
+				<PersistGate
+					loading={<Loading />}
+					onBeforeLift={onBeforeLift}
+					persistor={persistor}
+				>
+					<ConnectedRouter history={history}>
+						<MultiThemeProvider>
+							<CssBaseline />
+							<NetworkErrorDetector />
+							<MuiPickersUtilsProvider utils={DateUtils}>
 								<CacheBuster>
 									<div className='adex-dapp'>
 										<Root />
@@ -56,11 +61,11 @@ const App = () => {
 										<Confirm />
 									</div>
 								</CacheBuster>
-							</ConnectedRouter>
-						</PersistGate>
-					</Provider>
-				</MuiPickersUtilsProvider>
-			</MultiThemeProvider>
+							</MuiPickersUtilsProvider>
+						</MultiThemeProvider>
+					</ConnectedRouter>
+				</PersistGate>
+			</Provider>
 		</React.Fragment>
 	)
 }
