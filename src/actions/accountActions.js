@@ -51,7 +51,7 @@ import {
 	selectLoginDirectSide,
 	selectUserLastSide,
 	selectEmail,
-	selectResendConfirmation,
+	selectProject,
 } from 'selectors'
 import { logOut } from 'services/store-data/auth'
 import { getErrorMsg } from 'helpers/errors'
@@ -68,6 +68,7 @@ import {
 	analyticsLoop,
 	advancedAnalyticsLoop,
 } from 'services/store-data/analytics'
+import { PROJECTS } from 'constants/global'
 
 const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
@@ -366,16 +367,19 @@ export function createSession({
 			const redirectSide = selectLoginDirectSide(getState())
 			await updateMemoryUi('initialDataLoaded', false)(dispatch, getState)
 
-			// getState() - after account is updated
-			const persistUserSide = selectUserLastSide(getState())
+			const state = getState() // after account is updated
+			const persistUserSide = selectUserLastSide(state)
+			const project = selectProject(state)
 
 			const { userSide } = (identity.relayerData || {}).meta || {}
 
 			const side = persistUserSide || userSide || redirectSide
 
-			const goTo = ['advertiser', 'publisher'].includes(side)
-				? side
-				: 'advertiser'
+			const goTo =
+				project === PROJECTS.platform &&
+				['advertiser', 'publisher'].includes(side)
+					? side
+					: 'advertiser'
 
 			dispatch(push(`/dashboard/${goTo}`))
 			updateGlobalUi('goToSide', '')(dispatch)
