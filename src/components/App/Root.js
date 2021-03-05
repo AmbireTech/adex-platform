@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { PROJECTS } from 'constants/global'
 import { useSelector } from 'react-redux'
 import {
 	metamaskChecks,
@@ -14,6 +15,7 @@ import {
 } from 'actions'
 import { Route, Switch, Redirect } from 'react-router'
 import Dashboard from 'components/dashboard/dashboard/Dashboard'
+import WalletDashboard from 'components/wallet/WalletDashboard'
 import ConnectHoc from 'components/signin/ConnectHoc'
 import {
 	CreateQuickIdentity,
@@ -23,6 +25,7 @@ import {
 } from 'components/signin/identity/Identity'
 import PageNotFound from 'components/page_not_found/PageNotFound'
 import Home from 'components/signin/Home'
+import WalletHome from 'components/signin/WalletHome'
 import JustDialog from 'components/common/dialog/JustDialog'
 import { migrateLegacyWallet, removeLegacyKey } from 'services/wallet/wallet'
 import Translate from 'components/translate/Translate'
@@ -34,6 +37,7 @@ import {
 	t,
 	selectNewVersionAvailable,
 	selectNewVersionAvailableId,
+	selectProject,
 } from 'selectors'
 import { getMetamaskEthereum } from 'services/smart-contracts/ethers'
 import { ImportantNotifications } from './ImportantNotifications'
@@ -47,6 +51,7 @@ const ConnectedCreateStandardIdentity = ConnectHoc(
 	JustDialog(CreateStandardIdentity)
 )
 const ConnectedRoot = ConnectHoc(Home)
+const ConnectedRootHome = ConnectHoc(WalletHome)
 
 const PrivateRoute = ({ component: Component, auth, ...other }) => {
 	return (
@@ -76,7 +81,68 @@ const handleLegacyWallet = async wallet => {
 	}
 }
 
+const Platform = ({ auth }) => (
+	<div>
+		<Switch>
+			<PrivateRoute auth={auth} path='/dashboard/:side' component={Dashboard} />
+			<Route exact path='/' component={ConnectedRoot} />
+			<Route
+				exact
+				path='/signup/quick'
+				component={ConnectedCreateQuickIdentity}
+			/>
+			<Route
+				exact
+				path='/login/full'
+				component={ConnectedLoginStandardIdentity}
+			/>
+			<Route
+				exact
+				path='/signup/full'
+				component={ConnectedCreateStandardIdentity}
+			/>
+			<Route exact path='/login/quick' component={ConnectedQuickLogin} />
+			<Route>
+				<PageNotFound />
+			</Route>
+		</Switch>
+	</div>
+)
+
+const Wallet = ({ auth }) => (
+	<div>
+		<Switch>
+			<PrivateRoute
+				auth={auth}
+				path='/dashboard/'
+				component={WalletDashboard}
+			/>
+			<Route exact path='/' component={ConnectedRootHome} />
+			<Route
+				exact
+				path='/signup/quick'
+				component={ConnectedCreateQuickIdentity}
+			/>
+			<Route
+				exact
+				path='/login/full'
+				component={ConnectedLoginStandardIdentity}
+			/>
+			<Route
+				exact
+				path='/signup/full'
+				component={ConnectedCreateStandardIdentity}
+			/>
+			<Route exact path='/login/quick' component={ConnectedQuickLogin} />
+			<Route>
+				<PageNotFound />
+			</Route>
+		</Switch>
+	</div>
+)
+
 const Root = () => {
+	const project = useSelector(selectProject)
 	const auth = useSelector(selectAuth)
 	const wallet = useSelector(selectWallet)
 	const location = useSelector(selectLocation)
@@ -131,33 +197,8 @@ const Root = () => {
 					}
 				/>
 			)}
-			<Switch>
-				<PrivateRoute
-					auth={auth}
-					path='/dashboard/:side'
-					component={Dashboard}
-				/>
-				<Route exact path='/' component={ConnectedRoot} />
-				<Route
-					exact
-					path='/signup/quick'
-					component={ConnectedCreateQuickIdentity}
-				/>
-				<Route
-					exact
-					path='/login/full'
-					component={ConnectedLoginStandardIdentity}
-				/>
-				<Route
-					exact
-					path='/signup/full'
-					component={ConnectedCreateStandardIdentity}
-				/>
-				<Route exact path='/login/quick' component={ConnectedQuickLogin} />
-				<Route>
-					<PageNotFound />
-				</Route>
-			</Switch>
+			{project === PROJECTS.platform && <Platform auth={auth} />}
+			{project === PROJECTS.wallet && <Wallet auth={auth} />}
 		</>
 	)
 }
