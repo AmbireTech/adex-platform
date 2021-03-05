@@ -1,3 +1,4 @@
+import project from './projectReducer'
 import account from './accountReducer'
 import signin from './signinReducer'
 import identity from './identityReducer'
@@ -26,6 +27,7 @@ import { filterActions } from 'redux-ignore'
 import * as types from 'constants/actionTypes'
 
 export const persistReducers = {
+	project,
 	account,
 	ui, //: filterActions(ui, [types.UPDATE_UI]),
 	items: filterActions(items, action => action.type.match(/_ITEM/)),

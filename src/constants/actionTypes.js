@@ -1,3 +1,4 @@
+export const UPDATE_PROJECT = 'UPDATE_PROJECT'
 export const ADD_ITEM = 'ADD_ITEM'
 export const UPDATE_ITEM = 'UPDATE_ITEM'
 export const UPDATE_NEW_ITEM = 'UPDATE_NEWITEM'

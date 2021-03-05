@@ -1,4 +1,5 @@
 import * as common from './common'
+import * as projectActions from './projectActions'
 import * as uiActions from './uiActions'
 import * as validationActions from './validationActions'
 import * as mediaValidations from './mediaValidations'
@@ -18,6 +19,7 @@ import * as unitActions from './unitActions'
 // without needing to change the code
 export default {
 	...common,
+	...projectActions,
 	...uiActions,
 	...validationActions,
 	...mediaValidations,
@@ -38,6 +40,7 @@ export default {
 // import { execute, addTost } from 'actions'
 // execute(addTost())
 export * from './common'
+export * from './projectActions'
 export * from './validationActions'
 export * from './mediaValidations'
 export * from './uiActions'
