@@ -33,9 +33,11 @@ import {
 	selectAccount,
 	selectDashboardBreadcrumbs,
 	selectInitialDataLoaded,
+	selectProject,
 } from 'selectors'
 import { styles } from './styles'
 import { formatAddress } from 'helpers/formatters'
+import { PROJECTS } from 'constants/global'
 
 const RRMenuItem = withReactRouterLink(MenuItem)
 const RRLink = withReactRouterLink(Link)
@@ -43,6 +45,7 @@ const useStyles = makeStyles(styles)
 
 function TopNav({ handleDrawerToggle, side, t }) {
 	const classes = useStyles()
+	const project = useSelector(selectProject)
 	const account = useSelector(selectAccount)
 	const loaded = useSelector(selectInitialDataLoaded)
 	const imgSrc = getAuthLogo(account.wallet.authType)
@@ -53,6 +56,11 @@ function TopNav({ handleDrawerToggle, side, t }) {
 			: account.email ||
 			  formatAddress(account.wallet.address) ||
 			  t('NOT_LOGGED')
+
+	const accountPagePath =
+		project === PROJECTS.platform
+			? `/dashboard/${side}/account`
+			: `/dashboard/account`
 
 	return (
 		<AppBar className={classes.appBar} color='default' position='sticky'>
@@ -115,7 +123,7 @@ function TopNav({ handleDrawerToggle, side, t }) {
 						>
 							<RRMenuItem
 								value='account'
-								to={{ pathname: '/dashboard/' + side + '/account' }}
+								to={{ pathname: accountPagePath }}
 								caption={t('ACCOUNT')}
 							>
 								<ListItemIcon>
