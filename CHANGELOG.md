@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.55
+##### *2021-03-05*
+
+## Fixed
+- Publishers receipts payouts values
+
 ## 4.20.54
 ##### *2021-02-10*
 
