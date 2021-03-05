@@ -1,4 +1,5 @@
 export * from './selectors'
+export * from './projectSelectors'
 export * from './configSelectors'
 export * from './accountSelectors'
 export * from './identitySelectors'
