@@ -1,7 +1,6 @@
 import React, { useState, Fragment } from 'react'
 import { useSelector } from 'react-redux'
 import {
-	WithdrawTokenFromIdentity,
 	WithdrawAnyTokenFromIdentity,
 	SetIdentityPrivilege,
 	SetAccountENS,
@@ -28,10 +27,7 @@ import { VpnKey, Lock } from '@material-ui/icons'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { ExternalAnchor } from 'components/common/anchor/anchor'
 import { styles } from './styles.js'
-import { LoadingSection } from 'components/common/spinners'
-import CreditCardIcon from '@material-ui/icons/CreditCard'
 import CopyIcon from '@material-ui/icons/FileCopy'
-import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc'
 import copy from 'copy-to-clipboard'
 import {
 	t,
@@ -39,22 +35,15 @@ import {
 	selectAccountStatsFormatted,
 	selectAccountIdentityAddr,
 	selectWalletPrivileges,
-	selectMainToken,
 	selectEasterEggsAllowed,
 	selectEnsAddressByAddr,
 	selectAccountIdentityCurrentPrivileges,
 	selectIdentityRecoveryAddr,
-	selectSide,
+	selectIsPlatform,
 } from 'selectors'
 import { execute, addToast, updateNewTransaction } from 'actions'
 import { formatAddress } from 'helpers/formatters'
-
-const RRButton = withReactRouterLink(Button)
-
-const VALIDATOR_LEADER_URL = process.env.VALIDATOR_LEADER_URL
-const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
-const VALIDATOR_FOLLOWER_URL = process.env.VALIDATOR_FOLLOWER_URL
-const VALIDATOR_FOLLOWER_ID = process.env.VALIDATOR_FOLLOWER_ID
+import { PlatformBalance, PlatformAdvanced } from './accountPlatform'
 
 const AccountItem = ({ left, right }) => {
 	const classes = useStyles()
@@ -84,17 +73,12 @@ function AccountInfo() {
 	const { authType = '' } = useSelector(selectWallet)
 	const identityAddress = useSelector(selectAccountIdentityAddr)
 	const privileges = useSelector(selectWalletPrivileges)
-	const side = useSelector(selectSide)
 	const canMakeTx = privileges > 1
 	const currentPrivileges = useSelector(selectAccountIdentityCurrentPrivileges)
 	const identityRecoveryAddr = useSelector(selectIdentityRecoveryAddr)
-	const { symbol } = useSelector(selectMainToken)
-	const {
-		walletAddress,
-		identityBalanceMainToken,
-		availableIdentityBalanceMainToken,
-		availableIdentityBalanceAllMainToken,
-	} = useSelector(selectAccountStatsFormatted)
+	const { walletAddress, availableIdentityBalanceMainToken } = useSelector(
+		selectAccountStatsFormatted
+	)
 
 	const identityEnsName = useSelector(state =>
 		selectEnsAddressByAddr(state, identityAddress)
@@ -109,6 +93,8 @@ function AccountInfo() {
 	const handleExpandChange = () => {
 		setExpanded(!expanded)
 	}
+
+	const isPlatform = useSelector(selectIsPlatform)
 
 	return (
 		<Fragment>
@@ -184,69 +170,7 @@ function AccountInfo() {
 					/>
 
 					<ListDivider />
-					<AccountItem
-						left={
-							<LoadingSection
-								loading={
-									!identityBalanceMainToken && identityBalanceMainToken !== 0
-								}
-							>
-								<ListItemText
-									className={classes.address}
-									primary={`${availableIdentityBalanceAllMainToken ||
-										0} ${symbol}`}
-									secondary={t('IDENTITY_MAIN_TOKEN_BALANCE_INFO')}
-								/>
-								{availableIdentityBalanceAllMainToken !==
-									availableIdentityBalanceMainToken && (
-									<ListItemText
-										className={classes.address}
-										primary={`${availableIdentityBalanceMainToken ||
-											0} ${symbol}`}
-										secondary={t(
-											'IDENTITY_MAIN_TOKEN_BALANCE_WITHDRAW_AVAILABLE_INFO',
-											{
-												args: [
-													<ExternalAnchor href='https://help.adex.network/hc/en-us/articles/360016097580-Why-can-t-I-withdraw-my-entire-balance-'>
-														{t('FIND_MORE')}
-													</ExternalAnchor>,
-												],
-											}
-										)}
-									/>
-								)}
-							</LoadingSection>
-						}
-						right={
-							<Fragment>
-								<Box py={1}>
-									<RRButton
-										to={`/dashboard/${side}/topup`}
-										fullWidth
-										variant='contained'
-										color='secondary'
-										aria-label='delete'
-										size='large'
-									>
-										<CreditCardIcon className={classes.iconBtnLeft} />
-										{t('TOP_UP')}
-									</RRButton>
-								</Box>
-								<Box py={1}>
-									<WithdrawTokenFromIdentity
-										disabled={!canMakeTx}
-										fullWidth
-										variant='contained'
-										color='default'
-										identityAvailable={availableIdentityBalanceMainToken}
-										identityAvailableRaw={availableIdentityBalanceMainToken}
-										token={symbol}
-										size='large'
-									/>
-								</Box>
-							</Fragment>
-						}
-					/>
+					{isPlatform && <PlatformBalance />}
 				</List>
 			</Paper>
 			<Box mt={1}>
@@ -309,30 +233,9 @@ function AccountInfo() {
 								))}
 						</List>
 						<ListDivider />
-						<List classes={{ root: classes.advancedList }}>
-							<ListItem>
-								<ListItemText
-									className={classes.address}
-									primary={t('VALIDATOR_LEADER_ID', {
-										args: [formatAddress(VALIDATOR_LEADER_ID)],
-									})}
-									secondary={t('VALIDATOR_LEADER_URL', {
-										args: [VALIDATOR_LEADER_URL],
-									})}
-								/>
-							</ListItem>
-							<ListItem>
-								<ListItemText
-									className={classes.address}
-									primary={t('VALIDATOR_FOLLOWER_ID', {
-										args: [formatAddress(VALIDATOR_FOLLOWER_ID)],
-									})}
-									secondary={t('VALIDATOR_FOLLOWER_URL', {
-										args: [VALIDATOR_FOLLOWER_URL],
-									})}
-								/>
-							</ListItem>
+						{isPlatform && <PlatformAdvanced />}
 
+						<List classes={{ root: classes.advancedList }}>
 							{allowEasterEggs && (
 								<Fragment>
 									<ListDivider />
