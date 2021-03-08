@@ -17,11 +17,13 @@ import {
 	selectAccount,
 	selectRegistrationAllowed,
 	selectUserLastSide,
+	selectProject,
 } from 'selectors'
 import { logOut } from 'services/store-data/auth'
 import { formatAddress } from 'helpers/formatters'
 import { push } from 'connected-react-router'
 import { removeFromLocalStorage } from 'helpers/localStorageHelpers'
+import { PROJECTS } from 'constants/global'
 
 const RRButton = withReactRouterLink(Button)
 const useStyles = makeStyles(styles)
@@ -32,9 +34,14 @@ const AuthSelect = () => {
 
 	const showRegistration = useSelector(selectRegistrationAllowed)
 	const auth = useSelector(selectAuth)
-	const userSide = useSelector(selectUserLastSide) || 'publisher'
+	const project = useSelector(selectProject)
+	const side = useSelector(selectUserLastSide) || 'publisher'
 	const account = useSelector(selectAccount)
 	const { wallet, identity } = account || {}
+	const userSide =
+		project === PROJECTS.platform && ['advertiser', 'publisher'].includes(side)
+			? side
+			: ''
 
 	useEffect(() => {
 		const allWallets = getAllWallets()

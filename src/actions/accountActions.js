@@ -379,10 +379,10 @@ export function createSession({
 				project === PROJECTS.platform &&
 				['advertiser', 'publisher'].includes(side)
 					? side
-					: 'advertiser'
+					: ''
 
 			dispatch(push(`/dashboard/${goTo}`))
-			updateGlobalUi('goToSide', '')(dispatch)
+			updateGlobalUi('goToSide', goTo)(dispatch)
 
 			// dispatch(push('/side-select'))
 		} catch (err) {
