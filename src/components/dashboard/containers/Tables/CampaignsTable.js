@@ -273,27 +273,6 @@ const getCols = ({ symbol, maxImpressions, maxDeposit, maxClicks }) => [
 	},
 ]
 
-const onDownload = (buildHead, buildBody, columns, data, decimals, symbol) => {
-	const mappedData = data.map(i => ({
-		index: i.index,
-		data: [
-			i.data[0],
-			i.data[1],
-			i.data[2],
-			i.data[3].humanFriendlyName,
-			`${i.data[4]} ${symbol}`,
-			`${((i.data[5] || 0) / 10).toFixed(2)} %`,
-			i.data[6],
-			i.data[7],
-			i.data[8],
-			formatDateTime(i.data[9]),
-			formatDateTime(i.data[10]),
-			formatDateTime(i.data[11]),
-		],
-	}))
-	return `${buildHead(columns)}${buildBody(mappedData)}`.trim()
-}
-
 const getOptions = ({ decimals, symbol }) => ({
 	filterType: 'multiselect',
 	selectableRows: 'none',
@@ -301,8 +280,6 @@ const getOptions = ({ decimals, symbol }) => ({
 		name: 'created',
 		direction: 'desc',
 	},
-	onDownload: (buildHead, buildBody, columns, data) =>
-		onDownload(buildHead, buildBody, columns, data, decimals, symbol),
 	customToolbarSelect: (selectedRows, displayData, _setSelectedRows) => {
 		const selectedIndexes = selectedRows.data.map(i => i.dataIndex)
 		const selectedItems = displayData
