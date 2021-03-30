@@ -60,11 +60,20 @@ const CustomTableViewCol = ({
 		onColumnUpdate(index)
 	}
 
+	const checkIfIndeterminate = () =>
+		columns.some(e => e.display === 'true') && !checkIfAllChecked()
+
+	const checkIfAllChecked = () =>
+		columns
+			.filter(e => e.display !== 'excluded')
+			.every(e => e.display === 'true')
+
 	const toggleAllColumns = () => {
 		const newColumns = {}
 		const atLeastOneUnchecked = columns.some(e => e.display === 'false')
 		columns.forEach(c => {
-			newColumns[c.name] = atLeastOneUnchecked ? true : false
+			if (c.display !== 'excluded')
+				newColumns[c.name] = atLeastOneUnchecked ? true : false
 		})
 		updateColumns(newColumns)
 	}
@@ -93,12 +102,9 @@ const CustomTableViewCol = ({
 								root: classes.checkboxRoot,
 								checked: classes.checked,
 							}}
-							indeterminate={
-								columns.some(e => e.display === 'true') &&
-								!columns.every(e => e.display === 'true')
-							}
+							indeterminate={checkIfIndeterminate()}
 							onChange={() => toggleAllColumns()}
-							checked={columns.every(e => e.display === 'true')}
+							checked={checkIfAllChecked()}
 							value={'select-all'}
 						/>
 					}
