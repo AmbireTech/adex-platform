@@ -26,6 +26,7 @@ import {
 	selectAccountIdentityAddr,
 	selectAccountStatsFormatted,
 	selectMainToken,
+	selectInitialDataLoaded,
 } from 'selectors'
 
 const RRListItem = withReactRouterLink(ListItem)
@@ -118,9 +119,8 @@ function SideNav(props) {
 
 	// TODO: test location
 	const location = routerLocation.pathname.split('/')[2]
-	const { availableIdentityBalanceAllMainToken } = useSelector(
-		selectAccountStatsFormatted
-	)
+	const loaded = useSelector(selectInitialDataLoaded)
+	const { identityBalanceMainToken } = useSelector(selectAccountStatsFormatted)
 
 	const AdxIcon = theme.type === 'dark' ? RRAdexIconTxtDark : RRAdexIconTxt
 
@@ -140,12 +140,7 @@ function SideNav(props) {
 								to={{ pathname: '/dashboard/' }}
 								className={classes.icon}
 							/>
-							<LoadingSection
-								loading={
-									!availableIdentityBalanceAllMainToken &&
-									availableIdentityBalanceAllMainToken !== 0
-								}
-							>
+							<LoadingSection loading={!loaded}>
 								<Typography
 									variant='button'
 									display='block'
@@ -153,7 +148,7 @@ function SideNav(props) {
 									color='textPrimary'
 									classes={{ button: classes.amount }}
 								>
-									<strong>{`${availableIdentityBalanceAllMainToken ||
+									<strong>{`${identityBalanceMainToken ||
 										0} ${symbol}`}</strong>
 								</Typography>
 								<Typography variant='button' component='div' display='block'>
