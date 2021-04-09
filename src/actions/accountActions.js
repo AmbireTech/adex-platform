@@ -22,6 +22,7 @@ import {
 	getAccountStats,
 	getOutstandingBalance,
 } from 'services/smart-contracts/actions/stats'
+import { getAccountStatsWallet } from 'services/smart-contracts/actions/walletStats'
 import { getChannelsWithOutstanding } from 'services/smart-contracts/actions/core'
 import {
 	addToast,
@@ -64,6 +65,7 @@ import {
 } from 'constants/spinners'
 import { campaignsLoop } from 'services/store-data/campaigns'
 import statsLoop from 'services/store-data/account'
+import walletStatsLoop from 'services/store-data/statsWallet'
 import {
 	analyticsLoop,
 	advancedAnalyticsLoop,
@@ -170,7 +172,31 @@ export function isAccountChanged(getState, account) {
 	return accountChanged
 }
 
-export function updateAccountStats() {
+export function updateAccountStatsWallet() {
+	return async function(dispatch, getState) {
+		const account = selectAccount(getState())
+		try {
+			const { formatted, raw } = await getAccountStatsWallet({
+				account,
+			})
+
+			if (!isAccountChanged(getState, account)) {
+				await updateAccount({
+					newValues: { stats: { formatted, raw } },
+				})(dispatch)
+			}
+		} catch (err) {
+			console.error('ERR_STATS', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_STATS', { args: [getErrorMsg(err)] }),
+				timeout: 20000,
+			})(dispatch)
+		}
+	}
+}
+
+export function updateAccountStatsPlatform() {
 	return async function(dispatch, getState) {
 		const account = selectAccount(getState())
 		try {
@@ -541,7 +567,7 @@ export function ensureQuickWalletBackup() {
 	}
 }
 
-export function loadAccountData() {
+export function loadPlatformAccountData() {
 	return async function(dispatch, getState) {
 		updateMemoryUi('initialDataLoaded', false)(dispatch, getState)
 		const account = selectAccount(getState())
@@ -582,6 +608,30 @@ export function stopAccountDataUpdate() {
 		advancedAnalyticsLoop.stop()
 		campaignsLoop.stop()
 		statsLoop.stop()
+	}
+}
+
+export function loadWalletAccountData() {
+	return async function(dispatch, getState) {
+		updateMemoryUi('initialDataLoaded', false)(dispatch, getState)
+		const account = selectAccount(getState())
+		!isAccountChanged(getState, account) &&
+			(await updateAccountIdentityData(() =>
+				updateInitialDataLoaded('accountIdentityData', true)(dispatch, getState)
+			)(dispatch, getState))
+
+		await walletStatsLoop.start(() =>
+			updateInitialDataLoaded('stats', true)(dispatch, getState)
+		)
+
+		updateMemoryUi('initialDataLoaded', true)(dispatch, getState)
+	}
+}
+
+export function stopWalletAccountDataUpdate() {
+	return async function(dispatch, getState) {
+		updateMemoryUi('initialDataLoaded', false)(dispatch, getState)
+		walletStatsLoop.stop()
 	}
 }
 
