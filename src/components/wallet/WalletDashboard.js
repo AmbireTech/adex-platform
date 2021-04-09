@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-// import SideNav from './SideNav'
+import WalletSideNav from './WalletSideNav'
 import TopBar from 'components/dashboard/dashboard/TopBar'
 import { Route, Switch } from 'react-router'
 import Account from 'components/dashboard/account/AccountInfo'
@@ -49,15 +49,11 @@ function WalletDashboard(props) {
 		setMobileOpen(!mobileOpen)
 	}
 
-	// const drawer = <SideNav side={side} />
+	const drawer = <WalletSideNav />
 
 	return (
 		<div className={classes.root}>
-			<TopBar
-				// side={side}
-				open={mobileOpen}
-				handleDrawerToggle={handleDrawerToggle}
-			/>
+			<TopBar open={mobileOpen} handleDrawerToggle={handleDrawerToggle} />
 			<Hidden mdUp>
 				<Drawer
 					variant='temporary'
@@ -71,7 +67,7 @@ function WalletDashboard(props) {
 						keepMounted: true, // Better open performance on mobile.
 					}}
 				>
-					{/* {drawer} */}
+					{drawer}
 				</Drawer>
 			</Hidden>
 			<Hidden smDown implementation='css'>
@@ -82,7 +78,7 @@ function WalletDashboard(props) {
 						paper: classes.drawerPaper,
 					}}
 				>
-					{/* {drawer} */}
+					{drawer}
 				</Drawer>
 			</Hidden>
 
