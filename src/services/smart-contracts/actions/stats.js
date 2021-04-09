@@ -11,7 +11,9 @@ import {
 } from 'selectors'
 import { AUTH_TYPES } from 'constants/misc'
 
-const privilegesNames = constants.valueToKey(constants.IdentityPrivilegeLevel)
+export const privilegesNames = constants.valueToKey(
+	constants.IdentityPrivilegeLevel
+)
 
 const tokenAvailableBalance = ({ token, balance, mainToken }) => {
 	if (token.address === mainToken.address) {
