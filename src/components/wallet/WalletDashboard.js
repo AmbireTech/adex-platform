@@ -19,6 +19,8 @@ import {
 	execute,
 	resolveEnsAddress,
 	updatePrivilegesWarningAccepted,
+	loadWalletAccountData,
+	stopWalletAccountDataUpdate,
 } from 'actions'
 import {
 	t,
@@ -40,6 +42,18 @@ function WalletDashboard(props) {
 	const showTxPrivLevelWarning = privileges <= 1 && !privilegesWarningAccepted
 
 	const classes = useStyles()
+
+	useEffect(() => {
+		async function updateInitialData() {
+			execute(loadWalletAccountData())
+		}
+
+		updateInitialData()
+
+		return () => {
+			execute(stopWalletAccountDataUpdate())
+		}
+	}, [])
 
 	useEffect(() => {
 		execute(resolveEnsAddress({ address }))

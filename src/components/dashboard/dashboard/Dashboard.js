@@ -38,7 +38,7 @@ import {
 	execute,
 	resolveEnsAddress,
 	updatePrivilegesWarningAccepted,
-	loadAccountData,
+	loadPlatformAccountData,
 	stopAccountDataUpdate,
 	updateNav,
 	updateUiByIdentity,
@@ -153,7 +153,7 @@ function Dashboard(props) {
 
 	useEffect(() => {
 		async function updateInitialData() {
-			execute(loadAccountData())
+			execute(loadPlatformAccountData())
 		}
 
 		updateInitialData()
