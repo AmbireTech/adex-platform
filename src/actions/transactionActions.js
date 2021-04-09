@@ -418,6 +418,7 @@ export function validateIdentityWithdrawAny({
 					withdrawOtherTokensFromIdentity({
 						account,
 						amountToWithdraw,
+						tokenAddress,
 						withdrawTo,
 						tokenDecimals,
 						getFeesOnly: true,
