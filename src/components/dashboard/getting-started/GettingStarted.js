@@ -248,7 +248,6 @@ export default function GettingStarted(props) {
 				<Accordion
 					expanded={expanded}
 					onChange={() => execute(setGettingStartedExpanded(!expanded))}
-					square={true}
 					variant='outlined'
 				>
 					<AccordionSummary

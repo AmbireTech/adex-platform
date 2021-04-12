@@ -168,7 +168,7 @@ function AdSlotBasic({ validateId }) {
 						/>
 					</Grid>
 					<Grid item xs={12}>
-						<Accordion square={true} variant='outlined'>
+						<Accordion variant='outlined'>
 							<AccordionSummary
 								expandIcon={<ExpandMoreIcon />}
 								aria-controls='slot-rules-advanced'

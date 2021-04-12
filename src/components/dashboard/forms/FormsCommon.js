@@ -38,7 +38,7 @@ export const WalletAction = ({ t, authType }) => {
 
 export const FeesBreakdown = ({ breakdownFormatted = {}, symbol }) => (
 	<Box p={1}>
-		<Accordion square={true} variant='outlined'>
+		<Accordion variant='outlined'>
 			<AccordionSummary
 				expandIcon={<ExpandMoreIcon />}
 				aria-controls='fees-breakdown'

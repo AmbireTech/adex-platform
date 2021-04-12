@@ -67,7 +67,7 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 							</Box>
 						)}
 						<Box py={1}>
-							<Accordion square={true} variant='outlined'>
+							<Accordion variant='outlined'>
 								<AccordionSummary
 									expandIcon={<ExpandMoreIcon />}
 									aria-controls='slot-rules-advanced'
@@ -81,7 +81,7 @@ export const SlotBasic = ({ item, ...hookProps }) => {
 							</Accordion>
 						</Box>
 						<Box py={1}>
-							<Accordion square={true} variant='outlined'>
+							<Accordion variant='outlined'>
 								<AccordionSummary
 									expandIcon={<ExpandMoreIcon />}
 									aria-controls='slot-rules-content'
