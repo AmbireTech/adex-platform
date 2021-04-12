@@ -73,7 +73,8 @@ const fiatProvidersDetails = [
 const cryptoProvidersDetails = [
 	{
 		title: t('CHANGELLY_TRANSFER'),
-		onClick: ({ side }) => execute(push(`/dashboard/${side}/topup/changelly`)),
+		onClick: ({ side }) =>
+			execute(push(`/dashboard${side ? `/${side}` : ''}/topup/changelly`)),
 		imgSrc: CHANGELLY_LOGO,
 		imgAlt: t('CHANGELLY'),
 		feeInfo: t('CHANGELLY_FEES'),
