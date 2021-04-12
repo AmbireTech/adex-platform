@@ -29,8 +29,31 @@ import {
 	selectPrivilegesWarningAccepted,
 } from 'selectors'
 import { useSelector } from 'react-redux'
+import clsx from 'clsx'
+
+const walletStyles = theme => {
+	return {
+		content: {
+			'&::before': {
+				backgroundSize: 'cover',
+				backgroundPosition: 'center',
+				backgroundRepeat: 'no-repeat',
+				content: '""',
+				position: 'absolute',
+				top: 0,
+				left: 0,
+				right: 0,
+				bottom: 0,
+				backgroundImage: `url(${require('resources/wallet/background.jpg')})`,
+				opacity: 0.5,
+				zIndex: -1,
+			},
+		},
+	}
+}
 
 const useStyles = makeStyles(styles)
+const useWalletStyles = makeStyles(walletStyles)
 
 const WalletStats = () => <Box>{'Wallet Dashboard here'}</Box>
 
@@ -42,6 +65,7 @@ function WalletDashboard(props) {
 	const showTxPrivLevelWarning = privileges <= 1 && !privilegesWarningAccepted
 
 	const classes = useStyles()
+	const walletClasses = useWalletStyles()
 
 	useEffect(() => {
 		async function updateInitialData() {
@@ -96,7 +120,7 @@ function WalletDashboard(props) {
 				</Drawer>
 			</Hidden>
 
-			<main className={classes.content}>
+			<main className={clsx(classes.content, walletClasses.content)}>
 				<div className={classes.contentInner}>
 					<Box>
 						{showTxPrivLevelWarning && (

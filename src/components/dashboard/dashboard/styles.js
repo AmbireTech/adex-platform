@@ -13,7 +13,6 @@ export const styles = theme => {
 			display: 'flex',
 			height: 'calc(100vh - 69px)',
 			width: '100vw',
-			backgroundColor: theme.palette.background.default,
 			// backgroundImage:
 			// 	theme.type === 'dark'
 			// 		? `linear-gradient(
