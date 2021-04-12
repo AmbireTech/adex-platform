@@ -96,7 +96,7 @@ export const CampaignAudience = ({
 				</Box>
 			</Box>
 			<Box>
-				<Accordion square={true} variant='outlined'>
+				<Accordion variant='outlined'>
 					<AccordionSummary
 						expandIcon={<ExpandMoreIcon />}
 						aria-controls='targeting-rules-content'

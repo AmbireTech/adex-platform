@@ -168,8 +168,6 @@ function AccountInfo() {
 							)
 						}
 					/>
-
-					<ListDivider />
 					{isPlatform && <PlatformBalance />}
 				</List>
 			</Paper>
@@ -177,7 +175,6 @@ function AccountInfo() {
 				<Accordion
 					expanded={expanded}
 					onChange={handleExpandChange}
-					square={true}
 					variant='outlined'
 				>
 					<AccordionSummary
