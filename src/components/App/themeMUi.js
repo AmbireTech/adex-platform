@@ -272,9 +272,14 @@ const typography = {
 	fontSize: 13.42,
 }
 
+const borderRadius = 0
+
 const defaultTheme = createMuiTheme({
 	typography,
 	palette: { ...paletteCommon },
+	shape: {
+		borderRadius,
+	},
 })
 
 const darkShadows = [...defaultTheme.shadows, '3px 4px 15px 0px rgba(0,0,0,1)']
@@ -290,10 +295,10 @@ const commonTheme = createMuiTheme({
 	overrides: {
 		MuiButton: {
 			root: {
-				borderRadius: 0,
+				borderRadius,
 			},
 			outlined: {
-				borderRadius: 0,
+				borderRadius,
 				borderColor: ALEX_GREY,
 			},
 			contained: {
@@ -328,12 +333,12 @@ const commonTheme = createMuiTheme({
 		},
 		MuiPaper: {
 			rounded: {
-				borderRadius: 0,
+				borderRadius,
 			},
 		},
 		MuiTooltip: {
 			tooltip: {
-				borderRadius: 0,
+				borderRadius,
 				fontSize: defaultTheme.typography.pxToRem(13),
 				backgroundColor: palette.tooltipBgColor,
 			},
@@ -343,22 +348,22 @@ const commonTheme = createMuiTheme({
 		},
 		MuiSelect: {
 			outlined: {
-				borderRadius: 0,
+				borderRadius,
 			},
 		},
 		MuiInputLabel: {
 			outlined: {
-				borderRadius: 0,
+				borderRadius,
 			},
 		},
 		MuiOutlinedInput: {
 			root: {
-				borderRadius: 0,
+				borderRadius,
 			},
 		},
 		MuiAlert: {
 			root: {
-				borderRadius: 0,
+				borderRadius,
 			},
 			outlinedSuccess: {
 				backgroundColor: WHITE,
