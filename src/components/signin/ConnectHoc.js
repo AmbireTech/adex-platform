@@ -23,8 +23,8 @@ export default function ConnectHoc(Decorated) {
 					// spacing={2}
 				>
 					<Grid className={classes.actions} item xs={12} md={7} lg={8} xl={9}>
-						<Box width={1} height={1} p={4}>
-							<Box width={1} height={1} position='relative'>
+						<Box width={1} height={1} position='relative' overflow='hidden'>
+							<Box width={1} height={1} p={4}>
 								<Decorated t={t} {...rest} />
 								<Hidden mdUp>
 									<Box display='flex' justifyContent='center'>

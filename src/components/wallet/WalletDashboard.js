@@ -45,7 +45,7 @@ const walletStyles = theme => {
 				right: 0,
 				bottom: 0,
 				backgroundImage: `url(${require('resources/wallet/background.jpg')})`,
-				opacity: 0.5,
+				opacity: 0.35,
 				zIndex: -1,
 			},
 		},
