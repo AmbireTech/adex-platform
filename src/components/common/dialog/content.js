@@ -72,6 +72,7 @@ const fullContentMessage = ({
 		justifyContent='center'
 		bgcolor={`${color}.main`}
 		color={`${color}.contrastText`}
+		borderRadius='borderRadius'
 	>
 		{spinner && (
 			<Box p={4}>
