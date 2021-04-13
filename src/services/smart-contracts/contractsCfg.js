@@ -5,6 +5,8 @@ import IdentityFactory from './build/IdentityFactory.json'
 import AdExENSManager from './abi/AdExENSManager.json'
 import ReverseRegistrar from './abi/ReverseRegistrar.json'
 import ERC20 from './abi/ERC20Token.json'
+import ADXLoyaltyPoolTokenABI from 'services/smart-contracts/abi/ADXLoyaltyPoolTokenABI.json'
+import StakingPoolABI from 'services/smart-contracts/abi/StakingPool.json'
 
 export const contracts = {
 	Identity: {
@@ -35,5 +37,22 @@ export const contracts = {
 	},
 	ERC20: {
 		abi: ERC20,
+	},
+	ADXLoyaltyPoolToken: {
+		address: process.env.ADDR_ADX_LOYALTY_POOL_TOKEN_ADDR,
+		abi: ADXLoyaltyPoolTokenABI,
+		decimalsMultiplier: 1e18,
+		name: 'ADX-LOYALTY',
+	},
+	ADXToken: {
+		address: process.env.ADX_TOKEN_ADDR,
+		abi: ERC20,
+		symbol: 'ADX',
+	},
+	StakingPool: {
+		address: process.env.ADDR_ADX_STAKING_POOL_TOKEN_ADDR,
+		abi: StakingPoolABI,
+		decimalsMultiplier: 1e18,
+		symbol: 'ADX-STAKING',
 	},
 }
