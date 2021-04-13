@@ -49,7 +49,11 @@ const StepperNav = ({ steps, currentPage, classes, ...other }) => {
 		)
 	}
 	return (
-		<StepperMUI alternativeLabel activeStep={currentPage}>
+		<StepperMUI
+			alternativeLabel
+			activeStep={currentPage}
+			classes={{ root: classes.stepperNavRoot }}
+		>
 			{steps.map((page, i) => {
 				return (
 					<Step key={page.title}>

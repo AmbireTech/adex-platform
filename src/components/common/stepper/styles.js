@@ -56,5 +56,8 @@ export const styles = theme => {
 			marginTop: -12,
 			marginLeft: -12,
 		},
+		stepperNavRoot: {
+			borderRadius: theme.shape.borderRadius,
+		},
 	}
 }
