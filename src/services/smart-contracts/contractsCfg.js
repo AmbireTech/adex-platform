@@ -42,7 +42,7 @@ export const contracts = {
 		address: process.env.ADDR_ADX_LOYALTY_POOL_TOKEN_ADDR,
 		abi: ADXLoyaltyPoolTokenABI,
 		decimalsMultiplier: 1e18,
-		name: 'ADX-LOYALTY',
+		symbol: 'ADX-LOYALTY',
 	},
 	ADXToken: {
 		address: process.env.ADX_TOKEN_ADDR,
