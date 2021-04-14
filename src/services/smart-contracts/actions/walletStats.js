@@ -45,6 +45,7 @@ const assets = {
 		},
 		isBaseAsset: true,
 		subAssets: [ADXLoyaltyPoolToken.address, StakingPool.address],
+		decimals: ADXToken.decimals,
 	},
 	[ADXLoyaltyPoolToken.address]: {
 		symbol: ADXLoyaltyPoolToken.symbol,
@@ -56,6 +57,7 @@ const assets = {
 		},
 		isBaseAsset: false,
 		subAssets: [],
+		decimals: ADXLoyaltyPoolToken.decimals,
 	},
 	[StakingPool.address]: {
 		symbol: StakingPool.symbol,
@@ -67,6 +69,7 @@ const assets = {
 		},
 		isBaseAsset: false,
 		subAssets: [],
+		decimals: StakingPool.decimals,
 	},
 }
 
@@ -140,7 +143,7 @@ async function getAssetsData({ identityAddress, authType }) {
 					{ total: ZERO, specific: [] }
 				)
 
-				assetData.total = total
+				assetData.total = total.add(assetData.balance)
 				assetData.specific = specific
 
 				data[address] = assetData
@@ -192,8 +195,6 @@ export async function getAccountStatsWallet({ account }) {
 		)
 	)
 
-	// console.log('assetsData', assetsData)
-
 	const identityBalanceMainToken =
 		identityWithdrawTokensBalancesBalances.totalBalanceInMainToken ||
 		BigNumber.from(0)
@@ -206,8 +207,58 @@ export async function getAccountStatsWallet({ account }) {
 		identityBalanceMainToken,
 	}
 
+	const formattedAssetsData = Object.entries(assetsData).reduce(
+		(formatted, [key, value]) => {
+			const formattedValue = { ...value }
+			formattedValue.balance = formatTokenAmount(
+				value.balance,
+				assets[key].decimals,
+				false,
+				2
+			)
+
+			formattedValue.baseTokenBalance = formatTokenAmount(
+				value.baseTokenBalance,
+				assets[key].decimals,
+				false,
+				2
+			)
+
+			formattedValue.total = formatTokenAmount(
+				value.total,
+				assets[key].decimals,
+				false,
+				2
+			)
+
+			formattedValue.specific = [...value.specific].map(v => {
+				const specificFormatted = { ...v }
+				specificFormatted.balance = formatTokenAmount(
+					v.balance,
+					assets[v.address].decimals,
+					false,
+					2
+				)
+
+				specificFormatted.baseTokenBalance = [...v.baseTokenBalance]
+				specificFormatted.baseTokenBalance[1] = formatTokenAmount(
+					v.baseTokenBalance[1],
+					assets[key].decimals,
+					false,
+					2
+				)
+
+				return specificFormatted
+			})
+
+			formatted[key] = formattedValue
+			return formatted
+		},
+		{}
+	)
+
 	const formatted = {
-		assetsData,
+		assetsData: formattedAssetsData,
 		walletAddress: wallet.address,
 		walletAuthType: wallet.authType,
 		walletPrivileges: privilegesNames[walletPrivileges],
