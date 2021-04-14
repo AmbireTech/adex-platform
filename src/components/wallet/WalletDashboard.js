@@ -30,6 +30,7 @@ import {
 } from 'selectors'
 import { useSelector } from 'react-redux'
 import clsx from 'clsx'
+import BaseAssetsStats from './BaseAssetsStats'
 
 const walletStyles = theme => {
 	return {
@@ -55,7 +56,11 @@ const walletStyles = theme => {
 const useStyles = makeStyles(styles)
 const useWalletStyles = makeStyles(walletStyles)
 
-const WalletStats = () => <Box>{'Wallet Dashboard here'}</Box>
+const WalletStats = () => (
+	<Box>
+		<BaseAssetsStats />
+	</Box>
+)
 
 function WalletDashboard(props) {
 	const [mobileOpen, setMobileOpen] = useState(false)
