@@ -115,12 +115,12 @@ function SideNav(props) {
 	const identity = useSelector(selectAccountIdentityAddr)
 	const classes = useStyles()
 	const routerLocation = useSelector(selectLocation)
-	const { symbol } = useSelector(selectMainToken)
+	// const { symbol } = useSelector(selectMainToken)
 
 	// TODO: test location
 	const location = routerLocation.pathname.split('/')[2]
 	const loaded = useSelector(selectInitialDataLoaded)
-	const { identityBalanceMainToken } = useSelector(selectAccountStatsFormatted)
+	const { totalUsdValue } = useSelector(selectAccountStatsFormatted)
 
 	const AdxIcon = theme.type === 'dark' ? RRAdexIconTxtDark : RRAdexIconTxt
 
@@ -148,8 +148,7 @@ function SideNav(props) {
 									color='textPrimary'
 									classes={{ button: classes.amount }}
 								>
-									<strong>{`${identityBalanceMainToken ||
-										0} ${symbol}`}</strong>
+									<strong>{`$ ${totalUsdValue || 0}`}</strong>
 								</Typography>
 								<Typography variant='button' component='div' display='block'>
 									{t('IDENTITY_BALANCE')}

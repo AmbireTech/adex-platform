@@ -21,7 +21,7 @@ function BaseAssetsStats() {
 							<TreeItem
 								key={x.address}
 								nodeId={x.address + '-' + i}
-								label={x.total + ' ' + x.symbol}
+								label={`${x.total} ${x.symbol} ($ ${x.totalUsd.toFixed(2)})`}
 							>
 								<TreeItem
 									key={x.address}
