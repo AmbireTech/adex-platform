@@ -1,9 +1,10 @@
 import { getEthers } from 'services/smart-contracts/ethers'
-import { Contract, BigNumber } from 'ethers'
+import { Contract, BigNumber, utils } from 'ethers'
 import { formatTokenAmount } from 'helpers/formatters'
 import { selectMainToken } from 'selectors'
 import { AUTH_TYPES } from 'constants/misc'
 import { privilegesNames, getWithdrawTokensBalances } from './stats'
+import { getPrices } from 'services/prices'
 
 import { contracts } from 'services/smart-contracts/contractsCfg.js'
 const { ADXLoyaltyPoolToken, StakingPool, ADXToken } = contracts
@@ -178,12 +179,14 @@ export async function getAccountStatsWallet({ account }) {
 		getAssetsData({ identityAddress: address }),
 		getWithdrawTokensBalances({ address }),
 		privilegesAction,
+		getPrices(),
 	]
 
 	const [
 		assetsData,
 		identityWithdrawTokensBalancesBalances = {},
 		walletPrivileges,
+		prices,
 	] = await Promise.all(
 		calls.map(c =>
 			c
@@ -195,19 +198,34 @@ export async function getAccountStatsWallet({ account }) {
 		)
 	)
 
+	const { withUsdValue, totalUsdValue } = Object.entries(assetsData).reduce(
+		(data, [key, asset]) => {
+			const assetTotalUsd =
+				utils.formatUnits(asset.total, asset.decimals) *
+				(prices[asset.symbol] || {}).USD
+			data.withUsdValue[key] = { ...asset }
+			data.withUsdValue[key].totalUsd = assetTotalUsd
+			data.totalUsdValue = data.totalUsdValue + assetTotalUsd
+
+			return data
+		},
+		{ withUsdValue: {}, totalUsdValue: 0 }
+	)
+
 	const identityBalanceMainToken =
 		identityWithdrawTokensBalancesBalances.totalBalanceInMainToken ||
 		BigNumber.from(0)
 
 	// BigNumber values for balances
 	const raw = {
-		assetsData,
+		totalUsdValue,
+		withUsdValue,
 		identityWithdrawTokensBalancesBalances,
 		walletPrivileges,
 		identityBalanceMainToken,
 	}
 
-	const formattedAssetsData = Object.entries(assetsData).reduce(
+	const formattedAssetsData = Object.entries(withUsdValue).reduce(
 		(formatted, [key, value]) => {
 			const formattedValue = { ...value }
 			formattedValue.balance = formatTokenAmount(
@@ -258,6 +276,7 @@ export async function getAccountStatsWallet({ account }) {
 	)
 
 	const formatted = {
+		totalUsdValue: totalUsdValue.toFixed(2),
 		assetsData: formattedAssetsData,
 		walletAddress: wallet.address,
 		walletAuthType: wallet.authType,
