@@ -130,7 +130,9 @@ async function getAssetsData({ identityAddress, authType }) {
 				const { total, specific } = asset.subAssets.reduce(
 					(data, subAddr) => {
 						const subData = assetsBalances[subAddr]
-						data.total = data.total.add(subData.baseTokenBalance || ZERO)
+						data.total = data.total.add(
+							(subData.baseTokenBalance || [])[1] || ZERO
+						)
 						data.specific = [...data.specific, subData]
 
 						return data
