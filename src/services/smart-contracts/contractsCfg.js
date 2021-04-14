@@ -43,16 +43,19 @@ export const contracts = {
 		abi: ADXLoyaltyPoolTokenABI,
 		decimalsMultiplier: 1e18,
 		symbol: 'ADX-LOYALTY',
+		decimals: 18,
 	},
 	ADXToken: {
 		address: process.env.ADX_TOKEN_ADDR,
 		abi: ERC20,
 		symbol: 'ADX',
+		decimals: 18,
 	},
 	StakingPool: {
 		address: process.env.ADDR_ADX_STAKING_POOL_TOKEN_ADDR,
 		abi: StakingPoolABI,
 		decimalsMultiplier: 1e18,
 		symbol: 'ADX-STAKING',
+		decimals: 18,
 	},
 }
