@@ -20,12 +20,12 @@ import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
 import { LoadingSection } from 'components/common/spinners'
+import { AmountText } from 'components/common/amount'
 import {
 	t,
 	selectLocation,
 	selectAccountIdentityAddr,
 	selectAccountStatsFormatted,
-	selectMainToken,
 	selectInitialDataLoaded,
 } from 'selectors'
 
@@ -141,15 +141,7 @@ function SideNav(props) {
 								className={classes.icon}
 							/>
 							<LoadingSection loading={!loaded}>
-								<Typography
-									variant='button'
-									display='block'
-									component='div'
-									color='textPrimary'
-									classes={{ button: classes.amount }}
-								>
-									<strong>{`$ ${totalUsdValue || 0}`}</strong>
-								</Typography>
+								<AmountText text={`$ ${totalUsdValue || 0}`} fontSize={25} />
 								<Typography variant='button' component='div' display='block'>
 									{t('IDENTITY_BALANCE')}
 								</Typography>

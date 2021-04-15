@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { Box, Paper } from '@material-ui/core'
 import { TreeView, TreeItem } from '@material-ui/lab'
 import { ExpandMore, ChevronRight } from '@material-ui/icons'
+import { AmountText } from 'components/common/amount'
 
 import { t, selectAccountStatsFormatted } from 'selectors'
 
@@ -21,20 +22,44 @@ function BaseAssetsStats() {
 							<TreeItem
 								key={x.address}
 								nodeId={x.address + '-' + i}
-								label={`${x.total} ${x.symbol} ($ ${x.totalUsd.toFixed(2)})`}
+								label={
+									<Box>
+										<AmountText text={`${x.total} ${x.symbol}`} fontSize={25} />
+										{' ('}
+										<AmountText text={`$ ${x.totalUsd}`} fontSize={17} />
+										{')'}
+									</Box>
+								}
 							>
 								<TreeItem
 									key={x.address}
 									nodeId={x.address}
-									label={x.balance + ' ' + x.symbol}
+									label={
+										<AmountText
+											text={`${x.balance} ${x.symbol}`}
+											fontSize={20}
+										/>
+									}
 								/>
 								{(x.specific || []).map((y, j) => (
 									<TreeItem
 										key={y.address + '-' + j}
 										nodeId={`${i}-${j}`}
-										label={`${y.balance}  ${y.symbol} (${
-											y.baseTokenBalance[1]
-										} ${y.baseTokenBalance[0] || x.symbol})`}
+										label={
+											<Box>
+												<AmountText
+													text={`${y.balance} ${x.symbol}`}
+													fontSize={20}
+												/>
+												{' ('}
+												<AmountText
+													text={`${y.baseTokenBalance[1]} ${y
+														.baseTokenBalance[0] || x.symbol}`}
+													fontSize={16}
+												/>
+												{')'}
+											</Box>
+										}
 									/>
 								))}
 							</TreeItem>
