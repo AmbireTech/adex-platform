@@ -158,6 +158,26 @@ async function getAssetsData({ identityAddress, authType }) {
 	return baseAssetsData
 }
 
+const withPricesValue = ({ prices, value }) => {
+	return Object.entries(prices).reduce((updated, [key, pr]) => {
+		updated[key] = value * pr
+		return updated
+	}, {})
+}
+
+const sumPricesValues = currenciesValues => {
+	return Object.keys(currenciesValues[0] || {}).reduce((sumByKey, key) => {
+		sumByKey[key] = currenciesValues.reduce((sum, value) => {
+			if (value[key]) {
+				sum = sum + value[key]
+			}
+			return sum
+		}, 0)
+
+		return sumByKey
+	}, {})
+}
+
 export async function getAccountStatsWallet({ account }) {
 	const { wallet, identity } = account
 	// const { authType } = wallet
@@ -198,18 +218,32 @@ export async function getAccountStatsWallet({ account }) {
 		)
 	)
 
-	const { withUsdValue, totalUsdValue } = Object.entries(assetsData).reduce(
+	const { withUsdValue, totalMainCurrenciesValues } = Object.entries(
+		assetsData
+	).reduce(
 		(data, [key, asset]) => {
-			const assetTotalUsd =
-				utils.formatUnits(asset.total, asset.decimals) *
-				(prices[asset.symbol] || {}).USD
+			const assetTotalValueFloat = utils.formatUnits(
+				asset.total,
+				asset.decimals
+			)
+			const assetToMainCurrenciesValues = withPricesValue({
+				prices: prices[asset.symbol],
+				value: assetTotalValueFloat,
+			})
+
 			data.withUsdValue[key] = { ...asset }
-			data.withUsdValue[key].totalUsd = assetTotalUsd
-			data.totalUsdValue = data.totalUsdValue + assetTotalUsd
+			data.withUsdValue[
+				key
+			].assetToMainCurrenciesValues = assetToMainCurrenciesValues
+
+			data.totalMainCurrenciesValues = sumPricesValues([
+				assetToMainCurrenciesValues,
+				data.totalMainCurrenciesValues,
+			])
 
 			return data
 		},
-		{ withUsdValue: {}, totalUsdValue: 0 }
+		{ withUsdValue: {}, totalMainCurrenciesValues: {} }
 	)
 
 	const identityBalanceMainToken =
@@ -218,7 +252,7 @@ export async function getAccountStatsWallet({ account }) {
 
 	// BigNumber values for balances
 	const raw = {
-		totalUsdValue,
+		totalMainCurrenciesValues,
 		withUsdValue,
 		identityWithdrawTokensBalancesBalances,
 		walletPrivileges,
@@ -249,8 +283,6 @@ export async function getAccountStatsWallet({ account }) {
 				2
 			)
 
-			formattedValue.totalUsd = utils.commify(value.totalUsd.toFixed(2))
-
 			formattedValue.specific = [...value.specific].map(v => {
 				const specificFormatted = { ...v }
 				specificFormatted.balance = formatTokenAmount(
@@ -278,7 +310,7 @@ export async function getAccountStatsWallet({ account }) {
 	)
 
 	const formatted = {
-		totalUsdValue: utils.commify(totalUsdValue.toFixed(2)),
+		totalMainCurrenciesValues, // TODO: format
 		assetsData: formattedAssetsData,
 		walletAddress: wallet.address,
 		walletAuthType: wallet.authType,
