@@ -20,7 +20,7 @@ import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
 import { LoadingSection } from 'components/common/spinners'
-import { AmountText } from 'components/common/amount'
+import { AmountWithCurrency } from 'components/common/amount'
 import {
 	t,
 	selectLocation,
@@ -141,8 +141,10 @@ function SideNav(props) {
 								className={classes.icon}
 							/>
 							<LoadingSection loading={!loaded}>
-								<AmountText
-									text={`$ ${totalMainCurrenciesValues['USD'].toFixed(2) || 0}`}
+								<AmountWithCurrency
+									amount={totalMainCurrenciesValues['USD']}
+									unit={'$'}
+									unitPlace='left'
 									fontSize={25}
 								/>
 								<Typography variant='button' component='div' display='block'>
