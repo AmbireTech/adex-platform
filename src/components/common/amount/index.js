@@ -1,5 +1,50 @@
 import React, { Fragment } from 'react'
 import { Box } from '@material-ui/core'
+import { formatNumberWithCommas } from 'helpers/formatters'
+
+const AmountUnit = ({ unit }) => (
+	<Box component='div' display='inline'>
+		{unit}
+	</Box>
+)
+
+export function AmountWithCurrency({
+	amount,
+	toFixed = 2,
+	unit,
+	unitPlace = 'right',
+	fontSize,
+	multiline,
+}) {
+	const formattedAmount = formatNumberWithCommas(
+		parseFloat(amount).toFixed(toFixed)
+	)
+	const decimalSeparatorSplit = formattedAmount.split('.')
+
+	return (
+		<Box
+			component='div'
+			display={multiline ? 'block' : 'inline'}
+			width={multiline ? 1 : 'auto'}
+			fontSize={fontSize}
+		>
+			{unit && unitPlace === 'left' && <AmountUnit unit={unit} />}{' '}
+			<Box component='div' display='inline'>
+				{decimalSeparatorSplit[0]}
+				{'.'}
+			</Box>
+			<Box
+				component='div'
+				display='inline'
+				style={{ opacity: '0.56' }}
+				fontSize={fontSize * 0.8}
+			>
+				{decimalSeparatorSplit[1] || '00'}
+			</Box>{' '}
+			{unit && unitPlace === 'right' && <AmountUnit unit={unit} />}
+		</Box>
+	)
+}
 
 function AmountTextSingle({ text = '', fontSize, multiline }) {
 	const decimalSeparatorSplit = text.split('.')
