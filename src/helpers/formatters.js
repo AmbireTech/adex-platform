@@ -42,7 +42,11 @@ export const formatTokenAmount = (
 ) => {
 	const formatted = utils.formatUnits(amountString, decimals)
 	if (pretty) {
-		return utils.commify(formatted)
+		return utils.commify(
+			typeof toFixed === 'number'
+				? parseFloat(formatted).toFixed(toFixed)
+				: formatted
+		)
 	} else if (typeof toFixed === 'number') {
 		// We want truncated not rounded
 		return parseFloat(formatted)
