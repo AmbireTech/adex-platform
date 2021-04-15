@@ -264,32 +264,24 @@ export async function getAccountStatsWallet({ account }) {
 			const formattedValue = { ...value }
 			formattedValue.balance = formatTokenAmount(
 				value.balance,
-				assets[key].decimals,
-				true,
-				2
+				assets[key].decimals
 			)
 
 			formattedValue.baseTokenBalance = formatTokenAmount(
 				value.baseTokenBalance,
-				assets[key].decimals,
-				true,
-				2
+				assets[key].decimals
 			)
 
 			formattedValue.total = formatTokenAmount(
 				value.total,
-				assets[key].decimals,
-				true,
-				2
+				assets[key].decimals
 			)
 
 			formattedValue.specific = [...value.specific].map(v => {
 				const specificFormatted = { ...v }
 				specificFormatted.balance = formatTokenAmount(
 					v.balance,
-					assets[v.address].decimals,
-					true,
-					2
+					assets[v.address].decimals
 				)
 
 				specificFormatted.baseTokenBalance = [...v.baseTokenBalance]
