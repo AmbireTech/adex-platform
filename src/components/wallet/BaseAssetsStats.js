@@ -26,7 +26,12 @@ function BaseAssetsStats() {
 									<Box>
 										<AmountText text={`${x.total} ${x.symbol}`} fontSize={25} />
 										{' ('}
-										<AmountText text={`$ ${x.totalUsd}`} fontSize={17} />
+										<AmountText
+											text={`$ ${x.assetToMainCurrenciesValues['USD'].toFixed(
+												2
+											)}`}
+											fontSize={17}
+										/>
 										{')'}
 									</Box>
 								}

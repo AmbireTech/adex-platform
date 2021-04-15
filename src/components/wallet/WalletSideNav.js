@@ -120,7 +120,7 @@ function SideNav(props) {
 	// TODO: test location
 	const location = routerLocation.pathname.split('/')[2]
 	const loaded = useSelector(selectInitialDataLoaded)
-	const { totalUsdValue } = useSelector(selectAccountStatsFormatted)
+	const { totalMainCurrenciesValues } = useSelector(selectAccountStatsFormatted)
 
 	const AdxIcon = theme.type === 'dark' ? RRAdexIconTxtDark : RRAdexIconTxt
 
@@ -141,7 +141,10 @@ function SideNav(props) {
 								className={classes.icon}
 							/>
 							<LoadingSection loading={!loaded}>
-								<AmountText text={`$ ${totalUsdValue || 0}`} fontSize={25} />
+								<AmountText
+									text={`$ ${totalMainCurrenciesValues['USD'].toFixed(2) || 0}`}
+									fontSize={25}
+								/>
 								<Typography variant='button' component='div' display='block'>
 									{t('IDENTITY_BALANCE')}
 								</Typography>
