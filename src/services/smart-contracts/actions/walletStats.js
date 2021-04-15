@@ -231,30 +231,32 @@ export async function getAccountStatsWallet({ account }) {
 			formattedValue.balance = formatTokenAmount(
 				value.balance,
 				assets[key].decimals,
-				false,
+				true,
 				2
 			)
 
 			formattedValue.baseTokenBalance = formatTokenAmount(
 				value.baseTokenBalance,
 				assets[key].decimals,
-				false,
+				true,
 				2
 			)
 
 			formattedValue.total = formatTokenAmount(
 				value.total,
 				assets[key].decimals,
-				false,
+				true,
 				2
 			)
+
+			formattedValue.totalUsd = utils.commify(value.totalUsd.toFixed(2))
 
 			formattedValue.specific = [...value.specific].map(v => {
 				const specificFormatted = { ...v }
 				specificFormatted.balance = formatTokenAmount(
 					v.balance,
 					assets[v.address].decimals,
-					false,
+					true,
 					2
 				)
 
@@ -262,7 +264,7 @@ export async function getAccountStatsWallet({ account }) {
 				specificFormatted.baseTokenBalance[1] = formatTokenAmount(
 					v.baseTokenBalance[1],
 					assets[key].decimals,
-					false,
+					true,
 					2
 				)
 
@@ -276,7 +278,7 @@ export async function getAccountStatsWallet({ account }) {
 	)
 
 	const formatted = {
-		totalUsdValue: totalUsdValue.toFixed(2),
+		totalUsdValue: utils.commify(totalUsdValue.toFixed(2)),
 		assetsData: formattedAssetsData,
 		walletAddress: wallet.address,
 		walletAuthType: wallet.authType,
@@ -285,7 +287,7 @@ export async function getAccountStatsWallet({ account }) {
 		identityBalanceMainToken: formatTokenAmount(
 			identityBalanceMainToken,
 			decimals,
-			false,
+			true,
 			2
 		),
 	}
