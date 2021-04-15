@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { Box, Paper } from '@material-ui/core'
 import { TreeView, TreeItem } from '@material-ui/lab'
 import { ExpandMore, ChevronRight } from '@material-ui/icons'
-import { AmountText } from 'components/common/amount'
+import { AmountWithCurrency } from 'components/common/amount'
 
 import { t, selectAccountStatsFormatted } from 'selectors'
 
@@ -24,12 +24,16 @@ function BaseAssetsStats() {
 								nodeId={x.address + '-' + i}
 								label={
 									<Box>
-										<AmountText text={`${x.total} ${x.symbol}`} fontSize={25} />
+										<AmountWithCurrency
+											amount={x.total}
+											unit={x.symbol}
+											fontSize={25}
+										/>
 										{' ('}
-										<AmountText
-											text={`$ ${x.assetToMainCurrenciesValues['USD'].toFixed(
-												2
-											)}`}
+										<AmountWithCurrency
+											amount={x.assetToMainCurrenciesValues['USD']}
+											unit={'$'}
+											unitPlace='left'
 											fontSize={17}
 										/>
 										{')'}
@@ -40,8 +44,9 @@ function BaseAssetsStats() {
 									key={x.address}
 									nodeId={x.address}
 									label={
-										<AmountText
-											text={`${x.balance} ${x.symbol}`}
+										<AmountWithCurrency
+											amount={x.balance}
+											unit={x.symbol}
 											fontSize={20}
 										/>
 									}
@@ -52,15 +57,16 @@ function BaseAssetsStats() {
 										nodeId={`${i}-${j}`}
 										label={
 											<Box>
-												<AmountText
-													text={`${y.balance} ${x.symbol}`}
+												<AmountWithCurrency
+													amount={y.balance}
+													unit={y.symbol}
 													fontSize={20}
 												/>
 												{' ('}
-												<AmountText
-													text={`${y.baseTokenBalance[1]} ${y
-														.baseTokenBalance[0] || x.symbol}`}
-													fontSize={16}
+												<AmountWithCurrency
+													amount={y.baseTokenBalance[1]}
+													unit={y.baseTokenBalance[0] || x.symbol}
+													fontSize={15}
 												/>
 												{')'}
 											</Box>
