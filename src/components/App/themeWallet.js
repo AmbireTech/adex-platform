@@ -62,15 +62,15 @@ const secondary = {
 }
 
 // Dark theme
-export const DARK_PRIMARY = '#5e35b1'
-export const DARK_PRIMARY_LIGHT = '#9162e4'
-export const DARK_PRIMARY_LIGHTEST = '#90fffb'
-export const DARK_PRIMARY_DARK = '#280680'
-export const DARK_PRIMARY_DARKEST = '#00493f'
+export const DARK_PRIMARY = '#b388ff'
+export const DARK_PRIMARY_LIGHT = '#e7b9ff'
+export const DARK_PRIMARY_LIGHTEST = '#e7b9ff'
+export const DARK_PRIMARY_DARK = '#805acb'
+export const DARK_PRIMARY_DARKEST = '#805acb'
 
-export const DARK_SECONDARY = '#e040fb'
-export const DARK_SECONDARY_LIGHT = '#ff79ff'
-export const DARK_SECONDARY_DARK = '#aa00c7'
+export const DARK_SECONDARY = '#64ffda'
+export const DARK_SECONDARY_LIGHT = '#9effff'
+export const DARK_SECONDARY_DARK = '#14cba8'
 
 export const DARK_PAPER = '#333'
 export const DARK_BG_DEFAULT = '#0f1316'
@@ -316,6 +316,9 @@ const commonTheme = createMuiTheme({
 		MuiPaper: {
 			rounded: {
 				borderRadius,
+			},
+			outlined: {
+				border: 0,
 			},
 		},
 		MuiTooltip: {
