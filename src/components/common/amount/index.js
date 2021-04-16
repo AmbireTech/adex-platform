@@ -3,7 +3,7 @@ import { Box } from '@material-ui/core'
 import { formatNumberWithCommas } from 'helpers/formatters'
 
 const AmountUnit = ({ unit }) => (
-	<Box component='div' display='inline'>
+	<Box component='div' display='inline' color='secondary.main'>
 		{unit}
 	</Box>
 )
@@ -38,6 +38,7 @@ export function AmountWithCurrency({
 				display='inline'
 				style={{ opacity: '0.56' }}
 				fontSize={fontSize * 0.8}
+				color='secondary.dark'
 			>
 				{decimalSeparatorSplit[1] || '00'}
 			</Box>{' '}
