@@ -433,6 +433,11 @@ const commonTheme = createMuiTheme({
 				borderRadius,
 			},
 		},
+		MuiListItem: {
+			root: {
+				borderRadius,
+			},
+		},
 	},
 })
 
