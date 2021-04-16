@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import WalletSideNav from './WalletSideNav'
-import TopBar from 'components/dashboard/dashboard/TopBar'
+import TopBar from './WalletTopBar'
 import { Route, Switch } from 'react-router'
 import Account from 'components/dashboard/account/AccountInfo'
 import TopUp from 'components/dashboard/deposit/TopUp'
@@ -30,10 +30,13 @@ import {
 } from 'selectors'
 import { useSelector } from 'react-redux'
 import clsx from 'clsx'
-import BaseAssetsStats from './BaseAssetsStats'
+import WalletStats from './WalletStats'
 
 const walletStyles = theme => {
 	return {
+		root: {
+			overflow: 'visible',
+		},
 		content: {
 			'&::before': {
 				backgroundSize: 'cover',
@@ -41,13 +44,18 @@ const walletStyles = theme => {
 				backgroundRepeat: 'no-repeat',
 				content: '""',
 				position: 'absolute',
-				top: 0,
+				top: -69,
 				left: 0,
 				right: 0,
 				bottom: 0,
 				backgroundImage: `url(${require('resources/wallet/background.jpg')})`,
-				opacity: 0.35,
+				opacity: 0.8,
 				zIndex: -1,
+			},
+		},
+		const: {
+			drawerPaper: {
+				backgroundColor: 'transparent',
 			},
 		},
 	}
@@ -55,12 +63,6 @@ const walletStyles = theme => {
 
 const useStyles = makeStyles(styles)
 const useWalletStyles = makeStyles(walletStyles)
-
-const WalletStats = () => (
-	<Box>
-		<BaseAssetsStats />
-	</Box>
-)
 
 function WalletDashboard(props) {
 	const [mobileOpen, setMobileOpen] = useState(false)
@@ -95,7 +97,7 @@ function WalletDashboard(props) {
 	const drawer = <WalletSideNav />
 
 	return (
-		<div className={classes.root}>
+		<div className={clsx(classes.root, walletClasses.root)}>
 			<TopBar open={mobileOpen} handleDrawerToggle={handleDrawerToggle} />
 			<Hidden mdUp>
 				<Drawer
@@ -104,7 +106,7 @@ function WalletDashboard(props) {
 					open={mobileOpen}
 					onClose={handleDrawerToggle}
 					classes={{
-						paper: classes.drawerPaper,
+						paper: clsx(classes.drawerPaper, walletClasses.drawerPaper),
 					}}
 					ModalProps={{
 						keepMounted: true, // Better open performance on mobile.
@@ -118,7 +120,7 @@ function WalletDashboard(props) {
 					variant='permanent'
 					open
 					classes={{
-						paper: classes.drawerPaper,
+						paper: clsx(classes.drawerPaper, walletClasses.drawerPaper),
 					}}
 				>
 					{drawer}
