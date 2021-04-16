@@ -120,7 +120,9 @@ function SideNav(props) {
 	// TODO: test location
 	const location = routerLocation.pathname.split('/')[2]
 	const loaded = useSelector(selectInitialDataLoaded)
-	const { totalMainCurrenciesValues } = useSelector(selectAccountStatsFormatted)
+	const { totalMainCurrenciesValues = {} } = useSelector(
+		selectAccountStatsFormatted
+	)
 
 	const AdxIcon = theme.type === 'dark' ? RRAdexIconTxtDark : RRAdexIconTxt
 
@@ -142,7 +144,7 @@ function SideNav(props) {
 							/>
 							<LoadingSection loading={!loaded}>
 								<AmountWithCurrency
-									amount={totalMainCurrenciesValues['USD']}
+									amount={totalMainCurrenciesValues['USD'] || 0}
 									unit={'$'}
 									unitPlace='left'
 									fontSize={25}
