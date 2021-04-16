@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
 			right: 0,
 			bottom: 0,
 			background: 'black',
-			opacity: 0.69,
+			opacity: 0.42,
 		},
 	},
 	videoBackground: {
