@@ -62,18 +62,18 @@ const secondary = {
 }
 
 // Dark theme
-export const DARK_PRIMARY = '#b388ff'
-export const DARK_PRIMARY_LIGHT = '#e7b9ff'
+export const DARK_PRIMARY = '#6930C3'
+export const DARK_PRIMARY_LIGHT = '#AA6AFF'
 export const DARK_PRIMARY_LIGHTEST = '#e7b9ff'
 export const DARK_PRIMARY_DARK = '#805acb'
 export const DARK_PRIMARY_DARKEST = '#805acb'
 
-export const DARK_SECONDARY = '#64ffda'
-export const DARK_SECONDARY_LIGHT = '#9effff'
+export const DARK_SECONDARY = '#3CCCC3'
+export const DARK_SECONDARY_LIGHT = '#80FFDB'
 export const DARK_SECONDARY_DARK = '#14cba8'
 
-export const DARK_PAPER = '#333'
-export const DARK_BG_DEFAULT = '#0f1316'
+export const DARK_PAPER = '#1A1920'
+export const DARK_BG_DEFAULT = '#292835'
 export const DARK_APPBAR = '#1f1f1f'
 
 export const DARK_ACCENT_ONE = '#ff7000'
