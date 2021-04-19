@@ -9,6 +9,7 @@ import { TreeView, TreeItem } from '@material-ui/lab'
 import { ExpandMore, ChevronRight } from '@material-ui/icons'
 import { AmountWithCurrency } from 'components/common/amount'
 import { InfoCard } from './WalletInfoCard'
+import { TradeAssets } from 'components/wallet/forms/walletTransactions'
 
 import { t, selectAccountStatsFormatted } from 'selectors'
 
@@ -22,12 +23,23 @@ function WalletStats() {
 			<Grid container spacing={4} alignItems='stretch' direction='row'>
 				<Grid item sm={12} md={6}>
 					<InfoCard title={t('PORTFOLIO VALUE')}>
-						<AmountWithCurrency
-							amount={totalMainCurrenciesValues['USD']}
-							unit={'$'}
-							unitPlace='left'
-							fontSize={69}
-						/>
+						<Box>
+							<Box>
+								<AmountWithCurrency
+									amount={totalMainCurrenciesValues['USD']}
+									unit={'$'}
+									unitPlace='left'
+									fontSize={69}
+								/>
+							</Box>
+							<Box mt={4}>
+								<TradeAssets
+									variant='contained'
+									color='secondary'
+									size='large'
+								/>
+							</Box>
+						</Box>
 					</InfoCard>
 				</Grid>
 
