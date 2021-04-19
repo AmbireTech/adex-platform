@@ -121,7 +121,7 @@ export function resetWeb3Transaction({ tx, addr }) {
 	}
 }
 
-function handleFeesData({
+export function handleFeesData({
 	stepsId,
 	validateId,
 	dirty,
