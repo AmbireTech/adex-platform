@@ -15,18 +15,15 @@ import {
 	selectSpinnerById,
 	selectWeb3SyncSpinnerByValidateId,
 	selectTradableAssetsFromSources,
+	selectTradableAssetsToSources,
 } from 'selectors'
 import { execute, updateNewTransaction } from 'actions'
 import { Alert } from '@material-ui/lab'
 import Dropdown from 'components/common/dropdown'
 
-const assetsToSource = [
-	{ label: 'ADX', value: '1000.5' },
-	{ label: 'USDT', value: '420.69' },
-]
-
 const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 	const assetsFromSource = useSelector(selectTradableAssetsFromSources)
+	const assetsToSource = useSelector(selectTradableAssetsToSources)
 	const {
 		formAsset,
 		formAssetAmount = '0',
