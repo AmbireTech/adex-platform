@@ -30,9 +30,12 @@ const assetsToSource = [
 ]
 
 const WalletTradeStep = ({ stepsId, validateId } = {}) => {
-	const { formAsset, formAssetAmount, toAsset, toAssetAmount } = useSelector(
-		state => selectNewTransactionById(state, stepsId)
-	)
+	const {
+		formAsset,
+		formAssetAmount = '0',
+		toAsset,
+		toAssetAmount = '0',
+	} = useSelector(state => selectNewTransactionById(state, stepsId))
 
 	const spinner = useSelector(state => selectSpinnerById(state, validateId))
 	const syncSpinner = useSelector(state =>
@@ -58,17 +61,17 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 				<ContentBody>
 					<Dropdown
 						fullWidth
-						variant='contained'
+						variant='standard'
 						required
-						onChange={ev =>
+						onChange={value => {
 							execute(
 								updateNewTransaction({
 									tx: stepsId,
 									key: 'formAsset',
-									value: ev.target.value,
+									value,
 								})
 							)
-						}
+						}}
 						source={assetsFromSource}
 						value={formAsset + ''}
 						label={t('PROP_FROMASSET')}
@@ -82,7 +85,7 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 						}
 					/>
 					<TextField
-						disabled={spinner}
+						// disabled={spinner}
 						type='text'
 						fullWidth
 						required
@@ -107,14 +110,14 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 					/>
 					<Dropdown
 						fullWidth
-						variant='contained'
+						variant='standard'
 						required
-						onChange={ev =>
+						onChange={value =>
 							execute(
 								updateNewTransaction({
 									tx: stepsId,
 									key: 'toAsset',
-									value: ev.target.value,
+									value,
 								})
 							)
 						}
