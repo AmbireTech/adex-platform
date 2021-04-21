@@ -1,7 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
-import TextField from '@material-ui/core/TextField'
+import { BigNumber } from 'ethers'
+import { TextField, Button, Box } from '@material-ui/core'
 // import { InputLoading } from 'components/common/spinners/'
 import {
 	ContentBox,
@@ -16,18 +17,29 @@ import {
 	selectWeb3SyncSpinnerByValidateId,
 	selectTradableAssetsFromSources,
 	selectTradableAssetsToSources,
+	selectAccountStatsRaw,
 } from 'selectors'
 import { execute, updateNewTransaction } from 'actions'
 import { Alert } from '@material-ui/lab'
 import Dropdown from 'components/common/dropdown'
+import { formatTokenAmount } from 'helpers/formatters'
+
+const ZERO = BigNumber.from(0)
 
 const WalletTradeStep = ({ stepsId, validateId } = {}) => {
+	const { assetsData = {} } = useSelector(selectAccountStatsRaw)
 	const assetsFromSource = useSelector(selectTradableAssetsFromSources)
 	const assetsToSource = useSelector(selectTradableAssetsToSources)
 
 	const { formAsset, formAssetAmount = '0', toAsset } = useSelector(state =>
 		selectNewTransactionById(state, stepsId)
 	)
+
+	const selectedFromAsset = assetsData[formAsset]
+
+	const fromAssetUserBalance = selectedFromAsset
+		? selectedFromAsset.balance
+		: ZERO
 
 	// const spinner = useSelector(state => selectSpinnerById(state, validateId))
 	const syncSpinner = useSelector(state =>
@@ -40,6 +52,20 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 		toAsset: errToAsset,
 		fees: errFees,
 	} = useSelector(state => selectValidationsById(state, validateId) || {})
+
+	const setTradePercent = percent => {
+		const bnBalance = BigNumber.from(fromAssetUserBalance)
+			.mul(percent)
+			.div(100)
+		const value = formatTokenAmount(bnBalance, selectedFromAsset.decimals)
+		execute(
+			updateNewTransaction({
+				tx: stepsId,
+				key: 'formAssetAmount',
+				value,
+			})
+		)
+	}
 
 	return (
 		<ContentBox>
@@ -99,6 +125,32 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 								: ''
 						}
 					/>
+					<Box>
+						<Button
+							disabled={!selectedFromAsset}
+							onClick={() => setTradePercent(25)}
+						>
+							25%
+						</Button>
+						<Button
+							disabled={!selectedFromAsset}
+							onClick={() => setTradePercent(50)}
+						>
+							50%
+						</Button>
+						<Button
+							disabled={!selectedFromAsset}
+							onClick={() => setTradePercent(75)}
+						>
+							75%
+						</Button>
+						<Button
+							disabled={!selectedFromAsset}
+							onClick={() => setTradePercent(100)}
+						>
+							100%
+						</Button>
+					</Box>
 					<Dropdown
 						fullWidth
 						variant='standard'
