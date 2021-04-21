@@ -157,7 +157,7 @@ export async function getAccountStatsWallet({ account }) {
 	// BigNumber values for balances
 	const raw = {
 		totalMainCurrenciesValues,
-		withUsdValue,
+		assetsData: withUsdValue,
 		identityWithdrawTokensBalancesBalances,
 		walletPrivileges,
 		identityBalanceMainToken,
