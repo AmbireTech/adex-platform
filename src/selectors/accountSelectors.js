@@ -48,6 +48,21 @@ export const selectAuthType = createSelector(
 export const selectAccountIdentity = createSelector(
 	selectAccount,
 	({ identity }) => identity || {}
+	// ({ identity }) => ({
+	// 	...(identity || {}),
+	// 	address: '0x3cB8E4Bf87a5E06F6b6B722FB3535020d5fd63f1',
+	// 	currentPrivileges: {
+	// 		'0x2aecF52ABe359820c48986046959B4136AfDfbe2': 2,
+	// 		['0x2aecF52ABe359820c48986046959B4136AfDfbe2'.toLowerCase()]: 2,
+	// 	},
+	// 	relayerData: {
+	// 		...((identity || {}).relayerData || {}),
+	// 		currentPrivileges: {
+	// 			'0x2aecF52ABe359820c48986046959B4136AfDfbe2': 2,
+	// 			['0x2aecF52ABe359820c48986046959B4136AfDfbe2'.toLowerCase()]: 2,
+	// 		},
+	// 	},
+	// })
 )
 
 export const selectAccountIdentityAddr = createSelector(
