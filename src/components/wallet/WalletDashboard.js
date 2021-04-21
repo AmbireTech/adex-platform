@@ -49,14 +49,14 @@ const walletStyles = theme => {
 				right: 0,
 				bottom: 0,
 				backgroundImage: `url(${require('resources/wallet/background.jpg')})`,
-				opacity: 0.8,
+				opacity: 0,
 				zIndex: -1,
 			},
 		},
-		const: {
-			drawerPaper: {
-				backgroundColor: 'transparent',
-			},
+		drawerPaper: {
+			backgroundColor: theme.palette.background.default,
+			borderRight: 0,
+			borderLeft: 0,
 		},
 	}
 }

@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => {
 
 	return {
 		navigation: {
-			backgroundColor: theme.palette.background.paper,
+			backgroundColor: theme.palette.background.default,
 		},
 		sntPadding: {
 			paddingTop: 0,
