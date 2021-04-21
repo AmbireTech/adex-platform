@@ -438,6 +438,18 @@ const commonTheme = createMuiTheme({
 				borderRadius,
 			},
 		},
+		MuiDivider: {
+			root: {
+				marginLeft: borderRadius,
+				marginRight: borderRadius,
+			},
+		},
+		MuiLinearProgress: {
+			root: {
+				marginLeft: borderRadius,
+				marginRight: borderRadius,
+			},
+		},
 	},
 })
 
