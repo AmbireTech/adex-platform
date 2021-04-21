@@ -15,7 +15,7 @@ export const selectTradableAssetsFromSources = createSelector(
 export const selectTradableAssetsToSources = createSelector(
 	[selectAccountStatsFormatted], // TODO: selected from
 	({ assetsData }) => {
-		Object.entries(assets).map(([addr, x]) => ({
+		return Object.entries(assets).map(([addr, x]) => ({
 			value: x.symbol,
 			label: `${x.symbol} - ${
 				assetsData[addr] ? assetsData[addr].balance : ''
