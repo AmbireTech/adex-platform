@@ -2,7 +2,26 @@ import { getEthers } from 'services/smart-contracts/ethers'
 import { Contract, BigNumber } from 'ethers'
 import { AUTH_TYPES } from 'constants/misc'
 import { contracts } from 'services/smart-contracts/contractsCfg.js'
-const { ADXLoyaltyPoolToken, StakingPool, ADXToken } = contracts
+const { ADXLoyaltyPoolToken, StakingPool, ADXToken, ERC20 } = contracts
+
+const goerliTokens = {
+	USDT: '0x509ee0d083ddf8ac028f2a56731412edd63223b9',
+	WETH: '0x0bb7509324ce409f7bbc4b701f932eaca9736ab7',
+}
+
+const mainnetTokens = {
+	USDT: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+	WETH: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+}
+
+const tokens =
+	process.env.NODE_ENV === 'production' ? mainnetTokens : goerliTokens
+
+const getERC20Token = (provider, address) => {
+	const token = new Contract(address, ERC20.abi, provider)
+
+	return token
+}
 
 const getAdxToken = provider => {
 	const adxToken = new Contract(ADXToken.address, ADXToken.abi, provider)
@@ -30,15 +49,19 @@ const getADXStakingPoolToken = provider => {
 	return adxStakingPool
 }
 
-// TODO: config or separate file
+const getERC20Balance = async ({ tokenAddress, address }) => {
+	const { provider } = await getEthers(AUTH_TYPES.READONLY)
+	const token = getERC20Token(provider, tokenAddress)
+	const balance = await token.balanceOf(address)
+
+	return balance
+}
+
 export const assets = {
 	[ADXToken.address]: {
 		symbol: ADXToken.symbol,
 		getBalance: async function({ address }) {
-			const { provider } = await getEthers(AUTH_TYPES.READONLY)
-			const adxToken = getAdxToken(provider)
-			const balance = await adxToken.balanceOf(address)
-			return balance
+			return await getERC20Balance({ tokenAddress: ADXToken.address, address })
 		},
 		isBaseAsset: true,
 		subAssets: [ADXLoyaltyPoolToken.address, StakingPool.address],
@@ -47,10 +70,10 @@ export const assets = {
 	[ADXLoyaltyPoolToken.address]: {
 		symbol: ADXLoyaltyPoolToken.symbol,
 		getBalance: async function({ address }) {
-			const { provider } = await getEthers(AUTH_TYPES.READONLY)
-			const loyaltyToken = getADXLoyaltyPoolToken(provider)
-			const balance = await loyaltyToken.balanceOf(address)
-			return balance
+			return await getERC20Balance({
+				tokenAddress: ADXLoyaltyPoolToken.address,
+				address,
+			})
 		},
 		isBaseAsset: false,
 		subAssets: [],
@@ -59,14 +82,32 @@ export const assets = {
 	[StakingPool.address]: {
 		symbol: StakingPool.symbol,
 		getBalance: async function({ address }) {
-			const { provider } = await getEthers(AUTH_TYPES.READONLY)
-			const stakingPool = getADXStakingPoolToken(provider)
-			const balance = await stakingPool.balanceOf(address)
-			return balance
+			return await getERC20Balance({
+				tokenAddress: StakingPool.address,
+				address,
+			})
 		},
 		isBaseAsset: false,
 		subAssets: [],
 		decimals: StakingPool.decimals,
+	},
+	[tokens.USDT]: {
+		symbol: 'USDT',
+		getBalance: async function({ address }) {
+			return await getERC20Balance({ tokenAddress: tokens.USDT, address })
+		},
+		isBaseAsset: true,
+		subAssets: [],
+		decimals: 6,
+	},
+	[tokens.WETH]: {
+		symbol: 'WETH',
+		getBalance: async function({ address }) {
+			return await getERC20Balance({ tokenAddress: tokens.WETH, address })
+		},
+		isBaseAsset: true,
+		subAssets: [],
+		decimals: 18,
 	},
 }
 
