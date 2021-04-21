@@ -12,7 +12,7 @@ import {
 	t,
 	selectValidationsById,
 	selectNewTransactionById,
-	selectSpinnerById,
+	// selectSpinnerById,
 	selectWeb3SyncSpinnerByValidateId,
 	selectTradableAssetsFromSources,
 	selectTradableAssetsToSources,
@@ -24,21 +24,18 @@ import Dropdown from 'components/common/dropdown'
 const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 	const assetsFromSource = useSelector(selectTradableAssetsFromSources)
 	const assetsToSource = useSelector(selectTradableAssetsToSources)
-	const {
-		formAsset,
-		formAssetAmount = '0',
-		toAsset,
-		toAssetAmount = '0',
-	} = useSelector(state => selectNewTransactionById(state, stepsId))
 
-	const spinner = useSelector(state => selectSpinnerById(state, validateId))
+	const { formAsset, formAssetAmount = '0', toAsset } = useSelector(state =>
+		selectNewTransactionById(state, stepsId)
+	)
+
+	// const spinner = useSelector(state => selectSpinnerById(state, validateId))
 	const syncSpinner = useSelector(state =>
 		selectWeb3SyncSpinnerByValidateId(state, validateId)
 	)
 
 	const {
 		formAssetAmount: errFormAssetAmount,
-		toAssetsAmount: errToAssetsAmount,
 		formAsset: errFormAsset,
 		toAsset: errToAsset,
 		fees: errFees,
@@ -127,30 +124,7 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 								: t('WALLET_TRADE_FROM_ASSET')
 						}
 					/>
-					<TextField
-						disabled={spinner}
-						type='text'
-						fullWidth
-						required
-						label={t('PROP_TOASSETAMOUNT')}
-						name='amountToWithdraw'
-						value={toAssetAmount || ''}
-						onChange={ev =>
-							execute(
-								updateNewTransaction({
-									tx: stepsId,
-									key: 'toAssetAmount',
-									value: ev.target.value,
-								})
-							)
-						}
-						error={errToAssetsAmount && !!errToAssetsAmount.dirty}
-						helperText={
-							errToAssetsAmount && !!errToAssetsAmount.dirty
-								? errToAssetsAmount.errMsg
-								: ''
-						}
-					/>
+
 					{errFees && errFees.dirty && errFees.errMsg && (
 						<Alert variant='filled' severity='error'>
 							{errFees.errMsg}
