@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import { BigNumber } from 'ethers'
 import { TextField, Button, Box, Grid, Paper } from '@material-ui/core'
+import { AmountWithCurrency } from 'components/common/amount'
 // import { InputLoading } from 'components/common/spinners/'
 import {
 	ContentBox,
@@ -18,6 +19,7 @@ import {
 	selectTradableAssetsFromSources,
 	selectTradableAssetsToSources,
 	selectAccountStatsRaw,
+	selectBaseAssetsPrices,
 } from 'selectors'
 import { execute, updateNewTransaction } from 'actions'
 import { Alert } from '@material-ui/lab'
@@ -26,10 +28,18 @@ import { formatTokenAmount } from 'helpers/formatters'
 
 const ZERO = BigNumber.from(0)
 
+const getMainCurrencyValue = ({ asset, floatAmount, prices, mainCurrency }) => {
+	const price = (prices[asset] || {})[mainCurrency] || 0
+	const value = parseFloat(floatAmount) * price
+	return value.toFixed(2)
+}
+
 const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 	const { assetsData = {} } = useSelector(selectAccountStatsRaw)
+	const prices = useSelector(selectBaseAssetsPrices)
 	const assetsFromSource = useSelector(selectTradableAssetsFromSources)
 	const assetsToSource = useSelector(selectTradableAssetsToSources)
+	const mainCurrency = { id: 'USD', symbol: '$' } // TODO selector
 
 	const {
 		formAsset = assetsFromSource[0].value,
@@ -38,6 +48,12 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 	} = useSelector(state => selectNewTransactionById(state, stepsId))
 
 	const selectedFromAsset = assetsData[formAsset]
+	const selectedFormAssetMainCurrencyValue = getMainCurrencyValue({
+		asset: selectedFromAsset.symbol,
+		floatAmount: formAssetAmount,
+		prices,
+		mainCurrency: mainCurrency.id,
+	})
 
 	const fromAssetUserBalance = selectedFromAsset
 		? selectedFromAsset.balance
@@ -119,9 +135,44 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 												type='text'
 												fullWidth
 												required
-												label={t('PROP_FROMASSETAMOUNT')}
+												label={
+													<Box display='inline'>
+														{t('TRADE_FROM_ASSET_AMOUNT_LABEL')} (
+														{t('AVAILABLE')}
+														<AmountWithCurrency
+															amount={
+																selectedFromAsset.assetToMainCurrenciesValues[
+																	mainCurrency.id
+																]
+															}
+															unit={mainCurrency.symbol}
+															unitPlace='left'
+															fontSize={14}
+														/>
+														)
+													</Box>
+												}
 												name='amountToWithdraw'
-												value={formAssetAmount || ''}
+												value={
+													`${formAssetAmount} ${selectedFromAsset.symbol} (${mainCurrency.symbol} ${selectedFormAssetMainCurrencyValue})`
+
+													// <Box display='inline'>
+													// 	<AmountWithCurrency
+													// 		amount={formAssetAmount}
+													// 		unit={selectedFromAsset.symbol}
+													// 		unitPlace='right'
+													// 		fontSize={14}
+													// 	/>
+													// 	(
+													// 	<AmountWithCurrency
+													// 		amount={selectedFormAssetMainCurrencyValue}
+													// 		unit={mainCurrency.symbol}
+													// 		unitPlace='left'
+													// 		fontSize={14}
+													// 	/>
+													// 	)
+													// </Box>
+												}
 												onChange={ev =>
 													execute(
 														updateNewTransaction({
