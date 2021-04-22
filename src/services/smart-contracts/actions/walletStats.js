@@ -82,7 +82,7 @@ const sumPricesValues = currenciesValues => {
 	}, {})
 }
 
-export async function getAccountStatsWallet({ account }) {
+export async function getAccountStatsWallet({ account, prices }) {
 	const { wallet, identity } = account
 	// const { authType } = wallet
 	const { address } = identity
@@ -103,14 +103,12 @@ export async function getAccountStatsWallet({ account }) {
 		getAssetsData({ identityAddress: address }),
 		getWithdrawTokensBalances({ address }),
 		privilegesAction,
-		getPrices(),
 	]
 
 	const [
 		assetsData,
 		identityWithdrawTokensBalancesBalances = {},
 		walletPrivileges,
-		prices,
 	] = await Promise.all(
 		calls.map(c =>
 			c
