@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import { BigNumber } from 'ethers'
-import { TextField, Button, Box } from '@material-ui/core'
+import { TextField, Button, Box, Grid, Paper } from '@material-ui/core'
 // import { InputLoading } from 'components/common/spinners/'
 import {
 	ContentBox,
@@ -31,9 +31,11 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 	const assetsFromSource = useSelector(selectTradableAssetsFromSources)
 	const assetsToSource = useSelector(selectTradableAssetsToSources)
 
-	const { formAsset, formAssetAmount = '0', toAsset } = useSelector(state =>
-		selectNewTransactionById(state, stepsId)
-	)
+	const {
+		formAsset = assetsFromSource[0].value,
+		formAssetAmount = '0',
+		toAsset = assetsFromSource[1].value,
+	} = useSelector(state => selectNewTransactionById(state, stepsId))
 
 	const selectedFromAsset = assetsData[formAsset]
 
@@ -76,106 +78,135 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 				></FullContentMessage>
 			) : (
 				<ContentBody>
-					<Dropdown
-						fullWidth
-						variant='standard'
-						required
-						onChange={value => {
-							execute(
-								updateNewTransaction({
-									tx: stepsId,
-									key: 'formAsset',
-									value,
-								})
-							)
-						}}
-						source={assetsFromSource}
-						value={formAsset + ''}
-						label={t('PROP_FROMASSET')}
-						htmlId='wallet-asset-from-dd'
-						name='formAsset'
-						error={errFormAsset && !!errFormAsset.dirty}
-						helperText={
-							errFormAsset && !!errFormAsset.dirty
-								? errFormAsset.errMsg
-								: t('WALLET_TRADE_FROM_ASSET')
-						}
-					/>
-					<TextField
-						// disabled={spinner}
-						type='text'
-						fullWidth
-						required
-						label={t('PROP_FROMASSETAMOUNT')}
-						name='amountToWithdraw'
-						value={formAssetAmount || ''}
-						onChange={ev =>
-							execute(
-								updateNewTransaction({
-									tx: stepsId,
-									key: 'formAssetAmount',
-									value: ev.target.value,
-								})
-							)
-						}
-						error={errFormAssetAmount && !!errFormAssetAmount.dirty}
-						helperText={
-							errFormAssetAmount && !!errFormAssetAmount.dirty
-								? errFormAssetAmount.errMsg
-								: ''
-						}
-					/>
-					<Box>
-						<Button
-							disabled={!selectedFromAsset}
-							onClick={() => setTradePercent(25)}
-						>
-							25%
-						</Button>
-						<Button
-							disabled={!selectedFromAsset}
-							onClick={() => setTradePercent(50)}
-						>
-							50%
-						</Button>
-						<Button
-							disabled={!selectedFromAsset}
-							onClick={() => setTradePercent(75)}
-						>
-							75%
-						</Button>
-						<Button
-							disabled={!selectedFromAsset}
-							onClick={() => setTradePercent(100)}
-						>
-							100%
-						</Button>
-					</Box>
-					<Dropdown
-						fullWidth
-						variant='standard'
-						required
-						onChange={value =>
-							execute(
-								updateNewTransaction({
-									tx: stepsId,
-									key: 'toAsset',
-									value,
-								})
-							)
-						}
-						source={assetsToSource}
-						value={toAsset + ''}
-						label={t('PROP_TOASSET')}
-						htmlId='wallet-asset-to-dd'
-						name='formAsset'
-						error={errToAsset && !!errToAsset.dirty}
-						helperText={
-							errToAsset && !!errToAsset.dirty
-								? errToAsset.errMsg
-								: t('WALLET_TRADE_FROM_ASSET')
-						}
-					/>
+					<Paper>
+						<Box p={1}>
+							<Grid container spacing={2}>
+								<Grid item xs={12}>
+									From
+								</Grid>
+								<Grid item xs={12} md={6}>
+									<Dropdown
+										fullWidth
+										variant='standard'
+										required
+										onChange={value => {
+											execute(
+												updateNewTransaction({
+													tx: stepsId,
+													key: 'formAsset',
+													value,
+												})
+											)
+										}}
+										source={assetsFromSource}
+										value={formAsset + ''}
+										label={t('PROP_FROMASSET')}
+										htmlId='wallet-asset-from-dd'
+										name='formAsset'
+										error={errFormAsset && !!errFormAsset.dirty}
+										helperText={
+											errFormAsset && !!errFormAsset.dirty
+												? errFormAsset.errMsg
+												: t('WALLET_TRADE_FROM_ASSET')
+										}
+									/>
+								</Grid>
+								<Grid item xs={12} md={6}>
+									<Box>
+										<Box>
+											<TextField
+												// disabled={spinner}
+												type='text'
+												fullWidth
+												required
+												label={t('PROP_FROMASSETAMOUNT')}
+												name='amountToWithdraw'
+												value={formAssetAmount || ''}
+												onChange={ev =>
+													execute(
+														updateNewTransaction({
+															tx: stepsId,
+															key: 'formAssetAmount',
+															value: ev.target.value,
+														})
+													)
+												}
+												error={errFormAssetAmount && !!errFormAssetAmount.dirty}
+												helperText={
+													errFormAssetAmount && !!errFormAssetAmount.dirty
+														? errFormAssetAmount.errMsg
+														: ''
+												}
+											/>
+											<Box>
+												<Button
+													disabled={!selectedFromAsset}
+													onClick={() => setTradePercent(25)}
+												>
+													25%
+												</Button>
+												<Button
+													disabled={!selectedFromAsset}
+													onClick={() => setTradePercent(50)}
+												>
+													50%
+												</Button>
+												<Button
+													disabled={!selectedFromAsset}
+													onClick={() => setTradePercent(75)}
+												>
+													75%
+												</Button>
+												<Button
+													disabled={!selectedFromAsset}
+													onClick={() => setTradePercent(100)}
+												>
+													100%
+												</Button>
+											</Box>
+										</Box>
+									</Box>
+								</Grid>
+							</Grid>
+						</Box>
+					</Paper>
+					<Box my={2}></Box>
+					<Paper>
+						<Box p={1}>
+							<Grid container spacing={2}>
+								<Grid item xs={12}>
+									To
+								</Grid>
+								<Grid item xs={12} md={6}>
+									<Dropdown
+										fullWidth
+										variant='standard'
+										required
+										onChange={value =>
+											execute(
+												updateNewTransaction({
+													tx: stepsId,
+													key: 'toAsset',
+													value,
+												})
+											)
+										}
+										source={assetsToSource}
+										value={toAsset + ''}
+										label={t('PROP_TOASSET')}
+										htmlId='wallet-asset-to-dd'
+										name='formAsset'
+										error={errToAsset && !!errToAsset.dirty}
+										helperText={
+											errToAsset && !!errToAsset.dirty
+												? errToAsset.errMsg
+												: t('WALLET_TRADE_FROM_ASSET')
+										}
+									/>
+								</Grid>
+							</Grid>
+						</Box>
+					</Paper>
 
 					{errFees && errFees.dirty && errFees.errMsg && (
 						<Alert variant='filled' severity='error'>
