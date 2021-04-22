@@ -23,6 +23,7 @@ import {
 	getOutstandingBalance,
 } from 'services/smart-contracts/actions/stats'
 import { getAccountStatsWallet } from 'services/smart-contracts/actions/walletStats'
+import { getPrices } from 'services/prices'
 import { getChannelsWithOutstanding } from 'services/smart-contracts/actions/core'
 import {
 	addToast,
@@ -176,13 +177,16 @@ export function updateAccountStatsWallet() {
 	return async function(dispatch, getState) {
 		const account = selectAccount(getState())
 		try {
+			const prices = await getPrices()
 			const { formatted, raw } = await getAccountStatsWallet({
 				account,
+				prices,
 			})
 
 			if (!isAccountChanged(getState, account)) {
+				// TODO: new reducer for prices and stats?
 				await updateAccount({
-					newValues: { stats: { formatted, raw } },
+					newValues: { stats: { formatted, raw }, prices },
 				})(dispatch)
 			}
 		} catch (err) {
