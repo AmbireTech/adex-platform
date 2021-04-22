@@ -186,7 +186,7 @@ export function updateAccountStatsWallet() {
 			if (!isAccountChanged(getState, account)) {
 				// TODO: new reducer for prices and stats?
 				await updateAccount({
-					newValues: { stats: { formatted, raw }, prices },
+					newValues: { stats: { formatted, raw, prices } },
 				})(dispatch)
 			}
 		} catch (err) {
