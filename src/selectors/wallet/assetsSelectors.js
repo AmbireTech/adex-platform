@@ -1,4 +1,4 @@
-import { selectAccountStatsFormatted, selectAccount } from 'selectors'
+import { selectAccountStatsFormatted, selectAccountStats } from 'selectors'
 import { createSelector } from 'reselect'
 import { assets } from 'services/adex-wallet/assets'
 
@@ -7,7 +7,7 @@ export const selectTradableAssetsFromSources = createSelector(
 	({ assetsData }) => {
 		return Object.values(assetsData).map(x => ({
 			value: x.address,
-			label: `${x.symbol} - ${x.balance}`,
+			label: `${x.symbol}`,
 		}))
 	}
 )
@@ -19,14 +19,12 @@ export const selectTradableAssetsToSources = createSelector(
 			.filter(x => x[1].isBaseAsset)
 			.map(([addr, x]) => ({
 				value: addr,
-				label: `${x.symbol} - ${
-					assetsData[addr] ? assetsData[addr].balance : ''
-				}`,
+				label: `${x.symbol}`,
 			}))
 	}
 )
 
 export const selectBaseAssetsPrices = createSelector(
-	[selectAccount],
-	({ prices }) => prices
+	[selectAccountStats],
+	({ prices = {} }) => prices
 )
