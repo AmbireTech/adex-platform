@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import { BigNumber } from 'ethers'
@@ -76,6 +76,7 @@ const estimatedConversionValue = ({
 
 const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 	// NOTE: RAW DATA - BNs - format in fields
+	const [selectedPercent, setSelectedPercent] = useState(0)
 	const { assetsData = {} } = useSelector(selectAccountStatsRaw)
 	const prices = useSelector(selectBaseAssetsPrices)
 	const assetsFromSource = useSelector(selectTradableAssetsFromSources)
@@ -153,212 +154,217 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 				></FullContentMessage>
 			) : (
 				<ContentBody>
-					<Paper elevation={5}>
-						<Box p={1}>
-							<Grid container spacing={2}>
-								<Grid item xs={12}>
-									From
-								</Grid>
-								<Grid item xs={12} sm={3}>
-									<Dropdown
-										fullWidth
-										variant='outlined'
-										required
-										onChange={value => {
-											execute(
-												updateNewTransaction({
-													tx: stepsId,
-													key: 'formAsset',
-													value,
-												})
-											)
-											execute(
-												updateNewTransaction({
-													tx: stepsId,
-													key: 'formAssetAmount',
-													value: '0',
-												})
-											)
-										}}
-										source={assetsFromSource}
-										value={formAsset + ''}
-										label={t('PROP_FROMASSET')}
-										htmlId='wallet-asset-from-dd'
-										name='formAsset'
-										error={errFormAsset && !!errFormAsset.dirty}
-										helperText={
-											errFormAsset && !!errFormAsset.dirty
-												? errFormAsset.errMsg
-												: t('WALLET_TRADE_FROM_ASSET')
-										}
-									/>
-								</Grid>
-								<Grid item xs={12} sm={9}>
-									<Box>
+					<Box p={2}>
+						<Paper elevation={25}>
+							<Box p={2}>
+								<Grid container spacing={2}>
+									<Grid item xs={12}>
+										From
+									</Grid>
+									<Grid item xs={12} sm={3}>
+										<Dropdown
+											fullWidth
+											variant='outlined'
+											required
+											onChange={value => {
+												execute(
+													updateNewTransaction({
+														tx: stepsId,
+														key: 'formAsset',
+														value,
+													})
+												)
+												execute(
+													updateNewTransaction({
+														tx: stepsId,
+														key: 'formAssetAmount',
+														value: '0',
+													})
+												)
+												setSelectedPercent(0)
+											}}
+											source={assetsFromSource}
+											value={formAsset + ''}
+											label={t('FROM_ASSET_LABEL')}
+											htmlId='wallet-asset-from-dd'
+											name='formAsset'
+											error={errFormAsset && !!errFormAsset.dirty}
+											helperText={
+												errFormAsset && !!errFormAsset.dirty
+													? errFormAsset.errMsg
+													: // : t('WALLET_TRADE_FROM_ASSET')
+													  ''
+											}
+										/>
+									</Grid>
+									<Grid item xs={12} sm={9}>
 										<Box>
-											<TextField
-												// disabled={spinner}
-												variant='outlined'
-												type='text'
-												fullWidth
-												required
-												InputProps={{
-													startAdornment: (
-														<InputAdornment position='start'>
-															{selectedFromAsset.symbol}
-														</InputAdornment>
-													),
-												}}
-												label={
-													<Box display='inline'>
-														{t('TRADE_FROM_ASSET_AMOUNT_LABEL')} (
-														{t('AVAILABLE')}{' '}
-														<AmountWithCurrency
-															amount={formatTokenAmount(
-																fromAssetUserBalance,
-																selectedToAsset.decimals
-															)}
-															unit={mainCurrency.symbol}
-															unitPlace='left'
-															fontSize={14}
-														/>
-														)
-													</Box>
-												}
-												name='amountToWithdraw'
-												value={`${formAssetAmount}`}
-												onChange={ev =>
-													execute(
-														updateNewTransaction({
-															tx: stepsId,
-															key: 'formAssetAmount',
-															value: ev.target.value,
-														})
-													)
-												}
-												error={errFormAssetAmount && !!errFormAssetAmount.dirty}
-												helperText={
-													errFormAssetAmount && !!errFormAssetAmount.dirty ? (
-														errFormAssetAmount.errMsg
-													) : (
-														<AmountWithCurrency
-															amount={selectedFormAssetMainCurrencyValue}
-															unit={mainCurrency.symbol}
-															unitPlace='left'
-															fontSize={14}
-														/>
-													)
-												}
-											/>
 											<Box>
-												<Button
-													variant='contained'
-													size='small'
-													color='default'
-													disabled={!selectedFromAsset}
-													onClick={() => setTradePercent(25)}
-												>
-													25%
-												</Button>
-												<Button
-													disabled={!selectedFromAsset}
-													onClick={() => setTradePercent(50)}
-												>
-													50%
-												</Button>
-												<Button
-													disabled={!selectedFromAsset}
-													onClick={() => setTradePercent(75)}
-												>
-													75%
-												</Button>
-												<Button
-													disabled={!selectedFromAsset}
-													onClick={() => setTradePercent(100)}
-												>
-													100%
-												</Button>
+												<TextField
+													// disabled={spinner}
+													variant='outlined'
+													type='text'
+													fullWidth
+													required
+													InputProps={{
+														startAdornment: (
+															<InputAdornment position='start'>
+																{selectedFromAsset.symbol}
+															</InputAdornment>
+														),
+													}}
+													label={
+														<Box display='inline'>
+															{t('TRADE_FROM_ASSET_AMOUNT_LABEL')} (
+															{t('AVAILABLE')}{' '}
+															<AmountWithCurrency
+																amount={formatTokenAmount(
+																	fromAssetUserBalance,
+																	selectedToAsset.decimals
+																)}
+																unit={mainCurrency.symbol}
+																unitPlace='left'
+																fontSize={16}
+															/>
+															)
+														</Box>
+													}
+													name='amountToWithdraw'
+													value={`${formAssetAmount}`}
+													onChange={ev => {
+														execute(
+															updateNewTransaction({
+																tx: stepsId,
+																key: 'formAssetAmount',
+																value: ev.target.value,
+															})
+														)
+														setSelectedPercent(0)
+													}}
+													error={
+														errFormAssetAmount && !!errFormAssetAmount.dirty
+													}
+													helperText={
+														errFormAssetAmount && !!errFormAssetAmount.dirty ? (
+															errFormAssetAmount.errMsg
+														) : (
+															<AmountWithCurrency
+																amount={selectedFormAssetMainCurrencyValue}
+																unit={mainCurrency.symbol}
+																unitPlace='left'
+																fontSize={16}
+															/>
+														)
+													}
+												/>
+												<Box>
+													{[25, 50, 75, 100].map(percent => (
+														<Box
+															display='inline'
+															key={percent.toString()}
+															p={0.5}
+														>
+															<Button
+																variant={
+																	selectedPercent === percent
+																		? 'contained'
+																		: 'outlined'
+																}
+																size='small'
+																color='default'
+																disabled={!selectedFromAsset}
+																onClick={() => {
+																	setTradePercent(percent)
+																	setSelectedPercent(percent)
+																}}
+															>
+																{percent}%
+															</Button>
+														</Box>
+													))}
+												</Box>
 											</Box>
 										</Box>
-									</Box>
+									</Grid>
 								</Grid>
-							</Grid>
-						</Box>
-					</Paper>
-					<Box my={4}></Box>
-					<Paper elevation={5}>
-						<Box p={1}>
-							<Grid container spacing={2}>
-								<Grid item xs={12}>
-									To
+							</Box>
+						</Paper>
+						<Box my={4}></Box>
+						<Paper elevation={25}>
+							<Box p={2}>
+								<Grid container spacing={2}>
+									<Grid item xs={12}>
+										To
+									</Grid>
+									<Grid item xs={12} sm={3}>
+										<Dropdown
+											fullWidth
+											variant='outlined'
+											required
+											onChange={value =>
+												execute(
+													updateNewTransaction({
+														tx: stepsId,
+														key: 'toAsset',
+														value,
+													})
+												)
+											}
+											source={assetsToSource}
+											value={toAsset + ''}
+											label={t('TO_ASSET_LABEL')}
+											htmlId='wallet-asset-to-dd'
+											name='formAsset'
+											error={errToAsset && !!errToAsset.dirty}
+											helperText={
+												errToAsset && !!errToAsset.dirty
+													? errToAsset.errMsg
+													: // : t('WALLET_TRADE_FROM_ASSET')
+													  ''
+											}
+										/>
+									</Grid>
+									<Grid item xs={12} sm={9}>
+										<TextField
+											// disabled={spinner}
+											variant='outlined'
+											type='text'
+											fullWidth
+											// disabled
+											InputProps={{
+												startAdornment: (
+													<InputAdornment position='start'>
+														{selectedToAsset.symbol}
+													</InputAdornment>
+												),
+											}}
+											label={
+												<Box display='inline'>
+													{t('TRADE_TO_ASSET_ESTIMATED_AMOUNT_LABEL')}
+												</Box>
+											}
+											name='amountToWithdraw'
+											value={`${toAssetAmount || 'N/A'}`}
+											helperText={
+												<AmountWithCurrency
+													amount={selectedToAssetMainCurrencyValue}
+													unit={mainCurrency.symbol}
+													unitPlace='left'
+													fontSize={16}
+												/>
+											}
+										/>
+									</Grid>
 								</Grid>
-								<Grid item xs={12} sm={3}>
-									<Dropdown
-										fullWidth
-										variant='outlined'
-										required
-										onChange={value =>
-											execute(
-												updateNewTransaction({
-													tx: stepsId,
-													key: 'toAsset',
-													value,
-												})
-											)
-										}
-										source={assetsToSource}
-										value={toAsset + ''}
-										label={t('PROP_TOASSET')}
-										htmlId='wallet-asset-to-dd'
-										name='formAsset'
-										error={errToAsset && !!errToAsset.dirty}
-										helperText={
-											errToAsset && !!errToAsset.dirty
-												? errToAsset.errMsg
-												: t('WALLET_TRADE_FROM_ASSET')
-										}
-									/>
-								</Grid>
-								<Grid item xs={12} sm={9}>
-									<TextField
-										// disabled={spinner}
-										variant='outlined'
-										type='text'
-										fullWidth
-										disabled
-										InputProps={{
-											startAdornment: (
-												<InputAdornment position='start'>
-													{selectedToAsset.symbol}
-												</InputAdornment>
-											),
-										}}
-										label={
-											<Box display='inline'>
-												{t('TRADE_TO_ASSET_ESTIMATED_AMOUNT_LABEL')}}
-											</Box>
-										}
-										name='amountToWithdraw'
-										value={`${toAssetAmount || 'N/A'}`}
-										helperText={
-											<AmountWithCurrency
-												amount={selectedToAssetMainCurrencyValue}
-												unit={mainCurrency.symbol}
-												unitPlace='left'
-												fontSize={14}
-											/>
-										}
-									/>
-								</Grid>
-							</Grid>
-						</Box>
-					</Paper>
+							</Box>
+						</Paper>
 
-					{errFees && errFees.dirty && errFees.errMsg && (
-						<Alert variant='filled' severity='error'>
-							{errFees.errMsg}
-						</Alert>
-					)}
+						{errFees && errFees.dirty && errFees.errMsg && (
+							<Alert variant='filled' severity='error'>
+								{errFees.errMsg}
+							</Alert>
+						)}
+					</Box>
 				</ContentBody>
 			)}
 		</ContentBox>
