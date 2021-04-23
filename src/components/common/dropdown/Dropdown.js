@@ -77,6 +77,7 @@ function Dropdown(props) {
 		noSrcLabel,
 		variant,
 		IconComponent,
+		size = 'medium',
 	} = props
 
 	const handleChange = event => {
@@ -93,6 +94,7 @@ function Dropdown(props) {
 					error={error}
 					fullWidth={fullWidth}
 					variant={variant}
+					size={size}
 				>
 					<InputLabel htmlFor={htmlId} required={required}>
 						{label}
@@ -140,6 +142,7 @@ function Dropdown(props) {
 			) : (
 				<>
 					<TextField
+						size={size}
 						fullWidth={fullWidth}
 						type='text'
 						variant={variant}
