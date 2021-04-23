@@ -1,6 +1,8 @@
 import React, { Fragment } from 'react'
 import { Box } from '@material-ui/core'
 import { formatNumberWithCommas } from 'helpers/formatters'
+import { validations } from 'adex-models'
+const { isNumberString } = validations
 
 const AmountUnit = ({ unit }) => (
 	<Box component='div' display='inline' color='secondary.main'>
@@ -16,6 +18,10 @@ export function AmountWithCurrency({
 	fontSize,
 	multiline,
 }) {
+	if (!isNumberString(amount)) {
+		return 'N/A'
+	}
+
 	const formattedAmount = formatNumberWithCommas(
 		parseFloat(amount).toFixed(toFixed)
 	)
