@@ -264,7 +264,10 @@ const defaultTheme = createMuiTheme({
 	},
 })
 
-const darkShadows = [...defaultTheme.shadows, '3px 4px 15px 0px rgba(0,0,0,1)']
+const darkShadows = [
+	...defaultTheme.shadows,
+	'2px 2px 13px 0px rgba(170, 106, 255,1)',
+]
 
 const lightShadows = [
 	...defaultTheme.shadows,
@@ -448,6 +451,11 @@ const commonTheme = createMuiTheme({
 			root: {
 				marginLeft: borderRadius,
 				marginRight: borderRadius,
+			},
+		},
+		MuiDialog: {
+			paper: {
+				boxShadow: darkShadows[25],
 			},
 		},
 	},
