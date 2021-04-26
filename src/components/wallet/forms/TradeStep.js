@@ -8,7 +8,8 @@ import {
 	Box,
 	Grid,
 	Paper,
-	InputAdornment,
+	// InputAdornment,
+	Typography,
 } from '@material-ui/core'
 import { AmountWithCurrency } from 'components/common/amount'
 // import { InputLoading } from 'components/common/spinners/'
@@ -159,7 +160,7 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 							<Box p={2}>
 								<Grid container spacing={2}>
 									<Grid item xs={12}>
-										From
+										<Typography variant='h5'>{t('FROM')}</Typography>
 									</Grid>
 									<Grid item xs={12} sm={3}>
 										<Dropdown
@@ -206,13 +207,6 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 													type='text'
 													fullWidth
 													required
-													InputProps={{
-														startAdornment: (
-															<InputAdornment position='start'>
-																{selectedFromAsset.symbol}
-															</InputAdornment>
-														),
-													}}
 													label={
 														<Box display='inline'>
 															{t('TRADE_FROM_ASSET_AMOUNT_LABEL')} (
@@ -222,8 +216,6 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 																	fromAssetUserBalance,
 																	selectedToAsset.decimals
 																)}
-																unit={mainCurrency.symbol}
-																unitPlace='left'
 																fontSize={16}
 															/>
 															)
@@ -245,19 +237,12 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 														errFormAssetAmount && !!errFormAssetAmount.dirty
 													}
 													helperText={
-														errFormAssetAmount && !!errFormAssetAmount.dirty ? (
-															errFormAssetAmount.errMsg
-														) : (
-															<AmountWithCurrency
-																amount={selectedFormAssetMainCurrencyValue}
-																unit={mainCurrency.symbol}
-																unitPlace='left'
-																fontSize={16}
-															/>
-														)
+														errFormAssetAmount && !!errFormAssetAmount.dirty
+															? errFormAssetAmount.errMsg
+															: null
 													}
 												/>
-												<Box>
+												<Box mt={1}>
 													{[25, 50, 75, 100].map(percent => (
 														<Box
 															display='inline'
@@ -294,7 +279,7 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 							<Box p={2}>
 								<Grid container spacing={2}>
 									<Grid item xs={12}>
-										To
+										<Typography variant='h5'>{t('TO')}</Typography>
 									</Grid>
 									<Grid item xs={12} sm={3}>
 										<Dropdown
@@ -331,13 +316,6 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 											type='text'
 											fullWidth
 											// disabled
-											InputProps={{
-												startAdornment: (
-													<InputAdornment position='start'>
-														{selectedToAsset.symbol}
-													</InputAdornment>
-												),
-											}}
 											label={
 												<Box display='inline'>
 													{t('TRADE_TO_ASSET_ESTIMATED_AMOUNT_LABEL')}
