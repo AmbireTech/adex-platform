@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import { BigNumber } from 'ethers'
@@ -85,8 +85,8 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 	const mainCurrency = { id: 'USD', symbol: '$' } // TODO selector
 
 	const {
-		formAsset = assetsFromSource[0].value,
-		formAssetAmount = '0',
+		formAsset,
+		formAssetAmount,
 		toAsset = assetsFromSource[1].value,
 	} = useSelector(state => selectNewTransactionById(state, stepsId))
 
@@ -145,6 +145,27 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 			})
 		)
 	}
+
+	useEffect(() => {
+		if (!formAsset) {
+			execute(
+				updateNewTransaction({
+					tx: stepsId,
+					key: 'formAsset',
+					value: assetsFromSource[0].value,
+				})
+			)
+		}
+		if (formAssetAmount === undefined) {
+			execute(
+				updateNewTransaction({
+					tx: stepsId,
+					key: 'formAssetAmount',
+					value: '0',
+				})
+			)
+		}
+	})
 
 	return (
 		<ContentBox>
