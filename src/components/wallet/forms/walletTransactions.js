@@ -9,6 +9,7 @@ import {
 	completeTx,
 	execute,
 	resetNewTransaction,
+	resetValidationErrors,
 } from 'actions'
 import ReactGA from 'react-ga'
 
@@ -16,6 +17,10 @@ const FormStepsWithDialog = WithDialog(FormSteps)
 
 const cancelFunction = stepsId => {
 	execute(resetNewTransaction({ tx: stepsId }))
+	// TODO: bind with form steps length
+	for (let i = 0; i <= 1; i++) {
+		execute(resetValidationErrors(stepsId + '-' + i))
+	}
 }
 
 const txCommon = {
