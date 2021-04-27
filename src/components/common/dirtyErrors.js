@@ -42,7 +42,12 @@ export const DirtyErrors = ({
 	const dirtyErrors = getDirtyValidationErrors(validations)
 	return (
 		!!dirtyErrors.length && (
-			<Box bgcolor='error.main' p={0.5} {...boxProps}>
+			<Box
+				bgcolor='error.main'
+				p={0.5}
+				{...boxProps}
+				borderRadius='borderRadius'
+			>
 				{dirtyErrors.map(err => (
 					<Chip
 						key={err.field}
