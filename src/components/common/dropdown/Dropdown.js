@@ -77,6 +77,7 @@ function Dropdown(props) {
 		noSrcLabel,
 		variant,
 		IconComponent,
+		inputComponent,
 		size = 'medium',
 	} = props
 
@@ -104,6 +105,7 @@ function Dropdown(props) {
 						value={value.id || value}
 						onChange={handleChange}
 						IconComponent={IconComponent}
+						input={inputComponent}
 						classes={{ selectMenu: classes.select }}
 					>
 						{[...source].map(src => {
