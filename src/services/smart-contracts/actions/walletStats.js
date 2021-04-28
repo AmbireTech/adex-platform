@@ -189,9 +189,7 @@ export async function getAccountStatsWallet({ account, prices }) {
 				specificFormatted.baseTokenBalance = [...v.baseTokenBalance]
 				specificFormatted.baseTokenBalance[1] = formatTokenAmount(
 					v.baseTokenBalance[1],
-					assets[key].decimals,
-					true,
-					2
+					assets[key].decimals
 				)
 
 				return specificFormatted
