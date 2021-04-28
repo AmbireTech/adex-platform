@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import { BigNumber } from 'ethers'
+import { makeStyles } from '@material-ui/core/styles'
 import {
 	TextField,
 	Button,
@@ -10,6 +11,7 @@ import {
 	Paper,
 	// InputAdornment,
 	Typography,
+	OutlinedInput,
 } from '@material-ui/core'
 import { AmountWithCurrency } from 'components/common/amount'
 // import { InputLoading } from 'components/common/spinners/'
@@ -33,6 +35,30 @@ import { execute, updateNewTransaction } from 'actions'
 import { Alert } from '@material-ui/lab'
 import Dropdown from 'components/common/dropdown'
 import { formatTokenAmount } from 'helpers/formatters'
+
+const styles = theme => {
+	return {
+		leftInput: {
+			borderBottomRightRadius: 0,
+			borderTopRightRadius: 0,
+			borderRight: 0,
+			borderRightWidth: '0 !important',
+		},
+		notchedOutlineLeft: {
+			borderRightWidth: '0 !important',
+		},
+		rightInput: {
+			borderBottomLeftRadius: 0,
+			borderTopLeftRadius: 0,
+			borderLeft: 0,
+		},
+		notchedOutlineRight: {
+			borderLeftWidth: '0 !important',
+		},
+	}
+}
+
+const useStyles = makeStyles(styles)
 
 const ZERO = BigNumber.from(0)
 
@@ -76,6 +102,7 @@ const estimatedConversionValue = ({
 }
 
 const WalletTradeStep = ({ stepsId, validateId } = {}) => {
+	const classes = useStyles()
 	// NOTE: RAW DATA - BNs - format in fields
 	const [selectedPercent, setSelectedPercent] = useState(0)
 	const { assetsData = {} } = useSelector(selectAccountStatsRaw)
@@ -176,50 +203,16 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 				></FullContentMessage>
 			) : (
 				<ContentBody>
-					<Box p={2}>
+					<Box>
 						<Paper elevation={25}>
 							<Box p={2}>
-								<Grid container spacing={2}>
+								<Grid container spacing={0}>
 									<Grid item xs={12}>
-										<Typography variant='h5'>{t('FROM')}</Typography>
+										<Box mb={2}>
+											<Typography variant='h5'>{t('FROM')}</Typography>
+										</Box>
 									</Grid>
-									<Grid item xs={12} sm={3}>
-										<Dropdown
-											fullWidth
-											variant='outlined'
-											required
-											onChange={value => {
-												execute(
-													updateNewTransaction({
-														tx: stepsId,
-														key: 'formAsset',
-														value,
-													})
-												)
-												execute(
-													updateNewTransaction({
-														tx: stepsId,
-														key: 'formAssetAmount',
-														value: '0',
-													})
-												)
-												setSelectedPercent(0)
-											}}
-											source={assetsFromSource}
-											value={formAsset + ''}
-											label={t('FROM_ASSET_LABEL')}
-											htmlId='wallet-asset-from-dd'
-											name='formAsset'
-											error={errFormAsset && !!errFormAsset.dirty}
-											helperText={
-												errFormAsset && !!errFormAsset.dirty
-													? errFormAsset.errMsg
-													: // : t('WALLET_TRADE_FROM_ASSET')
-													  ''
-											}
-										/>
-									</Grid>
-									<Grid item xs={12} sm={9}>
+									<Grid item xs={8}>
 										<Box>
 											<Box>
 												<TextField
@@ -262,6 +255,12 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 															? errFormAssetAmount.errMsg
 															: null
 													}
+													InputProps={{
+														classes: {
+															root: classes.leftInput,
+															// notchedOutline: classes.notchedOutlineLeft,
+														},
+													}}
 												/>
 												<Box mt={1}>
 													{[25, 50, 75, 100].map(percent => (
@@ -292,17 +291,95 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 											</Box>
 										</Box>
 									</Grid>
+									<Grid item xs={4}>
+										<Dropdown
+											fullWidth
+											variant='outlined'
+											required
+											onChange={value => {
+												execute(
+													updateNewTransaction({
+														tx: stepsId,
+														key: 'formAsset',
+														value,
+													})
+												)
+												execute(
+													updateNewTransaction({
+														tx: stepsId,
+														key: 'formAssetAmount',
+														value: '0',
+													})
+												)
+												setSelectedPercent(0)
+											}}
+											source={assetsFromSource}
+											value={formAsset + ''}
+											label={t('FROM_ASSET_LABEL')}
+											htmlId='wallet-asset-from-dd'
+											name='formAsset'
+											error={errFormAsset && !!errFormAsset.dirty}
+											helperText={
+												errFormAsset && !!errFormAsset.dirty
+													? errFormAsset.errMsg
+													: // : t('WALLET_TRADE_FROM_ASSET')
+													  ''
+											}
+											inputComponent={
+												<OutlinedInput
+													label={t('FROM_ASSET_LABEL')}
+													labelWidth={0}
+													classes={{
+														root: classes.rightInput,
+														// notchedOutline: classes.notchedOutlineRight,
+													}}
+												/>
+											}
+										/>
+									</Grid>
 								</Grid>
 							</Box>
 						</Paper>
 						<Box my={4}></Box>
 						<Paper elevation={25}>
 							<Box p={2}>
-								<Grid container spacing={2}>
+								<Grid container spacing={0}>
 									<Grid item xs={12}>
-										<Typography variant='h5'>{t('TO')}</Typography>
+										<Box mb={2}>
+											<Typography variant='h5'>{t('TO')}</Typography>
+										</Box>
 									</Grid>
-									<Grid item xs={12} sm={3}>
+									<Grid item xs={8}>
+										<TextField
+											// disabled={spinner}
+											variant='outlined'
+											type='text'
+											fullWidth
+											// disabled
+											label={
+												<Box display='inline'>
+													{t('TRADE_TO_ASSET_ESTIMATED_AMOUNT_LABEL')}
+												</Box>
+											}
+											name='amountToWithdraw'
+											value={`${toAssetAmount || 'N/A'}`}
+											helperText={
+												<AmountWithCurrency
+													amount={selectedToAssetMainCurrencyValue}
+													unit={mainCurrency.symbol}
+													unitPlace='left'
+													fontSize={16}
+												/>
+											}
+											InputProps={{
+												classes: {
+													root: classes.leftInput,
+													// notchedOutline: classes.notchedOutlineLeft,
+												},
+											}}
+										/>
+									</Grid>
+									<Grid item xs={4}>
 										<Dropdown
 											fullWidth
 											variant='outlined'
@@ -328,28 +405,14 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 													: // : t('WALLET_TRADE_FROM_ASSET')
 													  ''
 											}
-										/>
-									</Grid>
-									<Grid item xs={12} sm={9}>
-										<TextField
-											// disabled={spinner}
-											variant='outlined'
-											type='text'
-											fullWidth
-											// disabled
-											label={
-												<Box display='inline'>
-													{t('TRADE_TO_ASSET_ESTIMATED_AMOUNT_LABEL')}
-												</Box>
-											}
-											name='amountToWithdraw'
-											value={`${toAssetAmount || 'N/A'}`}
-											helperText={
-												<AmountWithCurrency
-													amount={selectedToAssetMainCurrencyValue}
-													unit={mainCurrency.symbol}
-													unitPlace='left'
-													fontSize={16}
+											inputComponent={
+												<OutlinedInput
+													label={t('TO_ASSET_LABEL')}
+													labelWidth={0}
+													classes={{
+														root: classes.rightInput,
+														// notchedOutline: classes.notchedOutlineRight,
+													}}
 												/>
 											}
 										/>
