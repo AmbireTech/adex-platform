@@ -19,9 +19,9 @@ import classnames from 'classnames'
 import { t } from 'selectors'
 
 export const styles = theme => ({
-	formControl: {
-		minWidth: 120,
-	},
+	// formControl: {
+	// 	minWidth: 120,
+	// },
 	groupHeader: {
 		backgroundColor: theme.palette.background.paper,
 	},

@@ -7,6 +7,7 @@ import { lime, grey } from '@material-ui/core/colors'
 
 const WHITE = '#fafafa'
 const BLACK = '#0f0f0f'
+const TRANSPARENT = 'transparent'
 
 export const ERROR_COLOR = '#FF4269'
 export const ERROR_LIGHT = '#ff7a97'
@@ -138,6 +139,7 @@ const paletteDark = {
 	background: {
 		paper: DARK_PAPER,
 		default: DARK_BG_DEFAULT,
+		stepperPaper: TRANSPARENT,
 	},
 	action: {
 		action: fade(WHITE, 0.46),
@@ -191,6 +193,7 @@ const paletteLight = {
 	background: {
 		default: BG_DEFAULT,
 		paper: WHITE,
+		stepperPaper: TRANSPARENT,
 	},
 	info: primary,
 	success: secondary,
