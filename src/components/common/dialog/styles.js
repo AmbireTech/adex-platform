@@ -5,7 +5,7 @@ export const styles = theme => {
 			height: `calc(100vh - ${spacing}px)`,
 			minWidth: 1024,
 			maxWidth: 1080,
-			backgroundColor: theme.palette.appBar.main,
+			backgroundColor: theme.palette.background.default,
 			'@media(max-width:1080px)': {
 				maxWidth: '100%',
 				minWidth: `calc(100vw - ${spacing}px)`,

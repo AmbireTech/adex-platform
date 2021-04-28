@@ -456,11 +456,6 @@ const commonTheme = createMuiTheme({
 				marginRight: borderRadius,
 			},
 		},
-		MuiDialog: {
-			paper: {
-				boxShadow: darkShadows[25],
-			},
-		},
 	},
 })
 
