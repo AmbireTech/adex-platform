@@ -29,7 +29,8 @@ function WalletStats() {
 									amount={totalMainCurrenciesValues['USD']}
 									unit={'$'}
 									unitPlace='left'
-									fontSize={69}
+									mainFontVariant='h2'
+									decimalsFontVariant='h3'
 								/>
 							</Box>
 							<Box mt={4}>
@@ -58,14 +59,16 @@ function WalletStats() {
 											<AmountWithCurrency
 												amount={x.total}
 												unit={x.symbol}
-												fontSize={25}
+												mainFontVariant='h6'
+												decimalsFontVariant='subtitle1'
 											/>
 											{' ('}
 											<AmountWithCurrency
 												amount={x.assetToMainCurrenciesValues['USD']}
 												unit={'$'}
 												unitPlace='left'
-												fontSize={17}
+												mainFontVariant='body1'
+												decimalsFontVariant='caption'
 											/>
 											{')'}
 										</Box>
@@ -78,7 +81,8 @@ function WalletStats() {
 											<AmountWithCurrency
 												amount={x.balance}
 												unit={x.symbol}
-												fontSize={20}
+												mainFontVariant='h6'
+												decimalsFontVariant='subtitle1'
 											/>
 										}
 									/>
@@ -91,13 +95,15 @@ function WalletStats() {
 													<AmountWithCurrency
 														amount={y.balance}
 														unit={y.symbol}
-														fontSize={20}
+														mainFontVariant='h6'
+														decimalsFontVariant='subtitle1'
 													/>
 													{' ('}
 													<AmountWithCurrency
 														amount={y.baseTokenBalance[1]}
 														unit={y.baseTokenBalance[0] || x.symbol}
-														fontSize={15}
+														mainFontVariant='body1'
+														decimalsFontVariant='caption'
 													/>
 													{')'}
 												</Box>
