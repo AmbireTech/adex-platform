@@ -1,5 +1,5 @@
 import React from 'react'
-import TradeStep from './TradeStep'
+import WalletSwapTokensStep from './SwapStep'
 import TransactionPreview from 'components/dashboard/forms/web3/TransactionPreview.js'
 import FormSteps from 'components/common/stepper/FormSteps'
 import WithDialog from 'components/common/dialog/WithDialog'
@@ -31,15 +31,15 @@ const txCommon = {
 export const TradeAssets = props => (
 	<FormStepsWithDialog
 		{...props}
-		btnLabel='WALLET_TRADE_BTN'
-		saveBtnLabel='WALLET_TRADE_DAVE_BTN'
-		title='WALLET_TRADE_FORM_TITLE'
-		stepsId='walletTradeForm'
+		btnLabel='WALLET_SWAP_BTN'
+		saveBtnLabel='WALLET_SWAP_SAVE_BTN'
+		title='WALLET_SWAP_FORM_TITLE'
+		stepsId='walletSwapForm'
 		{...txCommon}
 		steps={[
 			{
-				title: 'WALLET_TRADE_FORM_TITLE',
-				component: TradeStep,
+				title: 'WALLET_SWAP_FORM_TITLE',
+				component: WalletSwapTokensStep,
 				validationFn: props => {
 					execute(validateWalletTrade(props))
 					ReactGA.event({

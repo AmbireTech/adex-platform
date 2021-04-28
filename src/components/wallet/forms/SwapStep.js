@@ -101,7 +101,7 @@ const estimatedConversionValue = ({
 	return value
 }
 
-const WalletTradeStep = ({ stepsId, validateId } = {}) => {
+const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	const classes = useStyles()
 	// NOTE: RAW DATA - BNs - format in fields
 	const [selectedPercent, setSelectedPercent] = useState(0)
@@ -204,7 +204,7 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 			) : (
 				<ContentBody>
 					<Box>
-						<Paper elevation={25}>
+						<Paper elevation={0}>
 							<Box p={2}>
 								<Grid container spacing={0}>
 									<Grid item xs={12}>
@@ -341,7 +341,7 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 							</Box>
 						</Paper>
 						<Box my={4}></Box>
-						<Paper elevation={25}>
+						<Paper elevation={0}>
 							<Box p={2}>
 								<Grid container spacing={0}>
 									<Grid item xs={12}>
@@ -433,10 +433,10 @@ const WalletTradeStep = ({ stepsId, validateId } = {}) => {
 	)
 }
 
-WalletTradeStep.propTypes = {
+WalletSwapTokensStep.propTypes = {
 	stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 	validateId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 		.isRequired,
 }
 
-export default WalletTradeStep
+export default WalletSwapTokensStep
