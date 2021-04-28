@@ -25,6 +25,8 @@ export const styles = theme => {
 			overflowX: 'hidden',
 			height: 0,
 			padding: spacing,
+			backgroundColor:
+				theme.palette.background.stepperPaper || theme.palette.background.paper,
 		},
 		right: {
 			textAlign: 'right',
