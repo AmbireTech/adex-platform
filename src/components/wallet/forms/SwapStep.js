@@ -114,19 +114,13 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	const mainCurrency = { id: 'USD', symbol: '$' } // TODO selector
 
 	const {
-		formAsset,
+		formAsset = '',
 		formAssetAmount,
 		toAsset = assetsFromSource[1].value,
 	} = useSelector(state => selectNewTransactionById(state, stepsId))
 
 	const selectedFromAsset = assetsData[formAsset] || {}
 	const selectedToAsset = assetsData[toAsset] || {}
-	const selectedFormAssetMainCurrencyValue = getMainCurrencyValue({
-		asset: selectedFromAsset.symbol,
-		floatAmount: formAssetAmount,
-		prices,
-		mainCurrency: mainCurrency.id,
-	})
 
 	const fromAssetUserBalance = selectedFromAsset
 		? selectedFromAsset.balance
@@ -399,7 +393,8 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 													amount={selectedToAssetMainCurrencyValue}
 													unit={mainCurrency.symbol}
 													unitPlace='left'
-													fontSize={16}
+													mainFontVariant='body1'
+													decimalsFontVariant='caption'
 												/>
 											}
 											InputProps={{

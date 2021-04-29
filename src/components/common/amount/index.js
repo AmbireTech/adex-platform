@@ -5,7 +5,7 @@ import { validations } from 'adex-models'
 const { isNumberString } = validations
 
 const AmountUnit = ({ unit }) => (
-	<Box component='div' display='inline' color='secondary.light'>
+	<Box component='span' display='inline' color='secondary.light'>
 		{unit}
 	</Box>
 )
@@ -31,16 +31,16 @@ export function AmountWithCurrency({
 
 	return (
 		<Box
-			component='div'
+			component={multiline ? 'div' : 'span'}
 			display={multiline ? 'block' : 'inline'}
 			width={multiline ? 1 : 'auto'}
 		>
-			<Typography component='div' display='inline' variant={mainFontVariant}>
+			<Typography component='span' display='inline' variant={mainFontVariant}>
 				{unit && unitPlace === 'left' && <AmountUnit unit={unit} />}{' '}
 				{decimalSeparatorSplit[0]}
 				{'.'}
 				<Typography
-					component='div'
+					component='span'
 					display='inline'
 					variant={decimalsFontVariant}
 					color='secondary'
