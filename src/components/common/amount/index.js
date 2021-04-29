@@ -5,7 +5,7 @@ import { validations } from 'adex-models'
 const { isNumberString } = validations
 
 const AmountUnit = ({ unit }) => (
-	<Box component='div' display='inline' color='secondary.main'>
+	<Box component='div' display='inline' color='secondary.light'>
 		{unit}
 	</Box>
 )
