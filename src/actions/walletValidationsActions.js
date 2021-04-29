@@ -1,9 +1,5 @@
 import { BigNumber } from 'ethers'
-import {
-	selectAccountStatsRaw,
-	selectAccountStatsFormatted,
-	selectMainToken,
-} from 'selectors'
+import { selectAccountStatsRaw, selectAccountStatsFormatted } from 'selectors'
 import { validate } from 'actions'
 import { formatTokenAmount } from 'helpers/formatters'
 
@@ -39,7 +35,7 @@ export function validateWalletFees({
 			BigNumber.from(feeAssetAsSpendAsset ? amountToSpendBN : 0)
 		)
 
-		const { symbol, decimals } = selectMainToken(state)
+		const { symbol, decimals } = feeAssetData
 
 		if (amountNeeded.gt(BigNumber.from(availableBalanceFeeAsset))) {
 			const amountNeededFormatted = formatTokenAmount(
