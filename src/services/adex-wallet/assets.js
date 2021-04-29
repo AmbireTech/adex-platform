@@ -2,6 +2,12 @@ import { getEthers } from 'services/smart-contracts/ethers'
 import { Contract, BigNumber } from 'ethers'
 import { AUTH_TYPES } from 'constants/misc'
 import { contracts } from 'services/smart-contracts/contractsCfg.js'
+import ADX_LOGO from 'resources/token-logos/ADX.png'
+// import WETH_LOGO from 'resources/token-logos/WETH.png'
+// import WBTC_LOGO from 'resources/token-logos/WBTC.png'
+import USDT_LOGO from 'resources/token-logos/USDT.png'
+import ETH_LOGO from 'resources/token-logos/ETH.png'
+// import BTC_LOGO from 'resources/token-logos/BTC.png'
 const { ADXLoyaltyPoolToken, StakingPool, ADXToken, ERC20 } = contracts
 
 const goerliTokens = {
@@ -66,6 +72,7 @@ export const assets = {
 		isBaseAsset: true,
 		subAssets: [ADXLoyaltyPoolToken.address, StakingPool.address],
 		decimals: ADXToken.decimals,
+		logoSrc: ADX_LOGO,
 	},
 	[ADXLoyaltyPoolToken.address]: {
 		symbol: ADXLoyaltyPoolToken.symbol,
@@ -78,6 +85,7 @@ export const assets = {
 		isBaseAsset: false,
 		subAssets: [],
 		decimals: ADXLoyaltyPoolToken.decimals,
+		logoSrc: ADX_LOGO,
 	},
 	[StakingPool.address]: {
 		symbol: StakingPool.symbol,
@@ -90,6 +98,7 @@ export const assets = {
 		isBaseAsset: false,
 		subAssets: [],
 		decimals: StakingPool.decimals,
+		logoSrc: ADX_LOGO,
 	},
 	[tokens.USDT]: {
 		symbol: 'USDT',
@@ -99,6 +108,7 @@ export const assets = {
 		isBaseAsset: true,
 		subAssets: [],
 		decimals: 6,
+		logoSrc: USDT_LOGO,
 	},
 	[tokens.WETH]: {
 		symbol: 'WETH',
@@ -108,6 +118,7 @@ export const assets = {
 		isBaseAsset: true,
 		subAssets: [],
 		decimals: 18,
+		logoSrc: ETH_LOGO,
 	},
 }
 
