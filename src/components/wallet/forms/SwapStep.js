@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import { BigNumber } from 'ethers'
 import { makeStyles } from '@material-ui/core/styles'
+import { SwapVert } from '@material-ui/icons'
 import {
 	TextField,
 	Button,
@@ -12,6 +13,7 @@ import {
 	// InputAdornment,
 	Typography,
 	OutlinedInput,
+	IconButton,
 } from '@material-ui/core'
 import { AmountWithCurrency } from 'components/common/amount'
 // import { InputLoading } from 'components/common/spinners/'
@@ -171,6 +173,31 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 				value,
 			})
 		)
+	}
+
+	const swapFromTo = () => {
+		execute(
+			updateNewTransaction({
+				tx: stepsId,
+				key: 'formAsset',
+				value: toAsset,
+			})
+		)
+		execute(
+			updateNewTransaction({
+				tx: stepsId,
+				key: 'toAsset',
+				value: formAsset,
+			})
+		)
+		execute(
+			updateNewTransaction({
+				tx: stepsId,
+				key: 'formAssetAmount',
+				value: toAssetAmount || '0',
+			})
+		)
+		setSelectedPercent(0)
 	}
 
 	useEffect(() => {
@@ -340,7 +367,11 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 								</Grid>
 							</Box>
 						</Paper>
-						<Box my={4}></Box>
+						<Box my={1}>
+							<IconButton onClick={swapFromTo} color='secondary'>
+								<SwapVert />
+							</IconButton>
+						</Box>
 						<Paper elevation={0}>
 							<Box p={2}>
 								<Grid container spacing={0}>
