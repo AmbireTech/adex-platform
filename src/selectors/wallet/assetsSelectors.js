@@ -8,6 +8,7 @@ export const selectTradableAssetsFromSources = createSelector(
 		return Object.values(assetsData).map(x => ({
 			value: x.address,
 			label: `${x.symbol}`,
+			imgSrc: (assets[x.address] || {}).logoSrc,
 		}))
 	}
 )
@@ -20,6 +21,7 @@ export const selectTradableAssetsToSources = createSelector(
 			.map(([addr, x]) => ({
 				value: addr,
 				label: `${x.symbol}`,
+				imgSrc: x.logoSrc,
 			}))
 	}
 )

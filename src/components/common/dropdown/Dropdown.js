@@ -36,6 +36,10 @@ export const styles = theme => ({
 		display: 'flex',
 		alignItems: 'center',
 	},
+	labelImg: {
+		height: '1.2rem',
+		marginRight: theme.spacing(1),
+	},
 })
 
 const useStyles = makeStyles(styles)
@@ -122,6 +126,16 @@ function Dropdown(props) {
 									classes={{ selected: classes.menuItem }}
 									value={src.value.id || src.value}
 								>
+									{!!src.iconSrc && 'icon'
+									//TODO: icon
+									}
+									{!!src.imgSrc && (
+										<img
+											src={src.imgSrc}
+											alt={src.label}
+											className={classes.labelImg}
+										/>
+									)}
 									{src.label}
 									{!!src.extraLabel && (
 										<Tooltip
