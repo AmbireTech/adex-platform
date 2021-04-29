@@ -1,6 +1,6 @@
 export const styles = theme => {
 	const spacing = theme.spacing(1)
-	const errColor = theme.palette.error.main
+	// const errColor = theme.palette.error.main
 	return {
 		root: {
 			color: 'purple',
@@ -60,6 +60,7 @@ export const styles = theme => {
 		},
 		stepperNavRoot: {
 			borderRadius: theme.shape.borderRadius,
+			padding: spacing,
 		},
 	}
 }
