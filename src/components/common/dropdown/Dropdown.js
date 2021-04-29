@@ -37,7 +37,7 @@ export const styles = theme => ({
 		alignItems: 'center',
 	},
 	labelImg: {
-		height: '1.2rem',
+		height: '1em',
 		marginRight: theme.spacing(1),
 	},
 })

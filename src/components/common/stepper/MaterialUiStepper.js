@@ -49,11 +49,7 @@ const StepperNav = ({ steps, currentPage, classes, ...other }) => {
 		)
 	}
 	return (
-		<StepperMUI
-			alternativeLabel
-			activeStep={currentPage}
-			classes={{ root: classes.stepperNavRoot }}
-		>
+		<StepperMUI alternativeLabel activeStep={currentPage}>
 			{steps.map((page, i) => {
 				return (
 					<Step key={page.title}>
@@ -183,13 +179,8 @@ const MaterialStepper = props => {
 			flexDirection='column'
 			alignItems='space-between'
 		>
-			<Box mb={1}>
-				<Paper
-					classes={{
-						root: classes.stepperNav,
-					}}
-					elevation={0}
-				>
+			<Box mb={1} p={1}>
+				<Paper classes={{ root: classes.stepperNavRoot }} elevation={0}>
 					<StepperNav
 						{...props}
 						steps={steps}
