@@ -66,6 +66,7 @@ const MaterialStepper = props => {
 		initialPage = 0,
 		steps = [],
 		closeDialog,
+		hideNav,
 		// ...rest
 	} = props
 	const classes = useStyles()
@@ -179,17 +180,19 @@ const MaterialStepper = props => {
 			flexDirection='column'
 			alignItems='space-between'
 		>
-			<Box mb={1} p={1}>
-				<Paper classes={{ root: classes.stepperNavRoot }} elevation={0}>
-					<StepperNav
-						{...props}
-						steps={steps}
-						classes={classes}
-						currentPage={currentPage}
-						goToPage={goToPage}
-					/>
-				</Paper>
-			</Box>
+			{!hideNav && (
+				<Box mb={1} p={1}>
+					<Paper classes={{ root: classes.stepperNavRoot }} elevation={0}>
+						<StepperNav
+							{...props}
+							steps={steps}
+							classes={classes}
+							currentPage={currentPage}
+							goToPage={goToPage}
+						/>
+					</Paper>
+				</Box>
+			)}
 			<Paper
 				classes={{
 					root: classes.pagePaper,
