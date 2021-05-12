@@ -21,7 +21,7 @@
     "adex-translations": "git+https://git@github.com/AdExNetwork/adex-translations.git#d0989106be8da2ac37e869a428dfa61545978d4d",
     "base64url": "^3.0.1",
     "case-sensitive-paths-webpack-plugin": "2.2.0",
-    "chart.js": "^2.7.2",
+    "chart.js": "^2.9.4",
     "classnames": "^2.2.5",
     "clsx": "^1.1.1",
     "connected-react-router": "^6.6.1",
