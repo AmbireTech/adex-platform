@@ -36,6 +36,7 @@ export const TradeAssets = props => (
 		title='WALLET_SWAP_FORM_TITLE'
 		stepsId='walletSwapForm'
 		{...txCommon}
+		hideNav={true}
 		steps={[
 			{
 				title: 'WALLET_SWAP_FORM_TITLE',

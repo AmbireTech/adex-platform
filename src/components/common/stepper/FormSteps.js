@@ -4,7 +4,14 @@ import { useSelector } from 'react-redux'
 import MaterialStepper from 'components/common/stepper/MaterialUiStepper'
 import { t, selectLocationQuery } from 'selectors'
 
-function FormSteps({ cancelFunction, stepsId, steps, closeDialog, ...rest }) {
+function FormSteps({
+	cancelFunction,
+	stepsId,
+	steps,
+	closeDialog,
+	hideNav,
+	...rest
+}) {
 	const [stepperSteps, setSteps] = useState([])
 	const { step = 0 } = useSelector(selectLocationQuery)
 
@@ -26,6 +33,7 @@ function FormSteps({ cancelFunction, stepsId, steps, closeDialog, ...rest }) {
 			initialPage={step}
 			steps={stepperSteps}
 			closeDialog={closeDialog}
+			hideNav={hideNav}
 		/>
 	)
 }

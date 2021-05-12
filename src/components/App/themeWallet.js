@@ -140,6 +140,7 @@ const paletteDark = {
 		paper: DARK_PAPER,
 		default: DARK_BG_DEFAULT,
 		stepperPaper: TRANSPARENT,
+		special: DARK_PRIMARY,
 	},
 	action: {
 		action: fade(WHITE, 0.46),

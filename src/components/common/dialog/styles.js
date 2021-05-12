@@ -1,15 +1,31 @@
+import { fade } from '@material-ui/core/styles/colorManipulator'
+
 export const styles = theme => {
 	const spacing = theme.spacing(1)
+
+	const width = ({ dialogWidth }) => dialogWidth || 1024
+	const height = ({ dialogHeight }) =>
+		dialogHeight || `calc(100vh - ${spacing}px)`
 	return {
 		dialog: {
-			height: `calc(100vh - ${spacing}px)`,
-			minWidth: 1024,
-			maxWidth: 1080,
+			maxHeight: `calc(100vh - ${spacing}px)`,
+			maxWidth: `calc(100vw - ${spacing}px)`,
+			height,
+			width,
 			backgroundColor: theme.palette.background.default,
-			'@media(max-width:1080px)': {
-				maxWidth: '100%',
-				minWidth: `calc(100vw - ${spacing}px)`,
-			},
+			borderRadius: 0,
+			// backgroundColor: theme.palette.background.default,
+			backgroundImage:
+				theme.type === 'dark'
+					? `radial-gradient(
+				circle,
+				${fade(
+					theme.palette.background.special || theme.palette.background.default,
+					0.333
+				)} 0%,
+				${fade(theme.palette.background.default, 0.69)} 100%
+			)`
+					: 0,
 		},
 		dialogTitle: {
 			display: 'flex',

@@ -100,6 +100,8 @@ export default function WithDialogHoc(Decorated) {
 			onClick,
 			fullWidth,
 			onBeforeOpen,
+			dialogWidth,
+			dialogHeight,
 			...rest
 		} = props
 
@@ -109,7 +111,7 @@ export default function WithDialogHoc(Decorated) {
 			variant,
 		}
 
-		const classes = useStyles()
+		const classes = useStyles({ dialogWidth, dialogHeight })
 		const [open, setOpen] = useState(false)
 		const location = useSelector(selectLocation)
 
