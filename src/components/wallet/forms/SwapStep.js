@@ -126,6 +126,10 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 		? selectedFromAsset.balance
 		: ZERO
 
+	const toAssetUserCurrentBalance = selectedToAsset
+		? selectedToAsset.balance
+		: ZERO
+
 	// const spinner = useSelector(state => selectSpinnerById(state, validateId))
 	const syncSpinner = useSelector(state =>
 		selectWeb3SyncSpinnerByValidateId(state, validateId)
@@ -229,94 +233,64 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 							<Box p={2}>
 								<Grid container spacing={0}>
 									<Grid item xs={12}>
-										<Box mb={2}>
+										<Box mb={2} display='flex' justifyContent='space-between'>
 											<Typography variant='h5'>{t('FROM')}</Typography>
+											<Box display='inline'>
+												<Typography variant='body1'>
+													{t('AVAILABLE')}
+													<AmountWithCurrency
+														amount={formatTokenAmount(
+															fromAssetUserBalance,
+															selectedFromAsset.decimals
+														)}
+														mainFontVariant='body1'
+														decimalsFontVariant='caption'
+													/>
+												</Typography>
+											</Box>
 										</Box>
 									</Grid>
 									<Grid item xs={8}>
 										<Box>
-											<Box>
-												<TextField
-													// disabled={spinner}
-													variant='outlined'
-													type='text'
-													fullWidth
-													required
-													label={
-														<Box display='inline'>
-															{t('TRADE_FROM_ASSET_AMOUNT_LABEL')} (
-															{t('AVAILABLE')}{' '}
-															<AmountWithCurrency
-																amount={formatTokenAmount(
-																	fromAssetUserBalance,
-																	selectedToAsset.decimals
-																)}
-																fontSize={16}
-															/>
-															)
-														</Box>
-													}
-													name='amountToWithdraw'
-													value={`${formAssetAmount}`}
-													onChange={ev => {
-														execute(
-															updateNewTransaction({
-																tx: stepsId,
-																key: 'formAssetAmount',
-																value: ev.target.value,
-															})
-														)
-														setSelectedPercent(0)
-													}}
-													error={
-														errFormAssetAmount && !!errFormAssetAmount.dirty
-													}
-													helperText={
-														errFormAssetAmount && !!errFormAssetAmount.dirty
-															? errFormAssetAmount.errMsg
-															: null
-													}
-													InputProps={{
-														classes: {
-															root: classes.leftInput,
-															// notchedOutline: classes.notchedOutlineLeft,
-														},
-													}}
-												/>
-												<Box mt={1}>
-													{[25, 50, 75, 100].map(percent => (
-														<Box
-															display='inline'
-															key={percent.toString()}
-															p={0.5}
-														>
-															<Button
-																variant={
-																	selectedPercent === percent
-																		? 'contained'
-																		: 'outlined'
-																}
-																size='small'
-																color='default'
-																disabled={!selectedFromAsset}
-																onClick={() => {
-																	setTradePercent(percent)
-																	setSelectedPercent(percent)
-																}}
-															>
-																{percent}%
-															</Button>
-														</Box>
-													))}
-												</Box>
-											</Box>
+											<TextField
+												// disabled={spinner}
+												variant='outlined'
+												type='text'
+												fullWidth
+												required
+												label=''
+												name='amountToWithdraw'
+												value={`${formAssetAmount}`}
+												onChange={ev => {
+													execute(
+														updateNewTransaction({
+															tx: stepsId,
+															key: 'formAssetAmount',
+															value: ev.target.value,
+														})
+													)
+													setSelectedPercent(0)
+												}}
+												error={errFormAssetAmount && !!errFormAssetAmount.dirty}
+												helperText={
+													errFormAssetAmount && !!errFormAssetAmount.dirty
+														? errFormAssetAmount.errMsg
+														: null
+												}
+												InputProps={{
+													classes: {
+														root: classes.leftInput,
+														// notchedOutline: classes.notchedOutlineLeft,
+													},
+												}}
+											/>
 										</Box>
 									</Grid>
 									<Grid item xs={4}>
 										<Dropdown
 											fullWidth
 											variant='outlined'
-											required
+											// required
 											onChange={value => {
 												execute(
 													updateNewTransaction({
@@ -336,7 +310,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 											}}
 											source={assetsFromSource}
 											value={formAsset + ''}
-											label={t('FROM_ASSET_LABEL')}
+											// label={t('FROM_ASSET_LABEL')}
 											htmlId='wallet-asset-from-dd'
 											name='formAsset'
 											error={errFormAsset && !!errFormAsset.dirty}
@@ -348,7 +322,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 											}
 											inputComponent={
 												<OutlinedInput
-													label={t('FROM_ASSET_LABEL')}
+													// label={t('FROM_ASSET_LABEL')}
 													labelWidth={0}
 													classes={{
 														root: classes.rightInput,
@@ -357,6 +331,34 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 												/>
 											}
 										/>
+									</Grid>
+									<Grid item xs={12}>
+										<Box mt={1}>
+											{[25, 50, 75, 100].map(percent => (
+												<Box
+													display='inline-block'
+													key={percent.toString()}
+													p={0.25}
+												>
+													<Button
+														variant={
+															selectedPercent === percent
+																? 'contained'
+																: 'outlined'
+														}
+														size='small'
+														color='default'
+														disabled={!selectedFromAsset}
+														onClick={() => {
+															setTradePercent(percent)
+															setSelectedPercent(percent)
+														}}
+													>
+														{percent}%
+													</Button>
+												</Box>
+											))}
+										</Box>
 									</Grid>
 								</Grid>
 							</Box>
@@ -370,8 +372,21 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 							<Box p={2}>
 								<Grid container spacing={0}>
 									<Grid item xs={12}>
-										<Box mb={2}>
+										<Box mb={2} display='flex' justifyContent='space-between'>
 											<Typography variant='h5'>{t('TO')}</Typography>
+											<Box display='inline'>
+												<Typography variant='body1'>
+													{t('CURRENT_BALANCE')}
+													<AmountWithCurrency
+														amount={formatTokenAmount(
+															toAssetUserCurrentBalance,
+															selectedToAsset.decimals
+														)}
+														mainFontVariant='body1'
+														decimalsFontVariant='caption'
+													/>
+												</Typography>
+											</Box>
 										</Box>
 									</Grid>
 									<Grid item xs={8}>
@@ -433,7 +448,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 											}
 											inputComponent={
 												<OutlinedInput
-													label={t('TO_ASSET_LABEL')}
+													// label={t('TO_ASSET_LABEL')}
 													labelWidth={0}
 													classes={{
 														root: classes.rightInput,
