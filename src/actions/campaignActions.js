@@ -559,7 +559,7 @@ export function excludeOrIncludeWebsites({
 			else if (!exclude && publishers.apply && publishers.apply === 'in') {
 				const newIn = [...hostnames]
 					// Filter already included
-					.filter(h => [...(publishers.in || [])].some(x => x.includes(h)))
+					.filter(h => ![...(publishers.in || [])].some(x => x.includes(h)))
 					.map(hostname =>
 						JSON.stringify({
 							hostname,
@@ -648,10 +648,19 @@ export function excludeOrIncludeWebsites({
 			)
 
 			const { decimals } = selectMainToken(state)
-			const { pricingBounds, minPerImpression, maxPerImpression } = campaign
+			const {
+				minPerImpression,
+				maxPerImpression,
+				pricingBoundsCPMUserInput,
+			} = campaign
+
+			const rulesPricingBounds = userInputPricingBoundsPerMileToRulesValue({
+				pricingBounds: pricingBoundsCPMUserInput,
+				decimals,
+			})
 
 			// Legacy campaigns shim
-			const campaignPricingBounds = pricingBounds || {
+			const campaignPricingBounds = rulesPricingBounds || {
 				IMPRESSION: {
 					min: minPerImpression,
 					max: maxPerImpression,
@@ -704,7 +713,7 @@ export function excludeOrIncludeWebsites({
 				updated,
 				toastType,
 				toastLabel,
-				roastArgs: [hostnames.length, updatedCampaign.title],
+				toastArgs: [hostnames.length, updatedCampaign.title],
 			})(dispatch, getState)
 
 			if (typeof onSuccess === 'function') {
