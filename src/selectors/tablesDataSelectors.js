@@ -543,7 +543,7 @@ export const selectCampaignStatsTableData = createCachedSelector(
 				rules &&
 				((rules.apply === 'nin' &&
 					(rules.nin || []).some(x => x.includes(key))) ||
-					(rules.apply === 'ni' &&
+					(rules.apply === 'in' &&
 						!(rules.in || []).some(x => x.includes(key)))),
 
 			website: key,
