@@ -8,8 +8,8 @@ export const styles = theme => {
 		dialogHeight || `calc(100vh - ${spacing}px)`
 	return {
 		dialog: {
-			maxHeight: `calc(100vh - ${spacing}px)`,
-			maxWidth: `calc(100vw - ${spacing}px)`,
+			maxHeight: `calc(100vh - ${spacing * 2}px)`,
+			maxWidth: `calc(100vw - ${spacing * 2}px)`,
 			height,
 			width,
 			backgroundColor: theme.palette.background.default,
@@ -26,6 +26,7 @@ export const styles = theme => {
 				${fade(theme.palette.background.default, 0.69)} 100%
 			)`
 					: 0,
+			margin: 0,
 		},
 		dialogTitle: {
 			display: 'flex',
