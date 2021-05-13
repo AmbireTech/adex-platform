@@ -221,7 +221,7 @@ const WebsitesActions = ({ campaignId, hostnames = [], onSuccess }) => {
 	)
 }
 
-const getOptions = ({ reloadData, campaignId }) => ({
+const getOptions = ({ campaignId }) => ({
 	filterType: 'multiselect',
 	sortOrder: {
 		name: 'impressions',
@@ -238,7 +238,9 @@ const getOptions = ({ reloadData, campaignId }) => ({
 		const actionData = {
 			campaignId,
 			hostnames,
-			onSuccess: reloadData,
+			onSuccess: () => {
+				setSelectedRows([])
+			},
 		}
 
 		return <WebsitesActions {...actionData} />
