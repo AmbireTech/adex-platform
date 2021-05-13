@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.56
+##### *2021-05-13*
+
+## Fixed
+- Campaigns targeting include/exclude websites
+
 ## 4.20.55
 ##### *2021-03-05*
 
