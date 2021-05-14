@@ -1,15 +1,16 @@
 import { fade } from '@material-ui/core/styles/colorManipulator'
 
 export const styles = theme => {
-	const spacing = theme.spacing(1)
+	const spacing = theme.spacing(3)
+	const spacingXS = theme.spacing(1)
 
 	const width = ({ dialogWidth }) => dialogWidth || 1024
 	const height = ({ dialogHeight }) =>
 		dialogHeight || `calc(100vh - ${spacing}px)`
 	return {
 		dialog: {
-			maxHeight: `calc(100vh - ${spacing * 2}px)`,
-			maxWidth: `calc(100vw - ${spacing * 2}px)`,
+			maxHeight: `calc(100vh - ${spacing}px)`,
+			maxWidth: `calc(100vw - ${spacing}px)`,
 			height,
 			width,
 			backgroundColor: theme.palette.background.default,
@@ -27,6 +28,10 @@ export const styles = theme => {
 			)`
 					: 0,
 			margin: 0,
+			[theme.breakpoints.down('xs')]: {
+				maxHeight: `calc(100vh - ${spacingXS}px)`,
+				maxWidth: `calc(100vw - ${spacingXS}px)`,
+			},
 		},
 		dialogTitle: {
 			display: 'flex',
@@ -35,9 +40,11 @@ export const styles = theme => {
 			justifyContent: 'space-between',
 			wordWrap: 'break-word',
 			margin: spacing,
-			marginLeft: theme.spacing(2),
 			marginBottom: 0,
 			padding: 0,
+			[theme.breakpoints.down('xs')]: {
+				margin: spacingXS,
+			},
 		},
 		content: {
 			display: 'flex',
@@ -48,6 +55,9 @@ export const styles = theme => {
 			margin: spacing,
 			overflow: 'visible',
 			overflowY: 'auto',
+			[theme.breakpoints.down('xs')]: {
+				margin: spacingXS,
+			},
 		},
 		contentBox: {
 			display: 'flex',
@@ -113,23 +123,15 @@ export const styles = theme => {
 				bottom: spacing,
 				right: spacing,
 			},
+			[theme.breakpoints.down('xs')]: {
+				bottom: spacingXS,
+				right: spacingXS,
+			},
 		},
 		breakLong: {
 			wordBreak: 'break-word',
 			overflowWrap: 'break-word',
 			hyphens: 'auto',
-		},
-		demoImg: {
-			top: 'auto',
-			left: 'auto',
-			right: 0,
-			bottom: 0,
-			width: '100px',
-			height: 'auto',
-			position: 'absolute',
-		},
-		demoBody: {
-			position: 'relative',
 		},
 		contentStickyTop: {
 			marginBottom: '2rem',
