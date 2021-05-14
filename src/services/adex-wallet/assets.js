@@ -7,17 +7,20 @@ import ADX_LOGO from 'resources/token-logos/ADX.png'
 // import WBTC_LOGO from 'resources/token-logos/WBTC.png'
 import USDT_LOGO from 'resources/token-logos/USDT.png'
 import ETH_LOGO from 'resources/token-logos/ETH.png'
+import UNI_LOGO from 'resources/token-logos/UNI.png'
 // import BTC_LOGO from 'resources/token-logos/BTC.png'
 const { ADXLoyaltyPoolToken, StakingPool, ADXToken, ERC20 } = contracts
 
 const goerliTokens = {
 	USDT: '0x509ee0d083ddf8ac028f2a56731412edd63223b9',
 	WETH: '0x0bb7509324ce409f7bbc4b701f932eaca9736ab7',
+	UNI: '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984',
 }
 
 const mainnetTokens = {
 	USDT: '0xdac17f958d2ee523a2206206994597c13d831ec7',
 	WETH: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+	UNI: '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984',
 }
 
 const tokens =
@@ -119,6 +122,16 @@ export const assets = {
 		subAssets: [],
 		decimals: 18,
 		logoSrc: ETH_LOGO,
+	},
+	[tokens.UNI]: {
+		symbol: 'UNI',
+		getBalance: async function({ address }) {
+			return await getERC20Balance({ tokenAddress: tokens.UNI, address })
+		},
+		isBaseAsset: true,
+		subAssets: [],
+		decimals: 18,
+		logoSrc: UNI_LOGO,
 	},
 }
 
