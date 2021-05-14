@@ -7,6 +7,7 @@ import ReverseRegistrar from './abi/ReverseRegistrar.json'
 import ERC20 from './abi/ERC20Token.json'
 import ADXLoyaltyPoolTokenABI from 'services/smart-contracts/abi/ADXLoyaltyPoolTokenABI.json'
 import StakingPoolABI from 'services/smart-contracts/abi/StakingPool.json'
+import WalletZapperAbi from 'services/smart-contracts/abi/Zapper.json'
 
 export const contracts = {
 	Identity: {
@@ -57,5 +58,11 @@ export const contracts = {
 		decimalsMultiplier: 1e18,
 		symbol: 'ADX-STAKING',
 		decimals: 18,
+	},
+	WalletZapper: {
+		address:
+			process.env.ADDR_WALLET_ZAPPER ||
+			'0xdd739fB19ce213708002D3148B7A4eeedC73265f',
+		abi: WalletZapperAbi,
 	},
 }

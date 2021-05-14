@@ -6,7 +6,7 @@ import { selectRelayerConfig } from 'selectors'
 
 // ethers.errors.setLogLevel('error')
 
-const { AdExCore, Identity, IdentityFactory } = contracts
+const { AdExCore, Identity, IdentityFactory, WalletZapper } = contracts
 
 const LocalProvider = process.env.WEB3_NODE_ADDR.startsWith('wss://')
 	? providers.WebSocketProvider
@@ -41,10 +41,21 @@ const getIdentityFactory = provider => {
 	return new Contract(identityFactoryAddr, IdentityFactory.abi, provider)
 }
 
+const getWalletZapper = provider => {
+	const walletZapperContract = new Contract(
+		WalletZapper.address,
+		WalletZapper.abi,
+		provider
+	)
+
+	return walletZapperContract
+}
+
 const getEthersResult = provider => {
 	const adexCore = getAdexCore(provider)
 	const mainToken = getMainToken(provider)
 	const identityFactory = getIdentityFactory(provider)
+	const walletZapper = getWalletZapper(provider)
 
 	const results = {
 		provider,
@@ -53,6 +64,7 @@ const getEthersResult = provider => {
 		Dai: mainToken,
 		MainToken: mainToken,
 		IdentityFactory: identityFactory,
+		WalletZapper: walletZapper,
 		getToken: ({ standard, address }) =>
 			getToken({ provider, standard, address }),
 		getIdentity: ({ address }) => getIdentity({ provider, address }),
