@@ -62,7 +62,7 @@ export const contracts = {
 	WalletZapper: {
 		address:
 			process.env.ADDR_WALLET_ZAPPER ||
-			'0xdd739fB19ce213708002D3148B7A4eeedC73265f',
+			'0xa9f5739476028e9fFD991f8E7a53296B9537F7c6',
 		abi: WalletZapperAbi,
 	},
 }
