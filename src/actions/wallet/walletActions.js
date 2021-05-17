@@ -10,12 +10,9 @@ import {
 	validateWalletFees,
 	validate,
 } from 'actions'
-import {
-	selectNewTransactionById,
-	// selectAccount,
-	t,
-} from 'selectors'
+import { selectNewTransactionById, selectWalletAddress, t } from 'selectors'
 import { BigNumber } from 'ethers'
+import { walletTradeTransaction } from 'services/wallet'
 
 export function handleWalletFeesData({
 	stepsId,
@@ -121,21 +118,23 @@ export function validateWalletTrade({
 
 export function walletTrade({
 	test,
-	// formAsset,
-	// formAssetAmount,
-	// toAsset,
-	// toAssetAmount,
+	getFeesOnly,
+	formAsset,
+	formAssetAmount,
+	toAsset,
+	toAssetAmount,
 }) {
 	return async function(dispatch, getState) {
 		try {
-			// const account = selectAccount(getState())
-			// const result = await walletTradeTransaction({
-			// 	account,
-			// 	amountToWithdraw,
-			// 	withdrawTo,
-			// })
+			const account = selectWalletAddress(getState())
+			const result = await walletTradeTransaction({
+				account,
+				formAsset,
+				formAssetAmount,
+				toAsset,
+				toAssetAmount,
+			})
 
-			const result = 'tx-ID-....TODO'
 			addToast({
 				type: 'accept',
 				label: t('WALLET_TRADE_TRANSACTION_SUCCESS', {
