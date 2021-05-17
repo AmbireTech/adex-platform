@@ -12,18 +12,20 @@ import UNI_LOGO from 'resources/token-logos/UNI.png'
 const { ADXLoyaltyPoolToken, StakingPool, ADXToken, ERC20 } = contracts
 
 const goerliTokens = {
-	USDT: '0x509ee0d083ddf8ac028f2a56731412edd63223b9',
+	USDT: '0x6170ea3629a1e49b77eed0e0a18460ac184ca71e',
 	WETH: '0x0bb7509324ce409f7bbc4b701f932eaca9736ab7',
 	UNI: '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984',
+	ADX: ADXToken.address,
 }
 
 const mainnetTokens = {
 	USDT: '0xdac17f958d2ee523a2206206994597c13d831ec7',
 	WETH: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
 	UNI: '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984',
+	ADX: ADXToken.address,
 }
 
-const tokens =
+export const tokens =
 	process.env.NODE_ENV === 'production' ? mainnetTokens : goerliTokens
 
 const getERC20Token = (provider, address) => {
