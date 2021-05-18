@@ -12,8 +12,8 @@ import UNI_LOGO from 'resources/token-logos/UNI.png'
 const { ADXLoyaltyPoolToken, StakingPool, ADXToken, ERC20 } = contracts
 
 const goerliTokens = {
-	USDT: '0x6170ea3629a1e49b77eed0e0a18460ac184ca71e',
-	WETH: '0x0bb7509324ce409f7bbc4b701f932eaca9736ab7',
+	USDT: '0x9bc43d6dcecae49ab1939dcd733c37b476746ea0',
+	WETH: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6',
 	UNI: '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984',
 	ADX: ADXToken.address,
 }
