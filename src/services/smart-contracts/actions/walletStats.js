@@ -4,8 +4,8 @@ import { formatTokenAmount } from 'helpers/formatters'
 import { selectMainToken } from 'selectors'
 import { AUTH_TYPES } from 'constants/misc'
 import { privilegesNames, getWithdrawTokensBalances } from './stats'
-import { getPrices } from 'services/prices'
-import { assets, mappers } from 'services/adex-wallet/assets'
+// import { getPrices } from 'services/prices'
+import { assets, mappers } from 'services/adex-wallet'
 
 const ZERO = BigNumber.from(0)
 
