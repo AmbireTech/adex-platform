@@ -10,9 +10,14 @@ import {
 	validateWalletFees,
 	validate,
 } from 'actions'
-import { selectNewTransactionById, selectWalletAddress, t } from 'selectors'
+import {
+	selectNewTransactionById,
+	selectAccount,
+	selectAuthType,
+	t,
+} from 'selectors'
 import { BigNumber } from 'ethers'
-import { walletTradeTransaction } from 'services/wallet'
+import { walletTradeTransaction } from 'services/smart-contracts/actions/wallet'
 
 export function handleWalletFeesData({
 	stepsId,
@@ -126,9 +131,12 @@ export function walletTrade({
 }) {
 	return async function(dispatch, getState) {
 		try {
-			const account = selectWalletAddress(getState())
+			const state = getState()
+			const account = selectAccount(state)
+			const authType = selectAuthType(state)
 			const result = await walletTradeTransaction({
 				account,
+				authType,
 				formAsset,
 				formAssetAmount,
 				toAsset,
