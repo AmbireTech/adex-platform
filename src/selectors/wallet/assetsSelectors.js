@@ -1,6 +1,6 @@
 import { selectAccountStatsFormatted, selectAccountStats } from 'selectors'
 import { createSelector } from 'reselect'
-import { assets } from 'services/adex-wallet/assets'
+import { assets } from 'services/adex-wallet'
 
 export const selectTradableAssetsFromSources = createSelector(
 	[selectAccountStatsFormatted],
