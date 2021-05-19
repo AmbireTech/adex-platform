@@ -3,26 +3,16 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "asset",
+				"name": "token",
 				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
 			},
 			{
 				"internalType": "address",
-				"name": "onBehalfOf",
+				"name": "spender",
 				"type": "address"
-			},
-			{
-				"internalType": "uint16",
-				"name": "referralCode",
-				"type": "uint16"
 			}
 		],
-		"name": "deposit",
+		"name": "approveMax",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -30,22 +20,152 @@
 	{
 		"inputs": [
 			{
+				"internalType": "contract ISwapRouter",
+				"name": "uniV3Router",
+				"type": "address"
+			},
+			{
 				"internalType": "address",
-				"name": "asset",
+				"name": "inputAsset",
+				"type": "address"
+			},
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "tokenOut",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "allocPts",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amountOutMin",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "wrap",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct WalletZapper.DiversificationTrade[]",
+				"name": "trades",
+				"type": "tuple[]"
+			}
+		],
+		"name": "diversifyV3",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address[]",
+				"name": "assetsToUnwrap",
+				"type": "address[]"
+			},
+			{
+				"components": [
+					{
+						"internalType": "contract IUniswapSimple",
+						"name": "router",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amountIn",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amountOutMin",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address[]",
+						"name": "path",
+						"type": "address[]"
+					},
+					{
+						"internalType": "bool",
+						"name": "wrap",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct WalletZapper.Trade[]",
+				"name": "trades",
+				"type": "tuple[]"
+			}
+		],
+		"name": "exchangeV2",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "contract IERC20",
+				"name": "token",
 				"type": "address"
 			},
 			{
 				"internalType": "uint256",
 				"name": "amount",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
 			}
 		],
-		"name": "withdraw",
+		"name": "recoverFunds",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "contract ISwapRouter",
+				"name": "uniV3Router",
+				"type": "address"
+			},
+			{
+				"components": [
+					{
+						"internalType": "bytes",
+						"name": "path",
+						"type": "bytes"
+					},
+					{
+						"internalType": "address",
+						"name": "recipient",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "deadline",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amountIn",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amountOutMinimum",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct ISwapRouter.ExactInputParams",
+				"name": "params",
+				"type": "tuple"
+			}
+		],
+		"name": "tradeV3",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -54,6 +174,139 @@
 			}
 		],
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "contract ISwapRouter",
+				"name": "uniV3Router",
+				"type": "address"
+			},
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "tokenIn",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "tokenOut",
+						"type": "address"
+					},
+					{
+						"internalType": "uint24",
+						"name": "fee",
+						"type": "uint24"
+					},
+					{
+						"internalType": "address",
+						"name": "recipient",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "deadline",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amountIn",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amountOutMinimum",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint160",
+						"name": "sqrtPriceLimitX96",
+						"type": "uint160"
+					}
+				],
+				"internalType": "struct ISwapRouter.ExactInputSingleParams",
+				"name": "params",
+				"type": "tuple"
+			}
+		],
+		"name": "tradeV3Single",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "contract IAaveLendingPool",
+				"name": "_lendingPool",
+				"type": "address"
+			},
+			{
+				"internalType": "uint16",
+				"name": "_aaveRefCode",
+				"type": "uint16"
+			},
+			{
+				"internalType": "address[]",
+				"name": "spenders",
+				"type": "address[]"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address[]",
+				"name": "assetsToUnwrap",
+				"type": "address[]"
+			}
+		],
+		"name": "unwrapLending",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "wrapETH",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address[]",
+				"name": "assetsToWrap",
+				"type": "address[]"
+			}
+		],
+		"name": "wrapLending",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "lendingPool",
+		"outputs": [
+			{
+				"internalType": "contract IAaveLendingPool",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	}
 ]
