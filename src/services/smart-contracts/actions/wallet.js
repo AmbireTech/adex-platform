@@ -3,9 +3,9 @@ import { getEthers } from 'services/smart-contracts/ethers'
 import { BigNumber, utils } from 'ethers'
 import { contracts } from 'services/smart-contracts/contractsCfg'
 import {
-	getIdentityTxnsWithNoncesAndFees,
 	getIdentityTxnsTotalFees,
 	processExecuteByFeeTokens,
+	getIdentityTxnsWithNoncesAndFees,
 	getApproveTxns,
 } from 'services/smart-contracts/actions/identity'
 import { selectMainToken } from 'selectors'
@@ -18,13 +18,13 @@ const ZapperInterface = new Interface(contracts.WalletZapper.abi)
 export async function walletTradeTransaction({
 	getFeesOnly,
 	account,
-	authType,
 	formAsset,
 	formAssetAmount,
 	toAsset,
 	toAssetAmount,
 }) {
 	const { wallet, identity } = account
+	const { authType } = wallet
 	const { path, router } = await getPath({ from: formAsset, to: toAsset })
 
 	const identityAddr = identity.address
@@ -33,20 +33,24 @@ export async function walletTradeTransaction({
 	)
 
 	// TODO: use swap tokens for fees - update relayer
+	// Add tokent to feeTokenWhitelist
 	const mainToken = selectMainToken()
+
+	const feeTokenAddr = mainToken.address
 
 	const from = assets[formAsset]
 	const to = assets[toAsset]
 
-	const fromAmount = utils.parseUnits(formAssetAmount, from.decimals)
-	const toAmount = utils.parseUnits(toAssetAmount, to.decimals)
+	const fromAmount = utils.parseUnits(formAssetAmount.toString(), from.decimals)
+	const toAmount = utils.parseUnits(toAssetAmount.toString(), to.decimals)
 
 	const txns = []
+
 	if (router === 'uniV2') {
 		const tradeTuple = [
 			uniswapRouters.uniV2,
-			`0x${fromAmount.toString(16)}`,
-			`0x${toAmount.toString(16)}`,
+			fromAmount.toHexString(),
+			toAmount.toHexString(),
 			path,
 			false,
 		]
@@ -59,7 +63,7 @@ export async function walletTradeTransaction({
 		txns.push({
 			identityContract: identityAddr,
 			to: WalletZapper.address,
-			feeTokenAddr: mainToken.address,
+			feeTokenAddr,
 			data,
 		})
 	}
@@ -74,14 +78,16 @@ export async function walletTradeTransaction({
 		executeAction: EXECUTE_ACTIONS.default,
 	})
 
-	const { total, totalBN, breakdownFormatted } = await getIdentityTxnsTotalFees(
-		{ txnsByFeeToken }
-	)
+	const { totalBN, breakdownFormatted } = await getIdentityTxnsTotalFees({
+		txnsByFeeToken,
+	})
 
 	if (getFeesOnly) {
 		return {
-			feesFormatted: total,
-			fees: totalBN,
+			feesAmountBN: totalBN,
+			feeTokenAddr,
+			spendTokenAddr: to.address,
+			amountToSpendBN: fromAmount,
 			breakdownFormatted,
 		}
 	}
