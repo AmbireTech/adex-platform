@@ -8,6 +8,7 @@ import ADX_LOGO from 'resources/token-logos/ADX.png'
 import USDT_LOGO from 'resources/token-logos/USDT.png'
 import ETH_LOGO from 'resources/token-logos/ETH.png'
 import UNI_LOGO from 'resources/token-logos/UNI.png'
+import DAI_LOGO from 'resources/token-logos/DAI.svg'
 // import BTC_LOGO from 'resources/token-logos/BTC.png'
 const { ADXLoyaltyPoolToken, StakingPool, ADXToken, ERC20 } = contracts
 
@@ -16,6 +17,7 @@ const goerliTokens = {
 	WETH: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6',
 	UNI: '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984',
 	ADX: ADXToken.address,
+	DAI: '0x7af963cF6D228E564e2A0aA0DdBF06210B38615D', //TST
 }
 
 const mainnetTokens = {
@@ -23,6 +25,7 @@ const mainnetTokens = {
 	WETH: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
 	UNI: '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984',
 	ADX: ADXToken.address,
+	DAI: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
 }
 
 export const tokens =
@@ -134,6 +137,16 @@ export const assets = {
 		subAssets: [],
 		decimals: 18,
 		logoSrc: UNI_LOGO,
+	},
+	[tokens.DAI]: {
+		symbol: 'DAI',
+		getBalance: async function({ address }) {
+			return await getERC20Balance({ tokenAddress: tokens.DAI, address })
+		},
+		isBaseAsset: true,
+		subAssets: [],
+		decimals: 18,
+		logoSrc: DAI_LOGO,
 	},
 }
 
