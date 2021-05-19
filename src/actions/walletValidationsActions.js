@@ -6,7 +6,7 @@ import { formatTokenAmount } from 'helpers/formatters'
 export function validateWalletFees({
 	validateId,
 	feesAmountBN,
-	feeAsset,
+	feeTokenAddr,
 	amountToSpendBN,
 	spendAsset,
 	errorMsg = '',
@@ -23,11 +23,11 @@ export function validateWalletFees({
 			assetsData: assetsDataFormatted = {},
 		} = selectAccountStatsFormatted(state)
 
-		const feeAssetAsSpendAsset = spendAsset === feeAsset
+		const feeAssetAsSpendAsset = spendAsset === feeTokenAddr
 
 		const feeAssetData = feeAssetAsSpendAsset
 			? assetsData[spendAsset]
-			: assetsData[feeAsset]
+			: assetsData[feeTokenAddr]
 
 		const availableBalanceFeeAsset = feeAssetData.balance
 
@@ -49,7 +49,7 @@ export function validateWalletFees({
 			args = [
 				amountNeededFormatted,
 				symbol,
-				assetsDataFormatted[feeAsset].balance,
+				assetsDataFormatted[feeTokenAddr].balance,
 				symbol,
 			]
 		}

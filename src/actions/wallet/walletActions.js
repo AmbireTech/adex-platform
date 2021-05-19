@@ -42,7 +42,7 @@ export function handleWalletFeesData({
 				feesAmountBN: feesData.feesAmountBN,
 				feeAsset: feesData.feeAsset,
 				spendAsset: feesData.spendAsset,
-				amountToSpendBN: feesData.actualWithdrawAmount || '0',
+				amountToSpendBN: feesData.amountToSpendBN || '0',
 				dirty,
 			})(dispatch, getState)
 		} catch (err) {
@@ -77,7 +77,8 @@ export function validateWalletTrade({
 		const {
 			formAsset,
 			formAssetAmount,
-			// toAssetAmount,
+			toAsset,
+			toAssetAmount,
 		} = selectNewTransactionById(state, stepsId)
 
 		// const authType = selectAuthType(state)
@@ -89,29 +90,34 @@ export function validateWalletTrade({
 				value: formAssetAmount,
 				dirty,
 			})(dispatch),
+			validateNumberString({
+				validateId,
+				prop: 'toAssetAmount',
+				value: toAssetAmount,
+				dirty,
+			})(dispatch),
 		])
 
 		let isValid = inputValidations.every(v => v === true)
 
 		if (isValid) {
+			const account = selectAccount(state)
+			const feeDataAction = async () =>
+				await walletTradeTransaction({
+					getFeesOnly: true,
+					account,
+					formAsset,
+					formAssetAmount,
+					toAsset,
+					toAssetAmount,
+				})
+
 			isValid = await handleWalletFeesData({
 				stepsId,
 				validateId,
 				dirty,
 				actionName: 'walletTrade',
-				feeDataAction: async () => {
-					// TODO
-					return {
-						total: '1',
-						feesAmountBN: BigNumber.from(1),
-						feeAsset: formAsset,
-						spendAsset: formAsset,
-						amountToSpendBN: formAssetAmount,
-						breakdownFormatted: {
-							feeAmount: '1',
-						},
-					}
-				},
+				feeDataAction,
 			})(dispatch, getState)
 		}
 
