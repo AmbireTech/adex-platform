@@ -116,6 +116,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	const {
 		formAsset = '',
 		formAssetAmount,
+		toAssetAmount = null,
 		toAsset = assetsFromSource[1].value,
 	} = useSelector(state => selectNewTransactionById(state, stepsId))
 
@@ -134,14 +135,6 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	const syncSpinner = useSelector(state =>
 		selectWeb3SyncSpinnerByValidateId(state, validateId)
 	)
-
-	const toAssetAmount = estimatedConversionValue({
-		formAssetAmount,
-		formAsset: selectedFromAsset.symbol,
-		toAsset: selectedToAsset.symbol,
-		prices,
-		mainCurrency: mainCurrency.id,
-	})
 
 	const selectedToAssetMainCurrencyValue = toAssetAmount
 		? getMainCurrencyValue({
@@ -173,6 +166,31 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 		)
 	}
 
+	useEffect(() => {
+		const value = estimatedConversionValue({
+			formAssetAmount,
+			formAsset: selectedFromAsset.symbol,
+			toAsset: selectedToAsset.symbol,
+			prices,
+			mainCurrency: mainCurrency.id,
+		})
+
+		execute(
+			updateNewTransaction({
+				tx: stepsId,
+				key: 'toAssetAmount',
+				value,
+			})
+		)
+	}, [
+		formAssetAmount,
+		selectedFromAsset.symbol,
+		selectedToAsset.symbol,
+		mainCurrency.id,
+		prices,
+		stepsId,
+	])
+
 	const swapFromTo = () => {
 		execute(
 			updateNewTransaction({
@@ -192,6 +210,13 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 			updateNewTransaction({
 				tx: stepsId,
 				key: 'formAssetAmount',
+				value: toAssetAmount || '0',
+			})
+		)
+		execute(
+			updateNewTransaction({
+				tx: stepsId,
+				key: 'toAssetAmount',
 				value: toAssetAmount || '0',
 			})
 		)
@@ -424,7 +449,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 										<Dropdown
 											fullWidth
 											variant='outlined'
-											required
+											// required
 											onChange={value =>
 												execute(
 													updateNewTransaction({
@@ -436,7 +461,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 											}
 											source={assetsToSource}
 											value={toAsset + ''}
-											label={t('TO_ASSET_LABEL')}
+											// label={t('TO_ASSET_LABEL')}
 											htmlId='wallet-asset-to-dd'
 											name='formAsset'
 											error={errToAsset && !!errToAsset.dirty}
