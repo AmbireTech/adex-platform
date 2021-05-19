@@ -40,7 +40,7 @@ export function handleWalletFeesData({
 			isValid = await validateWalletFees({
 				validateId,
 				feesAmountBN: feesData.feesAmountBN,
-				feeAsset: feesData.feeAsset,
+				feeTokenAddr: feesData.feeTokenAddr,
 				spendAsset: feesData.spendAsset,
 				amountToSpendBN: feesData.amountToSpendBN || '0',
 				dirty,
