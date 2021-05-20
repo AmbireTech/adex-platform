@@ -15,6 +15,36 @@ const { Interface } = utils
 
 const ZapperInterface = new Interface(contracts.WalletZapper.abi)
 
+export async function getTradeOutAmount({
+	formAsset,
+	formAssetAmount,
+	toAsset,
+}) {
+	const { UniSwapRouterV2 } = await getEthers(AUTH_TYPES.READONLY)
+
+	const { path, router } = await getPath({ from: formAsset, to: toAsset })
+
+	const from = assets[formAsset]
+	const to = assets[toAsset]
+
+	const fromAmount = utils
+		.parseUnits(formAssetAmount.toString(), from.decimals)
+		.toHexString()
+
+	if (router === 'uniV2') {
+		const amountsOut = await UniSwapRouterV2.getAmountsOut(fromAmount, path)
+
+		const amountOutParsed = utils.formatUnits(
+			amountsOut[amountsOut.length - 1],
+			to.decimals
+		)
+
+		return amountOutParsed
+	}
+
+	throw new Error('Invalid path')
+}
+
 export async function walletTradeTransaction({
 	getFeesOnly,
 	account,
@@ -45,6 +75,8 @@ export async function walletTradeTransaction({
 	const toAmount = utils.parseUnits(toAssetAmount.toString(), to.decimals)
 
 	const txns = []
+
+	// TODO: approve?
 
 	if (router === 'uniV2') {
 		const tradeTuple = [
