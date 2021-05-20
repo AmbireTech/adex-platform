@@ -32,8 +32,13 @@ import {
 	selectTradableAssetsToSources,
 	selectAccountStatsRaw,
 	selectBaseAssetsPrices,
+	selectSpinnerById,
 } from 'selectors'
-import { execute, updateNewTransaction } from 'actions'
+import {
+	execute,
+	updateNewTransaction,
+	updateEstimatedTradeValue,
+} from 'actions'
 import { Alert } from '@material-ui/lab'
 import Dropdown from 'components/common/dropdown'
 import { formatTokenAmount } from 'helpers/formatters'
@@ -70,38 +75,38 @@ const getMainCurrencyValue = ({ asset, floatAmount, prices, mainCurrency }) => {
 	return value.toFixed(2)
 }
 
-const conversionRate = ({ formAsset, toAsset, prices, mainCurrency }) => {
-	const fromPrice = parseFloat((prices[formAsset] || {})[mainCurrency] || 0)
-	const toPrice = parseFloat((prices[toAsset] || {})[mainCurrency] || 0)
+// const conversionRate = ({ formAsset, toAsset, prices, mainCurrency }) => {
+// 	const fromPrice = parseFloat((prices[formAsset] || {})[mainCurrency] || 0)
+// 	const toPrice = parseFloat((prices[toAsset] || {})[mainCurrency] || 0)
 
-	if (!toPrice) {
-		return null
-	}
+// 	if (!toPrice) {
+// 		return null
+// 	}
 
-	return fromPrice / toPrice
-}
+// 	return fromPrice / toPrice
+// }
 
-const estimatedConversionValue = ({
-	formAsset,
-	toAsset,
-	formAssetAmount,
-	prices,
-	mainCurrency,
-}) => {
-	const rate = conversionRate({
-		formAsset,
-		toAsset,
-		prices,
-		mainCurrency,
-	})
+// const estimatedConversionValue = ({
+// 	formAsset,
+// 	toAsset,
+// 	formAssetAmount,
+// 	prices,
+// 	mainCurrency,
+// }) => {
+// 	const rate = conversionRate({
+// 		formAsset,
+// 		toAsset,
+// 		prices,
+// 		mainCurrency,
+// 	})
 
-	const value =
-		rate && !!parseFloat(formAssetAmount)
-			? parseFloat(formAssetAmount) * rate
-			: null
+// 	const value =
+// 		rate && !!parseFloat(formAssetAmount)
+// 			? parseFloat(formAssetAmount) * rate
+// 			: null
 
-	return value
-}
+// 	return value
+// }
 
 const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	const classes = useStyles()
@@ -112,6 +117,9 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	const assetsFromSource = useSelector(selectTradableAssetsFromSources)
 	const assetsToSource = useSelector(selectTradableAssetsToSources)
 	const mainCurrency = { id: 'USD', symbol: '$' } // TODO selector
+	// const estimatingSpinner = useSelector(state =>
+	// 	selectSpinnerById(state, validateId)
+	// )
 
 	const {
 		formAsset = '',
@@ -167,19 +175,10 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	}
 
 	useEffect(() => {
-		const value = estimatedConversionValue({
-			formAssetAmount,
-			formAsset: selectedFromAsset.symbol,
-			toAsset: selectedToAsset.symbol,
-			prices,
-			mainCurrency: mainCurrency.id,
-		})
-
 		execute(
-			updateNewTransaction({
-				tx: stepsId,
-				key: 'toAssetAmount',
-				value,
+			updateEstimatedTradeValue({
+				stepsId,
+				validateId,
 			})
 		)
 	}, [
@@ -187,8 +186,8 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 		selectedFromAsset.symbol,
 		selectedToAsset.symbol,
 		mainCurrency.id,
-		prices,
 		stepsId,
+		validateId,
 	])
 
 	const swapFromTo = () => {
