@@ -17,7 +17,10 @@ import {
 	t,
 } from 'selectors'
 import { BigNumber } from 'ethers'
-import { walletTradeTransaction } from 'services/smart-contracts/actions/wallet'
+import {
+	walletTradeTransaction,
+	getTradeOutAmount,
+} from 'services/smart-contracts/actions/wallet'
 
 export function handleWalletFeesData({
 	stepsId,
@@ -122,6 +125,55 @@ export function validateWalletTrade({
 		}
 
 		await handleAfterValidation({ isValid, onValid, onInvalid })
+
+		await updateSpinner(validateId, false)(dispatch)
+	}
+}
+
+export function updateEstimatedTradeValue({
+	stepsId,
+	validateId,
+	dirty,
+	onValid,
+	onInvalid,
+}) {
+	return async function(dispatch, getState) {
+		await updateSpinner(validateId, true)(dispatch)
+		const state = getState()
+
+		const { formAsset, formAssetAmount, toAsset } = selectNewTransactionById(
+			state,
+			stepsId
+		)
+
+		if (!formAsset || !toAsset) {
+			return
+		}
+
+		const inputValidations = await Promise.all([
+			validateNumberString({
+				validateId,
+				prop: 'formAssetAmount',
+				value: formAssetAmount,
+				dirty,
+			})(dispatch),
+		])
+
+		let isValid = inputValidations.every(v => v === true)
+
+		if (isValid) {
+			const toAssetAmount = await getTradeOutAmount({
+				formAsset,
+				formAssetAmount,
+				toAsset,
+			})
+
+			await updateNewTransaction({
+				tx: stepsId,
+				key: 'toAssetAmount',
+				value: toAssetAmount,
+			})(dispatch, getState)
+		}
 
 		await updateSpinner(validateId, false)(dispatch)
 	}
