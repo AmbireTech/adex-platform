@@ -6,7 +6,14 @@ import { selectRelayerConfig } from 'selectors'
 
 // ethers.errors.setLogLevel('error')
 
-const { AdExCore, Identity, IdentityFactory, WalletZapper } = contracts
+const {
+	AdExCore,
+	Identity,
+	IdentityFactory,
+	WalletZapper,
+	UniSwapRouterV2,
+	UniSwapRouterV3,
+} = contracts
 
 const LocalProvider = process.env.WEB3_NODE_ADDR.startsWith('wss://')
 	? providers.WebSocketProvider
@@ -51,11 +58,33 @@ const getWalletZapper = provider => {
 	return walletZapperContract
 }
 
+const getUniRouterV2 = provider => {
+	const uniV2 = new Contract(
+		UniSwapRouterV2.address,
+		UniSwapRouterV2.abi,
+		provider
+	)
+
+	return uniV2
+}
+
+const getUniRouterV3 = provider => {
+	const uniV3 = new Contract(
+		UniSwapRouterV3.address,
+		UniSwapRouterV3.abi,
+		provider
+	)
+
+	return uniV3
+}
+
 const getEthersResult = provider => {
 	const adexCore = getAdexCore(provider)
 	const mainToken = getMainToken(provider)
 	const identityFactory = getIdentityFactory(provider)
 	const walletZapper = getWalletZapper(provider)
+	const uniV2 = getUniRouterV2(provider)
+	const uniV3 = getUniRouterV3(provider)
 
 	const results = {
 		provider,
@@ -65,6 +94,8 @@ const getEthersResult = provider => {
 		MainToken: mainToken,
 		IdentityFactory: identityFactory,
 		WalletZapper: walletZapper,
+		UniSwapRouterV2: uniV2,
+		UniSwapRouterV3: uniV3,
 		getToken: ({ standard, address }) =>
 			getToken({ provider, standard, address }),
 		getIdentity: ({ address }) => getIdentity({ provider, address }),

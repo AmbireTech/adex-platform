@@ -8,6 +8,8 @@ import ERC20 from './abi/ERC20Token.json'
 import ADXLoyaltyPoolTokenABI from 'services/smart-contracts/abi/ADXLoyaltyPoolTokenABI.json'
 import StakingPoolABI from 'services/smart-contracts/abi/StakingPool.json'
 import WalletZapperAbi from 'services/smart-contracts/abi/Zapper.json'
+import UniSwapRouterV2Abi from 'services/smart-contracts/abi/UniSwapRouterV2.json'
+import UniSwapRouterV3Abi from 'services/smart-contracts/abi/UniSwapRouterV3.json'
 
 export const contracts = {
 	Identity: {
@@ -64,5 +66,17 @@ export const contracts = {
 			process.env.ADDR_WALLET_ZAPPER ||
 			'0xA6CC4cf51B4246A0e61cA105A8EFfad1b76eBF8A',
 		abi: WalletZapperAbi,
+	},
+	UniSwapRouterV2: {
+		address:
+			process.env.UNISWAP_ROUTER_V2 ||
+			'0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+		abi: UniSwapRouterV2Abi,
+	},
+	UniSwapRouterV3: {
+		address:
+			process.env.UNISWAP_ROUTER_V2 ||
+			'0xE592427A0AEce92De3Edee1F18E0157C05861564',
+		abi: UniSwapRouterV3Abi,
 	},
 }
