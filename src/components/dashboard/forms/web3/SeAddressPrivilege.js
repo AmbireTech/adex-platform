@@ -36,9 +36,12 @@ const PRIV_LEVELS_SRC = Object.values(IdentityPrivilegeLevel).map(value => {
 })
 
 function SeAddressPrivilege({ stepsId, validateId } = {}) {
-	const { setAddr, privLevel, warningAccepted, warningMsg } = useSelector(
-		state => selectNewTransactionById(state, stepsId)
-	)
+	const {
+		setAddr,
+		privLevel,
+		warningAccepted,
+		warningMsg,
+	} = useSelector(state => selectNewTransactionById(state, stepsId))
 
 	const {
 		setAddr: errAddr,

@@ -128,8 +128,5 @@ export default function ValidImageHoc(Decorated) {
 		}
 	}
 
-	return connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)(Translate(ValidImage))
+	return connect(mapStateToProps, mapDispatchToProps)(Translate(ValidImage))
 }

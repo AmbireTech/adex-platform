@@ -45,7 +45,10 @@ export async function getIdentityDeployData({
 		mainToken,
 	} = selectRelayerConfig()
 
-	const privileges = [[owner, 2], [identityRecoveryAddr, 2]]
+	const privileges = [
+		[owner, 2],
+		[identityRecoveryAddr, 2],
+	]
 
 	const routineAuthorizationsRaw = [
 		{

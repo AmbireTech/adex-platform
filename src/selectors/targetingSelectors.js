@@ -172,26 +172,23 @@ export const selectAllTargetingPublishers = createSelector(
 )
 
 // NOTE: it can be constant but we may need some dynamic data
-const autocompleteLocationsSingleSelect = createSelector(
-	[],
-	() => {
-		const tiers = Object.values(CountryTiers).map(
-			({ name, ruleValue, countries } = {}) => ({
-				label: t(name),
-				extraLabel: countries.join(', '),
-				value: ruleValue,
-				group: t('BY_TIER'),
-			})
-		)
-		const all = AllCountries.map(({ name, ruleValue } = {}) => ({
+const autocompleteLocationsSingleSelect = createSelector([], () => {
+	const tiers = Object.values(CountryTiers).map(
+		({ name, ruleValue, countries } = {}) => ({
 			label: t(name),
+			extraLabel: countries.join(', '),
 			value: ruleValue,
-			group: name[0].toUpperCase(),
-		}))
+			group: t('BY_TIER'),
+		})
+	)
+	const all = AllCountries.map(({ name, ruleValue } = {}) => ({
+		label: t(name),
+		value: ruleValue,
+		group: name[0].toUpperCase(),
+	}))
 
-		return [...tiers, ...all]
-	}
-)
+	return [...tiers, ...all]
+})
 
 const autocompleteCategoriesMultiSelectIn = createSelector(
 	[selectTargetingCategoriesByType],

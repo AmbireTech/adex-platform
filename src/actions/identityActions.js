@@ -345,9 +345,10 @@ export function validateQuickLogin({ validateId, dirty }) {
 					}
 				}
 
-				updateIdentity('identityAddr', walletData ? walletData.identity : null)(
-					dispatch
-				)
+				updateIdentity(
+					'identityAddr',
+					walletData ? walletData.identity : null
+				)(dispatch)
 				updateIdentity('wallet', wallet)(dispatch)
 				updateIdentity('walletAddr', wallet.address)(dispatch)
 				updateIdentity('identityData', wallet.identity)(dispatch)
@@ -565,9 +566,12 @@ export function validateQuickInfo({ validateId, dirty, onValid, onInvalid }) {
 			validateEmail(validateId, email, dirty, true)(dispatch),
 			validateEmailCheck(validateId, emailCheck, email, dirty)(dispatch),
 			validatePassword(validateId, password, dirty)(dispatch),
-			validatePasswordCheck(validateId, passwordCheck, password, dirty)(
-				dispatch
-			),
+			validatePasswordCheck(
+				validateId,
+				passwordCheck,
+				password,
+				dirty
+			)(dispatch),
 			validateKnowFrom(validateId, knowFrom, dirty)(dispatch),
 			validateUserSide(validateId, userSide, dirty)(dispatch),
 			validateMoreInfo(validateId, knowFrom, moreInfo, dirty)(dispatch),
@@ -608,9 +612,11 @@ export function validateFullInfo({ validateId, dirty, onValid, onInvalid }) {
 		const validations = await Promise.all([
 			// validate wallet again in case of step skip
 			validateWallet(validateId, wallet, dirty)(dispatch),
-			validateIdentityContractOwner(validateId, identityContractOwner, dirty)(
-				dispatch
-			),
+			validateIdentityContractOwner(
+				validateId,
+				identityContractOwner,
+				dirty
+			)(dispatch),
 
 			// validate step fields
 			validateEmail(validateId, email, dirty, true)(dispatch),
@@ -653,9 +659,11 @@ export function validateContractOwner({
 
 		const validations = await Promise.all([
 			validateWallet(validateId, wallet, dirty)(dispatch),
-			validateIdentityContractOwner(validateId, identityContractOwner, dirty)(
-				dispatch
-			),
+			validateIdentityContractOwner(
+				validateId,
+				identityContractOwner,
+				dirty
+			)(dispatch),
 		])
 
 		const isValid = validations.every(v => v === true)

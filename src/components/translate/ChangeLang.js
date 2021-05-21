@@ -100,7 +100,4 @@ function mapDispatchToProps(dispatch) {
 	}
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(ChangeLang)
+export default connect(mapStateToProps, mapDispatchToProps)(ChangeLang)

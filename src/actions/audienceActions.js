@@ -90,10 +90,12 @@ export function validateAndUpdateAudience({
 			const isValid = validations.every(v => v === true)
 
 			if (isValid && update) {
-				const updatedAudience = (await putAudience({
-					audience,
-					id,
-				})).audience
+				const updatedAudience = (
+					await putAudience({
+						audience,
+						id,
+					})
+				).audience
 
 				dispatch({
 					type: UPDATE_ITEM,
