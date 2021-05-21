@@ -49,6 +49,7 @@ import {
 	selectWalletPrivileges,
 	selectPrivilegesWarningAccepted,
 	selectInitialDataLoaded,
+	selectDebugIdentity,
 } from 'selectors'
 import { useSelector } from 'react-redux'
 import GettingStarted from '../getting-started/GettingStarted'
@@ -144,6 +145,7 @@ function Dashboard(props) {
 	const privileges = useSelector(selectWalletPrivileges)
 	const privilegesWarningAccepted = useSelector(selectPrivilegesWarningAccepted)
 	const showTxPrivLevelWarning = privileges <= 1 && !privilegesWarningAccepted
+	const { debugIdentityAddr } = useSelector(selectDebugIdentity)
 
 	const { match } = props
 	const { side } = match.params
@@ -228,6 +230,14 @@ function Dashboard(props) {
 									{t('PRIVILEGES_LEVEL_WARNING_MSG', {
 										args: [`PRIV_${privileges}_LABEL`],
 									})}
+								</Alert>
+							</Box>
+						)}
+
+						{debugIdentityAddr && (
+							<Box mb={2}>
+								<Alert variant='filled' severity='warning'>
+									{`Debugging identity: ${debugIdentityAddr}`}
 								</Alert>
 							</Box>
 						)}

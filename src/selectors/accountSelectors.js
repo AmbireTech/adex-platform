@@ -1,9 +1,65 @@
 import dateUtils from 'helpers/dateUtils'
 import { createSelector } from 'reselect'
 import { createDeepEqualSelector } from 'selectors'
+import { utils } from 'ethers'
 
-export const selectAccount = state => state.persist.account || {}
+export const selectAccountRaw = state => state.persist.account || {}
 export const selectChannels = state => state.memory.channels
+
+export const selectMemoryUi = state => state.memory.uiMemory
+
+export const selectDebugIdentity = createSelector(
+	selectMemoryUi,
+	({ debugIdentityAddr, debuggerAddr }) => ({
+		debugIdentityAddr,
+		debuggerAddr,
+	})
+)
+
+export const selectDebugAccount = createSelector(
+	selectDebugIdentity,
+	({ debugIdentityAddr, debuggerAddr }) => {
+		// TODO: utils.address
+		if (debugIdentityAddr) {
+			const address = utils.getAddress(debugIdentityAddr)
+			const debuggerPrivAddr = utils.getAddress(
+				debuggerAddr || debugIdentityAddr
+			)
+			return {
+				address,
+				currentPrivileges: {
+					[debuggerPrivAddr]: 2,
+					[debuggerPrivAddr.toLowerCase()]: 2,
+				},
+			}
+		} else {
+			return null
+		}
+	}
+)
+
+export const selectAccount = createSelector(
+	[selectAccountRaw, selectDebugAccount],
+	(account, debugData) => {
+		if (debugData) {
+			const debugAccount = {
+				...account,
+				identity: {
+					...(account.identity || {}),
+					...debugData,
+					relayerData: {
+						...((account.identity || {}).relayerData || {}),
+						currentPrivileges: debugData.currentPrivileges,
+					},
+				},
+			}
+
+			return debugAccount
+		}
+
+		return account
+	}
+)
 
 export const selectAuth = createSelector(
 	selectAccount,
