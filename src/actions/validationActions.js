@@ -185,9 +185,11 @@ export function validateENS({ username, dirty, validateId }) {
 			: 'ERR_INVALID_ENS_USER_NAME'
 
 		if (!msg) {
-			msg = (await freeAdExENS({
-				username,
-			})).msg
+			msg = (
+				await freeAdExENS({
+					username,
+				})
+			).msg
 		}
 
 		const isValid = !msg

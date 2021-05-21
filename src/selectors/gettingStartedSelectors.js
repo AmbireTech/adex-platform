@@ -35,9 +35,8 @@ export const selectHasCreatedAdSlot = createSelector(
 	adSlotsArray => adSlotsArray.length > 0
 )
 
-export const hasVerifiedSites = createSelector(
-	selectWebsitesList,
-	websites => websites.some(({ issues }) => !issues || !issues.length)
+export const hasVerifiedSites = createSelector(selectWebsitesList, websites =>
+	websites.some(({ issues }) => !issues || !issues.length)
 )
 
 export const selectHasAdSlotImpressions = createSelector(

@@ -63,7 +63,7 @@ const AuthSelect = () => {
 					title: t('CONFIRM_DIALOG_NEW_AUTH_TITLE'),
 					text: t('CONFIRM_DIALOG_NEW_AUTH_TEXT', {
 						args: [
-							(wallet.email || (wallet.authType || '')).toUpperCase(),
+							(wallet.email || wallet.authType || '').toUpperCase(),
 							identity.address,
 						],
 					}),
@@ -138,7 +138,7 @@ const AuthSelect = () => {
 										title: t('CONFIRM_DIALOG_REMOVE_SAVED_AUTH_TITLE'),
 										text: t('CONFIRM_DIALOG_REMOVE_SAVED_AUTH_TEXT', {
 											args: [
-												(wallet.email || (wallet.authType || '')).toUpperCase(),
+												(wallet.email || wallet.authType || '').toUpperCase(),
 												identity.address,
 											],
 										}),
