@@ -50,7 +50,7 @@ const OUTSTANDING_STATUSES = {
 const GLOBAL_MIN_CPM = '0.01' // per 1000 user input
 const GLOBAL_MAX_CPM = '15.00' // per 1000 user input
 
-const EXTRA_PROCESS_TIME = 69 * 60 // 69 min in seconds
+const EXTRA_PROCESS_TIME = 48 * 60 * 60 // 48 hours in seconds
 
 function toEthereumChannel(channel) {
 	const specHash = crypto
