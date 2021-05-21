@@ -501,3 +501,20 @@ export function resetTableStateById(tableId) {
 		updateMemoryUi(`selectedRows${tableId}`, undefined)(dispatch, getState)
 	}
 }
+
+export function updateDebuggingAddresses(search) {
+	return function(dispatch) {
+		const searchParams = new URLSearchParams(search)
+
+		const debugIdentityAddr = searchParams.get('debug-identity-addr')
+		const debuggerAddr = searchParams.get('debugger-addr')
+
+		if (debugIdentityAddr) {
+			dispatch({
+				type: types.RESET_ALL_ITEMS,
+			})
+			updateMemoryUi('debugIdentityAddr', debugIdentityAddr)(dispatch)
+			updateMemoryUi('debuggerAddr', debuggerAddr)(dispatch)
+		}
+	}
+}

@@ -11,6 +11,7 @@ import {
 	handleRedirectParams,
 	handleSignupLink,
 	refreshCacheAndReload,
+	updateDebuggingAddresses,
 } from 'actions'
 import { Route, Switch, Redirect } from 'react-router'
 import Dashboard from 'components/dashboard/dashboard/Dashboard'
@@ -91,6 +92,8 @@ const Root = () => {
 			execute(getRelayerConfig())
 			execute(handleRedirectParams(location.search))
 			execute(handleSignupLink(location.search))
+			execute(updateDebuggingAddresses(location.search))
+			execute(updateEasterEggsAllowed(location.search))
 		}
 
 		initialChecks()
@@ -105,7 +108,6 @@ const Root = () => {
 	useEffect(() => {
 		execute(metamaskNetworkCheck())
 		execute(updateRegistrationAllowed(location.search))
-		execute(updateEasterEggsAllowed(location.search))
 	}, [location])
 
 	return (
