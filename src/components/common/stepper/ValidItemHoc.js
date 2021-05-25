@@ -75,8 +75,5 @@ export default function NewItemHoc(Decorated) {
 		}
 	}
 
-	return connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)(Translate(ValidItemHoc))
+	return connect(mapStateToProps, mapDispatchToProps)(Translate(ValidItemHoc))
 }

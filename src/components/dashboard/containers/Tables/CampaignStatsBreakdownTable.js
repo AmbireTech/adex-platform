@@ -255,9 +255,12 @@ function CampaignStatsBreakdownTable({
 }) {
 	const { symbol } = useSelector(selectMainToken)
 
-	const { maxClicks, maxImpressions, maxEarnings, maxCTR } = useSelector(
-		state => selectCampaignStatsMaxValues(state, campaignId)
-	)
+	const {
+		maxClicks,
+		maxImpressions,
+		maxEarnings,
+		maxCTR,
+	} = useSelector(state => selectCampaignStatsMaxValues(state, campaignId))
 
 	const [options, setOptions] = useState({})
 

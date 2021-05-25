@@ -118,10 +118,12 @@ export function saveUnit() {
 			const item = selectNewAdUnit(state)
 			const newItem = { ...item }
 			const authSig = selectAuthSig(state)
-			const imageIpfs = (await getImgsIpfsFromBlob({
-				tempUrl: newItem.temp.tempUrl,
-				authSig,
-			})).ipfs
+			const imageIpfs = (
+				await getImgsIpfsFromBlob({
+					tempUrl: newItem.temp.tempUrl,
+					authSig,
+				})
+			).ipfs
 
 			newItem.mediaUrl = `ipfs://${imageIpfs}`
 			newItem.mediaMime = newItem.temp.mime

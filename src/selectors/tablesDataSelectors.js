@@ -136,13 +136,19 @@ export const selectCampaignsTableData = createSelector(
 export const selectCampaignsMaxImpressions = createSelector(
 	selectCampaignsTableData,
 	campaigns =>
-		Math.max.apply(null, campaigns.map(i => Number(i.impressions || 0))) || 1
+		Math.max.apply(
+			null,
+			campaigns.map(i => Number(i.impressions || 0))
+		) || 1
 )
 
 export const selectCampaignsMaxClicks = createSelector(
 	selectCampaignsTableData,
 	campaigns =>
-		Math.max.apply(null, campaigns.map(i => Number(i.clicks || 0))) || 1
+		Math.max.apply(
+			null,
+			campaigns.map(i => Number(i.clicks || 0))
+		) || 1
 )
 
 export const selectCampaignsMaxDeposit = createSelector(
