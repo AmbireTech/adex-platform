@@ -67,46 +67,59 @@ export function updateNewItemAction(type, prop, value, newValues, itemId) {
 
 export function updateNewSlot(prop, value, newValues, itemId) {
 	return async function(dispatch, getState) {
-		await updateNewItemAction('AdSlot', prop, value, newValues, itemId)(
-			dispatch,
-			getState
-		)
+		await updateNewItemAction(
+			'AdSlot',
+			prop,
+			value,
+			newValues,
+			itemId
+		)(dispatch, getState)
 	}
 }
 
 export function updateNewUnit(prop, value, newValues) {
 	return async function(dispatch, getState) {
-		await updateNewItemAction('AdUnit', prop, value, newValues)(
-			dispatch,
-			getState
-		)
+		await updateNewItemAction(
+			'AdUnit',
+			prop,
+			value,
+			newValues
+		)(dispatch, getState)
 	}
 }
 
 export function updateNewCampaign(prop, value, newValues) {
 	return async function(dispatch, getState) {
-		await updateNewItemAction('Campaign', prop, value, newValues)(
-			dispatch,
-			getState
-		)
+		await updateNewItemAction(
+			'Campaign',
+			prop,
+			value,
+			newValues
+		)(dispatch, getState)
 	}
 }
 
 export function updateNewAudience(prop, value, newValues, itemId) {
 	return async function(dispatch, getState) {
-		await updateNewItemAction('Audience', prop, value, newValues, itemId)(
-			dispatch,
-			getState
-		)
+		await updateNewItemAction(
+			'Audience',
+			prop,
+			value,
+			newValues,
+			itemId
+		)(dispatch, getState)
 	}
 }
 
 export function updateNewWebsite(prop, value, newValues, itemId) {
 	return async function(dispatch, getState) {
-		await updateNewItemAction('Website', prop, value, newValues, itemId)(
-			dispatch,
-			getState
-		)
+		await updateNewItemAction(
+			'Website',
+			prop,
+			value,
+			newValues,
+			itemId
+		)(dispatch, getState)
 	}
 }
 
@@ -143,10 +156,13 @@ export function updateNewItemTarget({
 			temp: { ...temp, targets },
 		}
 
-		await updateNewItemAction(itemType, null, null, newValues, itemId)(
-			dispatch,
-			getState
-		)
+		await updateNewItemAction(
+			itemType,
+			null,
+			null,
+			newValues,
+			itemId
+		)(dispatch, getState)
 	}
 }
 
@@ -179,10 +195,13 @@ export function updateTargetRuleInput({
 			}
 		}
 
-		await updateNewItemAction(itemType, null, null, newValues, itemId)(
-			dispatch,
-			getState
-		)
+		await updateNewItemAction(
+			itemType,
+			null,
+			null,
+			newValues,
+			itemId
+		)(dispatch, getState)
 	}
 }
 

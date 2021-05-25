@@ -3,10 +3,7 @@ import { PROJECTS } from 'constants/global'
 
 export const getProject = state => state.persist.project
 
-export const selectProject = createSelector(
-	[getProject],
-	project => project
-)
+export const selectProject = createSelector([getProject], project => project)
 
 export const selectIsPlatform = createSelector(
 	[selectProject],

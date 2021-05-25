@@ -76,14 +76,10 @@ export const selectWallet = createDeepEqualSelector(
 	({ wallet }) => wallet || {}
 )
 
-export const selectEmail = createSelector(
-	selectAccount,
-	({ email }) => email
-)
+export const selectEmail = createSelector(selectAccount, ({ email }) => email)
 
-export const selectEmailProvider = createSelector(
-	selectEmail,
-	email => (!!email ? email.split('@')[1] : null)
+export const selectEmailProvider = createSelector(selectEmail, email =>
+	!!email ? email.split('@')[1] : null
 )
 
 export const selectAuthSig = createSelector(

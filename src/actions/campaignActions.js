@@ -89,10 +89,12 @@ const VALIDATOR_FOLLOWER_FEE_ADDR = process.env.VALIDATOR_FOLLOWER_FEE_ADDR
 // updatedCampaign updated campaign class instance
 function updateCampaignOnMarket({ updated, toastLabel, toastArgs, toastType }) {
 	return async function(dispatch, getState) {
-		const updatedCampaign = (await updateCampaign({
-			campaign: updated.marketUpdate,
-			id: updated.id,
-		})).campaign
+		const updatedCampaign = (
+			await updateCampaign({
+				campaign: updated.marketUpdate,
+				id: updated.id,
+			})
+		).campaign
 
 		dispatch({
 			type: UPDATE_ITEM,
@@ -688,10 +690,12 @@ export function excludeOrIncludeWebsites({
 				targetingRules: newRules,
 			})
 
-			const updatedCampaign = (await updateCampaign({
-				campaign: updated.marketUpdate,
-				id: updated.id,
-			})).campaign
+			const updatedCampaign = (
+				await updateCampaign({
+					campaign: updated.marketUpdate,
+					id: updated.id,
+				})
+			).campaign
 
 			await updateValidatorAuthTokens({ newAuth: authTokens })(
 				dispatch,

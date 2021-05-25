@@ -615,9 +615,11 @@ export async function openChannel({
 		executeAction: EXECUTE_ACTIONS.openCampaign,
 	})
 
-	const { total, totalBN, breakdownFormatted } = await getIdentityTxnsTotalFees(
-		{ txnsByFeeToken }
-	)
+	const {
+		total,
+		totalBN,
+		breakdownFormatted,
+	} = await getIdentityTxnsTotalFees({ txnsByFeeToken })
 	const bigZero = BigNumber.from(0)
 	const mtBalance = BigNumber.from(availableIdentityBalanceMainToken)
 	const maxAvailable = mtBalance.sub(totalBN).lt(bigZero)

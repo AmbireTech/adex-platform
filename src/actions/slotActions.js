@@ -61,10 +61,12 @@ async function getFallbackUnit({
 	title,
 	description,
 }) {
-	const imageIpfs = (await getImgsIpfsFromBlob({
-		tempUrl,
-		authSig,
-	})).ipfs
+	const imageIpfs = (
+		await getImgsIpfsFromBlob({
+			tempUrl,
+			authSig,
+		})
+	).ipfs
 
 	const unit = new AdUnit({
 		type,
@@ -269,15 +271,17 @@ export function saveSlot() {
 			const mainToken = selectMainToken()
 			let fallbackUnit = null
 			if (newItem.temp.useFallback) {
-				fallbackUnit = (await getFallbackUnit({
-					mediaMime: newItem.temp.mime,
-					tempUrl: newItem.temp.tempUrl,
-					targetUrl: newItem.targetUrl,
-					type: newItem.type,
-					authSig,
-					title: newItem.title,
-					description: newItem.description,
-				})).ipfs
+				fallbackUnit = (
+					await getFallbackUnit({
+						mediaMime: newItem.temp.mime,
+						tempUrl: newItem.temp.tempUrl,
+						targetUrl: newItem.targetUrl,
+						type: newItem.type,
+						authSig,
+						title: newItem.title,
+						description: newItem.description,
+					})
+				).ipfs
 			}
 
 			newItem.fallbackUnit = fallbackUnit
@@ -407,10 +411,13 @@ export function mapCurrentToNewPassback({ itemId, dirtyProps }) {
 			newValues.targetUrl = targetUrl
 		}
 
-		updateNewItem(item, newValues, 'AdSlot', AdSlot, item.id)(
-			dispatch,
-			getState
-		)
+		updateNewItem(
+			item,
+			newValues,
+			'AdSlot',
+			AdSlot,
+			item.id
+		)(dispatch, getState)
 	}
 }
 
