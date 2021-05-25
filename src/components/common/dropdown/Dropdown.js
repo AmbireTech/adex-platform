@@ -113,6 +113,7 @@ function Dropdown(props) {
 						classes={{ selectMenu: classes.select }}
 					>
 						{[...source].map(src => {
+							const srcValue = src.value || {}
 							return src.group ? (
 								<ListSubheader
 									className={classes.groupHeader}
@@ -122,9 +123,9 @@ function Dropdown(props) {
 								</ListSubheader>
 							) : (
 								<MenuItem
-									key={src.value.key || src.value.id || src.value}
+									key={srcValue.key || srcValue.id || src.value}
 									classes={{ selected: classes.menuItem }}
-									value={src.value.id || src.value}
+									value={srcValue.id || src.value}
 								>
 									{!!src.iconSrc && 'icon'
 									//TODO: icon
