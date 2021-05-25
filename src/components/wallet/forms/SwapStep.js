@@ -125,7 +125,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 		formAsset = '',
 		formAssetAmount,
 		toAssetAmount = null,
-		toAsset = assetsFromSource[1].value,
+		toAsset = assetsFromSource[1] ? assetsFromSource[1].value : '',
 	} = useSelector(state => selectNewTransactionById(state, stepsId))
 
 	const selectedFromAsset = assetsData[formAsset] || {}
@@ -228,7 +228,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 				updateNewTransaction({
 					tx: stepsId,
 					key: 'formAsset',
-					value: assetsFromSource[0].value,
+					value: assetsFromSource[0] ? assetsFromSource[0].value : '',
 				})
 			)
 		}
@@ -241,7 +241,8 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 				})
 			)
 		}
-	})
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	return (
 		<ContentBox>
