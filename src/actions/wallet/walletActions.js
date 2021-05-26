@@ -16,7 +16,6 @@ import {
 	selectAuthType,
 	t,
 } from 'selectors'
-import { BigNumber } from 'ethers'
 import {
 	walletTradeTransaction,
 	getTradeOutAmount,
@@ -208,8 +207,14 @@ export function walletTrade({
 				}),
 				timeout: 20000,
 			})(dispatch)
-		} catch {
-			// TODO
+		} catch (err) {
+			addToast({
+				type: 'cancel',
+				label: t('ERR_WALLET_TRADE', {
+					args: [err.message],
+				}),
+				timeout: 5000,
+			})(dispatch)
 		}
 	}
 }
