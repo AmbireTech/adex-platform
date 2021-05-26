@@ -2,6 +2,59 @@
 	{
 		"inputs": [
 			{
+				"internalType": "contract IAaveLendingPool",
+				"name": "_lendingPool",
+				"type": "address"
+			},
+			{
+				"internalType": "uint16",
+				"name": "_aaveRefCode",
+				"type": "uint16"
+			},
+			{
+				"internalType": "address[]",
+				"name": "spenders",
+				"type": "address[]"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [],
+		"name": "admin",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "allowedSpenders",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "token",
 				"type": "address"
@@ -30,11 +83,26 @@
 				"type": "address"
 			},
 			{
+				"internalType": "uint24",
+				"name": "inputFee",
+				"type": "uint24"
+			},
+			{
+				"internalType": "uint256",
+				"name": "inputMinOut",
+				"type": "uint256"
+			},
+			{
 				"components": [
 					{
 						"internalType": "address",
 						"name": "tokenOut",
 						"type": "address"
+					},
+					{
+						"internalType": "uint24",
+						"name": "fee",
+						"type": "uint24"
 					},
 					{
 						"internalType": "uint256",
@@ -105,6 +173,19 @@
 		"name": "exchangeV2",
 		"outputs": [],
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "lendingPool",
+		"outputs": [
+			{
+				"internalType": "contract IAaveLendingPool",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -245,27 +326,6 @@
 	{
 		"inputs": [
 			{
-				"internalType": "contract IAaveLendingPool",
-				"name": "_lendingPool",
-				"type": "address"
-			},
-			{
-				"internalType": "uint16",
-				"name": "_aaveRefCode",
-				"type": "uint16"
-			},
-			{
-				"internalType": "address[]",
-				"name": "spenders",
-				"type": "address[]"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "address[]",
 				"name": "assetsToUnwrap",
 				"type": "address[]"
@@ -294,19 +354,6 @@
 		"name": "wrapLending",
 		"outputs": [],
 		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "lendingPool",
-		"outputs": [
-			{
-				"internalType": "contract IAaveLendingPool",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
 		"type": "function"
 	}
 ]
