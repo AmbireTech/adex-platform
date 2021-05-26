@@ -13,17 +13,45 @@ export const paths = {
 		},
 		[tokens.ADX]: {
 			router: 'uniV3',
-			path: [tokens.WETH, tokens.UNI],
+			path: [tokens.WETH, tokens.ADX],
 		},
 		[tokens.USDT]: {
 			router: 'uniV3',
 			path: [tokens.WETH, tokens.USDT],
+		},
+		[tokens.DAI]: {
+			router: 'uniV3',
+			path: [tokens.WETH, tokens.DAI],
 		},
 	},
 	[tokens.ADX]: {
 		[tokens.UNI]: {
 			router: 'uniV2',
 			path: [tokens.ADX, tokens.WETH, tokens.UNI],
+		},
+		[tokens.USDT]: {
+			router: 'uniV3',
+			path: [tokens.ADX, tokens.WETH, tokens.USDT],
+		},
+		[tokens.DAI]: {
+			router: 'uniV3',
+			path: [tokens.ADX, tokens.WETH, tokens.DAI],
+		},
+	},
+	[tokens.UNI]: {
+		[tokens.USDT]: {
+			router: 'uniV3',
+			path: [tokens.UNI, tokens.WETH, tokens.USDT],
+		},
+		[tokens.DAI]: {
+			router: 'uniV2',
+			path: [tokens.UNI, tokens.WETH, tokens.DAI],
+		},
+	},
+	[tokens.USDT]: {
+		[tokens.DAI]: {
+			router: 'uniV2',
+			path: [tokens.USDT, tokens.DAI],
 		},
 	},
 }
