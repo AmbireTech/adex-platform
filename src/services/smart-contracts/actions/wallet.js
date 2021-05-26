@@ -10,16 +10,21 @@ import {
 } from 'services/smart-contracts/actions/identity'
 import { selectMainToken } from 'selectors'
 import { AUTH_TYPES, EXECUTE_ACTIONS } from 'constants/misc'
+import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
 
 const { Interface } = utils
 
 const ZapperInterface = new Interface(contracts.WalletZapper.abi)
+const ERC20 = new Interface(ERC20TokenABI)
 
 export async function getTradeOutAmount({
 	formAsset,
 	formAssetAmount,
 	toAsset,
 }) {
+	if (!formAssetAmount || parseFloat(formAssetAmount) <= 0) {
+		return '0'
+	}
 	const { UniSwapRouterV2 } = await getEthers(AUTH_TYPES.READONLY)
 
 	const { path, router } = await getPath({ from: formAsset, to: toAsset })
@@ -79,6 +84,16 @@ export async function walletTradeTransaction({
 	// TODO: approve?
 
 	if (router === 'uniV2') {
+		txns.push({
+			identityContract: identityAddr,
+			to: formAsset,
+			feeTokenAddr,
+			data: ERC20.encodeFunctionData('transfer', [
+				WalletZapper.address,
+				fromAmount.toHexString(),
+			]),
+		})
+
 		const tradeTuple = [
 			uniswapRouters.uniV2,
 			fromAmount.toHexString(),
