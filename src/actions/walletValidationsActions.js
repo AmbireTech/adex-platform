@@ -63,3 +63,54 @@ export function validateWalletFees({
 		return isValid
 	}
 }
+
+export function validateWalletDiversificationAssets({
+	validateId,
+	formAsset,
+	formAssetAmount,
+	diversificationAssets,
+	dirty,
+}) {
+	return async function(dispatch, getState) {
+		let isValid = true
+		let msg = ''
+		let args = []
+		const hasDiversifications =
+			!!diversificationAssets && diversificationAssets.length
+
+		const isValidDiversification =
+			hasDiversifications &&
+			hasDiversifications.every(asset => asset.address && asset.share)
+
+		const hasFullDiversification = hasDiversifications
+			? diversificationAssets.reduce(
+					(used, asset) => used + asset.share,
+
+					0
+			  )
+			: 0
+
+		if (!hasDiversifications) {
+			isValid = false
+			msg = 'ERR_NO_DIVERSIFICATION_ASSETS_SELECTED'
+		} else if (!isValidDiversification) {
+			isValid = false
+			msg = 'ERR_INVALID_DIVERSIFICATION_ASSETS'
+			// TODO: args
+		} else if (hasFullDiversification < 100) {
+			isValid = false
+			msg = 'ERR_DIVERSIFICATION_ASSETS_NOT_DISTRIBUTED'
+		} else if (hasFullDiversification > 100) {
+			isValid = false
+			msg = 'ERR_DIVERSIFICATION_ASSETS_OVER_MAX'
+		}
+
+		await validate(validateId, 'diversificationAssets', {
+			isValid,
+			err: { msg, args },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
