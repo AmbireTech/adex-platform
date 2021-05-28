@@ -17,6 +17,8 @@ const { Interface } = utils
 const ZapperInterface = new Interface(contracts.WalletZapper.abi)
 const ERC20 = new Interface(ERC20TokenABI)
 
+const DEADLINE = 60 * 60 * 1000
+
 export async function getTradeOutAmount({
 	formAsset,
 	formAssetAmount,
@@ -76,31 +78,29 @@ export async function walletTradeTransaction({
 	const from = assets[formAsset]
 	const to = assets[toAsset]
 
-	const fromAmount = utils.parseUnits(formAssetAmount.toString(), from.decimals)
-	const toAmount = utils.parseUnits(toAssetAmount.toString(), to.decimals)
+	const fromAmount = utils
+		.parseUnits(formAssetAmount.toString(), from.decimals)
+		.toHexString()
+	const toAmount = utils
+		.parseUnits(toAssetAmount.toString(), to.decimals)
+		.toHexString()
 
 	const txns = []
 
 	// TODO: approve?
 
-	if (router === 'uniV2') {
-		txns.push({
-			identityContract: identityAddr,
-			to: formAsset,
-			feeTokenAddr,
-			data: ERC20.encodeFunctionData('transfer', [
-				WalletZapper.address,
-				fromAmount.toHexString(),
-			]),
-		})
+	txns.push({
+		identityContract: identityAddr,
+		to: formAsset,
+		feeTokenAddr,
+		data: ERC20.encodeFunctionData('transfer', [
+			WalletZapper.address,
+			fromAmount,
+		]),
+	})
 
-		const tradeTuple = [
-			uniswapRouters.uniV2,
-			fromAmount.toHexString(),
-			toAmount.toHexString(),
-			path,
-			false,
-		]
+	if (router === 'uniV2') {
+		const tradeTuple = [uniswapRouters.uniV2, fromAmount, toAmount, path, false]
 
 		const data = ZapperInterface.encodeFunctionData('exchangeV2', [
 			[],
@@ -113,6 +113,21 @@ export async function walletTradeTransaction({
 			feeTokenAddr,
 			data,
 		})
+	} else if (router === 'uniV3') {
+		const deadline = Math.floor((Date.now() + DEADLINE) / 1000)
+		const paramsTuple =
+			path.length === 2
+				? [
+						formAsset,
+						toAsset,
+						3000, // TODO
+						identityAddr,
+						deadline,
+						fromAmount,
+						toAmount,
+						0,
+				  ]
+				: [path, identityAddr, deadline, fromAmount, toAmount]
 	}
 
 	const txnsByFeeToken = await getIdentityTxnsWithNoncesAndFees({
@@ -134,6 +149,105 @@ export async function walletTradeTransaction({
 			feesAmountBN: totalBN,
 			feeTokenAddr,
 			spendTokenAddr: to.address,
+			amountToSpendBN: fromAmount,
+			breakdownFormatted,
+		}
+	}
+
+	const result = await processExecuteByFeeTokens({
+		identityAddr,
+		txnsByFeeToken,
+		wallet,
+		provider,
+	})
+
+	return {
+		result,
+	}
+	// TODO: ..
+}
+
+export async function walletDiversificationTransaction({
+	getFeesOnly,
+	account,
+	formAsset,
+	formAssetAmount,
+	diversificationAssets,
+}) {
+	const { wallet, identity } = account
+	const { authType } = wallet
+
+	const identityAddr = identity.address
+	const {
+		provider,
+		WalletZapper,
+		Identity,
+		getToken,
+		UniSwapRouterV3,
+	} = await getEthers(authType)
+
+	// TODO: use swap tokens for fees - update relayer
+	// Add tokent to feeTokenWhitelist
+	const mainToken = selectMainToken()
+
+	const feeTokenAddr = mainToken.address
+
+	const from = assets[formAsset]
+
+	const fromAmount = utils
+		.parseUnits(formAssetAmount.toString(), from.decimals)
+		.toHexString()
+
+	const txns = []
+
+	txns.push({
+		identityContract: identityAddr,
+		to: formAsset,
+		feeTokenAddr,
+		data: ERC20.encodeFunctionData('transfer', [
+			WalletZapper.address,
+			fromAmount,
+		]),
+	})
+
+	const diversificationTrades = diversificationAssets.map(asset => {
+		// TODO: map to DiversificationTrade
+		return asset
+	})
+
+	const data = ZapperInterface.encodeFunctionData('diversifyV3', [
+		UniSwapRouterV3.address,
+		formAsset,
+		0x0, // inputFee
+		diversificationTrades,
+	])
+
+	txns.push({
+		identityContract: identityAddr,
+		to: WalletZapper.address,
+		feeTokenAddr,
+		data,
+	})
+
+	const txnsByFeeToken = await getIdentityTxnsWithNoncesAndFees({
+		txns,
+		identityAddr,
+		provider,
+		Identity,
+		account,
+		getToken,
+		executeAction: EXECUTE_ACTIONS.default,
+	})
+
+	const { totalBN, breakdownFormatted } = await getIdentityTxnsTotalFees({
+		txnsByFeeToken,
+	})
+
+	if (getFeesOnly) {
+		return {
+			feesAmountBN: totalBN,
+			feeTokenAddr,
+			spendTokenAddr: from.address,
 			amountToSpendBN: fromAmount,
 			breakdownFormatted,
 		}
