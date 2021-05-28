@@ -9,7 +9,10 @@ import { TreeView, TreeItem } from '@material-ui/lab'
 import { ExpandMore, ChevronRight } from '@material-ui/icons'
 import { AmountWithCurrency } from 'components/common/amount'
 import { InfoCard } from './WalletInfoCard'
-import { TradeAssets } from 'components/wallet/forms/walletTransactions'
+import {
+	TradeAssets,
+	DiversifyAssets,
+} from 'components/wallet/forms/walletTransactions'
 
 import { t, selectAccountStatsFormatted } from 'selectors'
 
@@ -34,6 +37,13 @@ function WalletStats() {
 						</Box>
 						<Box mt={4}>
 							<TradeAssets
+								variant='contained'
+								color='secondary'
+								size='large'
+								dialogWidth={512}
+								dialogHeight={800}
+							/>
+							<DiversifyAssets
 								variant='contained'
 								color='secondary'
 								size='large'
