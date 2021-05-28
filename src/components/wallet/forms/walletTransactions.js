@@ -1,5 +1,6 @@
 import React from 'react'
 import WalletSwapTokensStep from './SwapStep'
+import WalletDiversifyTokensStep from './DiversifyStep'
 import TransactionPreview from 'components/dashboard/forms/web3/TransactionPreview.js'
 import FormSteps from 'components/common/stepper/FormSteps'
 import WithDialog from 'components/common/dialog/WithDialog'
@@ -10,6 +11,7 @@ import {
 	execute,
 	resetNewTransaction,
 	resetValidationErrors,
+	validateWalletDiversify,
 } from 'actions'
 import ReactGA from 'react-ga'
 
@@ -46,6 +48,44 @@ export const TradeAssets = props => (
 					ReactGA.event({
 						action: 'wallet',
 						category: 'trade',
+						label: 'continue',
+					})
+				},
+			},
+			{
+				title: 'PREVIEW_WALLET',
+				completeBtnTitle: 'PROCEED',
+				component: TransactionPreview,
+				completeFn: props =>
+					execute(
+						completeTx({
+							...props,
+							competeAction: walletTrade,
+						})
+					),
+			},
+		]}
+	/>
+)
+
+export const DiversifyAssets = props => (
+	<FormStepsWithDialog
+		{...props}
+		btnLabel='WALLET_DIVERSIFY_BTN'
+		saveBtnLabel='WALLET_DIVERSIFY_SAVE_BTN'
+		title='WALLET_DIVERSIFY_FORM_TITLE'
+		stepsId='walletDiversifyForm'
+		{...txCommon}
+		hideNav={true}
+		steps={[
+			{
+				title: 'WALLET_DIVERSIFY_FORM_TITLE',
+				component: WalletDiversifyTokensStep,
+				validationFn: props => {
+					execute(validateWalletDiversify(props))
+					ReactGA.event({
+						action: 'wallet',
+						category: 'diversify',
 						label: 'continue',
 					})
 				},
