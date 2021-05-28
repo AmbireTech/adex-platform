@@ -9,6 +9,7 @@ import {
 	updateNewTransaction,
 	validateWalletFees,
 	validate,
+	validateWalletDiversificationAssets,
 } from 'actions'
 import {
 	selectNewTransactionById,
@@ -19,6 +20,7 @@ import {
 import {
 	walletTradeTransaction,
 	getTradeOutAmount,
+	walletDiversificationTransaction,
 } from 'services/smart-contracts/actions/wallet'
 
 export function handleWalletFeesData({
@@ -216,5 +218,70 @@ export function walletTrade({
 				timeout: 5000,
 			})(dispatch)
 		}
+	}
+}
+
+export function validateWalletDiversify({
+	stepsId,
+	validateId,
+	dirty,
+	onValid,
+	onInvalid,
+}) {
+	return async function(dispatch, getState) {
+		await updateSpinner(validateId, true)(dispatch)
+		if (!dirty) {
+			await beforeWeb3(validateId)(dispatch, getState)
+		}
+		const state = getState()
+		// const account = selectAccount(state)
+		const {
+			formAsset,
+			formAssetAmount,
+			diversificationAssets,
+			toAssetAmount,
+		} = selectNewTransactionById(state, stepsId)
+
+		// const authType = selectAuthType(state)
+
+		const inputValidations = await Promise.all([
+			validateNumberString({
+				validateId,
+				prop: 'formAssetAmount',
+				value: formAssetAmount,
+				dirty,
+			})(dispatch),
+			validateWalletDiversificationAssets({
+				validateId,
+				value: diversificationAssets,
+				dirty,
+			})(dispatch),
+		])
+
+		let isValid = inputValidations.every(v => v === true)
+
+		if (isValid) {
+			const account = selectAccount(state)
+			const feeDataAction = async () =>
+				await walletDiversificationTransaction({
+					getFeesOnly: true,
+					account,
+					formAsset,
+					formAssetAmount,
+					diversificationAssets,
+				})
+
+			isValid = await handleWalletFeesData({
+				stepsId,
+				validateId,
+				dirty,
+				actionName: 'walletTrade',
+				feeDataAction,
+			})(dispatch, getState)
+		}
+
+		await handleAfterValidation({ isValid, onValid, onInvalid })
+
+		await updateSpinner(validateId, false)(dispatch)
 	}
 }
