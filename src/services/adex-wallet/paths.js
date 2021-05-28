@@ -5,6 +5,24 @@ export const uniswapRouters = {
 	uniV3: '0xE592427A0AEce92De3Edee1F18E0157C05861564',
 }
 
+/**
+ * The default factory enabled fee amounts, denominated in hundredths of bips.
+ */
+export const FeeAmount = {
+	LOW: 500,
+	MEDIUM: 3000,
+	HIGH: 10000,
+}
+
+/**
+ * The default factory tick spacings by fee amount.
+ */
+export const TICK_SPACINGS = {
+	[FeeAmount.LOW]: 10,
+	[FeeAmount.MEDIUM]: 60,
+	[FeeAmount.HIGH]: 200,
+}
+
 export const paths = {
 	[tokens.WETH]: {
 		[tokens.UNI]: {
@@ -13,15 +31,15 @@ export const paths = {
 		},
 		[tokens.ADX]: {
 			router: 'uniV3',
-			path: [tokens.WETH, tokens.ADX],
+			path: [{ route: [tokens.WETH, tokens.ADX], fees: [FeeAmount.MEDIUM] }],
 		},
 		[tokens.USDT]: {
 			router: 'uniV3',
-			path: [tokens.WETH, tokens.USDT],
+			path: [{ route: [tokens.WETH, tokens.USDT], fees: [FeeAmount.LOW] }],
 		},
 		[tokens.DAI]: {
 			router: 'uniV3',
-			path: [tokens.WETH, tokens.DAI],
+			path: [{ route: [tokens.WETH, tokens.DAI], fees: [FeeAmount.MEDIUM] }],
 		},
 	},
 	[tokens.ADX]: {
