@@ -14,6 +14,7 @@ import {
 	Typography,
 	OutlinedInput,
 	IconButton,
+	Slider,
 } from '@material-ui/core'
 import { AmountWithCurrency } from 'components/common/amount'
 // import { InputLoading } from 'components/common/spinners/'
@@ -75,6 +76,55 @@ const getMainCurrencyValue = ({ asset, floatAmount, prices, mainCurrency }) => {
 	return value.toFixed(2)
 }
 
+const AssetSelector = ({
+	asset,
+	logoSrc,
+	symbol,
+	name,
+	share,
+	maxPercent,
+	onChange,
+}) => {
+	return (
+		<Box>
+			<Box>
+				<Box
+					display='flex'
+					flexDirection='row'
+					alignItems='center'
+					justifyContent='space-between'
+				>
+					<Box>
+						<img
+							src={logoSrc}
+							alt={name}
+							// className={classes.labelImg}
+						/>
+					</Box>
+					<Box>
+						{name} ({symbol})
+					</Box>
+					<Box>avl</Box>
+				</Box>
+				<Box>
+					<Slider
+						defaultValue={0}
+						// getAriaValueText={valuetext}
+						aria-labelledby={`asset-${symbol}-share-slider`}
+						step={5}
+						marks
+						onChange={(ev, value) => onChange(asset, value)}
+						min={0}
+						max={100}
+						valueLabelDisplay='auto'
+					/>
+				</Box>
+			</Box>
+			<Box></Box>
+		</Box>
+	)
+}
+
 const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	const classes = useStyles()
 	// NOTE: RAW DATA - BNs - format in fields
@@ -91,34 +141,19 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	const {
 		formAsset = '',
 		formAssetAmount,
-		toAssetAmount = null,
-		toAsset = assetsFromSource[1] ? assetsFromSource[1].value : '',
+		diversificationAssets = [],
 	} = useSelector(state => selectNewTransactionById(state, stepsId))
 
 	const selectedFromAsset = assetsData[formAsset] || {}
-	const selectedToAsset = assetsData[toAsset] || {}
 
 	const fromAssetUserBalance = selectedFromAsset
 		? selectedFromAsset.balance
-		: ZERO
-
-	const toAssetUserCurrentBalance = selectedToAsset
-		? selectedToAsset.balance
 		: ZERO
 
 	// const spinner = useSelector(state => selectSpinnerById(state, validateId))
 	const syncSpinner = useSelector(state =>
 		selectWeb3SyncSpinnerByValidateId(state, validateId)
 	)
-
-	const selectedToAssetMainCurrencyValue = toAssetAmount
-		? getMainCurrencyValue({
-				asset: selectedToAsset.symbol,
-				floatAmount: toAssetAmount,
-				prices,
-				mainCurrency: mainCurrency.id,
-		  })
-		: null
 
 	const {
 		formAssetAmount: errFormAssetAmount,
@@ -151,14 +186,30 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	}, [
 		formAssetAmount,
 		selectedFromAsset.symbol,
-		selectedToAsset.symbol,
 		mainCurrency.id,
 		stepsId,
 		validateId,
 	])
 
-	const updateDiversifications = () => {
-		// TODO
+	const updateDiversifications = (asset, share) => {
+		const updated = [...diversificationAssets]
+
+		const toUpdateIndex = updated.findIndex(x => x.address === asset)
+		const newValue = { asset, share }
+
+		if (toUpdateIndex) {
+			updated[toUpdateIndex] = newValue
+		} else {
+			updated.push(newValue)
+		}
+
+		execute(
+			updateNewTransaction({
+				tx: stepsId,
+				key: 'diversificationAssets',
+				value: updated,
+			})
+		)
 	}
 
 	useEffect(() => {
@@ -323,6 +374,15 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 												</Box>
 											))}
 										</Box>
+									</Grid>
+									<Grid item xs={12}>
+										{diversificationAssets.map(({ address, share }) => (
+											<AssetSelector
+												asset={address}
+												share={share}
+												onChange={updateDiversifications}
+											/>
+										))}
 									</Grid>
 								</Grid>
 							</Box>
