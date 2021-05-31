@@ -74,6 +74,7 @@ const getERC20Balance = async ({ tokenAddress, address }) => {
 export const assets = {
 	[ADXToken.address]: {
 		symbol: ADXToken.symbol,
+		name: 'AdEx Network',
 		getBalance: async function({ address }) {
 			return await getERC20Balance({ tokenAddress: ADXToken.address, address })
 		},
@@ -84,6 +85,7 @@ export const assets = {
 	},
 	[ADXLoyaltyPoolToken.address]: {
 		symbol: ADXLoyaltyPoolToken.symbol,
+		name: 'AdEx Loyalty pool',
 		getBalance: async function({ address }) {
 			return await getERC20Balance({
 				tokenAddress: ADXLoyaltyPoolToken.address,
@@ -97,6 +99,7 @@ export const assets = {
 	},
 	[StakingPool.address]: {
 		symbol: StakingPool.symbol,
+		name: 'AdEx Staking pool',
 		getBalance: async function({ address }) {
 			return await getERC20Balance({
 				tokenAddress: StakingPool.address,
@@ -110,6 +113,7 @@ export const assets = {
 	},
 	[tokens.USDT]: {
 		symbol: 'USDT',
+		name: 'Theter',
 		getBalance: async function({ address }) {
 			return await getERC20Balance({ tokenAddress: tokens.USDT, address })
 		},
@@ -120,6 +124,7 @@ export const assets = {
 	},
 	[tokens.WETH]: {
 		symbol: 'WETH',
+		name: 'WETH',
 		getBalance: async function({ address }) {
 			return await getERC20Balance({ tokenAddress: tokens.WETH, address })
 		},
@@ -130,6 +135,7 @@ export const assets = {
 	},
 	[tokens.UNI]: {
 		symbol: 'UNI',
+		name: 'Uniswap',
 		getBalance: async function({ address }) {
 			return await getERC20Balance({ tokenAddress: tokens.UNI, address })
 		},
@@ -140,6 +146,7 @@ export const assets = {
 	},
 	[tokens.DAI]: {
 		symbol: 'DAI',
+		name: 'Dai',
 		getBalance: async function({ address }) {
 			return await getERC20Balance({ tokenAddress: tokens.DAI, address })
 		},
