@@ -15,6 +15,8 @@ import {
 	OutlinedInput,
 	Fab,
 	Slider,
+	FormControl,
+	InputAdornment,
 } from '@material-ui/core'
 import { AmountWithCurrency } from 'components/common/amount'
 // import { InputLoading } from 'components/common/spinners/'
@@ -30,10 +32,7 @@ import {
 	// selectSpinnerById,
 	selectWeb3SyncSpinnerByValidateId,
 	selectTradableAssetsFromSources,
-	selectTradableAssetsToSources,
 	selectAccountStatsRaw,
-	selectBaseAssetsPrices,
-	selectSpinnerById,
 } from 'selectors'
 import {
 	execute,
@@ -63,6 +62,10 @@ const styles = theme => {
 		notchedOutlineRight: {
 			borderLeftWidth: '0 !important',
 		},
+		labelImg: {
+			maxHeight: theme.spacing(3),
+			marginRight: theme.spacing(2),
+		},
 	}
 }
 
@@ -79,40 +82,48 @@ const AssetSelector = ({
 	maxPercent,
 	onChange,
 }) => {
+	const classes = useStyles()
+
 	return (
 		<Box>
+			{' '}
 			<Box>
-				<Box
-					display='flex'
-					flexDirection='row'
-					alignItems='center'
-					justifyContent='space-between'
+				<Box display='flex' flexDirection='row' alignItems='center'>
+					<img src={logoSrc} alt={name} className={classes.labelImg} />
+					{name} ({symbol})
+				</Box>
+				<Box>avl</Box>
+			</Box>
+			<Box
+				display='flex'
+				flexDirection='row'
+				alignItems='center'
+				justifyContent='space-between'
+			>
+				<Slider
+					defaultValue={0}
+					// getAriaValueText={valuetext}
+					aria-labelledby={`asset-${symbol}-share-slider`}
+					step={5}
+					marks
+					onChange={(ev, value) => onChange(address, value)}
+					min={0}
+					max={100}
+					value={share}
+					valueLabelDisplay='auto'
+				/>
+				<FormControl
+					// className={clsx(classes.margin, classes.textField)}
+					variant='outlined'
 				>
-					<Box>
-						<img
-							src={logoSrc}
-							alt={name}
-							// className={classes.labelImg}
-						/>
-					</Box>
-					<Box>
-						{name} ({symbol})
-					</Box>
-					<Box>avl</Box>
-				</Box>
-				<Box>
-					<Slider
-						defaultValue={0}
-						// getAriaValueText={valuetext}
-						aria-labelledby={`asset-${symbol}-share-slider`}
-						step={5}
-						marks
-						onChange={(ev, value) => onChange(address, value)}
-						min={0}
-						max={100}
-						valueLabelDisplay='auto'
+					<OutlinedInput
+						id={`asset-${symbol}-share-input`}
+						value={share}
+						onChange={ev => onChange(address, ev.target.value)}
+						endAdornment={<InputAdornment position='end'>%</InputAdornment>}
+						labelWidth={0}
 					/>
-				</Box>
+				</FormControl>
 			</Box>
 			<Box></Box>
 		</Box>
@@ -400,7 +411,8 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 												aria-label='add'
 												onClick={() =>
 													selectedNewAsset &&
-													updateDiversifications(selectedNewAsset, 0)
+													updateDiversifications(selectedNewAsset, 0) &&
+													setNewSelectedAsset('')
 												}
 											>
 												<AddIcon />
