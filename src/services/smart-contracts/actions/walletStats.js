@@ -12,18 +12,23 @@ const ZERO = BigNumber.from(0)
 async function getAssetsData({ identityAddress, authType }) {
 	const assetsBalances = (
 		await Promise.all(
-			Object.entries(assets).map(async ([address, { getBalance, symbol }]) => {
-				const balance = await getBalance({ address: identityAddress })
-				const baseTokenBalance = mappers[address]
-					? await mappers[address](balance)
-					: balance
-				return {
-					address,
-					symbol,
-					balance,
-					baseTokenBalance,
+			Object.entries(assets).map(
+				async ([address, { getBalance, symbol, decimals, name, logoSrc }]) => {
+					const balance = await getBalance({ address: identityAddress })
+					const baseTokenBalance = mappers[address]
+						? await mappers[address](balance)
+						: balance
+					return {
+						address,
+						symbol,
+						balance,
+						baseTokenBalance,
+						decimals,
+						name,
+						logoSrc,
+					}
 				}
-			})
+			)
 		)
 	).reduce((byAddress, data) => {
 		byAddress[data.address] = data
