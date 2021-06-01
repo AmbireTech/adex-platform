@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import { BigNumber } from 'ethers'
 import { makeStyles } from '@material-ui/core/styles'
-import { SwapVert } from '@material-ui/icons'
+import { Add as AddIcon } from '@material-ui/icons'
 import {
 	TextField,
 	Button,
@@ -13,7 +13,7 @@ import {
 	// InputAdornment,
 	Typography,
 	OutlinedInput,
-	IconButton,
+	Fab,
 	Slider,
 } from '@material-ui/core'
 import { AmountWithCurrency } from 'components/common/amount'
@@ -70,14 +70,8 @@ const useStyles = makeStyles(styles)
 
 const ZERO = BigNumber.from(0)
 
-const getMainCurrencyValue = ({ asset, floatAmount, prices, mainCurrency }) => {
-	const price = (prices[asset] || {})[mainCurrency] || 0
-	const value = parseFloat(floatAmount) * price
-	return value.toFixed(2)
-}
-
 const AssetSelector = ({
-	asset,
+	address,
 	logoSrc,
 	symbol,
 	name,
@@ -113,7 +107,7 @@ const AssetSelector = ({
 						aria-labelledby={`asset-${symbol}-share-slider`}
 						step={5}
 						marks
-						onChange={(ev, value) => onChange(asset, value)}
+						onChange={(ev, value) => onChange(address, value)}
 						min={0}
 						max={100}
 						valueLabelDisplay='auto'
@@ -130,9 +124,8 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	// NOTE: RAW DATA - BNs - format in fields
 	const [selectedPercent, setSelectedPercent] = useState(0)
 	const { assetsData = {} } = useSelector(selectAccountStatsRaw)
-	const prices = useSelector(selectBaseAssetsPrices)
 	const assetsFromSource = useSelector(selectTradableAssetsFromSources)
-	const assetsToSource = useSelector(selectTradableAssetsToSources)
+	const [selectedNewAsset, setNewSelectedAsset] = useState('')
 	const mainCurrency = { id: 'USD', symbol: '$' } // TODO selector
 	// const estimatingSpinner = useSelector(state =>
 	// 	selectSpinnerById(state, validateId)
@@ -143,6 +136,10 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 		formAssetAmount,
 		diversificationAssets = [],
 	} = useSelector(state => selectNewTransactionById(state, stepsId))
+
+	const availableAssetsSrc = [...assetsFromSource].filter(
+		x => !diversificationAssets.some(y => y.address === x.value)
+	)
 
 	const selectedFromAsset = assetsData[formAsset] || {}
 
@@ -191,13 +188,13 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 		validateId,
 	])
 
-	const updateDiversifications = (asset, share) => {
+	const updateDiversifications = (address, share) => {
 		const updated = [...diversificationAssets]
 
-		const toUpdateIndex = updated.findIndex(x => x.address === asset)
-		const newValue = { asset, share }
+		const toUpdateIndex = updated.findIndex(x => x.address === address)
+		const newValue = { address, share }
 
-		if (toUpdateIndex) {
+		if (toUpdateIndex > -1) {
 			updated[toUpdateIndex] = newValue
 		} else {
 			updated.push(newValue)
@@ -378,11 +375,37 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 									<Grid item xs={12}>
 										{diversificationAssets.map(({ address, share }) => (
 											<AssetSelector
-												asset={address}
+												key={address}
 												share={share}
+												{...assetsData[address]}
 												onChange={updateDiversifications}
 											/>
 										))}
+										<Box display='flex' flexDirection='row' alignItems='center'>
+											<Dropdown
+												fullWidth
+												variant='outlined'
+												onChange={value => {
+													console.log('value', value)
+													value && setNewSelectedAsset(value)
+												}}
+												source={availableAssetsSrc}
+												value={selectedNewAsset}
+												// label={t('FROM_ASSET_LABEL')}
+												htmlId='wallet-asset-from-dd'
+											/>
+											<Fab
+												size='small'
+												color='primary'
+												aria-label='add'
+												onClick={() =>
+													selectedNewAsset &&
+													updateDiversifications(selectedNewAsset, 0)
+												}
+											>
+												<AddIcon />
+											</Fab>
+										</Box>
 									</Grid>
 								</Grid>
 							</Box>
