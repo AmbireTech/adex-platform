@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import { BigNumber } from 'ethers'
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles, withStyles } from '@material-ui/core/styles'
 import { Add as AddIcon } from '@material-ui/icons'
 import {
 	TextField,
@@ -66,14 +66,49 @@ const styles = theme => {
 			maxHeight: theme.spacing(3),
 			marginRight: theme.spacing(2),
 		},
+		shareInput: {
+			marginLeft: theme.spacing(2),
+			maxWidth: 77,
+		},
+	}
+}
+
+const sliderStyles = theme => {
+	const color = ({ index = 0 }) =>
+		theme.palette.chartColors.all[index % theme.palette.chartColors.all.length]
+
+	const height = 8
+	const borderRadius = height / 2
+
+	return {
+		track: {
+			borderRadius,
+			height,
+		},
+		root: {
+			color,
+			height,
+			borderRadius,
+		},
+		rail: {
+			height,
+			borderRadius,
+		},
+		thumb: {
+			marginTop: 0,
+			height,
+			width: height,
+		},
 	}
 }
 
 const useStyles = makeStyles(styles)
+const useSliderStyles = makeStyles(sliderStyles)
 
 const ZERO = BigNumber.from(0)
 
 const AssetSelector = ({
+	index,
 	address,
 	logoSrc,
 	symbol,
@@ -83,6 +118,7 @@ const AssetSelector = ({
 	onChange,
 }) => {
 	const classes = useStyles()
+	const sliderClasses = useSliderStyles({ index })
 
 	return (
 		<Box>
@@ -105,16 +141,18 @@ const AssetSelector = ({
 					// getAriaValueText={valuetext}
 					aria-labelledby={`asset-${symbol}-share-slider`}
 					step={5}
-					marks
+					marks={false}
 					onChange={(ev, value) => onChange(address, value)}
 					min={0}
 					max={100}
 					value={share}
-					valueLabelDisplay='auto'
+					valueLabelDisplay='off'
+					classes={sliderClasses}
 				/>
 				<FormControl
-					// className={clsx(classes.margin, classes.textField)}
+					className={classes.shareInput}
 					variant='outlined'
+					size='small'
 				>
 					<OutlinedInput
 						id={`asset-${symbol}-share-input`}
@@ -384,9 +422,10 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 										</Box>
 									</Grid>
 									<Grid item xs={12}>
-										{diversificationAssets.map(({ address, share }) => (
+										{diversificationAssets.map(({ address, share }, index) => (
 											<AssetSelector
 												key={address}
+												index={index}
 												share={share}
 												{...assetsData[address]}
 												onChange={updateDiversifications}
@@ -402,6 +441,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 												}}
 												source={availableAssetsSrc}
 												value={selectedNewAsset}
+												size='small'
 												// label={t('FROM_ASSET_LABEL')}
 												htmlId='wallet-asset-from-dd'
 											/>
