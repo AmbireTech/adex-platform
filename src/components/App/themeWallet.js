@@ -126,6 +126,10 @@ const paletteCommon = {
 		white: WHITE,
 		black: BLACK,
 	},
+	chartColors: {
+		main: primary,
+		all: ['#DDFF4E', '#3CCCC3', '#80FFDB', '#AA6AFF', '#6930C3'],
+	},
 }
 
 const paletteDark = {
