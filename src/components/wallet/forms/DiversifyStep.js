@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import { BigNumber } from 'ethers'
-import { makeStyles, withStyles } from '@material-ui/core/styles'
-import { Add as AddIcon } from '@material-ui/icons'
+import { makeStyles, useTheme } from '@material-ui/core/styles'
+import { Add as AddIcon, Stop as StopIcon } from '@material-ui/icons'
 import {
 	TextField,
 	Button,
@@ -19,6 +19,7 @@ import {
 	InputAdornment,
 	Divider,
 } from '@material-ui/core'
+import { Doughnut } from 'react-chartjs-2'
 import { AmountWithCurrency } from 'components/common/amount'
 // import { InputLoading } from 'components/common/spinners/'
 import {
@@ -112,6 +113,113 @@ const useStyles = makeStyles(styles)
 const useSliderStyles = makeStyles(sliderStyles)
 
 const ZERO = BigNumber.from(0)
+
+const SelectedDoughnut = ({
+	diversificationAssets,
+	assetsData,
+	sharesLeft = 0,
+}) => {
+	const theme = useTheme()
+
+	const chartColors = [...theme.palette.chartColors.all]
+
+	const { labels, shares } = diversificationAssets.reduce(
+		(data, asset) => {
+			data.labels.push(assetsData[asset.address].symbol)
+			data.shares.push(asset.share)
+
+			return data
+		},
+		{
+			labels: [],
+			shares: [],
+		}
+	)
+
+	if (sharesLeft > 0) {
+		labels.unshift('UNALLOCATED')
+		shares.unshift(sharesLeft)
+		chartColors.unshift('#707070')
+	}
+
+	const data = {
+		labels,
+		datasets: [
+			{
+				backgroundColor: chartColors,
+				hoverBackgroundColor: chartColors,
+				borderWidth: 0,
+				data: shares,
+				label: t('ASSET_SHARE'),
+			},
+		],
+	}
+
+	return (
+		<Grid container spacing={2} alignItems='center'>
+			<Grid item xs={6}>
+				<Doughnut
+					width={120}
+					height={120}
+					data={data}
+					options={{
+						cutoutPercentage: 70,
+						responsive: true,
+						legend: {
+							display: false,
+						},
+						title: {
+							display: false,
+						},
+						animation: false,
+						tooltips: {
+							callbacks: {
+								label: function(item, data) {
+									return (
+										data.labels[item.index] +
+										': ' +
+										data.datasets[item.datasetIndex].data[item.index]
+									)
+								},
+							},
+						},
+					}}
+				/>
+			</Grid>
+			<Grid item xs={6}>
+				<Box>
+					{data.labels.map((label, index) => {
+						return (
+							<Box
+								key={label + index}
+								display='flex'
+								flexDirection='row'
+								alignItems='center'
+								justifyContent='space-between'
+							>
+								<Box
+									display='flex'
+									flexDirection='row'
+									//   alignItems='center'
+								>
+									<Box
+										style={{ color: chartColors[index % chartColors.length] }}
+									>
+										<StopIcon color='inherit' fontSize='small' />
+									</Box>
+									<Box> {label} </Box>
+								</Box>
+								<Box color='text.primary' fontWeight='fontWeightBold'>
+									{data.datasets[0].data[index]}%
+								</Box>
+							</Box>
+						)
+					})}
+				</Box>
+			</Grid>
+		</Grid>
+	)
+}
 
 const AssetSelector = ({
 	index,
@@ -449,10 +557,16 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 									</Box>
 								</Grid>
 								<Grid item xs={12}>
+									<SelectedDoughnut
+										diversificationAssets={diversificationAssets}
+										assetsData={assetsData}
+										sharesLeft={sharesLeft}
+									/>
+								</Grid>
+								<Grid item xs={12}>
 									{diversificationAssets.map(({ address, share }, index) => (
-										<Box>
+										<Box key={address}>
 											<AssetSelector
-												key={address}
 												index={index}
 												share={share}
 												{...assetsData[address]}
@@ -479,11 +593,12 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 											size='small'
 											color='primary'
 											aria-label='add'
-											onClick={() =>
-												selectedNewAsset &&
-												updateDiversifications(selectedNewAsset, 0) &&
-												setNewSelectedAsset('')
-											}
+											onClick={() => {
+												if (selectedNewAsset) {
+													updateDiversifications(selectedNewAsset, 0)
+													setNewSelectedAsset('')
+												}
+											}}
 										>
 											<AddIcon />
 										</Fab>
