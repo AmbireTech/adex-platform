@@ -17,6 +17,7 @@ import {
 	Slider,
 	FormControl,
 	InputAdornment,
+	Divider,
 } from '@material-ui/core'
 import { AmountWithCurrency } from 'components/common/amount'
 // import { InputLoading } from 'components/common/spinners/'
@@ -63,12 +64,16 @@ const styles = theme => {
 			borderLeftWidth: '0 !important',
 		},
 		labelImg: {
-			maxHeight: theme.spacing(3),
+			maxHeight: theme.spacing(2),
 			marginRight: theme.spacing(2),
 		},
 		shareInput: {
 			marginLeft: theme.spacing(2),
 			maxWidth: 77,
+		},
+		divider: {
+			marginTop: theme.spacing(1),
+			marginBottom: theme.spacing(2),
 		},
 	}
 }
@@ -93,6 +98,7 @@ const sliderStyles = theme => {
 		rail: {
 			height,
 			borderRadius,
+			color: theme.palette.common.black,
 		},
 		thumb: {
 			marginTop: 0,
@@ -121,34 +127,43 @@ const AssetSelector = ({
 	const sliderClasses = useSliderStyles({ index })
 
 	return (
-		<Box>
+		<Box
+			display='flex'
+			flexDirection='row'
+			alignItems='center'
+			// justifyContent='space-between'
+		>
 			{' '}
-			<Box>
-				<Box display='flex' flexDirection='row' alignItems='center'>
-					<img src={logoSrc} alt={name} className={classes.labelImg} />
-					{name} ({symbol})
+			<Box flexGrow='1'>
+				<Box
+					display='flex'
+					flexDirection='row'
+					alignItems='center'
+					justifyContent='space-between'
+				>
+					<Box display='flex' flexDirection='row' alignItems='center'>
+						<img src={logoSrc} alt={name} className={classes.labelImg} />
+						{name} ({symbol})
+					</Box>
+					<Box>avl</Box>
 				</Box>
-				<Box>avl</Box>
+				<Box>
+					<Slider
+						defaultValue={0}
+						// getAriaValueText={valuetext}
+						aria-labelledby={`asset-${symbol}-share-slider`}
+						step={5}
+						marks={false}
+						onChange={(ev, value) => onChange(address, value)}
+						min={0}
+						max={100}
+						value={share}
+						valueLabelDisplay='off'
+						classes={sliderClasses}
+					/>
+				</Box>
 			</Box>
-			<Box
-				display='flex'
-				flexDirection='row'
-				alignItems='center'
-				justifyContent='space-between'
-			>
-				<Slider
-					defaultValue={0}
-					// getAriaValueText={valuetext}
-					aria-labelledby={`asset-${symbol}-share-slider`}
-					step={5}
-					marks={false}
-					onChange={(ev, value) => onChange(address, value)}
-					min={0}
-					max={100}
-					value={share}
-					valueLabelDisplay='off'
-					classes={sliderClasses}
-				/>
+			<Box>
 				<FormControl
 					className={classes.shareInput}
 					variant='outlined'
@@ -163,7 +178,6 @@ const AssetSelector = ({
 					/>
 				</FormControl>
 			</Box>
-			<Box></Box>
 		</Box>
 	)
 }
@@ -195,6 +209,10 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	const fromAssetUserBalance = selectedFromAsset
 		? selectedFromAsset.balance
 		: ZERO
+
+	const sharesLeft =
+		100 -
+		diversificationAssets.reduce((left, asset) => left + (asset.share || 0), 0)
 
 	// const spinner = useSelector(state => selectSpinnerById(state, validateId))
 	const syncSpinner = useSelector(state =>
@@ -240,8 +258,18 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	const updateDiversifications = (address, share) => {
 		const updated = [...diversificationAssets]
 
+		const otherAssetsShares = [...updated]
+			.filter(x => x.address !== address)
+			.reduce((otherTotal, asset) => otherTotal + asset.share, 0)
+
+		const maxShareLeft = 100 - otherAssetsShares
+
 		const toUpdateIndex = updated.findIndex(x => x.address === address)
-		const newValue = { address, share }
+
+		const newValue = {
+			address,
+			share: share > maxShareLeft ? maxShareLeft : share,
+		}
 
 		if (toUpdateIndex > -1) {
 			updated[toUpdateIndex] = newValue
@@ -290,139 +318,139 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 			) : (
 				<ContentBody>
 					<Box>
-						<Paper elevation={0}>
-							<Box p={2}>
-								<Grid container spacing={0}>
-									<Grid item xs={12}>
-										<Box mb={2} display='flex' justifyContent='space-between'>
-											<Typography variant='h5'>{t('FROM')}</Typography>
-											<Box display='inline'>
-												<Typography variant='body1'>
-													{t('AVAILABLE')}
-													<AmountWithCurrency
-														amount={formatTokenAmount(
-															fromAssetUserBalance,
-															selectedFromAsset.decimals
-														)}
-														mainFontVariant='body1'
-														decimalsFontVariant='caption'
-													/>
-												</Typography>
-											</Box>
+						<Box p={2}>
+							<Grid container spacing={0}>
+								<Grid item xs={12}>
+									<Box mb={2} display='flex' justifyContent='space-between'>
+										<Typography variant='h5'>{t('FROM')}</Typography>
+										<Box display='inline'>
+											<Typography variant='body1'>
+												{t('AVAILABLE')}
+												<AmountWithCurrency
+													amount={formatTokenAmount(
+														fromAssetUserBalance,
+														selectedFromAsset.decimals
+													)}
+													mainFontVariant='body1'
+													decimalsFontVariant='caption'
+												/>
+											</Typography>
 										</Box>
-									</Grid>
-									<Grid item xs={8}>
-										<Box>
-											<TextField
-												// disabled={spinner}
-												variant='outlined'
-												type='text'
-												fullWidth
-												required
-												label=''
-												name='amountToWithdraw'
-												value={`${formAssetAmount}`}
-												onChange={ev => {
-													execute(
-														updateNewTransaction({
-															tx: stepsId,
-															key: 'formAssetAmount',
-															value: ev.target.value,
-														})
-													)
-													setSelectedPercent(0)
-												}}
-												error={errFormAssetAmount && !!errFormAssetAmount.dirty}
-												helperText={
-													errFormAssetAmount && !!errFormAssetAmount.dirty
-														? errFormAssetAmount.errMsg
-														: null
-												}
-												InputProps={{
-													classes: {
-														root: classes.leftInput,
-														// notchedOutline: classes.notchedOutlineLeft,
-													},
-												}}
-											/>
-										</Box>
-									</Grid>
-									<Grid item xs={4}>
-										<Dropdown
-											fullWidth
+									</Box>
+								</Grid>
+								<Grid item xs={8}>
+									<Box>
+										<TextField
+											// disabled={spinner}
 											variant='outlined'
-											// required
-											onChange={value => {
-												execute(
-													updateNewTransaction({
-														tx: stepsId,
-														key: 'formAsset',
-														value,
-													})
-												)
+											type='text'
+											fullWidth
+											required
+											label=''
+											name='amountToWithdraw'
+											value={`${formAssetAmount}`}
+											onChange={ev => {
 												execute(
 													updateNewTransaction({
 														tx: stepsId,
 														key: 'formAssetAmount',
-														value: '0',
+														value: ev.target.value,
 													})
 												)
 												setSelectedPercent(0)
 											}}
-											source={assetsFromSource}
-											value={formAsset + ''}
-											// label={t('FROM_ASSET_LABEL')}
-											htmlId='wallet-asset-from-dd'
-											name='formAsset'
-											error={errFormAsset && !!errFormAsset.dirty}
+											error={errFormAssetAmount && !!errFormAssetAmount.dirty}
 											helperText={
-												errFormAsset && !!errFormAsset.dirty
-													? errFormAsset.errMsg
-													: // : t('WALLET_TRADE_FROM_ASSET')
-													  ''
+												errFormAssetAmount && !!errFormAssetAmount.dirty
+													? errFormAssetAmount.errMsg
+													: null
 											}
-											inputComponent={
-												<OutlinedInput
-													// label={t('FROM_ASSET_LABEL')}
-													labelWidth={0}
-													classes={{
-														root: classes.rightInput,
-														// notchedOutline: classes.notchedOutlineRight,
-													}}
-												/>
-											}
+											InputProps={{
+												classes: {
+													root: classes.leftInput,
+													// notchedOutline: classes.notchedOutlineLeft,
+												},
+											}}
 										/>
-									</Grid>
-									<Grid item xs={12}>
-										<Box mt={1}>
-											{[25, 50, 75, 100].map(percent => (
-												<Box
-													display='inline-block'
-													key={percent.toString()}
-													p={0.25}
+									</Box>
+								</Grid>
+								<Grid item xs={4}>
+									<Dropdown
+										fullWidth
+										variant='outlined'
+										// required
+										onChange={value => {
+											execute(
+												updateNewTransaction({
+													tx: stepsId,
+													key: 'formAsset',
+													value,
+												})
+											)
+											execute(
+												updateNewTransaction({
+													tx: stepsId,
+													key: 'formAssetAmount',
+													value: '0',
+												})
+											)
+											setSelectedPercent(0)
+										}}
+										source={assetsFromSource}
+										value={formAsset + ''}
+										// label={t('FROM_ASSET_LABEL')}
+										htmlId='wallet-asset-from-dd'
+										name='formAsset'
+										error={errFormAsset && !!errFormAsset.dirty}
+										helperText={
+											errFormAsset && !!errFormAsset.dirty
+												? errFormAsset.errMsg
+												: // : t('WALLET_TRADE_FROM_ASSET')
+												  ''
+										}
+										inputComponent={
+											<OutlinedInput
+												// label={t('FROM_ASSET_LABEL')}
+												labelWidth={0}
+												classes={{
+													root: classes.rightInput,
+													// notchedOutline: classes.notchedOutlineRight,
+												}}
+											/>
+										}
+									/>
+								</Grid>
+								<Grid item xs={12}>
+									<Box mt={1} mb={2}>
+										{[25, 50, 75, 100].map(percent => (
+											<Box
+												display='inline-block'
+												key={percent.toString()}
+												p={0.25}
+											>
+												<Button
+													variant={
+														selectedPercent === percent
+															? 'contained'
+															: 'outlined'
+													}
+													size='small'
+													color='default'
+													disabled={!selectedFromAsset}
+													onClick={() => {
+														setTradePercent(percent)
+														setSelectedPercent(percent)
+													}}
 												>
-													<Button
-														variant={
-															selectedPercent === percent
-																? 'contained'
-																: 'outlined'
-														}
-														size='small'
-														color='default'
-														disabled={!selectedFromAsset}
-														onClick={() => {
-															setTradePercent(percent)
-															setSelectedPercent(percent)
-														}}
-													>
-														{percent}%
-													</Button>
-												</Box>
-											))}
-										</Box>
-									</Grid>
-									<Grid item xs={12}>
-										{diversificationAssets.map(({ address, share }, index) => (
+													{percent}%
+												</Button>
+											</Box>
+										))}
+									</Box>
+								</Grid>
+								<Grid item xs={12}>
+									{diversificationAssets.map(({ address, share }, index) => (
+										<Box>
 											<AssetSelector
 												key={address}
 												index={index}
@@ -430,38 +458,51 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 												{...assetsData[address]}
 												onChange={updateDiversifications}
 											/>
-										))}
-										<Box display='flex' flexDirection='row' alignItems='center'>
-											<Dropdown
-												fullWidth
-												variant='outlined'
-												onChange={value => {
-													console.log('value', value)
-													value && setNewSelectedAsset(value)
-												}}
-												source={availableAssetsSrc}
-												value={selectedNewAsset}
-												size='small'
-												// label={t('FROM_ASSET_LABEL')}
-												htmlId='wallet-asset-from-dd'
-											/>
-											<Fab
-												size='small'
-												color='primary'
-												aria-label='add'
-												onClick={() =>
-													selectedNewAsset &&
-													updateDiversifications(selectedNewAsset, 0) &&
-													setNewSelectedAsset('')
-												}
-											>
-												<AddIcon />
-											</Fab>
+											<Divider className={classes.divider} />
 										</Box>
-									</Grid>
+									))}
+									<Box display='flex' flexDirection='row' alignItems='center'>
+										<Dropdown
+											fullWidth
+											variant='outlined'
+											onChange={value => {
+												console.log('value', value)
+												value && setNewSelectedAsset(value)
+											}}
+											source={availableAssetsSrc}
+											value={selectedNewAsset}
+											size='small'
+											// label={t('FROM_ASSET_LABEL')}
+											htmlId='wallet-asset-from-dd'
+										/>
+										<Fab
+											size='small'
+											color='primary'
+											aria-label='add'
+											onClick={() =>
+												selectedNewAsset &&
+												updateDiversifications(selectedNewAsset, 0) &&
+												setNewSelectedAsset('')
+											}
+										>
+											<AddIcon />
+										</Fab>
+									</Box>
 								</Grid>
-							</Box>
-						</Paper>
+								<Grid item xs={12}>
+									<Box mt={2}>
+										<TextField
+											label={t('SHARES_LEFT')}
+											value={sharesLeft}
+											InputProps={{
+												readOnly: true,
+											}}
+											variant='outlined'
+										/>
+									</Box>
+								</Grid>
+							</Grid>
+						</Box>
 
 						{errFees && errFees.dirty && errFees.errMsg && (
 							<Alert variant='filled' severity='error'>
