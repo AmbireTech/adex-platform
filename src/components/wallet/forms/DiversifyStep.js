@@ -44,6 +44,69 @@ import {
 import { Alert } from '@material-ui/lab'
 import Dropdown from 'components/common/dropdown'
 import { formatTokenAmount } from 'helpers/formatters'
+import { tokens } from 'services/adex-wallet/assets'
+
+const diversificationPresets = [
+	{
+		label: 'DIV_PRESET_CONSERVATIVE',
+		assets: [
+			{
+				address: tokens.USDT,
+				share: 40,
+			},
+			{
+				address: tokens.DAI,
+				share: 30,
+			},
+			{
+				address: tokens.WETH,
+				share: 20,
+			},
+			{
+				address: tokens.ADX,
+				share: 10,
+			},
+		],
+	},
+	{
+		label: 'DIV_PRESET_DEGEN',
+		assets: [
+			{
+				address: tokens.WETH,
+				share: 40,
+			},
+			{
+				address: tokens.ADX,
+				share: 20,
+			},
+			{
+				address: tokens.UNI,
+				share: 20,
+			},
+			{
+				address: tokens.USDT,
+				share: 20,
+			},
+		],
+	},
+	{
+		label: 'DIV_PRESET_RISKY',
+		assets: [
+			{
+				address: tokens.UNI,
+				share: 50,
+			},
+			{
+				address: tokens.ADX,
+				share: 30,
+			},
+			{
+				address: tokens.USDT,
+				share: 20,
+			},
+		],
+	},
+]
 
 const styles = theme => {
 	return {
@@ -363,26 +426,28 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 		validateId,
 	])
 
-	const updateDiversifications = (address, share) => {
-		const updated = [...diversificationAssets]
+	const updateDiversifications = (address, share, presets) => {
+		const updated = [...(presets || diversificationAssets)]
 
-		const otherAssetsShares = [...updated]
-			.filter(x => x.address !== address)
-			.reduce((otherTotal, asset) => otherTotal + asset.share, 0)
+		if (!presets) {
+			const otherAssetsShares = [...updated]
+				.filter(x => x.address !== address)
+				.reduce((otherTotal, asset) => otherTotal + asset.share, 0)
 
-		const maxShareLeft = 100 - otherAssetsShares
+			const maxShareLeft = 100 - otherAssetsShares
 
-		const toUpdateIndex = updated.findIndex(x => x.address === address)
+			const toUpdateIndex = updated.findIndex(x => x.address === address)
 
-		const newValue = {
-			address,
-			share: share > maxShareLeft ? maxShareLeft : share,
-		}
+			const newValue = {
+				address,
+				share: share > maxShareLeft ? maxShareLeft : share,
+			}
 
-		if (toUpdateIndex > -1) {
-			updated[toUpdateIndex] = newValue
-		} else {
-			updated.push(newValue)
+			if (toUpdateIndex > -1) {
+				updated[toUpdateIndex] = newValue
+			} else {
+				updated.push(newValue)
+			}
 		}
 
 		execute(
@@ -562,6 +627,28 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 										assetsData={assetsData}
 										sharesLeft={sharesLeft}
 									/>
+								</Grid>
+								<Grid item xs={12}>
+									<Box
+										display='flex'
+										flexDirection='row'
+										justifyContent='flex-end'
+										flexWrap='wrap'
+									>
+										<Typography>{t('PRESETS')}</Typography>
+										{diversificationPresets.map(x => (
+											<Box key={x.label} m={0.5}>
+												<Button
+													size='small'
+													onClick={() => {
+														updateDiversifications(null, null, x.assets)
+													}}
+												>
+													{t(x.label)}
+												</Button>
+											</Box>
+										))}
+									</Box>
 								</Grid>
 								<Grid item xs={12}>
 									{diversificationAssets.map(({ address, share }, index) => (
