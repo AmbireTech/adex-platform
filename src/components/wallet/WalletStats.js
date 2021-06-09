@@ -1,20 +1,154 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux'
 import {
 	Box,
 	// Paper,
 	Grid,
 } from '@material-ui/core'
+import { useTheme } from '@material-ui/core/styles'
 import { TreeView, TreeItem } from '@material-ui/lab'
 import { ExpandMore, ChevronRight } from '@material-ui/icons'
 import { AmountWithCurrency } from 'components/common/amount'
 import { InfoCard } from './WalletInfoCard'
+import { Stop as StopIcon } from '@material-ui/icons'
 import {
 	TradeAssets,
 	DiversifyAssets,
 } from 'components/wallet/forms/walletTransactions'
+import { Doughnut } from 'react-chartjs-2'
 
 import { t, selectAccountStatsFormatted } from 'selectors'
+
+const WalletDoughnut = ({ assetsData }) => {
+	const theme = useTheme()
+
+	const chartColors = [
+		...(theme.palette.chartColors ? theme.palette.chartColors.all : []),
+	]
+
+	const { labels, values } = Object.values(assetsData).reduce(
+		(data, asset) => {
+			data.labels.push(asset.symbol)
+			data.values.push(asset.assetToMainCurrenciesValues['USD'])
+			return data
+		},
+		{
+			labels: [],
+			values: [],
+		}
+	)
+
+	const data = {
+		labels,
+		datasets: [
+			{
+				backgroundColor: chartColors,
+				hoverBackgroundColor: chartColors,
+				borderWidth: 0,
+				data: values,
+				label: t('ASSET_SHARE'),
+			},
+		],
+	}
+
+	return (
+		<Grid container spacing={2} alignItems='center'>
+			<Grid item xs={5}>
+				<Box position='relative' width='100%' height='100%' paddingTop='100%'>
+					<Box
+						position='absolute'
+						top={0}
+						bottom={0}
+						width='100%'
+						height='100%'
+					>
+						<Doughnut
+							width={120}
+							height={120}
+							data={data}
+							options={{
+								cutoutPercentage: 70,
+								responsive: true,
+								legend: {
+									display: false,
+								},
+								title: {
+									display: false,
+								},
+								animation: false,
+								tooltips: {
+									callbacks: {
+										label: function(item, data) {
+											return (
+												data.labels[item.index] +
+												': ' +
+												data.datasets[item.datasetIndex].data[item.index]
+											)
+										},
+									},
+								},
+							}}
+							style={{
+								position: 'absolute',
+								top: 0,
+								bottom: 0,
+								width: '100%',
+								height: '100%',
+							}}
+						/>
+					</Box>
+					<Box
+						display='flex'
+						flexDirection='column'
+						alignItems='center'
+						justifyContent='center'
+						position='absolute'
+						width='70%'
+						height='70%'
+						backgroundColor='background.paper'
+						left='15%'
+						top='15%'
+						borderRadius='50%'
+					>
+						<Box>{}</Box>
+						<Box>{t('TOTAL')}</Box>
+					</Box>{' '}
+				</Box>
+			</Grid>
+			<Grid item xs={7}>
+				<Box>
+					{data.labels.map((label, index) => {
+						return (
+							<Box
+								key={label + index}
+								display='flex'
+								flexDirection='row'
+								alignItems='center'
+								justifyContent='space-between'
+							>
+								<Box
+									display='flex'
+									flexDirection='row'
+									//   alignItems='center'
+								>
+									<Box
+										style={{ color: chartColors[index % chartColors.length] }}
+									>
+										<StopIcon color='inherit' fontSize='small' />
+									</Box>
+									<Box> {label} </Box>
+								</Box>
+								<Box color='text.primary' fontWeight='fontWeightBold'>
+									{data.datasets[0].data[index]}%
+								</Box>
+							</Box>
+						)
+					})}
+				</Box>
+			</Grid>
+		</Grid>
+	)
+}
 
 function WalletStats() {
 	const { assetsData = {}, totalMainCurrenciesValues = {} } = useSelector(
@@ -47,12 +181,15 @@ function WalletStats() {
 								variant='contained'
 								color='secondary'
 								size='large'
-								dialogWidth={512}
-								dialogHeight={800}
+								dialogWidth={700}
+								dialogHeight={1000}
 							/>
 						</Box>
 					</Box>
 				</InfoCard>
+			</Grid>
+			<Grid item xs={12} md={6}>
+				<WalletDoughnut assetsData={assetsData} />
 			</Grid>
 
 			<Grid item xs={12} md={6}>
