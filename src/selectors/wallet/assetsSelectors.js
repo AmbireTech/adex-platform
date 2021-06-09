@@ -1,4 +1,8 @@
-import { selectAccountStatsFormatted, selectAccountStats } from 'selectors'
+import {
+	selectAccountStatsFormatted,
+	selectAccountStats,
+	selectIdentitySideUi,
+} from 'selectors'
 import { createSelector } from 'reselect'
 import { assets } from 'services/adex-wallet'
 
@@ -29,4 +33,10 @@ export const selectTradableAssetsToSources = createSelector(
 export const selectBaseAssetsPrices = createSelector(
 	[selectAccountStats],
 	({ prices = {} }) => prices
+)
+
+export const selectMainCurrency = createSelector(
+	[selectIdentitySideUi],
+	({ mainCurrency = { id: 'USD', symbol: '$', symbolPosition: 'left' } }) =>
+		mainCurrency
 )
