@@ -183,19 +183,28 @@ const SelectedDoughnut = ({
 	sharesLeft = 0,
 }) => {
 	const theme = useTheme()
+	const classes = useStyles()
 
 	const chartColors = [...theme.palette.chartColors.all]
 
-	const { labels, shares } = diversificationAssets.reduce(
+	const {
+		labels,
+		shares,
+		totalMainCurrencyValue,
+	} = diversificationAssets.reduce(
 		(data, asset) => {
 			data.labels.push(assetsData[asset.address].symbol)
 			data.shares.push(asset.share)
+			data.totalMainCurrencyValue =
+				data.totalMainCurrencyValue +
+				assetsData[asset.address].assetToMainCurrenciesValues['USD']
 
 			return data
 		},
 		{
 			labels: [],
 			shares: [],
+			totalMainCurrencyValue: 0,
 		}
 	)
 
@@ -221,33 +230,66 @@ const SelectedDoughnut = ({
 	return (
 		<Grid container spacing={2} alignItems='center'>
 			<Grid item xs={6}>
-				<Doughnut
-					width={120}
-					height={120}
-					data={data}
-					options={{
-						cutoutPercentage: 70,
-						responsive: true,
-						legend: {
-							display: false,
-						},
-						title: {
-							display: false,
-						},
-						animation: false,
-						tooltips: {
-							callbacks: {
-								label: function(item, data) {
-									return (
-										data.labels[item.index] +
-										': ' +
-										data.datasets[item.datasetIndex].data[item.index]
-									)
+				<Box position='relative' width='100%' height='100%' paddingTop='100%'>
+					<Box
+						position='absolute'
+						top={0}
+						bottom={0}
+						width='100%'
+						height='100%'
+					>
+						<Doughnut
+							width={120}
+							height={120}
+							data={data}
+							options={{
+								cutoutPercentage: 70,
+								responsive: true,
+								legend: {
+									display: false,
 								},
-							},
-						},
-					}}
-				/>
+								title: {
+									display: false,
+								},
+								animation: false,
+								tooltips: {
+									callbacks: {
+										label: function(item, data) {
+											return (
+												data.labels[item.index] +
+												': ' +
+												data.datasets[item.datasetIndex].data[item.index]
+											)
+										},
+									},
+								},
+							}}
+							style={{
+								position: 'absolute',
+								top: 0,
+								bottom: 0,
+								width: '100%',
+								height: '100%',
+							}}
+						/>
+					</Box>
+					<Box
+						className={classes.chartCore}
+						display='flex'
+						flexDirection='column'
+						alignItems='center'
+						justifyContent='center'
+						position='absolute'
+						width='70%'
+						height='70%'
+						backgroundColor='background.paper'
+						left='15%'
+						top='15%'
+						borderRadius='50%'
+					>
+						{totalMainCurrencyValue}
+					</Box>{' '}
+				</Box>
 			</Grid>
 			<Grid item xs={6}>
 				<Box>
@@ -633,13 +675,17 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 										display='flex'
 										flexDirection='row'
 										justifyContent='flex-end'
+										alignItems='center'
 										flexWrap='wrap'
 									>
-										<Typography>{t('PRESETS')}</Typography>
+										<Typography variant='caption' element='div'>
+											{t('PRESETS')}:
+										</Typography>
 										{diversificationPresets.map(x => (
 											<Box key={x.label} m={0.5}>
 												<Button
 													size='small'
+													variant='contained'
 													onClick={() => {
 														updateDiversifications(null, null, x.assets)
 													}}
