@@ -35,6 +35,7 @@ import {
 	selectWeb3SyncSpinnerByValidateId,
 	selectTradableAssetsFromSources,
 	selectAccountStatsRaw,
+	selectMainCurrency,
 } from 'selectors'
 import {
 	execute,
@@ -181,24 +182,17 @@ const SelectedDoughnut = ({
 	diversificationAssets,
 	assetsData,
 	sharesLeft = 0,
+	totalUsedValueMainCurrency = 0,
 }) => {
 	const theme = useTheme()
 	const classes = useStyles()
 
 	const chartColors = [...theme.palette.chartColors.all]
 
-	const {
-		labels,
-		shares,
-		totalMainCurrencyValue,
-	} = diversificationAssets.reduce(
+	const { labels, shares } = diversificationAssets.reduce(
 		(data, asset) => {
 			data.labels.push(assetsData[asset.address].symbol)
 			data.shares.push(asset.share)
-			data.totalMainCurrencyValue =
-				data.totalMainCurrencyValue +
-				assetsData[asset.address].assetToMainCurrenciesValues['USD']
-
 			return data
 		},
 		{
@@ -229,7 +223,7 @@ const SelectedDoughnut = ({
 
 	return (
 		<Grid container spacing={2} alignItems='center'>
-			<Grid item xs={6}>
+			<Grid item xs={5}>
 				<Box position='relative' width='100%' height='100%' paddingTop='100%'>
 					<Box
 						position='absolute'
@@ -287,11 +281,12 @@ const SelectedDoughnut = ({
 						top='15%'
 						borderRadius='50%'
 					>
-						{totalMainCurrencyValue}
+						<Box>{totalUsedValueMainCurrency}</Box>
+						<Box>{t('TOTAL')}</Box>
 					</Box>{' '}
 				</Box>
 			</Grid>
-			<Grid item xs={6}>
+			<Grid item xs={7}>
 				<Box>
 					{data.labels.map((label, index) => {
 						return (
@@ -371,6 +366,7 @@ const AssetSelector = ({
 						min={0}
 						max={100}
 						value={share}
+						size='small'
 						valueLabelDisplay='off'
 						classes={sliderClasses}
 					/>
@@ -398,20 +394,17 @@ const AssetSelector = ({
 const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	const classes = useStyles()
 	// NOTE: RAW DATA - BNs - format in fields
-	const [selectedPercent, setSelectedPercent] = useState(0)
 	const { assetsData = {} } = useSelector(selectAccountStatsRaw)
 	const assetsFromSource = useSelector(selectTradableAssetsFromSources)
 	const [selectedNewAsset, setNewSelectedAsset] = useState('')
-	const mainCurrency = { id: 'USD', symbol: '$' } // TODO selector
+	const mainCurrency = useSelector(selectMainCurrency) // { id: 'USD', symbol: '$' }
 	// const estimatingSpinner = useSelector(state =>
 	// 	selectSpinnerById(state, validateId)
 	// )
 
-	const {
-		formAsset = '',
-		formAssetAmount,
-		diversificationAssets = [],
-	} = useSelector(state => selectNewTransactionById(state, stepsId))
+	const { formAsset = '', diversificationAssets = [] } = useSelector(state =>
+		selectNewTransactionById(state, stepsId)
+	)
 
 	const availableAssetsSrc = [...assetsFromSource].filter(
 		x => !diversificationAssets.some(y => y.address === x.value)
@@ -419,39 +412,30 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 
 	const selectedFromAsset = assetsData[formAsset] || {}
 
-	const fromAssetUserBalance = selectedFromAsset
+	const fromAssetUserBalance = selectedFromAsset.balance
 		? selectedFromAsset.balance
 		: ZERO
 
-	const sharesLeft =
-		100 -
-		diversificationAssets.reduce((left, asset) => left + (asset.share || 0), 0)
+	const sharesUsed = diversificationAssets.reduce(
+		(left, asset) => left + (asset.share || 0),
+		0
+	)
+
+	const sharesLeft = 100 - sharesUsed
 
 	// const spinner = useSelector(state => selectSpinnerById(state, validateId))
 	const syncSpinner = useSelector(state =>
 		selectWeb3SyncSpinnerByValidateId(state, validateId)
 	)
 
-	const {
-		formAssetAmount: errFormAssetAmount,
-		formAsset: errFormAsset,
-		toAsset: errToAsset,
-		fees: errFees,
-	} = useSelector(state => selectValidationsById(state, validateId) || {})
+	const totalUsedValueMainCurrency = selectedFromAsset.balance
+		? selectedFromAsset.assetToMainCurrenciesValues[mainCurrency.id] *
+		  (sharesUsed / 100)
+		: 0
 
-	const setTradePercent = percent => {
-		const bnBalance = BigNumber.from(fromAssetUserBalance)
-			.mul(percent)
-			.div(100)
-		const value = formatTokenAmount(bnBalance, selectedFromAsset.decimals)
-		execute(
-			updateNewTransaction({
-				tx: stepsId,
-				key: 'formAssetAmount',
-				value,
-			})
-		)
-	}
+	const { formAsset: errFormAsset, fees: errFees } = useSelector(
+		state => selectValidationsById(state, validateId) || {}
+	)
 
 	useEffect(() => {
 		execute(
@@ -460,13 +444,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 				validateId,
 			})
 		)
-	}, [
-		formAssetAmount,
-		selectedFromAsset.symbol,
-		mainCurrency.id,
-		stepsId,
-		validateId,
-	])
+	}, [selectedFromAsset.symbol, mainCurrency.id, stepsId, validateId])
 
 	const updateDiversifications = (address, share, presets) => {
 		const updated = [...(presets || diversificationAssets)]
@@ -511,15 +489,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 				})
 			)
 		}
-		if (formAssetAmount === undefined) {
-			execute(
-				updateNewTransaction({
-					tx: stepsId,
-					key: 'formAssetAmount',
-					value: '0',
-				})
-			)
-		}
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
@@ -535,24 +505,6 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 					<Box>
 						<Box p={2}>
 							<Grid container spacing={0}>
-								<Grid item xs={12}>
-									<Box mb={2} display='flex' justifyContent='space-between'>
-										<Typography variant='h5'>{t('FROM')}</Typography>
-										<Box display='inline'>
-											<Typography variant='body1'>
-												{t('AVAILABLE')}
-												<AmountWithCurrency
-													amount={formatTokenAmount(
-														fromAssetUserBalance,
-														selectedFromAsset.decimals
-													)}
-													mainFontVariant='body1'
-													decimalsFontVariant='caption'
-												/>
-											</Typography>
-										</Box>
-									</Box>
-								</Grid>
 								<Grid item xs={8}>
 									<Box>
 										<TextField
@@ -561,25 +513,13 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 											type='text'
 											fullWidth
 											required
-											label=''
-											name='amountToWithdraw'
-											value={`${formAssetAmount}`}
-											onChange={ev => {
-												execute(
-													updateNewTransaction({
-														tx: stepsId,
-														key: 'formAssetAmount',
-														value: ev.target.value,
-													})
-												)
-												setSelectedPercent(0)
-											}}
-											error={errFormAssetAmount && !!errFormAssetAmount.dirty}
-											helperText={
-												errFormAssetAmount && !!errFormAssetAmount.dirty
-													? errFormAssetAmount.errMsg
-													: null
-											}
+											label={t('AVAILABLE')}
+											name='fromAssetUserBalance'
+											value={formatTokenAmount(
+												fromAssetUserBalance,
+												selectedFromAsset.decimals
+											)}
+											readonly
 											InputProps={{
 												classes: {
 													root: classes.leftInput,
@@ -602,14 +542,6 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 													value,
 												})
 											)
-											execute(
-												updateNewTransaction({
-													tx: stepsId,
-													key: 'formAssetAmount',
-													value: '0',
-												})
-											)
-											setSelectedPercent(0)
 										}}
 										source={assetsFromSource}
 										value={formAsset + ''}
@@ -636,38 +568,11 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 									/>
 								</Grid>
 								<Grid item xs={12}>
-									<Box mt={1} mb={2}>
-										{[25, 50, 75, 100].map(percent => (
-											<Box
-												display='inline-block'
-												key={percent.toString()}
-												p={0.25}
-											>
-												<Button
-													variant={
-														selectedPercent === percent
-															? 'contained'
-															: 'outlined'
-													}
-													size='small'
-													color='default'
-													disabled={!selectedFromAsset}
-													onClick={() => {
-														setTradePercent(percent)
-														setSelectedPercent(percent)
-													}}
-												>
-													{percent}%
-												</Button>
-											</Box>
-										))}
-									</Box>
-								</Grid>
-								<Grid item xs={12}>
 									<SelectedDoughnut
 										diversificationAssets={diversificationAssets}
 										assetsData={assetsData}
 										sharesLeft={sharesLeft}
+										totalUsedValueMainCurrency={totalUsedValueMainCurrency}
 									/>
 								</Grid>
 								<Grid item xs={12}>
@@ -713,7 +618,6 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 											fullWidth
 											variant='outlined'
 											onChange={value => {
-												console.log('value', value)
 												value && setNewSelectedAsset(value)
 											}}
 											source={availableAssetsSrc}
