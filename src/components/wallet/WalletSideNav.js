@@ -35,9 +35,10 @@ const RRAdexIconTxtDark = withReactRouterLink(AdexIconTxtDark)
 const { ETH_SCAN_ADDR_HOST } = process.env
 
 const useStyles = makeStyles(theme => {
-	const activeColor = theme.palette.primary.contrastText
+	const activeColor = theme.palette.text.primary
+	const activeColorIcon = theme.palette.primary.main
 
-	const activeBgColor = theme.palette.primary.main
+	const activeBgColor = theme.palette.transparent
 
 	return {
 		navigation: {
@@ -73,6 +74,15 @@ const useStyles = makeStyles(theme => {
 			borderTopColor: theme.palette.divider,
 			borderTopStyle: 'solid',
 		},
+		navLink: {
+			color: theme.palette.text.secondary,
+			'& .MuiListItemIcon-root': {
+				color: theme.palette.text.secondary,
+			},
+			'&:hover': {
+				color: activeColor,
+			},
+		},
 		active: {
 			color: activeColor,
 			backgroundColor: activeBgColor,
@@ -83,17 +93,17 @@ const useStyles = makeStyles(theme => {
 				backgroundColor: activeBgColor,
 				color: activeColor,
 				'& .MuiListItemIcon-root': {
-					color: activeColor,
+					color: activeColorIcon,
 				},
 			},
 			'& .MuiListItemIcon-root': {
-				color: theme.palette.common.white,
+				color: activeColorIcon,
 			},
 		},
 		adxLink: {
-			color: theme.palette.text.hint,
+			color: theme.palette.text.secondary,
 			'&:hover': {
-				color: theme.palette.text.secondary,
+				color: activeColor,
 			},
 		},
 		sideSwitch: {
@@ -166,27 +176,25 @@ function SideNav(props) {
 			>
 				<Box>
 					<List>
-						<ListDivider />
 						<RRListItem
 							button
 							to={{ pathname: '/dashboard/' }}
-							className={classnames({ [classes.active]: !location })}
+							className={classnames(
+								{
+									[classes.active]: !location,
+								},
+								classes.navLink
+							)}
 						>
 							<ListItemIcon>
 								<DashboardIcon />
 							</ListItemIcon>
 							<ListItemText primary={t('DASHBOARD')} />
 						</RRListItem>
-						<ListDivider />
-					</List>
-				</Box>
-				<Box>
-					<List>
-						<ListDivider />
 						<RRListItem
 							button
 							to={{ pathname: '/dashboard/topup' }}
-							className={classnames({
+							className={classnames(classes.navLink, {
 								[classes.active]: location === 'topup',
 							})}
 						>
@@ -195,7 +203,35 @@ function SideNav(props) {
 							</ListItemIcon>
 							<ListItemText primary={t('TOP_UP')} />
 						</RRListItem>
-						<ListDivider />
+
+						<Anchor
+							fullWidth
+							target='_blank'
+							href={`${ETH_SCAN_ADDR_HOST + identity}`}
+						>
+							<ListItem button className={classnames(classes.navLink)}>
+								<ListItemIcon>
+									<SwapHorizontalIcon />
+								</ListItemIcon>
+								<ListItemText primary={t('TRANSACTIONS')} />
+							</ListItem>
+						</Anchor>
+						<RRListItem
+							button
+							to={{ pathname: '/dashboard/account' }}
+							className={classnames(classes.navLink, {
+								[classes.active]: location === 'account',
+							})}
+						>
+							<ListItemIcon>
+								<AccountBoxIcon />
+							</ListItemIcon>
+							<ListItemText primary={t('ACCOUNT')} />
+						</RRListItem>
+					</List>
+				</Box>
+				<Box>
+					<List>
 						<Anchor
 							fullWidth
 							target='_blank'
@@ -208,32 +244,6 @@ function SideNav(props) {
 								<ListItemText primary={t('HELP')} />
 							</ListItem>
 						</Anchor>
-
-						<Anchor
-							fullWidth
-							target='_blank'
-							href={`${ETH_SCAN_ADDR_HOST + identity}`}
-						>
-							<ListItem button>
-								<ListItemIcon>
-									<SwapHorizontalIcon />
-								</ListItemIcon>
-								<ListItemText primary={t('TRANSACTIONS')} />
-							</ListItem>
-						</Anchor>
-
-						<RRListItem
-							button
-							to={{ pathname: '/dashboard/account' }}
-							className={classnames({
-								[classes.active]: location === 'account',
-							})}
-						>
-							<ListItemIcon>
-								<AccountBoxIcon />
-							</ListItemIcon>
-							<ListItemText primary={t('ACCOUNT')} />
-						</RRListItem>
 					</List>
 				</Box>
 			</Box>
