@@ -17,9 +17,13 @@ import {
 } from 'components/wallet/forms/walletTransactions'
 import { Doughnut } from 'react-chartjs-2'
 
-import { t, selectAccountStatsFormatted } from 'selectors'
+import { t, selectAccountStatsFormatted, selectMainCurrency } from 'selectors'
 
-const WalletDoughnut = ({ assetsData }) => {
+const WalletDoughnut = ({
+	assetsData,
+	totalMainCurrenciesValues,
+	mainCurrency,
+}) => {
 	const theme = useTheme()
 
 	const chartColors = [
@@ -29,7 +33,11 @@ const WalletDoughnut = ({ assetsData }) => {
 	const { labels, values } = Object.values(assetsData).reduce(
 		(data, asset) => {
 			data.labels.push(asset.symbol)
-			data.values.push(asset.assetToMainCurrenciesValues['USD'])
+			data.values.push(
+				(asset.assetToMainCurrenciesValues[mainCurrency.id] /
+					totalMainCurrenciesValues[mainCurrency.id]) *
+					100
+			)
 			return data
 		},
 		{
@@ -61,6 +69,7 @@ const WalletDoughnut = ({ assetsData }) => {
 						bottom={0}
 						width='100%'
 						height='100%'
+						zIndex={1}
 					>
 						<Doughnut
 							width={120}
@@ -97,22 +106,6 @@ const WalletDoughnut = ({ assetsData }) => {
 							}}
 						/>
 					</Box>
-					<Box
-						display='flex'
-						flexDirection='column'
-						alignItems='center'
-						justifyContent='center'
-						position='absolute'
-						width='70%'
-						height='70%'
-						backgroundColor='background.paper'
-						left='15%'
-						top='15%'
-						borderRadius='50%'
-					>
-						<Box>{}</Box>
-						<Box>{t('TOTAL')}</Box>
-					</Box>{' '}
 				</Box>
 			</Grid>
 			<Grid item xs={7}>
@@ -139,7 +132,7 @@ const WalletDoughnut = ({ assetsData }) => {
 									<Box> {label} </Box>
 								</Box>
 								<Box color='text.primary' fontWeight='fontWeightBold'>
-									{data.datasets[0].data[index]}%
+									{data.datasets[0].data[index].toFixed(2)}%
 								</Box>
 							</Box>
 						)
@@ -155,14 +148,16 @@ function WalletStats() {
 		selectAccountStatsFormatted
 	)
 
+	const mainCurrency = useSelector(selectMainCurrency)
+
 	return (
 		<Grid container spacing={2} alignItems='stretch' direction='row'>
 			<Grid item xs={12} md={6}>
-				<InfoCard title={t('PORTFOLIO VALUE')}>
+				<InfoCard title={t('PORTFOLIO_VALUE')}>
 					<Box>
 						<Box>
 							<AmountWithCurrency
-								amount={totalMainCurrenciesValues['USD']}
+								amount={totalMainCurrenciesValues[mainCurrency.id]}
 								unit={'$'}
 								unitPlace='left'
 								mainFontVariant='h2'
@@ -189,7 +184,13 @@ function WalletStats() {
 				</InfoCard>
 			</Grid>
 			<Grid item xs={12} md={6}>
-				<WalletDoughnut assetsData={assetsData} />
+				<InfoCard title={t('PORTFOLIO_BY_ASSETz')}>
+					<WalletDoughnut
+						assetsData={assetsData}
+						totalMainCurrenciesValues={totalMainCurrenciesValues}
+						mainCurrency={mainCurrency}
+					/>
+				</InfoCard>
 			</Grid>
 
 			<Grid item xs={12} md={6}>
@@ -212,7 +213,7 @@ function WalletStats() {
 										/>
 										{' ('}
 										<AmountWithCurrency
-											amount={x.assetToMainCurrenciesValues['USD']}
+											amount={x.assetToMainCurrenciesValues[mainCurrency.id]}
 											unit={'$'}
 											unitPlace='left'
 											mainFontVariant='body1'
