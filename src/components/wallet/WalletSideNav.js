@@ -1,19 +1,21 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
-import ListDivider from '@material-ui/core/Divider'
+import {
+	List,
+	ListItem,
+	ListItemText,
+	ListItemIcon,
+	Divider,
+} from '@material-ui/core'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
-import MonetizationOnIcon from '@material-ui/icons/MonetizationOn'
 import classnames from 'classnames'
 import packageJson from './../../../package.json'
 import Anchor from 'components/common/anchor/anchor'
 import AdexIconTxt from 'components/common/icons/AdexIconTxt'
-import AdexIconTxtDark from 'components/common/icons/AdexIconTxtDark'
-import DashboardIcon from '@material-ui/icons/Dashboard'
-import SwapHorizontalIcon from '@material-ui/icons/SwapHoriz'
+import AdexIconTxtDark from 'components/common/icons/AdexWalletTxtDark'
+import DashboardIcon from 'components/common/icons/WalletDashboard'
+import TopUpIcon from 'components/common/icons/WalletTopUp'
+import SwapHorizontalIcon from 'components/common/icons/WalletTransactions'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
 import Box from '@material-ui/core/Box'
@@ -112,6 +114,7 @@ const useStyles = makeStyles(theme => {
 		icon: {
 			height: 32,
 			width: 'auto',
+			maxWidth: '100%',
 			cursor: 'pointer',
 		},
 		amount: {
@@ -199,7 +202,7 @@ function SideNav(props) {
 							})}
 						>
 							<ListItemIcon>
-								<MonetizationOnIcon color='secondary' />
+								<TopUpIcon />
 							</ListItemIcon>
 							<ListItemText primary={t('TOP_UP')} />
 						</RRListItem>
@@ -249,7 +252,7 @@ function SideNav(props) {
 			</Box>
 
 			<Box>
-				<ListDivider />
+				<Divider />
 				<ListItem>
 					<Box>
 						<div>
