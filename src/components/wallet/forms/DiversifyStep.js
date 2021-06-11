@@ -129,7 +129,8 @@ const styles = theme => {
 			borderLeftWidth: '0 !important',
 		},
 		labelImg: {
-			maxHeight: theme.spacing(2),
+			// height: theme.spacing(2),
+			height: theme.typography.overline.fontSize,
 			marginRight: theme.spacing(2),
 		},
 		shareInput: {
@@ -137,8 +138,7 @@ const styles = theme => {
 			maxWidth: 77,
 		},
 		divider: {
-			marginTop: theme.spacing(1),
-			marginBottom: theme.spacing(2),
+			marginBottom: theme.spacing(0.5),
 		},
 	}
 }
@@ -185,6 +185,8 @@ const SelectedDoughnut = ({
 	totalUsedValueMainCurrency = 0,
 }) => {
 	const theme = useTheme()
+
+	console.log('theme', theme)
 	const classes = useStyles()
 
 	const chartColors = [...theme.palette.chartColors.all]
@@ -351,7 +353,9 @@ const AssetSelector = ({
 				>
 					<Box display='flex' flexDirection='row' alignItems='center'>
 						<img src={logoSrc} alt={name} className={classes.labelImg} />
-						{name} ({symbol})
+						<Typography component='div' variant='overline'>
+							{name} ({symbol})
+						</Typography>
 					</Box>
 					<Box>avl</Box>
 				</Box>
