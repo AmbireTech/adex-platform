@@ -11,6 +11,7 @@ import {
 	Tooltip,
 	Typography,
 	Select,
+	Avatar,
 } from '@material-ui/core'
 import { InfoSharp } from '@material-ui/icons'
 
@@ -37,8 +38,10 @@ export const styles = theme => ({
 		alignItems: 'center',
 	},
 	labelImg: {
-		height: '1em',
-		marginRight: theme.spacing(1),
+		height: theme.spacing(2),
+		width: theme.spacing(2),
+		marginRight: theme.spacing(2),
+		backgroundColor: theme.palette.common.white,
 	},
 })
 
@@ -106,11 +109,16 @@ function Dropdown(props) {
 					</InputLabel>
 					<Select
 						label={label}
-						value={value.id || value}
+						value={value ? value.id || value : value}
 						onChange={handleChange}
 						IconComponent={IconComponent}
 						input={inputComponent}
 						classes={{ selectMenu: classes.select }}
+						MenuProps={{
+							PaperProps: {
+								square: true,
+							},
+						}}
 					>
 						{[...source].map(src => {
 							const srcValue = src.value || {}
@@ -131,7 +139,7 @@ function Dropdown(props) {
 									//TODO: icon
 									}
 									{!!src.imgSrc && (
-										<img
+										<Avatar
 											src={src.imgSrc}
 											alt={src.label}
 											className={classes.labelImg}
