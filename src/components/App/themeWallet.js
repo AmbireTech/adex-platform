@@ -19,20 +19,20 @@ export const INFO = '#1b75bc'
 export const ERROR = '#ff6969'
 
 // Light theme
-export const PRIMARY = '#1B75BC'
-export const PRIMARY_LIGHT = '#5fa3ef'
-export const PRIMARY_LIGHTEST = '#96d4ff'
-export const PRIMARY_DARK = '#004a8b'
-export const PRIMARY_DARKEST = '#00235d'
+export const PRIMARY = '#AA6AFF'
+export const PRIMARY_LIGHT = '#df9aff'
+export const PRIMARY_LIGHTEST = '#ffccff'
+export const PRIMARY_DARK = '#6930c3'
+export const PRIMARY_DARKEST = '#410599'
 
-export const SECONDARY = '#1BC69F'
-export const SECONDARY_LIGHT = '#65fad0'
-export const SECONDARY_DARK = '#009471'
+export const SECONDARY = '#80FFDB'
+export const SECONDARY_LIGHT = '#b6ffff'
+export const SECONDARY_DARK = '#3cccc3'
 
 export const ALEX_GREY = '#3C3C3C'
 export const ALEX_GREY_LIGHT = '#666'
 export const ALEX_GREY_DARK = '#161616'
-export const ALEX_GREY_LIGHTEST = '#ebebeb'
+export const ALEX_GREY_LIGHTEST = '#48cba9'
 
 export const GANDALF_GREY = '#C4C4C4'
 
@@ -63,15 +63,15 @@ const secondary = {
 }
 
 // Dark theme
-export const DARK_PRIMARY = '#6930C3'
-export const DARK_PRIMARY_LIGHT = '#AA6AFF'
-export const DARK_PRIMARY_LIGHTEST = '#e7b9ff'
-export const DARK_PRIMARY_DARK = '#805acb'
-export const DARK_PRIMARY_DARKEST = '#805acb'
+export const DARK_PRIMARY = '#AA6AFF'
+export const DARK_PRIMARY_LIGHT = '#df9aff'
+export const DARK_PRIMARY_LIGHTEST = '#ffccff'
+export const DARK_PRIMARY_DARK = '#6930c3'
+export const DARK_PRIMARY_DARKEST = '#410599'
 
-export const DARK_SECONDARY = '#3CCCC3'
-export const DARK_SECONDARY_LIGHT = '#80FFDB'
-export const DARK_SECONDARY_DARK = '#14cba8'
+export const DARK_SECONDARY = '#80FFDB'
+export const DARK_SECONDARY_LIGHT = '#b6ffff'
+export const DARK_SECONDARY_DARK = '#3cccc3'
 
 export const DARK_PAPER = '#1A1920'
 export const DARK_BG_DEFAULT = '#292835'
@@ -445,9 +445,9 @@ const commonTheme = createMuiTheme({
 			},
 		},
 		MuiListItem: {
-			root: {
-				borderRadius,
-			},
+			// root: {
+			// 	borderRadius,
+			// },
 		},
 		MuiDivider: {
 			root: {
