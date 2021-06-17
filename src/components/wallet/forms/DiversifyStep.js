@@ -609,6 +609,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 										justifyContent='flex-end'
 										alignItems='center'
 										flexWrap='wrap'
+										mb={2}
 									>
 										<Typography variant='caption' element='div'>
 											{t('PRESETS')}:
@@ -686,14 +687,20 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 									)}
 								</Grid>
 								<Grid item xs={12}>
-									<Box mt={2}>
-										<TextField
-											label={t('SHARES_LEFT')}
-											value={sharesLeft}
-											InputProps={{
-												readOnly: true,
+									<Box
+										mt={4}
+										display='flex'
+										flexDirection='row'
+										justifyContent='space-between'
+									>
+										<Box fontSize='h6.fontSize' color='primary.main'>
+											{t('DIVERSIFY_TOTAL_WARNING')}
+										</Box>
+										<Box
+											fontSize='h6.fontSize'
+											dangerouslySetInnerHTML={{
+												__html: t('SHARES_LEFT', { args: [sharesLeft] }),
 											}}
-											variant='outlined'
 										/>
 									</Box>
 								</Grid>
