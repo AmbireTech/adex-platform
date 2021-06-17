@@ -1,11 +1,11 @@
 import React from 'react'
-import { Box, Typography } from '@material-ui/core'
+import { Box } from '@material-ui/core'
 import { formatNumberWithCommas } from 'helpers/formatters'
 import { validations } from 'adex-models'
 const { isNumberString } = validations
 
 const AmountUnit = ({ unit }) => (
-	<Box component='span' display='inline' color='secondary.light'>
+	<Box component='span' display='inline' color='secondary.main'>
 		{unit}
 	</Box>
 )
@@ -35,20 +35,24 @@ export function AmountWithCurrency({
 			display={multiline ? 'block' : 'inline'}
 			width={multiline ? 1 : 'auto'}
 		>
-			<Typography component='span' display='inline' variant={mainFontVariant}>
+			<Box
+				component='span'
+				display='inline'
+				fontSize={`${mainFontVariant}.fontSize`}
+			>
 				{unit && unitPlace === 'left' && <AmountUnit unit={unit} />}{' '}
 				{decimalSeparatorSplit[0]}
 				{'.'}
-				<Typography
+				<Box
 					component='span'
 					display='inline'
-					variant={decimalsFontVariant}
-					color='secondary'
+					fontSize={`${decimalsFontVariant}.fontSize`}
+					color='secondary.dark'
 				>
 					{decimalSeparatorSplit[1] || '00'}
-				</Typography>{' '}
+				</Box>{' '}
 				{unit && unitPlace === 'right' && <AmountUnit unit={unit} />}
-			</Typography>
+			</Box>
 		</Box>
 	)
 }
