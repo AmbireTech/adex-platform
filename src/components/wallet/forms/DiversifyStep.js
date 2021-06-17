@@ -3,7 +3,12 @@ import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import { BigNumber } from 'ethers'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
-import { Add as AddIcon, Stop as StopIcon } from '@material-ui/icons'
+import { fade } from '@material-ui/core/styles/colorManipulator'
+import {
+	AddSharp as AddIcon,
+	StopSharp as StopIcon,
+	CloseSharp as CloseIcon,
+} from '@material-ui/icons'
 import {
 	TextField,
 	Button,
@@ -13,7 +18,6 @@ import {
 	// InputAdornment,
 	Typography,
 	OutlinedInput,
-	Fab,
 	Slider,
 	FormControl,
 	InputAdornment,
@@ -45,6 +49,7 @@ import { Alert } from '@material-ui/lab'
 import Dropdown from 'components/common/dropdown'
 import { formatTokenAmount } from 'helpers/formatters'
 import { tokens } from 'services/adex-wallet/assets'
+import { IconButton } from '@material-ui/core'
 
 const diversificationPresets = [
 	{
@@ -140,6 +145,13 @@ const styles = theme => {
 		divider: {
 			marginBottom: theme.spacing(1),
 			marginTop: theme.spacing(0.5),
+		},
+		addBtn: {
+			backgroundColor: theme.palette.primary.main,
+			color: theme.palette.primary.contrastText,
+			'&:hover': {
+				backgroundColor: fade(theme.palette.primary.main, 0.69),
+			},
 		},
 	}
 }
@@ -378,7 +390,7 @@ const AssetSelector = ({
 					/>
 				</Box>
 			</Box>
-			<Box>
+			<Box mr={1}>
 				<FormControl
 					className={classes.shareInput}
 					variant='outlined'
@@ -393,6 +405,13 @@ const AssetSelector = ({
 					/>
 				</FormControl>
 			</Box>
+			<IconButton
+				size='small'
+				edge='end'
+				onClick={() => onChange(address, null, null, true)}
+			>
+				<CloseIcon />
+			</IconButton>
 		</Box>
 	)
 }
@@ -452,7 +471,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 		)
 	}, [selectedFromAsset.symbol, mainCurrency.id, stepsId, validateId])
 
-	const updateDiversifications = (address, share, presets) => {
+	const updateDiversifications = (address, share, presets, remove) => {
 		const updated = [...(presets || diversificationAssets)]
 
 		if (!presets) {
@@ -469,9 +488,11 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 				share: share > maxShareLeft ? maxShareLeft : share,
 			}
 
-			if (toUpdateIndex > -1) {
+			if (toUpdateIndex > -1 && remove) {
+				updated.splice(toUpdateIndex, 1)
+			} else if (toUpdateIndex > -1) {
 				updated[toUpdateIndex] = newValue
-			} else {
+			} else if (!remove) {
 				updated.push(newValue)
 			}
 		}
@@ -647,9 +668,10 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 													htmlId='diversify-new-asset-dd'
 												/>
 											</Box>
-											<Fab
+											<IconButton
+												className={classes.addBtn}
 												size='small'
-												color='primary'
+												edge='end'
 												aria-label='add'
 												onClick={() => {
 													if (selectedNewAsset) {
@@ -659,7 +681,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 												}}
 											>
 												<AddIcon />
-											</Fab>
+											</IconButton>
 										</Box>
 									)}
 								</Grid>
