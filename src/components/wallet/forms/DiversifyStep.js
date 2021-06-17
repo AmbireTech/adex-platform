@@ -9,7 +9,7 @@ import {
 	Button,
 	Box,
 	Grid,
-	Paper,
+	Avatar,
 	// InputAdornment,
 	Typography,
 	OutlinedInput,
@@ -20,7 +20,6 @@ import {
 	Divider,
 } from '@material-ui/core'
 import { Doughnut } from 'react-chartjs-2'
-import { AmountWithCurrency } from 'components/common/amount'
 // import { InputLoading } from 'components/common/spinners/'
 import {
 	ContentBox,
@@ -129,16 +128,18 @@ const styles = theme => {
 			borderLeftWidth: '0 !important',
 		},
 		labelImg: {
-			// height: theme.spacing(2),
-			height: theme.typography.overline.fontSize,
+			height: theme.spacing(3),
+			width: theme.spacing(3),
 			marginRight: theme.spacing(2),
+			backgroundColor: theme.palette.common.white,
 		},
 		shareInput: {
 			marginLeft: theme.spacing(2),
 			maxWidth: 77,
 		},
 		divider: {
-			marginBottom: theme.spacing(0.5),
+			marginBottom: theme.spacing(1),
+			marginTop: theme.spacing(0.5),
 		},
 	}
 }
@@ -159,6 +160,7 @@ const sliderStyles = theme => {
 			color,
 			height,
 			borderRadius,
+			padding: `${theme.spacing(1)}px 0`,
 		},
 		rail: {
 			height,
@@ -352,10 +354,10 @@ const AssetSelector = ({
 					justifyContent='space-between'
 				>
 					<Box display='flex' flexDirection='row' alignItems='center'>
-						<img src={logoSrc} alt={name} className={classes.labelImg} />
-						<Typography component='div' variant='overline'>
+						<Avatar src={logoSrc} alt={name} className={classes.labelImg} />
+						<Box>
 							{name} ({symbol})
-						</Typography>
+						</Box>
 					</Box>
 					<Box>avl</Box>
 				</Box>
@@ -617,33 +619,49 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 											<Divider className={classes.divider} />
 										</Box>
 									))}
-									<Box display='flex' flexDirection='row' alignItems='center'>
-										<Dropdown
-											fullWidth
-											variant='outlined'
-											onChange={value => {
-												value && setNewSelectedAsset(value)
-											}}
-											source={availableAssetsSrc}
-											value={selectedNewAsset}
-											size='small'
-											// label={t('FROM_ASSET_LABEL')}
-											htmlId='wallet-asset-from-dd'
-										/>
-										<Fab
-											size='small'
-											color='primary'
-											aria-label='add'
-											onClick={() => {
-												if (selectedNewAsset) {
-													updateDiversifications(selectedNewAsset, 0)
-													setNewSelectedAsset('')
-												}
-											}}
+									{availableAssetsSrc.length && (
+										<Box
+											display='flex'
+											flexDirection='row'
+											alignItems='center'
+											justifyContent='stretch'
 										>
-											<AddIcon />
-										</Fab>
-									</Box>
+											<Box width={1} mr={1}>
+												<Dropdown
+													fullWidth
+													variant='standard'
+													onChange={value => {
+														value && setNewSelectedAsset(value)
+													}}
+													source={availableAssetsSrc}
+													value={selectedNewAsset}
+													size='small'
+													label={
+														selectedNewAsset
+															? t('DIVERSIFY_ADD_NEW_ASSET')
+															: availableAssetsSrc
+																	.map(x => x.label)
+																	.join(', ')
+																	.substr(0, 20) + '...'
+													}
+													htmlId='diversify-new-asset-dd'
+												/>
+											</Box>
+											<Fab
+												size='small'
+												color='primary'
+												aria-label='add'
+												onClick={() => {
+													if (selectedNewAsset) {
+														updateDiversifications(selectedNewAsset, 0)
+														setNewSelectedAsset('')
+													}
+												}}
+											>
+												<AddIcon />
+											</Fab>
+										</Box>
+									)}
 								</Grid>
 								<Grid item xs={12}>
 									<Box mt={2}>
