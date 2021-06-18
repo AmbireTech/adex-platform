@@ -240,6 +240,50 @@ const SelectedDoughnut = ({
 			<Grid item xs={6} sm={5}>
 				<Box position='relative' width='100%' height='100%' paddingTop='100%'>
 					<Box
+						className={classes.chartCore}
+						display='flex'
+						flexDirection='column'
+						alignItems='center'
+						justifyContent='center'
+						position='absolute'
+						width='70%'
+						height='70%'
+						bgcolor='background.paper'
+						left='15%'
+						top='15%'
+						borderRadius='50%'
+					>
+						<svg
+							width='98%'
+							height='100%'
+							viewBox='0 0 300 300'
+							preserveAspectRatio='xMinYMid meet'
+						>
+							<text
+								dominantBaseline='middle'
+								textAnchor='middle'
+								x='50%'
+								y='50%'
+								fontSize='40'
+								fontWeight='bold'
+								fill={theme.palette.text.primary}
+							>
+								{totalUsedValueMainCurrency}
+							</text>
+							<text
+								dominantBaseline='middle'
+								textAnchor='middle'
+								x='50%'
+								y='69%'
+								fontSize='36'
+								fontWeight='bold'
+								fill={theme.palette.text.secondary}
+							>
+								{t('TOTAL')}
+							</text>
+						</svg>
+					</Box>
+					<Box
 						position='absolute'
 						top={0}
 						bottom={0}
@@ -281,53 +325,6 @@ const SelectedDoughnut = ({
 							}}
 						/>
 					</Box>
-					<Box
-						className={classes.chartCore}
-						display='flex'
-						flexDirection='column'
-						alignItems='center'
-						justifyContent='center'
-						position='absolute'
-						width='70%'
-						height='70%'
-						bgcolor='background.paper'
-						left='15%'
-						top='15%'
-						borderRadius='50%'
-						zIndex='0'
-					>
-						<svg
-							width='98%'
-							height='100%'
-							viewBox='0 0 300 300'
-							preserveAspectRatio='xMinYMid meet'
-						>
-							<text
-								dominant-baseline='middle'
-								text-anchor='middle'
-								x='50%'
-								y='50%'
-								font-size='40'
-								font-weight='bold'
-								fill={theme.palette.text.primary}
-							>
-								{totalUsedValueMainCurrency}
-							</text>
-							<text
-								dominant-baseline='middle'
-								text-anchor='middle'
-								x='50%'
-								y='69%'
-								font-size='36'
-								font-weight='bold'
-								fill={theme.palette.text.secondary}
-							>
-								{t('TOTAL')}
-							</text>
-						</svg>
-						{/* <Box>{totalUsedValueMainCurrency}</Box>
-						<Box>{t('TOTAL')}</Box> */}
-					</Box>{' '}
 				</Box>
 			</Grid>
 			<Grid item xs={6} sm={7}>
@@ -571,6 +568,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 											type='text'
 											fullWidth
 											required
+											size='small'
 											label={t('AVAILABLE')}
 											name='fromAssetUserBalance'
 											value={formatTokenAmount(
@@ -591,6 +589,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 									<Dropdown
 										fullWidth
 										variant='outlined'
+										size='small'
 										// required
 										onChange={value => {
 											execute(
