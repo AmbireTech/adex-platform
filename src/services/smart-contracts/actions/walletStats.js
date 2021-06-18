@@ -135,18 +135,32 @@ export async function getAccountStatsWallet({ account, prices }) {
 				asset.total,
 				asset.decimals
 			)
-			const assetToMainCurrenciesValues = withPricesValue({
+			const assetTotalToMainCurrenciesValues = withPricesValue({
 				prices: prices[asset.symbol],
 				value: assetTotalValueFloat,
+			})
+
+			const assetBalanceValueFloat = utils.formatUnits(
+				asset.balance,
+				asset.decimals
+			)
+
+			const assetBalanceToMainCurrenciesValues = withPricesValue({
+				prices: prices[asset.symbol],
+				value: assetBalanceValueFloat,
 			})
 
 			data.withUsdValue[key] = { ...asset }
 			data.withUsdValue[
 				key
-			].assetToMainCurrenciesValues = assetToMainCurrenciesValues
+			].assetTotalToMainCurrenciesValues = assetTotalToMainCurrenciesValues
+
+			data.withUsdValue[
+				key
+			].assetBalanceToMainCurrenciesValues = assetBalanceToMainCurrenciesValues
 
 			data.totalMainCurrenciesValues = sumPricesValues([
-				assetToMainCurrenciesValues,
+				assetTotalToMainCurrenciesValues,
 				data.totalMainCurrenciesValues,
 			])
 
