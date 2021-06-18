@@ -337,17 +337,13 @@ const SelectedDoughnut = ({
 								flexDirection='row'
 								alignItems='center'
 								justifyContent='space-between'
+								flexWrap='wrap'
 							>
-								<Box
-									display='flex'
-									flexDirection='row'
-									//   alignItems='center'
-								>
-									<Box
+								<Box display='flex' flexDirection='row' alignItems='center'>
+									<StopIcon
 										style={{ color: chartColors[index % chartColors.length] }}
-									>
-										<StopIcon color='inherit' fontSize='small' />
-									</Box>
+										fontSize='small'
+									/>
 									<Box> {label} </Box>
 								</Box>
 								<Box color='text.primary' fontWeight='fontWeightBold'>
