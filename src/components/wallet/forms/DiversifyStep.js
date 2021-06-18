@@ -199,8 +199,6 @@ const SelectedDoughnut = ({
 	totalUsedValueMainCurrency = 0,
 }) => {
 	const theme = useTheme()
-
-	console.log('theme', theme)
 	const classes = useStyles()
 
 	const chartColors = [...theme.palette.chartColors.all]
@@ -239,7 +237,7 @@ const SelectedDoughnut = ({
 
 	return (
 		<Grid container spacing={2} alignItems='center'>
-			<Grid item xs={5}>
+			<Grid item xs={6} sm={5}>
 				<Box position='relative' width='100%' height='100%' paddingTop='100%'>
 					<Box
 						position='absolute'
@@ -292,17 +290,47 @@ const SelectedDoughnut = ({
 						position='absolute'
 						width='70%'
 						height='70%'
-						backgroundColor='background.paper'
+						bgcolor='background.paper'
 						left='15%'
 						top='15%'
 						borderRadius='50%'
+						zIndex='0'
 					>
-						<Box>{totalUsedValueMainCurrency}</Box>
-						<Box>{t('TOTAL')}</Box>
+						<svg
+							width='98%'
+							height='100%'
+							viewBox='0 0 300 300'
+							preserveAspectRatio='xMinYMid meet'
+						>
+							<text
+								dominant-baseline='middle'
+								text-anchor='middle'
+								x='50%'
+								y='50%'
+								font-size='40'
+								font-weight='bold'
+								fill={theme.palette.text.primary}
+							>
+								{totalUsedValueMainCurrency}
+							</text>
+							<text
+								dominant-baseline='middle'
+								text-anchor='middle'
+								x='50%'
+								y='69%'
+								font-size='36'
+								font-weight='bold'
+								fill={theme.palette.text.secondary}
+							>
+								{t('TOTAL')}
+							</text>
+						</svg>
+						{/* <Box>{totalUsedValueMainCurrency}</Box>
+						<Box>{t('TOTAL')}</Box> */}
 					</Box>{' '}
 				</Box>
 			</Grid>
-			<Grid item xs={7}>
+			<Grid item xs={6} sm={7}>
 				<Box>
 					{data.labels.map((label, index) => {
 						return (
@@ -422,7 +450,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	const { assetsData = {} } = useSelector(selectAccountStatsRaw)
 	const assetsFromSource = useSelector(selectTradableAssetsFromSources)
 	const [selectedNewAsset, setNewSelectedAsset] = useState('')
-	const mainCurrency = useSelector(selectMainCurrency) // { id: 'USD', symbol: '$' }
+	const mainCurrency = useSelector(selectMainCurrency) // {id: 'USD', symbol: '$' }
 	// const estimatingSpinner = useSelector(state =>
 	// 	selectSpinnerById(state, validateId)
 	// )
@@ -453,10 +481,13 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 		selectWeb3SyncSpinnerByValidateId(state, validateId)
 	)
 
-	const totalUsedValueMainCurrency = selectedFromAsset.balance
-		? selectedFromAsset.assetToMainCurrenciesValues[mainCurrency.id] *
-		  (sharesUsed / 100)
-		: 0
+	const totalUsedValueMainCurrency =
+		mainCurrency.symbol +
+		(selectedFromAsset.balance
+			? selectedFromAsset.assetBalanceToMainCurrenciesValues[mainCurrency.id] *
+			  (sharesUsed / 100)
+			: 0
+		).toFixed(2)
 
 	const { formAsset: errFormAsset, fees: errFees } = useSelector(
 		state => selectValidationsById(state, validateId) || {}
@@ -530,7 +561,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 			) : (
 				<ContentBody>
 					<Box>
-						<Box p={2}>
+						<Box mb={2}>
 							<Grid container spacing={0}>
 								<Grid item xs={8}>
 									<Box>
@@ -546,7 +577,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 												fromAssetUserBalance,
 												selectedFromAsset.decimals
 											)}
-											readonly
+											readOnly
 											InputProps={{
 												classes: {
 													root: classes.leftInput,
