@@ -34,7 +34,7 @@ const WalletDoughnut = ({
 		(data, asset) => {
 			data.labels.push(asset.symbol)
 			data.values.push(
-				(asset.assetToMainCurrenciesValues[mainCurrency.id] /
+				(asset.assetTotalToMainCurrenciesValues[mainCurrency.id] /
 					totalMainCurrenciesValues[mainCurrency.id]) *
 					100
 			)
@@ -176,15 +176,15 @@ function WalletStats() {
 								variant='contained'
 								color='secondary'
 								size='large'
-								dialogWidth={700}
-								dialogHeight={1000}
+								dialogWidth={512}
+								dialogHeight={800}
 							/>
 						</Box>
 					</Box>
 				</InfoCard>
 			</Grid>
 			<Grid item xs={12} md={6}>
-				<InfoCard title={t('PORTFOLIO_BY_ASSETz')}>
+				<InfoCard title={t('PORTFOLIO_BY_ASSETS')}>
 					<WalletDoughnut
 						assetsData={assetsData}
 						totalMainCurrenciesValues={totalMainCurrenciesValues}
@@ -213,7 +213,9 @@ function WalletStats() {
 										/>
 										{' ('}
 										<AmountWithCurrency
-											amount={x.assetToMainCurrenciesValues[mainCurrency.id]}
+											amount={
+												x.assetTotalToMainCurrenciesValues[mainCurrency.id]
+											}
 											unit={'$'}
 											unitPlace='left'
 											mainFontVariant='body1'
