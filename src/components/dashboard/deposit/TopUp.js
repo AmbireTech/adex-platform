@@ -89,7 +89,7 @@ export default function TopUp() {
 							<Typography
 								align='center'
 								component='span'
-								color='danger'
+								color='error'
 								dangerouslySetInnerHTML={{
 									__html: t('DAI_DIRECT_DEPOSIT_WARNING_1'),
 								}}
