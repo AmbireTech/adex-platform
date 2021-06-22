@@ -155,17 +155,20 @@ function SideNav(props) {
 								to={{ pathname: '/dashboard/' }}
 								className={classes.icon}
 							/>
-							<LoadingSection loading={!loaded}>
-								<AmountWithCurrency
-									amount={totalMainCurrenciesValues['USD'] || 0}
-									unit={'$'}
-									unitPlace='left'
-									fontSize={25}
-								/>
-								<Typography variant='button' component='div' display='block'>
-									{t('IDENTITY_BALANCE')}
-								</Typography>
-							</LoadingSection>
+							<Box mt={6}>
+								<LoadingSection loading={!loaded}>
+									<Typography variant='button' component='div' display='block'>
+										{t('WALLET_BALANCE')}
+									</Typography>
+									<AmountWithCurrency
+										amount={totalMainCurrenciesValues['USD'] || 0}
+										unit={'$'}
+										unitPlace='left'
+										mainFontVariant='h2'
+										decimalsFontVariant='h3'
+									/>
+								</LoadingSection>
+							</Box>
 						</Box>
 					</ListItem>
 				</Box>
