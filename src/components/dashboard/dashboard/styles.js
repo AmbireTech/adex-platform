@@ -1,9 +1,7 @@
-import { fade } from '@material-ui/core/styles/colorManipulator'
-
-const drawerWidth = 250
 const lastRowRightReserved = 169
 
 export const styles = theme => {
+	const { drawerWidth } = theme.props
 	return {
 		root: {
 			marginTop: 69,

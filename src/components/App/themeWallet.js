@@ -282,9 +282,14 @@ const lightShadows = [
 	'2px 2px 13px 0px rgba(69,69,69,0.420)',
 ]
 
+const props = {
+	drawerWidth: 280,
+}
+
 const commonTheme = createMuiTheme({
 	...defaultTheme,
 	typography,
+	props,
 	overrides: {
 		MuiButton: {
 			root: {
