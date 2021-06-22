@@ -65,6 +65,9 @@ const walletStyles = theme => {
 				zIndex: -1,
 			},
 		},
+		jazzIcon: {
+			marginLeft: theme.spacing(1),
+		},
 	}
 }
 
@@ -106,19 +109,25 @@ function TopNav({ handleDrawerToggle, side }) {
 					alignItems='center'
 					justifyContent='space-between'
 				>
-					<Hidden mdUp>
-						<Box pl={1}>
-							<IconButton
-								color='default'
-								aria-label='open drawer'
-								onClick={handleDrawerToggle}
-							>
-								<MenuIcon />
-							</IconButton>
-						</Box>
-					</Hidden>
+					<Box
+						display='flex'
+						flexDirection='row'
+						alignItems='center'
+						justifyContent='flex-start'
+					>
+						<Hidden mdUp>
+							<Box px={1}>
+								<IconButton
+									color='default'
+									aria-label='open drawer'
+									onClick={handleDrawerToggle}
+								>
+									<MenuIcon />
+								</IconButton>
+							</Box>
+						</Hidden>
 
-					<Hidden smDown>
+						{/* <Hidden smDown>
 						<Box display='flex' flexGrow='1' pl={2}>
 							<Breadcrumbs aria-label='breadcrumb'>
 								{breadcrumbs.map(({ to, label }, index) =>
@@ -140,50 +149,68 @@ function TopNav({ handleDrawerToggle, side }) {
 								)}
 							</Breadcrumbs>
 						</Box>
-					</Hidden>
+					</Hidden> */}
 
-					<Box display='flex' flexDirection='row' alignItems='center' pr={1}>
-						{/* <ChangeLang /> */}
+						<Box display='flex' flexDirection='row' alignItems='center' pr={1}>
+							{/* <ChangeLang /> */}
+
+							{/* <Jazzicon
+								diameter={30}
+								seed={jsNumberForAddress(account.wallet.address)}
+							/> */}
+							<ButtonMenu
+								id='menu-appbar'
+								// leftIconSrc={imgSrc}
+								rightIcon={
+									<Box
+										ml={1}
+										display='flex'
+										alignItems='center'
+										justifyContent='center'
+									>
+										<Jazzicon
+											className={classes.jazzIcon}
+											diameter={30}
+											seed={jsNumberForAddress(account.wallet.address)}
+										/>
+									</Box>
+								}
+								label={btnMenuLabel}
+								variant='contained'
+							>
+								<RRMenuItem
+									value='account'
+									to={{ pathname: accountPagePath }}
+									caption={t('ACCOUNT')}
+								>
+									<ListItemIcon>
+										<AccountBoxIcon />
+									</ListItemIcon>
+									<ListItemText
+										classes={{ primary: classes.primary }}
+										primary={t('ACCOUNT')}
+									/>
+								</RRMenuItem>
+								{/* <MenuDivider /> */}
+								<MenuItem
+									value='logout'
+									onClick={() => {
+										logOut()
+									}}
+								>
+									<ListItemIcon>
+										<ExitToAppIcon />
+									</ListItemIcon>
+									<ListItemText
+										classes={{ primary: classes.primary }}
+										primary={t('LOGOUT')}
+									/>
+								</MenuItem>
+							</ButtonMenu>
+						</Box>
+					</Box>
+					<Box>
 						<ThemeSwitch />
-						<Jazzicon
-							diameter={30}
-							seed={jsNumberForAddress(account.wallet.address)}
-						/>
-						<ButtonMenu
-							id='menu-appbar'
-							leftIconSrc={imgSrc}
-							rightIcon={<ExpandMoreIcon />}
-							label={btnMenuLabel}
-						>
-							<RRMenuItem
-								value='account'
-								to={{ pathname: accountPagePath }}
-								caption={t('ACCOUNT')}
-							>
-								<ListItemIcon>
-									<AccountBoxIcon />
-								</ListItemIcon>
-								<ListItemText
-									classes={{ primary: classes.primary }}
-									primary={t('ACCOUNT')}
-								/>
-							</RRMenuItem>
-							{/* <MenuDivider /> */}
-							<MenuItem
-								value='logout'
-								onClick={() => {
-									logOut()
-								}}
-							>
-								<ListItemIcon>
-									<ExitToAppIcon />
-								</ListItemIcon>
-								<ListItemText
-									classes={{ primary: classes.primary }}
-									primary={t('LOGOUT')}
-								/>
-							</MenuItem>
-						</ButtonMenu>
 					</Box>
 				</Box>
 			</Toolbar>
