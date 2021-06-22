@@ -61,7 +61,7 @@ const WalletDoughnut = ({
 
 	return (
 		<Grid container spacing={2} alignItems='center'>
-			<Grid item xs={5}>
+			<Grid item xs={12} sm={5}>
 				<Box position='relative' width='100%' height='100%' paddingTop='100%'>
 					<Box
 						position='absolute'
@@ -91,7 +91,10 @@ const WalletDoughnut = ({
 											return (
 												data.labels[item.index] +
 												': ' +
-												data.datasets[item.datasetIndex].data[item.index]
+												data.datasets[item.datasetIndex].data[
+													item.index
+												].toFixed(2) +
+												'%'
 											)
 										},
 									},
@@ -108,7 +111,7 @@ const WalletDoughnut = ({
 					</Box>
 				</Box>
 			</Grid>
-			<Grid item xs={7}>
+			<Grid item xs={12} sm={7}>
 				<Box>
 					{data.labels.map((label, index) => {
 						return (
@@ -124,11 +127,10 @@ const WalletDoughnut = ({
 									flexDirection='row'
 									//   alignItems='center'
 								>
-									<Box
+									<StopIcon
 										style={{ color: chartColors[index % chartColors.length] }}
-									>
-										<StopIcon color='inherit' fontSize='small' />
-									</Box>
+										fontSize='small'
+									/>
 									<Box> {label} </Box>
 								</Box>
 								<Box color='text.primary' fontWeight='fontWeightBold'>
