@@ -13,7 +13,15 @@ const ImgIcon = ({ src }) => {
 	)
 }
 
-function ButtonMenu({ children, btnStyle, label, rightIcon, leftIconSrc, id }) {
+function ButtonMenu({
+	children,
+	btnStyle,
+	label,
+	rightIcon,
+	leftIconSrc,
+	id,
+	variant,
+}) {
 	const [anchorEl, setAnchorEl] = useState(null)
 
 	const handleMenu = event => {
@@ -29,6 +37,7 @@ function ButtonMenu({ children, btnStyle, label, rightIcon, leftIconSrc, id }) {
 	return (
 		<>
 			<Button
+				variant={variant}
 				style={btnStyle}
 				onClick={handleMenu}
 				aria-haspopup='true'
