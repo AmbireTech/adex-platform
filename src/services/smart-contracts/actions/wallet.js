@@ -1,16 +1,30 @@
 import { assets, getPath, uniswapRouters } from 'services/adex-wallet'
 import { getEthers } from 'services/smart-contracts/ethers'
-import { BigNumber, utils } from 'ethers'
+import {
+	//  BigNumber,
+	utils,
+	Contract,
+} from 'ethers'
 import { contracts } from 'services/smart-contracts/contractsCfg'
 import {
 	getIdentityTxnsTotalFees,
 	processExecuteByFeeTokens,
 	getIdentityTxnsWithNoncesAndFees,
-	getApproveTxns,
 } from 'services/smart-contracts/actions/identity'
 import { selectMainToken } from 'selectors'
 import { AUTH_TYPES, EXECUTE_ACTIONS } from 'constants/misc'
 import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
+
+import { computePoolAddress, tickToPrice } from '@uniswap/v3-sdk'
+import {
+	// Currency,
+	Token,
+	//   TradeType,
+	CurrencyAmount,
+} from '@uniswap/sdk-core'
+import { abi as IUniswapV3PoolABI } from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json'
+
+const UNI_V3_FACTORY_ADDR = '0x1F98431c8aD98523631AE4a59f267346ea31F984'
 
 const { Interface } = utils
 
@@ -27,9 +41,12 @@ export async function getTradeOutAmount({
 	if (!formAssetAmount || parseFloat(formAssetAmount) <= 0) {
 		return '0'
 	}
-	const { UniSwapRouterV2 } = await getEthers(AUTH_TYPES.READONLY)
+	const { UniSwapRouterV2, provider } = await getEthers(AUTH_TYPES.READONLY)
 
-	const { path, router } = await getPath({ from: formAsset, to: toAsset })
+	const { path, router, pools } = await getPath({
+		from: formAsset,
+		to: toAsset,
+	})
 
 	const from = assets[formAsset]
 	const to = assets[toAsset]
@@ -45,6 +62,68 @@ export async function getTradeOutAmount({
 			amountsOut[amountsOut.length - 1],
 			to.decimals
 		)
+
+		return amountOutParsed
+	}
+
+	if (router === 'uniV3') {
+		const tokenA = new Token(
+			5,
+			formAsset,
+			from.decimals,
+			from.symbol,
+			from.name
+		)
+
+		const tokenB = new Token(5, toAsset, to.decimals, to.symbol, to.name)
+		const poolAddress = computePoolAddress({
+			factoryAddress: UNI_V3_FACTORY_ADDR,
+			tokenA,
+			tokenB,
+			fee: pools[0].fees,
+		})
+
+		const poolContract = new Contract(poolAddress, IUniswapV3PoolABI, provider)
+
+		const [
+			// factory,
+			// token0,
+			// token1,
+			// fee,
+			// tickSpacing,
+			// maxLiquidityPerTick,
+			slot,
+			// liquidity,
+		] = await Promise.all([
+			// poolContract.factory(),
+			// poolContract.token0(),
+			// poolContract.token1(),
+			// poolContract.fee(),
+			// poolContract.tickSpacing(),
+			// poolContract.maxLiquidityPerTick(),
+			poolContract.slot0(),
+			// poolContract.liquidity(),
+		])
+
+		const poolState = {
+			liquidity: await poolContract.liquidity(),
+			sqrtPriceX96: slot[0],
+			tick: slot[1],
+			observationIndex: slot[2],
+			observationCardinality: slot[3],
+			observationCardinalityNext: slot[4],
+			feeProtocol: slot[5],
+			unlocked: slot[6],
+		}
+
+		const price = tickToPrice(tokenA, tokenB, poolState.tick)
+
+		const fromTokenCurrencyAmount = CurrencyAmount.fromRawAmount(
+			tokenA,
+			utils.parseUnits(formAssetAmount.toString(), from.decimals)
+		)
+
+		const amountOutParsed = price.quote(fromTokenCurrencyAmount).toSignificant()
 
 		return amountOutParsed
 	}
