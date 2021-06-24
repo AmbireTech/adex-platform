@@ -26,12 +26,14 @@ export const TICK_SPACINGS = {
 export const paths = {
 	[tokens.WETH]: {
 		[tokens.UNI]: {
-			router: 'uniV2',
+			router: 'uniV3',
 			path: [tokens.WETH, tokens.UNI],
 		},
 		[tokens.ADX]: {
 			router: 'uniV3',
-			path: [{ route: [tokens.WETH, tokens.ADX], fees: [FeeAmount.MEDIUM] }],
+			pools: [
+				{ tokenA: tokens.WETH, tokenB: tokens.ADX, fees: FeeAmount.MEDIUM },
+			],
 		},
 		[tokens.USDT]: {
 			router: 'uniV3',
@@ -77,15 +79,20 @@ export const paths = {
 export async function getPath({ from, to }) {
 	// TODO: check paths
 
-	if (paths[from] && paths[from][to]) {
+	if (
+		(paths[from] && paths[from][to]) ||
+		(paths[from] && paths[from][to] && paths[from][to].pools)
+	) {
 		return paths[from][to]
-	} else if (paths[to] && paths[to][from]) {
+	} else if (paths[to] && paths[to][from] && paths[to][from].path) {
 		const reversePath = paths[to][from]
 
 		return {
 			...reversePath,
 			path: [...reversePath.path].reverse(),
 		}
+	} else if (paths[to] && paths[to][from] && paths[to][from].pools) {
+		return paths[to][from]
 	} else {
 		throw new Error('Router and path not found')
 	}
