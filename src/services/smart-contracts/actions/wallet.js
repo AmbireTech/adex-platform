@@ -15,7 +15,13 @@ import { selectMainToken } from 'selectors'
 import { AUTH_TYPES, EXECUTE_ACTIONS } from 'constants/misc'
 import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
 
-import { computePoolAddress, tickToPrice } from '@uniswap/v3-sdk'
+import {
+	computePoolAddress,
+	tickToPrice,
+	Pool,
+	Route,
+	encodeRouteToPath,
+} from '@uniswap/v3-sdk'
 import {
 	// Currency,
 	Token,
@@ -33,15 +39,16 @@ const ERC20 = new Interface(ERC20TokenABI)
 
 const DEADLINE = 60 * 60 * 1000
 
-function getUnitTokens({ formAsset, toAsset, from, to }) {
-	const tokenA = new Token(5, formAsset, from.decimals, from.symbol, from.name)
+function getUniToken({ address, tokenData }) {
+	const token = new Token(
+		5,
+		address,
+		tokenData.decimals,
+		tokenData.symbol,
+		tokenData.name
+	)
 
-	const tokenB = new Token(5, toAsset, to.decimals, to.symbol, to.name)
-
-	return {
-		tokenA,
-		tokenB,
-	}
+	return token
 }
 
 async function getPollStateData({ tokenA, tokenB, fee, provider }) {
@@ -126,12 +133,13 @@ export async function getTradeOutAmount({
 	}
 
 	if (router === 'uniV3') {
-		const { tokenA, tokenB } = getUnitTokens({ formAsset, toAsset, from, to })
+		const tokenA = getUniToken({ address: formAsset, tokenData: from })
+		const tokenB = getUniToken({ address: toAsset, tokenData: to })
 
 		const { poolState } = await getPollStateData({
 			tokenA,
 			tokenB,
-			fee: pools[0].fees,
+			fee: pools[0].fee,
 			provider,
 		})
 
@@ -142,7 +150,8 @@ export async function getTradeOutAmount({
 			utils.parseUnits(formAssetAmount.toString(), from.decimals)
 		)
 
-		const amountOutParsed = price.quote(fromTokenCurrencyAmount).toSignificant()
+		const amountOutParsed =
+			price.quote(fromTokenCurrencyAmount).toSignificant() * 0.95
 
 		return amountOutParsed
 	}
@@ -166,12 +175,16 @@ export async function walletTradeTransaction({
 	})
 
 	const identityAddr = identity.address
-	const { provider, WalletZapper, Identity, getToken } = await getEthers(
-		authType
-	)
+	const {
+		provider,
+		WalletZapper,
+		Identity,
+		getToken,
+		UniSwapRouterV3,
+	} = await getEthers(authType)
 
 	// TODO: use swap tokens for fees - update relayer
-	// Add tokent to feeTokenWhitelist
+	// Add token to feeTokenWhitelist
 	const mainToken = selectMainToken()
 
 	const feeTokenAddr = mainToken.address
@@ -217,19 +230,79 @@ export async function walletTradeTransaction({
 	} else if (router === 'uniV3') {
 		const deadline = Math.floor((Date.now() + DEADLINE) / 1000)
 
-		const paramsTuple =
-			path.length === 2
-				? [
-						formAsset,
-						toAsset,
-						3000, // TODO
-						identityAddr,
-						deadline,
-						fromAmount,
-						toAmount,
-						0,
-				  ]
-				: [path, identityAddr, deadline, fromAmount, toAmount]
+		let data = null
+
+		if (pools.length === 1) {
+			data = ZapperInterface.encodeFunctionData('tradeV3Single', [
+				UniSwapRouterV3.address,
+				[
+					formAsset,
+					toAsset,
+					pools[0].fee,
+					identityAddr,
+					deadline,
+					fromAmount,
+					toAmount,
+					// poolState.sqrtPriceX96,
+					0,
+				],
+			])
+		} else if (pools.length > 1) {
+			const tokenA = getUniToken({
+				address: formAsset,
+				tokenData: from,
+			})
+			const tokenB = getUniToken({
+				address: toAsset,
+				tokenData: to,
+			})
+
+			const poolsWithData = await Promise.all(
+				pools.map(async ({ addressTokenA, addressTokenB, fee }) => {
+					const tokenA = getUniToken({
+						address: addressTokenA,
+						tokenData: assets[addressTokenA],
+					})
+					const tokenB = getUniToken({
+						address: addressTokenB,
+						tokenData: assets[addressTokenB],
+					})
+
+					const { poolState } = await getPollStateData({
+						tokenA,
+						tokenB,
+						fee,
+						provider,
+					})
+
+					const pool = new Pool(
+						tokenA,
+						tokenB,
+						fee,
+						poolState.sqrtPriceX96,
+						poolState.liquidity,
+						poolState.tick
+					)
+
+					return pool
+				})
+			)
+
+			const route = new Route([poolsWithData], tokenA, tokenB)
+			const v3Path = encodeRouteToPath(route)
+
+			data = ZapperInterface.encodeFunctionData('tradeV3', [
+				UniSwapRouterV3.address,
+				[v3Path, identityAddr, deadline, fromAmount, toAmount],
+			])
+		}
+
+		txns.push({
+			identityContract: identityAddr,
+			to: WalletZapper.address,
+			feeTokenAddr,
+			data,
+		})
 	}
 
 	const txnsByFeeToken = await getIdentityTxnsWithNoncesAndFees({
