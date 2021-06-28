@@ -38,6 +38,7 @@ export const paths = {
 					fee: FeeAmount.MEDIUM,
 				},
 			],
+			poolsPath: [tokens.WETH, tokens.ADX],
 		},
 		[tokens.USDT]: {
 			router: 'uniV3',
@@ -48,6 +49,7 @@ export const paths = {
 					fee: FeeAmount.LOW,
 				},
 			],
+			poolsPath: [tokens.WETH, tokens.USDT],
 		},
 		[tokens.DAI]: {
 			router: 'uniV3',
@@ -58,6 +60,7 @@ export const paths = {
 					fee: FeeAmount.MEDIUM,
 				},
 			],
+			poolsPath: [tokens.WETH, tokens.DAI],
 		},
 	},
 	[tokens.ADX]: {
@@ -79,6 +82,7 @@ export const paths = {
 					fee: FeeAmount.LOW,
 				},
 			],
+			poolsPath: [tokens.ADX, tokens.WETH, tokens.USDT],
 		},
 		[tokens.DAI]: {
 			router: 'uniV3',
@@ -94,6 +98,7 @@ export const paths = {
 					fee: FeeAmount.MEDIUM,
 				},
 			],
+			poolsPath: [tokens.ADX, tokens.WETH, tokens.DAI],
 		},
 	},
 	[tokens.UNI]: {
@@ -111,6 +116,7 @@ export const paths = {
 					fee: FeeAmount.LOW,
 				},
 			],
+			poolsPath: [tokens.UNI, tokens.WETH, tokens.USDT],
 		},
 		[tokens.DAI]: {
 			router: 'uniV2',
@@ -141,7 +147,10 @@ export async function getPath({ from, to }) {
 			path: [...reversePath.path].reverse(),
 		}
 	} else if (paths[to] && paths[to][from] && paths[to][from].pools) {
-		return paths[to][from]
+		return {
+			...paths[to][from],
+			poolsPath: [...paths[to][from]].reverse(),
+		}
 	} else {
 		throw new Error('Router and path not found')
 	}
