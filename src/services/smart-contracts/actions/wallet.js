@@ -33,6 +33,65 @@ const ERC20 = new Interface(ERC20TokenABI)
 
 const DEADLINE = 60 * 60 * 1000
 
+function getUnitTokens({ formAsset, toAsset, from, to }) {
+	const tokenA = new Token(5, formAsset, from.decimals, from.symbol, from.name)
+
+	const tokenB = new Token(5, toAsset, to.decimals, to.symbol, to.name)
+
+	return {
+		tokenA,
+		tokenB,
+	}
+}
+
+async function getPollStateData({ tokenA, tokenB, fee, provider }) {
+	const poolAddress = computePoolAddress({
+		factoryAddress: UNI_V3_FACTORY_ADDR,
+		tokenA,
+		tokenB,
+		fee,
+	})
+
+	const poolContract = new Contract(poolAddress, IUniswapV3PoolABI, provider)
+
+	const [
+		// factory,
+		// token0,
+		// token1,
+		// fee,
+		// tickSpacing,
+		// maxLiquidityPerTick,
+		slot,
+		// liquidity,
+	] = await Promise.all([
+		// poolContract.factory(),
+		// poolContract.token0(),
+		// poolContract.token1(),
+		// poolContract.fee(),
+		// poolContract.tickSpacing(),
+		// poolContract.maxLiquidityPerTick(),
+		poolContract.slot0(),
+		// poolContract.liquidity(),
+	])
+
+	const poolState = {
+		liquidity: await poolContract.liquidity(),
+		sqrtPriceX96: slot[0],
+		tick: slot[1],
+		observationIndex: slot[2],
+		observationCardinality: slot[3],
+		observationCardinalityNext: slot[4],
+		feeProtocol: slot[5],
+		unlocked: slot[6],
+	}
+
+	return {
+		tokenA,
+		tokenB,
+		poolState,
+	}
+}
+
 export async function getTradeOutAmount({
 	formAsset,
 	formAssetAmount,
@@ -67,54 +126,14 @@ export async function getTradeOutAmount({
 	}
 
 	if (router === 'uniV3') {
-		const tokenA = new Token(
-			5,
-			formAsset,
-			from.decimals,
-			from.symbol,
-			from.name
-		)
+		const { tokenA, tokenB } = getUnitTokens({ formAsset, toAsset, from, to })
 
-		const tokenB = new Token(5, toAsset, to.decimals, to.symbol, to.name)
-		const poolAddress = computePoolAddress({
-			factoryAddress: UNI_V3_FACTORY_ADDR,
+		const { poolState } = await getPollStateData({
 			tokenA,
 			tokenB,
 			fee: pools[0].fees,
+			provider,
 		})
-
-		const poolContract = new Contract(poolAddress, IUniswapV3PoolABI, provider)
-
-		const [
-			// factory,
-			// token0,
-			// token1,
-			// fee,
-			// tickSpacing,
-			// maxLiquidityPerTick,
-			slot,
-			// liquidity,
-		] = await Promise.all([
-			// poolContract.factory(),
-			// poolContract.token0(),
-			// poolContract.token1(),
-			// poolContract.fee(),
-			// poolContract.tickSpacing(),
-			// poolContract.maxLiquidityPerTick(),
-			poolContract.slot0(),
-			// poolContract.liquidity(),
-		])
-
-		const poolState = {
-			liquidity: await poolContract.liquidity(),
-			sqrtPriceX96: slot[0],
-			tick: slot[1],
-			observationIndex: slot[2],
-			observationCardinality: slot[3],
-			observationCardinalityNext: slot[4],
-			feeProtocol: slot[5],
-			unlocked: slot[6],
-		}
 
 		const price = tickToPrice(tokenA, tokenB, poolState.tick)
 
@@ -141,7 +160,10 @@ export async function walletTradeTransaction({
 }) {
 	const { wallet, identity } = account
 	const { authType } = wallet
-	const { path, router } = await getPath({ from: formAsset, to: toAsset })
+	const { path, router, pools } = await getPath({
+		from: formAsset,
+		to: toAsset,
+	})
 
 	const identityAddr = identity.address
 	const { provider, WalletZapper, Identity, getToken } = await getEthers(
@@ -194,6 +216,7 @@ export async function walletTradeTransaction({
 		})
 	} else if (router === 'uniV3') {
 		const deadline = Math.floor((Date.now() + DEADLINE) / 1000)
+
 		const paramsTuple =
 			path.length === 2
 				? [
