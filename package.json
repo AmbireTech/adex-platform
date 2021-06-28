@@ -15,6 +15,8 @@
     "@transak/transak-sdk": "^1.0.28",
     "@typescript-eslint/eslint-plugin": "1.6.0",
     "@typescript-eslint/parser": "1.6.0",
+    "@uniswap/sdk-core": "^3.0.0",
+    "@uniswap/v3-sdk": "^3.1.0",
     "adex-constants": "1.0.10",
     "adex-models": "git+https://git@github.com/AdExBlockchain/adex-models.git#499114f10e52f06fe59199b187c7a9a79173a12e",
     "adex-protocol-eth": "4.2.4",
