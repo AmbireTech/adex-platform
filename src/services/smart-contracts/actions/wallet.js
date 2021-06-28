@@ -1,10 +1,6 @@
 import { assets, getPath, uniswapRouters } from 'services/adex-wallet'
 import { getEthers } from 'services/smart-contracts/ethers'
-import {
-	//  BigNumber,
-	utils,
-	Contract,
-} from 'ethers'
+import { utils, Contract, BigNumber } from 'ethers'
 import { contracts } from 'services/smart-contracts/contractsCfg'
 import {
 	getIdentityTxnsTotalFees,
@@ -21,12 +17,14 @@ import {
 	Pool,
 	Route,
 	encodeRouteToPath,
+	Trade,
 } from '@uniswap/v3-sdk'
 import {
 	// Currency,
 	Token,
-	//   TradeType,
+	TradeType,
 	CurrencyAmount,
+	Percent,
 } from '@uniswap/sdk-core'
 import { abi as IUniswapV3PoolABI } from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json'
 
@@ -99,6 +97,43 @@ async function getPollStateData({ tokenA, tokenB, fee, provider }) {
 	}
 }
 
+async function getUniv3Route({ pools, tokenIn, tokenOut, provider }) {
+	const poolsWithData = await Promise.all(
+		pools.map(async ({ addressTokenA, addressTokenB, fee }) => {
+			const tokenA = getUniToken({
+				address: addressTokenA,
+				tokenData: assets[addressTokenA],
+			})
+			const tokenB = getUniToken({
+				address: addressTokenB,
+				tokenData: assets[addressTokenB],
+			})
+
+			const { poolState } = await getPollStateData({
+				tokenA,
+				tokenB,
+				fee,
+				provider,
+			})
+
+			const pool = new Pool(
+				tokenA,
+				tokenB,
+				fee,
+				poolState.sqrtPriceX96,
+				poolState.liquidity,
+				poolState.tick
+			)
+
+			return pool
+		})
+	)
+
+	const route = new Route(poolsWithData, tokenIn, tokenOut)
+
+	return route
+}
+
 export async function getTradeOutAmount({
 	formAsset,
 	formAssetAmount,
@@ -133,27 +168,49 @@ export async function getTradeOutAmount({
 	}
 
 	if (router === 'uniV3') {
-		const tokenA = getUniToken({ address: formAsset, tokenData: from })
-		const tokenB = getUniToken({ address: toAsset, tokenData: to })
-
-		const { poolState } = await getPollStateData({
-			tokenA,
-			tokenB,
-			fee: pools[0].fee,
-			provider,
+		const tokenIn = getUniToken({
+			address: formAsset,
+			tokenData: from,
+		})
+		const tokenOut = getUniToken({
+			address: toAsset,
+			tokenData: to,
 		})
 
-		const price = tickToPrice(tokenA, tokenB, poolState.tick)
-
+		const route = await getUniv3Route({ pools, tokenIn, tokenOut, provider })
 		const fromTokenCurrencyAmount = CurrencyAmount.fromRawAmount(
-			tokenA,
+			tokenIn,
 			utils.parseUnits(formAssetAmount.toString(), from.decimals)
 		)
 
-		const amountOutParsed =
-			price.quote(fromTokenCurrencyAmount).toSignificant() * 0.95
+		// TODO: calc amount out
+		const toTokenCurrencyAmount = CurrencyAmount.fromRawAmount(
+			tokenOut,
+			utils.parseUnits('0.5', to.decimals)
+		)
 
-		return amountOutParsed
+		const trade = Trade.createUncheckedTrade({
+			route,
+			inputAmount: fromTokenCurrencyAmount,
+			outputAmount: toTokenCurrencyAmount,
+			tradeType: TradeType.EXACT_INPUT,
+		})
+
+		const minimumAmountOut = trade.minimumAmountOut(new Percent(5, 100))
+
+		// const { poolState } = await getPollStateData({
+		// 	tokenA,
+		// 	tokenB,
+		// 	fee: pools[0].fee,
+		// 	provider,
+		// })
+
+		// const price = tickToPrice(tokenA, tokenB, poolState.tick)
+
+		// const amountOutParsed =
+		// 	price.quote(fromTokenCurrencyAmount).toSignificant() * 0.95
+
+		return minimumAmountOut.toSignificant()
 	}
 
 	throw new Error('Invalid path')
@@ -248,47 +305,16 @@ export async function walletTradeTransaction({
 				],
 			])
 		} else if (pools.length > 1) {
-			const tokenA = getUniToken({
+			const tokenIn = getUniToken({
 				address: formAsset,
 				tokenData: from,
 			})
-			const tokenB = getUniToken({
+			const tokenOut = getUniToken({
 				address: toAsset,
 				tokenData: to,
 			})
 
-			const poolsWithData = await Promise.all(
-				pools.map(async ({ addressTokenA, addressTokenB, fee }) => {
-					const tokenA = getUniToken({
-						address: addressTokenA,
-						tokenData: assets[addressTokenA],
-					})
-					const tokenB = getUniToken({
-						address: addressTokenB,
-						tokenData: assets[addressTokenB],
-					})
-
-					const { poolState } = await getPollStateData({
-						tokenA,
-						tokenB,
-						fee,
-						provider,
-					})
-
-					const pool = new Pool(
-						tokenA,
-						tokenB,
-						fee,
-						poolState.sqrtPriceX96,
-						poolState.liquidity,
-						poolState.tick
-					)
-
-					return pool
-				})
-			)
-
-			const route = new Route([poolsWithData], tokenA, tokenB)
+			const route = getUniv3Route({ pools, tokenIn, tokenOut, provider })
 			const v3Path = encodeRouteToPath(route)
 
 			data = ZapperInterface.encodeFunctionData('tradeV3', [
