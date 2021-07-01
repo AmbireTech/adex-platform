@@ -149,7 +149,7 @@ export async function getPath({ from, to }) {
 	} else if (paths[to] && paths[to][from] && paths[to][from].pools) {
 		return {
 			...paths[to][from],
-			poolsPath: [...paths[to][from]].reverse(),
+			poolsPath: [...paths[to][from].poolsPath].reverse(),
 		}
 	} else {
 		throw new Error('Router and path not found')
