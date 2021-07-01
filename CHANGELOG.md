@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.20.57
+##### *2021-07-01*
+
+### Changed
+- Temp disabled WYRE top-up option
 ## 4.20.56
 ##### *2021-05-13*
 
