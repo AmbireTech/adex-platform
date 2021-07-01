@@ -324,7 +324,7 @@ export async function walletTradeTransaction({
 				tokenData: to,
 			})
 
-			const route = getUniv3Route({ pools, tokenIn, tokenOut, provider })
+			const route = await getUniv3Route({ pools, tokenIn, tokenOut, provider })
 			const v3Path = encodeRouteToPath(route)
 
 			data = ZapperInterface.encodeFunctionData('tradeV3', [
