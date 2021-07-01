@@ -1,4 +1,4 @@
-import { assets, getPath, uniswapRouters } from 'services/adex-wallet'
+import { assets, getPath, uniswapRouters, tokens } from 'services/adex-wallet'
 import { getEthers } from 'services/smart-contracts/ethers'
 import { utils, Contract, BigNumber } from 'ethers'
 import { contracts } from 'services/smart-contracts/contractsCfg'
@@ -395,6 +395,7 @@ export async function walletDiversificationTransaction({
 		Identity,
 		getToken,
 		UniSwapRouterV3,
+		UniSwapQuoterV3,
 	} = await getEthers(authType)
 
 	// TODO: use swap tokens for fees - update relayer
@@ -421,10 +422,91 @@ export async function walletDiversificationTransaction({
 		]),
 	})
 
-	const diversificationTrades = diversificationAssets.map(asset => {
-		// TODO: map to DiversificationTrade
-		return asset
+	const tokenIn = getUniToken({
+		address: formAsset,
+		tokenData: from,
 	})
+
+	const diversificationTrades = (
+		await Promise.all(
+			diversificationAssets.map(async asset => {
+				const to = assets[asset.address]
+
+				if (asset.address === tokens['WETH']) {
+					return null
+				}
+
+				const { router, pools } = await getPath({
+					from: formAsset,
+					to: asset.address,
+				})
+
+				if (router !== 'uniV3') {
+					throw new Error('diversificationTrades -  Unsupported router')
+				}
+
+				if (!pools || pools.length > 1) {
+					throw new Error('diversificationTrades -  not single trade')
+				}
+
+				const pool = pools[0]
+
+				const tokenOut = getUniToken({
+					address: asset.address,
+					tokenData: to,
+				})
+
+				const amountIn = utils
+					.parseUnits(formAssetAmount.toString(), from.decimals)
+					.mul(100)
+					.div(asset.share)
+
+				const amountOut = await UniSwapQuoterV3['quoteExactInput'](
+					tokenIn.address,
+					tokenOut.address,
+					pools[0].fee,
+					amountIn.toHexString(),
+					0 // sqrtPriceLimitX96
+				)
+
+				const fromTokenCurrencyAmount = CurrencyAmount.fromRawAmount(
+					tokenIn,
+					amountIn
+				)
+
+				const toTokenCurrencyAmount = CurrencyAmount.fromRawAmount(
+					tokenOut,
+					amountOut
+				)
+
+				const route = await getUniv3Route({
+					pools,
+					tokenIn,
+					tokenOut,
+					provider,
+				})
+
+				const trade = Trade.createUncheckedTrade({
+					route,
+					inputAmount: fromTokenCurrencyAmount,
+					outputAmount: toTokenCurrencyAmount,
+					tradeType: TradeType.EXACT_INPUT,
+				})
+
+				const amountOutMin = trade.minimumAmountOut(new Percent(5, 1000))
+
+				// TODO: map to DiversificationTrade
+
+				return [
+					asset.address,
+					pool.fee,
+					Math.floor(asset.share * 10),
+					amountOutMin,
+					false,
+				]
+			})
+		)
+	).filter(x => !!x)
 
 	const data = ZapperInterface.encodeFunctionData('diversifyV3', [
 		UniSwapRouterV3.address,
