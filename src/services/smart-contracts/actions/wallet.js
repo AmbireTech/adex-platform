@@ -142,7 +142,9 @@ export async function getTradeOutAmount({
 	if (!formAssetAmount || parseFloat(formAssetAmount) <= 0) {
 		return '0'
 	}
-	const { UniSwapRouterV2, provider } = await getEthers(AUTH_TYPES.READONLY)
+	const { UniSwapRouterV2, provider, UniSwapQuoterV3 } = await getEthers(
+		AUTH_TYPES.READONLY
+	)
 
 	const { path, router, pools } = await getPath({
 		from: formAsset,
@@ -177,16 +179,36 @@ export async function getTradeOutAmount({
 			tokenData: to,
 		})
 
+		const isSingleSwap = pools.length === 1
+
 		const route = await getUniv3Route({ pools, tokenIn, tokenOut, provider })
+		const amountInHex = utils
+			.parseUnits(formAssetAmount.toString(), from.decimals)
+			.toHexString()
+
+		// ABI - changed functions as read
+		// https://twitter.com/dcfgod/status/1405608315011411970?s=20
+		const action = isSingleSwap ? 'quoteExactInputSingle' : 'quoteExactInput'
+		const args = isSingleSwap
+			? [
+					tokenIn.address,
+					tokenOut.address,
+					pools[0].fee,
+					amountInHex,
+					0, // sqrtPriceLimitX96
+			  ]
+			: [encodeRouteToPath(route), amountInHex]
+
+		const amountOut = await UniSwapQuoterV3[action](...args)
+
 		const fromTokenCurrencyAmount = CurrencyAmount.fromRawAmount(
 			tokenIn,
 			utils.parseUnits(formAssetAmount.toString(), from.decimals)
 		)
 
-		// TODO: calc amount out
 		const toTokenCurrencyAmount = CurrencyAmount.fromRawAmount(
 			tokenOut,
-			utils.parseUnits('0.5', to.decimals)
+			amountOut
 		)
 
 		const trade = Trade.createUncheckedTrade({
@@ -196,19 +218,7 @@ export async function getTradeOutAmount({
 			tradeType: TradeType.EXACT_INPUT,
 		})
 
-		const minimumAmountOut = trade.minimumAmountOut(new Percent(5, 100))
-
-		// const { poolState } = await getPollStateData({
-		// 	tokenA,
-		// 	tokenB,
-		// 	fee: pools[0].fee,
-		// 	provider,
-		// })
-
-		// const price = tickToPrice(tokenA, tokenB, poolState.tick)
-
-		// const amountOutParsed =
-		// 	price.quote(fromTokenCurrencyAmount).toSignificant() * 0.95
+		const minimumAmountOut = trade.minimumAmountOut(new Percent(5, 1000))
 
 		return minimumAmountOut.toSignificant()
 	}
