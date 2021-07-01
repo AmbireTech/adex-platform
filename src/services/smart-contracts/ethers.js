@@ -13,6 +13,7 @@ const {
 	WalletZapper,
 	UniSwapRouterV2,
 	UniSwapRouterV3,
+	UniSwapQuoterV3,
 } = contracts
 
 const LocalProvider = process.env.WEB3_NODE_ADDR.startsWith('wss://')
@@ -78,6 +79,16 @@ const getUniRouterV3 = provider => {
 	return uniV3
 }
 
+const getUniQuoterV3 = provider => {
+	const uniQuoterV3 = new Contract(
+		UniSwapQuoterV3.address,
+		UniSwapQuoterV3.abi,
+		provider
+	)
+
+	return uniQuoterV3
+}
+
 const getEthersResult = provider => {
 	const adexCore = getAdexCore(provider)
 	const mainToken = getMainToken(provider)
@@ -85,6 +96,7 @@ const getEthersResult = provider => {
 	const walletZapper = getWalletZapper(provider)
 	const uniV2 = getUniRouterV2(provider)
 	const uniV3 = getUniRouterV3(provider)
+	const quoterV3 = getUniQuoterV3(provider)
 
 	const results = {
 		provider,
@@ -96,6 +108,7 @@ const getEthersResult = provider => {
 		WalletZapper: walletZapper,
 		UniSwapRouterV2: uniV2,
 		UniSwapRouterV3: uniV3,
+		UniSwapQuoterV3: quoterV3,
 		getToken: ({ standard, address }) =>
 			getToken({ provider, standard, address }),
 		getIdentity: ({ address }) => getIdentity({ provider, address }),
