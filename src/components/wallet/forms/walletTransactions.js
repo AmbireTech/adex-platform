@@ -12,6 +12,7 @@ import {
 	resetNewTransaction,
 	resetValidationErrors,
 	validateWalletDiversify,
+	walletDiversification,
 } from 'actions'
 import ReactGA from 'react-ga'
 
@@ -98,7 +99,7 @@ export const DiversifyAssets = props => (
 					execute(
 						completeTx({
 							...props,
-							competeAction: walletTrade,
+							competeAction: walletDiversification,
 						})
 					),
 			},
