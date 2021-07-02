@@ -192,10 +192,8 @@ export function walletTrade({
 		try {
 			const state = getState()
 			const account = selectAccount(state)
-			const authType = selectAuthType(state)
 			const result = await walletTradeTransaction({
 				account,
-				authType,
 				formAsset,
 				formAssetAmount,
 				toAsset,
@@ -239,7 +237,6 @@ export function validateWalletDiversify({
 			formAsset,
 			formAssetAmount,
 			diversificationAssets,
-			toAssetAmount,
 		} = selectNewTransactionById(state, stepsId)
 
 		// const authType = selectAuthType(state)
@@ -253,7 +250,7 @@ export function validateWalletDiversify({
 			})(dispatch),
 			validateWalletDiversificationAssets({
 				validateId,
-				value: diversificationAssets,
+				diversificationAssets,
 				dirty,
 			})(dispatch),
 		])
@@ -283,5 +280,40 @@ export function validateWalletDiversify({
 		await handleAfterValidation({ isValid, onValid, onInvalid })
 
 		await updateSpinner(validateId, false)(dispatch)
+	}
+}
+
+export function walletDiversification({
+	formAsset,
+	formAssetAmount,
+	diversificationAssets,
+}) {
+	return async function(dispatch, getState) {
+		try {
+			const state = getState()
+			const account = selectAccount(state)
+			const result = await walletDiversificationTransaction({
+				account,
+				formAsset,
+				formAssetAmount,
+				diversificationAssets,
+			})
+
+			addToast({
+				type: 'accept',
+				label: t('WALLET_DIVERSIFICATION_TRADE_TRANSACTION_SUCCESS', {
+					args: [result],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		} catch (err) {
+			addToast({
+				type: 'cancel',
+				label: t('ERR_WALLET_DIVERSIFICATION_TRADE', {
+					args: [err.message],
+				}),
+				timeout: 5000,
+			})(dispatch)
+		}
 	}
 }
