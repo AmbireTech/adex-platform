@@ -26,7 +26,7 @@ export const TICK_SPACINGS = {
 export const paths = {
 	[tokens.WETH]: {
 		[tokens.UNI]: {
-			router: 'uniV3',
+			router: 'uniV2',
 			path: [tokens.WETH, tokens.UNI],
 		},
 		[tokens.ADX]: {
@@ -57,7 +57,7 @@ export const paths = {
 				{
 					addressTokenA: tokens.DAI,
 					addressTokenB: tokens.WETH,
-					fee: FeeAmount.MEDIUM,
+					fee: FeeAmount.LOW,
 				},
 			],
 			poolsPath: [tokens.WETH, tokens.DAI],
@@ -131,7 +131,7 @@ export const paths = {
 	},
 }
 
-export async function getPath({ from, to }) {
+export function getPath({ from, to }) {
 	// TODO: check paths
 
 	if (
@@ -152,6 +152,6 @@ export async function getPath({ from, to }) {
 			poolsPath: [...paths[to][from].poolsPath].reverse(),
 		}
 	} else {
-		throw new Error('Router and path not found')
+		throw new Error(`Router and path not found from ${from} to ${to}`)
 	}
 }
