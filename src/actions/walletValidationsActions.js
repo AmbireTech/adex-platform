@@ -80,7 +80,7 @@ export function validateWalletDiversificationAssets({
 
 		const isValidDiversification =
 			hasDiversifications &&
-			hasDiversifications.every(asset => asset.address && asset.share)
+			diversificationAssets.every(asset => asset.address && asset.share)
 
 		const hasFullDiversification = hasDiversifications
 			? diversificationAssets.reduce(
