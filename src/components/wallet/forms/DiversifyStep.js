@@ -36,7 +36,7 @@ import {
 	selectNewTransactionById,
 	// selectSpinnerById,
 	selectWeb3SyncSpinnerByValidateId,
-	selectTradableAssetsFromSources,
+	selectDiversifiableAssetsFromSources,
 	selectAccountStatsRaw,
 	selectMainCurrency,
 } from 'selectors'
@@ -82,12 +82,12 @@ const diversificationPresets = [
 			},
 			{
 				address: tokens.ADX,
-				share: 20,
+				share: 40,
 			},
-			{
-				address: tokens.UNI,
-				share: 20,
-			},
+			// {
+			// 	address: tokens.UNI,
+			// 	share: 20,
+			// },
 			{
 				address: tokens.USDT,
 				share: 20,
@@ -98,7 +98,7 @@ const diversificationPresets = [
 		label: 'DIV_PRESET_RISKY',
 		assets: [
 			{
-				address: tokens.UNI,
+				address: tokens.WETH,
 				share: 50,
 			},
 			{
@@ -441,7 +441,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	const classes = useStyles()
 	// NOTE: RAW DATA - BNs - format in fields
 	const { assetsData = {} } = useSelector(selectAccountStatsRaw)
-	const assetsFromSource = useSelector(selectTradableAssetsFromSources)
+	const assetsFromSource = useSelector(selectDiversifiableAssetsFromSources)
 	const [selectedNewAsset, setNewSelectedAsset] = useState('')
 	const mainCurrency = useSelector(selectMainCurrency) // {id: 'USD', symbol: '$' }
 	// const estimatingSpinner = useSelector(state =>
@@ -544,6 +544,19 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
+	useEffect(() => {
+		execute(
+			updateNewTransaction({
+				tx: stepsId,
+				key: 'formAssetAmount',
+				value: formatTokenAmount(
+					BigNumber.from(fromAssetUserBalance).div(10),
+					selectedFromAsset.decimals
+				),
+			})
+		)
+	}, [fromAssetUserBalance, selectedFromAsset.decimals, stepsId])
+
 	return (
 		<ContentBox>
 			{syncSpinner ? (
@@ -568,7 +581,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 											label={t('AVAILABLE')}
 											name='fromAssetUserBalance'
 											value={formatTokenAmount(
-												fromAssetUserBalance,
+												BigNumber.from(fromAssetUserBalance).div(10),
 												selectedFromAsset.decimals
 											)}
 											readOnly
