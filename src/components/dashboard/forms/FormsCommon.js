@@ -44,7 +44,7 @@ export const FeesBreakdown = ({ breakdownFormatted = {}, symbol }) => (
 				aria-controls='fees-breakdown'
 				id='fees-breakdown'
 			>
-				<Typography>
+				<Typography component='div'>
 					<Grid container direction='row' justify='center' alignItems='center'>
 						<Grid>
 							{t('FEES_BREAKDOWN_ADVANCED_LABEL', {
@@ -58,7 +58,7 @@ export const FeesBreakdown = ({ breakdownFormatted = {}, symbol }) => (
 									title={t('TOOLTIP_EXPLAIN_TRANSACTION_FEE')}
 									interactive
 								>
-									<HelpIcon dominantBaseline color={'primary'} />
+									<HelpIcon color={'primary'} />
 								</Tooltip>
 							</Grid>
 						</Grid>
