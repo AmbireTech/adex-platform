@@ -17,6 +17,8 @@ import {
 	Route,
 	encodeRouteToPath,
 	Trade,
+	Tick,
+	TickListDataProvider,
 } from '@uniswap/v3-sdk'
 import {
 	// Currency,
@@ -64,23 +66,23 @@ async function getPollStateData({ tokenA, tokenB, fee, provider }) {
 		// token0,
 		// token1,
 		// fee,
-		// tickSpacing,
+		tickSpacing,
 		// maxLiquidityPerTick,
 		slot,
-		// liquidity,
+		liquidity,
 	] = await Promise.all([
 		// poolContract.factory(),
 		// poolContract.token0(),
 		// poolContract.token1(),
 		// poolContract.fee(),
-		// poolContract.tickSpacing(),
+		poolContract.tickSpacing(),
 		// poolContract.maxLiquidityPerTick(),
 		poolContract.slot0(),
-		// poolContract.liquidity(),
+		poolContract.liquidity(),
 	])
 
 	const poolState = {
-		liquidity: await poolContract.liquidity(),
+		liquidity,
 		sqrtPriceX96: slot[0],
 		tick: slot[1],
 		observationIndex: slot[2],
@@ -88,7 +90,12 @@ async function getPollStateData({ tokenA, tokenB, fee, provider }) {
 		observationCardinalityNext: slot[4],
 		feeProtocol: slot[5],
 		unlocked: slot[6],
+		tickSpacing,
+		ticks: await poolContract.ticks(slot[1]),
 	}
+
+	console.log('poolState', poolState)
+	console.log('poolContract', poolContract)
 
 	return {
 		tokenA,
@@ -116,13 +123,27 @@ async function getUniv3Route({ pools, tokenIn, tokenOut, provider }) {
 				provider,
 			})
 
+			// const { t }
+
+			const tick = new Tick({
+				index: poolState.tick,
+				liquidityGross: poolState.ticks.liquidityGross,
+				liquidityNet: poolState.ticks.liquidityGross,
+			})
+
+			const ticksDataProvider = new TickListDataProvider(
+				[tick],
+				poolState.tickSpacing
+			)
+
 			const pool = new Pool(
 				tokenA,
 				tokenB,
 				fee,
 				poolState.sqrtPriceX96,
 				poolState.liquidity,
-				poolState.tick
+				poolState.tick,
+				ticksDataProvider
 			)
 
 			return pool
@@ -211,14 +232,20 @@ export async function getTradeOutAmount({
 			amountOut
 		)
 
-		const trade = Trade.createUncheckedTrade({
+		const trade = new Trade({
 			route,
 			inputAmount: fromTokenCurrencyAmount,
 			outputAmount: toTokenCurrencyAmount,
 			tradeType: TradeType.EXACT_INPUT,
 		})
 
-		const minimumAmountOut = trade.minimumAmountOut(new Percent(5, 1000))
+		// const bestTrade = Trade.bestTradeExactIn(
+		// 	route.pools,
+		// 	fromTokenCurrencyAmount,
+		// 	tokenOut
+		// )
+
+		const minimumAmountOut = trade.minimumAmountOut(new Percent(5, 100))
 
 		return minimumAmountOut.toSignificant()
 	}
