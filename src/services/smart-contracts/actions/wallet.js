@@ -14,12 +14,22 @@ import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
 import {
 	computePoolAddress,
 	Pool,
-	Route,
+	Route as RouteV3,
 	encodeRouteToPath,
-	Trade,
+	Trade as TradeV3,
 	Tick,
 	TickListDataProvider,
+	nearestUsableTick,
 } from '@uniswap/v3-sdk'
+import {
+	Route as RouteV2,
+	Fetcher as FetcherV2,
+	Token as TokenV2,
+	Trade as TradeV2,
+	TokenAmount as TokenAmountV2,
+	TradeType as TradeTypeV2,
+	Percent as PercentV2,
+} from '@uniswap/sdk'
 import {
 	// Currency,
 	Token,
@@ -39,9 +49,9 @@ const ERC20 = new Interface(ERC20TokenABI)
 const DEADLINE = 60 * 60 * 1000
 const ZERO = BigNumber.from(0)
 
-function getUniToken({ address, tokenData }) {
+function getUniToken({ address, tokenData, chainId = 5 }) {
 	const token = new Token(
-		5,
+		chainId,
 		address,
 		tokenData.decimals,
 		tokenData.symbol,
@@ -81,27 +91,67 @@ async function getPollStateData({ tokenA, tokenB, fee, provider }) {
 		poolContract.liquidity(),
 	])
 
+	const tick = slot[1]
+	const usableTick = nearestUsableTick(tick, tickSpacing)
+
 	const poolState = {
 		liquidity,
 		sqrtPriceX96: slot[0],
-		tick: slot[1],
+		tick,
 		observationIndex: slot[2],
 		observationCardinality: slot[3],
 		observationCardinalityNext: slot[4],
 		feeProtocol: slot[5],
 		unlocked: slot[6],
 		tickSpacing,
-		ticks: await poolContract.ticks(slot[1]),
+		usableTick,
+		usableTickData: await poolContract.ticks(usableTick),
+		currentTickData: await poolContract.ticks(tick),
 	}
 
-	console.log('poolState', poolState)
-	console.log('poolContract', poolContract)
+	// console.log('slot', slot)
+	// console.log('poolState', poolState)
+	// console.log('poolContract', poolContract)
 
 	return {
 		tokenA,
 		tokenB,
 		poolState,
 	}
+}
+
+async function getUniv2RouteAndTokens({ path, amountOut, provider }) {
+	if (!provider) {
+		throw new Error('getUniv2Route - INVALID_PROVIDER')
+	}
+	const tokens = path.map(tokenAddr => {
+		const tokenData = assets[tokenAddr]
+		if (!tokenData) {
+			throw new Error('getUniv2Route - INVALID_PATH_TOKEN')
+		}
+
+		const token = new TokenV2(
+			provider.network.chainId,
+			tokenAddr,
+			tokenData.decimals,
+			tokenData.symbol,
+			tokenData.name
+		)
+
+		return token
+	})
+
+	const pairs = []
+
+	for (let index = 0; index < tokens.length - 1; index++) {
+		pairs.push(await FetcherV2.fetchPairData(tokens[index], tokens[index + 1]))
+	}
+
+	const tokenIn = tokens[0]
+	const tokenOut = tokens[tokens.length - 1]
+
+	const route = new RouteV2(pairs, tokenIn)
+	return { route, tokenIn, tokenOut }
 }
 
 async function getUniv3Route({ pools, tokenIn, tokenOut, provider }) {
@@ -123,12 +173,10 @@ async function getUniv3Route({ pools, tokenIn, tokenOut, provider }) {
 				provider,
 			})
 
-			// const { t }
-
 			const tick = new Tick({
-				index: poolState.tick,
-				liquidityGross: poolState.ticks.liquidityGross,
-				liquidityNet: poolState.ticks.liquidityGross,
+				index: poolState.usableTick,
+				liquidityGross: poolState.usableTickData.liquidityGross,
+				liquidityNet: poolState.usableTickData.liquidityNet,
 			})
 
 			const ticksDataProvider = new TickListDataProvider(
@@ -150,22 +198,20 @@ async function getUniv3Route({ pools, tokenIn, tokenOut, provider }) {
 		})
 	)
 
-	const route = new Route(poolsWithData, tokenIn, tokenOut)
+	const route = new RouteV3(poolsWithData, tokenIn, tokenOut)
 
 	return route
 }
 
-export async function getTradeOutAmount({
-	formAsset,
-	formAssetAmount,
-	toAsset,
-}) {
+export async function getTradeOutData({ formAsset, formAssetAmount, toAsset }) {
 	if (!formAssetAmount || parseFloat(formAssetAmount) <= 0) {
 		return '0'
 	}
-	const { UniSwapRouterV2, provider, UniSwapQuoterV3 } = await getEthers(
-		AUTH_TYPES.READONLY
-	)
+	const {
+		// UniSwapRouterV2,
+		provider,
+		UniSwapQuoterV3,
+	} = await getEthers(AUTH_TYPES.READONLY)
 
 	const { path, router, pools } = await getPath({
 		from: formAsset,
@@ -175,19 +221,37 @@ export async function getTradeOutAmount({
 	const from = assets[formAsset]
 	const to = assets[toAsset]
 
-	const fromAmount = utils
-		.parseUnits(formAssetAmount.toString(), from.decimals)
-		.toHexString()
+	const fromAmount = utils.parseUnits(formAssetAmount.toString(), from.decimals)
+	// .toHexString()
 
 	if (router === 'uniV2') {
-		const amountsOut = await UniSwapRouterV2.getAmountsOut(fromAmount, path)
+		// const amountsOut = await UniSwapRouterV2.getAmountsOut(fromAmount, path)
 
-		const amountOutParsed = utils.formatUnits(
-			amountsOut[amountsOut.length - 1],
-			to.decimals
-		)
+		const {
+			route,
+			tokenIn,
+			//tokenOut
+		} = await getUniv2RouteAndTokens({
+			path,
+			provider,
+		})
 
-		return amountOutParsed
+		const tokenInAmount = new TokenAmountV2(tokenIn, fromAmount)
+
+		const trade = new TradeV2(route, tokenInAmount, TradeTypeV2.EXACT_INPUT)
+
+		const midPrice = route.midPrice
+		const priceImpact = midPrice.raw.subtract(trade.executionPrice.raw)
+		// .toSignificant()
+
+		const minimumAmountOut = trade
+			.minimumAmountOut(new PercentV2(5, 1000))
+			.toSignificant()
+
+		return {
+			minimumAmountOut,
+			priceImpact,
+		}
 	}
 
 	if (router === 'uniV3') {
@@ -232,22 +296,31 @@ export async function getTradeOutAmount({
 			amountOut
 		)
 
-		const trade = new Trade({
+		const trade = new TradeV3({
 			route,
 			inputAmount: fromTokenCurrencyAmount,
 			outputAmount: toTokenCurrencyAmount,
 			tradeType: TradeType.EXACT_INPUT,
 		})
 
-		// const bestTrade = Trade.bestTradeExactIn(
+		// const bestTrade = await TradeV3.bestTradeExactIn(
 		// 	route.pools,
 		// 	fromTokenCurrencyAmount,
 		// 	tokenOut
 		// )
 
-		const minimumAmountOut = trade.minimumAmountOut(new Percent(5, 100))
+		// console.log('bestTrade', bestTrade)
 
-		return minimumAmountOut.toSignificant()
+		const minimumAmountOut = trade
+			.minimumAmountOut(new Percent(5, 1000))
+			.toSignificant()
+
+		const priceImpact = trade.priceImpact.toSignificant()
+
+		return {
+			minimumAmountOut,
+			priceImpact,
+		}
 	}
 
 	throw new Error('Invalid path')
@@ -630,7 +703,7 @@ export async function walletDiversificationTransaction({
 				provider,
 			})
 
-			const trade = Trade.createUncheckedTrade({
+			const trade = TradeV3.createUncheckedTrade({
 				route,
 				inputAmount: fromTokenCurrencyAmount,
 				outputAmount: toTokenCurrencyAmount,
