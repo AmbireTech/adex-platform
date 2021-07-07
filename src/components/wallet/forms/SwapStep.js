@@ -124,8 +124,8 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	const {
 		formAsset = '',
 		formAssetAmount,
-		toAssetAmount = null,
-		toAsset = assetsFromSource[1] ? assetsFromSource[1].value : '',
+		toAssetAmount = '0.00',
+		toAsset = '',
 	} = useSelector(state => selectNewTransactionById(state, stepsId))
 
 	const selectedFromAsset = assetsData[formAsset] || {}
@@ -237,6 +237,24 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 				updateNewTransaction({
 					tx: stepsId,
 					key: 'formAssetAmount',
+					value: '0',
+				})
+			)
+		}
+		if (!toAsset) {
+			execute(
+				updateNewTransaction({
+					tx: stepsId,
+					key: 'toAsset',
+					value: assetsFromSource[1] ? assetsFromSource[1].value : '',
+				})
+			)
+		}
+		if (toAssetAmount === undefined) {
+			execute(
+				updateNewTransaction({
+					tx: stepsId,
+					key: 'toAssetAmount',
 					value: '0',
 				})
 			)
@@ -460,7 +478,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 												)
 											}
 											source={assetsToSource}
-											value={toAsset + ''}
+											value={toAsset}
 											// label={t('TO_ASSET_LABEL')}
 											htmlId='wallet-asset-to-dd'
 											name='formAsset'
