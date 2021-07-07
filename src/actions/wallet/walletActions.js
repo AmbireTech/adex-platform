@@ -19,7 +19,7 @@ import {
 } from 'selectors'
 import {
 	walletTradeTransaction,
-	getTradeOutAmount,
+	getTradeOutData,
 	walletDiversificationTransaction,
 } from 'services/smart-contracts/actions/wallet'
 
@@ -163,7 +163,7 @@ export function updateEstimatedTradeValue({
 		let isValid = inputValidations.every(v => v === true)
 
 		if (isValid) {
-			const toAssetAmount = await getTradeOutAmount({
+			const { minimumAmountOut } = await getTradeOutData({
 				formAsset,
 				formAssetAmount,
 				toAsset,
@@ -172,7 +172,7 @@ export function updateEstimatedTradeValue({
 			await updateNewTransaction({
 				tx: stepsId,
 				key: 'toAssetAmount',
-				value: toAssetAmount,
+				value: minimumAmountOut,
 			})(dispatch, getState)
 		}
 
