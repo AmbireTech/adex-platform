@@ -95,7 +95,7 @@ export const paths = {
 				{
 					addressTokenA: tokens.DAI,
 					addressTokenB: tokens.WETH,
-					fee: FeeAmount.MEDIUM,
+					fee: FeeAmount.LOW,
 				},
 			],
 			poolsPath: [tokens.ADX, tokens.WETH, tokens.DAI],
