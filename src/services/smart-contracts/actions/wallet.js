@@ -17,8 +17,8 @@ import {
 	Route as RouteV3,
 	encodeRouteToPath,
 	Trade as TradeV3,
-	Tick,
-	TickListDataProvider,
+	// Tick,
+	// TickListDataProvider,
 	nearestUsableTick,
 } from '@uniswap/v3-sdk'
 import {
@@ -40,6 +40,7 @@ import {
 import { abi as IUniswapV3PoolABI } from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json'
 
 const UNI_V3_FACTORY_ADDR = '0x1F98431c8aD98523631AE4a59f267346ea31F984'
+const SIGNIFICANT_DIGITS = 6
 
 const { Interface } = utils
 
@@ -173,16 +174,16 @@ async function getUniv3Route({ pools, tokenIn, tokenOut, provider }) {
 				provider,
 			})
 
-			const tick = new Tick({
-				index: poolState.usableTick,
-				liquidityGross: poolState.usableTickData.liquidityGross,
-				liquidityNet: poolState.usableTickData.liquidityNet,
-			})
+			// const tick = new Tick({
+			// 	index: poolState.usableTick,
+			// 	liquidityGross: poolState.usableTickData.liquidityGross,
+			// 	liquidityNet: poolState.usableTickData.liquidityNet,
+			// })
 
-			const ticksDataProvider = new TickListDataProvider(
-				[tick],
-				poolState.tickSpacing
-			)
+			// const ticksDataProvider = new TickListDataProvider(
+			// 	[tick],
+			// 	poolState.tickSpacing
+			// )
 
 			const pool = new Pool(
 				tokenA,
@@ -190,8 +191,8 @@ async function getUniv3Route({ pools, tokenIn, tokenOut, provider }) {
 				fee,
 				poolState.sqrtPriceX96,
 				poolState.liquidity,
-				poolState.tick,
-				ticksDataProvider
+				poolState.tick
+				// ticksDataProvider
 			)
 
 			return pool
@@ -241,16 +242,35 @@ export async function getTradeOutData({ formAsset, formAssetAmount, toAsset }) {
 		const trade = new TradeV2(route, tokenInAmount, TradeTypeV2.EXACT_INPUT)
 
 		const midPrice = route.midPrice
-		const priceImpact = midPrice.raw.subtract(trade.executionPrice.raw)
-		// .toSignificant()
+		const priceImpact = midPrice.raw
+			.subtract(trade.executionPrice.raw)
+			.multiply(100)
+			.divide(route.midPrice.raw)
+			.toSignificant(SIGNIFICANT_DIGITS)
 
+		const executionPrice = trade.executionPrice.toSignificant(
+			SIGNIFICANT_DIGITS
+		)
+
+		const slippageTolerance = new PercentV2(5, 1000)
 		const minimumAmountOut = trade
-			.minimumAmountOut(new PercentV2(5, 1000))
-			.toSignificant()
+			.minimumAmountOut(slippageTolerance)
+			.toSignificant(SIGNIFICANT_DIGITS)
+
+		const expectedAmountOut = tokenInAmount
+			.multiply(trade.executionPrice)
+			.toSignificant(SIGNIFICANT_DIGITS)
+
+		const routeTokens = trade.route.path.map(x => x.symbol)
 
 		return {
 			minimumAmountOut,
 			priceImpact,
+			executionPrice,
+			expectedAmountOut,
+			slippageTolerance: slippageTolerance.toSignificant(2),
+			routeTokens,
+			router,
 		}
 	}
 
@@ -311,15 +331,29 @@ export async function getTradeOutData({ formAsset, formAssetAmount, toAsset }) {
 
 		// console.log('bestTrade', bestTrade)
 
+		const slippageTolerance = new Percent(5, 1000)
 		const minimumAmountOut = trade
-			.minimumAmountOut(new Percent(5, 1000))
-			.toSignificant()
+			.minimumAmountOut(slippageTolerance)
+			.toSignificant(SIGNIFICANT_DIGITS)
 
-		const priceImpact = trade.priceImpact.toSignificant()
+		const priceImpact = trade.priceImpact.toSignificant(SIGNIFICANT_DIGITS)
+		const executionPrice = trade.executionPrice.toSignificant(
+			SIGNIFICANT_DIGITS
+		)
+		const expectedAmountOut = trade.executionPrice
+			.quote(fromTokenCurrencyAmount)
+			.toSignificant(SIGNIFICANT_DIGITS)
+
+		const routeTokens = trade.route.tokenPath.map(x => x.symbol)
 
 		return {
+			expectedAmountOut,
 			minimumAmountOut,
 			priceImpact,
+			executionPrice,
+			slippageTolerance: slippageTolerance.toSignificant(2),
+			routeTokens,
+			router,
 		}
 	}
 
@@ -715,7 +749,12 @@ export async function walletDiversificationTransaction({
 				asset.address,
 				pool.fee,
 				Math.round(flattedShare),
-				utils.parseUnits(amountOutMin.toSignificant(), to.decimals).toString(),
+				utils
+					.parseUnits(
+						amountOutMin.toSignificant(SIGNIFICANT_DIGITS),
+						to.decimals
+					)
+					.toString(),
 				false,
 			]
 		})
