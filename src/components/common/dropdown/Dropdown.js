@@ -73,6 +73,7 @@ function Dropdown(props) {
 		label = '',
 		value,
 		source = [],
+		disabledValues = {},
 		htmlId = 'some-id',
 		disabled = false,
 		error = false,
@@ -122,6 +123,10 @@ function Dropdown(props) {
 					>
 						{[...source].map(src => {
 							const srcValue = src.value || {}
+							const isDisabledSrc =
+								!!disabledValues[srcValue.key] ||
+								!!disabledValues[srcValue.id] ||
+								!!disabledValues[src.value]
 							return src.group ? (
 								<ListSubheader
 									className={classes.groupHeader}
@@ -134,6 +139,7 @@ function Dropdown(props) {
 									key={srcValue.key || srcValue.id || src.value}
 									classes={{ selected: classes.menuItem }}
 									value={srcValue.id || src.value}
+									disabled={isDisabledSrc}
 								>
 									{!!src.iconSrc && 'icon'
 									//TODO: icon
