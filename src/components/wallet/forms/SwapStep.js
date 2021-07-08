@@ -75,6 +75,38 @@ const getMainCurrencyValue = ({ asset, floatAmount, prices, mainCurrency }) => {
 	return value.toFixed(2)
 }
 
+const DataRow = ({ left, right }) => (
+	<Box
+		display='flex'
+		flexDirection='row'
+		justifyContent='space-between'
+		alignItems='center'
+	>
+		<Box>{left}</Box>
+		<Box>{right}</Box>
+	</Box>
+)
+
+const TradeData = ({
+	router,
+	minimumAmountOut,
+	priceImpact,
+	executionPrice,
+	slippageTolerance,
+	routeTokens = [],
+}) => (
+	<Paper>
+		<Box p={2}>
+			<DataRow left={t('router')} right={router} />
+			<DataRow left={t('routeTokens')} right={routeTokens.join(' > ')} />
+			<DataRow left={t('minimumAmountOut')} right={minimumAmountOut} />
+			<DataRow left={t('priceImpact')} right={priceImpact} />
+			<DataRow left={t('executionPrice')} right={executionPrice} />
+			<DataRow left={t('slippageTolerance')} right={slippageTolerance} />
+		</Box>
+	</Paper>
+)
+
 // const conversionRate = ({ formAsset, toAsset, prices, mainCurrency }) => {
 // 	const fromPrice = parseFloat((prices[formAsset] || {})[mainCurrency] || 0)
 // 	const toPrice = parseFloat((prices[toAsset] || {})[mainCurrency] || 0)
@@ -126,6 +158,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 		formAssetAmount,
 		toAssetAmount = '0.00',
 		toAsset = '',
+		tradeData,
 	} = useSelector(state => selectNewTransactionById(state, stepsId))
 
 	const selectedFromAsset = assetsData[formAsset] || {}
@@ -506,6 +539,8 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 								</Grid>
 							</Box>
 						</Paper>
+
+						{tradeData && <TradeData {...tradeData} />}
 
 						{errFees && errFees.dirty && errFees.errMsg && (
 							<Alert variant='filled' severity='error'>
