@@ -141,39 +141,70 @@ export function updateEstimatedTradeValue({
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
 		const state = getState()
+		try {
+			const { formAsset, formAssetAmount, toAsset } = selectNewTransactionById(
+				state,
+				stepsId
+			)
 
-		const { formAsset, formAssetAmount, toAsset } = selectNewTransactionById(
-			state,
-			stepsId
-		)
+			if (!formAsset || !toAsset) {
+				return
+			}
 
-		if (!formAsset || !toAsset) {
-			return
-		}
+			const inputValidations = await Promise.all([
+				validateNumberString({
+					validateId,
+					prop: 'formAssetAmount',
+					value: formAssetAmount,
+					dirty,
+				})(dispatch),
+			])
 
-		const inputValidations = await Promise.all([
-			validateNumberString({
-				validateId,
-				prop: 'formAssetAmount',
-				value: formAssetAmount,
-				dirty,
-			})(dispatch),
-		])
+			let isValid = inputValidations.every(v => v === true)
 
-		let isValid = inputValidations.every(v => v === true)
+			if (isValid) {
+				const {
+					expectedAmountOut,
+					minimumAmountOut,
+					priceImpact,
+					executionPrice,
+					slippageTolerance,
+					routeTokens,
+					router,
+				} = await getTradeOutData({
+					formAsset,
+					formAssetAmount,
+					toAsset,
+				})
 
-		if (isValid) {
-			const { minimumAmountOut } = await getTradeOutData({
-				formAsset,
-				formAssetAmount,
-				toAsset,
-			})
+				await updateNewTransaction({
+					tx: stepsId,
+					key: 'toAssetAmount',
+					value: expectedAmountOut,
+				})(dispatch, getState)
 
-			await updateNewTransaction({
-				tx: stepsId,
-				key: 'toAssetAmount',
-				value: minimumAmountOut,
-			})(dispatch, getState)
+				await updateNewTransaction({
+					tx: stepsId,
+					key: 'tradeData',
+					value: {
+						minimumAmountOut,
+						priceImpact,
+						executionPrice,
+						slippageTolerance,
+						routeTokens,
+						router,
+					},
+				})(dispatch, getState)
+			}
+		} catch (err) {
+			console.error(err)
+			addToast({
+				type: 'cancel',
+				label: t('ERR_WALLET_TRADE_DATA', {
+					args: [err.message],
+				}),
+				timeout: 5000,
+			})(dispatch)
 		}
 
 		await updateSpinner(validateId, false)(dispatch)
@@ -208,6 +239,7 @@ export function walletTrade({
 				timeout: 20000,
 			})(dispatch)
 		} catch (err) {
+			console.error(err)
 			addToast({
 				type: 'cancel',
 				label: t('ERR_WALLET_TRADE', {
