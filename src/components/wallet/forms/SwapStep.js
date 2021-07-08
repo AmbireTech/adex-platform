@@ -352,6 +352,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 												setSelectedPercent(0)
 											}}
 											source={assetsFromSource}
+											disabledValues={{ [toAsset]: true }}
 											value={formAsset + ''}
 											// label={t('FROM_ASSET_LABEL')}
 											htmlId='wallet-asset-from-dd'
@@ -478,6 +479,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 												)
 											}
 											source={assetsToSource}
+											disabledValues={{ [formAsset]: true }}
 											value={toAsset}
 											// label={t('TO_ASSET_LABEL')}
 											htmlId='wallet-asset-to-dd'
