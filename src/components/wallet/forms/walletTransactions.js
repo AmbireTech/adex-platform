@@ -1,7 +1,7 @@
 import React from 'react'
 import WalletSwapTokensStep from './SwapStep'
 import WalletDiversifyTokensStep from './DiversifyStep'
-import TransactionPreview from 'components/dashboard/forms/web3/TransactionPreview.js'
+import TransactionPreview from './WalletTransactionPreview'
 import FormSteps from 'components/common/stepper/FormSteps'
 import WithDialog from 'components/common/dialog/WithDialog'
 import {
