@@ -562,6 +562,7 @@ export async function walletDiversificationTransaction({
 	const fromAmount = utils.parseUnits(formAssetAmount.toString(), from.decimals)
 
 	const txns = []
+	const tokensOutData = []
 
 	const tokenIn = getUniToken({
 		address: formAsset,
@@ -583,15 +584,24 @@ export async function walletDiversificationTransaction({
 	let toTransferAmountIn = ZERO
 	let toSwapAmountInToWETH = ZERO
 
-	let usedShares = hasWETHOut ? diversificationAssets[WETHOutIndex].share : 0
+	const WETHOutShare = hasWETHOut
+		? diversificationAssets[WETHOutIndex].share
+		: 0
+	let usedShares = WETHOutShare
 
 	if (!hasWETHOut && tokenIn.address === wethIn.address) {
 		wethAmountIn = utils.parseUnits(formAssetAmount.toString(), weth.decimals)
 		toTransferAmountIn = wethAmountIn
 	} else if (hasWETHOut && tokenIn.address === wethIn.address) {
-		const wethAmountOut = fromAmount
-			.mul(diversificationAssets[WETHOutIndex].share * 10)
-			.div(1000)
+		const wethAmountOut = fromAmount.mul(WETHOutShare * 10).div(1000)
+
+		tokensOutData.push({
+			address: wethIn.address,
+			share: WETHOutShare,
+			amountOutMin: new TokenAmountV2(wethIn, wethAmountOut).toSignificant(
+				SIGNIFICANT_DIGITS
+			),
+		})
 
 		wethAmountIn = fromAmount.sub(wethAmountOut)
 		toTransferAmountIn = wethAmountIn
@@ -603,7 +613,7 @@ export async function walletDiversificationTransaction({
 		usedShares += allocatedInputToken.share
 
 		toSwapAmountInToWETH = hasWETHOut
-			? fromAmount.mul(diversificationAssets[WETHOutIndex].share * 10).div(1000)
+			? fromAmount.mul(WETHOutShare * 10).div(1000)
 			: ZERO
 
 		toTransferAmountIn = allocatedInputToken
@@ -616,7 +626,7 @@ export async function walletDiversificationTransaction({
 			pools[0].fee,
 			toTransferAmountIn
 				.sub(toSwapAmountInToWETH)
-				.mul(950)
+				.mul(995)
 				.div(1000)
 				.toHexString(),
 			0 // sqrtPriceLimitX96
@@ -644,6 +654,17 @@ export async function walletDiversificationTransaction({
 			0 // sqrtPriceLimitX96
 		)
 
+		if (!toSwapAmountInToWETH.isZero()) {
+			tokensOutData.push({
+				address: wethIn.address,
+				share: WETHOutShare,
+				amountOutMin: new TokenAmountV2(
+					wethIn,
+					toWETHAmountOut.mul(995).div(1000)
+				).toSignificant(SIGNIFICANT_DIGITS),
+			})
+		}
+
 		// TODO: trade + slippage
 
 		txns.push({
@@ -660,7 +681,7 @@ export async function walletDiversificationTransaction({
 					deadline,
 					toSwapAmountInToWETH.toHexString(),
 					toWETHAmountOut
-						.mul(950)
+						.mul(995)
 						.div(1000)
 						.toHexString(),
 					// poolState.sqrtPriceX96,
@@ -745,6 +766,13 @@ export async function walletDiversificationTransaction({
 			})
 
 			const amountOutMin = trade.minimumAmountOut(new Percent(5, 1000))
+
+			tokensOutData.push({
+				address: asset.address,
+				share: asset.share,
+				amountOutMin: amountOutMin.toSignificant(SIGNIFICANT_DIGITS),
+			})
+
 			return [
 				asset.address,
 				pool.fee,
@@ -809,6 +837,7 @@ export async function walletDiversificationTransaction({
 			spendTokenAddr: from.address,
 			amountToSpendBN: fromAmount,
 			breakdownFormatted,
+			tokensOutData,
 		}
 	}
 
