@@ -23,6 +23,9 @@ export const selectDiversifiableAssetsFromSources = createSelector(
 	({ assetsData = {} }) => {
 		return Object.values(assetsData)
 			.filter(x => {
+				if (!x.isSwappable || !x.isBaseAsset) {
+					return false
+				}
 				if (x.address === tokens['WETH']) {
 					return true
 				}
@@ -46,7 +49,7 @@ export const selectTradableAssetsToSources = createSelector(
 	[selectAccountStatsFormatted], // TODO: selected from
 	({ assetsData } = {}) => {
 		return Object.entries(assets)
-			.filter(x => x[1].isBaseAsset)
+			.filter(x => x[1].isBaseAsset && x[1].isSwappable)
 			.map(([addr, x]) => ({
 				value: addr,
 				label: `${x.symbol}`,
