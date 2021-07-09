@@ -13,7 +13,10 @@ async function getAssetsData({ identityAddress, authType }) {
 	const assetsBalances = (
 		await Promise.all(
 			Object.entries(assets).map(
-				async ([address, { getBalance, symbol, decimals, name, logoSrc }]) => {
+				async ([
+					address,
+					{ getBalance, symbol, decimals, name, logoSrc, isSwappable },
+				]) => {
 					const balance = await getBalance({ address: identityAddress })
 					const baseTokenBalance = mappers[address]
 						? await mappers[address](balance)
@@ -26,6 +29,7 @@ async function getAssetsData({ identityAddress, authType }) {
 						decimals,
 						name,
 						logoSrc,
+						isSwappable,
 					}
 				}
 			)
@@ -70,6 +74,9 @@ async function getAssetsData({ identityAddress, authType }) {
 }
 
 const withPricesValue = ({ prices, value }) => {
+	if (!prices) {
+		return { USD: 0, EUR: 0 }
+	}
 	return Object.entries(prices).reduce((updated, [key, pr]) => {
 		updated[key] = value * pr
 		return updated
@@ -80,7 +87,7 @@ const sumPricesValues = currenciesValues => {
 	return Object.keys(currenciesValues[0] || {}).reduce((sumByKey, key) => {
 		sumByKey[key] = currenciesValues.reduce((sum, value) => {
 			if (value[key]) {
-				sum = sum + value[key]
+				sum = sum + (value[key] || 0)
 			}
 			return sum
 		}, 0)
