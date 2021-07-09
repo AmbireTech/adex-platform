@@ -23,7 +23,7 @@ export const selectDiversifiableAssetsFromSources = createSelector(
 	({ assetsData = {} }) => {
 		return Object.values(assetsData)
 			.filter(x => {
-				if (!x.isSwappable || !x.isBaseAsset) {
+				if (!x.isSwappable) {
 					return false
 				}
 				if (x.address === tokens['WETH']) {
