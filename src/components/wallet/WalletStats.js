@@ -30,21 +30,23 @@ const WalletDoughnut = ({
 		...(theme.palette.chartColors ? theme.palette.chartColors.all : []),
 	]
 
-	const { labels, values } = Object.values(assetsData).reduce(
-		(data, asset) => {
-			data.labels.push(asset.symbol)
-			data.values.push(
-				(asset.assetTotalToMainCurrenciesValues[mainCurrency.id] /
-					totalMainCurrenciesValues[mainCurrency.id]) *
-					100
-			)
-			return data
-		},
-		{
-			labels: [],
-			values: [],
-		}
-	)
+	const { labels, values } = Object.values(assetsData)
+		.filter(x => x.isSwappable)
+		.reduce(
+			(data, asset) => {
+				data.labels.push(asset.symbol)
+				data.values.push(
+					(asset.assetTotalToMainCurrenciesValues[mainCurrency.id] /
+						totalMainCurrenciesValues[mainCurrency.id]) *
+						100
+				)
+				return data
+			},
+			{
+				labels: [],
+				values: [],
+			}
+		)
 
 	const data = {
 		labels,
@@ -216,7 +218,9 @@ function WalletStats() {
 										{' ('}
 										<AmountWithCurrency
 											amount={
-												x.assetTotalToMainCurrenciesValues[mainCurrency.id]
+												(x.assetTotalToMainCurrenciesValues || {})[
+													mainCurrency.id
+												]
 											}
 											unit={'$'}
 											unitPlace='left'
