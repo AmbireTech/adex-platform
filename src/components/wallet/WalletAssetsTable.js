@@ -2,12 +2,32 @@ import React, { useState, useCallback, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
 import { Box, Avatar } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
+import clsx from 'clsx'
+
 import {
 	t,
 	selectInitialDataLoaded,
 	selectWalletAssetsTableData,
 } from 'selectors'
 import { useTableData } from 'components/dashboard/containers/Tables/tableHooks'
+
+const styles = theme => {
+	return {
+		row: {
+			'& td': {
+				borderBottom: 0,
+			},
+		},
+		OddRow: {
+			'& td': {
+				backgroundColor: theme.palette.background.default,
+			},
+		},
+	}
+}
+
+const useStyles = makeStyles(styles)
 
 const getCols = ({ symbol }) => [
 	{
@@ -68,17 +88,25 @@ const getCols = ({ symbol }) => [
 	},
 ]
 
-const getOptions = () => ({
+const getOptions = ({ classes }) => ({
 	// filterType: 'multiselect',
 	sortOrder: {
 		name: 'created',
 		direction: 'desc',
 	},
 	selectableRows: 'none',
+	setRowProps: (row, _dataIndex, rowIndex) => {
+		return {
+			className: clsx(row, {
+				[classes.OddRow]: rowIndex % 2 === 0,
+			}),
+			style: { border: 0 },
+		}
+	},
 })
 
 function WalletAssetsTable(props) {
-	// const { symbol } = useSelector(selectMainToken)
+	const classes = useStyles()
 	const itemsLoaded = useSelector(selectInitialDataLoaded)
 
 	const [options, setOptions] = useState({})
@@ -97,8 +125,8 @@ function WalletAssetsTable(props) {
 	})
 
 	useEffect(() => {
-		setOptions(getOptions())
-	}, [])
+		setOptions(getOptions({ classes }))
+	}, [classes])
 
 	return (
 		<MUIDataTableEnhanced
