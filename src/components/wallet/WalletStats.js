@@ -17,6 +17,8 @@ import {
 } from 'components/wallet/forms/walletTransactions'
 import { Doughnut } from 'react-chartjs-2'
 
+import WalletAssetsTable from './WalletAssetsTable'
+
 import { t, selectAccountStatsFormatted, selectMainCurrency } from 'selectors'
 
 const WalletDoughnut = ({
@@ -271,6 +273,9 @@ function WalletStats() {
 						))}
 					</TreeView>
 				</InfoCard>
+			</Grid>
+			<Grid item xs={12}>
+				<WalletAssetsTable />
 			</Grid>
 		</Grid>
 	)
