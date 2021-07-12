@@ -327,6 +327,7 @@ const commonTheme = createMuiTheme({
 			},
 			root: {
 				whiteSpace: 'nowrap',
+				borderBottom: '0',
 			},
 		},
 		MuiPaper: {
