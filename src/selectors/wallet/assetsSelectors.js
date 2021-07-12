@@ -68,3 +68,20 @@ export const selectMainCurrency = createSelector(
 	({ mainCurrency = { id: 'USD', symbol: '$', symbolPosition: 'left' } }) =>
 		mainCurrency
 )
+
+export const selectWalletAssetsTableData = createSelector(
+	[selectAccountStatsFormatted],
+	({ assetsData } = {}) => {
+		// console.log('assetsData', assetsData)
+		return Object.values(assetsData).map(
+			({ symbol, name, logoSrc, balance }) => {
+				return {
+					name,
+					logo: { logoSrc, name },
+					symbol,
+					balance,
+				}
+			}
+		)
+	}
+)
