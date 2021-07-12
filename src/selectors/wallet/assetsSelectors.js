@@ -71,7 +71,7 @@ export const selectMainCurrency = createSelector(
 
 export const selectWalletAssetsTableData = createSelector(
 	[selectAccountStatsFormatted],
-	({ assetsData } = {}) => {
+	({ assetsData = {} } = {}) => {
 		// console.log('assetsData', assetsData)
 		return Object.values(assetsData).map(
 			({ symbol, name, logoSrc, balance }) => {
@@ -79,7 +79,7 @@ export const selectWalletAssetsTableData = createSelector(
 					name,
 					logo: { logoSrc, name },
 					symbol,
-					balance,
+					balance: parseFloat(balance),
 				}
 			}
 		)
