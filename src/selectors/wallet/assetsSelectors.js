@@ -74,12 +74,21 @@ export const selectWalletAssetsTableData = createSelector(
 	({ assetsData = {} } = {}) => {
 		// console.log('assetsData', assetsData)
 		return Object.values(assetsData).map(
-			({ symbol, name, logoSrc, balance }) => {
+			({ symbol, name, logoSrc, balance, specific, ...rest }) => {
 				return {
-					name,
+					// nameFilter: name,
+					name: [name, logoSrc],
 					logo: { logoSrc, name },
 					symbol,
 					balance: parseFloat(balance),
+					specific: {
+						symbol,
+						name,
+						logoSrc,
+						balance,
+						specific,
+						...rest,
+					},
 				}
 			}
 		)
