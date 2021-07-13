@@ -328,6 +328,8 @@ const commonTheme = createMuiTheme({
 			root: {
 				whiteSpace: 'nowrap',
 				borderBottom: '0',
+				fontSize: defaultTheme.typography.body1.fontSize,
+				fontWeight: defaultTheme.typography.fontWeightBold,
 			},
 		},
 		MuiPaper: {
@@ -448,6 +450,20 @@ const commonTheme = createMuiTheme({
 		MuiAccordion: {
 			rounded: {
 				borderRadius,
+			},
+		},
+		MuiTableRow: {
+			root: {
+				borderBottom: 0,
+				fontSize: defaultTheme.typography.h6.fontSize,
+				fontWeight: defaultTheme.typography.fontWeightBold,
+			},
+		},
+		MUIDataTableHeadRow: {
+			root: {
+				color: defaultTheme.palette.text.primary,
+				opacity: 0.6,
+				backgroundColor: defaultTheme.palette.background.default,
 			},
 		},
 		MuiListItem: {
