@@ -94,6 +94,7 @@ function MUIDataTableEnhanced(props) {
 		data,
 		columns,
 		options,
+		components,
 		handleRowSelectionChange,
 		// loading,
 		tableId,
@@ -132,6 +133,7 @@ function MUIDataTableEnhanced(props) {
 				title={title}
 				data={data}
 				columns={columnsWithFilters}
+				components={components}
 				options={{
 					...generalTableOptions,
 					...options,
