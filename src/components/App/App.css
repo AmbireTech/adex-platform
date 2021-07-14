@@ -4,6 +4,10 @@ a, img {
   user-drag: none;
 }
 
+html, body {
+  overflow: hidden;
+}
+
 @media print {
   html, body {
     height: initial !important;
