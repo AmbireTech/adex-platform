@@ -430,15 +430,30 @@ const commonTheme = createMuiTheme({
 		MUIDataTableBodyCell: {
 			stackedCommon: {
 				[defaultTheme.breakpoints.down('sm')]: {
-					display: 'inline-flex',
+					display: 'inline-block',
 					height: 'auto',
 					borderBottom: 'none',
+					overflow: 'hidden',
+					'&:first-child': {
+						width: 'calc(30%)',
+						marginRight: defaultTheme.spacing(1),
+						whiteSpace: 'break-spaces',
+						overflow: 'hidden',
+						// textOverflow: 'ellipsis',
+						wordBreak: 'break-all',
+					},
+					'&:last-child': {
+						width: 'calc(70%)',
+					},
 				},
 			},
 		},
 		MUIDataTable: {
 			root: {
 				border: '1px solid black',
+			},
+			tableRoot: {
+				tableLayout: 'fixed',
 			},
 		},
 		MUIDataTableBody: {
