@@ -1,15 +1,13 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { ExpandButton, TableBodyRow } from 'mui-datatables'
 import { TreeView, TreeItem } from '@material-ui/lab'
 import { ExpandMore, ChevronRight } from '@material-ui/icons'
 import MUIDataTableEnhanced from 'components/dashboard/containers/Tables/MUIDataTableEnhanced'
-import { Box, Avatar, TableRow, TableCell } from '@material-ui/core'
+import { Box, Avatar } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { AmountWithCurrency } from 'components/common/amount'
-
+import { selectMainCurrency } from 'selectors'
 import clsx from 'clsx'
-
 import {
 	t,
 	selectInitialDataLoaded,
@@ -20,30 +18,26 @@ import { useTableData } from 'components/dashboard/containers/Tables/tableHooks'
 const styles = theme => {
 	return {
 		OddRow: {
-			'& td': {
-				backgroundColor: theme.palette.background.default,
-			},
+			backgroundColor: theme.palette.background.default,
 		},
 		logo: {
 			marginRight: theme.spacing(1),
+		},
+		amountContainer: {
+			display: 'flex',
+			flexDirections: 'row',
+			flexWrap: 'wrap',
+		},
+		amountLabel: {
+			fontWeight: 'inherit',
+			borderBottom: `1px solid ${theme.palette.divider}`,
 		},
 	}
 }
 
 const useStyles = makeStyles(styles)
 
-const getCols = ({ classes }) => [
-	// {
-	// 	name: 'logo',
-	// 	// label: t('logo'),
-	// 	options: {
-	// 		filter: false,
-	// 		sort: false,
-	// 		customBodyRender: (value) => (
-	// 			<Avatar src={logoSrc} alt={name} />
-	// 		),
-	// 	},
-	// },
+const getCols = ({ classes, mainCurrency = {} }) => [
 	{
 		name: 'name',
 		label: t('PROP_ASSET'),
@@ -61,86 +55,98 @@ const getCols = ({ classes }) => [
 		},
 	},
 	{
-		name: 'balance',
-		label: t('PROP_AMOUNT'),
+		name: 'balanceData',
+		label: t('balanceData', { isProp: true }),
 		options: {
-			filter: false,
+			filter: true,
 			sort: true,
-			customBodyRender: balance => balance,
-		},
-	},
-	{
-		name: 'specific',
-		label: t('specific'),
-		options: {
-			// filter: true,
-			// sort: true,
-			customBodyRender: x => {
-				return (
+			sortCompare: order => {
+				return (obj1, obj2) => {
+					const [a] = obj1.data
+					const [b] = obj2.data
+					return (a - b) * (order === 'desc' ? -1 : 1)
+				}
+			},
+			customBodyRender: ([balance, balanceData] = []) => {
+				const {
+					specific,
+					address,
+					total,
+					symbol,
+					assetTotalToMainCurrenciesValues,
+				} = balanceData
+
+				const Total = () => (
+					<Box className={classes.amountContainer}>
+						<AmountWithCurrency
+							amount={total}
+							unit={symbol}
+							mainFontVariant='subtitle1'
+							decimalsFontVariant='subtitle2'
+						/>{' '}
+						<Box>
+							{'('}{' '}
+							<AmountWithCurrency
+								amount={
+									(assetTotalToMainCurrenciesValues || {})[mainCurrency.id]
+								}
+								unit={mainCurrency.symbol}
+								unitPlace={mainCurrency.symbolPosition}
+								mainFontVariant='subtitle1'
+								decimalsFontVariant='subtitle2'
+							/>
+							{')'}
+						</Box>
+					</Box>
+				)
+
+				return !specific || !specific.length ? (
+					<Total />
+				) : (
 					<TreeView
 						defaultCollapseIcon={<ExpandMore />}
 						defaultExpandIcon={<ChevronRight />}
 					>
 						<TreeItem
-							key={x.address}
-							nodeId={x.address + '-' + 1}
-							label={
-								<Box>
-									<AmountWithCurrency
-										amount={x.total}
-										unit={x.symbol}
-										mainFontVariant='h6'
-										decimalsFontVariant='subtitle1'
-									/>
-									{' ('}
-									<AmountWithCurrency
-										amount={
-											0
-											// (x.assetTotalToMainCurrenciesValues || {})[
-											// 	mainCurrency.id
-											// ]
-										}
-										unit={'$'}
-										unitPlace='left'
-										mainFontVariant='body1'
-										decimalsFontVariant='caption'
-									/>
-									{')'}
-								</Box>
-							}
+							classes={{ label: classes.amountLabel }}
+							nodeId={address + '-total'}
+							label={<Total />}
 						>
 							<TreeItem
-								key={x.address}
-								nodeId={x.address}
+								classes={{ label: classes.amountLabel }}
+								nodeId={address + '-balance'}
 								label={
 									<AmountWithCurrency
-										amount={x.balance}
-										unit={x.symbol}
-										mainFontVariant='h6'
-										decimalsFontVariant='subtitle1'
+										amount={balance}
+										unit={symbol}
+										mainFontVariant='subtitle1'
+										decimalsFontVariant='subtitle2'
 									/>
 								}
 							/>
-							{(x.specific || []).map((y, j) => (
+							{(specific || []).map((y, index) => (
 								<TreeItem
-									key={y.address + '-' + j}
-									nodeId={`${1}-${j}`}
+									classes={{ label: classes.amountLabel }}
+									key={y.address + '-' + index}
+									nodeId={`${y.address}-${index}`}
 									label={
-										<Box>
+										<Box className={classes.amountContainer}>
 											<AmountWithCurrency
 												amount={y.balance}
 												unit={y.symbol}
-												mainFontVariant='h6'
-												decimalsFontVariant='subtitle1'
-											/>
-											{' ('}
-											<AmountWithCurrency
-												amount={y.baseTokenBalance[1]}
-												unit={y.baseTokenBalance[0] || x.symbol}
-												mainFontVariant='body1'
-												decimalsFontVariant='caption'
-											/>
-											{')'}
+												mainFontVariant='subtitle1'
+												decimalsFontVariant='subtitle2'
+											/>{' '}
+											<Box>
+												{'('}
+												<AmountWithCurrency
+													amount={y.baseTokenBalance[1]}
+													unit={y.baseTokenBalance[0] || symbol}
+													mainFontVariant='subtitle1'
+													decimalsFontVariant='subtitle2'
+												/>
+												{')'}
+											</Box>
 										</Box>
 									}
 								/>
@@ -192,6 +198,7 @@ const getOptions = ({ classes }) => ({
 function WalletAssetsTable(props) {
 	const classes = useStyles()
 	const itemsLoaded = useSelector(selectInitialDataLoaded)
+	const mainCurrency = useSelector(selectMainCurrency)
 
 	const [options, setOptions] = useState({})
 
@@ -199,8 +206,9 @@ function WalletAssetsTable(props) {
 		() =>
 			getCols({
 				classes,
+				mainCurrency,
 			}),
-		[classes]
+		[classes, mainCurrency]
 	)
 
 	const { data, columns } = useTableData({
@@ -214,6 +222,7 @@ function WalletAssetsTable(props) {
 
 	return (
 		<MUIDataTableEnhanced
+			tableId='wallet-stats-table'
 			title={t('POSITIONS')}
 			data={data}
 			columns={columns}
