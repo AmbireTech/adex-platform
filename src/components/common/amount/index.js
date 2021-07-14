@@ -5,7 +5,13 @@ import { validations } from 'adex-models'
 const { isNumberString } = validations
 
 const AmountUnit = ({ unit }) => (
-	<Box component='span' display='inline' color='secondary.main'>
+	<Box
+		component='span'
+		display='inline'
+		color='secondary.main'
+		whiteSpace='break-spaces'
+		wordBreak='break-word'
+	>
 		{unit}
 	</Box>
 )
