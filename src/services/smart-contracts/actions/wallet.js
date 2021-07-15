@@ -610,14 +610,29 @@ export async function walletDiversificationTransaction({
 			x => x.address === formAsset
 		)
 
+		const allocatedInputTokenAmount = allocatedInputToken
+			? fromAmount.mul(allocatedInputToken.share * 10).div(1000)
+			: ZERO
+
 		usedShares += allocatedInputToken.share
+
+		if (allocatedInputToken) {
+			tokensOutData.push({
+				address: allocatedInputToken.address,
+				share: allocatedInputToken.share,
+				amountOutMin: new TokenAmountV2(
+					tokenIn,
+					allocatedInputTokenAmount
+				).toSignificant(SIGNIFICANT_DIGITS),
+			})
+		}
 
 		toSwapAmountInToWETH = hasWETHOut
 			? fromAmount.mul(WETHOutShare * 10).div(1000)
 			: ZERO
 
 		toTransferAmountIn = allocatedInputToken
-			? fromAmount.sub(fromAmount.mul(allocatedInputToken.share * 10).div(1000))
+			? fromAmount.sub(allocatedInputTokenAmount)
 			: fromAmount
 
 		wethAmountIn = await UniSwapQuoterV3['quoteExactInputSingle'](
@@ -654,7 +669,7 @@ export async function walletDiversificationTransaction({
 			0 // sqrtPriceLimitX96
 		)
 
-		if (!toSwapAmountInToWETH.isZero()) {
+		if (!toWETHAmountOut.isZero()) {
 			tokensOutData.push({
 				address: wethIn.address,
 				share: WETHOutShare,
