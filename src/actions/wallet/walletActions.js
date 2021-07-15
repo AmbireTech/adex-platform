@@ -16,6 +16,7 @@ import {
 	selectNewTransactionById,
 	selectAccount,
 	selectAuthType,
+	selectAccountStatsFormatted,
 	t,
 } from 'selectors'
 import {
@@ -367,13 +368,13 @@ export function validateWalletWithdraw({
 		}
 		const state = getState()
 		// const account = selectAccount(state)
-		const {
-			amountToWithdraw,
-			withdrawTo,
-			tokenDecimals,
-		} = selectNewTransactionById(state, stepsId)
-
+		const { amountToWithdraw, withdrawTo } = selectNewTransactionById(
+			state,
+			stepsId
+		)
+		const { assetsData = {} } = selectAccountStatsFormatted(state)
 		const { withdrawAsset } = stepsProps
+		const { decimals: tokenDecimals } = assetsData[withdrawAsset]
 		const authType = selectAuthType(state)
 
 		const inputValidations = await Promise.all([

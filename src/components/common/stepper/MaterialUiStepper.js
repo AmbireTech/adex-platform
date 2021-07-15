@@ -62,13 +62,7 @@ const StepperNav = ({ steps, currentPage, classes, ...other }) => {
 }
 
 const MaterialStepper = props => {
-	const {
-		initialPage = 0,
-		steps = [],
-		closeDialog,
-		hideNav,
-		stepsProps,
-	} = props
+	const { initialPage = 0, steps = [], closeDialog, hideNav } = props
 	const classes = useStyles()
 
 	const [currentPage, setCurrentPage] = useState(+initialPage)
@@ -77,7 +71,7 @@ const MaterialStepper = props => {
 
 	const page = steps[currentPage] || {}
 	const pageProps = page.props || {}
-	const { validateId } = pageProps
+	const { validateId, stepsProps } = pageProps
 	const Comp = page.component || null
 	const {
 		validationFn,
@@ -159,10 +153,10 @@ const MaterialStepper = props => {
 
 	useEffect(() => {
 		if (!isBack && validationFn) {
-			validationFn({ stepsId, validateId, dirty: false })
+			validationFn({ stepsId, validateId, dirty: false, stepsProps })
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentPage, validationFn, stepsId, validateId])
+	}, [currentPage, validationFn, stepsId, validateId, stepsProps])
 
 	const onKeyPressed = useCallback(
 		async ev => {

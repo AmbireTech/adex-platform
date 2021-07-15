@@ -111,7 +111,7 @@ export const WithdrawAsset = props => (
 		btnLabel='WALLET_WITHDRAW_ASSET_BTN'
 		saveBtnLabel='WALLET_WITHDRAW_ASSET_SAVE_BTN'
 		title='WALLET_WITHDRAW_ASSET_TITLE'
-		stepsId={`walletWithdraw-${props.withdrawAsset}`}
+		stepsId={`walletWithdraw-${props.stepsProps.withdrawAsset}`}
 		{...txCommon}
 		hideNav={true}
 		steps={[
