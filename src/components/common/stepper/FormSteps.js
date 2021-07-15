@@ -25,8 +25,8 @@ function FormSteps({
 			props: {
 				...rest,
 				stepsId,
-				stepsProps,
 				validateId: stepsId + '-' + index,
+				stepsProps,
 			},
 		}))
 
