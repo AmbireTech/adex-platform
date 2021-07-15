@@ -10,6 +10,7 @@ import {
 	validateWalletFees,
 	validate,
 	validateWalletDiversificationAssets,
+	validateEthAddress,
 } from 'actions'
 import {
 	selectNewTransactionById,
@@ -22,6 +23,7 @@ import {
 	getTradeOutData,
 	walletDiversificationTransaction,
 } from 'services/smart-contracts/actions/wallet'
+import { BigNumber } from 'ethers'
 
 export function handleWalletFeesData({
 	stepsId,
@@ -347,5 +349,101 @@ export function walletDiversification({
 				timeout: 5000,
 			})(dispatch)
 		}
+	}
+}
+
+export function validateWalletWithdraw({
+	stepsId,
+	validateId,
+	dirty,
+	onValid,
+	onInvalid,
+	stepsProps = {},
+}) {
+	return async function(dispatch, getState) {
+		await updateSpinner(validateId, true)(dispatch)
+		if (!dirty) {
+			await beforeWeb3(validateId)(dispatch, getState)
+		}
+		const state = getState()
+		// const account = selectAccount(state)
+		const {
+			amountToWithdraw,
+			withdrawTo,
+			tokenDecimals,
+		} = selectNewTransactionById(state, stepsId)
+
+		const { withdrawAsset } = stepsProps
+		const authType = selectAuthType(state)
+
+		const inputValidations = await Promise.all([
+			validateEthAddress({
+				validateId,
+				addr: withdrawTo,
+				prop: 'withdrawTo',
+				nonERC20: true,
+				nonZeroAddr: true,
+				authType,
+				dirty,
+				quickCheck: !dirty,
+			})(dispatch),
+			validateEthAddress({
+				validateId,
+				addr: withdrawAsset,
+				prop: 'withdrawAsset',
+				nonERC20: false,
+				nonZeroAddr: true,
+				authType,
+				dirty,
+				quickCheck: !dirty,
+			})(dispatch),
+			validateNumberString({
+				validateId,
+				prop: 'amountToWithdraw',
+				value: amountToWithdraw,
+				dirty,
+			})(dispatch),
+			validateNumberString({
+				validateId,
+				prop: 'tokenDecimals',
+				value: tokenDecimals,
+				integerOnly: true,
+				dirty,
+			})(dispatch),
+		])
+
+		let isValid = inputValidations.every(v => v === true)
+
+		if (isValid) {
+			const feeDataAction = async () => {
+				// TODO
+				return {
+					feesAmountBN: BigNumber.from('0'),
+					feeTokenAddr: withdrawAsset,
+					spendTokenAddr: withdrawAsset,
+					amountToSpendBN: BigNumber.from(),
+					// breakdownFormatted,
+				}
+			}
+			//
+			// await walletWithdraw({
+			// 	getFeesOnly: true,
+			// 	account,
+			// 	formAsset,
+			// 	amountToWithdraw,
+			// })
+
+			isValid = await handleWalletFeesData({
+				stepsId,
+				validateId,
+				dirty,
+				actionName: 'walletWithdraw',
+				feeDataAction,
+			})(dispatch, getState)
+		}
+
+		await handleAfterValidation({ isValid, onValid, onInvalid })
+
+		await updateSpinner(validateId, false)(dispatch)
 	}
 }
