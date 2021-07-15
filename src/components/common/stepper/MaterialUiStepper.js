@@ -67,7 +67,7 @@ const MaterialStepper = props => {
 		steps = [],
 		closeDialog,
 		hideNav,
-		// ...rest
+		stepsProps,
 	} = props
 	const classes = useStyles()
 
@@ -133,6 +133,7 @@ const MaterialStepper = props => {
 				validateId,
 				dirty: true,
 				onValid: onValid || (() => goToPage(currentPage + 1)),
+				stepsProps,
 			})
 		} else if (isValidPage()) {
 			goToPage(currentPage + 1)
@@ -143,6 +144,7 @@ const MaterialStepper = props => {
 		stepsId,
 		validateId,
 		onValid,
+		stepsProps,
 		goToPage,
 		currentPage,
 	])

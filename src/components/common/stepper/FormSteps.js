@@ -10,6 +10,7 @@ function FormSteps({
 	steps,
 	closeDialog,
 	hideNav,
+	stepsProps,
 	...rest
 }) {
 	const [stepperSteps, setSteps] = useState([])
@@ -21,7 +22,12 @@ function FormSteps({
 			stepsId,
 			title: t(s.title),
 			cancelFunction,
-			props: { ...rest, stepsId, validateId: stepsId + '-' + index },
+			props: {
+				...rest,
+				stepsId,
+				stepsProps,
+				validateId: stepsId + '-' + index,
+			},
 		}))
 
 		setSteps(updatedSteps)
