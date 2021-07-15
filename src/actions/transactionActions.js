@@ -575,6 +575,7 @@ export function completeTx({
 	validateId,
 	onValid,
 	onInvalid,
+	stepsProps,
 }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
@@ -591,7 +592,7 @@ export function completeTx({
 
 			const transaction = selectNewTransactionById(state, stepsId)
 
-			await competeAction({ ...transaction })(dispatch, getState)
+			await competeAction({ stepsProps, ...transaction })(dispatch, getState)
 			isValid = true
 		} catch (err) {
 			console.error('ERR_TRANSACTION', err)
