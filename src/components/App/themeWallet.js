@@ -32,7 +32,7 @@ export const SECONDARY_DARK = '#3cccc3'
 export const ALEX_GREY = '#3C3C3C'
 export const ALEX_GREY_LIGHT = '#666'
 export const ALEX_GREY_DARK = '#161616'
-export const ALEX_GREY_LIGHTEST = '#48cba9'
+export const ALEX_GREY_LIGHTEST = '#ebebeb'
 
 export const GANDALF_GREY = '#C4C4C4'
 
