@@ -26,7 +26,7 @@ export const styles = theme => {
 				color: 'inherit',
 			},
 			margin: theme.spacing(0.5),
-			backgroundColor: theme.palette.lightGrey.main,
+			backgroundColor: theme.palette.background.paper,
 		},
 	}
 }
@@ -43,10 +43,10 @@ export const DirtyErrors = ({
 	return (
 		!!dirtyErrors.length && (
 			<Box
-				bgcolor='error.main'
+				// bgcolor='error.main'
 				p={0.5}
 				{...boxProps}
-				borderRadius='borderRadius'
+				// borderRadius='borderRadius'
 			>
 				{dirtyErrors.map(err => (
 					<Chip
@@ -56,7 +56,7 @@ export const DirtyErrors = ({
 						variant='default'
 						size='small'
 						label={`${err.field}: ${err.msg}`}
-						color='default'
+						// color='default'
 						{...chipsProps}
 					/>
 				))}
