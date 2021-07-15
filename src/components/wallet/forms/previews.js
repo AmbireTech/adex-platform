@@ -22,6 +22,7 @@ export const DiversifyPreview = ({ tokensOutData, assetsData }) => {
 				const { logoSrc, name, symbol } = assetsData[address]
 				return (
 					<Box
+						key={address}
 						display='flex'
 						flexDirection='row'
 						alignItems='center'
