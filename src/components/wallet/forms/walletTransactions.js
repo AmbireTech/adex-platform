@@ -1,6 +1,7 @@
 import React from 'react'
 import WalletSwapTokensStep from './SwapStep'
 import WalletDiversifyTokensStep from './DiversifyStep'
+import WalletWithdrawStep from './WalletWithdrawStep'
 import TransactionPreview from './WalletTransactionPreview'
 import FormSteps from 'components/common/stepper/FormSteps'
 import WithDialog from 'components/common/dialog/WithDialog'
@@ -13,6 +14,7 @@ import {
 	resetValidationErrors,
 	validateWalletDiversify,
 	walletDiversification,
+	validateWalletWithdraw,
 } from 'actions'
 import ReactGA from 'react-ga'
 
@@ -46,11 +48,12 @@ export const TradeAssets = props => (
 				component: WalletSwapTokensStep,
 				validationFn: props => {
 					execute(validateWalletTrade(props))
-					ReactGA.event({
-						action: 'wallet',
-						category: 'trade',
-						label: 'continue',
-					})
+					// TODO: Proper GA events
+					// ReactGA.event({
+					// 	action: 'wallet',
+					// 	category: 'trade',
+					// 	label: 'continue',
+					// })
 				},
 			},
 			{
@@ -82,27 +85,60 @@ export const DiversifyAssets = props => (
 			{
 				title: 'WALLET_DIVERSIFY_FORM_TITLE',
 				component: WalletDiversifyTokensStep,
-				validationFn: props => {
-					execute(validateWalletDiversify(props))
-					ReactGA.event({
-						action: 'wallet',
-						category: 'diversify',
-						label: 'continue',
-					})
+				validationFn: async props => {
+					await execute(validateWalletDiversify(props))
 				},
 			},
 			{
 				title: 'PREVIEW_WALLET',
 				completeBtnTitle: 'PROCEED',
 				component: TransactionPreview,
-				completeFn: props =>
-					execute(
+				completeFn: async props =>
+					await execute(
 						completeTx({
 							...props,
 							competeAction: walletDiversification,
 						})
 					),
 			},
+		]}
+	/>
+)
+
+export const WithdrawAsset = props => (
+	<FormStepsWithDialog
+		{...props}
+		btnLabel='WALLET_WITHDRAW_ASSET_BTN'
+		saveBtnLabel='WALLET_WITHDRAW_ASSET_SAVE_BTN'
+		title='WALLET_WITHDRAW_ASSET_TITLE'
+		stepsId={`walletWithdraw-${props.withdrawAsset}`}
+		{...txCommon}
+		hideNav={true}
+		steps={[
+			{
+				title: 'WALLET_WITHDRAW_ASSET_TITLE',
+				component: WalletWithdrawStep,
+				validationFn: props => {
+					execute(validateWalletWithdraw(props))
+					ReactGA.event({
+						action: 'wallet',
+						category: 'withdraw',
+						label: 'continue',
+					})
+				},
+			},
+			// {
+			// 	title: 'PREVIEW_WALLET',
+			// 	completeBtnTitle: 'PROCEED',
+			// 	component: TransactionPreview,
+			// 	completeFn: props =>
+			// 		execute(
+			// 			completeTx({
+			// 				...props,
+			// 				competeAction: walletWithdraw,
+			// 			})
+			// 		),
+			// },
 		]}
 	/>
 )
