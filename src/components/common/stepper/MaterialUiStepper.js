@@ -147,9 +147,10 @@ const MaterialStepper = props => {
 		await completeFn({
 			stepsId,
 			validateId,
+			stepsProps,
 			onValid: () => typeof closeDialog === 'function' && closeDialog(),
 		})
-	}, [closeDialog, completeFn, stepsId, validateId])
+	}, [closeDialog, completeFn, stepsId, stepsProps, validateId])
 
 	useEffect(() => {
 		if (!isBack && validationFn) {
