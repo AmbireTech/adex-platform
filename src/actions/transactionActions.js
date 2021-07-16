@@ -589,10 +589,12 @@ export function completeTx({
 
 		try {
 			const state = getState()
-
 			const transaction = selectNewTransactionById(state, stepsId)
 
-			await competeAction({ stepsProps, ...transaction })(dispatch, getState)
+			await competeAction({ stepsProps, stepsId, ...transaction })(
+				dispatch,
+				getState
+			)
 			isValid = true
 		} catch (err) {
 			console.error('ERR_TRANSACTION', err)
