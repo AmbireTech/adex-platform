@@ -16,15 +16,21 @@ import {
 	selectNewTransactionById,
 	selectAccount,
 	selectAuthType,
-	selectAccountStatsFormatted,
 	t,
+	selectAccountStatsRaw,
 } from 'selectors'
 import {
 	walletTradeTransaction,
 	getTradeOutData,
 	walletDiversificationTransaction,
+	walletWithdrawTransaction,
 } from 'services/smart-contracts/actions/wallet'
-import { BigNumber } from 'ethers'
+
+function checkStepId({ stepsId, functionName }) {
+	if (!stepsId) {
+		throw new Error('No steps id provided - ' + functionName)
+	}
+}
 
 export function handleWalletFeesData({
 	stepsId,
@@ -313,7 +319,6 @@ export function validateWalletDiversify({
 		}
 
 		await handleAfterValidation({ isValid, onValid, onInvalid })
-
 		await updateSpinner(validateId, false)(dispatch)
 	}
 }
@@ -367,16 +372,15 @@ export function validateWalletWithdraw({
 			await beforeWeb3(validateId)(dispatch, getState)
 		}
 		const state = getState()
-		// const account = selectAccount(state)
+		const account = selectAccount(state)
 		const { amountToWithdraw, withdrawTo } = selectNewTransactionById(
 			state,
 			stepsId
 		)
-		const { assetsData = {} } = selectAccountStatsFormatted(state)
+		const { assetsData = {} } = selectAccountStatsRaw(state)
 		const { withdrawAsset } = stepsProps
 		const { decimals: tokenDecimals } = assetsData[withdrawAsset]
 		const authType = selectAuthType(state)
-
 		const inputValidations = await Promise.all([
 			validateEthAddress({
 				validateId,
@@ -416,23 +420,15 @@ export function validateWalletWithdraw({
 		let isValid = inputValidations.every(v => v === true)
 
 		if (isValid) {
-			const feeDataAction = async () => {
-				// TODO
-				return {
-					feesAmountBN: BigNumber.from('0'),
-					feeTokenAddr: withdrawAsset,
-					spendTokenAddr: withdrawAsset,
-					amountToSpendBN: BigNumber.from(),
-					// breakdownFormatted,
-				}
-			}
-			//
-			// await walletWithdraw({
-			// 	getFeesOnly: true,
-			// 	account,
-			// 	formAsset,
-			// 	amountToWithdraw,
-			// })
+			const feeDataAction = async () =>
+				await walletWithdrawTransaction({
+					getFeesOnly: true,
+					account,
+					amountToWithdraw,
+					withdrawTo,
+					withdrawAssetAddr: withdrawAsset,
+					assetsDataRaw: assetsData,
+				})
 
 			isValid = await handleWalletFeesData({
 				stepsId,
@@ -444,7 +440,53 @@ export function validateWalletWithdraw({
 		}
 
 		await handleAfterValidation({ isValid, onValid, onInvalid })
-
 		await updateSpinner(validateId, false)(dispatch)
+	}
+}
+
+export function walletWithdraw({
+	stepsId,
+	// validateId,
+	// dirty,
+	// onValid,
+	// onInvalid,
+	stepsProps = {},
+}) {
+	return async function(dispatch, getState) {
+		try {
+			checkStepId({ stepsId, functionName: 'walletWithdraw' })
+			const state = getState()
+			const account = selectAccount(state)
+			const { amountToWithdraw, withdrawTo } = selectNewTransactionById(
+				state,
+				stepsId
+			)
+			const { assetsData = {} } = selectAccountStatsRaw(state)
+			const { withdrawAsset } = stepsProps
+			const result = await walletWithdrawTransaction({
+				account,
+				amountToWithdraw,
+				withdrawTo,
+				withdrawAssetAddr: withdrawAsset,
+				assetsDataRaw: assetsData,
+			})
+
+			addToast({
+				type: 'accept',
+				label: t('WALLET_WITHDRAW_TRANSACTION_SUCCESS', {
+					args: [result],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		} catch (err) {
+			console.error(err)
+			addToast({
+				type: 'cancel',
+				label: t('ERR_WALLET_WITHDRAW_TRADE', {
+					args: [err.message],
+				}),
+				timeout: 5000,
+			})(dispatch)
+		}
 	}
 }
