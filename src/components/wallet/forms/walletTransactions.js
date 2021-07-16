@@ -15,6 +15,7 @@ import {
 	validateWalletDiversify,
 	walletDiversification,
 	validateWalletWithdraw,
+	walletWithdraw,
 } from 'actions'
 import ReactGA from 'react-ga'
 
@@ -127,18 +128,18 @@ export const WithdrawAsset = props => (
 					})
 				},
 			},
-			// {
-			// 	title: 'PREVIEW_WALLET',
-			// 	completeBtnTitle: 'PROCEED',
-			// 	component: TransactionPreview,
-			// 	completeFn: props =>
-			// 		execute(
-			// 			completeTx({
-			// 				...props,
-			// 				competeAction: walletWithdraw,
-			// 			})
-			// 		),
-			// },
+			{
+				title: 'PREVIEW_WALLET',
+				completeBtnTitle: 'PROCEED',
+				component: TransactionPreview,
+				completeFn: props =>
+					execute(
+						completeTx({
+							...props,
+							competeAction: walletWithdraw,
+						})
+					),
+			},
 		]}
 	/>
 )
