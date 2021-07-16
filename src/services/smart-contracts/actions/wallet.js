@@ -42,7 +42,7 @@ import { abi as IUniswapV3PoolABI } from '@uniswap/v3-core/artifacts/contracts/i
 const UNI_V3_FACTORY_ADDR = '0x1F98431c8aD98523631AE4a59f267346ea31F984'
 const SIGNIFICANT_DIGITS = 6
 
-const { Interface } = utils
+const { Interface, parseUnits } = utils
 
 const ZapperInterface = new Interface(contracts.WalletZapper.abi)
 const ERC20 = new Interface(ERC20TokenABI)
@@ -489,6 +489,8 @@ export async function walletTradeTransaction({
 		txnsByFeeToken,
 	})
 
+	console.log('breakdownFormatted', breakdownFormatted)
+
 	if (getFeesOnly) {
 		return {
 			feesAmountBN: totalBN,
@@ -853,6 +855,83 @@ export async function walletDiversificationTransaction({
 			amountToSpendBN: fromAmount,
 			breakdownFormatted,
 			tokensOutData,
+		}
+	}
+
+	const result = await processExecuteByFeeTokens({
+		identityAddr,
+		txnsByFeeToken,
+		wallet,
+		provider,
+	})
+
+	return {
+		result,
+	}
+	// TODO: ..
+}
+
+export async function walletWithdrawTransaction({
+	account,
+	amountToWithdraw,
+	withdrawTo,
+	getFeesOnly,
+	withdrawAssetAddr,
+	assetsDataRaw,
+}) {
+	const { wallet, identity } = account
+	const { authType } = wallet
+	const { provider, Identity, getToken } = await getEthers(authType)
+	const identityAddr = identity.address
+
+	const token = assets[withdrawAssetAddr]
+	const tokenData = assetsDataRaw[withdrawAssetAddr]
+
+	// TODO: fee token
+	const mainToken = selectMainToken()
+	const feeTokenAddr = mainToken.address
+
+	if (!tokenData) {
+		throw new Error('walletWithdraw - invalid withdraw token address')
+	}
+
+	const txns = []
+
+	const toWithdrawAmount = parseUnits(amountToWithdraw, token.decimals)
+
+	const withdrawTx = {
+		identityContract: identityAddr,
+		feeTokenAddr: mainToken.address,
+		to: withdrawAssetAddr,
+		data: ERC20.encodeFunctionData('transfer', [
+			withdrawTo,
+			toWithdrawAmount.toHexString(),
+		]),
+	}
+
+	txns.push(withdrawTx)
+
+	const txnsByFeeToken = await getIdentityTxnsWithNoncesAndFees({
+		txns,
+		identityAddr,
+		provider,
+		Identity,
+		account,
+		getToken,
+		executeAction: EXECUTE_ACTIONS.withdraw,
+	})
+
+	const { totalBN, breakdownFormatted } = await getIdentityTxnsTotalFees({
+		txnsByFeeToken,
+	})
+
+	if (getFeesOnly) {
+		return {
+			feesAmountBN: totalBN,
+			feeTokenAddr,
+			spendTokenAddr: withdrawTo,
+			amountToSpendBN: toWithdrawAmount,
+			breakdownFormatted,
 		}
 	}
 
