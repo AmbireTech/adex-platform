@@ -25,21 +25,21 @@ export const TICK_SPACINGS = {
 
 export const paths = {
 	[tokens.WETH]: {
-		[tokens.UNI]: {
-			router: 'uniV2',
-			path: [tokens.WETH, tokens.UNI],
-		},
-		[tokens.ADX]: {
-			router: 'uniV3',
-			pools: [
-				{
-					addressTokenA: tokens.ADX,
-					addressTokenB: tokens.WETH,
-					fee: FeeAmount.MEDIUM,
-				},
-			],
-			poolsPath: [tokens.WETH, tokens.ADX],
-		},
+		// [tokens.UNI]: {
+		// 	router: 'uniV2',
+		// 	path: [tokens.WETH, tokens.UNI],
+		// },
+		// [tokens.ADX]: {
+		// 	router: 'uniV3',
+		// 	pools: [
+		// 		{
+		// 			addressTokenA: tokens.ADX,
+		// 			addressTokenB: tokens.WETH,
+		// 			fee: FeeAmount.MEDIUM,
+		// 		},
+		// 	],
+		// 	poolsPath: [tokens.WETH, tokens.ADX],
+		// },
 		[tokens.USDT]: {
 			router: 'uniV3',
 			pools: [
@@ -63,44 +63,44 @@ export const paths = {
 			poolsPath: [tokens.WETH, tokens.DAI],
 		},
 	},
-	[tokens.ADX]: {
-		[tokens.UNI]: {
-			router: 'uniV2',
-			path: [tokens.ADX, tokens.WETH, tokens.UNI],
-		},
-		[tokens.USDT]: {
-			router: 'uniV3',
-			pools: [
-				{
-					addressTokenA: tokens.ADX,
-					addressTokenB: tokens.WETH,
-					fee: FeeAmount.MEDIUM,
-				},
-				{
-					addressTokenA: tokens.USDT,
-					addressTokenB: tokens.WETH,
-					fee: FeeAmount.LOW,
-				},
-			],
-			poolsPath: [tokens.ADX, tokens.WETH, tokens.USDT],
-		},
-		[tokens.DAI]: {
-			router: 'uniV3',
-			pools: [
-				{
-					addressTokenA: tokens.ADX,
-					addressTokenB: tokens.WETH,
-					fee: FeeAmount.MEDIUM,
-				},
-				{
-					addressTokenA: tokens.DAI,
-					addressTokenB: tokens.WETH,
-					fee: FeeAmount.MEDIUM,
-				},
-			],
-			poolsPath: [tokens.ADX, tokens.WETH, tokens.DAI],
-		},
-	},
+	// [tokens.ADX]: {
+	// 	[tokens.UNI]: {
+	// 		router: 'uniV2',
+	// 		path: [tokens.ADX, tokens.WETH, tokens.UNI],
+	// 	},
+	// 	[tokens.USDT]: {
+	// 		router: 'uniV3',
+	// 		pools: [
+	// 			{
+	// 				addressTokenA: tokens.ADX,
+	// 				addressTokenB: tokens.WETH,
+	// 				fee: FeeAmount.MEDIUM,
+	// 			},
+	// 			{
+	// 				addressTokenA: tokens.USDT,
+	// 				addressTokenB: tokens.WETH,
+	// 				fee: FeeAmount.LOW,
+	// 			},
+	// 		],
+	// 		poolsPath: [tokens.ADX, tokens.WETH, tokens.USDT],
+	// 	},
+	// 	[tokens.DAI]: {
+	// 		router: 'uniV3',
+	// 		pools: [
+	// 			{
+	// 				addressTokenA: tokens.ADX,
+	// 				addressTokenB: tokens.WETH,
+	// 				fee: FeeAmount.MEDIUM,
+	// 			},
+	// 			{
+	// 				addressTokenA: tokens.DAI,
+	// 				addressTokenB: tokens.WETH,
+	// 				fee: FeeAmount.MEDIUM,
+	// 			},
+	// 		],
+	// 		poolsPath: [tokens.ADX, tokens.WETH, tokens.DAI],
+	// 	},
+	// },
 	[tokens.UNI]: {
 		[tokens.USDT]: {
 			router: 'uniV3',
@@ -130,6 +130,114 @@ export const paths = {
 		},
 	},
 }
+
+// export const paths = {
+// 	[tokens.WETH]: {
+// 		[tokens.UNI]: {
+// 			router: 'uniV2',
+// 			path: [tokens.WETH, tokens.UNI],
+// 		},
+// 		[tokens.ADX]: {
+// 			router: 'uniV3',
+// 			pools: [
+// 				{
+// 					addressTokenA: tokens.ADX,
+// 					addressTokenB: tokens.WETH,
+// 					fee: FeeAmount.MEDIUM,
+// 				},
+// 			],
+// 			poolsPath: [tokens.WETH, tokens.ADX],
+// 		},
+// 		[tokens.USDT]: {
+// 			router: 'uniV3',
+// 			pools: [
+// 				{
+// 					addressTokenA: tokens.USDT,
+// 					addressTokenB: tokens.WETH,
+// 					fee: FeeAmount.LOW,
+// 				},
+// 			],
+// 			poolsPath: [tokens.WETH, tokens.USDT],
+// 		},
+// 		[tokens.DAI]: {
+// 			router: 'uniV3',
+// 			pools: [
+// 				{
+// 					addressTokenA: tokens.DAI,
+// 					addressTokenB: tokens.WETH,
+// 					fee: FeeAmount.MEDIUM,
+// 				},
+// 			],
+// 			poolsPath: [tokens.WETH, tokens.DAI],
+// 		},
+// 	},
+// 	[tokens.ADX]: {
+// 		[tokens.UNI]: {
+// 			router: 'uniV2',
+// 			path: [tokens.ADX, tokens.WETH, tokens.UNI],
+// 		},
+// 		[tokens.USDT]: {
+// 			router: 'uniV3',
+// 			pools: [
+// 				{
+// 					addressTokenA: tokens.ADX,
+// 					addressTokenB: tokens.WETH,
+// 					fee: FeeAmount.MEDIUM,
+// 				},
+// 				{
+// 					addressTokenA: tokens.USDT,
+// 					addressTokenB: tokens.WETH,
+// 					fee: FeeAmount.LOW,
+// 				},
+// 			],
+// 			poolsPath: [tokens.ADX, tokens.WETH, tokens.USDT],
+// 		},
+// 		[tokens.DAI]: {
+// 			router: 'uniV3',
+// 			pools: [
+// 				{
+// 					addressTokenA: tokens.ADX,
+// 					addressTokenB: tokens.WETH,
+// 					fee: FeeAmount.MEDIUM,
+// 				},
+// 				{
+// 					addressTokenA: tokens.DAI,
+// 					addressTokenB: tokens.WETH,
+// 					fee: FeeAmount.MEDIUM,
+// 				},
+// 			],
+// 			poolsPath: [tokens.ADX, tokens.WETH, tokens.DAI],
+// 		},
+// 	},
+// 	[tokens.UNI]: {
+// 		[tokens.USDT]: {
+// 			router: 'uniV3',
+// 			pools: [
+// 				{
+// 					addressTokenA: tokens.UNI,
+// 					addressTokenB: tokens.WETH,
+// 					fee: FeeAmount.LOW,
+// 				},
+// 				{
+// 					addressTokenA: tokens.USDT,
+// 					addressTokenB: tokens.WETH,
+// 					fee: FeeAmount.LOW,
+// 				},
+// 			],
+// 			poolsPath: [tokens.UNI, tokens.WETH, tokens.USDT],
+// 		},
+// 		[tokens.DAI]: {
+// 			router: 'uniV2',
+// 			path: [tokens.UNI, tokens.WETH, tokens.DAI],
+// 		},
+// 	},
+// 	[tokens.USDT]: {
+// 		[tokens.DAI]: {
+// 			router: 'uniV2',
+// 			path: [tokens.USDT, tokens.DAI],
+// 		},
+// 	},
+// }
 
 export function getPath({ from, to }) {
 	// TODO: check paths
