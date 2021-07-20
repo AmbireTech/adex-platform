@@ -69,8 +69,10 @@ export const NETWORK_STATUS = {
 export const ETHEREUM_NETWORKS = {
 	1: { name: 'Mainnet', for: 'development' },
 	5: { name: 'Goerli', for: 'development' },
+	42: { name: 'Kovan', for: 'development' },
 	production: { name: 'Mainnet', for: 'development' },
-	development: { name: 'Goerli', for: 'development' },
+	// development: { name: 'Goerli', for: 'development' },
+	development: { name: 'Kovan', for: 'development' },
 }
 
 export const SORT_PROPERTIES_CAMPAIGN = [

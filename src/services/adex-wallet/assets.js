@@ -12,6 +12,15 @@ import DAI_LOGO from 'resources/token-logos/DAI.svg'
 // import BTC_LOGO from 'resources/token-logos/BTC.png'
 const { ADXLoyaltyPoolToken, StakingPool, ADXToken, ERC20 } = contracts
 
+const kovanTokens = {
+	USDT: '0x13512979ade267ab5100878e2e0f485b568328a4',
+	WETH: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
+	UNI: '0x075A36BA8846C6B6F53644fDd3bf17E5151789DC',
+	// ADX: ADXToken.address,
+	DAI: '0xff795577d9ac8bd7d90ee22b6c1703490b6512fd', //DAI
+	// TST: '0x7af963cF6D228E564e2A0aA0DdBF06210B38615D',
+}
+
 const goerliTokens = {
 	USDT: '0x9bc43d6dcecae49ab1939dcd733c37b476746ea0',
 	WETH: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6',
@@ -30,7 +39,7 @@ const mainnetTokens = {
 }
 
 export const tokens =
-	process.env.NODE_ENV === 'production' ? mainnetTokens : goerliTokens
+	process.env.NODE_ENV === 'production' ? mainnetTokens : kovanTokens
 
 const getERC20Token = (provider, address) => {
 	const token = new Contract(address, ERC20.abi, provider)
@@ -73,48 +82,48 @@ const getERC20Balance = async ({ tokenAddress, address }) => {
 }
 
 export const assets = {
-	[ADXToken.address]: {
-		symbol: ADXToken.symbol,
-		name: 'AdEx Network',
-		getBalance: async function({ address }) {
-			return await getERC20Balance({ tokenAddress: ADXToken.address, address })
-		},
-		isSwappable: true,
-		isBaseAsset: true,
-		subAssets: [ADXLoyaltyPoolToken.address, StakingPool.address],
-		decimals: ADXToken.decimals,
-		logoSrc: ADX_LOGO,
-	},
-	[ADXLoyaltyPoolToken.address]: {
-		symbol: ADXLoyaltyPoolToken.symbol,
-		name: 'AdEx Loyalty pool',
-		getBalance: async function({ address }) {
-			return await getERC20Balance({
-				tokenAddress: ADXLoyaltyPoolToken.address,
-				address,
-			})
-		},
-		isSwappable: true,
-		isBaseAsset: false,
-		subAssets: [],
-		decimals: ADXLoyaltyPoolToken.decimals,
-		logoSrc: ADX_LOGO,
-	},
-	[StakingPool.address]: {
-		symbol: StakingPool.symbol,
-		name: 'AdEx Staking pool',
-		getBalance: async function({ address }) {
-			return await getERC20Balance({
-				tokenAddress: StakingPool.address,
-				address,
-			})
-		},
-		isSwappable: true,
-		isBaseAsset: false,
-		subAssets: [],
-		decimals: StakingPool.decimals,
-		logoSrc: ADX_LOGO,
-	},
+	// [ADXToken.address]: {
+	// 	symbol: ADXToken.symbol,
+	// 	name: 'AdEx Network',
+	// 	getBalance: async function({ address }) {
+	// 		return await getERC20Balance({ tokenAddress: ADXToken.address, address })
+	// 	},
+	// 	isSwappable: true,
+	// 	isBaseAsset: true,
+	// 	subAssets: [ADXLoyaltyPoolToken.address, StakingPool.address],
+	// 	decimals: ADXToken.decimals,
+	// 	logoSrc: ADX_LOGO,
+	// },
+	// [ADXLoyaltyPoolToken.address]: {
+	// 	symbol: ADXLoyaltyPoolToken.symbol,
+	// 	name: 'AdEx Loyalty pool',
+	// 	getBalance: async function({ address }) {
+	// 		return await getERC20Balance({
+	// 			tokenAddress: ADXLoyaltyPoolToken.address,
+	// 			address,
+	// 		})
+	// 	},
+	// 	isSwappable: true,
+	// 	isBaseAsset: false,
+	// 	subAssets: [],
+	// 	decimals: ADXLoyaltyPoolToken.decimals,
+	// 	logoSrc: ADX_LOGO,
+	// },
+	// [StakingPool.address]: {
+	// 	symbol: StakingPool.symbol,
+	// 	name: 'AdEx Staking pool',
+	// 	getBalance: async function({ address }) {
+	// 		return await getERC20Balance({
+	// 			tokenAddress: StakingPool.address,
+	// 			address,
+	// 		})
+	// 	},
+	// 	isSwappable: true,
+	// 	isBaseAsset: false,
+	// 	subAssets: [],
+	// 	decimals: StakingPool.decimals,
+	// 	logoSrc: ADX_LOGO,
+	// },
 	[tokens.USDT]: {
 		symbol: 'USDT',
 		name: 'Theter',
@@ -163,18 +172,18 @@ export const assets = {
 		decimals: 18,
 		logoSrc: DAI_LOGO,
 	},
-	[tokens.TST]: {
-		symbol: 'TST',
-		name: 'TST Goerli - main',
-		getBalance: async function({ address }) {
-			return await getERC20Balance({ tokenAddress: tokens.TST, address })
-		},
-		isSwappable: false,
-		isBaseAsset: true,
-		subAssets: [],
-		decimals: 18,
-		logoSrc: DAI_LOGO,
-	},
+	// [tokens.TST]: {
+	// 	symbol: 'TST',
+	// 	name: 'TST Goerli - main',
+	// 	getBalance: async function({ address }) {
+	// 		return await getERC20Balance({ tokenAddress: tokens.TST, address })
+	// 	},
+	// 	isSwappable: false,
+	// 	isBaseAsset: true,
+	// 	subAssets: [],
+	// 	decimals: 18,
+	// 	logoSrc: DAI_LOGO,
+	// },
 }
 
 export const mappers = {
