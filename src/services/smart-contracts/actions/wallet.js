@@ -526,7 +526,7 @@ export async function walletDiversificationTransaction({
 	const {
 		provider,
 		WalletZapper,
-		Identity,
+		IdentityPayable,
 		getToken,
 		UniSwapRouterV3,
 		UniSwapQuoterV3,
@@ -835,7 +835,7 @@ export async function walletDiversificationTransaction({
 		txns,
 		identityAddr,
 		provider,
-		Identity,
+		Identity: IdentityPayable,
 		account,
 		getToken,
 		executeAction: EXECUTE_ACTIONS.default,
