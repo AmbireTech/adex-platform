@@ -9,6 +9,7 @@ import { selectRelayerConfig } from 'selectors'
 const {
 	AdExCore,
 	Identity,
+	IdentityPayable,
 	IdentityFactory,
 	WalletZapper,
 	UniSwapRouterV2,
@@ -40,6 +41,12 @@ const getToken = ({ provider, standard, address }) => {
 
 const getIdentity = ({ provider, address }) => {
 	const identityContract = new Contract(address, Identity.abi, provider)
+
+	return identityContract
+}
+
+const getIdentityPayable = ({ provider, address }) => {
+	const identityContract = new Contract(address, IdentityPayable.abi, provider)
 
 	return identityContract
 }
@@ -102,6 +109,7 @@ const getEthersResult = provider => {
 		provider,
 		AdExCore: adexCore,
 		Identity: Identity,
+		IdentityPayable: IdentityPayable,
 		Dai: mainToken,
 		MainToken: mainToken,
 		IdentityFactory: identityFactory,
@@ -112,6 +120,8 @@ const getEthersResult = provider => {
 		getToken: ({ standard, address }) =>
 			getToken({ provider, standard, address }),
 		getIdentity: ({ address }) => getIdentity({ provider, address }),
+		getIdentityPayable: ({ address }) =>
+			getIdentityPayable({ provider, address }),
 	}
 
 	return results

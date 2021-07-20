@@ -3,6 +3,7 @@ import AdExCore from './build/AdExCore.json'
 import Dai from './build/Dai.json'
 import IdentityFactory from './build/IdentityFactory.json'
 import AdExENSManager from './abi/AdExENSManager.json'
+import IdentityPayable from './abi/IdentityPayable.json'
 import ReverseRegistrar from './abi/ReverseRegistrar.json'
 import ERC20 from './abi/ERC20Token.json'
 import ADXLoyaltyPoolTokenABI from 'services/smart-contracts/abi/ADXLoyaltyPoolTokenABI.json'
@@ -15,6 +16,9 @@ import UniSwapQuoterV3Abi from 'services/smart-contracts/abi/UniSwapQuoterV3.jso
 export const contracts = {
 	Identity: {
 		abi: Identity.abi,
+	},
+	IdentityPayable: {
+		abi: IdentityPayable.abi,
 	},
 	AdExENSManager: {
 		address: process.env.ADEX_ENS_ADDR,
