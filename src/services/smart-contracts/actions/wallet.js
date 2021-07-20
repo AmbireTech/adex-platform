@@ -145,7 +145,9 @@ async function getUniv2RouteAndTokens({ path, amountOut, provider }) {
 	const pairs = []
 
 	for (let index = 0; index < tokens.length - 1; index++) {
-		pairs.push(await FetcherV2.fetchPairData(tokens[index], tokens[index + 1]))
+		pairs.push(
+			await FetcherV2.fetchPairData(tokens[index], tokens[index + 1], provider)
+		)
 	}
 
 	const tokenIn = tokens[0]
@@ -241,13 +243,8 @@ export async function getTradeOutData({ formAsset, formAssetAmount, toAsset }) {
 
 		const trade = new TradeV2(route, tokenInAmount, TradeTypeV2.EXACT_INPUT)
 
-		const midPrice = route.midPrice
-		const priceImpact = midPrice.raw
-			.subtract(trade.executionPrice.raw)
-			.multiply(100)
-			.divide(route.midPrice.raw)
-			.toSignificant(SIGNIFICANT_DIGITS)
-
+		const midPrice = route.midPrice.toSignificant(SIGNIFICANT_DIGITS)
+		const priceImpact = trade.priceImpact.toSignificant(SIGNIFICANT_DIGITS)
 		const executionPrice = trade.executionPrice.toSignificant(
 			SIGNIFICANT_DIGITS
 		)
@@ -257,14 +254,15 @@ export async function getTradeOutData({ formAsset, formAssetAmount, toAsset }) {
 			.minimumAmountOut(slippageTolerance)
 			.toSignificant(SIGNIFICANT_DIGITS)
 
-		const expectedAmountOut = tokenInAmount
-			.multiply(trade.executionPrice)
-			.toSignificant(SIGNIFICANT_DIGITS)
+		const expectedAmountOut = trade.outputAmount.toSignificant(
+			SIGNIFICANT_DIGITS
+		)
 
 		const routeTokens = trade.route.path.map(x => x.symbol)
 
 		return {
 			minimumAmountOut,
+			midPrice,
 			priceImpact,
 			executionPrice,
 			expectedAmountOut,
@@ -341,7 +339,7 @@ export async function getTradeOutData({ formAsset, formAssetAmount, toAsset }) {
 			SIGNIFICANT_DIGITS
 		)
 		const expectedAmountOut = trade.executionPrice
-			.quote(fromTokenCurrencyAmount)
+			.quote(executionPrice)
 			.toSignificant(SIGNIFICANT_DIGITS)
 
 		const routeTokens = trade.route.tokenPath.map(x => x.symbol)
