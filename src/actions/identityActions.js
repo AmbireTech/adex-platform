@@ -199,7 +199,11 @@ export function updateOwnerIdentities({ owner }) {
 							ens,
 						}
 					} catch {
-						return null
+						return {
+							identity: identityAddr,
+							privLevel,
+							ens: null,
+						}
 					}
 				})
 
