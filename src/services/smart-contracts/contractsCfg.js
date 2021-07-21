@@ -18,7 +18,7 @@ export const contracts = {
 		abi: Identity.abi,
 	},
 	IdentityPayable: {
-		abi: IdentityPayable.abi,
+		abi: IdentityPayable,
 	},
 	AdExENSManager: {
 		address: process.env.ADEX_ENS_ADDR,

@@ -46,9 +46,13 @@ const getIdentity = ({ provider, address }) => {
 }
 
 const getIdentityPayable = ({ provider, address }) => {
-	const identityContract = new Contract(address, IdentityPayable.abi, provider)
+	const identityPayableContract = new Contract(
+		address,
+		IdentityPayable.abi,
+		provider
+	)
 
-	return identityContract
+	return identityPayableContract
 }
 
 const getIdentityFactory = provider => {
