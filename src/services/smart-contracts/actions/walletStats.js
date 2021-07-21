@@ -100,16 +100,19 @@ export async function getAccountStatsWallet({ account, prices }) {
 	const { wallet, identity } = account
 	// const { authType } = wallet
 	const { address } = identity
-	const { getIdentity } = await getEthers(AUTH_TYPES.READONLY)
+	const { getIdentityPayable } = await getEthers(AUTH_TYPES.READONLY)
 	const { decimals } = selectMainToken()
 
 	const { status = {} } = identity
-	const identityContract = getIdentity({ address })
+	const identityContract = getIdentityPayable({
+		address,
+	})
 	let privilegesAction
+
 	try {
-		await identityContract.deployed()
 		privilegesAction = identityContract.privileges(wallet.address)
-	} catch {
+	} catch (e) {
+		console.error('getAccountStatsWallet', e)
 		privilegesAction = Promise.resolve(status.type || 'Not Deployed')
 	}
 
