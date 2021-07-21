@@ -34,7 +34,7 @@
     "dotenv": "6.2.0",
     "dotenv-expand": "4.2.0",
     "ethereumjs-util": "^6.1.0",
-    "ethers": "5.0.8",
+    "ethers": "5.4.1",
     "file-loader": "3.0.1",
     "fs-extra": "7.0.1",
     "gh-pages": "^2.0.1",
