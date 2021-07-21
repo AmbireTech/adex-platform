@@ -1,5 +1,5 @@
 import base64 from 'base64url'
-import ethers from 'ethers'
+import { ethers } from 'ethers'
 
 // see https://github.com/ethereum/EIPs/issues/1341
 // Implements EIP 1341: Ethereum Web Tokens
