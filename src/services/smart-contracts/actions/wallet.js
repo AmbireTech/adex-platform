@@ -879,7 +879,7 @@ export async function walletWithdrawTransaction({
 }) {
 	const { wallet, identity } = account
 	const { authType } = wallet
-	const { provider, Identity, getToken } = await getEthers(authType)
+	const { provider, IdentityPayable, getToken } = await getEthers(authType)
 	const identityAddr = identity.address
 
 	const token = assets[withdrawAssetAddr]
@@ -913,7 +913,7 @@ export async function walletWithdrawTransaction({
 		txns,
 		identityAddr,
 		provider,
-		Identity,
+		Identity: IdentityPayable,
 		account,
 		getToken,
 		executeAction: EXECUTE_ACTIONS.withdraw,
@@ -944,4 +944,75 @@ export async function walletWithdrawTransaction({
 		result,
 	}
 	// TODO: ..
+}
+
+export async function walletSetIdentityPrivilege({
+	account,
+	setAddr,
+	privLevel,
+	getFeesOnly,
+}) {
+	const { wallet, identity } = account
+	const { provider, IdentityPayable, getToken } = await getEthers(
+		wallet.authType
+	)
+	const identityAddr = identity.address
+
+	const identityInterface = new Interface(IdentityPayable.abi)
+
+	const mainToken = selectMainToken()
+	const feeTokenAddr = mainToken.address
+
+	const tx1 = {
+		identityContract: identityAddr,
+		feeTokenAddr,
+		to: identityAddr,
+		data: identityInterface.encodeFunctionData('setAddrPrivilege', [
+			setAddr,
+			privLevel,
+		]),
+	}
+
+	const txns = [tx1]
+	const txnsByFeeToken = await getIdentityTxnsWithNoncesAndFees({
+		txns,
+		identityAddr,
+		provider,
+		Identity: IdentityPayable,
+		account,
+		getToken,
+		executeAction: EXECUTE_ACTIONS.privilegesChange,
+	})
+
+	if (getFeesOnly) {
+		const {
+			// total,
+			totalBN,
+			breakdownFormatted,
+		} = await getIdentityTxnsTotalFees({
+			txnsByFeeToken,
+		})
+		return {
+			feesAmountBN: totalBN,
+			feeTokenAddr,
+			spendTokenAddr: feeTokenAddr,
+			amountToSpendBN: totalBN,
+			breakdownFormatted,
+		}
+	}
+
+	const result = await processExecuteByFeeTokens({
+		txnsByFeeToken,
+		identityAddr,
+		wallet,
+		provider,
+		extraData: {
+			setAddr,
+			privLevel,
+		},
+	})
+
+	return {
+		result,
+	}
 }
