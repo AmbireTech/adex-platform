@@ -46,7 +46,7 @@ export const paths = {
 				{
 					addressTokenA: tokens.USDT,
 					addressTokenB: tokens.WETH,
-					fee: FeeAmount.LOW,
+					fee: FeeAmount.HIGH,
 				},
 			],
 			poolsPath: [tokens.WETH, tokens.USDT],
@@ -61,6 +61,17 @@ export const paths = {
 				},
 			],
 			poolsPath: [tokens.WETH, tokens.DAI],
+		},
+		[tokens.UNI]: {
+			router: 'uniV3',
+			pools: [
+				{
+					addressTokenA: tokens.UNI,
+					addressTokenB: tokens.WETH,
+					fee: FeeAmount.HIGH,
+				},
+			],
+			poolsPath: [tokens.WETH, tokens.UNI],
 		},
 	},
 	// [tokens.ADX]: {
@@ -108,12 +119,12 @@ export const paths = {
 				{
 					addressTokenA: tokens.UNI,
 					addressTokenB: tokens.WETH,
-					fee: FeeAmount.LOW,
+					fee: FeeAmount.HIGH,
 				},
 				{
 					addressTokenA: tokens.USDT,
 					addressTokenB: tokens.WETH,
-					fee: FeeAmount.LOW,
+					fee: FeeAmount.HIGH,
 				},
 			],
 			poolsPath: [tokens.UNI, tokens.WETH, tokens.USDT],
@@ -124,9 +135,25 @@ export const paths = {
 		},
 	},
 	[tokens.USDT]: {
+		// [tokens.DAI]: {
+		// 	router: 'uniV2',
+		// 	path: [tokens.USDT, tokens.DAI],
+		// },
 		[tokens.DAI]: {
-			router: 'uniV2',
-			path: [tokens.USDT, tokens.DAI],
+			router: 'uniV3',
+			pools: [
+				{
+					addressTokenA: tokens.DAI,
+					addressTokenB: tokens.WETH,
+					fee: FeeAmount.MEDIUM,
+				},
+				{
+					addressTokenA: tokens.USDT,
+					addressTokenB: tokens.WETH,
+					fee: FeeAmount.LOW,
+				},
+			],
+			poolsPath: [tokens.UNI, tokens.WETH, tokens.USDT],
 		},
 	},
 }
@@ -258,6 +285,7 @@ export function getPath({ from, to }) {
 		return {
 			...paths[to][from],
 			poolsPath: [...paths[to][from].poolsPath].reverse(),
+			pools: [...paths[to][from].pools].reverse(),
 		}
 	} else {
 		throw new Error(`Router and path not found from ${from} to ${to}`)
