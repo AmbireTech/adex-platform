@@ -339,7 +339,7 @@ export async function getTradeOutData({ formAsset, formAssetAmount, toAsset }) {
 			SIGNIFICANT_DIGITS
 		)
 		const expectedAmountOut = trade.executionPrice
-			.quote(executionPrice)
+			.quote(trade.inputAmount)
 			.toSignificant(SIGNIFICANT_DIGITS)
 
 		const routeTokens = trade.route.tokenPath.map(x => x.symbol)
@@ -377,7 +377,7 @@ export async function walletTradeTransaction({
 	const {
 		provider,
 		WalletZapper,
-		Identity,
+		IdentityPayable,
 		getToken,
 		UniSwapRouterV3,
 	} = await getEthers(authType)
@@ -477,7 +477,7 @@ export async function walletTradeTransaction({
 		txns,
 		identityAddr,
 		provider,
-		Identity,
+		Identity: IdentityPayable,
 		account,
 		getToken,
 		executeAction: EXECUTE_ACTIONS.default,
