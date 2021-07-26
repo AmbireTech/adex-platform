@@ -5,6 +5,7 @@ import {
 	SetIdentityPrivilege,
 	SetAccountENS,
 } from 'components/dashboard/forms/web3/transactions'
+import { WalletSetIdentityPrivilege } from 'components/wallet/forms/walletTransactions'
 import { makeStyles } from '@material-ui/core/styles'
 import {
 	List,
@@ -197,14 +198,25 @@ function AccountInfo() {
 								/>
 							}
 							right={
-								<SetIdentityPrivilege
-									disabled={!canMakeTx}
-									fullWidth
-									variant='contained'
-									color='secondary'
-									size='large'
-									identityAvailable={availableIdentityBalanceMainToken}
-								/>
+								isPlatform ? (
+									<SetIdentityPrivilege
+										disabled={!canMakeTx}
+										fullWidth
+										variant='contained'
+										color='secondary'
+										size='large'
+										identityAvailable={availableIdentityBalanceMainToken}
+									/>
+								) : (
+									<WalletSetIdentityPrivilege
+										disabled={!canMakeTx}
+										fullWidth
+										variant='contained'
+										color='secondary'
+										size='large'
+										identityAvailable={availableIdentityBalanceMainToken}
+									/>
+								)
 							}
 						/>
 						<ListDivider />

@@ -3,6 +3,7 @@ import WalletSwapTokensStep from './SwapStep'
 import WalletDiversifyTokensStep from './DiversifyStep'
 import WalletWithdrawStep from './WalletWithdrawStep'
 import TransactionPreview from './WalletTransactionPreview'
+import SeAddressPrivilege from 'components/dashboard/forms/web3/SeAddressPrivilege'
 import FormSteps from 'components/common/stepper/FormSteps'
 import WithDialog from 'components/common/dialog/WithDialog'
 import {
@@ -16,6 +17,8 @@ import {
 	walletDiversification,
 	validateWalletWithdraw,
 	walletWithdraw,
+	walletValidatePrivilegesChange,
+	walletUpdateIdentityPrivilege,
 } from 'actions'
 import ReactGA from 'react-ga'
 
@@ -143,3 +146,35 @@ export const WithdrawAsset = props => (
 		]}
 	/>
 )
+
+export const WalletSetIdentityPrivilege = ({ SaveBtn, label, ...props }) => {
+	return (
+		<FormStepsWithDialog
+			{...props}
+			btnLabel={label || 'ACCOUNT_SET_IDENTITY_PRIVILEGE_BTN'}
+			saveBtnLabel='ACCOUNT_SET_IDENTITY_PRIVILEGE_SAVE_BTN'
+			title='ACCOUNT_SET_IDENTITY_PRIVILEGE_TITLE'
+			stepsId='setIdentityPrivilege'
+			{...txCommon}
+			steps={[
+				{
+					title: 'ACCOUNT_SET_IDENTITY_PRIVILEGE_STEP',
+					component: SeAddressPrivilege,
+					validationFn: props => execute(walletValidatePrivilegesChange(props)),
+				},
+				{
+					title: 'PREVIEW_AND_MAKE_TX',
+					completeBtnTitle: 'PROCEED',
+					component: TransactionPreview,
+					completeFn: props =>
+						execute(
+							completeTx({
+								...props,
+								competeAction: walletUpdateIdentityPrivilege,
+							})
+						),
+				},
+			]}
+		/>
+	)
+}
