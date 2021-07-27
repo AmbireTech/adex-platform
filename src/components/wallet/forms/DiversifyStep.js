@@ -48,70 +48,8 @@ import {
 import { Alert } from '@material-ui/lab'
 import Dropdown from 'components/common/dropdown'
 import { formatTokenAmount } from 'helpers/formatters'
-import { tokens } from 'services/adex-wallet/assets'
+import { diversificationPresets } from 'services/adex-wallet/diversifications'
 import { IconButton } from '@material-ui/core'
-
-const diversificationPresets = [
-	{
-		label: 'DIV_PRESET_CONSERVATIVE',
-		assets: [
-			{
-				address: tokens.USDT,
-				share: 40,
-			},
-			{
-				address: tokens.DAI,
-				share: 30,
-			},
-			{
-				address: tokens.WETH,
-				share: 20,
-			},
-			{
-				address: tokens.ADX,
-				share: 10,
-			},
-		],
-	},
-	{
-		label: 'DIV_PRESET_DEGEN',
-		assets: [
-			{
-				address: tokens.WETH,
-				share: 40,
-			},
-			{
-				address: tokens.ADX,
-				share: 40,
-			},
-			// {
-			// 	address: tokens.UNI,
-			// 	share: 20,
-			// },
-			{
-				address: tokens.USDT,
-				share: 20,
-			},
-		],
-	},
-	{
-		label: 'DIV_PRESET_RISKY',
-		assets: [
-			{
-				address: tokens.WETH,
-				share: 50,
-			},
-			{
-				address: tokens.ADX,
-				share: 30,
-			},
-			{
-				address: tokens.USDT,
-				share: 20,
-			},
-		],
-	},
-]
 
 const styles = theme => {
 	return {

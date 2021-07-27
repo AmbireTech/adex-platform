@@ -135,26 +135,26 @@ export const paths = {
 		},
 	},
 	[tokens.USDT]: {
-		// [tokens.DAI]: {
-		// 	router: 'uniV2',
-		// 	path: [tokens.USDT, tokens.DAI],
-		// },
 		[tokens.DAI]: {
-			router: 'uniV3',
-			pools: [
-				{
-					addressTokenA: tokens.DAI,
-					addressTokenB: tokens.WETH,
-					fee: FeeAmount.MEDIUM,
-				},
-				{
-					addressTokenA: tokens.USDT,
-					addressTokenB: tokens.WETH,
-					fee: FeeAmount.LOW,
-				},
-			],
-			poolsPath: [tokens.UNI, tokens.WETH, tokens.USDT],
+			router: 'uniV2',
+			path: [tokens.USDT, tokens.DAI],
 		},
+		// [tokens.DAI]: {
+		// 	router: 'uniV3',
+		// 	pools: [
+		// 		{
+		// 			addressTokenA: tokens.DAI,
+		// 			addressTokenB: tokens.WETH,
+		// 			fee: FeeAmount.MEDIUM,
+		// 		},
+		// 		{
+		// 			addressTokenA: tokens.USDT,
+		// 			addressTokenB: tokens.WETH,
+		// 			fee: FeeAmount.LOW,
+		// 		},
+		// 	],
+		// 	poolsPath: [tokens.UNI, tokens.WETH, tokens.USDT],
+		// },
 	},
 }
 
