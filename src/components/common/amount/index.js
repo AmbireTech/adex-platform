@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box } from '@material-ui/core'
-import { formatNumberWithCommas } from 'helpers/formatters'
+import { formatFloatNumberWithCommas } from 'helpers/formatters'
 import { validations } from 'adex-models'
 const { isNumberString } = validations
 
@@ -10,7 +10,7 @@ const AmountUnit = ({ unit }) => (
 		display='inline'
 		color='secondary.main'
 		whiteSpace='break-spaces'
-		wordBreak='break-word'
+		// wordBreak='break-word'
 	>
 		{unit}
 	</Box>
@@ -18,7 +18,7 @@ const AmountUnit = ({ unit }) => (
 
 export function AmountWithCurrency({
 	amount,
-	toFixed = 2,
+	toFixed = 4,
 	unit,
 	unitPlace = 'right',
 	// Typography variants to take the advantage of the responsive text size
@@ -30,7 +30,7 @@ export function AmountWithCurrency({
 		return 'N/A'
 	}
 
-	const formattedAmount = formatNumberWithCommas(
+	const formattedAmount = formatFloatNumberWithCommas(
 		parseFloat(amount).toFixed(toFixed)
 	)
 	const decimalSeparatorSplit = formattedAmount.split('.')
