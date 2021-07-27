@@ -110,6 +110,7 @@ export async function getAccountStatsWallet({ account, prices }) {
 	let privilegesAction
 
 	try {
+		await identityContract.deployed()
 		privilegesAction = identityContract.privileges(wallet.address)
 	} catch (e) {
 		console.error('getAccountStatsWallet', e)
