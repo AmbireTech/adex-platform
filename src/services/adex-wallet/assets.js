@@ -14,10 +14,14 @@ const { ADXLoyaltyPoolToken, StakingPool, ADXToken, ERC20 } = contracts
 
 const kovanTokens = {
 	USDT: '0x13512979ade267ab5100878e2e0f485b568328a4',
+	aUSDT: '0xFF3c8bc103682FA918c954E84F5056aB4DD5189d', // AAVE USDT
 	WETH: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
+	aWETH: '0x87b1f4cf9BD63f7BBD3eE1aD04E8F52540349347', // AAVE WETH
 	UNI: '0x075A36BA8846C6B6F53644fDd3bf17E5151789DC',
+	aUNI: '',
 	// ADX: ADXToken.address,
 	DAI: '0xff795577d9ac8bd7d90ee22b6c1703490b6512fd', //DAI
+	aDAI: '0xdCf0aF9e59C002FA3AA091a46196b37530FD48a8', // AAVE DAI
 	// TST: '0x7af963cF6D228E564e2A0aA0DdBF06210B38615D',
 }
 
@@ -132,6 +136,18 @@ export const assets = {
 		},
 		isSwappable: true,
 		isBaseAsset: true,
+		subAssets: [tokens.aUSDT],
+		decimals: 6,
+		logoSrc: USDT_LOGO,
+	},
+	[tokens.aUSDT]: {
+		symbol: 'aUSDT',
+		name: 'Aave interest bearing USDT',
+		getBalance: async function({ address }) {
+			return await getERC20Balance({ tokenAddress: tokens.aUSDT, address })
+		},
+		isSwappable: true,
+		isBaseAsset: false,
 		subAssets: [],
 		decimals: 6,
 		logoSrc: USDT_LOGO,
@@ -144,6 +160,18 @@ export const assets = {
 		},
 		isSwappable: true,
 		isBaseAsset: true,
+		subAssets: [tokens.aWETH],
+		decimals: 18,
+		logoSrc: ETH_LOGO,
+	},
+	[tokens.aWETH]: {
+		symbol: 'aWETH',
+		name: 'Aave interest bearing WETH',
+		getBalance: async function({ address }) {
+			return await getERC20Balance({ tokenAddress: tokens.aWETH, address })
+		},
+		isSwappable: true,
+		isBaseAsset: false,
 		subAssets: [],
 		decimals: 18,
 		logoSrc: ETH_LOGO,
@@ -168,6 +196,18 @@ export const assets = {
 		},
 		isSwappable: true,
 		isBaseAsset: true,
+		subAssets: [tokens.aDAI],
+		decimals: 18,
+		logoSrc: DAI_LOGO,
+	},
+	[tokens.aDAI]: {
+		symbol: 'aDAI',
+		name: 'Aave interest bearing DAI',
+		getBalance: async function({ address }) {
+			return await getERC20Balance({ tokenAddress: tokens.aDAI, address })
+		},
+		isSwappable: true,
+		isBaseAsset: false,
 		subAssets: [],
 		decimals: 18,
 		logoSrc: DAI_LOGO,
@@ -184,6 +224,10 @@ export const assets = {
 	// 	decimals: 18,
 	// 	logoSrc: DAI_LOGO,
 	// },
+}
+
+async function mapAAVEInterestToken(baseTokenSymbol, aTokenAmount) {
+	return [baseTokenSymbol, aTokenAmount]
 }
 
 export const mappers = {
@@ -213,4 +257,7 @@ export const mappers = {
 
 		return [assets[ADXToken.address].symbol, adxAmount]
 	},
+	[tokens.aUSDT]: mapAAVEInterestToken.bind(null, assets[tokens.USDT].symbol),
+	[tokens.aWETH]: mapAAVEInterestToken.bind(null, assets[tokens.WETH].symbol),
+	[tokens.aDAI]: mapAAVEInterestToken.bind(null, assets[tokens.DAI].symbol),
 }
