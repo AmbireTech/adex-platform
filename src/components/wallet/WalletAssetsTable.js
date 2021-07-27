@@ -29,6 +29,9 @@ const styles = theme => {
 			flexDirections: 'row',
 			flexWrap: 'wrap',
 		},
+		amountLabelMain: {
+			fontWeight: 'inherit',
+		},
 		amountLabel: {
 			fontWeight: 'inherit',
 			borderBottom: `1px solid ${theme.palette.divider}`,
@@ -109,7 +112,7 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 						defaultExpandIcon={<ChevronRight />}
 					>
 						<TreeItem
-							classes={{ label: classes.amountLabel }}
+							classes={{ label: classes.amountLabelMain }}
 							nodeId={address + '-total'}
 							label={<Total />}
 						>
@@ -139,7 +142,7 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 												decimalsFontVariant='subtitle2'
 											/>{' '}
 											<Box>
-												{'('}
+												{' ('}
 												<AmountWithCurrency
 													amount={y.baseTokenBalance[1]}
 													unit={y.baseTokenBalance[0] || symbol}
