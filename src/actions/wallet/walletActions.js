@@ -96,6 +96,7 @@ export function validateWalletTrade({
 			formAssetAmount,
 			toAsset,
 			toAssetAmount,
+			lendOutputToAAVE,
 		} = selectNewTransactionById(state, stepsId)
 
 		// const authType = selectAuthType(state)
@@ -127,6 +128,7 @@ export function validateWalletTrade({
 					formAssetAmount,
 					toAsset,
 					toAssetAmount,
+					lendOutputToAAVE,
 				})
 
 			isValid = await handleWalletFeesData({
@@ -231,6 +233,7 @@ export function walletTrade({
 	formAssetAmount,
 	toAsset,
 	toAssetAmount,
+	lendOutputToAAVE,
 }) {
 	return async function(dispatch, getState) {
 		try {
@@ -242,6 +245,7 @@ export function walletTrade({
 				formAssetAmount,
 				toAsset,
 				toAssetAmount,
+				lendOutputToAAVE,
 			})
 
 			addToast({

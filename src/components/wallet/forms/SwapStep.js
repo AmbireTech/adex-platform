@@ -14,6 +14,10 @@ import {
 	Typography,
 	OutlinedInput,
 	IconButton,
+	FormControl,
+	FormGroup,
+	FormControlLabel,
+	Checkbox,
 } from '@material-ui/core'
 import { AmountWithCurrency } from 'components/common/amount'
 // import { InputLoading } from 'components/common/spinners/'
@@ -159,6 +163,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 		toAssetAmount = '0.00',
 		toAsset = '',
 		tradeData,
+		lendOutputToAAVE,
 	} = useSelector(state => selectNewTransactionById(state, stepsId))
 
 	const selectedFromAsset = assetsData[formAsset] || {}
@@ -536,11 +541,41 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 											}
 										/>
 									</Grid>
+									<Grid item xs={12}>
+										<Box mt={2}>
+											<FormControl>
+												<FormGroup row>
+													<FormControlLabel
+														control={
+															<Checkbox
+																checked={!!lendOutputToAAVE}
+																onChange={ev => {
+																	execute(
+																		updateNewTransaction({
+																			tx: stepsId,
+																			key: 'lendOutputToAAVE',
+																			value: ev.target.checked,
+																		})
+																	)
+																}}
+																value='lendOutputToAAVE'
+															/>
+														}
+														label={t('WALLET_SWAP_LEND_TO_AAVE_INFO')}
+													/>
+												</FormGroup>
+											</FormControl>
+										</Box>
+									</Grid>
 								</Grid>
 							</Box>
 						</Paper>
 
-						{tradeData && <TradeData {...tradeData} />}
+						{tradeData && (
+							<Box mt={2}>
+								<TradeData {...tradeData} />
+							</Box>
+						)}
 
 						{errFees && errFees.dirty && errFees.errMsg && (
 							<Alert variant='filled' severity='error'>

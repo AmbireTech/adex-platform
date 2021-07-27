@@ -365,6 +365,7 @@ export async function walletTradeTransaction({
 	formAssetAmount,
 	toAsset,
 	toAssetAmount,
+	lendOutputToAAVE = false,
 }) {
 	const { wallet, identity } = account
 	const { authType } = wallet
@@ -413,7 +414,13 @@ export async function walletTradeTransaction({
 	})
 
 	if (router === 'uniV2') {
-		const tradeTuple = [uniswapRouters.uniV2, fromAmount, toAmount, path, false]
+		const tradeTuple = [
+			uniswapRouters.uniV2,
+			fromAmount,
+			toAmount,
+			path,
+			lendOutputToAAVE,
+		]
 
 		const data = ZapperInterface.encodeFunctionData('exchangeV2', [
 			[],
