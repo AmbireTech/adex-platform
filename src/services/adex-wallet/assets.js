@@ -146,8 +146,9 @@ export const assets = {
 		getBalance: async function({ address }) {
 			return await getERC20Balance({ tokenAddress: tokens.aUSDT, address })
 		},
-		isSwappable: true,
+		isSwappable: false,
 		isBaseAsset: false,
+		isAaveInterestToken: true,
 		subAssets: [],
 		decimals: 6,
 		logoSrc: USDT_LOGO,
@@ -170,8 +171,9 @@ export const assets = {
 		getBalance: async function({ address }) {
 			return await getERC20Balance({ tokenAddress: tokens.aWETH, address })
 		},
-		isSwappable: true,
+		isSwappable: false,
 		isBaseAsset: false,
+		isAaveInterestToken: true,
 		subAssets: [],
 		decimals: 18,
 		logoSrc: ETH_LOGO,
@@ -206,8 +208,9 @@ export const assets = {
 		getBalance: async function({ address }) {
 			return await getERC20Balance({ tokenAddress: tokens.aDAI, address })
 		},
-		isSwappable: true,
+		isSwappable: false,
 		isBaseAsset: false,
+		isAaveInterestToken: true,
 		subAssets: [],
 		decimals: 18,
 		logoSrc: DAI_LOGO,
