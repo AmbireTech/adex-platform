@@ -38,8 +38,8 @@ const WalletDoughnut = ({
 			(data, asset) => {
 				data.labels.push(asset.symbol)
 				data.values.push(
-					(asset.assetTotalToMainCurrenciesValues[mainCurrency.id] /
-						totalMainCurrenciesValues[mainCurrency.id]) *
+					((asset.assetTotalToMainCurrenciesValues[mainCurrency.id] || 0) /
+						(totalMainCurrenciesValues[mainCurrency.id] || 1)) *
 						100
 				)
 				return data
