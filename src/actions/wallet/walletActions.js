@@ -97,8 +97,10 @@ export function validateWalletTrade({
 			toAsset,
 			toAssetAmount,
 			lendOutputToAAVE,
+			tradeData = {},
 		} = selectNewTransactionById(state, stepsId)
 
+		const { minimumAmountOut } = tradeData
 		// const authType = selectAuthType(state)
 
 		const inputValidations = await Promise.all([
@@ -128,6 +130,7 @@ export function validateWalletTrade({
 					formAssetAmount,
 					toAsset,
 					toAssetAmount,
+					minimumAmountOut,
 					lendOutputToAAVE,
 				})
 
@@ -233,18 +236,28 @@ export function walletTrade({
 	formAssetAmount,
 	toAsset,
 	toAssetAmount,
+	tradeData,
 	lendOutputToAAVE,
 }) {
 	return async function(dispatch, getState) {
 		try {
 			const state = getState()
 			const account = selectAccount(state)
+			const {
+				minimumAmountOut,
+				// priceImpact,
+				// executionPrice,
+				// slippageTolerance,
+				// routeTokens,
+				// router,
+			} = tradeData
 			const result = await walletTradeTransaction({
 				account,
 				formAsset,
 				formAssetAmount,
 				toAsset,
 				toAssetAmount,
+				minimumAmountOut,
 				lendOutputToAAVE,
 			})
 
