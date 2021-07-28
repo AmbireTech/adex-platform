@@ -365,6 +365,7 @@ export async function walletTradeTransaction({
 	formAssetAmount,
 	toAsset,
 	toAssetAmount,
+	minimumAmountOut,
 	lendOutputToAAVE = false,
 }) {
 	const { wallet, identity } = account
@@ -381,6 +382,7 @@ export async function walletTradeTransaction({
 		IdentityPayable,
 		getToken,
 		UniSwapRouterV3,
+		UniSwapQuoterV3,
 	} = await getEthers(authType)
 
 	// TODO: use swap tokens for fees - update relayer
@@ -392,12 +394,11 @@ export async function walletTradeTransaction({
 	const from = assets[formAsset]
 	const to = assets[toAsset]
 
-	const fromAmount = utils
-		.parseUnits(formAssetAmount.toString(), from.decimals)
-		.toHexString()
-	const toAmount = utils
-		.parseUnits(toAssetAmount.toString(), to.decimals)
-		.toHexString()
+	const fromAmount = utils.parseUnits(formAssetAmount.toString(), from.decimals)
+	const fromAmountHex = fromAmount.toHexString()
+	const toAmount = utils.parseUnits(toAssetAmount.toString(), to.decimals)
+	const toAmountHex = toAmount.toHexString()
+	const minOut = utils.parseUnits(minimumAmountOut.toString(), to.decimals)
 
 	const txns = []
 
@@ -409,15 +410,15 @@ export async function walletTradeTransaction({
 		feeTokenAddr,
 		data: ERC20.encodeFunctionData('transfer', [
 			WalletZapper.address,
-			fromAmount,
+			fromAmountHex,
 		]),
 	})
 
 	if (router === 'uniV2') {
 		const tradeTuple = [
 			uniswapRouters.uniV2,
-			fromAmount,
-			toAmount,
+			fromAmountHex,
+			toAmountHex,
 			path,
 			lendOutputToAAVE,
 		]
@@ -447,11 +448,12 @@ export async function walletTradeTransaction({
 					pools[0].fee,
 					identityAddr,
 					deadline,
-					fromAmount,
-					toAmount,
+					fromAmountHex,
+					minOut.toHexString(),
 					// poolState.sqrtPriceX96,
 					0,
 				],
+				// lendOutputToAAVE,
 			])
 		} else if (pools.length > 1) {
 			const tokenIn = getUniToken({
@@ -464,12 +466,67 @@ export async function walletTradeTransaction({
 			})
 
 			const route = await getUniv3Route({ pools, tokenIn, tokenOut, provider })
-			const v3Path = encodeRouteToPath(route)
+			// const v3Path = encodeRouteToPath(route)
 
-			data = ZapperInterface.encodeFunctionData('tradeV3', [
+			const fromTokenCurrencyAmount = CurrencyAmount.fromRawAmount(
+				tokenIn,
+				fromAmount
+			)
+
+			const toTokenCurrencyAmount = CurrencyAmount.fromRawAmount(
+				tokenOut,
+				toAmount
+			)
+
+			// TODO: Assuming all paths go through WETH - validate it here
+			const inputMinOut =
+				formAsset !== tokens['WETH']
+					? await UniSwapQuoterV3['quoteExactInputSingle'](
+							tokenIn.address,
+							tokens['WETH'],
+							pools[0].fee,
+							fromAmount
+								.mul(995)
+								.div(1000)
+								.toHexString(),
+							0 // sqrtPriceLimitX96
+					  )
+					: 0x0
+
+			const trade = TradeV3.createUncheckedTrade({
+				route,
+				inputAmount: fromTokenCurrencyAmount,
+				outputAmount: toTokenCurrencyAmount,
+				tradeType: TradeType.EXACT_INPUT,
+			})
+
+			const amountOutMin = trade.minimumAmountOut(new Percent(10, 1000))
+			const outAmount = utils
+				.parseUnits(amountOutMin.toSignificant(SIGNIFICANT_DIGITS), to.decimals)
+				.toHexString()
+			console.log(
+				'amountOutMin.toSignificant(SIGNIFICANT_DIGITS)',
+				amountOutMin.toSignificant(SIGNIFICANT_DIGITS)
+			)
+			console.log('outAmount', outAmount)
+			console.log('inputMinOut', inputMinOut.toString())
+			const diversificationTrades = [
+				[tokenIn.address, pools[0].fee, 1000, outAmount, lendOutputToAAVE],
+			]
+			const args = [
 				UniSwapRouterV3.address,
-				[v3Path, identityAddr, deadline, fromAmount, toAmount],
-			])
+				formAsset !== tokens['WETH'] ? formAsset : 0x0,
+				formAsset !== tokens['WETH'] ? pools[0].fee : 0x0, // inputFee
+				inputMinOut.toString(), //inputMinOut.toString(),
+				diversificationTrades,
+			]
+
+			data = ZapperInterface.encodeFunctionData('diversifyV3', args)
+
+			// data = ZapperInterface.encodeFunctionData('tradeV3', [
+			// 	UniSwapRouterV3.address,
+			// 	[v3Path, identityAddr, deadline, fromAmount, toAmount],
+			// ])
 		}
 
 		txns.push({
@@ -709,6 +766,7 @@ export async function walletDiversificationTransaction({
 					// poolState.sqrtPriceX96,
 					0,
 				],
+				// false,
 			]),
 		})
 	}
