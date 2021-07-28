@@ -15,7 +15,8 @@ import {
 	t,
 } from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
-import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy'
+// import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy'
+import { getProxyDeployBytecode } from 'adex-protocol-eth-wallet/js/IdentityProxyDeploy'
 import solc from 'solcBrowser'
 import { RoutineAuthorization } from 'adex-protocol-eth/js/Identity'
 import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
@@ -252,6 +253,7 @@ export async function setIdentityPrivilege({
 		result,
 	}
 }
+
 function txnsByTokenWithSaiToDaiSwap({
 	txns,
 	mainToken,
