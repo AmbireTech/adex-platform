@@ -541,39 +541,37 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 											}
 										/>
 									</Grid>
-									{tradeData && tradeData.router === 'uniV2' && (
-										<Grid item xs={12}>
-											<Box mt={2}>
-												<FormControl>
-													<FormGroup row>
-														<FormControlLabel
-															control={
-																<Checkbox
-																	checked={!!lendOutputToAAVE}
-																	onChange={ev => {
-																		execute(
-																			updateNewTransaction({
-																				tx: stepsId,
-																				key: 'lendOutputToAAVE',
-																				value: ev.target.checked,
-																			})
-																		)
-																	}}
-																	value='lendOutputToAAVE'
-																/>
-															}
-															label={t('WALLET_SWAP_LEND_TO_AAVE_INFO', {
-																args: [
-																	selectedToAsset.symbol || '-',
-																	selectedToAsset.currentToAaveAPY || '-',
-																],
-															})}
-														/>
-													</FormGroup>
-												</FormControl>
-											</Box>
-										</Grid>
-									)}
+									<Grid item xs={12}>
+										<Box mt={2}>
+											<FormControl>
+												<FormGroup row>
+													<FormControlLabel
+														control={
+															<Checkbox
+																checked={!!lendOutputToAAVE}
+																onChange={ev => {
+																	execute(
+																		updateNewTransaction({
+																			tx: stepsId,
+																			key: 'lendOutputToAAVE',
+																			value: ev.target.checked,
+																		})
+																	)
+																}}
+																value='lendOutputToAAVE'
+															/>
+														}
+														label={t('WALLET_SWAP_LEND_TO_AAVE_INFO', {
+															args: [
+																selectedToAsset.symbol || '-',
+																selectedToAsset.currentToAaveAPY || '-',
+															],
+														})}
+													/>
+												</FormGroup>
+											</FormControl>
+										</Box>
+									</Grid>
 								</Grid>
 							</Box>
 						</Paper>
