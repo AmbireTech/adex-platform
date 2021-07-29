@@ -68,10 +68,21 @@ export const paths = {
 				{
 					addressTokenA: tokens.UNI,
 					addressTokenB: tokens.WETH,
-					fee: FeeAmount.HIGH,
+					fee: FeeAmount.MEDIUM,
 				},
 			],
 			poolsPath: [tokens.WETH, tokens.UNI],
+		},
+		[tokens.LINK]: {
+			router: 'uniV3',
+			pools: [
+				{
+					addressTokenA: tokens.LINK,
+					addressTokenB: tokens.WETH,
+					fee: FeeAmount.MEDIUM,
+				},
+			],
+			poolsPath: [tokens.WETH, tokens.LINK],
 		},
 	},
 	// [tokens.ADX]: {
@@ -155,6 +166,22 @@ export const paths = {
 		// 	],
 		// 	poolsPath: [tokens.UNI, tokens.WETH, tokens.USDT],
 		// },
+		[tokens.LINK]: {
+			router: 'uniV3',
+			pools: [
+				{
+					addressTokenA: tokens.USDT,
+					addressTokenB: tokens.WETH,
+					fee: FeeAmount.MEDIUM,
+				},
+				{
+					addressTokenA: tokens.LINK,
+					addressTokenB: tokens.WETH,
+					fee: FeeAmount.MEDIUM,
+				},
+			],
+			poolsPath: [tokens.USDT, tokens.WETH, tokens.LINK],
+		},
 	},
 }
 

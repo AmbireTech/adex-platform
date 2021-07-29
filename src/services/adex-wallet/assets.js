@@ -9,6 +9,7 @@ import USDT_LOGO from 'resources/token-logos/USDT.png'
 import ETH_LOGO from 'resources/token-logos/ETH.png'
 import UNI_LOGO from 'resources/token-logos/UNI.png'
 import DAI_LOGO from 'resources/token-logos/DAI.svg'
+import LINK_LOGO from 'resources/token-logos/LINK.png'
 // import BTC_LOGO from 'resources/token-logos/BTC.png'
 const { ADXLoyaltyPoolToken, StakingPool, ADXToken, ERC20 } = contracts
 
@@ -23,6 +24,8 @@ const kovanTokens = {
 	DAI: '0xff795577d9ac8bd7d90ee22b6c1703490b6512fd', //DAI
 	aDAI: '0xdCf0aF9e59C002FA3AA091a46196b37530FD48a8', // AAVE DAI
 	// TST: '0x7af963cF6D228E564e2A0aA0DdBF06210B38615D',
+	LINK: '0xAD5ce863aE3E4E9394Ab43d4ba0D80f419F61789',
+	aLINK: '0xeD9044cA8F7caCe8eACcD40367cF2bee39eD1b04',
 }
 
 const goerliTokens = {
@@ -227,6 +230,31 @@ export const assets = {
 	// 	decimals: 18,
 	// 	logoSrc: DAI_LOGO,
 	// },
+	[tokens.LINK]: {
+		symbol: 'LINK',
+		name: 'ChainLink',
+		getBalance: async function({ address }) {
+			return await getERC20Balance({ tokenAddress: tokens.LINK, address })
+		},
+		isSwappable: true,
+		isBaseAsset: true,
+		subAssets: [tokens.aLINK],
+		decimals: 18,
+		logoSrc: LINK_LOGO,
+	},
+	[tokens.aLINK]: {
+		symbol: 'aLINK',
+		name: 'Aave interest bearing LINK',
+		getBalance: async function({ address }) {
+			return await getERC20Balance({ tokenAddress: tokens.aLINK, address })
+		},
+		isSwappable: false,
+		isBaseAsset: false,
+		isAaveInterestToken: true,
+		subAssets: [],
+		decimals: 18,
+		logoSrc: LINK_LOGO,
+	},
 }
 
 async function mapAAVEInterestToken(baseTokenSymbol, aTokenAmount) {
@@ -263,4 +291,5 @@ export const mappers = {
 	[tokens.aUSDT]: mapAAVEInterestToken.bind(null, assets[tokens.USDT].symbol),
 	[tokens.aWETH]: mapAAVEInterestToken.bind(null, assets[tokens.WETH].symbol),
 	[tokens.aDAI]: mapAAVEInterestToken.bind(null, assets[tokens.DAI].symbol),
+	[tokens.aLINK]: mapAAVEInterestToken.bind(null, assets[tokens.LINK].symbol),
 }
