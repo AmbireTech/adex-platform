@@ -69,7 +69,7 @@ export default function Home({ t, ...rest }) {
 					autoPlay
 					muted
 					loop
-					playbackRate='2'
+					// playbackRate='2'
 				>
 					<source src={walletVideoBkgSrc} type='video/mp4' />
 				</video>
