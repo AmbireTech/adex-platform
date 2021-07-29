@@ -50,7 +50,8 @@ const ERC20 = new Interface(ERC20TokenABI)
 const DEADLINE = 60 * 60 * 1000
 const ZERO = BigNumber.from(0)
 
-function getUniToken({ address, tokenData, chainId = 5 }) {
+async function getUniToken({ address, tokenData, provider }) {
+	const { chainId } = await provider.getNetwork()
 	const token = new Token(
 		chainId,
 		address,
@@ -160,13 +161,15 @@ async function getUniv2RouteAndTokens({ path, amountOut, provider }) {
 async function getUniv3Route({ pools, tokenIn, tokenOut, provider }) {
 	const poolsWithData = await Promise.all(
 		pools.map(async ({ addressTokenA, addressTokenB, fee }) => {
-			const tokenA = getUniToken({
+			const tokenA = await getUniToken({
 				address: addressTokenA,
 				tokenData: assets[addressTokenA],
+				provider,
 			})
-			const tokenB = getUniToken({
+			const tokenB = await getUniToken({
 				address: addressTokenB,
 				tokenData: assets[addressTokenB],
+				provider,
 			})
 
 			const { poolState } = await getPollStateData({
@@ -273,17 +276,18 @@ export async function getTradeOutData({ formAsset, formAssetAmount, toAsset }) {
 	}
 
 	if (router === 'uniV3') {
-		const tokenIn = getUniToken({
+		const tokenIn = await getUniToken({
 			address: formAsset,
 			tokenData: from,
+			provider,
 		})
-		const tokenOut = getUniToken({
+		const tokenOut = await getUniToken({
 			address: toAsset,
 			tokenData: to,
+			provider,
 		})
 
 		const isSingleSwap = pools.length === 1
-
 		const route = await getUniv3Route({ pools, tokenIn, tokenOut, provider })
 		const amountInHex = utils
 			.parseUnits(formAssetAmount.toString(), from.decimals)
@@ -300,7 +304,7 @@ export async function getTradeOutData({ formAsset, formAssetAmount, toAsset }) {
 					amountInHex,
 					0, // sqrtPriceLimitX96
 			  ]
-			: [encodeRouteToPath(route), amountInHex]
+			: [encodeRouteToPath(route, false), amountInHex]
 
 		const amountOut = await UniSwapQuoterV3[action](...args)
 
@@ -382,7 +386,7 @@ export async function walletTradeTransaction({
 		IdentityPayable,
 		getToken,
 		UniSwapRouterV3,
-		UniSwapQuoterV3,
+		// UniSwapQuoterV3,
 	} = await getEthers(authType)
 
 	// TODO: use swap tokens for fees - update relayer
@@ -453,80 +457,43 @@ export async function walletTradeTransaction({
 					// poolState.sqrtPriceX96,
 					0,
 				],
-				// lendOutputToAAVE,
+				// lendOutputToAAVE, // TODO: update Zapper to accept wrap param on tradeV3Single
 			])
 		} else if (pools.length > 1) {
-			const tokenIn = getUniToken({
+			if (lendOutputToAAVE) {
+				return walletDiversificationTransaction({
+					getFeesOnly,
+					account,
+					formAsset,
+					formAssetAmount,
+					diversificationAssets: [
+						{
+							address: toAsset,
+							share: 100,
+							lendOutputToAAVE,
+						},
+					],
+				})
+			}
+
+			const tokenIn = await getUniToken({
 				address: formAsset,
 				tokenData: from,
+				provider,
 			})
-			const tokenOut = getUniToken({
+			const tokenOut = await getUniToken({
 				address: toAsset,
 				tokenData: to,
+				provider,
 			})
 
 			const route = await getUniv3Route({ pools, tokenIn, tokenOut, provider })
-			// const v3Path = encodeRouteToPath(route)
+			const v3Path = encodeRouteToPath(route)
 
-			const fromTokenCurrencyAmount = CurrencyAmount.fromRawAmount(
-				tokenIn,
-				fromAmount
-			)
-
-			const toTokenCurrencyAmount = CurrencyAmount.fromRawAmount(
-				tokenOut,
-				toAmount
-			)
-
-			// TODO: Assuming all paths go through WETH - validate it here
-			const inputMinOut =
-				formAsset !== tokens['WETH']
-					? await UniSwapQuoterV3['quoteExactInputSingle'](
-							tokenIn.address,
-							tokens['WETH'],
-							pools[0].fee,
-							fromAmount
-								.mul(995)
-								.div(1000)
-								.toHexString(),
-							0 // sqrtPriceLimitX96
-					  )
-					: 0x0
-
-			const trade = TradeV3.createUncheckedTrade({
-				route,
-				inputAmount: fromTokenCurrencyAmount,
-				outputAmount: toTokenCurrencyAmount,
-				tradeType: TradeType.EXACT_INPUT,
-			})
-
-			const amountOutMin = trade.minimumAmountOut(new Percent(10, 1000))
-			const outAmount = utils
-				.parseUnits(amountOutMin.toSignificant(SIGNIFICANT_DIGITS), to.decimals)
-				.toHexString()
-			console.log(
-				'amountOutMin.toSignificant(SIGNIFICANT_DIGITS)',
-				amountOutMin.toSignificant(SIGNIFICANT_DIGITS)
-			)
-			console.log('outAmount', outAmount)
-			console.log('inputMinOut', inputMinOut.toString())
-			const diversificationTrades = [
-				[tokenIn.address, pools[0].fee, 1000, outAmount, lendOutputToAAVE],
-			]
-			const args = [
+			data = ZapperInterface.encodeFunctionData('tradeV3', [
 				UniSwapRouterV3.address,
-				formAsset !== tokens['WETH'] ? formAsset : 0x0,
-				formAsset !== tokens['WETH'] ? pools[0].fee : 0x0, // inputFee
-				inputMinOut.toString(), //inputMinOut.toString(),
-				diversificationTrades,
-			]
-
-			data = ZapperInterface.encodeFunctionData('diversifyV3', args)
-
-			// data = ZapperInterface.encodeFunctionData('tradeV3', [
-			// 	UniSwapRouterV3.address,
-			// 	[v3Path, identityAddr, deadline, fromAmount, toAmount],
-			// ])
+				[v3Path, identityAddr, deadline, fromAmount, toAmount],
+			])
 		}
 
 		txns.push({
@@ -628,14 +595,16 @@ export async function walletDiversificationTransaction({
 	const txns = []
 	const tokensOutData = []
 
-	const tokenIn = getUniToken({
+	const tokenIn = await getUniToken({
 		address: formAsset,
 		tokenData: from,
+		provider,
 	})
 
-	const wethIn = getUniToken({
+	const wethIn = await getUniToken({
 		address: tokens['WETH'],
 		tokenData: weth,
+		provider,
 	})
 
 	const WETHOutIndex = diversificationAssets.findIndex(
@@ -678,9 +647,8 @@ export async function walletDiversificationTransaction({
 			? fromAmount.mul(allocatedInputToken.share * 10).div(1000)
 			: ZERO
 
-		usedShares += allocatedInputToken.share
-
 		if (allocatedInputToken) {
+			usedShares += allocatedInputToken.share
 			tokensOutData.push({
 				address: allocatedInputToken.address,
 				share: allocatedInputToken.share,
@@ -799,10 +767,10 @@ export async function walletDiversificationTransaction({
 			}
 
 			const pool = pools[0]
-
-			const tokenOut = getUniToken({
+			const tokenOut = await getUniToken({
 				address: asset.address,
 				tokenData: to,
+				provider,
 			})
 
 			const flattedShare = Math.round(
@@ -851,6 +819,7 @@ export async function walletDiversificationTransaction({
 				address: asset.address,
 				share: asset.share,
 				amountOutMin: amountOutMin.toSignificant(SIGNIFICANT_DIGITS),
+				wrap: !!asset.lendOutputToAAVE,
 			})
 
 			return [
@@ -863,7 +832,7 @@ export async function walletDiversificationTransaction({
 						to.decimals
 					)
 					.toString(),
-				false,
+				!!asset.lendOutputToAAVE,
 			]
 		})
 	)
@@ -886,8 +855,6 @@ export async function walletDiversificationTransaction({
 		wethAmountIn.toString(), //inputMinOut.toString(),
 		diversificationTrades,
 	]
-
-	console.log('args', args)
 
 	txns.push({
 		identityContract: identityAddr,
