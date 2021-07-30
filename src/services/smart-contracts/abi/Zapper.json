@@ -310,6 +310,11 @@
 				"internalType": "struct ISwapRouter.ExactInputSingleParams",
 				"name": "params",
 				"type": "tuple"
+			},
+			{
+				"internalType": "bool",
+				"name": "wrapOutputToLending",
+				"type": "bool"
 			}
 		],
 		"name": "tradeV3Single",
