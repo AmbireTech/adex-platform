@@ -42,25 +42,43 @@ export function handleWalletFeesData({
 	dirty,
 	actionName,
 	feeDataAction,
+	autoSetMaxInputDataAction,
+	temp,
 }) {
 	return async function(dispatch, getState) {
 		let isValid = false
 		try {
-			const feesData = await feeDataAction()
+			const hasAutoUpdateFunc = typeof autoSetMaxInputDataAction === 'function'
+			let feesData = await feeDataAction()
+
+			const overAvailability = feesData.amountToSpendBN.gt(
+				feesData.maxAvailableToSpend
+			)
+			isValid = await validateWalletFees({
+				validateId,
+				feesAmountBN: feesData.feesAmountBN,
+				feeTokenAddr: feesData.feeTokenAddr,
+				spendTokenAddr: feesData.spendTokenAddr,
+				amountToSpendBN: feesData.amountToSpendBN || '0',
+				dirty,
+				// Skip only on the first run to skip error msg flash
+				skipStateUpdateIfInvalid: hasAutoUpdateFunc && overAvailability,
+			})(dispatch, getState)
+
+			if (!isValid && overAvailability && hasAutoUpdateFunc) {
+				await autoSetMaxInputDataAction(feesData.maxAvailableToSpendFormatted)
+				feesData = await feeDataAction(feesData.maxAvailableToSpendFormatted)
+				isValid = await validateWalletFees({
+					validateId,
+					...feesData,
+					dirty,
+				})(dispatch, getState)
+			}
 
 			await updateNewTransaction({
 				tx: stepsId,
 				key: 'feesData',
 				value: feesData,
-			})(dispatch, getState)
-
-			isValid = await validateWalletFees({
-				validateId,
-				feesAmountBN: feesData.feesAmountBN,
-				feeTokenAddr: feesData.feeTokenAddr,
-				spendAsset: feesData.spendAsset,
-				amountToSpendBN: feesData.amountToSpendBN || '0',
-				dirty,
 			})(dispatch, getState)
 		} catch (err) {
 			console.error(actionName, err)
@@ -394,7 +412,7 @@ export function validateWalletWithdraw({
 		}
 		const state = getState()
 		const account = selectAccount(state)
-		const { amountToWithdraw, withdrawTo } = selectNewTransactionById(
+		const { amountToWithdraw, withdrawTo, temp } = selectNewTransactionById(
 			state,
 			stepsId
 		)
@@ -441,15 +459,22 @@ export function validateWalletWithdraw({
 		let isValid = inputValidations.every(v => v === true)
 
 		if (isValid) {
-			const feeDataAction = async () =>
+			const feeDataAction = async maxInput =>
 				await walletWithdrawTransaction({
 					getFeesOnly: true,
 					account,
-					amountToWithdraw,
+					amountToWithdraw: maxInput || amountToWithdraw,
 					withdrawTo,
 					withdrawAssetAddr: withdrawAsset,
 					assetsDataRaw: assetsData,
 				})
+
+			const autoSetMaxInputDataAction = async maxInput =>
+				await updateNewTransaction({
+					tx: stepsId,
+					key: 'amountToWithdraw',
+					value: maxInput,
+				})(dispatch, getState)
 
 			isValid = await handleWalletFeesData({
 				stepsId,
@@ -457,6 +482,8 @@ export function validateWalletWithdraw({
 				dirty,
 				actionName: 'walletWithdraw',
 				feeDataAction,
+				autoSetMaxInputDataAction,
+				temp,
 			})(dispatch, getState)
 		}
 

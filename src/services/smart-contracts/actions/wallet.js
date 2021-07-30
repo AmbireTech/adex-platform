@@ -44,6 +44,7 @@ import {
 	getWalletIdentityTxnsTotalFees,
 	processExecuteWalletTxns,
 } from './walletIdentity'
+import { formatTokenAmount } from 'helpers/formatters'
 
 const UNI_V3_FACTORY_ADDR = '0x1F98431c8aD98523631AE4a59f267346ea31F984'
 const SIGNIFICANT_DIGITS = 6
@@ -531,7 +532,7 @@ export async function walletTradeTransaction({
 		return {
 			feesAmountBN: totalBN,
 			feeTokenAddr,
-			spendTokenAddr: to.address,
+			spendTokenAddr: from.address,
 			amountToSpendBN: fromAmount,
 			breakdownFormatted,
 		}
@@ -913,6 +914,7 @@ export async function walletWithdrawTransaction({
 	amountToWithdraw,
 	withdrawTo,
 	getFeesOnly,
+	getMaxFees,
 	withdrawAssetAddr,
 	assetsDataRaw,
 }) {
@@ -931,7 +933,10 @@ export async function walletWithdrawTransaction({
 
 	const txns = []
 
-	const toWithdrawAmount = parseUnits(amountToWithdraw, token.decimals)
+	const toWithdrawAmount = parseUnits(
+		getMaxFees ? tokenData.totalAvailable : amountToWithdraw,
+		token.decimals
+	)
 
 	const withdrawTx = {
 		identityContract: identityAddr,
@@ -958,17 +963,59 @@ export async function walletWithdrawTransaction({
 		amountInInputTokenNeeded: toWithdrawAmount,
 	})
 
-	const { totalBN, breakdownFormatted } = await getWalletIdentityTxnsTotalFees({
+	const {
+		total,
+		totalBN,
+		breakdownFormatted,
+		...rest
+	} = await getWalletIdentityTxnsTotalFees({
 		txnsWithNonceAndFees,
 	})
+
+	// TODO: unified function
+	const totalAvailable = BigNumber.from(tokenData.totalAvailable)
+	const maxAvailableToSpend = totalAvailable.sub(totalBN).lt(ZERO)
+		? ZERO
+		: totalAvailable.sub(totalBN)
+	const maxAvailableToSpendFormatted = formatTokenAmount(
+		maxAvailableToSpend.toString(),
+		tokenData.decimals,
+		false,
+		tokenData.decimals
+	)
+
+	const actualToSpend = toWithdrawAmount.gte(maxAvailableToSpend)
+		? maxAvailableToSpend
+		: toWithdrawAmount
+	const actualToSpendFormatted = formatTokenAmount(
+		actualToSpend.toString(),
+		tokenData.decimals,
+		false,
+		tokenData.decimals
+	)
+	const totalToSpend = totalBN.add(actualToSpend)
+	const totalToSpendFormatted = formatTokenAmount(
+		totalToSpend.toString(),
+		tokenData.decimals,
+		false,
+		tokenData.decimals
+	)
 
 	if (getFeesOnly) {
 		return {
 			feesAmountBN: totalBN,
+			feesAmountFormatted: total,
 			feeTokenAddr,
 			spendTokenAddr: withdrawAssetAddr,
 			amountToSpendBN: toWithdrawAmount,
+			actualToSpend,
+			actualToSpendFormatted,
 			breakdownFormatted,
+			maxAvailableToSpend,
+			maxAvailableToSpendFormatted,
+			totalToSpend,
+			totalToSpendFormatted,
+			...rest,
 		}
 	}
 
