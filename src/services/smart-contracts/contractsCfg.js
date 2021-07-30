@@ -71,7 +71,8 @@ export const contracts = {
 		address:
 			process.env.ADDR_WALLET_ZAPPER ||
 			// '0x10eB10Bf93BCd299542cEb1D5E5677ea1F6A41D7',
-			'0x6c8Bfe371c9BbBbb66fdaB1EE46950Cf5f49e962',
+			// '0x6c8Bfe371c9BbBbb66fdaB1EE46950Cf5f49e962', //kovan old
+			'0x1D947008f56B410887E1F4794A86517888a1B27f',
 		abi: WalletZapperAbi,
 	},
 	UniSwapRouterV2: {
