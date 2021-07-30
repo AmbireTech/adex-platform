@@ -13,6 +13,10 @@ import LINK_LOGO from 'resources/token-logos/LINK.png'
 // import BTC_LOGO from 'resources/token-logos/BTC.png'
 const { ADXLoyaltyPoolToken, StakingPool, ADXToken, ERC20 } = contracts
 
+// 0xe0fba4fc209b4948668006b2be61711b7f465bae
+// 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D
+// 0xE592427A0AEce92De3Edee1F18E0157C05861564
+
 const kovanTokens = {
 	USDT: '0x13512979ade267ab5100878e2e0f485b568328a4',
 	aUSDT: '0xFF3c8bc103682FA918c954E84F5056aB4DD5189d', // AAVE USDT
