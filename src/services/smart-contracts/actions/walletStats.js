@@ -15,7 +15,15 @@ async function getAssetsData({ identityAddress, authType }) {
 			Object.entries(assets).map(
 				async ([
 					address,
-					{ getBalance, symbol, decimals, name, logoSrc, isSwappable },
+					{
+						getBalance,
+						symbol,
+						decimals,
+						name,
+						logoSrc,
+						isSwappable,
+						isAaveInterestToken,
+					},
 				]) => {
 					const balance = await getBalance({ address: identityAddress })
 					const baseTokenBalance = mappers[address]
@@ -30,6 +38,7 @@ async function getAssetsData({ identityAddress, authType }) {
 						name,
 						logoSrc,
 						isSwappable,
+						isAaveInterestToken,
 					}
 				}
 			)
@@ -46,20 +55,27 @@ async function getAssetsData({ identityAddress, authType }) {
 					...assetsBalances[address],
 				}
 
-				const { total, specific } = asset.subAssets.reduce(
+				const { total, specific, aaveWrapped } = asset.subAssets.reduce(
 					(data, subAddr) => {
 						const subData = assetsBalances[subAddr]
 						data.total = data.total.add(
 							(subData.baseTokenBalance || [])[1] || ZERO
 						)
 						data.specific = [...data.specific, subData]
+						data.aaveWrapped = data.aaveWrapped.add(
+							subData.isAaveInterestToken
+								? (subData.baseTokenBalance || [])[1] || ZERO
+								: ZERO
+						)
 
 						return data
 					},
-					{ total: ZERO, specific: [] }
+					{ total: ZERO, specific: [], aaveWrapped: ZERO }
 				)
 
 				assetData.total = total.add(assetData.balance)
+				assetData.aaveWrapped = aaveWrapped
+				assetData.totalAvailable = assetData.balance.add(aaveWrapped)
 				assetData.specific = specific
 
 				data[address] = assetData
@@ -208,6 +224,16 @@ export async function getAccountStatsWallet({ account, prices }) {
 
 			formattedValue.total = formatTokenAmount(
 				value.total,
+				assets[key].decimals
+			)
+
+			formattedValue.aaveWrapped = formatTokenAmount(
+				value.aaveWrapped,
+				assets[key].decimals
+			)
+
+			formattedValue.totalAvailable = formatTokenAmount(
+				value.totalAvailable,
 				assets[key].decimals
 			)
 
