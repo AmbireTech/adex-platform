@@ -8,9 +8,10 @@ export function validateWalletFees({
 	feesAmountBN,
 	feeTokenAddr,
 	amountToSpendBN,
-	spendAsset,
+	spendTokenAddr,
 	errorMsg = '',
 	dirty,
+	skipStateUpdateIfInvalid,
 }) {
 	return async function(dispatch, getState) {
 		let isValid = true
@@ -23,13 +24,13 @@ export function validateWalletFees({
 			assetsData: assetsDataFormatted = {},
 		} = selectAccountStatsFormatted(state)
 
-		const feeAssetAsSpendAsset = spendAsset === feeTokenAddr
+		const feeAssetAsSpendAsset = spendTokenAddr === feeTokenAddr
 
 		const feeAssetData = feeAssetAsSpendAsset
-			? assetsData[spendAsset]
+			? assetsData[spendTokenAddr]
 			: assetsData[feeTokenAddr]
 
-		const availableBalanceFeeAsset = feeAssetData.balance
+		const availableBalanceFeeAsset = feeAssetData.totalAvailable
 
 		const amountNeeded = BigNumber.from(feesAmountBN).add(
 			BigNumber.from(feeAssetAsSpendAsset ? amountToSpendBN : 0)
@@ -42,7 +43,7 @@ export function validateWalletFees({
 				amountNeeded,
 				decimals,
 				null,
-				2
+				8
 			)
 			isValid = false
 			msg = 'ERR_TX_INSUFFICIENT_BALANCE'
@@ -54,11 +55,13 @@ export function validateWalletFees({
 			]
 		}
 
-		await validate(validateId, 'fees', {
-			isValid,
-			err: { msg, args },
-			dirty,
-		})(dispatch)
+		if (isValid || (!isValid && !skipStateUpdateIfInvalid)) {
+			await validate(validateId, 'fees', {
+				isValid,
+				err: { msg, args },
+				dirty,
+			})(dispatch)
+		}
 
 		return isValid
 	}
