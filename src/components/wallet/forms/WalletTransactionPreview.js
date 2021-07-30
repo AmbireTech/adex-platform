@@ -5,11 +5,19 @@ import PropTypes from 'prop-types'
 import ErrorIcon from '@material-ui/icons/Error'
 import WarningIcon from '@material-ui/icons/Warning'
 import { Alert, AlertTitle } from '@material-ui/lab'
-import { Box } from '@material-ui/core'
 import {
-	WalletAction,
-	FeesBreakdown,
-} from 'components/dashboard/forms/FormsCommon'
+	Box,
+	List,
+	ListItem,
+	ListItemText,
+	ListSubheader,
+	Accordion,
+	AccordionSummary,
+	Typography,
+	Tooltip,
+	Grid,
+} from '@material-ui/core'
+import { WalletAction } from 'components/dashboard/forms/FormsCommon'
 import {
 	PropRow,
 	ContentBox,
@@ -18,8 +26,7 @@ import {
 	FullContentSpinner,
 } from 'components/common/dialog/content'
 import { styles } from 'components/dashboard/forms/web3/styles'
-import { DiversifyPreview } from './previews'
-
+import { DiversifyPreview, WithdrawPreview } from './previews'
 import {
 	selectMainToken,
 	t,
@@ -29,6 +36,9 @@ import {
 	selectAccountStatsRaw,
 } from 'selectors'
 import { execute, checkNetworkCongestion } from 'actions'
+
+import { HelpSharp as HelpIcon } from '@material-ui/icons'
+import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
 
 const useStyles = makeStyles(styles)
 
@@ -43,6 +53,8 @@ function TransactionPreview(props) {
 		waitingForWalletAction,
 		feesData = {},
 		errors = [],
+		withdrawTo,
+		amountToWithdraw,
 	} = useSelector(state => selectNewTransactionById(state, txId))
 	const [networkCongested, setNetworkCongested] = useState(false)
 	const { assetsData = {} } = useSelector(selectAccountStatsRaw)
@@ -109,16 +121,83 @@ function TransactionPreview(props) {
 
 						{stepsId === 'walletDiversifyForm' && (
 							<DiversifyPreview
-								t={t}
 								assetsData={assetsData}
 								tokensOutData={feesData.tokensOutData}
 							/>
 						)}
 
-						<FeesBreakdown
-							breakdownFormatted={feesData.breakdownFormatted}
-							symbol={symbol}
-						/>
+						{stepsId.includes('walletWithdraw-') && (
+							<WithdrawPreview
+								withdrawTo={withdrawTo}
+								amountToWithdraw={amountToWithdraw}
+								feesData={feesData}
+							/>
+						)}
+
+						<Box p={1}>
+							<Accordion variant='outlined'>
+								<AccordionSummary
+									expandIcon={<ExpandMoreIcon />}
+									aria-controls='fees-breakdown'
+									id='fees-breakdown'
+								>
+									<Typography component='div'>
+										<Grid
+											container
+											direction='row'
+											justify='center'
+											alignItems='center'
+										>
+											<Grid>
+												{t('FEES_BREAKDOWN_ADVANCED_LABEL', {
+													args: [
+														feesData.feesAmountFormatted,
+														feesData.feeTokenSymbol,
+													],
+												})}
+											</Grid>
+											<Grid>
+												<Grid container justify='center' alignItems='center'>
+													<Tooltip
+														style={{ fontSize: '1em', marginLeft: '0.5em' }}
+														title={t('TOOLTIP_EXPLAIN_TRANSACTION_FEE')}
+														interactive
+													>
+														<HelpIcon color={'primary'} />
+													</Tooltip>
+												</Grid>
+											</Grid>
+										</Grid>
+									</Typography>
+								</AccordionSummary>
+								<List
+									disablePadding
+									dense
+									subheader={
+										<ListSubheader component='div'>
+											{t('BD_TOTAL_FEE', {
+												args: [
+													feesData.breakdownFormatted.feeAmount,
+													feesData.feeTokenSymbol,
+												],
+											})}
+										</ListSubheader>
+									}
+								>
+									{!!feesData.breakdownFormatted.hasDeployTx && (
+										<ListItem>
+											<ListItemText primary={t('BD_HAS_DEPLOY_FEE_INFO')} />
+										</ListItem>
+									)}
+									<ListItem>
+										<ListItemText
+											primary={t('FEE_DATA_INTERNAL_TXNS_COUNT')}
+											secondary={feesData.breakdownFormatted.txnsCount}
+										/>
+									</ListItem>
+								</List>
+							</Accordion>
+						</Box>
 					</ContentBody>
 				</ContentBox>
 			)}
