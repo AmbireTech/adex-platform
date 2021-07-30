@@ -1,6 +1,9 @@
 import React from 'react'
-import { Box, Avatar } from '@material-ui/core'
+import { Box, Avatar, ListItemText } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import { Alert } from '@material-ui/lab'
+import { PropRow } from 'components/common/dialog/content'
+import { t } from 'selectors'
 
 const styles = theme => {
 	return {
@@ -41,6 +44,47 @@ export const DiversifyPreview = ({ tokensOutData, assetsData }) => {
 					</Box>
 				)
 			})}
+		</Box>
+	)
+}
+
+export const WithdrawPreview = ({
+	withdrawTo,
+	feesData,
+	amountToWithdraw,
+	symbol = 'xx',
+}) => {
+	const classes = useStyles()
+	return (
+		<Box>
+			<Box p={1}>
+				<Alert variant='filled' severity='warning'>
+					{t('WITHDRAW_ADDRESS_WARNING')}
+				</Alert>
+			</Box>
+			<PropRow
+				key='withdrawTo'
+				left={t('withdrawTo', { isProp: true })}
+				right={(withdrawTo || '').toString()}
+			/>
+			<PropRow
+				key='amountToWithdraw'
+				left={t('amountToWithdraw', { isProp: true })}
+				right={
+					<ListItemText
+						className={classes.address}
+						secondary={t('AMOUNT_WITHDRAW_INFO', {
+							args: [
+								feesData.feesAmountFormatted,
+								feesData.feeTokenSymbol,
+								feesData.actualToSpendFormatted,
+								symbol,
+							],
+						})}
+						primary={`${feesData.totalToSpendFormatted} ${symbol}`}
+					/>
+				}
+			/>
 		</Box>
 	)
 }
