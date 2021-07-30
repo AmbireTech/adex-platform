@@ -25,7 +25,7 @@ const WalletWithdrawStep = ({ stepsId, validateId, stepsProps = {} } = {}) => {
 	const { withdrawAsset } = stepsProps
 	const { assetsData = {} } = useSelector(selectAccountStatsFormatted)
 
-	const { symbol, balance: max } = assetsData[withdrawAsset] || {}
+	const { symbol, totalAvailable: max } = assetsData[withdrawAsset] || {}
 
 	const { amountToWithdraw, withdrawTo } = useSelector(state =>
 		selectNewTransactionById(state, stepsId)
