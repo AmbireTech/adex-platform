@@ -15,12 +15,13 @@ export const GAS_LIMITS = {
 	swapV2: BigNumber.from(110_000), // each
 	swapV3: BigNumber.from(110_000), // each
 	wrap: BigNumber.from(180_000), // each
+	unwrap: BigNumber.from(180_000), // each
 	deploy: BigNumber.from(120_000),
 	base: BigNumber.from(30_000), // Base for each identity tx
 }
 
 export async function getWalletIdentityTxnsWithNoncesAndFees({
-	amountInInputTokenNeeded = '0',
+	spendAsset,
 	txns = [],
 	identityAddr,
 	provider,
@@ -80,7 +81,7 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 		// TODO: BN
 		const txFeeAmountUSD = txFeeAmountETH * prices['WETH']['USD']
 		const txFeeAmountFeeToken = parseUnits(
-			(txFeeAmountUSD / feeTokenAddrUSDPrice).toString(),
+			(txFeeAmountUSD / feeTokenAddrUSDPrice).toFixed(feeToken.decimals),
 			feeToken.decimals
 		)
 
@@ -110,7 +111,8 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 }
 
 export async function getWalletIdentityTxnsTotalFees({ txnsWithNonceAndFees }) {
-	const feeToken = assets[txnsWithNonceAndFees[0].feeTokenAddr]
+	const { feeTokenAddr } = txnsWithNonceAndFees[0]
+	const feeToken = assets[feeTokenAddr]
 
 	const { total, totalBreakdown } = txnsWithNonceAndFees.reduce(
 		(result, tx) => {
@@ -130,7 +132,7 @@ export async function getWalletIdentityTxnsTotalFees({ txnsWithNonceAndFees }) {
 		{
 			hasDeployTx: false,
 			total: ZERO,
-			totalBreakdown: { txnsCount: 0, sweepTxnsCount: 0 },
+			totalBreakdown: { feeAmount: ZERO, txnsCount: 0, hasDeployTx: false },
 		}
 	)
 
@@ -145,9 +147,16 @@ export async function getWalletIdentityTxnsTotalFees({ txnsWithNonceAndFees }) {
 	}
 
 	const fees = {
-		total: formatTokenAmount(total.toString(), feeToken.decimal, false, 8),
+		total: formatTokenAmount(
+			total.toString(),
+			feeToken.decimals,
+			false,
+			feeToken.decimals
+		),
 		breakdownFormatted,
 		totalBN: total,
+		feeTokenAddr,
+		feeTokenSymbol: feeToken.symbol,
 	}
 
 	return fees
