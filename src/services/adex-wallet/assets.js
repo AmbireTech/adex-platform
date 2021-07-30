@@ -146,6 +146,7 @@ export const assets = {
 		subAssets: [tokens.aUSDT],
 		decimals: 6,
 		logoSrc: USDT_LOGO,
+		isStableCoin: true,
 	},
 	[tokens.aUSDT]: {
 		symbol: 'aUSDT',
@@ -208,6 +209,7 @@ export const assets = {
 		subAssets: [tokens.aDAI],
 		decimals: 18,
 		logoSrc: DAI_LOGO,
+		isStableCoin: true,
 	},
 	[tokens.aDAI]: {
 		symbol: 'aDAI',
