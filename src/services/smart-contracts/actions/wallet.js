@@ -38,6 +38,12 @@ import {
 	Percent,
 } from '@uniswap/sdk-core'
 import { abi as IUniswapV3PoolABI } from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json'
+import {
+	GAS_LIMITS,
+	getWalletIdentityTxnsWithNoncesAndFees,
+	getWalletIdentityTxnsTotalFees,
+	processExecuteWalletTxns,
+} from './walletIdentity'
 
 const UNI_V3_FACTORY_ADDR = '0x1F98431c8aD98523631AE4a59f267346ea31F984'
 const SIGNIFICANT_DIGITS = 6
@@ -443,6 +449,7 @@ export async function walletTradeTransaction({
 
 		let data = null
 
+		console.log('lendOutputToAAVE', lendOutputToAAVE)
 		if (pools.length === 1) {
 			data = ZapperInterface.encodeFunctionData('tradeV3Single', [
 				UniSwapRouterV3.address,
@@ -450,14 +457,14 @@ export async function walletTradeTransaction({
 					formAsset,
 					toAsset,
 					pools[0].fee,
-					identityAddr,
+					lendOutputToAAVE ? WalletZapper.address : identityAddr,
 					deadline,
 					fromAmountHex,
 					minOut.toHexString(),
 					// poolState.sqrtPriceX96,
 					0,
 				],
-				// lendOutputToAAVE, // TODO: update Zapper to accept wrap param on tradeV3Single
+				lendOutputToAAVE, // TODO: update Zapper to accept wrap param on tradeV3Single
 			])
 		} else if (pools.length > 1) {
 			if (lendOutputToAAVE) {
@@ -863,7 +870,7 @@ export async function walletDiversificationTransaction({
 		data: ZapperInterface.encodeFunctionData('diversifyV3', args),
 	})
 
-	const txnsByFeeToken = await getIdentityTxnsWithNoncesAndFees({
+	const txnsWithNonceAndFees = await getIdentityTxnsWithNoncesAndFees({
 		txns,
 		identityAddr,
 		provider,
@@ -873,8 +880,8 @@ export async function walletDiversificationTransaction({
 		executeAction: EXECUTE_ACTIONS.default,
 	})
 
-	const { totalBN, breakdownFormatted } = await getIdentityTxnsTotalFees({
-		txnsByFeeToken,
+	const { totalBN, breakdownFormatted } = await getWalletIdentityTxnsTotalFees({
+		txnsWithNonceAndFees,
 	})
 
 	if (getFeesOnly) {
@@ -890,7 +897,7 @@ export async function walletDiversificationTransaction({
 
 	const result = await processExecuteByFeeTokens({
 		identityAddr,
-		txnsByFeeToken,
+		txnsWithNonceAndFees,
 		wallet,
 		provider,
 	})
@@ -916,10 +923,7 @@ export async function walletWithdrawTransaction({
 
 	const token = assets[withdrawAssetAddr]
 	const tokenData = assetsDataRaw[withdrawAssetAddr]
-
-	// TODO: fee token
-	const mainToken = selectMainToken()
-	const feeTokenAddr = mainToken.address
+	const feeTokenAddr = withdrawAssetAddr
 
 	if (!tokenData) {
 		throw new Error('walletWithdraw - invalid withdraw token address')
@@ -931,17 +935,18 @@ export async function walletWithdrawTransaction({
 
 	const withdrawTx = {
 		identityContract: identityAddr,
-		feeTokenAddr: mainToken.address,
+		feeTokenAddr,
 		to: withdrawAssetAddr,
 		data: ERC20.encodeFunctionData('transfer', [
 			withdrawTo,
 			toWithdrawAmount.toHexString(),
 		]),
+		operationsGasLimits: [GAS_LIMITS.transfer],
 	}
 
 	txns.push(withdrawTx)
 
-	const txnsByFeeToken = await getIdentityTxnsWithNoncesAndFees({
+	const txnsWithNonceAndFees = await getWalletIdentityTxnsWithNoncesAndFees({
 		txns,
 		identityAddr,
 		provider,
@@ -949,25 +954,27 @@ export async function walletWithdrawTransaction({
 		account,
 		getToken,
 		executeAction: EXECUTE_ACTIONS.withdraw,
+		feeTokenAddr,
+		amountInInputTokenNeeded: toWithdrawAmount,
 	})
 
-	const { totalBN, breakdownFormatted } = await getIdentityTxnsTotalFees({
-		txnsByFeeToken,
+	const { totalBN, breakdownFormatted } = await getWalletIdentityTxnsTotalFees({
+		txnsWithNonceAndFees,
 	})
 
 	if (getFeesOnly) {
 		return {
 			feesAmountBN: totalBN,
 			feeTokenAddr,
-			spendTokenAddr: withdrawTo,
+			spendTokenAddr: withdrawAssetAddr,
 			amountToSpendBN: toWithdrawAmount,
 			breakdownFormatted,
 		}
 	}
 
-	const result = await processExecuteByFeeTokens({
+	const result = await processExecuteWalletTxns({
 		identityAddr,
-		txnsByFeeToken,
+		txnsWithNonceAndFees,
 		wallet,
 		provider,
 	})
