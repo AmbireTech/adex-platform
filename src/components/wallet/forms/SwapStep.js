@@ -170,11 +170,11 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	const selectedToAsset = assetsData[toAsset] || {}
 
 	const fromAssetUserBalance = selectedFromAsset
-		? selectedFromAsset.balance
+		? selectedFromAsset.totalAvailable
 		: ZERO
 
 	const toAssetUserCurrentBalance = selectedToAsset
-		? selectedToAsset.balance
+		? selectedToAsset.totalAvailable
 		: ZERO
 
 	// const spinner = useSelector(state => selectSpinnerById(state, validateId))
