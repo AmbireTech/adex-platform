@@ -1,4 +1,4 @@
-import { Contract, BigNumber, utils } from 'ethers'
+import { Contract, BigNumber, utils, constants } from 'ethers'
 import { tokens, assets } from 'services/adex-wallet'
 import { formatTokenAmount } from 'helpers/formatters'
 import {
@@ -6,7 +6,11 @@ import {
 	getMultipleTxSignatures,
 } from 'services/smart-contracts/actions/ethers'
 import { executeTx } from 'services/adex-relayer'
-const { parseUnits, formatUnits } = utils
+import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
+const { parseUnits, formatUnits, Interface } = utils
+const { MaxInt256 } = constants
+
+const ERC20 = new Interface(ERC20TokenABI)
 
 const ZERO = BigNumber.from('0')
 
@@ -18,16 +22,16 @@ export const GAS_LIMITS = {
 	unwrap: BigNumber.from(180_000), // each
 	deploy: BigNumber.from(120_000),
 	base: BigNumber.from(30_000), // Base for each identity tx
+	approve: BigNumber.from(70_000),
 }
 
+// Calc nonces and
 export async function getWalletIdentityTxnsWithNoncesAndFees({
-	spendAsset,
 	txns = [],
 	identityAddr,
 	provider,
 	Identity,
 	account,
-	getToken,
 	feeTokenAddr,
 }) {
 	const allSameFeeToken = txns.every(x => x.feeTokenAddr === feeTokenAddr)
@@ -114,49 +118,52 @@ export async function getWalletIdentityTxnsTotalFees({ txnsWithNonceAndFees }) {
 	const { feeTokenAddr } = txnsWithNonceAndFees[0]
 	const feeToken = assets[feeTokenAddr]
 
-	const { total, totalBreakdown } = txnsWithNonceAndFees.reduce(
+	const { totalFeesBN, txnsCount, hasDeployTx } = txnsWithNonceAndFees.reduce(
 		(result, tx) => {
 			const { feeAmount, isDeployTx } = tx
 
-			const { total, totalBreakdown } = result
-			result.total = total.add(feeAmount)
+			const { totalFeesBN, txnsCount, hasDeployTx } = result
+			result.totalFeesBN = totalFeesBN.add(feeAmount)
+			result.txnsCount = txnsCount + 1
+			result.hasDeployTx = hasDeployTx || isDeployTx
 
 			result.totalBreakdown = {
 				feeAmount: result.total,
-				txnsCount: totalBreakdown.txnsCount + 1,
-				hasDeployTx: result.hasDeployTx || isDeployTx,
+				txnsCount: txnsCount + 1,
+				hasDeployTx: hasDeployTx || isDeployTx,
 			}
 
 			return result
 		},
 		{
 			hasDeployTx: false,
-			total: ZERO,
-			totalBreakdown: { feeAmount: ZERO, txnsCount: 0, hasDeployTx: false },
+			totalFeesBN: ZERO,
+			txnsCount: 0,
 		}
 	)
 
-	const breakdownFormatted = {
-		...totalBreakdown,
-		feeAmount: formatTokenAmount(
-			totalBreakdown.feeAmount.toString(),
-			feeToken.decimals,
-			false,
-			8
-		),
-	}
+	const actionMinAmountBN = totalFeesBN.mul(2)
 
 	const fees = {
-		total: formatTokenAmount(
-			total.toString(),
+		totalFeesFormatted: formatTokenAmount(
+			totalFeesBN,
 			feeToken.decimals,
 			false,
 			feeToken.decimals
 		),
-		breakdownFormatted,
-		totalBN: total,
+		totalFeesBN,
+		txnsCount,
+		hasDeployTx,
 		feeTokenAddr,
 		feeTokenSymbol: feeToken.symbol,
+		feeTokenDecimals: feeToken.decimals,
+		actionMinAmountBN,
+		actionMinAmountFormatted: formatTokenAmount(
+			actionMinAmountBN,
+			feeToken.decimals,
+			false,
+			feeToken.decimals
+		),
 	}
 
 	return fees
@@ -193,4 +200,46 @@ export async function processExecuteWalletTxns({
 	return {
 		result,
 	}
+}
+
+export async function getWalletApproveTxns({
+	provider,
+	tokenAddress,
+	identityAddr,
+	feeTokenAddr,
+	approveForAddress,
+	approveAmount = MaxInt256,
+}) {
+	console.log('tokenAddress', tokenAddress)
+	const tokenContract = new Contract(tokenAddress, ERC20TokenABI, provider)
+
+	const allowance = await tokenContract.allowance(
+		identityAddr,
+		approveForAddress
+	)
+
+	const approveTxns = []
+
+	if (!allowance.isZero()) {
+		approveTxns.push({
+			identityContract: identityAddr,
+			feeTokenAddr,
+			to: tokenAddress,
+			data: ERC20.encodeFunctionData('approve', [approveForAddress, 0]),
+			operationsGasLimits: [GAS_LIMITS.approve],
+		})
+	}
+
+	approveTxns.push({
+		identityContract: identityAddr,
+		feeTokenAddr,
+		to: tokenAddress,
+		data: ERC20.encodeFunctionData('approve', [
+			approveForAddress,
+			approveAmount,
+		]),
+		operationsGasLimits: [GAS_LIMITS.approve],
+	})
+
+	return approveTxns
 }
