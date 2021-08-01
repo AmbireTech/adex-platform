@@ -151,7 +151,7 @@ function TransactionPreview(props) {
 											<Grid>
 												{t('FEES_BREAKDOWN_ADVANCED_LABEL', {
 													args: [
-														feesData.feesAmountFormatted,
+														feesData.totalFeesFormatted,
 														feesData.feeTokenSymbol,
 													],
 												})}
@@ -177,14 +177,14 @@ function TransactionPreview(props) {
 										<ListSubheader component='div'>
 											{t('BD_TOTAL_FEE', {
 												args: [
-													feesData.breakdownFormatted.feeAmount,
+													feesData.totalFeesFormatted,
 													feesData.feeTokenSymbol,
 												],
 											})}
 										</ListSubheader>
 									}
 								>
-									{!!feesData.breakdownFormatted.hasDeployTx && (
+									{!!feesData.hasDeployTx && (
 										<ListItem>
 											<ListItemText primary={t('BD_HAS_DEPLOY_FEE_INFO')} />
 										</ListItem>
@@ -192,7 +192,7 @@ function TransactionPreview(props) {
 									<ListItem>
 										<ListItemText
 											primary={t('FEE_DATA_INTERNAL_TXNS_COUNT')}
-											secondary={feesData.breakdownFormatted.txnsCount}
+											secondary={feesData.txnsCount}
 										/>
 									</ListItem>
 								</List>

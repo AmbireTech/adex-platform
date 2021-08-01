@@ -75,13 +75,13 @@ export const WithdrawPreview = ({
 						className={classes.address}
 						secondary={t('AMOUNT_WITHDRAW_INFO', {
 							args: [
-								feesData.feesAmountFormatted,
+								feesData.mainActionAmountFormatted,
 								feesData.feeTokenSymbol,
-								feesData.actualToSpendFormatted,
+								feesData.totalAmountToSpendFormatted,
 								symbol,
 							],
 						})}
-						primary={`${feesData.totalToSpendFormatted} ${symbol}`}
+						primary={`${feesData.totalAmountToSpendFormatted} ${symbol}`}
 					/>
 				}
 			/>
