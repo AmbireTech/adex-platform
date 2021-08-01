@@ -1,13 +1,16 @@
 import { BigNumber } from 'ethers'
 import { selectAccountStatsRaw, selectAccountStatsFormatted } from 'selectors'
 import { validate } from 'actions'
-import { formatTokenAmount } from 'helpers/formatters'
 
 export function validateWalletFees({
 	validateId,
-	feesAmountBN,
+	totalFeesBN,
 	feeTokenAddr,
-	amountToSpendBN,
+	totalAmountToSpendBN,
+	totalAmountToSpendFormatted,
+	mainActionAmountBN,
+	actionMinAmountBN,
+	actionMinAmountFormatted,
 	spendTokenAddr,
 	errorMsg = '',
 	dirty,
@@ -32,25 +35,26 @@ export function validateWalletFees({
 
 		const availableBalanceFeeAsset = feeAssetData.totalAvailable
 
-		const amountNeeded = BigNumber.from(feesAmountBN).add(
-			BigNumber.from(feeAssetAsSpendAsset ? amountToSpendBN : 0)
-		)
+		const { symbol } = feeAssetData
 
-		const { symbol, decimals } = feeAssetData
-
-		if (amountNeeded.gt(BigNumber.from(availableBalanceFeeAsset))) {
-			const amountNeededFormatted = formatTokenAmount(
-				amountNeeded,
-				decimals,
-				null,
-				8
-			)
+		if (totalAmountToSpendBN.gt(BigNumber.from(availableBalanceFeeAsset))) {
 			isValid = false
 			msg = 'ERR_TX_INSUFFICIENT_BALANCE'
 			args = [
-				amountNeededFormatted,
+				totalAmountToSpendFormatted,
 				symbol,
-				assetsDataFormatted[feeTokenAddr].balance,
+				assetsDataFormatted[feeTokenAddr].totalAvailable,
+				symbol,
+			]
+		}
+
+		if (actionMinAmountBN.lt(totalAmountToSpendBN)) {
+			isValid = false
+			msg = 'ERR_TX_SUB_MIN_ACTION_AMOUNT'
+			args = [
+				actionMinAmountFormatted,
+				symbol,
+				totalAmountToSpendFormatted,
 				symbol,
 			]
 		}
