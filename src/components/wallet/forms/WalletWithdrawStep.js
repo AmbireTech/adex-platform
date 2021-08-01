@@ -27,13 +27,13 @@ const WalletWithdrawStep = ({ stepsId, validateId, stepsProps = {} } = {}) => {
 
 	const { symbol, totalAvailable } = assetsData[withdrawAsset] || {}
 
-	const { amountToWithdraw, withdrawTo, feesData = {} } = useSelector(state =>
-		selectNewTransactionById(state, stepsId)
-	)
+	const {
+		amountToWithdraw,
+		withdrawTo,
+		//   feesData = {} // TODO: min amount
+	} = useSelector(state => selectNewTransactionById(state, stepsId))
 
-	const { maxAvailableToSpendFormatted } = feesData
-
-	const max = maxAvailableToSpendFormatted || totalAvailable
+	const max = totalAvailable
 
 	const spinner = useSelector(state => selectSpinnerById(state, validateId))
 	const syncSpinner = useSelector(state =>

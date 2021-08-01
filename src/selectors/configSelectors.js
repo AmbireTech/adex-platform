@@ -40,6 +40,7 @@ export const selectRelayerConfig = state => {
 // advertiserMinGrantAmount
 // relayerAddr
 // gasPriceCap
+// gasPriceRatio
 
 export const selectFeeTokenWhitelist = createSelector(
 	[selectRelayerConfig],
