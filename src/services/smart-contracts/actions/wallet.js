@@ -219,8 +219,8 @@ async function getUniv3Route({ pools, tokenIn, tokenOut, provider }) {
 }
 
 export async function getTradeOutData({
-	formAsset,
-	formAssetAmount,
+	fromAsset,
+	fromAssetAmount,
 	fromAssetAmountBN,
 	toAsset,
 }) {
@@ -231,16 +231,16 @@ export async function getTradeOutData({
 	} = await getEthers(AUTH_TYPES.READONLY)
 
 	const { path, router, pools } = await getPath({
-		from: formAsset,
+		from: fromAsset,
 		to: toAsset,
 	})
 
-	const from = assets[formAsset]
+	const from = assets[fromAsset]
 	const to = assets[toAsset]
 
 	const fromAmount =
 		fromAssetAmountBN ||
-		utils.parseUnits(formAssetAmount.toString(), from.decimals)
+		utils.parseUnits(fromAssetAmount.toString(), from.decimals)
 
 	if (router === 'uniV2') {
 		// const amountsOut = await UniSwapRouterV2.getAmountsOut(fromAmount, path)
@@ -289,7 +289,7 @@ export async function getTradeOutData({
 
 	if (router === 'uniV3') {
 		const tokenIn = await getUniToken({
-			address: formAsset,
+			address: fromAsset,
 			tokenData: from,
 			provider,
 		})
@@ -375,16 +375,16 @@ export async function getTradeOutData({
 async function getWalletTradeTxns({
 	getFeesOnly,
 	account,
-	formAsset,
-	formAssetAmount,
-	formAssetAmountAfterFeesCalcBN,
+	fromAsset,
+	fromAssetAmount,
+	fromAssetAmountAfterFeesCalcBN,
 	toAsset,
 	lendOutputToAAVE = false,
 }) {
 	const { wallet, identity } = account
 	const { authType } = wallet
 	const { path, router, pools } = await getPath({
-		from: formAsset,
+		from: fromAsset,
 		to: toAsset,
 	})
 
@@ -398,20 +398,20 @@ async function getWalletTradeTxns({
 		// UniSwapQuoterV3,
 	} = await getEthers(authType)
 
-	const feeTokenAddr = formAsset
+	const feeTokenAddr = fromAsset
 
-	const from = assets[formAsset]
+	const from = assets[fromAsset]
 	const to = assets[toAsset]
 
 	const fromAssetAmountUserInputBN = utils.parseUnits(
-		formAssetAmount.toString(),
+		fromAssetAmount.toString(),
 		from.decimals
 	)
 
 	const fromAmount =
-		getFeesOnly || !formAssetAmountAfterFeesCalcBN
+		getFeesOnly || !fromAssetAmountAfterFeesCalcBN
 			? fromAssetAmountUserInputBN
-			: formAssetAmountAfterFeesCalcBN
+			: fromAssetAmountAfterFeesCalcBN
 
 	const fromAmountHex = fromAmount.toHexString()
 
@@ -423,7 +423,7 @@ async function getWalletTradeTxns({
 		slippageTolerance,
 		routeTokens,
 	} = await getTradeOutData({
-		formAsset,
+		fromAsset,
 		fromAssetAmountBN: fromAmount,
 		toAsset,
 	})
@@ -436,7 +436,7 @@ async function getWalletTradeTxns({
 
 	txns.push({
 		identityContract: identityAddr,
-		to: formAsset,
+		to: fromAsset,
 		feeTokenAddr,
 		data: ERC20.encodeFunctionData('transfer', [
 			WalletZapper.address,
@@ -477,7 +477,7 @@ async function getWalletTradeTxns({
 			data = ZapperInterface.encodeFunctionData('tradeV3Single', [
 				UniSwapRouterV3.address,
 				[
-					formAsset,
+					fromAsset,
 					toAsset,
 					pools[0].fee,
 					// TODO: final version always identityAddr
@@ -495,8 +495,8 @@ async function getWalletTradeTxns({
 				return walletDiversificationTransaction({
 					getFeesOnly,
 					account,
-					formAsset,
-					formAssetAmount,
+					fromAsset,
+					fromAssetAmount,
 					diversificationAssets: [
 						{
 							address: toAsset,
@@ -508,7 +508,7 @@ async function getWalletTradeTxns({
 			}
 
 			const tokenIn = await getUniToken({
-				address: formAsset,
+				address: fromAsset,
 				tokenData: from,
 				provider,
 			})
@@ -555,7 +555,7 @@ async function getWalletTradeTxns({
 		router,
 		toAmount,
 		toAsset,
-		formAsset,
+		fromAsset,
 	}
 
 	return { txnsWithNonceAndFees, fromAssetAmountUserInputBN, tradeData }
@@ -563,12 +563,12 @@ async function getWalletTradeTxns({
 
 export async function walletTradeTransaction({
 	account,
-	formAsset,
-	formAssetAmount, // User input amount
+	fromAsset,
+	fromAssetAmount, // User input amount
 	toAsset,
 	lendOutputToAAVE = false,
 }) {
-	const from = assets[formAsset]
+	const from = assets[fromAsset]
 
 	// Pre call to get fees
 	const {
@@ -577,9 +577,9 @@ export async function walletTradeTransaction({
 	} = await getWalletTradeTxns({
 		getFeesOnly: true,
 		account,
-		formAsset,
-		formAssetAmount,
-		// formAssetAmountAfterFeesCalcBN,
+		fromAsset,
+		fromAssetAmount,
+		// fromAssetAmountAfterFeesCalcBN,
 		toAsset,
 		lendOutputToAAVE,
 	})
@@ -606,9 +606,9 @@ export async function walletTradeTransaction({
 	} = await getWalletTradeTxns({
 		getFeesOnly: false, // Important on actual call
 		account,
-		formAsset,
-		formAssetAmount,
-		formAssetAmountAfterFeesCalcBN: mainActionAmountBN,
+		fromAsset,
+		fromAssetAmount,
+		fromAssetAmountAfterFeesCalcBN: mainActionAmountBN,
 		toAsset,
 		lendOutputToAAVE,
 	})
@@ -628,9 +628,9 @@ export async function walletTradeTransaction({
 		// feeTokenAddr, //in ..rest
 		// actionMinAmountBN, // in ...rest
 		// actionMinAmountFormatted, // in ...rest
-		spendTokenAddr: formAsset,
+		spendTokenAddr: fromAsset,
 		totalAmountToSpendBN: fromAssetAmountUserInputBN, // Total amount out
-		totalAmountToSpendFormatted: formAssetAmount, // Total amount out
+		totalAmountToSpendFormatted: fromAssetAmount, // Total amount out
 		mainActionAmountBN,
 		mainActionAmountFormatted,
 		...rest,
@@ -644,10 +644,10 @@ export async function walletTradeTransaction({
 async function getDiversificationTxns({
 	getFeesOnly,
 	account,
-	formAsset,
-	formAssetAmount,
-	formAssetAmountBN,
-	formAssetAmountAfterFeesCalcBN,
+	fromAsset,
+	fromAssetAmount,
+	fromAssetAmountBN,
+	fromAssetAmountAfterFeesCalcBN,
 	diversificationAssets,
 	lendOutputToAAVE = false,
 }) {
@@ -664,14 +664,14 @@ async function getDiversificationTxns({
 		UniSwapQuoterV3,
 	} = await getEthers(authType)
 
-	const feeTokenAddr = formAsset
+	const feeTokenAddr = fromAsset
 
 	const { router, pools } = getPath({
-		from: formAsset,
+		from: fromAsset,
 		to: tokens['WETH'],
 	})
 
-	if (formAsset !== tokens['WETH']) {
+	if (fromAsset !== tokens['WETH']) {
 		if (router !== 'uniV3') {
 			throw new Error('walletDiversificationTransaction - fromAsset not uniV3')
 		}
@@ -683,24 +683,24 @@ async function getDiversificationTxns({
 		}
 	}
 
-	const from = assets[formAsset]
+	const from = assets[fromAsset]
 	const weth = assets[tokens['WETH']]
 	const deadline = Math.floor((Date.now() + DEADLINE) / 1000)
 
 	const fromAssetAmountUserInputBN =
-		formAssetAmountBN ||
-		utils.parseUnits(formAssetAmount.toString(), from.decimals)
+		fromAssetAmountBN ||
+		utils.parseUnits(fromAssetAmount.toString(), from.decimals)
 
 	const fromAmount =
-		getFeesOnly || !formAssetAmountAfterFeesCalcBN
+		getFeesOnly || !fromAssetAmountAfterFeesCalcBN
 			? fromAssetAmountUserInputBN
-			: formAssetAmountAfterFeesCalcBN
+			: fromAssetAmountAfterFeesCalcBN
 
 	const txns = []
 	const tokensOutData = []
 
 	const tokenIn = await getUniToken({
-		address: formAsset,
+		address: fromAsset,
 		tokenData: from,
 		provider,
 	})
@@ -744,7 +744,7 @@ async function getDiversificationTxns({
 		toTransferAmountIn = wethAmountIn
 	} else {
 		const allocatedInputToken = diversificationAssets.find(
-			x => x.address === formAsset
+			x => x.address === fromAsset
 		)
 
 		const allocatedInputTokenAmount = allocatedInputToken
@@ -787,7 +787,7 @@ async function getDiversificationTxns({
 	if (!toTransferAmountIn.isZero()) {
 		txns.push({
 			identityContract: identityAddr,
-			to: formAsset,
+			to: fromAsset,
 			feeTokenAddr,
 			data: ERC20.encodeFunctionData('transfer', [
 				WalletZapper.address,
@@ -826,7 +826,7 @@ async function getDiversificationTxns({
 			data: ZapperInterface.encodeFunctionData('tradeV3Single', [
 				UniSwapRouterV3.address,
 				[
-					formAsset,
+					fromAsset,
 					wethIn.address,
 					pools[0].fee,
 					identityAddr,
@@ -848,7 +848,7 @@ async function getDiversificationTxns({
 	}
 
 	const diversificationAssetsToDiversify = [...diversificationAssets].filter(
-		x => x.address !== formAsset && x.address !== tokens['WETH']
+		x => x.address !== fromAsset && x.address !== tokens['WETH']
 	)
 
 	const diversificationsSharesLeft = 100 - usedShares || 0
@@ -962,8 +962,8 @@ async function getDiversificationTxns({
 
 	const args = [
 		UniSwapRouterV3.address,
-		formAsset,
-		formAsset !== tokens['WETH'] ? pools[0].fee : 0x0, // inputFee
+		fromAsset,
+		fromAsset !== tokens['WETH'] ? pools[0].fee : 0x0, // inputFee
 		wethAmountIn.toString(), //inputMinOut.toString(),
 		diversificationTrades,
 	]
@@ -996,12 +996,12 @@ async function getDiversificationTxns({
 
 export async function walletDiversificationTransaction({
 	account,
-	formAsset,
-	formAssetAmount,
-	formAssetAmountBN,
+	fromAsset,
+	fromAssetAmount,
+	fromAssetAmountBN,
 	diversificationAssets,
 }) {
-	const from = assets[formAsset]
+	const from = assets[fromAsset]
 	// Pre call to get fees
 	const {
 		txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
@@ -1009,10 +1009,10 @@ export async function walletDiversificationTransaction({
 	} = await getDiversificationTxns({
 		getFeesOnly: true,
 		account,
-		formAsset,
-		formAssetAmount,
-		formAssetAmountBN,
-		// formAssetAmountAfterFeesCalcBN,
+		fromAsset,
+		fromAssetAmount,
+		fromAssetAmountBN,
+		// fromAssetAmountAfterFeesCalcBN,
 		diversificationAssets,
 	})
 
@@ -1044,10 +1044,10 @@ export async function walletDiversificationTransaction({
 	} = await getDiversificationTxns({
 		getFeesOnly: false,
 		account,
-		formAsset,
-		formAssetAmount,
-		formAssetAmountBN,
-		formAssetAmountAfterFeesCalcBN: mainActionAmountBN,
+		fromAsset,
+		fromAssetAmount,
+		fromAssetAmountBN,
+		fromAssetAmountAfterFeesCalcBN: mainActionAmountBN,
 		diversificationAssets,
 	})
 
@@ -1066,9 +1066,9 @@ export async function walletDiversificationTransaction({
 		// feeTokenAddr, //in ..rest
 		// actionMinAmountBN, // in ...rest
 		// actionMinAmountFormatted, // in ...rest
-		spendTokenAddr: formAsset,
+		spendTokenAddr: fromAsset,
 		totalAmountToSpendBN: fromAssetAmountUserInputBN, // Total amount out
-		totalAmountToSpendFormatted: formAssetAmount, // Total amount out
+		totalAmountToSpendFormatted: fromAssetAmount, // Total amount out
 		mainActionAmountBN,
 		mainActionAmountFormatted,
 		...rest,

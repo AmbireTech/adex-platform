@@ -111,8 +111,8 @@ const TradeData = ({
 	</Paper>
 )
 
-// const conversionRate = ({ formAsset, toAsset, prices, mainCurrency }) => {
-// 	const fromPrice = parseFloat((prices[formAsset] || {})[mainCurrency] || 0)
+// const conversionRate = ({ fromAsset, toAsset, prices, mainCurrency }) => {
+// 	const fromPrice = parseFloat((prices[fromAsset] || {})[mainCurrency] || 0)
 // 	const toPrice = parseFloat((prices[toAsset] || {})[mainCurrency] || 0)
 
 // 	if (!toPrice) {
@@ -123,22 +123,22 @@ const TradeData = ({
 // }
 
 // const estimatedConversionValue = ({
-// 	formAsset,
+// 	fromAsset,
 // 	toAsset,
-// 	formAssetAmount,
+// 	fromAssetAmount,
 // 	prices,
 // 	mainCurrency,
 // }) => {
 // 	const rate = conversionRate({
-// 		formAsset,
+// 		fromAsset,
 // 		toAsset,
 // 		prices,
 // 		mainCurrency,
 // 	})
 
 // 	const value =
-// 		rate && !!parseFloat(formAssetAmount)
-// 			? parseFloat(formAssetAmount) * rate
+// 		rate && !!parseFloat(fromAssetAmount)
+// 			? parseFloat(fromAssetAmount) * rate
 // 			: null
 
 // 	return value
@@ -158,15 +158,15 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	// )
 
 	const {
-		formAsset = '',
-		formAssetAmount,
+		fromAsset = '',
+		fromAssetAmount,
 		toAssetAmount = '0.00',
 		toAsset = '',
 		tradeData,
 		lendOutputToAAVE,
 	} = useSelector(state => selectNewTransactionById(state, stepsId))
 
-	const selectedFromAsset = assetsData[formAsset] || {}
+	const selectedFromAsset = assetsData[fromAsset] || {}
 	const selectedToAsset = assetsData[toAsset] || {}
 
 	const fromAssetUserBalance = selectedFromAsset
@@ -192,8 +192,8 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 		: null
 
 	const {
-		formAssetAmount: errFormAssetAmount,
-		formAsset: errFormAsset,
+		fromAssetAmount: errFromAssetAmount,
+		fromAsset: errFromAsset,
 		toAsset: errToAsset,
 		fees: errFees,
 	} = useSelector(state => selectValidationsById(state, validateId) || {})
@@ -206,7 +206,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 		execute(
 			updateNewTransaction({
 				tx: stepsId,
-				key: 'formAssetAmount',
+				key: 'fromAssetAmount',
 				value,
 			})
 		)
@@ -220,7 +220,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 			})
 		)
 	}, [
-		formAssetAmount,
+		fromAssetAmount,
 		selectedFromAsset.symbol,
 		selectedToAsset.symbol,
 		mainCurrency.id,
@@ -232,7 +232,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 		execute(
 			updateNewTransaction({
 				tx: stepsId,
-				key: 'formAsset',
+				key: 'fromAsset',
 				value: toAsset,
 			})
 		)
@@ -240,13 +240,13 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 			updateNewTransaction({
 				tx: stepsId,
 				key: 'toAsset',
-				value: formAsset,
+				value: fromAsset,
 			})
 		)
 		execute(
 			updateNewTransaction({
 				tx: stepsId,
-				key: 'formAssetAmount',
+				key: 'fromAssetAmount',
 				value: toAssetAmount || '0',
 			})
 		)
@@ -261,20 +261,20 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	}
 
 	useEffect(() => {
-		if (!formAsset) {
+		if (!fromAsset) {
 			execute(
 				updateNewTransaction({
 					tx: stepsId,
-					key: 'formAsset',
+					key: 'fromAsset',
 					value: assetsFromSource[0] ? assetsFromSource[0].value : '',
 				})
 			)
 		}
-		if (formAssetAmount === undefined) {
+		if (fromAssetAmount === undefined) {
 			execute(
 				updateNewTransaction({
 					tx: stepsId,
-					key: 'formAssetAmount',
+					key: 'fromAssetAmount',
 					value: '0',
 				})
 			)
@@ -341,21 +341,21 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 												required
 												label=''
 												name='amountToWithdraw'
-												value={`${formAssetAmount}`}
+												value={`${fromAssetAmount}`}
 												onChange={ev => {
 													execute(
 														updateNewTransaction({
 															tx: stepsId,
-															key: 'formAssetAmount',
+															key: 'fromAssetAmount',
 															value: ev.target.value,
 														})
 													)
 													setSelectedPercent(0)
 												}}
-												error={errFormAssetAmount && !!errFormAssetAmount.dirty}
+												error={errFromAssetAmount && !!errFromAssetAmount.dirty}
 												helperText={
-													errFormAssetAmount && !!errFormAssetAmount.dirty
-														? errFormAssetAmount.errMsg
+													errFromAssetAmount && !!errFromAssetAmount.dirty
+														? errFromAssetAmount.errMsg
 														: null
 												}
 												InputProps={{
@@ -376,14 +376,14 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 												execute(
 													updateNewTransaction({
 														tx: stepsId,
-														key: 'formAsset',
+														key: 'fromAsset',
 														value,
 													})
 												)
 												execute(
 													updateNewTransaction({
 														tx: stepsId,
-														key: 'formAssetAmount',
+														key: 'fromAssetAmount',
 														value: '0',
 													})
 												)
@@ -391,14 +391,14 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 											}}
 											source={assetsFromSource}
 											disabledValues={{ [toAsset]: true }}
-											value={formAsset + ''}
+											value={fromAsset + ''}
 											// label={t('FROM_ASSET_LABEL')}
 											htmlId='wallet-asset-from-dd'
-											name='formAsset'
-											error={errFormAsset && !!errFormAsset.dirty}
+											name='fromAsset'
+											error={errFromAsset && !!errFromAsset.dirty}
 											helperText={
-												errFormAsset && !!errFormAsset.dirty
-													? errFormAsset.errMsg
+												errFromAsset && !!errFromAsset.dirty
+													? errFromAsset.errMsg
 													: // : t('WALLET_TRADE_FROM_ASSET')
 													  ''
 											}
@@ -517,11 +517,11 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 												)
 											}
 											source={assetsToSource}
-											disabledValues={{ [formAsset]: true }}
+											disabledValues={{ [fromAsset]: true }}
 											value={toAsset}
 											// label={t('TO_ASSET_LABEL')}
 											htmlId='wallet-asset-to-dd'
-											name='formAsset'
+											name='fromAsset'
 											error={errToAsset && !!errToAsset.dirty}
 											helperText={
 												errToAsset && !!errToAsset.dirty
