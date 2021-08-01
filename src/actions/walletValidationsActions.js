@@ -4,6 +4,7 @@ import { validate } from 'actions'
 
 export function validateWalletFees({
 	validateId,
+	actionName,
 	totalFeesBN,
 	feeTokenAddr,
 	totalAmountToSpendBN,
@@ -52,6 +53,7 @@ export function validateWalletFees({
 			isValid = false
 			msg = 'ERR_TX_SUB_MIN_ACTION_AMOUNT'
 			args = [
+				actionName,
 				actionMinAmountFormatted,
 				symbol,
 				totalAmountToSpendFormatted,
@@ -89,7 +91,7 @@ export function validateWalletDiversificationAssets({
 			hasDiversifications &&
 			diversificationAssets.every(asset => asset.address && asset.share)
 
-		const hasFullDiversification = hasDiversifications
+		const diversificationShares = hasDiversifications
 			? diversificationAssets.reduce(
 					(used, asset) => used + asset.share,
 
@@ -104,12 +106,14 @@ export function validateWalletDiversificationAssets({
 			isValid = false
 			msg = 'ERR_INVALID_DIVERSIFICATION_ASSETS'
 			// TODO: args
-		} else if (hasFullDiversification < 100) {
+		} else if (diversificationShares < 100) {
 			isValid = false
 			msg = 'ERR_DIVERSIFICATION_ASSETS_NOT_DISTRIBUTED'
-		} else if (hasFullDiversification > 100) {
+			args = [diversificationShares]
+		} else if (diversificationShares > 100) {
 			isValid = false
 			msg = 'ERR_DIVERSIFICATION_ASSETS_OVER_MAX'
+			args = [diversificationShares]
 		}
 
 		await validate(validateId, 'diversificationAssets', {
