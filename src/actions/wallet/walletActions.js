@@ -51,29 +51,26 @@ export function handleWalletFeesData({
 			const hasAutoUpdateFunc = typeof autoSetMaxInputDataAction === 'function'
 			let feesData = await feeDataAction()
 
-			const overAvailability = feesData.amountToSpendBN.gt(
-				feesData.maxAvailableToSpend
-			)
+			// const overAvailability = feesData.amountToSpendBN.gt(
+			// 	feesData.maxAvailableToSpend
+			// )
 			isValid = await validateWalletFees({
 				validateId,
-				feesAmountBN: feesData.feesAmountBN,
-				feeTokenAddr: feesData.feeTokenAddr,
-				spendTokenAddr: feesData.spendTokenAddr,
-				amountToSpendBN: feesData.amountToSpendBN || '0',
+				...feesData,
 				dirty,
 				// Skip only on the first run to skip error msg flash
-				skipStateUpdateIfInvalid: hasAutoUpdateFunc && overAvailability,
+				// skipStateUpdateIfInvalid: hasAutoUpdateFunc && overAvailability,
 			})(dispatch, getState)
 
-			if (!isValid && overAvailability && hasAutoUpdateFunc) {
-				await autoSetMaxInputDataAction(feesData.maxAvailableToSpendFormatted)
-				feesData = await feeDataAction(feesData.maxAvailableToSpendFormatted)
-				isValid = await validateWalletFees({
-					validateId,
-					...feesData,
-					dirty,
-				})(dispatch, getState)
-			}
+			// if (!isValid && overAvailability && hasAutoUpdateFunc) {
+			// 	await autoSetMaxInputDataAction(feesData.maxAvailableToSpendFormatted)
+			// 	feesData = await feeDataAction(feesData.maxAvailableToSpendFormatted)
+			// 	isValid = await validateWalletFees({
+			// 		validateId,
+			// 		...feesData,
+			// 		dirty,
+			// 	})(dispatch, getState)
+			// }
 
 			await updateNewTransaction({
 				tx: stepsId,
