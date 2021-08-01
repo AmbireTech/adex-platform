@@ -393,7 +393,7 @@ async function getWalletTradeTxns({
 		provider,
 		WalletZapper,
 		IdentityPayable,
-		getToken,
+		// getToken,
 		UniSwapRouterV3,
 		// UniSwapQuoterV3,
 	} = await getEthers(authType)
@@ -480,6 +480,7 @@ async function getWalletTradeTxns({
 					formAsset,
 					toAsset,
 					pools[0].fee,
+					// TODO: final version always identityAddr
 					lendOutputToAAVE ? WalletZapper.address : identityAddr,
 					deadline,
 					fromAmountHex,
@@ -561,7 +562,6 @@ async function getWalletTradeTxns({
 }
 
 export async function walletTradeTransaction({
-	getFeesOnly,
 	account,
 	formAsset,
 	formAssetAmount, // User input amount
@@ -575,7 +575,7 @@ export async function walletTradeTransaction({
 		txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
 		fromAssetAmountUserInputBN: _preFromAssetAmountUserInputBN,
 	} = await getWalletTradeTxns({
-		getFeesOnly,
+		getFeesOnly: true,
 		account,
 		formAsset,
 		formAssetAmount,
@@ -621,7 +621,6 @@ export async function walletTradeTransaction({
 		txnsWithNonceAndFees,
 	})
 
-	// if (getFeesOnly) {
 	return {
 		txnsWithNonceAndFees,
 		totalFeesBN,
@@ -642,13 +641,15 @@ export async function walletTradeTransaction({
 	}
 }
 
-export async function walletDiversificationTransaction({
+async function getDiversificationTxns({
 	getFeesOnly,
 	account,
 	formAsset,
 	formAssetAmount,
 	formAssetAmountBN,
+	formAssetAmountAfterFeesCalcBN,
 	diversificationAssets,
+	lendOutputToAAVE = false,
 }) {
 	const { wallet, identity } = account
 	const { authType } = wallet
@@ -658,16 +659,12 @@ export async function walletDiversificationTransaction({
 		provider,
 		WalletZapper,
 		IdentityPayable,
-		getToken,
+		// getToken,
 		UniSwapRouterV3,
 		UniSwapQuoterV3,
 	} = await getEthers(authType)
 
-	// TODO: use swap tokens for fees - update relayer
-	// Add tokent to feeTokenWhitelist
-	const mainToken = selectMainToken()
-
-	const feeTokenAddr = mainToken.address
+	const feeTokenAddr = formAsset
 
 	const { router, pools } = getPath({
 		from: formAsset,
@@ -690,9 +687,14 @@ export async function walletDiversificationTransaction({
 	const weth = assets[tokens['WETH']]
 	const deadline = Math.floor((Date.now() + DEADLINE) / 1000)
 
-	const fromAmount =
+	const fromAssetAmountUserInputBN =
 		formAssetAmountBN ||
 		utils.parseUnits(formAssetAmount.toString(), from.decimals)
+
+	const fromAmount =
+		getFeesOnly || !formAssetAmountAfterFeesCalcBN
+			? fromAssetAmountUserInputBN
+			: formAssetAmountAfterFeesCalcBN
 
 	const txns = []
 	const tokensOutData = []
@@ -791,6 +793,7 @@ export async function walletDiversificationTransaction({
 				WalletZapper.address,
 				toTransferAmountIn.toHexString(),
 			]),
+			operationsGasLimits: [GAS_LIMITS.transfer],
 		})
 	}
 
@@ -828,7 +831,9 @@ export async function walletDiversificationTransaction({
 					pools[0].fee,
 					identityAddr,
 					deadline,
-					toSwapAmountInToWETH.toHexString(),
+					// TODO: final version always identityAddr
+					lendOutputToAAVE ? WalletZapper.address : identityAddr,
+					// TODO: slippage cfg
 					toWETHAmountOut
 						.mul(995)
 						.div(1000)
@@ -836,8 +841,9 @@ export async function walletDiversificationTransaction({
 					// poolState.sqrtPriceX96,
 					0,
 				],
-				// false,
+				lendOutputToAAVE,
 			]),
+			operationsGasLimits: [GAS_LIMITS.swapV3],
 		})
 	}
 
@@ -917,11 +923,15 @@ export async function walletDiversificationTransaction({
 
 			const amountOutMin = trade.minimumAmountOut(new Percent(5, 1000))
 
+			// console.log('amountOutMin', amountOutMin.toSignificant(2))
+
+			const wrap = !!asset.lendOutputToAAVE || !!lendOutputToAAVE
+
 			tokensOutData.push({
 				address: asset.address,
 				share: asset.share,
 				amountOutMin: amountOutMin.toSignificant(SIGNIFICANT_DIGITS),
-				wrap: !!asset.lendOutputToAAVE,
+				wrap,
 			})
 
 			return [
@@ -934,7 +944,7 @@ export async function walletDiversificationTransaction({
 						to.decimals
 					)
 					.toString(),
-				!!asset.lendOutputToAAVE,
+				wrap,
 			]
 		})
 	)
@@ -963,44 +973,111 @@ export async function walletDiversificationTransaction({
 		to: WalletZapper.address,
 		feeTokenAddr,
 		data: ZapperInterface.encodeFunctionData('diversifyV3', args),
+		operationsGasLimits: diversificationTrades.reduce((limits, trade) => {
+			const tradeLimits = trade.wrap
+				? [GAS_LIMITS.swapV3, GAS_LIMITS.wrap]
+				: [GAS_LIMITS.swapV3]
+			limits = [...limits, ...tradeLimits]
+			return limits
+		}, []),
 	})
 
-	const txnsWithNonceAndFees = await getIdentityTxnsWithNoncesAndFees({
+	const txnsWithNonceAndFees = await getWalletIdentityTxnsWithNoncesAndFees({
 		txns,
 		identityAddr,
 		provider,
 		Identity: IdentityPayable,
 		account,
-		getToken,
-		executeAction: EXECUTE_ACTIONS.default,
+		feeTokenAddr,
 	})
 
-	const { totalBN, breakdownFormatted } = await getWalletIdentityTxnsTotalFees({
-		txnsWithNonceAndFees,
+	return { txnsWithNonceAndFees, fromAssetAmountUserInputBN, tokensOutData }
+}
+
+export async function walletDiversificationTransaction({
+	account,
+	formAsset,
+	formAssetAmount,
+	formAssetAmountBN,
+	diversificationAssets,
+}) {
+	const from = assets[formAsset]
+	// Pre call to get fees
+	const {
+		txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
+		fromAssetAmountUserInputBN: _preFromAssetAmountUserInputBN,
+	} = await getDiversificationTxns({
+		getFeesOnly: true,
+		account,
+		formAsset,
+		formAssetAmount,
+		formAssetAmountBN,
+		// formAssetAmountAfterFeesCalcBN,
+		diversificationAssets,
 	})
 
-	if (getFeesOnly) {
-		return {
-			feesAmountBN: totalBN,
-			feeTokenAddr,
-			spendTokenAddr: from.address,
-			amountToSpendBN: fromAmount,
-			breakdownFormatted,
-			tokensOutData,
+	const { totalFeesBN: _preTotalFeesBN } = await getWalletIdentityTxnsTotalFees(
+		{
+			txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
 		}
-	}
+	)
 
-	const result = await processExecuteByFeeTokens({
-		identityAddr,
+	const mainActionAmountBN = _preFromAssetAmountUserInputBN.sub(_preTotalFeesBN)
+	const mainActionAmountFormatted = formatTokenAmount(
+		mainActionAmountBN,
+		from.decimals,
+		false,
+		from.decimals
+	)
+
+	// console.log(
+	// 	'_preTotalFeesBN',
+	// 	formatTokenAmount(_preTotalFeesBN, from.decimals, false, from.decimals)
+	// )
+
+	// Actual call with fees pre calculated
+	const {
 		txnsWithNonceAndFees,
-		wallet,
-		provider,
+		fromAssetAmountUserInputBN,
+		// tradeData,
+		tokensOutData,
+	} = await getDiversificationTxns({
+		getFeesOnly: false,
+		account,
+		formAsset,
+		formAssetAmount,
+		formAssetAmountBN,
+		formAssetAmountAfterFeesCalcBN: mainActionAmountBN,
+		diversificationAssets,
+	})
+
+	const {
+		totalFees,
+		totalFeesBN,
+		...rest
+	} = await getWalletIdentityTxnsTotalFees({
+		txnsWithNonceAndFees,
 	})
 
 	return {
-		result,
+		txnsWithNonceAndFees,
+		totalFeesBN,
+		// totalFeesFormatted, // in rest,
+		// feeTokenAddr, //in ..rest
+		// actionMinAmountBN, // in ...rest
+		// actionMinAmountFormatted, // in ...rest
+		spendTokenAddr: formAsset,
+		totalAmountToSpendBN: fromAssetAmountUserInputBN, // Total amount out
+		totalAmountToSpendFormatted: formAssetAmount, // Total amount out
+		mainActionAmountBN,
+		mainActionAmountFormatted,
+		...rest,
+		actionMeta: {
+			// NOTE: the trade data at final preview with fees excluded from input
+			// tradeData,
+			tokensOutData,
+		},
 	}
-	// TODO: ..
 }
 
 async function getWithdrawTxns({
@@ -1010,12 +1087,16 @@ async function getWithdrawTxns({
 	withdrawTo,
 	getFeesOnly,
 	withdrawAssetAddr,
-	getMinAmountToSpend,
+	// getMinAmountToSpend,
 	tokenData,
 }) {
 	const { wallet, identity } = account
 	const { authType } = wallet
-	const { provider, IdentityPayable, getToken } = await getEthers(authType)
+	const {
+		provider,
+		IdentityPayable,
+		//   getToken
+	} = await getEthers(authType)
 	const identityAddr = identity.address
 
 	const token = assets[withdrawAssetAddr]
@@ -1084,15 +1165,17 @@ async function getWithdrawTxns({
 		feeTokenAddr,
 	})
 
-	return { txnsWithNonceAndFees, amountToWithdrawBN, tradeData }
+	return {
+		txnsWithNonceAndFees,
+		amountToWithdrawBN,
+		//  tradeData
+	}
 }
 
 export async function walletWithdrawTransaction({
 	account,
 	amountToWithdraw,
-	// amountToWithdrawAfterFeesCalcBN,
 	withdrawTo,
-	getFeesOnly,
 	withdrawAssetAddr,
 	assetsDataRaw,
 	getMinAmountToSpend,
@@ -1108,7 +1191,7 @@ export async function walletWithdrawTransaction({
 		amountToWithdraw,
 		// amountToWithdrawAfterFeesCalcBN,
 		withdrawTo,
-		getFeesOnly,
+		getFeesOnly: true,
 		withdrawAssetAddr,
 		tokenData,
 		getMinAmountToSpend,
@@ -1158,6 +1241,7 @@ export async function walletWithdrawTransaction({
 	// actionMinAmountBN - should be more than 2x fees
 
 	return {
+		txnsWithNonceAndFees,
 		totalFeesBN,
 		// totalFeesFormatted, // in rest,
 		// feeTokenAddr, //in ..rest
@@ -1169,6 +1253,9 @@ export async function walletWithdrawTransaction({
 		mainActionAmountBN,
 		mainActionAmountFormatted,
 		...rest,
+		actionMeta: {
+			withdrawAssetAddr,
+		},
 	}
 }
 
