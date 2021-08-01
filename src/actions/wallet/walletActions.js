@@ -456,22 +456,15 @@ export function validateWalletWithdraw({
 		let isValid = inputValidations.every(v => v === true)
 
 		if (isValid) {
-			const feeDataAction = async maxInput =>
+			const feeDataAction = async () =>
 				await walletWithdrawTransaction({
 					getFeesOnly: true,
 					account,
-					amountToWithdraw: maxInput || amountToWithdraw,
+					amountToWithdraw,
 					withdrawTo,
 					withdrawAssetAddr: withdrawAsset,
 					assetsDataRaw: assetsData,
 				})
-
-			const autoSetMaxInputDataAction = async maxInput =>
-				await updateNewTransaction({
-					tx: stepsId,
-					key: 'amountToWithdraw',
-					value: maxInput,
-				})(dispatch, getState)
 
 			isValid = await handleWalletFeesData({
 				stepsId,
@@ -479,7 +472,6 @@ export function validateWalletWithdraw({
 				dirty,
 				actionName: 'walletWithdraw',
 				feeDataAction,
-				autoSetMaxInputDataAction,
 				temp,
 			})(dispatch, getState)
 		}
@@ -502,15 +494,17 @@ export function walletWithdraw({
 			checkStepId({ stepsId, functionName: 'walletWithdraw' })
 			const state = getState()
 			const account = selectAccount(state)
-			const { amountToWithdraw, withdrawTo } = selectNewTransactionById(
-				state,
-				stepsId
-			)
+			const {
+				amountToWithdraw,
+				withdrawTo,
+				feesData = {},
+			} = selectNewTransactionById(state, stepsId)
 			const { assetsData = {} } = selectAccountStatsRaw(state)
 			const { withdrawAsset } = stepsProps
 			const result = await walletWithdrawTransaction({
 				account,
 				amountToWithdraw,
+				amountToWithdrawAfterFeesCalcBN: feesData.mainActionAmountBN,
 				withdrawTo,
 				withdrawAssetAddr: withdrawAsset,
 				assetsDataRaw: assetsData,
