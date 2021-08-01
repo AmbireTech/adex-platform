@@ -143,9 +143,9 @@ export function validateWalletTrade({
 
 		if (isValid) {
 			const account = selectAccount(state)
+			// We get txns and data here
 			const feeDataAction = async () =>
 				await walletTradeTransaction({
-					getFeesOnly: true,
 					account,
 					formAsset,
 					formAssetAmount,
@@ -171,14 +171,14 @@ export function validateWalletTrade({
 }
 
 export function walletTrade({
-	test,
-	getFeesOnly,
-	formAsset,
-	formAssetAmount,
-	toAsset,
-	toAssetAmount,
-	lendOutputToAAVE,
-	feesData = {},
+	// test,
+	// getFeesOnly,
+	// formAsset,
+	// formAssetAmount,
+	// toAsset,
+	// toAssetAmount,
+	// lendOutputToAAVE,
+	feesData = {}, // TODO: txnsData etc...
 }) {
 	return async function(dispatch, getState) {
 		try {
@@ -188,16 +188,6 @@ export function walletTrade({
 			const { provider } = await getEthers(authType)
 			const identityAddr = selectAccountIdentityAddr(state)
 			const { txnsWithNonceAndFees } = feesData
-
-			// const result = await walletTradeTransaction({
-			// 	account,
-			// 	formAsset,
-			// 	formAssetAmount,
-			// 	toAsset,
-			// 	toAssetAmount,
-			// 	formAssetAmountAfterFeesCalcBN: feesData.mainActionAmountBN,
-			// 	lendOutputToAAVE,
-			// })
 
 			const result = await processExecuteWalletTxns({
 				identityAddr,
@@ -468,7 +458,6 @@ export function validateWalletWithdraw({
 		if (isValid) {
 			const feeDataAction = async () =>
 				await walletWithdrawTransaction({
-					getFeesOnly: true,
 					account,
 					amountToWithdraw,
 					withdrawTo,
@@ -497,25 +486,26 @@ export function walletWithdraw({
 	// dirty,
 	// onValid,
 	// onInvalid,
-	stepsProps = {},
-	amountToWithdraw,
-	withdrawTo,
+	// stepsProps = {},
+	// amountToWithdraw,
+	// withdrawTo,
 	feesData = {},
 }) {
 	return async function(dispatch, getState) {
 		try {
 			checkStepId({ stepsId, functionName: 'walletWithdraw' })
 			const state = getState()
-			const account = selectAccount(state)
-			const { assetsData = {} } = selectAccountStatsRaw(state)
-			const { withdrawAsset } = stepsProps
-			const result = await walletWithdrawTransaction({
-				account,
-				amountToWithdraw,
-				amountToWithdrawAfterFeesCalcBN: feesData.mainActionAmountBN,
-				withdrawTo,
-				withdrawAssetAddr: withdrawAsset,
-				assetsDataRaw: assetsData,
+			const authType = selectAuthType(state)
+			const wallet = selectWallet(state)
+			const { provider } = await getEthers(authType)
+			const identityAddr = selectAccountIdentityAddr(state)
+			const { txnsWithNonceAndFees } = feesData
+
+			const result = await processExecuteWalletTxns({
+				identityAddr,
+				txnsWithNonceAndFees,
+				wallet,
+				provider,
 			})
 
 			addToast({
