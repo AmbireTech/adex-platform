@@ -221,6 +221,7 @@ export async function processExecuteWalletTxns({
 	identityAddr,
 	extraData = {},
 }) {
+	// console.log('txnsWithNonceAndFees', txnsWithNonceAndFees)
 	const signer = await getSigner({ wallet, provider })
 	const signatures = await getMultipleTxSignatures({
 		txns: txnsWithNonceAndFees,
