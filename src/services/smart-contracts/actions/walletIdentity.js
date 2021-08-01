@@ -7,6 +7,7 @@ import {
 } from 'services/smart-contracts/actions/ethers'
 import { executeTx } from 'services/adex-relayer'
 import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
+import { selectRelayerConfig } from 'selectors'
 const { parseUnits, formatUnits, Interface } = utils
 const { MaxInt256 } = constants
 
@@ -34,6 +35,7 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 	account,
 	feeTokenAddr,
 }) {
+	const { gasPriceRatio = 1.07, gasPriceCap } = selectRelayerConfig()
 	const allSameFeeToken = txns.every(x => x.feeTokenAddr === feeTokenAddr)
 
 	if (!allSameFeeToken) {
@@ -57,27 +59,37 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 	// TODO: move it from account
 	const { prices } = account.stats
 
-	const gasPrice = await provider.getGasPrice()
+	const networkGasPrice = await provider.getGasPrice()
+
+	const gasPrice = Math.min(
+		gasPriceCap,
+		Math.floor(networkGasPrice * gasPriceRatio)
+	)
+
 	const feeTokenAddrUSDPrice = prices[feeToken.symbol]['USD']
 
 	const withNonceAndFees = txns.map((tx, txIndex) => {
 		const { operationsGasLimits = [] } = tx
 		// const feeToken = feeTokenWhitelist[tx.feeTokenAddr]
 		const isDeployTx = currentNonce === 0
+		const addFeeTx = txIndex === txns.length - 1
 
-		const operationsGasLimitSum = operationsGasLimits.reduce(
+		const operationsGasLimitSumBN = operationsGasLimits.reduce(
 			(a, b) => a.add(b),
 			ZERO
 		)
 
-		const txEstimatedGasLimit = operationsGasLimitSum
+		const txEstimatedGasLimitBN = operationsGasLimitSumBN
 			.add(isDeployTx ? GAS_LIMITS.deploy : ZERO)
 			// Add fee transfer fee
-			.add(txIndex === txns.length - 1 ? GAS_LIMITS.transfer : ZERO)
+			.add(addFeeTx ? GAS_LIMITS.transfer : ZERO)
+
+		const calculatedOperationsCount =
+			operationsGasLimits.length + (isDeployTx ? 1 : 0) + (addFeeTx ? 1 : 0)
 
 		const txFeeAmountETH = parseFloat(
 			formatUnits(
-				txEstimatedGasLimit.mul(gasPrice),
+				txEstimatedGasLimitBN.mul(gasPrice),
 				assets[tokens['WETH']].decimals
 			)
 		)
@@ -96,7 +108,9 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 			...tx,
 			feeTokenAddr,
 			feeAmount,
-			isDeployTx,
+			txEstimatedGasLimitBN,
+			calculatedGasPriceBN: gasPrice,
+			calculatedOperationsCount,
 			nonce: currentNonce,
 		}
 
@@ -112,14 +126,40 @@ export async function getWalletIdentityTxnsTotalFees({ txnsWithNonceAndFees }) {
 	const { feeTokenAddr } = txnsWithNonceAndFees[0]
 	const feeToken = assets[feeTokenAddr]
 
-	const { totalFeesBN, txnsCount, hasDeployTx } = txnsWithNonceAndFees.reduce(
+	const {
+		totalFeesBN,
+		txnsCount,
+		hasDeployTx,
+		totalEstimatedGasLimitBN,
+		calculatedGasPriceBN,
+		calculatedOperationsCount,
+	} = txnsWithNonceAndFees.reduce(
 		(result, tx) => {
-			const { feeAmount, isDeployTx } = tx
+			const {
+				feeAmount,
+				isDeployTx,
+				txEstimatedGasLimitBN,
+				calculatedOperationsCount,
+				calculatedGasPriceBN,
+			} = tx
 
-			const { totalFeesBN, txnsCount, hasDeployTx } = result
+			const {
+				totalFeesBN,
+				txnsCount,
+				hasDeployTx,
+				totalEstimatedGasLimitBN,
+			} = result
 			result.totalFeesBN = totalFeesBN.add(feeAmount)
 			result.txnsCount = txnsCount + 1
 			result.hasDeployTx = hasDeployTx || isDeployTx
+			result.totalEstimatedGasLimitBN = totalEstimatedGasLimitBN.add(
+				txEstimatedGasLimitBN
+			)
+			// It's the same for all txns
+			result.calculatedGasPriceBN =
+				result.calculatedGasPriceBN || calculatedGasPriceBN
+			result.calculatedOperationsCount =
+				result.calculatedOperationsCount + calculatedOperationsCount
 
 			return result
 		},
@@ -127,7 +167,16 @@ export async function getWalletIdentityTxnsTotalFees({ txnsWithNonceAndFees }) {
 			hasDeployTx: false,
 			totalFeesBN: ZERO,
 			txnsCount: 0,
+			totalEstimatedGasLimitBN: ZERO,
+			calculatedGasPriceBN: null,
+			calculatedOperationsCount: 0,
 		}
+	)
+
+	console.log('calculatedGasPriceBN', calculatedGasPriceBN.toString())
+	console.log(
+		'calculatedGasPriceGWEI',
+		formatUnits(calculatedGasPriceBN, 'gwei')
 	)
 
 	const actionMinAmountBN = totalFeesBN.mul(2)
@@ -152,6 +201,14 @@ export async function getWalletIdentityTxnsTotalFees({ txnsWithNonceAndFees }) {
 			false,
 			feeToken.decimals
 		),
+		totalEstimatedGasLimitBN,
+		totalEstimatedGasLimitFormatted: totalEstimatedGasLimitBN.toString(),
+		calculatedGasPriceBN,
+		calculatedGasPriceGWEI: formatUnits(
+			calculatedGasPriceBN.toString(),
+			'gwei'
+		),
+		calculatedOperationsCount,
 	}
 
 	return fees

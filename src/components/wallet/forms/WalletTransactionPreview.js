@@ -190,8 +190,26 @@ function TransactionPreview(props) {
 									)}
 									<ListItem>
 										<ListItemText
-											primary={t('FEE_DATA_INTERNAL_TXNS_COUNT')}
+											primary={t('FEE_DATA_TXNS_COUNT')}
 											secondary={feesData.txnsCount}
+										/>
+									</ListItem>
+									<ListItem>
+										<ListItemText
+											primary={t('FEE_DATA_TXNS_OPERATIONS_COUNT')}
+											secondary={feesData.calculatedOperationsCount}
+										/>
+									</ListItem>
+									<ListItem>
+										<ListItemText
+											primary={t('FEE_DATA_TXNS_TOTAOL_GAS_LIMIT')}
+											secondary={feesData.totalEstimatedGasLimitFormatted}
+										/>
+									</ListItem>
+									<ListItem>
+										<ListItemText
+											primary={t('FEE_DATA_CALCULATED_GAS_PRICE')}
+											secondary={feesData.calculatedGasPriceGWEI + ' Gwei'}
 										/>
 									</ListItem>
 								</List>
