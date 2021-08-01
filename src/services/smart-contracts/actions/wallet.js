@@ -43,6 +43,7 @@ import {
 	getWalletIdentityTxnsWithNoncesAndFees,
 	getWalletIdentityTxnsTotalFees,
 	processExecuteWalletTxns,
+	getWalletApproveTxns,
 } from './walletIdentity'
 import { formatTokenAmount } from 'helpers/formatters'
 
@@ -52,7 +53,8 @@ const SIGNIFICANT_DIGITS = 6
 const { Interface, parseUnits } = utils
 
 const ZapperInterface = new Interface(contracts.WalletZapper.abi)
-const ERC20 = new Interface(ERC20TokenABI)
+const ERC20 = new Interface(contracts.ERC20.abi)
+const AaveLendingPool = new Interface(contracts.AaveLendingPool.abi)
 
 const DEADLINE = 60 * 60 * 1000
 const ZERO = BigNumber.from(0)
@@ -914,9 +916,9 @@ export async function walletWithdrawTransaction({
 	amountToWithdraw,
 	withdrawTo,
 	getFeesOnly,
-	getMaxFees,
 	withdrawAssetAddr,
 	assetsDataRaw,
+	getMinAmountToSpend,
 }) {
 	const { wallet, identity } = account
 	const { authType } = wallet
@@ -933,10 +935,58 @@ export async function walletWithdrawTransaction({
 
 	const txns = []
 
-	const toWithdrawAmount = parseUnits(
-		getMaxFees ? tokenData.totalAvailable : amountToWithdraw,
-		token.decimals
-	)
+	const amountToWithdrawBN = parseUnits(amountToWithdraw, token.decimals)
+
+	const amountToUnwrap = BigNumber.from(tokenData.balance)
+		.sub(amountToWithdrawBN)
+		.lt(ZERO)
+		? amountToWithdrawBN.sub(tokenData.balance)
+		: ZERO
+
+	const aaveInterestToken = tokenData.specific.find(x => x.isAaveInterestToken)
+
+	if (amountToUnwrap.gt(ZERO) && aaveInterestToken) {
+		// const approveTxns = await getWalletApproveTxns({
+		// 	provider,
+		// 	identityAddr,
+		// 	// tokenAddress: aaveInterestToken.address,
+		// 	tokenAddress: withdrawAssetAddr,
+		// 	feeTokenAddr,
+		// 	approveForAddress: contracts.AaveLendingPool.address,
+		// 	// approveForAddress: identityAddr,
+		// 	approveAmount: amountToUnwrap,
+		// })
+
+		// const approveTxnsIt = await getWalletApproveTxns({
+		// 	provider,
+		// 	identityAddr,
+		// 	tokenAddress: aaveInterestToken.address,
+		// 	// tokenAddress: withdrawAssetAddr,
+		// 	feeTokenAddr,
+		// 	approveForAddress: contracts.AaveLendingPool.address,
+		// 	// approveForAddress: identityAddr,
+		// 	approveAmount: amountToUnwrap,
+		// })
+
+		const unwrapTx = {
+			identityContract: identityAddr,
+			feeTokenAddr,
+			to: contracts.AaveLendingPool.address,
+			data: AaveLendingPool.encodeFunctionData('withdraw', [
+				withdrawAssetAddr,
+				// aaveInterestToken.address,
+				amountToUnwrap.toHexString(),
+				identityAddr,
+			]),
+			operationsGasLimits: [GAS_LIMITS.transfer],
+		}
+
+		txns.push(
+			// ...approveTxns,
+			// ...approveTxnsIt,
+			unwrapTx
+		)
+	}
 
 	const withdrawTx = {
 		identityContract: identityAddr,
@@ -944,7 +994,7 @@ export async function walletWithdrawTransaction({
 		to: withdrawAssetAddr,
 		data: ERC20.encodeFunctionData('transfer', [
 			withdrawTo,
-			toWithdrawAmount.toHexString(),
+			amountToWithdrawBN.toHexString(),
 		]),
 		operationsGasLimits: [GAS_LIMITS.transfer],
 	}
@@ -957,64 +1007,46 @@ export async function walletWithdrawTransaction({
 		provider,
 		Identity: IdentityPayable,
 		account,
-		getToken,
 		executeAction: EXECUTE_ACTIONS.withdraw,
 		feeTokenAddr,
-		amountInInputTokenNeeded: toWithdrawAmount,
 	})
 
 	const {
-		total,
-		totalBN,
-		breakdownFormatted,
+		totalFees,
+		totalFeesBN,
 		...rest
 	} = await getWalletIdentityTxnsTotalFees({
 		txnsWithNonceAndFees,
 	})
 
 	// TODO: unified function
-	const totalAvailable = BigNumber.from(tokenData.totalAvailable)
-	const maxAvailableToSpend = totalAvailable.sub(totalBN).lt(ZERO)
-		? ZERO
-		: totalAvailable.sub(totalBN)
-	const maxAvailableToSpendFormatted = formatTokenAmount(
-		maxAvailableToSpend.toString(),
+	const mainActionAmountBN = amountToWithdrawBN.sub(totalFeesBN)
+	const mainActionAmountFormatted = formatTokenAmount(
+		mainActionAmountBN,
 		tokenData.decimals,
 		false,
 		tokenData.decimals
 	)
 
-	const actualToSpend = toWithdrawAmount.gte(maxAvailableToSpend)
-		? maxAvailableToSpend
-		: toWithdrawAmount
-	const actualToSpendFormatted = formatTokenAmount(
-		actualToSpend.toString(),
-		tokenData.decimals,
-		false,
-		tokenData.decimals
-	)
-	const totalToSpend = totalBN.add(actualToSpend)
-	const totalToSpendFormatted = formatTokenAmount(
-		totalToSpend.toString(),
-		tokenData.decimals,
-		false,
-		tokenData.decimals
-	)
+	//NOTE: Use everywhere
+	// amountToWithdraw - spend token user amount (mey be different for all funcs)
+	// feesAmountBN - Get it form amountToWithdraw
+	// totalAmountToSpendBN - total amount for the action + fees (amountToWithdrawBN)
+	// mainActionAmountBN - amountToWithdraw.sub(feesAmountBN) - the actual amount to withdraw
+	// actionMinAmountBN - should be more than 2x fees
 
 	if (getFeesOnly) {
 		return {
-			feesAmountBN: totalBN,
-			feesAmountFormatted: total,
-			feeTokenAddr,
+			totalFeesBN,
+			// totalFeesFormatted, // in rest,
+			// feeTokenAddr, //in ..rest
+			// actionMinAmountBN, // in ...rest
+			// actionMinAmountFormatted, // in ...rest
 			spendTokenAddr: withdrawAssetAddr,
-			amountToSpendBN: toWithdrawAmount,
-			actualToSpend,
-			actualToSpendFormatted,
-			breakdownFormatted,
-			maxAvailableToSpend,
-			maxAvailableToSpendFormatted,
-			totalToSpend,
-			totalToSpendFormatted,
+			totalAmountToSpendBN: amountToWithdrawBN, // Total amount out
+			totalAmountToSpendFormatted: amountToWithdraw, // Total amount out
+			mainActionAmountBN,
+			mainActionAmountFormatted,
 			...rest,
 		}
 	}
