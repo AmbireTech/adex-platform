@@ -48,12 +48,7 @@ export const DiversifyPreview = ({ tokensOutData, assetsData }) => {
 	)
 }
 
-export const WithdrawPreview = ({
-	withdrawTo,
-	feesData,
-	amountToWithdraw,
-	symbol = 'xx',
-}) => {
+export const WithdrawPreview = ({ withdrawTo, feesData, symbol = 'xx' }) => {
 	const classes = useStyles()
 	return (
 		<Box>
@@ -75,9 +70,9 @@ export const WithdrawPreview = ({
 						className={classes.address}
 						secondary={t('AMOUNT_WITHDRAW_INFO', {
 							args: [
-								feesData.mainActionAmountFormatted,
+								feesData.totalFeesFormatted,
 								feesData.feeTokenSymbol,
-								feesData.totalAmountToSpendFormatted,
+								feesData.mainActionAmountFormatted,
 								symbol,
 							],
 						})}

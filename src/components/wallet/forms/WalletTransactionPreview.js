@@ -54,7 +54,6 @@ function TransactionPreview(props) {
 		feesData = {},
 		errors = [],
 		withdrawTo,
-		amountToWithdraw,
 	} = useSelector(state => selectNewTransactionById(state, txId))
 	const [networkCongested, setNetworkCongested] = useState(false)
 	const { assetsData = {} } = useSelector(selectAccountStatsRaw)
@@ -129,7 +128,7 @@ function TransactionPreview(props) {
 						{stepsId.includes('walletWithdraw-') && (
 							<WithdrawPreview
 								withdrawTo={withdrawTo}
-								amountToWithdraw={amountToWithdraw}
+								symbol={symbol}
 								feesData={feesData}
 							/>
 						)}
