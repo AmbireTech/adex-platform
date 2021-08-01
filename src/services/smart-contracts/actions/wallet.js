@@ -598,7 +598,7 @@ export async function walletTradeTransaction({
 		from.decimals
 	)
 
-	// Actual call with fees calculated
+	// Actual call with fees pre calculated
 	const {
 		txnsWithNonceAndFees,
 		fromAssetAmountUserInputBN,
@@ -618,7 +618,7 @@ export async function walletTradeTransaction({
 		totalFeesBN,
 		...rest
 	} = await getWalletIdentityTxnsTotalFees({
-		txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
+		txnsWithNonceAndFees,
 	})
 
 	// if (getFeesOnly) {
@@ -1003,15 +1003,15 @@ export async function walletDiversificationTransaction({
 	// TODO: ..
 }
 
-export async function walletWithdrawTransaction({
+async function getWithdrawTxns({
 	account,
 	amountToWithdraw,
 	amountToWithdrawAfterFeesCalcBN,
 	withdrawTo,
 	getFeesOnly,
 	withdrawAssetAddr,
-	assetsDataRaw,
 	getMinAmountToSpend,
+	tokenData,
 }) {
 	const { wallet, identity } = account
 	const { authType } = wallet
@@ -1019,7 +1019,7 @@ export async function walletWithdrawTransaction({
 	const identityAddr = identity.address
 
 	const token = assets[withdrawAssetAddr]
-	const tokenData = assetsDataRaw[withdrawAssetAddr]
+
 	const feeTokenAddr = withdrawAssetAddr
 
 	if (!tokenData) {
@@ -1084,6 +1084,63 @@ export async function walletWithdrawTransaction({
 		feeTokenAddr,
 	})
 
+	return { txnsWithNonceAndFees, amountToWithdrawBN, tradeData }
+}
+
+export async function walletWithdrawTransaction({
+	account,
+	amountToWithdraw,
+	// amountToWithdrawAfterFeesCalcBN,
+	withdrawTo,
+	getFeesOnly,
+	withdrawAssetAddr,
+	assetsDataRaw,
+	getMinAmountToSpend,
+}) {
+	const tokenData = assetsDataRaw[withdrawAssetAddr]
+
+	// Pre call to get fees
+	const {
+		txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
+		amountToWithdrawBN: _preAmountToWithdrawBN,
+	} = await getWithdrawTxns({
+		account,
+		amountToWithdraw,
+		// amountToWithdrawAfterFeesCalcBN,
+		withdrawTo,
+		getFeesOnly,
+		withdrawAssetAddr,
+		tokenData,
+		getMinAmountToSpend,
+	})
+
+	const { totalFeesBN: _preTotalFeesBN } = await getWalletIdentityTxnsTotalFees(
+		{
+			txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
+		}
+	)
+
+	// TODO: unified function
+	const mainActionAmountBN = _preAmountToWithdrawBN.sub(_preTotalFeesBN)
+	const mainActionAmountFormatted = formatTokenAmount(
+		mainActionAmountBN,
+		tokenData.decimals,
+		false,
+		tokenData.decimals
+	)
+
+	// Actual call with fees pre calculated
+	const { txnsWithNonceAndFees, amountToWithdrawBN } = await getWithdrawTxns({
+		account,
+		amountToWithdraw,
+		amountToWithdrawAfterFeesCalcBN: mainActionAmountBN,
+		withdrawTo,
+		getFeesOnly: false, // !!Important
+		withdrawAssetAddr,
+		tokenData,
+		getMinAmountToSpend,
+	})
+
 	const {
 		totalFees,
 		totalFeesBN,
@@ -1091,15 +1148,6 @@ export async function walletWithdrawTransaction({
 	} = await getWalletIdentityTxnsTotalFees({
 		txnsWithNonceAndFees,
 	})
-
-	// TODO: unified function
-	const mainActionAmountBN = amountToWithdrawBN.sub(totalFeesBN)
-	const mainActionAmountFormatted = formatTokenAmount(
-		mainActionAmountBN,
-		tokenData.decimals,
-		false,
-		tokenData.decimals
-	)
 
 	// NOTE: Use everywhere
 	// amountToWithdraw - spend token user amount (mey be different for all funcs)
@@ -1109,33 +1157,19 @@ export async function walletWithdrawTransaction({
 	// !!!!! mainActionAmountBN - use tis amount when calling functions for signatures
 	// actionMinAmountBN - should be more than 2x fees
 
-	if (getFeesOnly) {
-		return {
-			totalFeesBN,
-			// totalFeesFormatted, // in rest,
-			// feeTokenAddr, //in ..rest
-			// actionMinAmountBN, // in ...rest
-			// actionMinAmountFormatted, // in ...rest
-			spendTokenAddr: withdrawAssetAddr,
-			totalAmountToSpendBN: amountToWithdrawBN, // Total amount out
-			totalAmountToSpendFormatted: amountToWithdraw, // Total amount out
-			mainActionAmountBN,
-			mainActionAmountFormatted,
-			...rest,
-		}
-	}
-
-	const result = await processExecuteWalletTxns({
-		identityAddr,
-		txnsWithNonceAndFees,
-		wallet,
-		provider,
-	})
-
 	return {
-		result,
+		totalFeesBN,
+		// totalFeesFormatted, // in rest,
+		// feeTokenAddr, //in ..rest
+		// actionMinAmountBN, // in ...rest
+		// actionMinAmountFormatted, // in ...rest
+		spendTokenAddr: withdrawAssetAddr,
+		totalAmountToSpendBN: amountToWithdrawBN, // Total amount out
+		totalAmountToSpendFormatted: amountToWithdraw, // Total amount out
+		mainActionAmountBN,
+		mainActionAmountFormatted,
+		...rest,
 	}
-	// TODO: ..
 }
 
 export async function walletSetIdentityPrivilege({
