@@ -122,10 +122,7 @@ function TransactionPreview(props) {
 						)}
 
 						{stepsId === 'walletDiversifyForm' && (
-							<DiversifyPreview
-								assetsData={assetsData}
-								tokensOutData={feesData.tokensOutData}
-							/>
+							<DiversifyPreview assetsData={assetsData} feesData={feesData} />
 						)}
 
 						{stepsId.includes('walletWithdraw-') && (
