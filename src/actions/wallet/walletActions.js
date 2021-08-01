@@ -46,35 +46,18 @@ export function handleWalletTxnsAndFeesData({
 	dirty,
 	actionName,
 	feeDataAction,
-	autoSetMaxInputDataAction,
 	temp,
 }) {
 	return async function(dispatch, getState) {
 		let isValid = false
 		try {
-			const hasAutoUpdateFunc = typeof autoSetMaxInputDataAction === 'function'
-			let feesData = await feeDataAction()
+			const feesData = await feeDataAction()
 
-			// const overAvailability = feesData.amountToSpendBN.gt(
-			// 	feesData.maxAvailableToSpend
-			// )
 			isValid = await validateWalletFees({
 				validateId,
 				...feesData,
 				dirty,
-				// Skip only on the first run to skip error msg flash
-				// skipStateUpdateIfInvalid: hasAutoUpdateFunc && overAvailability,
 			})(dispatch, getState)
-
-			// if (!isValid && overAvailability && hasAutoUpdateFunc) {
-			// 	await autoSetMaxInputDataAction(feesData.maxAvailableToSpendFormatted)
-			// 	feesData = await feeDataAction(feesData.maxAvailableToSpendFormatted)
-			// 	isValid = await validateWalletFees({
-			// 		validateId,
-			// 		...feesData,
-			// 		dirty,
-			// 	})(dispatch, getState)
-			// }
 
 			// TODO: rename feesData to txnsData, and feesData to be prop of txnsData
 			// temp txnsWithNonceAndFees is prop of feesData
@@ -338,7 +321,6 @@ export function validateWalletDiversify({
 			const account = selectAccount(state)
 			const feeDataAction = async () =>
 				await walletDiversificationTransaction({
-					getFeesOnly: true,
 					account,
 					formAsset,
 					formAssetAmount,
@@ -360,19 +342,25 @@ export function validateWalletDiversify({
 }
 
 export function walletDiversification({
-	formAsset,
-	formAssetAmount,
-	diversificationAssets,
+	// formAsset,
+	// formAssetAmount,
+	// diversificationAssets,
+	feesData = {}, // TODO: txnsData etc...
 }) {
 	return async function(dispatch, getState) {
 		try {
 			const state = getState()
-			const account = selectAccount(state)
-			const result = await walletDiversificationTransaction({
-				account,
-				formAsset,
-				formAssetAmount,
-				diversificationAssets,
+			const authType = selectAuthType(state)
+			const wallet = selectWallet(state)
+			const { provider } = await getEthers(authType)
+			const identityAddr = selectAccountIdentityAddr(state)
+			const { txnsWithNonceAndFees } = feesData
+
+			const result = await processExecuteWalletTxns({
+				identityAddr,
+				txnsWithNonceAndFees,
+				wallet,
+				provider,
 			})
 
 			addToast({
