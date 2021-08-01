@@ -48,7 +48,7 @@ export function validateWalletFees({
 			]
 		}
 
-		if (actionMinAmountBN.lt(totalAmountToSpendBN)) {
+		if (actionMinAmountBN.gt(totalAmountToSpendBN)) {
 			isValid = false
 			msg = 'ERR_TX_SUB_MIN_ACTION_AMOUNT'
 			args = [
