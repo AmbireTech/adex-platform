@@ -13,6 +13,7 @@ import WalletZapperAbi from 'services/smart-contracts/abi/Zapper.json'
 import UniSwapRouterV2Abi from 'services/smart-contracts/abi/UniSwapRouterV2.json'
 import UniSwapRouterV3Abi from 'services/smart-contracts/abi/UniSwapRouterV3.json'
 import UniSwapQuoterV3Abi from 'services/smart-contracts/abi/UniSwapQuoterV3.json'
+import AAVELendingPoolAbi from 'services/smart-contracts/abi/AAVELendingPool.json'
 
 export const contracts = {
 	Identity: {
@@ -94,5 +95,11 @@ export const contracts = {
 		// Abi modified
 		// https://twitter.com/dcfgod/status/1405608315011411970?s=20
 		abi: UniSwapQuoterV3Abi,
+	},
+	AaveLendingPool: {
+		address:
+			process.env.AAVE_LENDING_POOL_ADDR ||
+			'0xE0fBa4Fc209b4948668006B2bE61711b7f465bAe',
+		abi: AAVELendingPoolAbi,
 	},
 }
