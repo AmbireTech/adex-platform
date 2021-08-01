@@ -179,7 +179,7 @@ export async function getWalletIdentityTxnsTotalFees({ txnsWithNonceAndFees }) {
 		formatUnits(calculatedGasPriceBN, 'gwei')
 	)
 
-	const actionMinAmountBN = totalFeesBN.mul(2)
+	const actionMinAmountBN = totalFeesBN.mul(1)
 
 	const fees = {
 		totalFeesFormatted: formatTokenAmount(

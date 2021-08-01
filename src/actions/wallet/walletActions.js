@@ -251,28 +251,21 @@ export function walletTrade({
 	formAssetAmount,
 	toAsset,
 	toAssetAmount,
-	tradeData,
 	lendOutputToAAVE,
+	feesData = {},
 }) {
 	return async function(dispatch, getState) {
 		try {
 			const state = getState()
 			const account = selectAccount(state)
-			const {
-				minimumAmountOut,
-				// priceImpact,
-				// executionPrice,
-				// slippageTolerance,
-				// routeTokens,
-				// router,
-			} = tradeData
+
 			const result = await walletTradeTransaction({
 				account,
 				formAsset,
 				formAssetAmount,
 				toAsset,
 				toAssetAmount,
-				minimumAmountOut,
+				formAssetAmountAfterFeesCalcBN: feesData.mainActionAmountBN,
 				lendOutputToAAVE,
 			})
 
@@ -488,17 +481,15 @@ export function walletWithdraw({
 	// onValid,
 	// onInvalid,
 	stepsProps = {},
+	amountToWithdraw,
+	withdrawTo,
+	feesData = {},
 }) {
 	return async function(dispatch, getState) {
 		try {
 			checkStepId({ stepsId, functionName: 'walletWithdraw' })
 			const state = getState()
 			const account = selectAccount(state)
-			const {
-				amountToWithdraw,
-				withdrawTo,
-				feesData = {},
-			} = selectNewTransactionById(state, stepsId)
 			const { assetsData = {} } = selectAccountStatsRaw(state)
 			const { withdrawAsset } = stepsProps
 			const result = await walletWithdrawTransaction({

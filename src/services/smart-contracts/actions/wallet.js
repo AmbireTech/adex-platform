@@ -376,9 +376,8 @@ export async function walletTradeTransaction({
 	account,
 	formAsset,
 	formAssetAmount,
+	formAssetAmountAfterFeesCalcBN,
 	toAsset,
-	toAssetAmount,
-	minimumAmountOut,
 	lendOutputToAAVE = false,
 }) {
 	const { wallet, identity } = account
@@ -398,24 +397,33 @@ export async function walletTradeTransaction({
 		// UniSwapQuoterV3,
 	} = await getEthers(authType)
 
-	// TODO: use swap tokens for fees - update relayer
-	// Add token to feeTokenWhitelist
-	const mainToken = selectMainToken()
-
-	const feeTokenAddr = mainToken.address
+	const feeTokenAddr = formAsset
 
 	const from = assets[formAsset]
 	const to = assets[toAsset]
 
-	const fromAmount = utils.parseUnits(formAssetAmount.toString(), from.decimals)
+	const fromAssetAmountUserInputBN = utils.parseUnits(
+		formAssetAmount.toString(),
+		from.decimals
+	)
+
+	const fromAmount =
+		getFeesOnly || !formAssetAmountAfterFeesCalcBN
+			? fromAssetAmountUserInputBN
+			: formAssetAmountAfterFeesCalcBN
 	const fromAmountHex = fromAmount.toHexString()
-	const toAmount = utils.parseUnits(toAssetAmount.toString(), to.decimals)
+
+	const { expectedAmountOut, minimumAmountOut } = await getTradeOutData({
+		formAsset,
+		formAssetAmount,
+		toAsset,
+	})
+
+	const toAmount = utils.parseUnits(expectedAmountOut.toString(), to.decimals)
 	const toAmountHex = toAmount.toHexString()
 	const minOut = utils.parseUnits(minimumAmountOut.toString(), to.decimals)
 
 	const txns = []
-
-	// TODO: approve?
 
 	txns.push({
 		identityContract: identityAddr,
@@ -425,6 +433,7 @@ export async function walletTradeTransaction({
 			WalletZapper.address,
 			fromAmountHex,
 		]),
+		operationsGasLimits: [GAS_LIMITS.transfer],
 	})
 
 	if (router === 'uniV2') {
@@ -446,13 +455,15 @@ export async function walletTradeTransaction({
 			to: WalletZapper.address,
 			feeTokenAddr,
 			data,
+			// TODO: gas limits for each swap in the trade
+			operationsGasLimits: [GAS_LIMITS.swapV2],
 		})
 	} else if (router === 'uniV3') {
 		const deadline = Math.floor((Date.now() + DEADLINE) / 1000)
 
 		let data = null
 
-		console.log('lendOutputToAAVE', lendOutputToAAVE)
+		// console.log('lendOutputToAAVE', lendOutputToAAVE)
 		if (pools.length === 1) {
 			data = ZapperInterface.encodeFunctionData('tradeV3Single', [
 				UniSwapRouterV3.address,
@@ -511,38 +522,54 @@ export async function walletTradeTransaction({
 			to: WalletZapper.address,
 			feeTokenAddr,
 			data,
+			operationsGasLimits: pools.map(() => GAS_LIMITS.swapV3),
 		})
 	}
 
-	const txnsByFeeToken = await getIdentityTxnsWithNoncesAndFees({
+	const txnsWithNonceAndFees = await getWalletIdentityTxnsWithNoncesAndFees({
 		txns,
 		identityAddr,
 		provider,
 		Identity: IdentityPayable,
 		account,
-		getToken,
-		executeAction: EXECUTE_ACTIONS.default,
+		feeTokenAddr,
 	})
 
-	const { totalBN, breakdownFormatted } = await getIdentityTxnsTotalFees({
-		txnsByFeeToken,
+	const {
+		totalFees,
+		totalFeesBN,
+		...rest
+	} = await getWalletIdentityTxnsTotalFees({
+		txnsWithNonceAndFees,
 	})
 
-	console.log('breakdownFormatted', breakdownFormatted)
+	const mainActionAmountBN = fromAssetAmountUserInputBN.sub(totalFeesBN)
+	const mainActionAmountFormatted = formatTokenAmount(
+		mainActionAmountBN,
+		from.decimals,
+		false,
+		from.decimals
+	)
 
 	if (getFeesOnly) {
 		return {
-			feesAmountBN: totalBN,
-			feeTokenAddr,
-			spendTokenAddr: from.address,
-			amountToSpendBN: fromAmount,
-			breakdownFormatted,
+			totalFeesBN,
+			// totalFeesFormatted, // in rest,
+			// feeTokenAddr, //in ..rest
+			// actionMinAmountBN, // in ...rest
+			// actionMinAmountFormatted, // in ...rest
+			spendTokenAddr: formAsset,
+			totalAmountToSpendBN: fromAssetAmountUserInputBN, // Total amount out
+			totalAmountToSpendFormatted: formAssetAmount, // Total amount out
+			mainActionAmountBN,
+			mainActionAmountFormatted,
+			...rest,
 		}
 	}
 
-	const result = await processExecuteByFeeTokens({
+	const result = await processExecuteWalletTxns({
 		identityAddr,
-		txnsByFeeToken,
+		txnsWithNonceAndFees,
 		wallet,
 		provider,
 	})
@@ -989,7 +1016,6 @@ export async function walletWithdrawTransaction({
 		provider,
 		Identity: IdentityPayable,
 		account,
-		executeAction: EXECUTE_ACTIONS.withdraw,
 		feeTokenAddr,
 	})
 
