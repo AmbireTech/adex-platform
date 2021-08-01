@@ -218,10 +218,12 @@ async function getUniv3Route({ pools, tokenIn, tokenOut, provider }) {
 	return route
 }
 
-export async function getTradeOutData({ formAsset, formAssetAmount, toAsset }) {
-	if (!formAssetAmount || parseFloat(formAssetAmount) <= 0) {
-		return '0'
-	}
+export async function getTradeOutData({
+	formAsset,
+	formAssetAmount,
+	fromAssetAmountBN,
+	toAsset,
+}) {
 	const {
 		// UniSwapRouterV2,
 		provider,
@@ -236,8 +238,9 @@ export async function getTradeOutData({ formAsset, formAssetAmount, toAsset }) {
 	const from = assets[formAsset]
 	const to = assets[toAsset]
 
-	const fromAmount = utils.parseUnits(formAssetAmount.toString(), from.decimals)
-	// .toHexString()
+	const fromAmount =
+		fromAssetAmountBN ||
+		utils.parseUnits(formAssetAmount.toString(), from.decimals)
 
 	if (router === 'uniV2') {
 		// const amountsOut = await UniSwapRouterV2.getAmountsOut(fromAmount, path)
@@ -298,9 +301,7 @@ export async function getTradeOutData({ formAsset, formAssetAmount, toAsset }) {
 
 		const isSingleSwap = pools.length === 1
 		const route = await getUniv3Route({ pools, tokenIn, tokenOut, provider })
-		const amountInHex = utils
-			.parseUnits(formAssetAmount.toString(), from.decimals)
-			.toHexString()
+		const amountInHex = fromAmount.toHexString()
 
 		// ABI - changed functions as read
 		// https://twitter.com/dcfgod/status/1405608315011411970?s=20
@@ -319,7 +320,7 @@ export async function getTradeOutData({ formAsset, formAssetAmount, toAsset }) {
 
 		const fromTokenCurrencyAmount = CurrencyAmount.fromRawAmount(
 			tokenIn,
-			utils.parseUnits(formAssetAmount.toString(), from.decimals)
+			fromAmount
 		)
 
 		const toTokenCurrencyAmount = CurrencyAmount.fromRawAmount(
@@ -371,7 +372,7 @@ export async function getTradeOutData({ formAsset, formAssetAmount, toAsset }) {
 	throw new Error('Invalid path')
 }
 
-export async function walletTradeTransaction({
+async function getWalletTradeTxns({
 	getFeesOnly,
 	account,
 	formAsset,
@@ -411,11 +412,19 @@ export async function walletTradeTransaction({
 		getFeesOnly || !formAssetAmountAfterFeesCalcBN
 			? fromAssetAmountUserInputBN
 			: formAssetAmountAfterFeesCalcBN
+
 	const fromAmountHex = fromAmount.toHexString()
 
-	const { expectedAmountOut, minimumAmountOut } = await getTradeOutData({
+	const {
+		expectedAmountOut,
+		minimumAmountOut,
+		priceImpact,
+		executionPrice,
+		slippageTolerance,
+		routeTokens,
+	} = await getTradeOutData({
 		formAsset,
-		formAssetAmount,
+		fromAssetAmountBN: fromAmount,
 		toAsset,
 	})
 
@@ -535,15 +544,53 @@ export async function walletTradeTransaction({
 		feeTokenAddr,
 	})
 
+	const tradeData = {
+		expectedAmountOut,
+		minimumAmountOut,
+		priceImpact,
+		executionPrice,
+		slippageTolerance,
+		routeTokens,
+		router,
+		toAmount,
+		toAsset,
+		formAsset,
+	}
+
+	return { txnsWithNonceAndFees, fromAssetAmountUserInputBN, tradeData }
+}
+
+export async function walletTradeTransaction({
+	getFeesOnly,
+	account,
+	formAsset,
+	formAssetAmount, // User input amount
+	toAsset,
+	lendOutputToAAVE = false,
+}) {
+	const from = assets[formAsset]
+
+	// Pre call to get fees
 	const {
-		totalFees,
-		totalFeesBN,
-		...rest
-	} = await getWalletIdentityTxnsTotalFees({
-		txnsWithNonceAndFees,
+		txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
+		fromAssetAmountUserInputBN: _preFromAssetAmountUserInputBN,
+	} = await getWalletTradeTxns({
+		getFeesOnly,
+		account,
+		formAsset,
+		formAssetAmount,
+		// formAssetAmountAfterFeesCalcBN,
+		toAsset,
+		lendOutputToAAVE,
 	})
 
-	const mainActionAmountBN = fromAssetAmountUserInputBN.sub(totalFeesBN)
+	const { totalFeesBN: _preTotalFeesBN } = await getWalletIdentityTxnsTotalFees(
+		{
+			txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
+		}
+	)
+
+	const mainActionAmountBN = _preFromAssetAmountUserInputBN.sub(_preTotalFeesBN)
 	const mainActionAmountFormatted = formatTokenAmount(
 		mainActionAmountBN,
 		from.decimals,
@@ -551,33 +598,48 @@ export async function walletTradeTransaction({
 		from.decimals
 	)
 
-	if (getFeesOnly) {
-		return {
-			totalFeesBN,
-			// totalFeesFormatted, // in rest,
-			// feeTokenAddr, //in ..rest
-			// actionMinAmountBN, // in ...rest
-			// actionMinAmountFormatted, // in ...rest
-			spendTokenAddr: formAsset,
-			totalAmountToSpendBN: fromAssetAmountUserInputBN, // Total amount out
-			totalAmountToSpendFormatted: formAssetAmount, // Total amount out
-			mainActionAmountBN,
-			mainActionAmountFormatted,
-			...rest,
-		}
-	}
-
-	const result = await processExecuteWalletTxns({
-		identityAddr,
+	// Actual call with fees calculated
+	const {
 		txnsWithNonceAndFees,
-		wallet,
-		provider,
+		fromAssetAmountUserInputBN,
+		tradeData,
+	} = await getWalletTradeTxns({
+		getFeesOnly: false, // Important on actual call
+		account,
+		formAsset,
+		formAssetAmount,
+		formAssetAmountAfterFeesCalcBN: mainActionAmountBN,
+		toAsset,
+		lendOutputToAAVE,
 	})
 
+	const {
+		totalFees,
+		totalFeesBN,
+		...rest
+	} = await getWalletIdentityTxnsTotalFees({
+		txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
+	})
+
+	// if (getFeesOnly) {
 	return {
-		result,
+		txnsWithNonceAndFees,
+		totalFeesBN,
+		// totalFeesFormatted, // in rest,
+		// feeTokenAddr, //in ..rest
+		// actionMinAmountBN, // in ...rest
+		// actionMinAmountFormatted, // in ...rest
+		spendTokenAddr: formAsset,
+		totalAmountToSpendBN: fromAssetAmountUserInputBN, // Total amount out
+		totalAmountToSpendFormatted: formAssetAmount, // Total amount out
+		mainActionAmountBN,
+		mainActionAmountFormatted,
+		...rest,
+		actionMeta: {
+			// NOTE: the trade data at final preview with fees excluded from input
+			tradeData,
+		},
 	}
-	// TODO: ..
 }
 
 export async function walletDiversificationTransaction({
@@ -585,6 +647,7 @@ export async function walletDiversificationTransaction({
 	account,
 	formAsset,
 	formAssetAmount,
+	formAssetAmountBN,
 	diversificationAssets,
 }) {
 	const { wallet, identity } = account
@@ -627,7 +690,9 @@ export async function walletDiversificationTransaction({
 	const weth = assets[tokens['WETH']]
 	const deadline = Math.floor((Date.now() + DEADLINE) / 1000)
 
-	const fromAmount = utils.parseUnits(formAssetAmount.toString(), from.decimals)
+	const fromAmount =
+		formAssetAmountBN ||
+		utils.parseUnits(formAssetAmount.toString(), from.decimals)
 
 	const txns = []
 	const tokensOutData = []
@@ -660,7 +725,7 @@ export async function walletDiversificationTransaction({
 	let usedShares = WETHOutShare
 
 	if (!hasWETHOut && tokenIn.address === wethIn.address) {
-		wethAmountIn = utils.parseUnits(formAssetAmount.toString(), weth.decimals)
+		wethAmountIn = fromAmount
 		toTransferAmountIn = wethAmountIn
 	} else if (hasWETHOut && tokenIn.address === wethIn.address) {
 		const wethAmountOut = fromAmount.mul(WETHOutShare * 10).div(1000)

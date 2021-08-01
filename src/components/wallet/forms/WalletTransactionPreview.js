@@ -26,9 +26,8 @@ import {
 	FullContentSpinner,
 } from 'components/common/dialog/content'
 import { styles } from 'components/dashboard/forms/web3/styles'
-import { DiversifyPreview, WithdrawPreview } from './previews'
+import { DiversifyPreview, WithdrawPreview, TradePreview } from './previews'
 import {
-	selectMainToken,
 	t,
 	selectSpinnerById,
 	selectAccount,
@@ -47,7 +46,6 @@ function TransactionPreview(props) {
 	const { previewWarnMsgs, stepsId } = props
 	const txId = stepsId
 	const account = useSelector(selectAccount)
-	const { symbol } = useSelector(selectMainToken)
 	const spinner = useSelector(state => selectSpinnerById(state, stepsId))
 	const {
 		waitingForWalletAction,
@@ -57,6 +55,7 @@ function TransactionPreview(props) {
 	} = useSelector(state => selectNewTransactionById(state, txId))
 	const [networkCongested, setNetworkCongested] = useState(false)
 	const { assetsData = {} } = useSelector(selectAccountStatsRaw)
+	const { totalFeesFormatted, feeTokenSymbol } = feesData
 
 	useEffect(() => {
 		async function checkNetwork() {
@@ -118,6 +117,10 @@ function TransactionPreview(props) {
 							  ))
 							: null}
 
+						{stepsId === 'walletSwapForm' && (
+							<TradePreview assetsData={assetsData} feesData={feesData} />
+						)}
+
 						{stepsId === 'walletDiversifyForm' && (
 							<DiversifyPreview
 								assetsData={assetsData}
@@ -128,7 +131,7 @@ function TransactionPreview(props) {
 						{stepsId.includes('walletWithdraw-') && (
 							<WithdrawPreview
 								withdrawTo={withdrawTo}
-								symbol={symbol}
+								symbol={feeTokenSymbol}
 								feesData={feesData}
 							/>
 						)}
@@ -141,32 +144,36 @@ function TransactionPreview(props) {
 									id='fees-breakdown'
 								>
 									<Typography component='div'>
-										<Grid
-											container
-											direction='row'
+										<Box
+											display='flex'
+											flexDirection='row'
 											justify='center'
 											alignItems='center'
 										>
-											<Grid>
+											<Box>
 												{t('FEES_BREAKDOWN_ADVANCED_LABEL', {
-													args: [
-														feesData.totalFeesFormatted,
-														feesData.feeTokenSymbol,
-													],
+													args: [totalFeesFormatted, feeTokenSymbol],
 												})}
-											</Grid>
-											<Grid>
-												<Grid container justify='center' alignItems='center'>
+											</Box>
+											<Box>
+												<Box
+													display='flex'
+													flexDirection='row'
+													justify='center'
+													alignItems='center'
+												>
 													<Tooltip
 														style={{ fontSize: '1em', marginLeft: '0.5em' }}
-														title={t('TOOLTIP_EXPLAIN_TRANSACTION_FEE')}
+														title={t('TOOLTIP_EXPLAIN_WALLET_TRANSACTION_FEE', {
+															args: [feeTokenSymbol],
+														})}
 														interactive
 													>
 														<HelpIcon color={'primary'} />
 													</Tooltip>
-												</Grid>
-											</Grid>
-										</Grid>
+												</Box>
+											</Box>
+										</Box>
 									</Typography>
 								</AccordionSummary>
 								<List
@@ -175,17 +182,14 @@ function TransactionPreview(props) {
 									subheader={
 										<ListSubheader component='div'>
 											{t('BD_TOTAL_FEE', {
-												args: [
-													feesData.totalFeesFormatted,
-													feesData.feeTokenSymbol,
-												],
+												args: [totalFeesFormatted, feeTokenSymbol],
 											})}
 										</ListSubheader>
 									}
 								>
 									{!!feesData.hasDeployTx && (
 										<ListItem>
-											<ListItemText primary={t('BD_HAS_DEPLOY_FEE_INFO')} />
+											<ListItemText primary={t('FEE_HAS_DEPLOY_FEE_INFO')} />
 										</ListItem>
 									)}
 									<ListItem>

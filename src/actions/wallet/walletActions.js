@@ -21,6 +21,8 @@ import {
 	selectWalletAddress,
 	t,
 	selectAccountStatsRaw,
+	selectWallet,
+	selectAccountIdentityAddr,
 } from 'selectors'
 import {
 	walletTradeTransaction,
@@ -29,6 +31,8 @@ import {
 	walletWithdrawTransaction,
 	walletSetIdentityPrivilege,
 } from 'services/smart-contracts/actions/wallet'
+import { processExecuteWalletTxns } from 'services/smart-contracts/actions/walletIdentity'
+import { getEthers } from 'services/smart-contracts/ethers'
 
 function checkStepId({ stepsId, functionName }) {
 	if (!stepsId) {
@@ -36,7 +40,7 @@ function checkStepId({ stepsId, functionName }) {
 	}
 }
 
-export function handleWalletFeesData({
+export function handleWalletTxnsAndFeesData({
 	stepsId,
 	validateId,
 	dirty,
@@ -72,6 +76,8 @@ export function handleWalletFeesData({
 			// 	})(dispatch, getState)
 			// }
 
+			// TODO: rename feesData to txnsData, and feesData to be prop of txnsData
+			// temp txnsWithNonceAndFees is prop of feesData
 			await updateNewTransaction({
 				tx: stepsId,
 				key: 'feesData',
@@ -149,7 +155,7 @@ export function validateWalletTrade({
 					lendOutputToAAVE,
 				})
 
-			isValid = await handleWalletFeesData({
+			isValid = await handleWalletTxnsAndFeesData({
 				stepsId,
 				validateId,
 				dirty,
@@ -161,6 +167,62 @@ export function validateWalletTrade({
 		await handleAfterValidation({ isValid, onValid, onInvalid })
 
 		await updateSpinner(validateId, false)(dispatch)
+	}
+}
+
+export function walletTrade({
+	test,
+	getFeesOnly,
+	formAsset,
+	formAssetAmount,
+	toAsset,
+	toAssetAmount,
+	lendOutputToAAVE,
+	feesData = {},
+}) {
+	return async function(dispatch, getState) {
+		try {
+			const state = getState()
+			const authType = selectAuthType(state)
+			const wallet = selectWallet(state)
+			const { provider } = await getEthers(authType)
+			const identityAddr = selectAccountIdentityAddr(state)
+			const { txnsWithNonceAndFees } = feesData
+
+			// const result = await walletTradeTransaction({
+			// 	account,
+			// 	formAsset,
+			// 	formAssetAmount,
+			// 	toAsset,
+			// 	toAssetAmount,
+			// 	formAssetAmountAfterFeesCalcBN: feesData.mainActionAmountBN,
+			// 	lendOutputToAAVE,
+			// })
+
+			const result = await processExecuteWalletTxns({
+				identityAddr,
+				txnsWithNonceAndFees,
+				wallet,
+				provider,
+			})
+
+			addToast({
+				type: 'accept',
+				label: t('WALLET_TRADE_TRANSACTION_SUCCESS', {
+					args: [result],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		} catch (err) {
+			console.error(err)
+			addToast({
+				type: 'cancel',
+				label: t('ERR_WALLET_TRADE', {
+					args: [err.message],
+				}),
+				timeout: 5000,
+			})(dispatch)
+		}
 	}
 }
 
@@ -244,51 +306,6 @@ export function updateEstimatedTradeValue({
 	}
 }
 
-export function walletTrade({
-	test,
-	getFeesOnly,
-	formAsset,
-	formAssetAmount,
-	toAsset,
-	toAssetAmount,
-	lendOutputToAAVE,
-	feesData = {},
-}) {
-	return async function(dispatch, getState) {
-		try {
-			const state = getState()
-			const account = selectAccount(state)
-
-			const result = await walletTradeTransaction({
-				account,
-				formAsset,
-				formAssetAmount,
-				toAsset,
-				toAssetAmount,
-				formAssetAmountAfterFeesCalcBN: feesData.mainActionAmountBN,
-				lendOutputToAAVE,
-			})
-
-			addToast({
-				type: 'accept',
-				label: t('WALLET_TRADE_TRANSACTION_SUCCESS', {
-					args: [result],
-				}),
-				timeout: 20000,
-			})(dispatch)
-		} catch (err) {
-			console.error(err)
-			addToast({
-				type: 'cancel',
-				label: t('ERR_WALLET_TRADE', {
-					args: [err.message],
-				}),
-				timeout: 5000,
-			})(dispatch)
-		}
-	}
-}
-
 export function validateWalletDiversify({
 	stepsId,
 	validateId,
@@ -338,7 +355,7 @@ export function validateWalletDiversify({
 					diversificationAssets,
 				})
 
-			isValid = await handleWalletFeesData({
+			isValid = await handleWalletTxnsAndFeesData({
 				stepsId,
 				validateId,
 				dirty,
@@ -459,7 +476,7 @@ export function validateWalletWithdraw({
 					assetsDataRaw: assetsData,
 				})
 
-			isValid = await handleWalletFeesData({
+			isValid = await handleWalletTxnsAndFeesData({
 				stepsId,
 				validateId,
 				dirty,
@@ -584,7 +601,7 @@ export function walletValidatePrivilegesChange({
 
 		if (isValid) {
 			const account = selectAccount(state)
-			isValid = await handleWalletFeesData({
+			isValid = await handleWalletTxnsAndFeesData({
 				stepsId,
 				validateId,
 				dirty,
