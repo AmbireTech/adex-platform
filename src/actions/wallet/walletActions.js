@@ -96,8 +96,8 @@ export function validateWalletTrade({
 		const state = getState()
 		// const account = selectAccount(state)
 		const {
-			formAsset,
-			formAssetAmount,
+			fromAsset,
+			fromAssetAmount,
 			toAsset,
 			toAssetAmount,
 			lendOutputToAAVE,
@@ -110,8 +110,8 @@ export function validateWalletTrade({
 		const inputValidations = await Promise.all([
 			validateNumberString({
 				validateId,
-				prop: 'formAssetAmount',
-				value: formAssetAmount,
+				prop: 'fromAssetAmount',
+				value: fromAssetAmount,
 				dirty,
 			})(dispatch),
 			validateNumberString({
@@ -130,8 +130,8 @@ export function validateWalletTrade({
 			const feeDataAction = async () =>
 				await walletTradeTransaction({
 					account,
-					formAsset,
-					formAssetAmount,
+					fromAsset,
+					fromAssetAmount,
 					toAsset,
 					toAssetAmount,
 					minimumAmountOut,
@@ -156,8 +156,8 @@ export function validateWalletTrade({
 export function walletTrade({
 	// test,
 	// getFeesOnly,
-	// formAsset,
-	// formAssetAmount,
+	// fromAsset,
+	// fromAssetAmount,
 	// toAsset,
 	// toAssetAmount,
 	// lendOutputToAAVE,
@@ -210,20 +210,20 @@ export function updateEstimatedTradeValue({
 		await updateSpinner(validateId, true)(dispatch)
 		const state = getState()
 		try {
-			const { formAsset, formAssetAmount, toAsset } = selectNewTransactionById(
+			const { fromAsset, fromAssetAmount, toAsset } = selectNewTransactionById(
 				state,
 				stepsId
 			)
 
-			if (!formAsset || !toAsset) {
+			if (!fromAsset || !toAsset) {
 				return
 			}
 
 			const inputValidations = await Promise.all([
 				validateNumberString({
 					validateId,
-					prop: 'formAssetAmount',
-					value: formAssetAmount,
+					prop: 'fromAssetAmount',
+					value: fromAssetAmount,
 					dirty,
 				})(dispatch),
 			])
@@ -240,8 +240,8 @@ export function updateEstimatedTradeValue({
 					routeTokens,
 					router,
 				} = await getTradeOutData({
-					formAsset,
-					formAssetAmount,
+					fromAsset,
+					fromAssetAmount,
 					toAsset,
 				})
 
@@ -294,8 +294,8 @@ export function validateWalletDiversify({
 		const state = getState()
 		// const account = selectAccount(state)
 		const {
-			formAsset,
-			formAssetAmount,
+			fromAsset,
+			fromAssetAmount,
 			diversificationAssets,
 		} = selectNewTransactionById(state, stepsId)
 
@@ -304,8 +304,8 @@ export function validateWalletDiversify({
 		const inputValidations = await Promise.all([
 			validateNumberString({
 				validateId,
-				prop: 'formAssetAmount',
-				value: formAssetAmount,
+				prop: 'fromAssetAmount',
+				value: fromAssetAmount,
 				dirty,
 			})(dispatch),
 			validateWalletDiversificationAssets({
@@ -322,8 +322,8 @@ export function validateWalletDiversify({
 			const feeDataAction = async () =>
 				await walletDiversificationTransaction({
 					account,
-					formAsset,
-					formAssetAmount,
+					fromAsset,
+					fromAssetAmount,
 					diversificationAssets,
 				})
 
@@ -342,8 +342,8 @@ export function validateWalletDiversify({
 }
 
 export function walletDiversification({
-	// formAsset,
-	// formAssetAmount,
+	// fromAsset,
+	// fromAssetAmount,
 	// diversificationAssets,
 	feesData = {}, // TODO: txnsData etc...
 }) {

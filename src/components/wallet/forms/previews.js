@@ -80,7 +80,7 @@ export const TradePreview = ({
 	const classes = useStyles()
 
 	const { tradeData = {} } = feesData.actionMeta || {}
-	const fromAssetData = assetsData[tradeData.formAsset]
+	const fromAssetData = assetsData[tradeData.fromAsset]
 
 	// console.log('fromAssetData', fromAssetData)
 	// console.log('feesData', feesData)

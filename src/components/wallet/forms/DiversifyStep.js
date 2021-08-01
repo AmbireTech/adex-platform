@@ -386,7 +386,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	// 	selectSpinnerById(state, validateId)
 	// )
 
-	const { formAsset = '', diversificationAssets = [] } = useSelector(state =>
+	const { fromAsset = '', diversificationAssets = [] } = useSelector(state =>
 		selectNewTransactionById(state, stepsId)
 	)
 
@@ -394,7 +394,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 		x => !diversificationAssets.some(y => y.address === x.value)
 	)
 
-	const selectedFromAsset = assetsData[formAsset] || {}
+	const selectedFromAsset = assetsData[fromAsset] || {}
 
 	const fromAssetUserBalance = selectedFromAsset.balance
 		? selectedFromAsset.balance
@@ -420,7 +420,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 			: 0
 		).toFixed(2)
 
-	const { formAsset: errFormAsset, fees: errFees } = useSelector(
+	const { fromAsset: errFromAsset, fees: errFees } = useSelector(
 		state => selectValidationsById(state, validateId) || {}
 	)
 
@@ -469,11 +469,11 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	}
 
 	useEffect(() => {
-		if (!formAsset) {
+		if (!fromAsset) {
 			execute(
 				updateNewTransaction({
 					tx: stepsId,
-					key: 'formAsset',
+					key: 'fromAsset',
 					value: assetsFromSource[0] ? assetsFromSource[0].value : '',
 				})
 			)
@@ -486,9 +486,9 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 		execute(
 			updateNewTransaction({
 				tx: stepsId,
-				key: 'formAssetAmount',
+				key: 'fromAssetAmount',
 				value: formatTokenAmount(
-					BigNumber.from(fromAssetUserBalance).div(10),
+					BigNumber.from(fromAssetUserBalance).div(5),
 					selectedFromAsset.decimals
 				),
 			})
@@ -519,7 +519,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 											label={t('AVAILABLE')}
 											name='fromAssetUserBalance'
 											value={formatTokenAmount(
-												BigNumber.from(fromAssetUserBalance).div(10),
+												BigNumber.from(fromAssetUserBalance).div(5),
 												selectedFromAsset.decimals
 											)}
 											readOnly
@@ -542,20 +542,20 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 											execute(
 												updateNewTransaction({
 													tx: stepsId,
-													key: 'formAsset',
+													key: 'fromAsset',
 													value,
 												})
 											)
 										}}
 										source={assetsFromSource}
-										value={formAsset + ''}
+										value={fromAsset + ''}
 										// label={t('FROM_ASSET_LABEL')}
 										htmlId='wallet-asset-from-dd'
-										name='formAsset'
-										error={errFormAsset && !!errFormAsset.dirty}
+										name='fromAsset'
+										error={errFromAsset && !!errFromAsset.dirty}
 										helperText={
-											errFormAsset && !!errFormAsset.dirty
-												? errFormAsset.errMsg
+											errFromAsset && !!errFromAsset.dirty
+												? errFromAsset.errMsg
 												: // : t('WALLET_TRADE_FROM_ASSET')
 												  ''
 										}
