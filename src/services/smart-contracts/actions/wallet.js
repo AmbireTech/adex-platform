@@ -914,6 +914,7 @@ export async function walletDiversificationTransaction({
 export async function walletWithdrawTransaction({
 	account,
 	amountToWithdraw,
+	amountToWithdrawAfterFeesCalcBN,
 	withdrawTo,
 	getFeesOnly,
 	withdrawAssetAddr,
@@ -945,47 +946,26 @@ export async function walletWithdrawTransaction({
 
 	const aaveInterestToken = tokenData.specific.find(x => x.isAaveInterestToken)
 
+	// console.log('amountToUnwrap', amountToUnwrap.toString())
+	// console.log(
+	// 	'aaveInterestToken',
+	// 	BigNumber.from(aaveInterestToken.balance).toString()
+	// )
+
 	if (amountToUnwrap.gt(ZERO) && aaveInterestToken) {
-		// const approveTxns = await getWalletApproveTxns({
-		// 	provider,
-		// 	identityAddr,
-		// 	// tokenAddress: aaveInterestToken.address,
-		// 	tokenAddress: withdrawAssetAddr,
-		// 	feeTokenAddr,
-		// 	approveForAddress: contracts.AaveLendingPool.address,
-		// 	// approveForAddress: identityAddr,
-		// 	approveAmount: amountToUnwrap,
-		// })
-
-		// const approveTxnsIt = await getWalletApproveTxns({
-		// 	provider,
-		// 	identityAddr,
-		// 	tokenAddress: aaveInterestToken.address,
-		// 	// tokenAddress: withdrawAssetAddr,
-		// 	feeTokenAddr,
-		// 	approveForAddress: contracts.AaveLendingPool.address,
-		// 	// approveForAddress: identityAddr,
-		// 	approveAmount: amountToUnwrap,
-		// })
-
 		const unwrapTx = {
 			identityContract: identityAddr,
 			feeTokenAddr,
 			to: contracts.AaveLendingPool.address,
 			data: AaveLendingPool.encodeFunctionData('withdraw', [
 				withdrawAssetAddr,
-				// aaveInterestToken.address,
 				amountToUnwrap.toHexString(),
 				identityAddr,
 			]),
-			operationsGasLimits: [GAS_LIMITS.transfer],
+			operationsGasLimits: [GAS_LIMITS.unwrap],
 		}
 
-		txns.push(
-			// ...approveTxns,
-			// ...approveTxnsIt,
-			unwrapTx
-		)
+		txns.push(unwrapTx)
 	}
 
 	const withdrawTx = {
@@ -994,7 +974,9 @@ export async function walletWithdrawTransaction({
 		to: withdrawAssetAddr,
 		data: ERC20.encodeFunctionData('transfer', [
 			withdrawTo,
-			amountToWithdrawBN.toHexString(),
+			getFeesOnly
+				? amountToWithdrawBN.sub(amountToUnwrap).toHexString()
+				: amountToWithdrawAfterFeesCalcBN.toHexString(),
 		]),
 		operationsGasLimits: [GAS_LIMITS.transfer],
 	}
@@ -1028,11 +1010,12 @@ export async function walletWithdrawTransaction({
 		tokenData.decimals
 	)
 
-	//NOTE: Use everywhere
+	// NOTE: Use everywhere
 	// amountToWithdraw - spend token user amount (mey be different for all funcs)
 	// feesAmountBN - Get it form amountToWithdraw
 	// totalAmountToSpendBN - total amount for the action + fees (amountToWithdrawBN)
 	// mainActionAmountBN - amountToWithdraw.sub(feesAmountBN) - the actual amount to withdraw
+	// !!!!! mainActionAmountBN - use tis amount when calling functions for signatures
 	// actionMinAmountBN - should be more than 2x fees
 
 	if (getFeesOnly) {
