@@ -92,18 +92,12 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 		// Total relayer fees for the transaction
 		const feeAmount = txFeeAmountFeeToken.toString()
 
-		const feesBreakdown = {
-			feeAmount,
-			isDeployTx,
-		}
-
 		const txWithNonce = {
 			...tx,
 			feeTokenAddr,
 			feeAmount,
 			isDeployTx,
 			nonce: currentNonce,
-			feesBreakdown,
 		}
 
 		currentNonce += 1
@@ -126,12 +120,6 @@ export async function getWalletIdentityTxnsTotalFees({ txnsWithNonceAndFees }) {
 			result.totalFeesBN = totalFeesBN.add(feeAmount)
 			result.txnsCount = txnsCount + 1
 			result.hasDeployTx = hasDeployTx || isDeployTx
-
-			result.totalBreakdown = {
-				feeAmount: result.total,
-				txnsCount: txnsCount + 1,
-				hasDeployTx: hasDeployTx || isDeployTx,
-			}
 
 			return result
 		},
@@ -210,7 +198,6 @@ export async function getWalletApproveTxns({
 	approveForAddress,
 	approveAmount = MaxInt256,
 }) {
-	console.log('tokenAddress', tokenAddress)
 	const tokenContract = new Contract(tokenAddress, ERC20TokenABI, provider)
 
 	const allowance = await tokenContract.allowance(
