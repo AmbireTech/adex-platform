@@ -15,18 +15,19 @@ function at(t) {
 };
 at.apply(this, arguments);
 `
-const getChangellyIframe = identityAddress =>
+const getChangellyIframe = (identityAddress, symbol = '') =>
 	`
 	<iframe 
-	src="https://widget.changelly.com?from=btc,eth,xrp&to=dai&amount=0.007&address=${identityAddress}&fromDefault=btc&toDefault=dai&theme=aqua&merchant_id=unl7fil0on3x48m1&payment_id=&v=3" 
+	src="https://widget.changelly.com?from=btc,eth,xrp&to=${`${symbol.toLowerCase()}`}&amount=0.007&address=${identityAddress}&fromDefault=btc&toDefault=${`${symbol.toLowerCase()}`}&theme=aqua&merchant_id=unl7fil0on3x48m1&payment_id=&v=3" 
 	width="100%" height="600" class="changelly" scrolling="no" 
 	onLoad="${onloadFunction}" 
 	style="min-width: 100%; width: 100px; overflow-y: hidden; border: none">Can't load widget</iframe>
 `
 
 function TopUpChangelly(props) {
+	const symbol = props.symbol === 'USDT' ? props.symbol + '20' : props.symbol
 	const identityAddr = useSelector(selectAccountIdentityAddr)
-	const widgetIframeHtml = getChangellyIframe(identityAddr)
+	const widgetIframeHtml = getChangellyIframe(identityAddr, symbol)
 
 	return (
 		<Paper variant='outlined'>

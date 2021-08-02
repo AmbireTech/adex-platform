@@ -31,5 +31,11 @@ export const styles = theme => {
 		img: {
 			width: '100%',
 		},
+		labelImg: {
+			height: theme.spacing(5),
+			width: theme.spacing(5),
+			marginRight: theme.spacing(2),
+			backgroundColor: theme.palette.common.white,
+		},
 	}
 }

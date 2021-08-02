@@ -14,7 +14,10 @@ import {
 	selectWalletAssetsTableData,
 } from 'selectors'
 import { useTableData } from 'components/dashboard/containers/Tables/tableHooks'
-import { WithdrawAsset } from 'components/wallet/forms/walletTransactions'
+import {
+	WithdrawAsset,
+	DepositAsset,
+} from 'components/wallet/forms/walletTransactions'
 
 const styles = theme => {
 	return {
@@ -177,7 +180,7 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 			filter: false,
 			sort: true,
 			download: false,
-			customBodyRender: ({ address, symbol, name } = {}) => (
+			customBodyRender: ({ address, symbol, name, logoSrc } = {}) => (
 				<Box key={address}>
 					<WithdrawAsset
 						size='small'
@@ -186,6 +189,14 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 						stepsProps={{ withdrawAsset: address, symbol, name }}
 						dialogWidth={512}
 						dialogHeight={800}
+					/>
+					<DepositAsset
+						size='small'
+						variant='contained'
+						color='primary'
+						dialogWidth={'calc(100vw)'}
+						dialogHeight={'calc(100vh)'}
+						topUpProps={{ address, symbol, name, logoSrc }}
 					/>
 				</Box>
 			),
