@@ -5,6 +5,7 @@ import WalletWithdrawStep from './WalletWithdrawStep'
 import TransactionPreview from './WalletTransactionPreview'
 import SeAddressPrivilege from 'components/dashboard/forms/web3/SeAddressPrivilege'
 import FormSteps from 'components/common/stepper/FormSteps'
+import TopUp from 'components/dashboard/deposit/WalletTopUp'
 import WithDialog from 'components/common/dialog/WithDialog'
 import {
 	walletTrade,
@@ -23,6 +24,7 @@ import {
 import ReactGA from 'react-ga'
 
 const FormStepsWithDialog = WithDialog(FormSteps)
+const TopUpWithDialog = WithDialog(TopUp)
 
 const cancelFunction = stepsId => {
 	execute(resetNewTransaction({ tx: stepsId }))
@@ -177,6 +179,19 @@ export const WalletSetIdentityPrivilege = ({ SaveBtn, label, ...props }) => {
 						),
 				},
 			]}
+		/>
+	)
+}
+
+export const DepositAsset = ({ label, topUpProps, ...props }) => {
+	const { name, symbol } = topUpProps
+	return (
+		<TopUpWithDialog
+			{...props}
+			btnLabel={label || 'DEPOSIT'}
+			title='DEPOSIT_TITLE'
+			titleArgs={[name, symbol]}
+			topUpProps={topUpProps}
 		/>
 	)
 }
