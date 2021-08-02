@@ -342,7 +342,7 @@ const commonTheme = createMuiTheme({
 		},
 		MuiTooltip: {
 			tooltip: {
-				borderRadius,
+				// borderRadius,
 				fontSize: defaultTheme.typography.pxToRem(13),
 				backgroundColor: palette.tooltipBgColor,
 			},

@@ -93,6 +93,7 @@ export const selectWalletAssetsTableData = createSelector(
 						},
 					],
 					actions: {
+						logoSrc,
 						address,
 						symbol,
 						name,
