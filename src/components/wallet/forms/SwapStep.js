@@ -541,7 +541,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 											}
 										/>
 									</Grid>
-									<Grid item xs={12}>
+									{/* <Grid item xs={12}>
 										<Box mt={2}>
 											<FormControl>
 												<FormGroup row>
@@ -571,7 +571,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 												</FormGroup>
 											</FormControl>
 										</Box>
-									</Grid>
+									</Grid> */}
 								</Grid>
 							</Box>
 						</Paper>
