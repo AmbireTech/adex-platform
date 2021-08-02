@@ -199,7 +199,7 @@ function WalletStats() {
 				</InfoCard>
 			</Grid>
 
-			<Grid item xs={12} md={6}>
+			{/* <Grid item xs={12} md={6}>
 				<InfoCard title={t('By asset')}>
 					<TreeView
 						defaultCollapseIcon={<ExpandMore />}
@@ -273,7 +273,7 @@ function WalletStats() {
 						))}
 					</TreeView>
 				</InfoCard>
-			</Grid>
+			</Grid> */}
 			<Grid item xs={12}>
 				<WalletAssetsTable />
 			</Grid>
