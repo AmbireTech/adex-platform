@@ -114,11 +114,8 @@ const sumPricesValues = currenciesValues => {
 
 export async function getAccountStatsWallet({ account, prices }) {
 	const { wallet, identity } = account
-	// const { authType } = wallet
 	const { address } = identity
 	const { getIdentityPayable } = await getEthers(AUTH_TYPES.READONLY)
-	const { decimals } = selectMainToken()
-
 	const { status = {} } = identity
 	const identityContract = getIdentityPayable({
 		address,
@@ -133,17 +130,9 @@ export async function getAccountStatsWallet({ account, prices }) {
 		privilegesAction = Promise.resolve(status.type || 'Not Deployed')
 	}
 
-	const calls = [
-		getAssetsData({ identityAddress: address }),
-		getWithdrawTokensBalances({ address }),
-		privilegesAction,
-	]
+	const calls = [getAssetsData({ identityAddress: address }), privilegesAction]
 
-	const [
-		assetsData,
-		identityWithdrawTokensBalancesBalances = {},
-		walletPrivileges,
-	] = await Promise.all(
+	const [assetsData, walletPrivileges] = await Promise.all(
 		calls.map(c =>
 			c
 				.then(res => res)
@@ -196,17 +185,11 @@ export async function getAccountStatsWallet({ account, prices }) {
 		{ withUsdValue: {}, totalMainCurrenciesValues: {} }
 	)
 
-	const identityBalanceMainToken =
-		identityWithdrawTokensBalancesBalances.totalBalanceInMainToken ||
-		BigNumber.from(0)
-
 	// BigNumber values for balances
 	const raw = {
 		totalMainCurrenciesValues,
 		assetsData: withUsdValue,
-		identityWithdrawTokensBalancesBalances,
 		walletPrivileges,
-		identityBalanceMainToken,
 	}
 
 	const formattedAssetsData = Object.entries(withUsdValue).reduce(
@@ -266,12 +249,6 @@ export async function getAccountStatsWallet({ account, prices }) {
 		walletAuthType: wallet.authType,
 		walletPrivileges: privilegesNames[walletPrivileges],
 		identityAddress: identity.address,
-		identityBalanceMainToken: formatTokenAmount(
-			identityBalanceMainToken,
-			decimals,
-			true,
-			2
-		),
 	}
 
 	return {
