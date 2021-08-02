@@ -209,9 +209,9 @@ function TopNav({ handleDrawerToggle, side }) {
 							</ButtonMenu>
 						</Box>
 					</Box>
-					<Box>
+					{/* <Box>
 						<ThemeSwitch />
-					</Box>
+					</Box> */}
 				</Box>
 			</Toolbar>
 		</AppBar>
