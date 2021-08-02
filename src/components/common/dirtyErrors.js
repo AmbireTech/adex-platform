@@ -38,7 +38,7 @@ export const DirtyErrors = ({
 		!!dirtyErrors.length && (
 			<Box p={0.5} {...boxProps}>
 				{dirtyErrors.map(err => (
-					<Box my={0.5}>
+					<Box my={0.5} key={err.field}>
 						<Alert
 							severity='error'
 							key={err.field}
