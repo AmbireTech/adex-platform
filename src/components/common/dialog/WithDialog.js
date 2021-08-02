@@ -96,6 +96,7 @@ export default function WithDialogHoc(Decorated) {
 			className,
 			icon,
 			title,
+			titleArgs = [],
 			dialogActions,
 			onClick,
 			fullWidth,
@@ -194,7 +195,9 @@ export default function WithDialogHoc(Decorated) {
 							root: classnames(classes.dialogTitle, classes.breakLong),
 						}}
 					>
-						<Typography variant='subtitle1'>{t(title)}</Typography>
+						<Typography variant='subtitle1'>
+							{t(title, { args: titleArgs })}
+						</Typography>
 						<IconButton onClick={handleToggle} size='small'>
 							<CancelIcon />
 						</IconButton>
