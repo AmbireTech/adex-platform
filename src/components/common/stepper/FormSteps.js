@@ -20,7 +20,7 @@ function FormSteps({
 		const updatedSteps = steps.map((s, index) => ({
 			...s,
 			stepsId,
-			title: t(s.title),
+			title: t(s.title, { args: s.title.args || [] }),
 			cancelFunction,
 			props: {
 				...rest,
