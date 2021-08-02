@@ -3,8 +3,8 @@ import WalletSideNav from './WalletSideNav'
 import TopBar from './WalletTopBar'
 import { Route, Switch } from 'react-router'
 import Account from 'components/dashboard/account/AccountInfo'
-import TopUp from 'components/dashboard/deposit/TopUp'
-import TopUpChangelly from 'components/dashboard/deposit/TopUpChangelly'
+// import TopUp from 'components/dashboard/deposit/WalletTopUp'
+// import TopUpChangelly from 'components/dashboard/deposit/TopUpChangelly'
 import {
 	Drawer,
 	Box,
@@ -148,12 +148,12 @@ function WalletDashboard(props) {
 
 						<Switch>
 							<Route exact path={'/dashboard/account'} component={Account} />
-							<Route
+							{/* <Route
 								exact
 								path={'/dashboard/topup/changelly'}
 								component={TopUpChangelly}
 							/>
-							<Route exact path={'/dashboard/topup'} component={TopUp} />
+							<Route exact path={'/dashboard/topup'} component={TopUp} /> */}
 							<Route exact path='/dashboard/' component={WalletStats} />
 							<Route component={PageNotFound} />
 						</Switch>
