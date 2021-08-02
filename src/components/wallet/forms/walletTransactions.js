@@ -115,12 +115,14 @@ export const WithdrawAsset = props => (
 		btnLabel='WALLET_WITHDRAW_ASSET_BTN'
 		saveBtnLabel='WALLET_WITHDRAW_ASSET_SAVE_BTN'
 		title='WALLET_WITHDRAW_ASSET_TITLE'
+		titleArgs={[props.stepsProps.name, props.stepsProps.symbol]}
 		stepsId={`walletWithdraw-${props.stepsProps.withdrawAsset}`}
 		{...txCommon}
 		hideNav={true}
 		steps={[
 			{
 				title: 'WALLET_WITHDRAW_ASSET_TITLE',
+				titleArgs: [props.stepsProps.name, props.stepsProps.symbol],
 				component: WalletWithdrawStep,
 				validationFn: props => {
 					execute(validateWalletWithdraw(props))

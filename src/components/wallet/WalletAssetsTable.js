@@ -177,13 +177,13 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 			filter: false,
 			sort: true,
 			download: false,
-			customBodyRender: ({ address, symbol } = {}) => (
+			customBodyRender: ({ address, symbol, name } = {}) => (
 				<Box key={address}>
 					<WithdrawAsset
 						size='small'
 						variant='contained'
 						color='secondary'
-						stepsProps={{ withdrawAsset: address, symbol }}
+						stepsProps={{ withdrawAsset: address, symbol, name }}
 						dialogWidth={512}
 						dialogHeight={800}
 					/>
