@@ -481,8 +481,7 @@ async function getWalletTradeTxns({
 					fromAsset,
 					toAsset,
 					pools[0].fee,
-					// TODO: final version always identityAddr
-					lendOutputToAAVE ? WalletZapper.address : identityAddr,
+					identityAddr,
 					deadline,
 					fromAmountHex,
 					minOut.toHexString(),
@@ -840,8 +839,7 @@ async function getDiversificationTxns({
 					pools[0].fee,
 					identityAddr,
 					deadline,
-					// TODO: final version always identityAddr
-					lendOutputToAAVE ? WalletZapper.address : identityAddr,
+					identityAddr,
 					// TODO: slippage cfg
 					toWETHAmountOut
 						.mul(995)
