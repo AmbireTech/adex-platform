@@ -195,7 +195,7 @@ const QuickInfo = props => {
 								/>
 							</Grid>
 						)}
-						<Grid item xs={12}>
+						{/* <Grid item xs={12}>
 							<Dropdown
 								required
 								fullWidth
@@ -213,7 +213,7 @@ const QuickInfo = props => {
 										: t('USER_SIDE_INFO')
 								}
 							/>
-						</Grid>
+						</Grid> */}
 						<Grid item xs={12}>
 							<FormControl
 								required
