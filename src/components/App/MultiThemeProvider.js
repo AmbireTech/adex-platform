@@ -28,24 +28,33 @@ export const MultiThemeContext = React.createContext()
 
 const MultiThemeProvider = ({ children }) => {
 	const project = useSelector(selectProject)
-	const [themeType, setThemeType] = useState('light')
+	const [themeType, setThemeType] = useState('dark')
 	const [theme, setTheme] = useState(darkTheme)
 
 	useEffect(() => {
-		const lastTheme = loadFromLocalStorage('themeType') || 'light'
-		setThemeType(lastTheme)
-		setTheme(THEMES[project][lastTheme])
+		if (project === PROJECTS.wallet) {
+			setTheme(darkThemeWallet)
+		} else {
+			const lastTheme = loadFromLocalStorage('themeType') || 'dark'
+			setThemeType(lastTheme)
+			setTheme(THEMES[project][lastTheme])
+		}
 	}, [project])
 
 	const switchTheme = () => {
-		if (themeType === 'light') {
-			saveToLocalStorage('dark', 'themeType')
-			setThemeType('dark')
-			setTheme(THEMES[project]['dark'])
+		// Until we have proper light theme
+		if (project === PROJECTS.wallet) {
+			setTheme(darkThemeWallet)
 		} else {
-			saveToLocalStorage('light', 'themeType')
-			setThemeType('light')
-			setTheme(THEMES[project]['light'])
+			if (themeType === 'light') {
+				saveToLocalStorage('dark', 'themeType')
+				setThemeType('dark')
+				setTheme(THEMES[project]['dark'])
+			} else {
+				saveToLocalStorage('light', 'themeType')
+				setThemeType('light')
+				setTheme(THEMES[project]['light'])
+			}
 		}
 	}
 
