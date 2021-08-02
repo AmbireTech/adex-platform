@@ -13,6 +13,7 @@ import {
 	validateEthAddress,
 	validatePrivLevel,
 	validatePrivilegesAddress,
+	validateActionInputAmount,
 } from 'actions'
 import {
 	selectNewTransactionById,
@@ -101,10 +102,8 @@ export function validateWalletTrade({
 			toAsset,
 			toAssetAmount,
 			lendOutputToAAVE,
-			tradeData = {},
 		} = selectNewTransactionById(state, stepsId)
 
-		const { minimumAmountOut } = tradeData
 		// const authType = selectAuthType(state)
 
 		const inputValidations = await Promise.all([
@@ -125,6 +124,16 @@ export function validateWalletTrade({
 		let isValid = inputValidations.every(v => v === true)
 
 		if (isValid) {
+			isValid = await validateActionInputAmount({
+				validateId,
+				prop: 'fromAssetAmount',
+				value: fromAssetAmount,
+				inputTokenAddr: fromAsset,
+				dirty,
+			})(dispatch, getState)
+		}
+
+		if (isValid) {
 			const account = selectAccount(state)
 			// We get txns and data here
 			const feeDataAction = async () =>
@@ -134,7 +143,6 @@ export function validateWalletTrade({
 					fromAssetAmount,
 					toAsset,
 					toAssetAmount,
-					minimumAmountOut,
 					lendOutputToAAVE,
 				})
 
@@ -231,37 +239,25 @@ export function updateEstimatedTradeValue({
 			let isValid = inputValidations.every(v => v === true)
 
 			if (isValid) {
-				const {
-					expectedAmountOut,
-					minimumAmountOut,
-					priceImpact,
-					executionPrice,
-					slippageTolerance,
-					routeTokens,
-					router,
-				} = await getTradeOutData({
-					fromAsset,
-					fromAssetAmount,
-					toAsset,
-				})
+				const isZeroAmount = !fromAssetAmount || fromAssetAmount === '0'
+				const tradeData = isZeroAmount
+					? undefined
+					: await getTradeOutData({
+							fromAsset,
+							fromAssetAmount,
+							toAsset,
+					  })
 
 				await updateNewTransaction({
 					tx: stepsId,
 					key: 'toAssetAmount',
-					value: expectedAmountOut,
+					value: tradeData ? tradeData.expectedAmountOut : '0',
 				})(dispatch, getState)
 
 				await updateNewTransaction({
 					tx: stepsId,
 					key: 'tradeData',
-					value: {
-						minimumAmountOut,
-						priceImpact,
-						executionPrice,
-						slippageTolerance,
-						routeTokens,
-						router,
-					},
+					value: tradeData,
 				})(dispatch, getState)
 			}
 		} catch (err) {
