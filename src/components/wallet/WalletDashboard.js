@@ -3,8 +3,6 @@ import WalletSideNav from './WalletSideNav'
 import TopBar from './WalletTopBar'
 import { Route, Switch } from 'react-router'
 import Account from 'components/dashboard/account/AccountInfo'
-// import TopUp from 'components/dashboard/deposit/WalletTopUp'
-// import TopUpChangelly from 'components/dashboard/deposit/TopUpChangelly'
 import {
 	Drawer,
 	Box,
@@ -27,6 +25,7 @@ import {
 	selectAccountIdentityAddr,
 	selectWalletPrivileges,
 	selectPrivilegesWarningAccepted,
+	selectDebugIdentity,
 } from 'selectors'
 import { useSelector } from 'react-redux'
 import clsx from 'clsx'
@@ -70,6 +69,7 @@ function WalletDashboard(props) {
 	const privileges = useSelector(selectWalletPrivileges)
 	const privilegesWarningAccepted = useSelector(selectPrivilegesWarningAccepted)
 	const showTxPrivLevelWarning = privileges <= 1 && !privilegesWarningAccepted
+	const { debugIdentityAddr } = useSelector(selectDebugIdentity)
 
 	const classes = useStyles()
 	const walletClasses = useWalletStyles()
@@ -130,6 +130,11 @@ function WalletDashboard(props) {
 			<main className={clsx(classes.content, walletClasses.content)}>
 				<div className={classes.contentInner}>
 					<Box>
+						<Box mb={2}>
+							<Alert variant='filled' severity='info'>
+								{t('BETA_WARNING_MSG')}
+							</Alert>
+						</Box>
 						{showTxPrivLevelWarning && (
 							<Box mb={2}>
 								<Alert
@@ -146,14 +151,16 @@ function WalletDashboard(props) {
 							</Box>
 						)}
 
+						{debugIdentityAddr && (
+							<Box mb={2}>
+								<Alert variant='filled' severity='warning'>
+									{`Debugging identity: ${debugIdentityAddr}`}
+								</Alert>
+							</Box>
+						)}
+
 						<Switch>
 							<Route exact path={'/dashboard/account'} component={Account} />
-							{/* <Route
-								exact
-								path={'/dashboard/topup/changelly'}
-								component={TopUpChangelly}
-							/>
-							<Route exact path={'/dashboard/topup'} component={TopUp} /> */}
 							<Route exact path='/dashboard/' component={WalletStats} />
 							<Route component={PageNotFound} />
 						</Switch>
