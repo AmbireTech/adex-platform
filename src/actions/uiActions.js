@@ -245,10 +245,10 @@ export function updateNewVersion({ shouldForceRefresh, version }) {
 
 export function refreshCacheAndReload({ version }) {
 	return async function(dispatch, getState) {
-		if (caches) {
+		if (window.caches) {
 			// Service worker cache should be cleared with caches.delete()
-			caches.keys().then(async function(names) {
-				await Promise.all(names.map(name => caches.delete(name)))
+			window.caches.keys().then(async function(names) {
+				await Promise.all(names.map(name => window.caches.delete(name)))
 			})
 		}
 
