@@ -113,29 +113,29 @@ function AccountInfo() {
 									})}
 									{...(!identityEnsName && {
 										primary: identityAddress,
-										secondary: (
-											<span className={classes.infoLabel}>
-												{t('ENS_NOT_SET')}
-												<Tooltip
-													interactive
-													arrow
-													title={t('ENS_NOT_SET_INFO', {
-														args: [
-															<ExternalAnchor href='https://help.adex.network/hc/en-us/articles/360017777100-What-is-an-Account-Username-and-how-to-set-it-'>
-																{t('HERE')}
-															</ExternalAnchor>,
-															'',
-														],
-													})}
-												>
-													<InfoSharp
-														className={classes.extraInfo}
-														fontSize='small'
-														color='primary'
-													/>
-												</Tooltip>
-											</span>
-										),
+										// secondary: (
+										// 	<span className={classes.infoLabel}>
+										// 		{t('ENS_NOT_SET')}
+										// 		<Tooltip
+										// 			interactive
+										// 			arrow
+										// 			title={t('ENS_NOT_SET_INFO', {
+										// 				args: [
+										// 					<ExternalAnchor href='https://help.adex.network/hc/en-us/articles/360017777100-What-is-an-Account-Username-and-how-to-set-it-'>
+										// 						{t('HERE')}
+										// 					</ExternalAnchor>,
+										// 					'',
+										// 				],
+										// 			})}
+										// 		>
+										// 			<InfoSharp
+										// 				className={classes.extraInfo}
+										// 				fontSize='small'
+										// 				color='primary'
+										// 			/>
+										// 		</Tooltip>
+										// 	</span>
+										// ),
 									})}
 								/>
 								<IconButton
@@ -155,19 +155,19 @@ function AccountInfo() {
 								</IconButton>
 							</Box>
 						}
-						right={
-							!!identityAddress && (
-								<SetAccountENS
-									disabled={!canMakeTx}
-									fullWidth
-									variant='contained'
-									color='default'
-									token='DAI'
-									size='large'
-									identityAvailable={availableIdentityBalanceMainToken}
-								/>
-							)
-						}
+						// right={
+						// 	!!identityAddress && (
+						// 		<SetAccountENS
+						// 			disabled={!canMakeTx}
+						// 			fullWidth
+						// 			variant='contained'
+						// 			color='default'
+						// 			token='DAI'
+						// 			size='large'
+						// 			identityAvailable={availableIdentityBalanceMainToken}
+						// 		/>
+						// 	)
+						// }
 					/>
 					{isPlatform && <PlatformBalance />}
 				</List>
@@ -188,7 +188,7 @@ function AccountInfo() {
 						</Typography>
 					</AccordionSummary>
 					<Box>
-						<ListDivider />
+						{/* <ListDivider />
 						<AccountItem
 							left={
 								<ListItemText
@@ -218,7 +218,7 @@ function AccountInfo() {
 									/>
 								)
 							}
-						/>
+						/> */}
 						<ListDivider />
 						<ListSubheader disableSticky>
 							{t('WALLETS_WITH_PRIVILEGES')}
