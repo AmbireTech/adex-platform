@@ -195,7 +195,7 @@ export function walletTrade({
 				timeout: 20000,
 			})(dispatch)
 		} catch (err) {
-			console.error(err)
+			console.error('ERR_WALLET_TRADE', err)
 			addToast({
 				type: 'cancel',
 				label: t('ERR_WALLET_TRADE', {
@@ -234,6 +234,20 @@ export function updateEstimatedTradeValue({
 					value: fromAssetAmount,
 					dirty,
 				})(dispatch),
+				validateEthAddress({
+					validateId,
+					prop: 'fromAsset',
+					addr: fromAsset,
+					quickCheck: true,
+					dirty,
+				})(dispatch),
+				validateEthAddress({
+					validateId,
+					prop: 'toAsset',
+					addr: toAsset,
+					quickCheck: true,
+					dirty,
+				})(dispatch),
 			])
 
 			let isValid = inputValidations.every(v => v === true)
@@ -248,6 +262,7 @@ export function updateEstimatedTradeValue({
 							toAsset,
 					  })
 
+				console.log('tradeData', tradeData)
 				await updateNewTransaction({
 					tx: stepsId,
 					key: 'toAssetAmount',
@@ -261,7 +276,7 @@ export function updateEstimatedTradeValue({
 				})(dispatch, getState)
 			}
 		} catch (err) {
-			console.error(err)
+			console.error('ERR_WALLET_TRADE_DATA', err)
 			addToast({
 				type: 'cancel',
 				label: t('ERR_WALLET_TRADE_DATA', {
