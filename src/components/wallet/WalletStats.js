@@ -160,7 +160,12 @@ function WalletStats() {
 		<Grid container spacing={2} alignItems='stretch' direction='row'>
 			<Grid item xs={12} md={6}>
 				<InfoCard title={t('PORTFOLIO_VALUE')}>
-					<Box>
+					<Box
+						display='flex'
+						flexDirection='column'
+						justifyContent='space-between'
+						height={1}
+					>
 						<Box>
 							<AmountWithCurrency
 								amount={totalMainCurrenciesValues[mainCurrency.id]}
@@ -178,13 +183,13 @@ function WalletStats() {
 								dialogWidth={512}
 								dialogHeight={800}
 							/>
-							<DiversifyAssets
+							{/* <DiversifyAssets
 								variant='contained'
 								color='secondary'
 								size='large'
 								dialogWidth={512}
 								dialogHeight={800}
-							/>
+							/> */}
 						</Box>
 					</Box>
 				</InfoCard>
