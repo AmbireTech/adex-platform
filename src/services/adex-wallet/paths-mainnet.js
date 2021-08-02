@@ -41,6 +41,9 @@ const wethPathsUniV3 = {
 
 const wethPathsUniV2 = {
 	[tokens.ADX]: true,
+	[tokens.USDC]: true,
+	[tokens.WBTC]: true,
+	[tokens.WETH]: true,
 }
 
 const directPaths = {}
