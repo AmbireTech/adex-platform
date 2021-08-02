@@ -175,21 +175,30 @@ function WalletStats() {
 								decimalsFontVariant='h3'
 							/>
 						</Box>
-						<Box mt={4}>
-							<TradeAssets
-								variant='contained'
-								color='secondary'
-								size='large'
-								dialogWidth={512}
-								dialogHeight={800}
-							/>
-							{/* <DiversifyAssets
-								variant='contained'
-								color='secondary'
-								size='large'
-								dialogWidth={512}
-								dialogHeight={800}
-							/> */}
+						<Box
+							mt={4}
+							display='flex'
+							flexDirection='row'
+							// justifyContent='space-between'
+						>
+							<Box m={0.5}>
+								<TradeAssets
+									variant='contained'
+									color='secondary'
+									size='large'
+									dialogWidth={512}
+									dialogHeight={800}
+								/>
+							</Box>
+							{/* <Box m={0.5}>
+								<DiversifyAssets
+									variant='contained'
+									color='primary'
+									size='large'
+									dialogWidth={512}
+									dialogHeight={800}
+								/>
+							</Box> */}
 						</Box>
 					</Box>
 				</InfoCard>

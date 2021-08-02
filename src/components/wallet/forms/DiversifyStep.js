@@ -386,9 +386,11 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	// 	selectSpinnerById(state, validateId)
 	// )
 
-	const { fromAsset = '', diversificationAssets = [] } = useSelector(state =>
-		selectNewTransactionById(state, stepsId)
-	)
+	const {
+		fromAsset = '',
+		diversificationAssets = [],
+		fromAssetAmount = '',
+	} = useSelector(state => selectNewTransactionById(state, stepsId))
 
 	const availableAssetsSrc = [...assetsFromSource].filter(
 		x => !diversificationAssets.some(y => y.address === x.value)
@@ -474,17 +476,26 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	}, [])
 
 	useEffect(() => {
-		execute(
-			updateNewTransaction({
-				tx: stepsId,
-				key: 'fromAssetAmount',
-				value: formatTokenAmount(
-					BigNumber.from(fromAssetUserBalance).div(5),
-					selectedFromAsset.decimals
-				),
-			})
-		)
-	}, [fromAssetUserBalance, selectedFromAsset.decimals, stepsId])
+		if (!!fromAsset) {
+			execute(
+				updateNewTransaction({
+					tx: stepsId,
+					key: 'fromAssetAmount',
+					value: formatTokenAmount(
+						BigNumber.from(fromAssetUserBalance), //.div(5),
+						selectedFromAsset.decimals
+					),
+				})
+			)
+			execute(
+				updateNewTransaction({
+					tx: stepsId,
+					key: 'fromAsset',
+					value: fromAsset,
+				})
+			)
+		}
+	}, [fromAsset, fromAssetUserBalance, selectedFromAsset.decimals, stepsId])
 
 	return (
 		<ContentBox>
@@ -509,11 +520,21 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 											size='small'
 											label={t('AVAILABLE')}
 											name='fromAssetUserBalance'
-											value={formatTokenAmount(
-												BigNumber.from(fromAssetUserBalance).div(5),
-												selectedFromAsset.decimals
-											)}
-											readOnly
+											// value={formatTokenAmount(
+											// 	BigNumber.from(fromAssetUserBalance).div(5),
+											// 	selectedFromAsset.decimals
+											// )}
+											// readOnly
+											value={fromAssetAmount || '0'}
+											onChange={ev => {
+												execute(
+													updateNewTransaction({
+														tx: stepsId,
+														key: 'fromAssetAmount',
+														value: ev.target.value,
+													})
+												)
+											}}
 											InputProps={{
 												classes: {
 													root: classes.leftInput,
@@ -563,12 +584,14 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 									/>
 								</Grid>
 								<Grid item xs={12}>
-									<SelectedDoughnut
-										diversificationAssets={diversificationAssets}
-										assetsData={assetsData}
-										sharesLeft={sharesLeft}
-										totalUsedValueMainCurrency={totalUsedValueMainCurrency}
-									/>
+									<Box my={1}>
+										<SelectedDoughnut
+											diversificationAssets={diversificationAssets}
+											assetsData={assetsData}
+											sharesLeft={sharesLeft}
+											totalUsedValueMainCurrency={totalUsedValueMainCurrency}
+										/>
+									</Box>
 								</Grid>
 								<Grid item xs={12}>
 									<Box
