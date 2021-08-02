@@ -100,7 +100,7 @@ export const ChangeControls = hookProps => {
 				<Box>
 					<DirtyErrors
 						validations={validations}
-						chipsProps={{ color: 'default', variant: 'default' }}
+						alertProps={{ color: 'info', variant: 'standard' }}
 						boxProps={{ mt: 1 }}
 					/>
 				</Box>
