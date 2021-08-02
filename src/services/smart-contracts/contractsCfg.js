@@ -69,37 +69,25 @@ export const contracts = {
 		decimals: 18,
 	},
 	WalletZapper: {
-		address:
-			process.env.ADDR_WALLET_ZAPPER ||
-			// '0x10eB10Bf93BCd299542cEb1D5E5677ea1F6A41D7',
-			// '0x6c8Bfe371c9BbBbb66fdaB1EE46950Cf5f49e962', //kovan old
-			'0x1D947008f56B410887E1F4794A86517888a1B27f',
+		address: process.env.ADDR_WALLET_ZAPPER,
 		abi: WalletZapperAbi,
 	},
 	UniSwapRouterV2: {
-		address:
-			process.env.UNISWAP_ROUTER_V2 ||
-			'0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+		address: process.env.UNISWAP_ROUTER_V2,
 		abi: UniSwapRouterV2Abi,
 	},
 	UniSwapRouterV3: {
-		address:
-			process.env.UNISWAP_ROUTER_V3 ||
-			'0xE592427A0AEce92De3Edee1F18E0157C05861564',
+		address: process.env.UNISWAP_ROUTER_V3,
 		abi: UniSwapRouterV3Abi,
 	},
 	UniSwapQuoterV3: {
-		address:
-			process.env.UNISWAP_QUOTER_V3 ||
-			'0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6',
+		address: process.env.UNISWAP_QUOTER_V3,
 		// Abi modified
 		// https://twitter.com/dcfgod/status/1405608315011411970?s=20
 		abi: UniSwapQuoterV3Abi,
 	},
 	AaveLendingPool: {
-		address:
-			process.env.AAVE_LENDING_POOL_ADDR ||
-			'0xE0fBa4Fc209b4948668006B2bE61711b7f465bAe',
+		address: process.env.AAVE_LENDING_POOL_ADDR,
 		abi: AAVELendingPoolAbi,
 	},
 }
