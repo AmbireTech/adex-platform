@@ -1,4 +1,4 @@
-export const PRICES_API_URL = `https://api.coingecko.com/api/v3/simple/price?ids=uniswap,adex,tether,weth,dai,chainlink&vs_currencies=usd,eur,dai`
+export const PRICES_API_URL = `https://api.coingecko.com/api/v3/simple/price?ids=adex,tether,weth,usdt,usd-coin,wrapped-bitcoin&vs_currencies=usd,eur,dai`
 
 const toStatsValue = data => {
 	return Object.entries(data).reduce((value, [key, prices]) => {
@@ -11,11 +11,11 @@ const toStatsValue = data => {
 			case 'tether':
 				statsKey = 'USDT'
 				break
-			case 'uniswap':
-				statsKey = 'UNI'
+			case 'wrapped-bitcoin':
+				statsKey = 'WBTC'
 				break
-			case 'chainlink':
-				statsKey = 'LINK'
+			case 'usd-coin':
+				statsKey = 'USDC'
 				break
 			default:
 				statsKey = key.toUpperCase()
