@@ -53,27 +53,71 @@ const TokenRow = ({
 const useStyles = makeStyles(styles)
 export const DiversifyPreview = ({ feesData = {}, assetsData }) => {
 	const classes = useStyles()
+	const { spendTokenAddr } = feesData
 	const { tokensOutData = [] } = feesData.actionMeta || {}
+	const fromAssetData = assetsData[spendTokenAddr] || {}
+
+	// console.log('fromAssetData', fromAssetData)
+	// console.log('feesData', feesData)
+
+	const { logoSrc, name, symbol } = fromAssetData
 	return (
 		<Box>
-			{tokensOutData.map(({ address, amountOutMin, share }) => {
-				const { logoSrc, name, symbol } = assetsData[address]
-				return (
+			<Box p={1}>
+				<Alert variant='filled' severity='info'>
+					{t('WALLET_FEES_INFO_SWAP')}
+				</Alert>
+			</Box>
+			<PropRow
+				key='fromAsset'
+				left={t('From')}
+				right={
 					<TokenRow
-						key={address}
 						{...{
-							address,
+							address: spendTokenAddr,
 							logoSrc,
 							name,
 							classes,
 							symbol,
-							share,
-							amount: amountOutMin,
-							secondary: t('SHARE_INFO', { args: [share] }),
+							amount: feesData.totalAmountToSpendFormatted,
+							secondary: t('AMOUNT_SWAP_INFO', {
+								args: [
+									feesData.totalFeesFormatted,
+									feesData.feeTokenSymbol,
+									feesData.mainActionAmountFormatted,
+									symbol,
+								],
+							}),
 						}}
 					/>
-				)
-			})}
+				}
+			/>
+			<PropRow
+				key='tooAssetsDib'
+				left={t('Diversify to')}
+				right={
+					<Box>
+						{tokensOutData.map(({ address, amountOutMin, share }) => {
+							const { logoSrc, name, symbol } = assetsData[address]
+							return (
+								<TokenRow
+									key={address}
+									{...{
+										address,
+										logoSrc,
+										name,
+										classes,
+										symbol,
+										share,
+										amount: amountOutMin,
+										secondary: t('SHARE_INFO', { args: [share] }),
+									}}
+								/>
+							)
+						})}
+					</Box>
+				}
+			/>
 		</Box>
 	)
 }
@@ -87,15 +131,14 @@ export const TradePreview = ({
 	const classes = useStyles()
 
 	const { tradeData = {} } = feesData.actionMeta || {}
-	const fromAssetData = assetsData[tradeData.fromAsset]
+	const fromAssetData = assetsData[tradeData.fromAsset] || {}
 
 	// console.log('fromAssetData', fromAssetData)
 	// console.log('feesData', feesData)
 
 	const { logoSrc, name, symbol } = fromAssetData
-	const { logoSrc: outLogoSrc, name: outName, symbol: outSymbol } = assetsData[
-		tradeData.toAsset
-	]
+	const { logoSrc: outLogoSrc, name: outName, symbol: outSymbol } =
+		assetsData[tradeData.toAsset] || {}
 	return (
 		<Box>
 			<Box p={1}>
@@ -150,7 +193,7 @@ export const TradePreview = ({
 
 export const WithdrawPreview = ({ withdrawTo, feesData, assetsData }) => {
 	const classes = useStyles()
-	const { symbol, name, logoSrc } = assetsData[feesData.spendTokenAddr]
+	const { symbol, name, logoSrc } = assetsData[feesData.spendTokenAddr] || {}
 	return (
 		<Box>
 			<Box p={1}>
