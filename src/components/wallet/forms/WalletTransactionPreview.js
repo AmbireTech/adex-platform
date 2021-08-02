@@ -127,6 +127,7 @@ function TransactionPreview(props) {
 
 						{stepsId.includes('walletWithdraw-') && (
 							<WithdrawPreview
+								assetsData={assetsData}
 								withdrawTo={withdrawTo}
 								symbol={feeTokenSymbol}
 								feesData={feesData}
@@ -148,7 +149,7 @@ function TransactionPreview(props) {
 											alignItems='center'
 										>
 											<Box>
-												{t('FEES_BREAKDOWN_ADVANCED_LABEL', {
+												{t('WALLET_FEES_BREAKDOWN_ADVANCED_LABEL', {
 													args: [totalFeesFormatted, feeTokenSymbol],
 												})}
 											</Box>
