@@ -26,7 +26,6 @@ const TokenRow = ({
 	secondary,
 }) => (
 	<Box
-		key={address}
 		display='flex'
 		flexDirection='row'
 		alignItems='center'
@@ -61,6 +60,7 @@ export const DiversifyPreview = ({ feesData = {}, assetsData }) => {
 				const { logoSrc, name, symbol } = assetsData[address]
 				return (
 					<TokenRow
+						key={address}
 						{...{
 							address,
 							logoSrc,
@@ -148,35 +148,50 @@ export const TradePreview = ({
 	)
 }
 
-export const WithdrawPreview = ({ withdrawTo, feesData, symbol = 'xx' }) => {
+export const WithdrawPreview = ({ withdrawTo, feesData, assetsData }) => {
 	const classes = useStyles()
+	const { symbol, name, logoSrc } = assetsData[feesData.spendTokenAddr]
 	return (
 		<Box>
 			<Box p={1}>
-				<Alert variant='filled' severity='warning'>
-					{t('WITHDRAW_ADDRESS_WARNING')}
+				<Alert variant='filled' severity='info'>
+					{t('WALLET_FEES_INFO_SWAP')}
 				</Alert>
 			</Box>
+
 			<PropRow
 				key='withdrawTo'
 				left={t('withdrawTo', { isProp: true })}
-				right={(withdrawTo || '').toString()}
+				right={
+					<ListItemText
+						// disableTypography
+						primary={(withdrawTo || '').toString()}
+						secondary={t('WITHDRAW_ADDRESS_WARNING')}
+						secondaryTypographyProps={{ color: 'primary' }}
+					/>
+				}
 			/>
 			<PropRow
 				key='amountToWithdraw'
 				left={t('amountToWithdraw', { isProp: true })}
 				right={
-					<ListItemText
-						className={classes.address}
-						secondary={t('AMOUNT_WITHDRAW_INFO', {
-							args: [
-								feesData.totalFeesFormatted,
-								feesData.feeTokenSymbol,
-								feesData.mainActionAmountFormatted,
-								symbol,
-							],
-						})}
-						primary={`${feesData.totalAmountToSpendFormatted} ${symbol}`}
+					<TokenRow
+						{...{
+							address: feesData.spendTokenAddr,
+							logoSrc,
+							name,
+							classes,
+							symbol,
+							amount: feesData.totalAmountToSpendFormatted,
+							secondary: t('AMOUNT_WITHDRAW_INFO', {
+								args: [
+									feesData.totalFeesFormatted,
+									feesData.feeTokenSymbol,
+									feesData.mainActionAmountFormatted,
+									symbol,
+								],
+							}),
+						}}
 					/>
 				}
 			/>
