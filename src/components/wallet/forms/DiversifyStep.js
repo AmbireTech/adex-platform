@@ -424,15 +424,6 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 		state => selectValidationsById(state, validateId) || {}
 	)
 
-	useEffect(() => {
-		execute(
-			updateEstimatedTradeValue({
-				stepsId,
-				validateId,
-			})
-		)
-	}, [selectedFromAsset.symbol, mainCurrency.id, stepsId, validateId])
-
 	const updateDiversifications = (address, share, presets, remove) => {
 		const updated = [...(presets || diversificationAssets)]
 
