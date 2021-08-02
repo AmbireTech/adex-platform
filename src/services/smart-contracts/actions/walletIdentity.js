@@ -112,6 +112,7 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 			calculatedGasPriceBN: gasPrice,
 			calculatedOperationsCount,
 			nonce: currentNonce,
+			isDeployTx,
 		}
 
 		currentNonce += 1
