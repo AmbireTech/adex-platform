@@ -311,11 +311,93 @@ export function updateValidatorAuthTokens({ newAuth }) {
 	}
 }
 
+export function createSessionWallet({
+	wallet,
+	identity = {},
+	email,
+	deleteLegacyKey,
+}) {
+	return async function(dispatch, getState) {
+		updateSpinner(CREATING_SESSION, true)(dispatch)
+		try {
+			const newWallet = { ...wallet }
+			const sessionSignature =
+				getSig({
+					addr: newWallet.address,
+					mode: newWallet.authType,
+					identity: identity.address,
+				}) || null
+
+			const hasSession = !!sessionSignature
+
+			if (hasSession) {
+				newWallet.authSig = sessionSignature
+			} else {
+				const {
+					signature,
+					// mode,
+					// authToken,
+					// hash,
+					// typedData,
+				} = await getAuthSig({ wallet: newWallet })
+
+				const expiryTime = Date.now() + +1000 * 60 * 60 * 24 * 30 * 12 // 12 months
+
+				addSig({
+					addr: wallet.address,
+					sig: signature,
+					mode: wallet.authType,
+					expiryTime: expiryTime,
+					identity: identity.address,
+				})
+
+				newWallet.authSig = signature
+			}
+
+			const account = {
+				email: email,
+				wallet: newWallet,
+				identity: { ...identity },
+			}
+
+			await updateAccount({
+				newValues: { ...account },
+			})(dispatch)
+
+			if (deleteLegacyKey) {
+				await removeLegacyKey({
+					email: wallet.email,
+					password: wallet.password,
+				})
+			}
+
+			await updateMemoryUi('initialDataLoaded', false)(dispatch, getState)
+
+			const goTo = ''
+
+			dispatch(push(`/dashboard/${goTo}`))
+			updateGlobalUi('goToSide', goTo)(dispatch)
+
+			// dispatch(push('/side-select'))
+		} catch (err) {
+			console.error('ERR_GETTING_SESSION', err)
+			addToast({
+				type: 'cancel',
+				label: translate('ERR_GETTING_SESSION', { args: [getErrorMsg(err)] }),
+				timeout: 20000,
+			})(dispatch)
+		}
+
+		updateSpinner(CREATING_SESSION, false)(dispatch)
+	}
+}
+
 export function createSession({
 	wallet,
 	identity = {},
 	email,
 	deleteLegacyKey,
+	walletSession,
 }) {
 	return async function(dispatch, getState) {
 		updateSpinner(CREATING_SESSION, true)(dispatch)
