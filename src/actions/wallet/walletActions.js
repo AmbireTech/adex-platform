@@ -262,7 +262,6 @@ export function updateEstimatedTradeValue({
 							toAsset,
 					  })
 
-				console.log('tradeData', tradeData)
 				await updateNewTransaction({
 					tx: stepsId,
 					key: 'toAssetAmount',
