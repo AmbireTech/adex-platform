@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import Button from '@material-ui/core/Button'
-import { Box, Divider } from '@material-ui/core'
+import { Box, Divider, Tooltip } from '@material-ui/core'
 import { Close } from '@material-ui/icons'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import { Typography } from '@material-ui/core'
@@ -91,6 +91,16 @@ const AuthSelect = () => {
 			<Box p={2} alignItems='center'>
 				<Typography align='center' variant='subtitle1' display='block'>
 					{t('SIGN_UP_IN_SELECT')}
+				</Typography>
+			</Box>
+			<Box p={2} alignItems='center'>
+				<Typography
+					align='center'
+					variant='subtitle1'
+					display='block'
+					color='secondary'
+				>
+					{t('REGISTRATIONS_DISABLED_INFO')}
 				</Typography>
 			</Box>
 			{auth && (
