@@ -145,7 +145,7 @@ export const assets = {
 		symbol: 'USDC',
 		name: 'USD Coin',
 		getBalance: async function({ address }) {
-			return await getERC20Balance({ tokenAddress: tokens.USDT, address })
+			return await getERC20Balance({ tokenAddress: tokens.USDC, address })
 		},
 		isSwappable: true,
 		isBaseAsset: true,
@@ -159,7 +159,7 @@ export const assets = {
 		symbol: 'WBTC',
 		name: 'Wrapped BTC',
 		getBalance: async function({ address }) {
-			return await getERC20Balance({ tokenAddress: tokens.USDT, address })
+			return await getERC20Balance({ tokenAddress: tokens.WBTC, address })
 		},
 		isSwappable: true,
 		isBaseAsset: true,
@@ -177,23 +177,24 @@ export const assets = {
 		},
 		isSwappable: true,
 		isBaseAsset: true,
-		subAssets: [tokens.aWETH],
+		// subAssets: [tokens.aWETH],
+		subAssets: [],
 		decimals: 18,
 		logoSrc: WETH_LOGO,
 	},
-	[tokens.aWETH]: {
-		symbol: 'aWETH',
-		name: 'Aave interest bearing WETH',
-		getBalance: async function({ address }) {
-			return await getERC20Balance({ tokenAddress: tokens.aWETH, address })
-		},
-		isSwappable: false,
-		isBaseAsset: false,
-		isAaveInterestToken: true,
-		subAssets: [],
-		decimals: 18,
-		logoSrc: ETH_LOGO,
-	},
+	// [tokens.aWETH]: {
+	// 	symbol: 'aWETH',
+	// 	name: 'Aave interest bearing WETH',
+	// 	getBalance: async function({ address }) {
+	// 		return await getERC20Balance({ tokenAddress: tokens.aWETH, address })
+	// 	},
+	// 	isSwappable: false,
+	// 	isBaseAsset: false,
+	// 	isAaveInterestToken: true,
+	// 	subAssets: [],
+	// 	decimals: 18,
+	// 	logoSrc: ETH_LOGO,
+	// },
 }
 
 async function mapAAVEInterestToken(baseTokenSymbol, aTokenAmount) {
