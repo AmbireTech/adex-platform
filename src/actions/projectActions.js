@@ -11,6 +11,11 @@ export function updateProject(hostname) {
 					type: UPDATE_PROJECT,
 					value: PROJECTS.wallet,
 				})
+			case 'walletstaging':
+				return dispatch({
+					type: UPDATE_PROJECT,
+					value: PROJECTS.wallet,
+				})
 			case 'platform':
 			default:
 				return dispatch({
