@@ -41,15 +41,15 @@ const fiatProvidersDetails = [
 		limitInfo: t('RAMP_LIMITS'),
 		currencies: t('RAMP_CURRENCIES'),
 	},
-	{
-		title: t('CREDIT_CARD'),
-		onClick: props => openWyre(props),
-		imgSrc: WYRE_LOGO,
-		imgAlt: t('WYRE'),
-		feeInfo: t('WYRE_FEES'),
-		limitInfo: t('WYRE_LIMITS'),
-		currencies: t('WYRE_CURRENCIES'),
-	},
+	// {
+	// 	title: t('CREDIT_CARD'),
+	// 	onClick: props => openWyre(props),
+	// 	imgSrc: WYRE_LOGO,
+	// 	imgAlt: t('WYRE'),
+	// 	feeInfo: t('WYRE_FEES'),
+	// 	limitInfo: t('WYRE_LIMITS'),
+	// 	currencies: t('WYRE_CURRENCIES'),
+	// },
 	{
 		title: t('BANK_TRANSFER'),
 		onClick: props => openPayTrie(props),
@@ -124,14 +124,21 @@ const ProviderListItem = ({
 	)
 }
 
-const Providers = ({ providersDetails, accountId, symbol, email, side }) => (
+const Providers = ({
+	providersDetails,
+	accountId,
+	symbol,
+	email,
+	side,
+	onCLick,
+}) => (
 	<List disablePadding>
 		{providersDetails.map((item, key) => (
 			<ListItem
 				disableGutters
 				key={key}
 				onClick={() => {
-					item.onClick({ accountId, symbol, email, side })
+					onCLick ? onCLick() : item.onClick({ accountId, symbol, email, side })
 					ReactGA.event({
 						...commonGAEventProps,
 						label: item.imgAlt,
@@ -161,12 +168,19 @@ export const FiatProviders = ({ accountId, symbol, email }) => (
 	/>
 )
 
-export const CryptoProviders = ({ accountId, symbol, email, side }) => (
+export const CryptoProviders = ({
+	accountId,
+	symbol,
+	email,
+	side,
+	onCLick,
+}) => (
 	<Providers
 		providersDetails={cryptoProvidersDetails}
 		accountId={accountId}
 		symbol={symbol}
 		email={email}
 		side={side}
+		onCLick={onCLick}
 	/>
 )
