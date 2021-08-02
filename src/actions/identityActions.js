@@ -6,7 +6,10 @@ import {
 	regAccount,
 	getIdentityData,
 } from 'services/adex-relayer/actions'
-import { createSession } from './accountActions'
+import {
+	//  createSession,
+	createSessionWallet,
+} from './accountActions'
 import { getIdentityDeployData } from 'services/smart-contracts/actions/identity'
 import {
 	addDataToWallet,
@@ -262,7 +265,8 @@ export function login() {
 				relayerData,
 			}
 			if (identity.currentPrivileges[wallet.address] > 0) {
-				await createSession({
+				// TODO: fix it when platform use this
+				await createSessionWallet({
 					identity,
 					wallet,
 					email,
