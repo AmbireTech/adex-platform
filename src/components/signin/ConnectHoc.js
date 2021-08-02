@@ -43,7 +43,7 @@ export default function ConnectHoc(Decorated) {
 							style={{ height: '100%' }}
 						>
 							<Box p={4} alignItems='center'>
-								<ThemeSwitch />
+								{/* <ThemeSwitch /> */}
 								<Typography align='center' variant='h3'>
 									{t('SIGN_UP_IN')}
 								</Typography>
