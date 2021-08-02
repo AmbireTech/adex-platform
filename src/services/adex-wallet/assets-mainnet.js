@@ -26,7 +26,7 @@ const tokens = {
 	USDC: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
 	WBTC: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
 	WETH: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-	// [ADXToken.symbol]: ADXToken.address,
+	[ADXToken.symbol]: ADXToken.address,
 	// [StakingPool.symbol]: StakingPool.address,
 	// [ADXLoyaltyPoolToken.symbol]: ADXLoyaltyPoolToken.address,
 }
@@ -72,18 +72,19 @@ const getERC20Balance = async ({ tokenAddress, address }) => {
 }
 
 export const assets = {
-	// [ADXToken.address]: {
-	// 	symbol: ADXToken.symbol,
-	// 	name: 'AdEx Network',
-	// 	getBalance: async function({ address }) {
-	// 		return await getERC20Balance({ tokenAddress: ADXToken.address, address })
-	// 	},
-	// 	isSwappable: true,
-	// 	isBaseAsset: true,
-	// 	subAssets: [ADXLoyaltyPoolToken.address, StakingPool.address],
-	// 	decimals: ADXToken.decimals,
-	// 	logoSrc: ADX_LOGO,
-	// },
+	[ADXToken.address]: {
+		symbol: ADXToken.symbol,
+		name: 'AdEx Network',
+		getBalance: async function({ address }) {
+			return await getERC20Balance({ tokenAddress: ADXToken.address, address })
+		},
+		isSwappable: true,
+		isBaseAsset: true,
+		// subAssets: [ADXLoyaltyPoolToken.address, StakingPool.address],
+		subAssets: [],
+		decimals: ADXToken.decimals,
+		logoSrc: ADX_LOGO,
+	},
 	// [ADXLoyaltyPoolToken.address]: {
 	// 	symbol: ADXLoyaltyPoolToken.symbol,
 	// 	name: 'AdEx Loyalty pool',
