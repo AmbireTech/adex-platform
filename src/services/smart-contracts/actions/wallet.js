@@ -42,10 +42,11 @@ import {
 	GAS_LIMITS,
 	getWalletIdentityTxnsWithNoncesAndFees,
 	getWalletIdentityTxnsTotalFees,
-	processExecuteWalletTxns,
-	getWalletApproveTxns,
+	// processExecuteWalletTxns,
+	// getWalletApproveTxns,
 } from './walletIdentity'
 import { formatTokenAmount } from 'helpers/formatters'
+import { t } from 'selectors'
 
 const UNI_V3_FACTORY_ADDR = '0x1F98431c8aD98523631AE4a59f267346ea31F984'
 const SIGNIFICANT_DIGITS = 6
@@ -584,11 +585,12 @@ export async function walletTradeTransaction({
 		lendOutputToAAVE,
 	})
 
-	const { totalFeesBN: _preTotalFeesBN } = await getWalletIdentityTxnsTotalFees(
-		{
-			txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
-		}
-	)
+	const {
+		totalFeesBN: _preTotalFeesBN,
+		totalFeesFormatted: _preTotalFeesFormatted,
+	} = await getWalletIdentityTxnsTotalFees({
+		txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
+	})
 
 	const mainActionAmountBN = _preFromAssetAmountUserInputBN.sub(_preTotalFeesBN)
 	const mainActionAmountFormatted = formatTokenAmount(
@@ -597,6 +599,13 @@ export async function walletTradeTransaction({
 		false,
 		from.decimals
 	)
+	if (mainActionAmountBN.lt(ZERO)) {
+		throw new Error(
+			t('ERR_NO_BALANCE_FOR_FEES', {
+				args: [from.symbol, _preTotalFeesFormatted],
+			})
+		)
+	}
 
 	// Actual call with fees pre calculated
 	const {
@@ -949,8 +958,6 @@ async function getDiversificationTxns({
 		})
 	)
 
-	// .filter(x => !!x)
-
 	const diversificationsAllocated = diversificationTrades.reduce(
 		(sum, x) => sum + x[2],
 		0
@@ -1016,11 +1023,12 @@ export async function walletDiversificationTransaction({
 		diversificationAssets,
 	})
 
-	const { totalFeesBN: _preTotalFeesBN } = await getWalletIdentityTxnsTotalFees(
-		{
-			txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
-		}
-	)
+	const {
+		totalFeesBN: _preTotalFeesBN,
+		totalFeesFormatted: _preTotalFeesFormatted,
+	} = await getWalletIdentityTxnsTotalFees({
+		txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
+	})
 
 	const mainActionAmountBN = _preFromAssetAmountUserInputBN.sub(_preTotalFeesBN)
 	const mainActionAmountFormatted = formatTokenAmount(
@@ -1029,6 +1037,14 @@ export async function walletDiversificationTransaction({
 		false,
 		from.decimals
 	)
+
+	if (mainActionAmountBN.lt(ZERO)) {
+		throw new Error(
+			t('ERR_NO_BALANCE_FOR_FEES', {
+				args: [from.symbol, _preTotalFeesFormatted],
+			})
+		)
+	}
 
 	// console.log(
 	// 	'_preTotalFeesBN',
@@ -1197,11 +1213,12 @@ export async function walletWithdrawTransaction({
 		getMinAmountToSpend,
 	})
 
-	const { totalFeesBN: _preTotalFeesBN } = await getWalletIdentityTxnsTotalFees(
-		{
-			txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
-		}
-	)
+	const {
+		totalFeesBN: _preTotalFeesBN,
+		totalFeesFormatted: _preTotalFeesFormatted,
+	} = await getWalletIdentityTxnsTotalFees({
+		txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
+	})
 
 	// TODO: unified function
 	const mainActionAmountBN = _preAmountToWithdrawBN.sub(_preTotalFeesBN)
@@ -1211,6 +1228,14 @@ export async function walletWithdrawTransaction({
 		false,
 		tokenData.decimals
 	)
+
+	if (mainActionAmountBN.lt(ZERO)) {
+		throw new Error(
+			t('ERR_NO_BALANCE_FOR_FEES', {
+				args: [tokenData.symbol, _preTotalFeesFormatted],
+			})
+		)
+	}
 
 	// Actual call with fees pre calculated
 	const { txnsWithNonceAndFees, amountToWithdrawBN } = await getWithdrawTxns({
