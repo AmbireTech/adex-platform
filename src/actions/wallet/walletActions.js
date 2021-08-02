@@ -314,6 +314,16 @@ export function validateWalletDiversify({
 		let isValid = inputValidations.every(v => v === true)
 
 		if (isValid) {
+			isValid = await validateActionInputAmount({
+				validateId,
+				prop: 'fromAssetAmount',
+				value: fromAssetAmount,
+				inputTokenAddr: fromAsset,
+				dirty,
+			})(dispatch, getState)
+		}
+
+		if (isValid) {
 			const account = selectAccount(state)
 			const feeDataAction = async () =>
 				await walletDiversificationTransaction({
