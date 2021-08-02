@@ -13,7 +13,8 @@ import LINK_LOGO from 'resources/token-logos/LINK.png'
 // import BTC_LOGO from 'resources/token-logos/BTC.png'
 const { ADXLoyaltyPoolToken, StakingPool, ADXToken, ERC20 } = contracts
 
-// 0xe0fba4fc209b4948668006b2be61711b7f465bae
+// 0xe0fba4fc209b4948668006b2be61711b7f465bae // lending proxy
+// lending - 0x2646FcF7F0AbB1ff279ED9845AdE04019C907EBE
 // 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D
 // 0xE592427A0AEce92De3Edee1F18E0157C05861564
 
@@ -137,7 +138,7 @@ export const assets = {
 	// },
 	[tokens.USDT]: {
 		symbol: 'USDT',
-		name: 'Theter',
+		name: 'Tether',
 		getBalance: async function({ address }) {
 			return await getERC20Balance({ tokenAddress: tokens.USDT, address })
 		},
@@ -163,7 +164,7 @@ export const assets = {
 	},
 	[tokens.WETH]: {
 		symbol: 'WETH',
-		name: 'WETH',
+		name: 'Wrapped Ethereum',
 		getBalance: async function({ address }) {
 			return await getERC20Balance({ tokenAddress: tokens.WETH, address })
 		},
