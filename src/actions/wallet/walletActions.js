@@ -253,7 +253,8 @@ export function updateEstimatedTradeValue({
 			let isValid = inputValidations.every(v => v === true)
 
 			if (isValid) {
-				const isZeroAmount = !fromAssetAmount || fromAssetAmount === '0'
+				const isZeroAmount =
+					!fromAssetAmount || parseFloat(fromAssetAmount) === 0
 				const tradeData = isZeroAmount
 					? undefined
 					: await getTradeOutData({
