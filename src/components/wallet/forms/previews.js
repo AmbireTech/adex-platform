@@ -22,8 +22,8 @@ const TokenRow = ({
 	name,
 	classes,
 	symbol,
-	share,
 	amount,
+	secondary,
 }) => (
 	<Box
 		key={address}
@@ -33,14 +33,20 @@ const TokenRow = ({
 		justifyContent='space-betweens'
 	>
 		<Box display='flex' flexDirection='row' alignItems='center'>
-			<Avatar src={logoSrc} alt={name} className={classes.labelImg} />
-			<Box>
-				{name} ({symbol})
-			</Box>
-		</Box>
-		<Box display='flex' flexDirection='row' alignItems='center'>
-			{share !== undefined && <Box>{`${share}% - `} </Box>}
-			<Box>{amount}</Box>
+			<ListItemText
+				className={classes.address}
+				primary={
+					<Box display='flex' flexDirection='row' alignItems='center'>
+						<Avatar src={logoSrc} alt={name} className={classes.labelImg} />
+						{name} ({symbol}): {amount}
+					</Box>
+				}
+				secondary={
+					<Box pl={5} component='span' display='block'>
+						{secondary}
+					</Box>
+				}
+			/>
 		</Box>
 	</Box>
 )
@@ -63,6 +69,7 @@ export const DiversifyPreview = ({ feesData = {}, assetsData }) => {
 							symbol,
 							share,
 							amount: amountOutMin,
+							secondary: t('SHARE_INFO', { args: [share] }),
 						}}
 					/>
 				)
@@ -91,9 +98,14 @@ export const TradePreview = ({
 	]
 	return (
 		<Box>
+			<Box p={1}>
+				<Alert variant='filled' severity='info'>
+					{t('WALLET_FEES_INFO_SWAP')}
+				</Alert>
+			</Box>
 			<PropRow
 				key='fromAsset'
-				left={t('fromAsset', { isProp: true })}
+				left={t('SWAP_FROM')}
 				right={
 					<TokenRow
 						{...{
@@ -102,14 +114,22 @@ export const TradePreview = ({
 							name,
 							classes,
 							symbol,
-							amount: feesData.mainActionAmountFormatted,
+							amount: feesData.totalAmountToSpendFormatted,
+							secondary: t('AMOUNT_SWAP_INFO', {
+								args: [
+									feesData.totalFeesFormatted,
+									feesData.feeTokenSymbol,
+									feesData.mainActionAmountFormatted,
+									symbol,
+								],
+							}),
 						}}
 					/>
 				}
 			/>
 			<PropRow
 				key='expectedOut'
-				left={t('toAsset', { isProp: true })}
+				left={t('SWAP_TO')}
 				right={
 					<TokenRow
 						{...{
@@ -119,25 +139,8 @@ export const TradePreview = ({
 							classes,
 							symbol: outSymbol,
 							amount: tradeData.expectedAmountOut,
+							secondary: t('SWAP_ESTIMATED_INFO'),
 						}}
-					/>
-				}
-			/>
-			<PropRow
-				key='amountToWithdraw'
-				left={t('amountToWithdraw', { isProp: true })}
-				right={
-					<ListItemText
-						className={classes.address}
-						secondary={t('AMOUNT_WITHDRAW_INFO', {
-							args: [
-								feesData.totalFeesFormatted,
-								feesData.feeTokenSymbol,
-								feesData.mainActionAmountFormatted,
-								symbol,
-							],
-						})}
-						primary={`${feesData.totalAmountToSpendFormatted} ${symbol}`}
 					/>
 				}
 			/>
