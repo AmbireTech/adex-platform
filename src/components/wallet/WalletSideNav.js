@@ -14,7 +14,7 @@ import Anchor from 'components/common/anchor/anchor'
 import AdexIconTxt from 'components/common/icons/AdexIconTxt'
 import AdexIconTxtDark from 'components/common/icons/AdexWalletTxtDark'
 import DashboardIcon from 'components/common/icons/WalletDashboard'
-import TopUpIcon from 'components/common/icons/WalletTopUp'
+// import TopUpIcon from 'components/common/icons/WalletTopUp'
 import SwapHorizontalIcon from 'components/common/icons/WalletTransactions'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
@@ -197,7 +197,7 @@ function SideNav(props) {
 							</ListItemIcon>
 							<ListItemText primary={t('DASHBOARD')} />
 						</RRListItem>
-						<RRListItem
+						{/* <RRListItem
 							button
 							to={{ pathname: '/dashboard/topup' }}
 							className={classnames(classes.navLink, {
@@ -208,7 +208,7 @@ function SideNav(props) {
 								<TopUpIcon />
 							</ListItemIcon>
 							<ListItemText primary={t('TOP_UP')} />
-						</RRListItem>
+						</RRListItem> */}
 
 						<Anchor
 							fullWidth
