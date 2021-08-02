@@ -45,7 +45,7 @@ export default function TopUp({ topUpProps }) {
 								height={1}
 							>
 								<Box mb={2}>
-									<Typography className={classes.title}>
+									<Typography component='div' className={classes.title}>
 										<Avatar
 											src={logoSrc}
 											alt={name}
