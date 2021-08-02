@@ -5,8 +5,8 @@ const paths = require('./paths')
 // Make sure that including paths.js after env.js will read .env variables.
 delete require.cache[require.resolve('./paths')]
 
-// const NODE_ENV = process.env.NODE_ENV
-const NODE_ENV = 'production'
+const NODE_ENV = process.env.NODE_ENV
+// const NODE_ENV = 'production'
 if (!NODE_ENV) {
 	throw new Error(
 		'The NODE_ENV environment variable is required but was not specified.'
@@ -125,6 +125,11 @@ function getClientEnvironment(publicUrl) {
 					process.env.ADDR_ADX_LOYALTY_POOL_TOKEN_ADDR,
 				ADDR_ADX_STAKING_POOL_TOKEN_ADDR:
 					process.env.ADDR_ADX_STAKING_POOL_TOKEN_ADDR,
+				ADDR_WALLET_ZAPPER: process.env.ADDR_WALLET_ZAPPER,
+				UNISWAP_ROUTER_V2: process.env.UNISWAP_ROUTER_V2,
+				UNISWAP_ROUTER_V3: process.env.UNISWAP_ROUTER_V3,
+				UNISWAP_QUOTER_V3: process.env.UNISWAP_QUOTER_V3,
+				AAVE_LENDING_POOL_ADDR: process.env.AAVE_LENDING_POOL_ADDR,
 			}
 		)
 
