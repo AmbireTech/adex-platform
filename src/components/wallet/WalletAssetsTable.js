@@ -49,7 +49,7 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 		name: 'name',
 		label: t('PROP_ASSET'),
 		options: {
-			filter: false,
+			filter: true,
 			sort: true,
 			customBodyRender: (value = []) => {
 				return (
@@ -65,7 +65,7 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 		name: 'balanceData',
 		label: t('balanceData', { isProp: true }),
 		options: {
-			filter: true,
+			filter: false,
 			sort: true,
 			sortCompare: order => {
 				return (obj1, obj2) => {
@@ -81,6 +81,7 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 					total,
 					symbol,
 					assetTotalToMainCurrenciesValues,
+					decimals,
 				} = balanceData
 
 				const Total = () => (
@@ -107,7 +108,11 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 					</Box>
 				)
 
-				return !specific || !specific.length ? (
+				return !specific ||
+					!specific.length ||
+					(specific &&
+						specific.length &&
+						!specific.some(x => x.balance > 0)) ? (
 					<Total />
 				) : (
 					<TreeView
@@ -128,6 +133,7 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 										unit={symbol}
 										mainFontVariant='subtitle1'
 										decimalsFontVariant='subtitle2'
+										toFixed={decimals}
 									/>
 								}
 							/>
@@ -143,6 +149,7 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 												unit={y.symbol}
 												mainFontVariant='subtitle1'
 												decimalsFontVariant='subtitle2'
+												toFixed={y.decimals}
 											/>{' '}
 											<Box>
 												{' ('}
@@ -151,6 +158,7 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 													unit={y.baseTokenBalance[0] || symbol}
 													mainFontVariant='subtitle1'
 													decimalsFontVariant='subtitle2'
+													toFixed={y.decimals}
 												/>
 												{')'}
 											</Box>
@@ -164,40 +172,44 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 			},
 		},
 	},
-	{
-		name: 'share',
-		label: t('PROP_SHARE'),
-		options: {
-			filter: false,
-			sort: true,
-			customBodyRender: (share = '') => `${share}%`,
-		},
-	},
+	// {
+	// 	name: 'share',
+	// 	label: t('PROP_SHARE'),
+	// 	options: {
+	// 		filter: false,
+	// 		sort: true,
+	// 		customBodyRender: (share = '') => `${share}%`,
+	// 	},
+	// },
 	{
 		name: 'actions',
 		label: t('ACTIONS'),
 		options: {
 			filter: false,
-			sort: true,
+			sort: false,
 			download: false,
 			customBodyRender: ({ address, symbol, name, logoSrc } = {}) => (
-				<Box key={address}>
-					<WithdrawAsset
-						size='small'
-						variant='contained'
-						color='secondary'
-						stepsProps={{ withdrawAsset: address, symbol, name }}
-						dialogWidth={512}
-						dialogHeight={800}
-					/>
-					<DepositAsset
-						size='small'
-						variant='contained'
-						color='primary'
-						dialogWidth={'calc(100vw)'}
-						dialogHeight={'calc(100vh)'}
-						topUpProps={{ address, symbol, name, logoSrc }}
-					/>
+				<Box key={address} display='flex' flexDirection='row'>
+					<Box m={0.5}>
+						<WithdrawAsset
+							size='small'
+							variant='contained'
+							color='secondary'
+							stepsProps={{ withdrawAsset: address, symbol, name }}
+							dialogWidth={512}
+							dialogHeight={800}
+						/>
+					</Box>
+					<Box m={0.5}>
+						<DepositAsset
+							size='small'
+							variant='contained'
+							color='primary'
+							dialogWidth={'calc(100vw)'}
+							dialogHeight={'calc(100vh)'}
+							topUpProps={{ address, symbol, name, logoSrc }}
+						/>
+					</Box>
 				</Box>
 			),
 		},
@@ -207,10 +219,11 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 const getOptions = ({ classes }) => ({
 	// filterType: 'multiselect',
 	sortOrder: {
-		name: 'created',
+		name: 'balance',
 		direction: 'desc',
 	},
 	selectableRows: 'none',
+	rowsPerPage: 5,
 	setRowProps: (_row, _dataIndex, rowIndex) => {
 		return {
 			className: clsx(classes.row, {
