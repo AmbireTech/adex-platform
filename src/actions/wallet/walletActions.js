@@ -450,6 +450,16 @@ export function validateWalletWithdraw({
 		let isValid = inputValidations.every(v => v === true)
 
 		if (isValid) {
+			isValid = await validateActionInputAmount({
+				validateId,
+				prop: 'amountToWithdraw',
+				value: amountToWithdraw,
+				inputTokenAddr: withdrawAsset,
+				dirty,
+			})(dispatch, getState)
+		}
+
+		if (isValid) {
 			const feeDataAction = async () =>
 				await walletWithdrawTransaction({
 					account,
