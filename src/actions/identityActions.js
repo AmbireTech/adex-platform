@@ -566,7 +566,7 @@ export function validateQuickInfo({ validateId, dirty, onValid, onInvalid }) {
 			passwordCheck,
 			tosCheck,
 			knowFrom,
-			userSide,
+			// userSide,
 			moreInfo,
 		} = identity
 
@@ -581,7 +581,7 @@ export function validateQuickInfo({ validateId, dirty, onValid, onInvalid }) {
 				dirty
 			)(dispatch),
 			validateKnowFrom(validateId, knowFrom, dirty)(dispatch),
-			validateUserSide(validateId, userSide, dirty)(dispatch),
+			// validateUserSide(validateId, userSide, dirty)(dispatch),
 			validateMoreInfo(validateId, knowFrom, moreInfo, dirty)(dispatch),
 			validateTOS(validateId, tosCheck, dirty)(dispatch),
 		])
@@ -612,7 +612,7 @@ export function validateFullInfo({ validateId, dirty, onValid, onInvalid }) {
 			emailCheck,
 			tosCheck,
 			knowFrom,
-			userSide,
+			// userSide,
 			moreInfo,
 			accessWarningCheck,
 		} = identity
@@ -630,7 +630,7 @@ export function validateFullInfo({ validateId, dirty, onValid, onInvalid }) {
 			validateEmail(validateId, email, dirty, true)(dispatch),
 			validateEmailCheck(validateId, emailCheck, email, dirty)(dispatch),
 			validateKnowFrom(validateId, knowFrom, dirty)(dispatch),
-			validateUserSide(validateId, userSide, dirty)(dispatch),
+			// validateUserSide(validateId, userSide, dirty)(dispatch),
 			validateMoreInfo(validateId, knowFrom, moreInfo, dirty)(dispatch),
 			validateTOS(validateId, tosCheck, dirty)(dispatch),
 			validateAccessWarning(validateId, accessWarningCheck, dirty)(dispatch),
