@@ -1,15 +1,17 @@
-import { BigNumber } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import { selectAccountStatsRaw, selectAccountStatsFormatted } from 'selectors'
 import { validate } from 'actions'
+import { validations } from 'adex-models'
+const { isNumberString } = validations
 
 export function validateWalletFees({
 	validateId,
 	actionName,
-	totalFeesBN,
+	// totalFeesBN,
 	feeTokenAddr,
 	totalAmountToSpendBN,
 	totalAmountToSpendFormatted,
-	mainActionAmountBN,
+	// mainActionAmountBN,
 	actionMinAmountBN,
 	actionMinAmountFormatted,
 	spendTokenAddr,
@@ -75,8 +77,8 @@ export function validateWalletFees({
 
 export function validateWalletDiversificationAssets({
 	validateId,
-	formAsset,
-	formAssetAmount,
+	// fromAsset,
+	// fromAssetAmount,
 	diversificationAssets,
 	dirty,
 }) {
@@ -117,6 +119,56 @@ export function validateWalletDiversificationAssets({
 		}
 
 		await validate(validateId, 'diversificationAssets', {
+			isValid,
+			err: { msg, args },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
+export function validateActionInputAmount({
+	validateId,
+	// actionName,
+	value,
+	inputTokenAddr,
+	prop,
+	// errorMsg = '',
+	dirty,
+}) {
+	return async function(dispatch, getState) {
+		let isValid = isNumberString(value)
+		let msg = 'ERR_INVALID_AMOUNT_VALUE'
+		let args = []
+		const state = getState()
+
+		const { assetsData = {} } = selectAccountStatsRaw(state)
+		const {
+			assetsData: assetsDataFormatted = {},
+		} = selectAccountStatsFormatted(state)
+
+		const tokenData = assetsData[inputTokenAddr]
+
+		const availableBalanceFeeAsset = tokenData.totalAvailable
+		const { symbol, decimals } = tokenData
+
+		const amount = isValid ? utils.parseUnits(value, decimals) : null
+		if (isValid && amount.isZero()) {
+			isValid = false
+			msg = 'ERR_ZERO_AMOUNT'
+		} else if (isValid && amount.gt(BigNumber.from(availableBalanceFeeAsset))) {
+			isValid = false
+			msg = 'ERR_TX_INSUFFICIENT_BALANCE'
+			args = [
+				value,
+				symbol,
+				assetsDataFormatted[inputTokenAddr].totalAvailable,
+				symbol,
+			]
+		}
+
+		await validate(validateId, prop, {
 			isValid,
 			err: { msg, args },
 			dirty,
