@@ -4,7 +4,7 @@ import dateUtils from 'helpers/dateUtils'
 import { selectAccountIdentityAddr } from './accountSelectors'
 import { SYNC_WEB3_DATA } from 'constants/spinners'
 
-const REGISTRATION_OPEN = process.env.REGISTRATION_OPEN === 'true'
+const REGISTRATION_OPEN = false //process.env.REGISTRATION_OPEN === 'true'
 
 export const selectNavTitle = state => state.memory.nav.navTitle
 export const selectSide = state => state.memory.nav.side
