@@ -211,8 +211,8 @@ export function updateEstimatedTradeValue({
 	stepsId,
 	validateId,
 	dirty,
-	onValid,
-	onInvalid,
+	// onValid,
+	// onInvalid,
 }) {
 	return async function(dispatch, getState) {
 		await updateSpinner(validateId, true)(dispatch)
