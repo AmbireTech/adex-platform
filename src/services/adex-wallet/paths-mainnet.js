@@ -89,7 +89,7 @@ function getDirectPath({ from, to }) {
 // - check for existing pools
 // - Get best price
 
-function getWETHPath({ from, to }) {
+function getWETHPath({ from, to, uniV3Only }) {
 	const fromToWETH_V3 = wethPathsUniV3[from]
 	const toToWETH_V3 = wethPathsUniV3[to]
 	const isToWETH = tokens.WETH === to
@@ -137,26 +137,28 @@ function getWETHPath({ from, to }) {
 		}
 	}
 
-	const fromToWETH_V2 = wethPathsUniV2[from]
-	const toToWETH_V2 = wethPathsUniV2[to]
+	if (!uniV3Only) {
+		const fromToWETH_V2 = wethPathsUniV2[from]
+		const toToWETH_V2 = wethPathsUniV2[to]
 
-	if (fromToWETH_V2 && (toToWETH_V2 || isToWETH)) {
-		return {
-			router: 'uniV2',
-			path,
+		if (fromToWETH_V2 && (toToWETH_V2 || isToWETH)) {
+			return {
+				router: 'uniV2',
+				path,
+			}
 		}
 	}
 
 	return false
 }
 
-export function getPath({ from, to }) {
+export function getPath({ from, to, uniV3Only }) {
 	const directPath = getDirectPath({ from, to })
-	if (directPath) {
+	if (directPath && (!uniV3Only || directPath.router === 'uniV3')) {
 		return directPath
 	}
 
-	const WETHThroughPath = getWETHPath({ from, to })
+	const WETHThroughPath = getWETHPath({ from, to, uniV3Only })
 
 	if (WETHThroughPath) {
 		return WETHThroughPath
