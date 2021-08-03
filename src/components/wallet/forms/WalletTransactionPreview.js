@@ -33,11 +33,14 @@ import {
 	selectAccount,
 	selectNewTransactionById,
 	selectAccountStatsRaw,
+	selectMainCurrency,
+	selectBaseAssetsPrices,
 } from 'selectors'
 import { execute, checkNetworkCongestion } from 'actions'
 
 import { HelpSharp as HelpIcon } from '@material-ui/icons'
 import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
+import { getMainCurrencyValue } from 'helpers/wallet'
 
 const useStyles = makeStyles(styles)
 
@@ -56,6 +59,15 @@ function TransactionPreview(props) {
 	const [networkCongested, setNetworkCongested] = useState(false)
 	const { assetsData = {} } = useSelector(selectAccountStatsRaw)
 	const { totalFeesFormatted, feeTokenSymbol } = feesData
+	const prices = useSelector(selectBaseAssetsPrices)
+	const mainCurrency = useSelector(selectMainCurrency)
+
+	const feesMainCurrencyValue = getMainCurrencyValue({
+		asset: feeTokenSymbol,
+		floatAmount: totalFeesFormatted,
+		prices,
+		mainCurrency,
+	})
 
 	useEffect(() => {
 		async function checkNetwork() {
@@ -118,19 +130,27 @@ function TransactionPreview(props) {
 							: null}
 
 						{stepsId === 'walletSwapForm' && (
-							<TradePreview assetsData={assetsData} feesData={feesData} />
+							<TradePreview
+								{...{ prices, mainCurrency, assetsData, feesData }}
+							/>
 						)}
 
 						{stepsId === 'walletDiversifyForm' && (
-							<DiversifyPreview assetsData={assetsData} feesData={feesData} />
+							<DiversifyPreview
+								{...{ prices, mainCurrency, assetsData, feesData }}
+							/>
 						)}
 
 						{stepsId.includes('walletWithdraw-') && (
 							<WithdrawPreview
-								assetsData={assetsData}
-								withdrawTo={withdrawTo}
-								symbol={feeTokenSymbol}
-								feesData={feesData}
+								{...{
+									prices,
+									mainCurrency,
+									assetsData,
+									feesData,
+									withdrawTo,
+									symbol: feeTokenSymbol,
+								}}
 							/>
 						)}
 
@@ -150,7 +170,12 @@ function TransactionPreview(props) {
 										>
 											<Box>
 												{t('WALLET_FEES_BREAKDOWN_ADVANCED_LABEL', {
-													args: [totalFeesFormatted, feeTokenSymbol],
+													args: [
+														totalFeesFormatted,
+														feeTokenSymbol,
+														feesMainCurrencyValue,
+														mainCurrency.symbol,
+													],
 												})}
 											</Box>
 											<Box>
