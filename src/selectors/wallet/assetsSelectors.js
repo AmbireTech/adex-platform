@@ -5,7 +5,7 @@ import {
 } from 'selectors'
 import { createSelector } from 'reselect'
 import { assets } from 'services/adex-wallet'
-import { getPath, tokens } from 'services/adex-wallet'
+import { getPath, tokens, getLogo } from 'services/adex-wallet'
 
 export const selectTradableAssetsFromSources = createSelector(
 	[selectAccountStatsFormatted],
@@ -13,7 +13,7 @@ export const selectTradableAssetsFromSources = createSelector(
 		return Object.values(assetsData).map(x => ({
 			value: x.address,
 			label: `${x.symbol}`,
-			imgSrc: (assets[x.address] || {}).logoSrc,
+			imgSrc: getLogo(x.address),
 		}))
 	}
 )
@@ -40,7 +40,7 @@ export const selectDiversifiableAssetsFromSources = createSelector(
 			.map(x => ({
 				value: x.address,
 				label: `${x.symbol}`,
-				imgSrc: (assets[x.address] || {}).logoSrc,
+				imgSrc: getLogo(x.address),
 			}))
 	}
 )
@@ -53,7 +53,7 @@ export const selectTradableAssetsToSources = createSelector(
 			.map(([addr, x]) => ({
 				value: addr,
 				label: `${x.symbol}`,
-				imgSrc: x.logoSrc,
+				imgSrc: getLogo(x.symbol),
 			}))
 	}
 )
@@ -73,11 +73,10 @@ export const selectWalletAssetsTableData = createSelector(
 	[selectAccountStatsFormatted],
 	({ assetsData = {} } = {}) => {
 		return Object.values(assetsData).map(
-			({ symbol, name, logoSrc, balance, specific, address, ...rest }) => {
+			({ symbol, name, balance, specific, address, ...rest }) => {
 				return {
 					// nameFilter: name,
-					name: [name, logoSrc],
-					logo: { logoSrc, name },
+					name: [name, symbol],
 					symbol,
 					balance: parseFloat(balance),
 					balanceData: [
@@ -85,7 +84,6 @@ export const selectWalletAssetsTableData = createSelector(
 						{
 							symbol,
 							name,
-							logoSrc,
 							balance,
 							specific,
 							address,
@@ -93,7 +91,6 @@ export const selectWalletAssetsTableData = createSelector(
 						},
 					],
 					actions: {
-						logoSrc,
 						address,
 						symbol,
 						name,

@@ -16,6 +16,7 @@ import { FiatProviders, CryptoProviders } from './Ramp'
 import ReactGA from 'react-ga'
 import { useTheme } from '@material-ui/core/styles'
 import TopUpChangelly from 'components/dashboard/deposit/TopUpChangelly'
+import { getLogo } from 'services/adex-wallet'
 
 const useStyles = makeStyles(styles)
 
@@ -27,7 +28,11 @@ export default function TopUp({ topUpProps }) {
 	const email = useSelector(selectEmail)
 	const side = useSelector(selectSide)
 
-	const { address, symbol, name, logoSrc } = topUpProps
+	const {
+		//  address,
+		symbol,
+		name,
+	} = topUpProps
 
 	return (
 		<Box p={2}>
@@ -47,7 +52,7 @@ export default function TopUp({ topUpProps }) {
 								<Box mb={2}>
 									<Typography component='div' className={classes.title}>
 										<Avatar
-											src={logoSrc}
+											src={getLogo(symbol)}
 											alt={name}
 											className={classes.labelImg}
 										/>{' '}

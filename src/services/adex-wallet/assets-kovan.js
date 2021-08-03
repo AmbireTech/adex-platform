@@ -10,6 +10,8 @@ import ETH_LOGO from 'resources/token-logos/ETH.png'
 import UNI_LOGO from 'resources/token-logos/UNI.png'
 import DAI_LOGO from 'resources/token-logos/DAI.svg'
 import LINK_LOGO from 'resources/token-logos/LINK.png'
+import ADX_WALLET_LOGO from 'resources/wallet/logo.png'
+
 // import BTC_LOGO from 'resources/token-logos/BTC.png'
 const { ADXLoyaltyPoolToken, StakingPool, ADXToken, ERC20 } = contracts
 
@@ -91,6 +93,23 @@ const getERC20Balance = async ({ tokenAddress, address }) => {
 	const balance = await token.balanceOf(address)
 
 	return balance
+}
+
+const logos = {
+	[ADXToken.address]: ADX_LOGO,
+	[ADXLoyaltyPoolToken.address]: ADX_LOGO,
+	[StakingPool.address]: ADX_LOGO,
+	[tokens.USDT]: USDT_LOGO,
+	[tokens.WETH]: ETH_LOGO,
+	[tokens.UNI]: UNI_LOGO,
+	[tokens.DAI]: DAI_LOGO,
+	[tokens.LINK]: LINK_LOGO,
+}
+
+export const getLogo = addressOrSymbol => {
+	return (
+		logos[addressOrSymbol] || logos[tokens[addressOrSymbol]] || ADX_WALLET_LOGO
+	)
 }
 
 export const assets = {
@@ -305,4 +324,5 @@ export const assetsKovan = {
 	tokens,
 	assets,
 	mappers,
+	getLogo,
 }
