@@ -482,7 +482,7 @@ async function getWalletTradeTxns({
 			feeTokenAddr,
 			data,
 			// TODO: gas limits for each swap in the trade
-			operationsGasLimits: [GAS_LIMITS.swapV2],
+			operationsGasLimits: [...path].slice(1).map(() => GAS_LIMITS.swapV2),
 		})
 	} else if (router === 'uniV3') {
 		const deadline = Math.floor((Date.now() + DEADLINE) / 1000)
