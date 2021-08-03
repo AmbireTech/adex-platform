@@ -101,12 +101,15 @@ const TradeData = ({
 }) => (
 	<Paper>
 		<Box p={2}>
-			<DataRow left={t('router')} right={router} />
-			<DataRow left={t('routeTokens')} right={routeTokens.join(' > ')} />
-			<DataRow left={t('minimumAmountOut')} right={minimumAmountOut} />
-			<DataRow left={t('priceImpact')} right={priceImpact} />
-			<DataRow left={t('executionPrice')} right={executionPrice} />
-			<DataRow left={t('slippageTolerance')} right={slippageTolerance} />
+			<DataRow left={t('SWAP_DATA_ROUTER')} right={router} />
+			<DataRow left={t('SWAP_DATA_PATH')} right={routeTokens.join(' > ')} />
+			<DataRow left={t('SWAP_DATA_PRICE_IMPACT')} right={priceImpact} />
+			<DataRow left={t('SWAP_DATA_MIN_RECEIVED')} right={minimumAmountOut} />
+			<DataRow
+				left={t('SWAP_DATA_SLIPPAGE_TOLERANCE')}
+				right={slippageTolerance}
+			/>
+			{/* <DataRow left={t('SWAP_DATA_EXECUTION_PRICE')} right={executionPrice} /> */}
 		</Box>
 	</Paper>
 )
@@ -153,9 +156,9 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	const assetsFromSource = useSelector(selectTradableAssetsFromSources)
 	const assetsToSource = useSelector(selectTradableAssetsToSources)
 	const mainCurrency = { id: 'USD', symbol: '$' } // TODO selector
-	// const estimatingSpinner = useSelector(state =>
-	// 	selectSpinnerById(state, validateId)
-	// )
+	const estimatingSpinner = useSelector(state =>
+		selectSpinnerById(state, validateId)
+	)
 
 	const {
 		fromAsset = '',
@@ -445,7 +448,12 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 								</Grid>
 							</Box>
 						</Paper>
-						<Box my={1}>
+						<Box
+							my={1}
+							display='flex'
+							flexDirection='row'
+							justifyContent='center'
+						>
 							<IconButton onClick={swapFromTo} color='secondary'>
 								<SwapVert />
 							</IconButton>
@@ -485,15 +493,6 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 											}
 											name='amountToWithdraw'
 											value={`${toAssetAmount || 'N/A'}`}
-											helperText={
-												<AmountWithCurrency
-													amount={selectedToAssetMainCurrencyValue}
-													unit={mainCurrency.symbol}
-													unitPlace='left'
-													mainFontVariant='body1'
-													decimalsFontVariant='caption'
-												/>
-											}
 											InputProps={{
 												classes: {
 													root: classes.leftInput,
@@ -541,6 +540,31 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 											}
 										/>
 									</Grid>
+									{tradeData && !estimatingSpinner && (
+										<Grid item xs={12}>
+											<Box
+												mt={1}
+												display='flex'
+												flexDirection='row'
+												justifyContent='space-between'
+											>
+												<Box>
+													<AmountWithCurrency
+														amount={selectedToAssetMainCurrencyValue}
+														unit={mainCurrency.symbol}
+														unitPlace='left'
+														mainFontVariant='body1'
+														decimalsFontVariant='caption'
+													/>
+												</Box>
+
+												<Box>
+													1 {selectedFromAsset.symbol} ={' '}
+													{tradeData.executionPrice} {selectedToAsset.symbol}
+												</Box>
+											</Box>
+										</Grid>
+									)}
 									{/* <Grid item xs={12}>
 										<Box mt={2}>
 											<FormControl>

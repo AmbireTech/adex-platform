@@ -2,7 +2,7 @@ import { getEthers } from 'services/smart-contracts/ethers'
 import { BigNumber, utils } from 'ethers'
 import { formatTokenAmount } from 'helpers/formatters'
 import { AUTH_TYPES } from 'constants/misc'
-import { privilegesNames, getWithdrawTokensBalances } from './stats'
+import { privilegesNames } from './stats'
 // import { getPrices } from 'services/prices'
 import { assets, mappers } from 'services/adex-wallet'
 

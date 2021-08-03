@@ -264,6 +264,9 @@ export async function getTradeOutData({
 		const executionPrice = trade.executionPrice.toSignificant(
 			SIGNIFICANT_DIGITS
 		)
+		const executionPriceInverted = trade.executionPrice
+			.invert()
+			.toSignificant(SIGNIFICANT_DIGITS)
 
 		const slippageTolerance = new PercentV2(5, 1000)
 		const minimumAmountOut = trade
@@ -281,6 +284,7 @@ export async function getTradeOutData({
 			midPrice,
 			priceImpact,
 			executionPrice,
+			executionPriceInverted,
 			expectedAmountOut,
 			slippageTolerance: slippageTolerance.toSignificant(2),
 			routeTokens,
@@ -353,6 +357,9 @@ export async function getTradeOutData({
 		const executionPrice = trade.executionPrice.toSignificant(
 			SIGNIFICANT_DIGITS
 		)
+		const executionPriceInverted = trade.executionPrice
+			.invert()
+			.toSignificant(SIGNIFICANT_DIGITS)
 		const expectedAmountOut = trade.executionPrice
 			.quote(trade.inputAmount)
 			.toSignificant(SIGNIFICANT_DIGITS)
@@ -364,6 +371,7 @@ export async function getTradeOutData({
 			minimumAmountOut,
 			priceImpact,
 			executionPrice,
+			executionPriceInverted,
 			slippageTolerance: slippageTolerance.toSignificant(2),
 			routeTokens,
 			router,
