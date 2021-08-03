@@ -897,8 +897,7 @@ async function getDiversificationTxns({
 
 			tokensOutData.push({
 				address: asset.address,
-				// share: asset.share,
-				share: flattedShare,
+				share: asset.share,
 				amountOutMin: minimumAmountOut,
 				wrap,
 			})
@@ -906,8 +905,8 @@ async function getDiversificationTxns({
 			return [
 				asset.address,
 				pool.fee,
-				Math.round(Math.floor(asset.share * 10)),
-				utils.parseUnits(minimumAmountOut, to.decimals).toString(),
+				flattedShare,
+				utils.parseUnits(minimumAmountOut, to.decimals).toHexString(),
 				wrap,
 			]
 		})
