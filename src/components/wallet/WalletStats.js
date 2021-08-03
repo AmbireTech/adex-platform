@@ -168,6 +168,7 @@ function WalletStats() {
 					>
 						<Box>
 							<AmountWithCurrency
+								toFixed={2}
 								amount={totalMainCurrenciesValues[mainCurrency.id]}
 								unit={'$'}
 								unitPlace='left'

@@ -161,6 +161,7 @@ function SideNav(props) {
 										{t('WALLET_BALANCE')}
 									</Typography>
 									<AmountWithCurrency
+										toFixed={2}
 										amount={totalMainCurrenciesValues['USD'] || 0}
 										unit={'$'}
 										unitPlace='left'
