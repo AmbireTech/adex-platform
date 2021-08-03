@@ -74,7 +74,6 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 			sort: true,
 			sortCompare: order => {
 				return (obj1, obj2) => {
-					console.log('obj1', obj1)
 					const a =
 						(obj1.data[1].assetTotalToMainCurrenciesValues || {})['USD'] ||
 						obj1.data[0]
@@ -96,15 +95,19 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 
 				const Total = () => (
 					<Box className={classes.amountContainer}>
-						<AmountWithCurrency
-							amount={total}
-							unit={symbol}
-							mainFontVariant='subtitle1'
-							decimalsFontVariant='subtitle2'
-						/>{' '}
-						<Box>
-							{'('}{' '}
+						<Box mr={0.5}>
 							<AmountWithCurrency
+								amount={total}
+								unit={symbol}
+								mainFontVariant='subtitle1'
+								decimalsFontVariant='subtitle2'
+								toFixed={decimals}
+							/>
+						</Box>
+						<Box>
+							{'('}
+							<AmountWithCurrency
+								toFixed={2}
 								amount={
 									(assetTotalToMainCurrenciesValues || {})[mainCurrency.id]
 								}
@@ -154,15 +157,17 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 									nodeId={`${y.address}-${index}`}
 									label={
 										<Box className={classes.amountContainer}>
-											<AmountWithCurrency
-												amount={y.balance}
-												unit={y.symbol}
-												mainFontVariant='subtitle1'
-												decimalsFontVariant='subtitle2'
-												toFixed={y.decimals}
-											/>{' '}
+											<Box mr={0.5}>
+												<AmountWithCurrency
+													amount={y.balance}
+													unit={y.symbol}
+													mainFontVariant='subtitle1'
+													decimalsFontVariant='subtitle2'
+													toFixed={y.decimals}
+												/>
+											</Box>
 											<Box>
-												{' ('}
+												{'('}
 												<AmountWithCurrency
 													amount={y.baseTokenBalance[1]}
 													unit={y.baseTokenBalance[0] || symbol}
@@ -215,8 +220,8 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 							size='small'
 							variant='contained'
 							color='primary'
-							dialogWidth={'calc(100vw)'}
-							dialogHeight={'calc(100vh)'}
+							dialogWidth={'100%'}
+							dialogHeight={'100%'}
 							topUpProps={{ address, symbol, name, logoSrc }}
 						/>
 					</Box>
