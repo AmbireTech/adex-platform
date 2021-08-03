@@ -940,7 +940,7 @@ async function getDiversificationTxns({
 				: [GAS_LIMITS.swapV3]
 			limits = [...limits, ...tradeLimits]
 			return limits
-		}, []),
+		}, extraGasOperations),
 	})
 
 	const txnsWithNonceAndFees = await getWalletIdentityTxnsWithNoncesAndFees({
