@@ -37,6 +37,7 @@ import {
 	selectAccountStatsRaw,
 	selectBaseAssetsPrices,
 	selectSpinnerById,
+	selectMainCurrency,
 } from 'selectors'
 import {
 	execute,
@@ -46,6 +47,7 @@ import {
 import { Alert } from '@material-ui/lab'
 import Dropdown from 'components/common/dropdown'
 import { formatTokenAmount } from 'helpers/formatters'
+import { getMainCurrencyValue } from 'helpers/wallet'
 
 const styles = theme => {
 	return {
@@ -72,12 +74,6 @@ const styles = theme => {
 const useStyles = makeStyles(styles)
 
 const ZERO = BigNumber.from(0)
-
-const getMainCurrencyValue = ({ asset, floatAmount, prices, mainCurrency }) => {
-	const price = (prices[asset] || {})[mainCurrency] || 0
-	const value = parseFloat(floatAmount) * price
-	return value.toFixed(2)
-}
 
 const DataRow = ({ left, right }) => (
 	<Box
@@ -153,9 +149,10 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	const [selectedPercent, setSelectedPercent] = useState(0)
 	const { assetsData = {} } = useSelector(selectAccountStatsRaw)
 	const prices = useSelector(selectBaseAssetsPrices)
+	const mainCurrency = useSelector(selectMainCurrency)
 	const assetsFromSource = useSelector(selectTradableAssetsFromSources)
 	const assetsToSource = useSelector(selectTradableAssetsToSources)
-	const mainCurrency = { id: 'USD', symbol: '$' } // TODO selector
+
 	const estimatingSpinner = useSelector(state =>
 		selectSpinnerById(state, validateId)
 	)
@@ -559,8 +556,9 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 												</Box>
 
 												<Box>
-													1 {selectedFromAsset.symbol} ={' '}
-													{tradeData.executionPrice} {selectedToAsset.symbol}
+													1 {selectedToAsset.symbol} ={' '}
+													{tradeData.executionPriceInverted}{' '}
+													{selectedFromAsset.symbol}
 												</Box>
 											</Box>
 										</Grid>
