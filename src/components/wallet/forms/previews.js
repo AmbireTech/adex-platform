@@ -5,6 +5,7 @@ import { Alert } from '@material-ui/lab'
 import { PropRow } from 'components/common/dialog/content'
 import { t } from 'selectors'
 import { getLogo } from 'services/adex-wallet'
+import { getMainCurrencyValue } from 'helpers/wallet'
 
 const styles = theme => {
 	return {
@@ -23,6 +24,8 @@ const TokenRow = ({
 	classes,
 	symbol,
 	amount,
+	amountMainCurrency,
+	mainCurrency,
 	secondary,
 }) => (
 	<Box
@@ -36,12 +39,23 @@ const TokenRow = ({
 				className={classes.address}
 				primary={
 					<Box display='flex' flexDirection='row' alignItems='center'>
-						<Avatar
-							src={getLogo(symbol)}
-							alt={name}
-							className={classes.labelImg}
-						/>
-						{name} ({symbol}): {amount}
+						<Box mr={0.5}>
+							<Avatar
+								src={getLogo(symbol)}
+								alt={name}
+								className={classes.labelImg}
+							/>
+						</Box>
+						<Box mr={0.5}>{name}</Box>
+						<Box mr={0.5}>({symbol}):</Box>
+						<Box mr={0.5}>{amount}</Box>
+						{amountMainCurrency && !!mainCurrency && (
+							<Box mr={0.5} color='text.secondary' fontSize='caption.fontSize'>
+								{mainCurrency.symbolPosition === 'left'
+									? `(${mainCurrency.symbol} ${amountMainCurrency})`
+									: `${amountMainCurrency} {${mainCurrency.symbol}}`}
+							</Box>
+						)}
 					</Box>
 				}
 				secondary={
@@ -55,16 +69,27 @@ const TokenRow = ({
 )
 
 const useStyles = makeStyles(styles)
-export const DiversifyPreview = ({ feesData = {}, assetsData }) => {
+export const DiversifyPreview = ({
+	feesData = {},
+	assetsData,
+	prices,
+	mainCurrency,
+}) => {
 	const classes = useStyles()
 	const { spendTokenAddr } = feesData
 	const { tokensOutData = [] } = feesData.actionMeta || {}
 	const fromAssetData = assetsData[spendTokenAddr] || {}
+	const { name, symbol } = fromAssetData
+	const fromMainCurrencyValue = getMainCurrencyValue({
+		asset: symbol,
+		floatAmount: feesData.totalAmountToSpendFormatted,
+		prices,
+		mainCurrency,
+	})
 
 	// console.log('fromAssetData', fromAssetData)
 	// console.log('feesData', feesData)
 
-	const { name, symbol } = fromAssetData
 	return (
 		<Box>
 			<Box p={1}>
@@ -83,6 +108,8 @@ export const DiversifyPreview = ({ feesData = {}, assetsData }) => {
 							classes,
 							symbol,
 							amount: feesData.totalAmountToSpendFormatted,
+							amountMainCurrency: fromMainCurrencyValue,
+							mainCurrency,
 							secondary: t('AMOUNT_SWAP_INFO', {
 								args: [
 									feesData.totalFeesFormatted,
@@ -102,6 +129,12 @@ export const DiversifyPreview = ({ feesData = {}, assetsData }) => {
 					<Box>
 						{tokensOutData.map(({ address, amountOutMin, share }) => {
 							const { name, symbol } = assetsData[address]
+							const amountMainCurrency = getMainCurrencyValue({
+								asset: symbol,
+								floatAmount: amountOutMin,
+								prices,
+								mainCurrency,
+							})
 							return (
 								<TokenRow
 									key={address}
@@ -112,6 +145,8 @@ export const DiversifyPreview = ({ feesData = {}, assetsData }) => {
 										symbol,
 										share,
 										amount: amountOutMin,
+										amountMainCurrency,
+										mainCurrency,
 										secondary: t('SHARE_INFO', { args: [share] }),
 									}}
 								/>
@@ -129,6 +164,8 @@ export const TradePreview = ({
 	feesData,
 	// symbol = 'xx',
 	assetsData,
+	prices,
+	mainCurrency,
 }) => {
 	const classes = useStyles()
 
@@ -141,6 +178,20 @@ export const TradePreview = ({
 	const { name, symbol } = fromAssetData
 	const { name: outName, symbol: outSymbol } =
 		assetsData[tradeData.toAsset] || {}
+
+	const fromMainCurrencyValue = getMainCurrencyValue({
+		asset: symbol,
+		floatAmount: feesData.totalAmountToSpendFormatted,
+		prices,
+		mainCurrency,
+	})
+
+	const ftoMainCurrencyValue = getMainCurrencyValue({
+		asset: outSymbol,
+		floatAmount: tradeData.expectedAmountOut,
+		prices,
+		mainCurrency,
+	})
 	return (
 		<Box>
 			<Box p={1}>
@@ -159,6 +210,8 @@ export const TradePreview = ({
 							classes,
 							symbol,
 							amount: feesData.totalAmountToSpendFormatted,
+							amountMainCurrency: fromMainCurrencyValue,
+							mainCurrency,
 							secondary: t('AMOUNT_SWAP_INFO', {
 								args: [
 									feesData.totalFeesFormatted,
@@ -182,6 +235,8 @@ export const TradePreview = ({
 							classes,
 							symbol: outSymbol,
 							amount: tradeData.expectedAmountOut,
+							amountMainCurrency: ftoMainCurrencyValue,
+							mainCurrency,
 							secondary: t('SWAP_ESTIMATED_INFO'),
 						}}
 					/>
@@ -191,9 +246,23 @@ export const TradePreview = ({
 	)
 }
 
-export const WithdrawPreview = ({ withdrawTo, feesData, assetsData }) => {
+export const WithdrawPreview = ({
+	withdrawTo,
+	feesData,
+	assetsData,
+	prices,
+	mainCurrency,
+}) => {
 	const classes = useStyles()
 	const { symbol, name } = assetsData[feesData.spendTokenAddr] || {}
+
+	const amountMainCurrency = getMainCurrencyValue({
+		asset: symbol,
+		floatAmount: feesData.totalAmountToSpendFormatted,
+		prices,
+		mainCurrency,
+	})
+
 	return (
 		<Box>
 			<Box p={1}>
@@ -225,6 +294,8 @@ export const WithdrawPreview = ({ withdrawTo, feesData, assetsData }) => {
 							classes,
 							symbol,
 							amount: feesData.totalAmountToSpendFormatted,
+							amountMainCurrency,
+							mainCurrency,
 							secondary: t('AMOUNT_WITHDRAW_INFO', {
 								args: [
 									feesData.totalFeesFormatted,
