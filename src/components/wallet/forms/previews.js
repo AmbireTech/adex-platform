@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import { Alert } from '@material-ui/lab'
 import { PropRow } from 'components/common/dialog/content'
 import { t } from 'selectors'
+import { getLogo } from 'services/adex-wallet'
 
 const styles = theme => {
 	return {
@@ -17,8 +18,7 @@ const styles = theme => {
 }
 
 const TokenRow = ({
-	address,
-	logoSrc,
+	// address,
 	name,
 	classes,
 	symbol,
@@ -36,7 +36,11 @@ const TokenRow = ({
 				className={classes.address}
 				primary={
 					<Box display='flex' flexDirection='row' alignItems='center'>
-						<Avatar src={logoSrc} alt={name} className={classes.labelImg} />
+						<Avatar
+							src={getLogo(symbol)}
+							alt={name}
+							className={classes.labelImg}
+						/>
 						{name} ({symbol}): {amount}
 					</Box>
 				}
@@ -60,7 +64,7 @@ export const DiversifyPreview = ({ feesData = {}, assetsData }) => {
 	// console.log('fromAssetData', fromAssetData)
 	// console.log('feesData', feesData)
 
-	const { logoSrc, name, symbol } = fromAssetData
+	const { name, symbol } = fromAssetData
 	return (
 		<Box>
 			<Box p={1}>
@@ -75,7 +79,6 @@ export const DiversifyPreview = ({ feesData = {}, assetsData }) => {
 					<TokenRow
 						{...{
 							address: spendTokenAddr,
-							logoSrc,
 							name,
 							classes,
 							symbol,
@@ -98,13 +101,12 @@ export const DiversifyPreview = ({ feesData = {}, assetsData }) => {
 				right={
 					<Box>
 						{tokensOutData.map(({ address, amountOutMin, share }) => {
-							const { logoSrc, name, symbol } = assetsData[address]
+							const { name, symbol } = assetsData[address]
 							return (
 								<TokenRow
 									key={address}
 									{...{
 										address,
-										logoSrc,
 										name,
 										classes,
 										symbol,
@@ -136,8 +138,8 @@ export const TradePreview = ({
 	// console.log('fromAssetData', fromAssetData)
 	// console.log('feesData', feesData)
 
-	const { logoSrc, name, symbol } = fromAssetData
-	const { logoSrc: outLogoSrc, name: outName, symbol: outSymbol } =
+	const { name, symbol } = fromAssetData
+	const { name: outName, symbol: outSymbol } =
 		assetsData[tradeData.toAsset] || {}
 	return (
 		<Box>
@@ -153,7 +155,6 @@ export const TradePreview = ({
 					<TokenRow
 						{...{
 							address: feesData.spendTokenAddr,
-							logoSrc,
 							name,
 							classes,
 							symbol,
@@ -177,7 +178,6 @@ export const TradePreview = ({
 					<TokenRow
 						{...{
 							address: feesData.spendTokenAddr,
-							logoSrc: outLogoSrc,
 							name: outName,
 							classes,
 							symbol: outSymbol,
@@ -193,7 +193,7 @@ export const TradePreview = ({
 
 export const WithdrawPreview = ({ withdrawTo, feesData, assetsData }) => {
 	const classes = useStyles()
-	const { symbol, name, logoSrc } = assetsData[feesData.spendTokenAddr] || {}
+	const { symbol, name } = assetsData[feesData.spendTokenAddr] || {}
 	return (
 		<Box>
 			<Box p={1}>
@@ -221,7 +221,6 @@ export const WithdrawPreview = ({ withdrawTo, feesData, assetsData }) => {
 					<TokenRow
 						{...{
 							address: feesData.spendTokenAddr,
-							logoSrc,
 							name,
 							classes,
 							symbol,

@@ -7,6 +7,7 @@ import { Box, Avatar } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { AmountWithCurrency } from 'components/common/amount'
 import { selectMainCurrency } from 'selectors'
+import { getLogo } from 'services/adex-wallet'
 import clsx from 'clsx'
 import {
 	t,
@@ -54,8 +55,12 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 			customBodyRender: (value = []) => {
 				return (
 					<Box display='flex' flexDirection='row' alignItems='center'>
-						<Avatar src={value[1]} alt={value[0]} className={classes.logo} />
-						{value[0]}
+						<Avatar
+							src={getLogo(value[1])}
+							alt={value[0]}
+							className={classes.logo}
+						/>
+						{value[0]} ({value[1]})
 					</Box>
 				)
 			},
@@ -69,8 +74,13 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 			sort: true,
 			sortCompare: order => {
 				return (obj1, obj2) => {
-					const [a] = obj1.data
-					const [b] = obj2.data
+					console.log('obj1', obj1)
+					const a =
+						(obj1.data[1].assetTotalToMainCurrenciesValues || {})['USD'] ||
+						obj1.data[0]
+					const b =
+						(obj2.data[1].assetTotalToMainCurrenciesValues || {})['USD'] ||
+						obj2.data[0]
 					return (a - b) * (order === 'desc' ? -1 : 1)
 				}
 			},

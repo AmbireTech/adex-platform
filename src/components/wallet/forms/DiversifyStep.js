@@ -40,16 +40,13 @@ import {
 	selectAccountStatsRaw,
 	selectMainCurrency,
 } from 'selectors'
-import {
-	execute,
-	updateNewTransaction,
-	updateEstimatedTradeValue,
-} from 'actions'
+import { execute, updateNewTransaction } from 'actions'
 import { Alert } from '@material-ui/lab'
 import Dropdown from 'components/common/dropdown'
 import { formatTokenAmount } from 'helpers/formatters'
 import { diversificationPresets } from 'services/adex-wallet/diversifications'
 import { IconButton } from '@material-ui/core'
+import { getLogo } from 'services/adex-wallet'
 
 const styles = theme => {
 	return {
@@ -299,7 +296,6 @@ const SelectedDoughnut = ({
 const AssetSelector = ({
 	index,
 	address,
-	logoSrc,
 	symbol,
 	name,
 	share,
@@ -325,7 +321,11 @@ const AssetSelector = ({
 					justifyContent='space-between'
 				>
 					<Box display='flex' flexDirection='row' alignItems='center'>
-						<Avatar src={logoSrc} alt={name} className={classes.labelImg} />
+						<Avatar
+							src={getLogo(symbol)}
+							alt={name}
+							className={classes.labelImg}
+						/>
 						<Box>
 							{name} ({symbol})
 						</Box>

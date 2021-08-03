@@ -10,6 +10,7 @@ import USDC_LOGO from 'resources/token-logos/USDC.png'
 import WBTC_LOGO from 'resources/token-logos/WBTC.png'
 import ETH_LOGO from 'resources/token-logos/ETH.png'
 import WETH_LOGO from 'resources/token-logos/WETH.png'
+import ADX_WALLET_LOGO from 'resources/wallet/logo.png'
 // import UNI_LOGO from 'resources/token-logos/UNI.png'
 // import DAI_LOGO from 'resources/token-logos/DAI.svg'
 // import LINK_LOGO from 'resources/token-logos/LINK.png'
@@ -69,6 +70,21 @@ const getERC20Balance = async ({ tokenAddress, address }) => {
 	const balance = await token.balanceOf(address)
 
 	return balance
+}
+
+const logos = {
+	[ADXToken.address]: ADX_LOGO,
+	[ADXLoyaltyPoolToken.address]: ADX_LOGO,
+	[StakingPool.address]: ADX_LOGO,
+	[tokens.USDC]: USDC_LOGO,
+	[tokens.WETH]: WETH_LOGO,
+	[tokens.WBTC]: WBTC_LOGO,
+}
+
+export const getLogo = addressOrSymbol => {
+	return (
+		logos[addressOrSymbol] || logos[tokens[addressOrSymbol]] || ADX_WALLET_LOGO
+	)
 }
 
 export const assets = {
@@ -231,4 +247,5 @@ export const assetsMainnet = {
 	tokens,
 	assets,
 	mappers,
+	getLogo,
 }

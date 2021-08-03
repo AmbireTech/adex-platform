@@ -1,7 +1,6 @@
 import { getEthers } from 'services/smart-contracts/ethers'
 import { BigNumber, utils } from 'ethers'
 import { formatTokenAmount } from 'helpers/formatters'
-import { selectMainToken } from 'selectors'
 import { AUTH_TYPES } from 'constants/misc'
 import { privilegesNames, getWithdrawTokensBalances } from './stats'
 // import { getPrices } from 'services/prices'
@@ -20,7 +19,6 @@ async function getAssetsData({ identityAddress, authType }) {
 						symbol,
 						decimals,
 						name,
-						logoSrc,
 						isSwappable,
 						isAaveInterestToken,
 					},
@@ -36,7 +34,6 @@ async function getAssetsData({ identityAddress, authType }) {
 						baseTokenBalance,
 						decimals,
 						name,
-						logoSrc,
 						isSwappable,
 						isAaveInterestToken,
 					}
