@@ -352,7 +352,7 @@ export function validateWalletDiversify({
 				stepsId,
 				validateId,
 				dirty,
-				actionName: 'walletTrade',
+				actionName: 'walletDiversify',
 				feeDataAction,
 			})(dispatch, getState)
 		}

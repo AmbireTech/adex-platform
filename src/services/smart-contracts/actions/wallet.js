@@ -9,7 +9,6 @@ import {
 } from 'services/smart-contracts/actions/identity'
 import { selectMainToken } from 'selectors'
 import { AUTH_TYPES, EXECUTE_ACTIONS } from 'constants/misc'
-import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
 
 import {
 	computePoolAddress,
@@ -47,6 +46,7 @@ import {
 } from './walletIdentity'
 import { formatTokenAmount } from 'helpers/formatters'
 import { t } from 'selectors'
+import { formatUnits } from 'ethers/lib/utils'
 
 const UNI_V3_FACTORY_ADDR = '0x1F98431c8aD98523631AE4a59f267346ea31F984'
 const SIGNIFICANT_DIGITS = 6
@@ -224,6 +224,8 @@ export async function getTradeOutData({
 	fromAssetAmount,
 	fromAssetAmountBN,
 	toAsset,
+	uniV3Only,
+	// slippageTolerance, // TODO:!!!
 }) {
 	const {
 		// UniSwapRouterV2,
@@ -234,7 +236,14 @@ export async function getTradeOutData({
 	const { path, router, pools } = await getPath({
 		from: fromAsset,
 		to: toAsset,
+		uniV3Only,
 	})
+
+	if (uniV3Only && router !== 'uniV3') {
+		throw new Error(
+			`getTradeOutData uniV3 call but selected router is ${router}`
+		)
+	}
 
 	const from = assets[fromAsset]
 	const to = assets[toAsset]
@@ -271,7 +280,7 @@ export async function getTradeOutData({
 		const slippageTolerance = new PercentV2(5, 1000)
 		const minimumAmountOut = trade
 			.minimumAmountOut(slippageTolerance)
-			.toSignificant(SIGNIFICANT_DIGITS)
+			.toFixed(to.decimals)
 
 		const expectedAmountOut = trade.outputAmount.toSignificant(
 			SIGNIFICANT_DIGITS
@@ -438,7 +447,6 @@ async function getWalletTradeTxns({
 	})
 
 	const toAmount = utils.parseUnits(expectedAmountOut.toString(), to.decimals)
-	const toAmountHex = toAmount.toHexString()
 	const minOut = utils.parseUnits(minimumAmountOut.toString(), to.decimals)
 
 	const txns = []
@@ -458,7 +466,7 @@ async function getWalletTradeTxns({
 		const tradeTuple = [
 			uniswapRouters.uniV2,
 			fromAmountHex,
-			toAmountHex,
+			minOut.toHexString(),
 			path,
 			lendOutputToAAVE,
 		]
@@ -531,7 +539,7 @@ async function getWalletTradeTxns({
 
 			data = ZapperInterface.encodeFunctionData('tradeV3', [
 				UniSwapRouterV3.address,
-				[v3Path, identityAddr, deadline, fromAmount, toAmount],
+				[v3Path, identityAddr, deadline, fromAmount, minOut.toHexString()],
 			])
 		}
 
@@ -740,7 +748,7 @@ async function getDiversificationTxns({
 	const WETHOutShare = hasWETHOut
 		? diversificationAssets[WETHOutIndex].share
 		: 0
-	let usedShares = WETHOutShare
+	let usedShares = 0 //WETHOutShare
 
 	if (!hasWETHOut && tokenIn.address === wethIn.address) {
 		wethAmountIn = fromAmount
@@ -780,24 +788,19 @@ async function getDiversificationTxns({
 		}
 
 		toSwapAmountInToWETH = hasWETHOut
-			? fromAmount.mul(WETHOutShare * 10).div(1000)
+			? fromAmount.mul(Math.floor(WETHOutShare * 10)).div(1000)
 			: ZERO
 
-		toTransferAmountIn = allocatedInputToken
-			? fromAmount.sub(allocatedInputTokenAmount)
-			: fromAmount
+		toTransferAmountIn = fromAmount.sub(allocatedInputTokenAmount)
 
-		wethAmountIn = await UniSwapQuoterV3['quoteExactInputSingle'](
-			tokenIn.address,
-			tokens['WETH'],
-			pools[0].fee,
-			toTransferAmountIn
-				.sub(toSwapAmountInToWETH)
-				.mul(995)
-				.div(1000)
-				.toHexString(),
-			0 // sqrtPriceLimitX96
-		)
+		const wethAmountInData = await getTradeOutData({
+			fromAsset: tokenIn.address,
+			fromAssetAmountBN: toTransferAmountIn,
+			toAsset: tokens['WETH'],
+			uniV3Only: true,
+		})
+
+		wethAmountIn = parseUnits(wethAmountInData.minimumAmountOut, weth.decimals)
 	}
 
 	if (!toTransferAmountIn.isZero()) {
@@ -813,53 +816,28 @@ async function getDiversificationTxns({
 		})
 	}
 
-	if (!toSwapAmountInToWETH.isZero()) {
-		const toWETHAmountOut = await UniSwapQuoterV3['quoteExactInputSingle'](
-			tokenIn.address,
-			tokens['WETH'],
-			pools[0].fee,
-			toSwapAmountInToWETH.toHexString(),
-			0 // sqrtPriceLimitX96
-		)
+	const extraGasOperations = []
 
-		if (!toWETHAmountOut.isZero()) {
+	if (!toSwapAmountInToWETH.isZero()) {
+		// NOTE: last version of zapper returns the dust WETH
+		// Can be used to swap WETH only once
+		extraGasOperations.push(GAS_LIMITS.transfer)
+
+		// Only for preview info
+		const toWETHAmountOutData = await getTradeOutData({
+			fromAsset: tokenIn.address,
+			fromAssetAmountBN: toSwapAmountInToWETH,
+			toAsset: tokens['WETH'],
+			uniV3Only: true,
+		})
+
+		if (toWETHAmountOutData && toWETHAmountOutData.minimumAmountOut) {
 			tokensOutData.push({
 				address: wethIn.address,
 				share: WETHOutShare,
-				amountOutMin: new TokenAmountV2(
-					wethIn,
-					toWETHAmountOut.mul(995).div(1000)
-				).toSignificant(SIGNIFICANT_DIGITS),
+				amountOutMin: toWETHAmountOutData.minimumAmountOut,
 			})
 		}
-
-		// TODO: trade + slippage
-
-		txns.push({
-			identityContract: identityAddr,
-			to: WalletZapper.address,
-			feeTokenAddr,
-			data: ZapperInterface.encodeFunctionData('tradeV3Single', [
-				UniSwapRouterV3.address,
-				[
-					fromAsset,
-					wethIn.address,
-					pools[0].fee,
-					identityAddr,
-					deadline,
-					identityAddr,
-					// TODO: slippage cfg
-					toWETHAmountOut
-						.mul(995)
-						.div(1000)
-						.toHexString(),
-					// poolState.sqrtPriceX96,
-					0,
-				],
-				lendOutputToAAVE,
-			]),
-			operationsGasLimits: [GAS_LIMITS.swapV3],
-		})
 	}
 
 	const diversificationAssetsToDiversify = [...diversificationAssets].filter(
@@ -867,7 +845,6 @@ async function getDiversificationTxns({
 	)
 
 	const diversificationsSharesLeft = 100 - usedShares || 0
-
 	const diversificationTrades = await Promise.all(
 		diversificationAssetsToDiversify.map(async asset => {
 			const to = assets[asset.address]
@@ -900,43 +877,19 @@ async function getDiversificationTxns({
 				(asset.share * 10 * 1000) / (diversificationsSharesLeft * 10)
 			)
 
+			usedShares += asset.share
+
 			const amountIn = BigNumber.from(wethAmountIn)
+				// .mul(Math.floor(asset.share * 10))
 				.mul(flattedShare)
 				.div(1000)
 
-			const amountOut = await UniSwapQuoterV3['quoteExactInputSingle'](
-				wethIn.address,
-				tokenOut.address,
-				pool.fee,
-				amountIn.toHexString(),
-				0 // sqrtPriceLimitX96
-			)
-
-			const fromTokenCurrencyAmount = CurrencyAmount.fromRawAmount(
-				wethIn,
-				amountIn
-			)
-
-			const toTokenCurrencyAmount = CurrencyAmount.fromRawAmount(
-				tokenOut,
-				amountOut
-			)
-
-			const route = await getUniv3Route({
-				pools,
-				tokenIn: wethIn,
-				tokenOut,
-				provider,
+			const { minimumAmountOut } = await getTradeOutData({
+				fromAsset: wethIn.address,
+				fromAssetAmountBN: amountIn,
+				toAsset: tokenOut.address,
+				uniV3Only: true,
 			})
-
-			const trade = TradeV3.createUncheckedTrade({
-				route,
-				inputAmount: fromTokenCurrencyAmount,
-				outputAmount: toTokenCurrencyAmount,
-				tradeType: TradeType.EXACT_INPUT,
-			})
-
-			const amountOutMin = trade.minimumAmountOut(new Percent(5, 1000))
 
 			// console.log('amountOutMin', amountOutMin.toSignificant(2))
 
@@ -944,33 +897,29 @@ async function getDiversificationTxns({
 
 			tokensOutData.push({
 				address: asset.address,
-				share: asset.share,
-				amountOutMin: amountOutMin.toSignificant(SIGNIFICANT_DIGITS),
+				// share: asset.share,
+				share: flattedShare,
+				amountOutMin: minimumAmountOut,
 				wrap,
 			})
 
 			return [
 				asset.address,
 				pool.fee,
-				Math.round(flattedShare),
-				utils
-					.parseUnits(
-						amountOutMin.toSignificant(SIGNIFICANT_DIGITS),
-						to.decimals
-					)
-					.toString(),
+				Math.round(Math.floor(asset.share * 10)),
+				utils.parseUnits(minimumAmountOut, to.decimals).toString(),
 				wrap,
 			]
 		})
 	)
 
-	const diversificationsAllocated = diversificationTrades.reduce(
-		(sum, x) => sum + x[2],
-		0
-	)
+	// const diversificationsAllocated = diversificationTrades.reduce(
+	// 	(sum, x) => sum + x[2],
+	// 	0
+	// )
 
-	if (diversificationsAllocated !== 1000) {
-		throw new Error('diversificationsAllocated not 1000')
+	if (usedShares + WETHOutShare !== 100) {
+		throw new Error('not 100 diversification alloc points')
 	}
 
 	const args = [
