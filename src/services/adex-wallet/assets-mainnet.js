@@ -1,21 +1,33 @@
-import { getEthers } from 'services/smart-contracts/ethers'
-import { Contract, BigNumber } from 'ethers'
-import { AUTH_TYPES } from 'constants/misc'
 import { contracts } from 'services/smart-contracts/contractsCfg.js'
 import ADX_LOGO from 'resources/token-logos/ADX.png'
 // import WETH_LOGO from 'resources/token-logos/WETH.png'
 // import WBTC_LOGO from 'resources/token-logos/WBTC.png'
-import USDT_LOGO from 'resources/token-logos/USDT.png'
+// import USDT_LOGO from 'resources/token-logos/USDT.png'
 import USDC_LOGO from 'resources/token-logos/USDC.png'
 import WBTC_LOGO from 'resources/token-logos/WBTC.png'
-import ETH_LOGO from 'resources/token-logos/ETH.png'
+// import ETH_LOGO from 'resources/token-logos/ETH.png'
 import WETH_LOGO from 'resources/token-logos/WETH.png'
-import ADX_WALLET_LOGO from 'resources/wallet/logo.png'
+// import ADX_WALLET_LOGO from 'resources/wallet/logo.png'
 // import UNI_LOGO from 'resources/token-logos/UNI.png'
 // import DAI_LOGO from 'resources/token-logos/DAI.svg'
 // import LINK_LOGO from 'resources/token-logos/LINK.png'
 // import BTC_LOGO from 'resources/token-logos/BTC.png'
-const { ADXLoyaltyPoolToken, StakingPool, ADXToken, ERC20 } = contracts
+import {
+	getERC20Balance,
+	// mapAAVEInterestToken,
+	// mapADXLoyaltyPoolToken,
+	// mapADXStakingPoolToken,
+	// getAdxToken,
+	// getADXLoyaltyPoolToken,
+	// getADXStakingPoolToken,
+	// getLogoCommon,
+} from './assets-common'
+const {
+	ADXLoyaltyPoolToken,
+	StakingPool,
+	ADXToken,
+	// ERC20,
+} = contracts
 
 // 0xe0fba4fc209b4948668006b2be61711b7f465bae // lending proxy
 // lending - 0x2646FcF7F0AbB1ff279ED9845AdE04019C907EBE
@@ -32,46 +44,6 @@ const tokens = {
 	// [ADXLoyaltyPoolToken.symbol]: ADXLoyaltyPoolToken.address,
 }
 
-const getERC20Token = (provider, address) => {
-	const token = new Contract(address, ERC20.abi, provider)
-
-	return token
-}
-
-// const getAdxToken = provider => {
-// 	const adxToken = new Contract(ADXToken.address, ADXToken.abi, provider)
-
-// 	return adxToken
-// }
-
-// const getADXLoyaltyPoolToken = provider => {
-// 	const adxLoyalty = new Contract(
-// 		ADXLoyaltyPoolToken.address,
-// 		ADXLoyaltyPoolToken.abi,
-// 		provider
-// 	)
-
-// 	return adxLoyalty
-// }
-
-// const getADXStakingPoolToken = provider => {
-// 	const adxStakingPool = new Contract(
-// 		StakingPool.address,
-// 		StakingPool.abi,
-// 		provider
-// 	)
-
-// 	return adxStakingPool
-// }
-
-const getERC20Balance = async ({ tokenAddress, address }) => {
-	const { provider } = await getEthers(AUTH_TYPES.READONLY)
-	const token = getERC20Token(provider, tokenAddress)
-	const balance = await token.balanceOf(address)
-
-	return balance
-}
-
 const logos = {
 	[ADXToken.address]: ADX_LOGO,
 	[ADXLoyaltyPoolToken.address]: ADX_LOGO,
@@ -81,13 +53,7 @@ const logos = {
 	[tokens.WBTC]: WBTC_LOGO,
 }
 
-export const getLogo = addressOrSymbol => {
-	return (
-		logos[addressOrSymbol] || logos[tokens[addressOrSymbol]] || ADX_WALLET_LOGO
-	)
-}
-
-export const assets = {
+const assets = {
 	[ADXToken.address]: {
 		symbol: ADXToken.symbol,
 		name: 'AdEx Network',
@@ -188,7 +154,7 @@ export const assets = {
 	},
 	[tokens.WETH]: {
 		symbol: 'WETH',
-		name: 'Wrapped Ethereum',
+		name: 'Wrapped ETH',
 		getBalance: async function({ address }) {
 			return await getERC20Balance({ tokenAddress: tokens.WETH, address })
 		},
@@ -214,38 +180,18 @@ export const assets = {
 	// },
 }
 
-async function mapAAVEInterestToken(baseTokenSymbol, aTokenAmount) {
-	return [baseTokenSymbol, aTokenAmount]
-}
-
-export const mappers = {
-	// [ADXLoyaltyPoolToken.address]: async function(loyaltyTokenAmount) {
-	// 	const { provider } = await getEthers(AUTH_TYPES.READONLY)
-	// 	const adexLoyaltyPoolToken = getADXLoyaltyPoolToken(provider)
-	// 	const [shareValue] = await Promise.all([adexLoyaltyPoolToken.shareValue()])
-	// 	const adxAmount = BigNumber.from(loyaltyTokenAmount)
-	// 		.mul(shareValue)
-	// 		.div(ADXLoyaltyPoolToken.decimalsMultiplier.toString())
-	// 	return [assets[ADXToken.address].symbol, adxAmount]
-	// },
-	// [StakingPool.address]: async function(stakingTokenAmount) {
-	// 	const { provider } = await getEthers(AUTH_TYPES.READONLY)
-	// 	const adexStakingPoolToken = getADXStakingPoolToken(provider)
-	// 	const [shareValue] = await Promise.all([adexStakingPoolToken.shareValue()])
-	// 	const adxAmount = BigNumber.from(stakingTokenAmount)
-	// 		.mul(shareValue)
-	// 		.div(StakingPool.decimalsMultiplier.toString())
-	// 	return [assets[ADXToken.address].symbol, adxAmount]
-	// },
-	// [tokens.aUSDT]: mapAAVEInterestToken.bind(null, assets[tokens.USDT].symbol),
-	// [tokens.aWETH]: mapAAVEInterestToken.bind(null, assets[tokens.WETH].symbol),
-	// [tokens.aDAI]: mapAAVEInterestToken.bind(null, assets[tokens.DAI].symbol),
-	// [tokens.aLINK]: mapAAVEInterestToken.bind(null, assets[tokens.LINK].symbol),
+const mappers = {
+	// 	[ADXLoyaltyPoolToken.address]: mapADXLoyaltyPoolToken.bind(null),
+	// 	[StakingPool.address]: mapADXStakingPoolToken.bind(null),
+	// 	[tokens.aUSDT]: mapAAVEInterestToken.bind(null, assets[tokens.USDT].symbol),
+	// 	[tokens.aWETH]: mapAAVEInterestToken.bind(null, assets[tokens.WETH].symbol),
+	// 	[tokens.aDAI]: mapAAVEInterestToken.bind(null, assets[tokens.DAI].symbol),
+	// 	[tokens.aLINK]: mapAAVEInterestToken.bind(null, assets[tokens.LINK].symbol),
 }
 
 export const assetsMainnet = {
 	tokens,
 	assets,
 	mappers,
-	getLogo,
+	logos,
 }
