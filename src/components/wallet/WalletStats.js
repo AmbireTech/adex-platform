@@ -6,14 +6,14 @@ import {
 	Grid,
 } from '@material-ui/core'
 import { useTheme } from '@material-ui/core/styles'
-import { TreeView, TreeItem } from '@material-ui/lab'
-import { ExpandMore, ChevronRight } from '@material-ui/icons'
+// import { TreeView, TreeItem } from '@material-ui/lab'
+// import { ExpandMore, ChevronRight } from '@material-ui/icons'
 import { AmountWithCurrency } from 'components/common/amount'
 import { InfoCard } from './WalletInfoCard'
 import { Stop as StopIcon } from '@material-ui/icons'
 import {
 	TradeAssets,
-	DiversifyAssets,
+	// DiversifyAssets,
 } from 'components/wallet/forms/walletTransactions'
 import { Doughnut } from 'react-chartjs-2'
 
@@ -155,6 +155,9 @@ function WalletStats() {
 	)
 
 	const mainCurrency = useSelector(selectMainCurrency)
+	const noBalance =
+		!totalMainCurrenciesValues[mainCurrency.id] ||
+		parseFloat(totalMainCurrenciesValues[mainCurrency.id]) === 0
 
 	return (
 		<Grid container spacing={2} alignItems='stretch' direction='row'>
@@ -170,8 +173,8 @@ function WalletStats() {
 							<AmountWithCurrency
 								toFixed={2}
 								amount={totalMainCurrenciesValues[mainCurrency.id]}
-								unit={'$'}
-								unitPlace='left'
+								unit={mainCurrency.symbol}
+								unitPlace={mainCurrency.symbolPosition}
 								mainFontVariant='h2'
 								decimalsFontVariant='h3'
 							/>
@@ -206,11 +209,15 @@ function WalletStats() {
 			</Grid>
 			<Grid item xs={12} md={6}>
 				<InfoCard title={t('PORTFOLIO_BY_ASSETS')}>
-					<WalletDoughnut
-						assetsData={assetsData}
-						totalMainCurrenciesValues={totalMainCurrenciesValues}
-						mainCurrency={mainCurrency}
-					/>
+					{noBalance ? (
+						t('NO_ASSETS_ADDED')
+					) : (
+						<WalletDoughnut
+							assetsData={assetsData}
+							totalMainCurrenciesValues={totalMainCurrenciesValues}
+							mainCurrency={mainCurrency}
+						/>
+					)}
 				</InfoCard>
 			</Grid>
 
