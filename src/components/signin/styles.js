@@ -4,6 +4,7 @@ export const styles = theme => {
 		root: {
 			// flexGrow: 1,
 			height: '100vh',
+			overflow: 'auto',
 		},
 		signinContainer: {
 			overflowX: 'hidden',
