@@ -120,6 +120,25 @@ const useStyles = makeStyles(theme => {
 		amount: {
 			fontSize: theme.typography.pxToRem(18),
 		},
+		topListItem: {
+			paddingTop: 0,
+		},
+		// Match Wallet top bar style (align with it)
+		logoAppBarContainer: {
+			marginTop: 4, // loading bar
+			// TopBar root
+			height: 69,
+			display: 'flex',
+			flexDirection: 'column',
+			justifyContent: 'center',
+		},
+		logoContainer: {
+			// match account btn
+			height: 42, // 42
+			display: 'flex',
+			flexDirection: 'column',
+			justifyContent: 'center',
+		},
 	}
 })
 
@@ -148,13 +167,17 @@ function SideNav(props) {
 		>
 			<Box>
 				<Box>
-					<ListItem>
+					<ListItem className={classes.topListItem}>
 						<Box>
-							<AdxIcon
-								// @cryptofan
-								to={{ pathname: '/dashboard/' }}
-								className={classes.icon}
-							/>
+							<Box className={classes.logoAppBarContainer}>
+								<Box className={classes.logoContainer}>
+									<AdxIcon
+										// @cryptofan
+										to={{ pathname: '/dashboard/' }}
+										className={classes.icon}
+									/>
+								</Box>
+							</Box>
 							<Box mt={6}>
 								<LoadingSection loading={!loaded}>
 									<Typography variant='button' component='div' display='block'>
