@@ -40,7 +40,7 @@ export default function TopUp({ topUpProps }) {
 				<TopUpChangelly symbol={symbol} />
 			) : (
 				<Grid container spacing={2}>
-					<Grid item lg={4} md={6} sm={6} xs={12}>
+					<Grid item lg={6} md={6} sm={6} xs={12}>
 						<Paper variant='outlined' className={classes.paper}>
 							<Box
 								p={2}
@@ -133,7 +133,7 @@ export default function TopUp({ topUpProps }) {
 							</Box>
 						</Paper>
 					</Grid>
-					<Grid item lg={4} md={6} sm={6} xs={12}>
+					<Grid item lg={6} md={6} sm={6} xs={12}>
 						<Paper variant='outlined' className={classes.paper}>
 							<Box
 								p={2}
@@ -170,7 +170,7 @@ export default function TopUp({ topUpProps }) {
 							</Box>
 						</Paper>
 					</Grid>
-					<Grid item lg={4} md={6} sm={6} xs={12}>
+					{/* <Grid item lg={4} md={6} sm={6} xs={12}>
 						<Paper variant='outlined' className={classes.paper}>
 							<Box
 								p={2}
@@ -208,7 +208,7 @@ export default function TopUp({ topUpProps }) {
 								</Box>
 							</Box>
 						</Paper>
-					</Grid>
+					</Grid> */}
 				</Grid>
 			)}
 		</Box>
