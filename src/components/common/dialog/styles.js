@@ -10,7 +10,7 @@ export const styles = theme => {
 	return {
 		dialog: {
 			maxHeight: `calc(100vh - ${spacing}px)`,
-			maxWidth: `calc(100vw - ${spacing}px)`,
+			maxWidth: `calc(100vh - calc(100vh - 100%)) - ${spacing}px`,
 			height,
 			width,
 			backgroundColor: theme.palette.background.default,
@@ -29,7 +29,7 @@ export const styles = theme => {
 					: 0,
 			margin: 0,
 			[theme.breakpoints.down('xs')]: {
-				maxHeight: `calc(100vh - ${spacingXS}px)`,
+				maxHeight: `calc(100vh - calc(100vh - 100%)) - ${spacing}px`,
 				maxWidth: `calc(100vw - ${spacingXS}px)`,
 			},
 		},
