@@ -31,8 +31,11 @@ export const getERC20Balance = async ({ tokenAddress, address }) => {
 	return balance
 }
 
-export async function mapAAVEInterestToken(baseTokenSymbol, aTokenAmount) {
-	return [baseTokenSymbol, aTokenAmount]
+export const getETHBalance = async ({ address }) => {
+	const { provider } = await getEthers(AUTH_TYPES.READONLY)
+	const balance = await provider.getBalance(address)
+
+	return balance
 }
 
 export const getAdxToken = provider => {
@@ -59,6 +62,14 @@ export const getADXStakingPoolToken = provider => {
 	)
 
 	return adxStakingPool
+}
+
+export async function mapWrappedETH(baseTokenSymbol, aTokenAmount) {
+	return [baseTokenSymbol, aTokenAmount]
+}
+
+export async function mapAAVEInterestToken(baseTokenSymbol, aTokenAmount) {
+	return [baseTokenSymbol, aTokenAmount]
 }
 
 export async function mapADXLoyaltyPoolToken(loyaltyTokenAmount) {
