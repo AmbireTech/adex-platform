@@ -20,7 +20,9 @@ async function getAssetsData({ identityAddress, authType }) {
 						decimals,
 						name,
 						isSwappable,
+						isBaseAsset,
 						isAaveInterestToken,
+						...rest
 					},
 				]) => {
 					const balance = await getBalance({ address: identityAddress })
@@ -35,7 +37,9 @@ async function getAssetsData({ identityAddress, authType }) {
 						decimals,
 						name,
 						isSwappable,
+						isBaseAsset,
 						isAaveInterestToken,
+						rest,
 					}
 				}
 			)
