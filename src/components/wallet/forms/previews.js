@@ -39,23 +39,30 @@ const TokenRow = ({
 				className={classes.address}
 				primary={
 					<Box display='flex' flexDirection='row' alignItems='center'>
-						<Box mr={0.5}>
+						<Box>
 							<Avatar
 								src={getLogo(symbol)}
 								alt={name}
 								className={classes.labelImg}
 							/>
 						</Box>
-						<Box mr={0.5}>{name}</Box>
-						<Box mr={0.5}>({symbol}):</Box>
-						<Box mr={0.5}>{amount}</Box>
-						{amountMainCurrency && !!mainCurrency && (
-							<Box mr={0.5} color='text.secondary' fontSize='caption.fontSize'>
-								{mainCurrency.symbolPosition === 'left'
-									? `(${mainCurrency.symbol} ${amountMainCurrency})`
-									: `${amountMainCurrency} {${mainCurrency.symbol}}`}
-							</Box>
-						)}
+						<Box
+							display='flex'
+							flexDirection='row'
+							alignItems='center'
+							flexWrap='wrap'
+						>
+							<Box mr={0.5}>{name}</Box>
+							<Box mr={0.5}>({symbol}):</Box>
+							<Box mr={0.5}>{amount}</Box>
+							{amountMainCurrency && !!mainCurrency && (
+								<Box mr={0.5} color='primary.main' fontSize='caption.fontSize'>
+									{mainCurrency.symbolPosition === 'left'
+										? `(${mainCurrency.symbol} ${amountMainCurrency})`
+										: `${amountMainCurrency} {${mainCurrency.symbol}}`}
+								</Box>
+							)}
+						</Box>
 					</Box>
 				}
 				secondary={
