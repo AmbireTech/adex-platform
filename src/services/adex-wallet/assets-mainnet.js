@@ -38,10 +38,12 @@ const {
 
 const tokens = {
 	ETH: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+	// aETH: '0x3a3A65aAb0dd2A17E3F1947bA16138cd37d08c04',
+	WETH: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+	// aWETH: '0x030bA81f1c18d280636F32af80b9AAd02Cf0854e',
 	// USDT: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
 	USDC: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
 	WBTC: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
-	WETH: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
 	[ADXToken.symbol]: ADXToken.address,
 	// [StakingPool.symbol]: StakingPool.address,
 	// [ADXLoyaltyPoolToken.symbol]: ADXLoyaltyPoolToken.address,
@@ -64,6 +66,7 @@ const assets = {
 		getBalance: async function({ address }) {
 			return await getETHBalance({ address })
 		},
+		isETH: true,
 		isSwappable: true,
 		isBaseAsset: true,
 		// subAssets: [ADXLoyaltyPoolToken.address, StakingPool.address],
@@ -71,16 +74,30 @@ const assets = {
 		subAssets: [tokens.WETH],
 		decimals: 18,
 	},
+	// [tokens.aETH]: {
+	// 	symbol: 'aETH',
+	// 	name: 'Aave interest bearing ETH',
+	// 	getBalance: async function({ address }) {
+	// 		return await getERC20Balance({ tokenAddress: tokens.aETH, address })
+	// 	},
+	// 	isSwappable: false,
+	// 	isBaseAsset: false,
+	// 	isAaveInterestToken: true,
+	// 	subAssets: [],
+	// 	decimals: 18,
+	// 	logoSrc: ETH_LOGO,
+	// },
 	[tokens.WETH]: {
 		symbol: 'WETH',
 		name: 'Wrapped ETH',
 		getBalance: async function({ address }) {
 			return await getERC20Balance({ tokenAddress: tokens.WETH, address })
 		},
+		isWrappedETH: true,
 		isSwappable: false,
 		isBaseAsset: false,
-		// subAssets: [tokens.aWETH],
-		subAssets: [],
+		subAssets: [tokens.aWETH],
+		// subAssets: [],
 		decimals: 18,
 	},
 	// [tokens.aWETH]: {
@@ -199,10 +216,11 @@ const mappers = {
 	// 	[ADXLoyaltyPoolToken.address]: mapADXLoyaltyPoolToken.bind(null),
 	// 	[StakingPool.address]: mapADXStakingPoolToken.bind(null),
 	// 	[tokens.aUSDT]: mapAAVEInterestToken.bind(null, assets[tokens.USDT].symbol),
-	// 	[tokens.aWETH]: mapAAVEInterestToken.bind(null, assets[tokens.WETH].symbol),
+	// [tokens.aWETH]: mapAAVEInterestToken.bind(null, assets[tokens.WETH].symbol),
 	// 	[tokens.aDAI]: mapAAVEInterestToken.bind(null, assets[tokens.DAI].symbol),
 	// 	[tokens.aLINK]: mapAAVEInterestToken.bind(null, assets[tokens.LINK].symbol),
 	[tokens.WETH]: mapWrappedETH.bind(null, assets[tokens.ETH].symbol),
+	// [tokens.aETH]: mapAAVEInterestToken.bind(null, assets[tokens.aETH].symbol),
 }
 
 export const assetsMainnet = {
