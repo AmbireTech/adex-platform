@@ -1,4 +1,10 @@
-import { assets, getPath, uniswapRouters, tokens } from 'services/adex-wallet'
+import {
+	assets,
+	getPath,
+	uniswapRouters,
+	tokens,
+	ETH_TOKENS,
+} from 'services/adex-wallet'
 import { getEthers } from 'services/smart-contracts/ethers'
 import { utils, Contract, BigNumber } from 'ethers'
 import { contracts } from 'services/smart-contracts/contractsCfg'
@@ -219,6 +225,11 @@ async function getUniv3Route({ pools, tokenIn, tokenOut, provider }) {
 	return route
 }
 
+function isETHBasedToken({ address }) {
+	const token = assets[address]
+	return ETH_TOKENS.includes(token.symbol)
+}
+
 export async function getTradeOutData({
 	fromAsset,
 	fromAssetAmount,
@@ -227,6 +238,10 @@ export async function getTradeOutData({
 	uniV3Only,
 	// slippageTolerance, // TODO:!!!
 }) {
+	const fromAssetTradableAddr = isETHBasedToken({ address: fromAsset })
+		? tokens['WETH']
+		: fromAsset
+
 	const {
 		// UniSwapRouterV2,
 		provider,
@@ -234,7 +249,7 @@ export async function getTradeOutData({
 	} = await getEthers(AUTH_TYPES.READONLY)
 
 	const { path, router, pools } = await getPath({
-		from: fromAsset,
+		from: fromAssetTradableAddr,
 		to: toAsset,
 		uniV3Only,
 	})
@@ -245,7 +260,7 @@ export async function getTradeOutData({
 		)
 	}
 
-	const from = assets[fromAsset]
+	const from = assets[fromAssetTradableAddr]
 	const to = assets[toAsset]
 
 	const fromAmount =
@@ -303,7 +318,7 @@ export async function getTradeOutData({
 
 	if (router === 'uniV3') {
 		const tokenIn = await getUniToken({
-			address: fromAsset,
+			address: fromAssetTradableAddr,
 			tokenData: from,
 			provider,
 		})
