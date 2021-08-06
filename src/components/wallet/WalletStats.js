@@ -33,7 +33,7 @@ const WalletDoughnut = ({
 	]
 
 	const { labels, values } = Object.values(assetsData)
-		.filter(x => x.isSwappable)
+		.filter(x => x.isBaseAsset)
 		.reduce(
 			(data, asset) => {
 				data.labels.push(asset.symbol)
