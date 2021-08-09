@@ -27,11 +27,11 @@ import {
 } from 'selectors'
 import {
 	walletTradeTransaction,
-	getTradeOutData,
 	walletDiversificationTransaction,
 	walletWithdrawTransaction,
 	walletSetIdentityPrivilege,
 } from 'services/smart-contracts/actions/wallet'
+import { getTradeOutData } from 'services/smart-contracts/actions/walletCommon'
 import { processExecuteWalletTxns } from 'services/smart-contracts/actions/walletIdentity'
 import { getEthers } from 'services/smart-contracts/ethers'
 
