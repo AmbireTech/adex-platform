@@ -405,7 +405,7 @@ export async function getTradeOutData({
 	throw new Error('Invalid path')
 }
 
-export async function unwrapAAVEInterestToken({
+export function txnsUnwrapAAVEInterestToken({
 	feeTokenAddr,
 	underlyingAssetAddr,
 	amount,
@@ -429,7 +429,7 @@ export async function unwrapAAVEInterestToken({
 	return txns
 }
 
-export async function txnsETHtoWETH({
+export function txnsETHtoWETH({
 	feeTokenAddr,
 	addrWETH,
 	amount,
@@ -453,7 +453,7 @@ export async function txnsETHtoWETH({
 }
 
 // TODO: assume all ETH based tokens has the same 18 decimals
-export async function getEthBasedTokensToWETHTxns({
+export function getEthBasedTokensToWETHTxns({
 	feeTokenAddr,
 	identityAddr,
 	amountNeeded,
@@ -463,12 +463,13 @@ export async function getEthBasedTokensToWETHTxns({
 	getAWETHasAssetsToUnwrap,
 	zapperAddress,
 }) {
-	console.log('assetsDataRaw', assetsDataRaw)
 	const txns = []
-	const balanceWETH = assetsDataRaw[tokens.WETH].balance
-	let amountReached = balanceWETH
+	// const balanceWETH = assetsDataRaw[tokens.WETH].balance
+	// console.log('balanceWETH', balanceWETH)
 
-	if (BigNumber.from(amountNeeded).gte(balanceWETH)) {
+	let amountReached = BigNumber.from(assetsDataRaw[tokens.WETH].balance)
+
+	if (BigNumber.from(amountNeeded).gte(amountReached)) {
 		const otherETHBalancesSorted = [
 			// {
 			// 	asset: assetsDataRaw[tokens.WETH].symbol,
@@ -487,7 +488,7 @@ export async function getEthBasedTokensToWETHTxns({
 			{
 				address: tokens.aWETH,
 				getTxns: amount =>
-					unwrapAAVEInterestToken({
+					txnsUnwrapAAVEInterestToken({
 						feeTokenAddr,
 						underlyingAssetAddr: tokens.WETH,
 						amount,
@@ -502,7 +503,7 @@ export async function getEthBasedTokensToWETHTxns({
 					// 1. - aETH to ETH to identity
 					// TODO: param send to identity or zapper
 					aETHtoWETHtxns.push(
-						unwrapAAVEInterestToken({
+						txnsUnwrapAAVEInterestToken({
 							feeTokenAddr,
 							// Hope it works that way for ETH
 							// https://etherscan.io/address/0x3a3a65aab0dd2a17e3f1947ba16138cd37d08c04#readContract
@@ -549,15 +550,13 @@ export async function getEthBasedTokensToWETHTxns({
 
 			const amount = amountNeededLeft.gt(balance) ? balance : amountNeededLeft
 
-			txns.push(getTxns(amount))
+			txns.push(...getTxns(amount))
 			amountReached = amountReached.add(amount)
 
 			if (amountReached.gte(amountNeeded)) {
 				break
 			}
 		}
-
-		console.log('txns', txns)
 	}
 
 	return txns
