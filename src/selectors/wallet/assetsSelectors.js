@@ -10,11 +10,13 @@ import { getPath, tokens, getLogo } from 'services/adex-wallet'
 export const selectTradableAssetsFromSources = createSelector(
 	[selectAccountStatsFormatted],
 	({ assetsData = {} }) => {
-		return Object.values(assetsData).map(x => ({
-			value: x.address,
-			label: `${x.symbol}`,
-			imgSrc: getLogo(x.address),
-		}))
+		return Object.values(assetsData)
+			.filter(x => x.isSwappable)
+			.map(x => ({
+				value: x.address,
+				label: `${x.symbol}`,
+				imgSrc: getLogo(x.address),
+			}))
 	}
 )
 
