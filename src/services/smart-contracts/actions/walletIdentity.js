@@ -66,7 +66,8 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 		Math.floor(networkGasPrice * gasPriceRatio)
 	)
 
-	const feeTokenAddrUSDPrice = prices[feeToken.symbol]['USD']
+	const feeTokenAddrUSDPrice =
+		prices[feeToken.mainAssetSymbol || feeToken.symbol]['USD']
 
 	const withNonceAndFees = txns.map((tx, txIndex) => {
 		const { operationsGasLimits = [] } = tx
