@@ -4,7 +4,7 @@ import { formatTokenAmount } from 'helpers/formatters'
 import { AUTH_TYPES } from 'constants/misc'
 import { privilegesNames } from './stats'
 // import { getPrices } from 'services/prices'
-import { assets, mappers } from 'services/adex-wallet'
+import { assets, mappers, tokens } from 'services/adex-wallet'
 
 const ZERO = BigNumber.from(0)
 
@@ -60,7 +60,12 @@ async function getAssetsData({ identityAddress, authType }) {
 			assetData.totalAvailable = assetData.balance
 
 			if (asset.isBaseAsset) {
-				const { total, specific, aaveWrapped } = asset.subAssets.reduce(
+				const {
+					total,
+					specific,
+					aaveWrapped,
+					wrappedETH,
+				} = asset.subAssets.reduce(
 					(data, subAddr) => {
 						const subData = assetsBalances[subAddr]
 						data.total = data.total.add(
@@ -72,16 +77,28 @@ async function getAssetsData({ identityAddress, authType }) {
 								? (subData.baseTokenBalance || [])[1] || ZERO
 								: ZERO
 						)
+						data.wrappedETH = data.wrappedETH.add(
+							subData.isWrappedETH
+								? (subData.baseTokenBalance || [])[1] || ZERO
+								: ZERO
+						)
 
 						return data
 					},
-					{ total: ZERO, specific: [], aaveWrapped: ZERO }
+					{ total: ZERO, specific: [], aaveWrapped: ZERO, wrappedETH: ZERO }
 				)
 
 				assetData.total = assetData.total.add(total)
 				assetData.aaveWrapped = aaveWrapped
-				assetData.totalAvailable = assetData.totalAvailable.add(aaveWrapped)
-				assetData.specific = specific
+				assetData.totalAvailable = assetData.totalAvailable
+					.add(aaveWrapped)
+					.add(wrappedETH)
+				assetData.specific = specific.map(x => ({
+					...x,
+					...(x.address === tokens.WETH
+						? { totalAvailableMainAsset: assetData.totalAvailable }
+						: {}),
+				}))
 			}
 
 			data[address] = assetData
@@ -90,6 +107,13 @@ async function getAssetsData({ identityAddress, authType }) {
 		},
 		{}
 	)
+
+	// WETH specific
+	const totalAvailableBalanceETH = (baseAssetsData[tokens.ETH] || {})
+		.totalAvailable
+
+	baseAssetsData[tokens.WETH].totalAvailableMainAsset = totalAvailableBalanceETH
+	baseAssetsData[tokens.WETH].kuraminko = 1234
 
 	return baseAssetsData
 }
@@ -221,6 +245,10 @@ export async function getAccountStatsWallet({ account, prices }) {
 
 			formattedValue.aaveWrapped = formatTokenAmount(
 				value.aaveWrapped,
+				assets[key].decimals
+			)
+			formattedValue.wrappedETH = formatTokenAmount(
+				value.wrappedETH,
 				assets[key].decimals
 			)
 
