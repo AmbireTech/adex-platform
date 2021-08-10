@@ -28,7 +28,9 @@ async function getAssetsData({ identityAddress, authType }) {
 					const balance = await getBalance({ address: identityAddress })
 					const baseTokenBalance = mappers[address]
 						? await mappers[address](balance)
-						: balance
+						: [symbol, balance]
+
+					// console.log('baseTokenBalance', symbol, baseTokenBalance)
 					return {
 						address,
 						symbol,
@@ -51,11 +53,13 @@ async function getAssetsData({ identityAddress, authType }) {
 
 	const baseAssetsData = Object.entries(assets).reduce(
 		(data, [address, asset]) => {
-			if (asset.isBaseAsset) {
-				const assetData = {
-					...assetsBalances[address],
-				}
+			const assetData = {
+				...assetsBalances[address],
+			}
+			assetData.total = assetData.balance
+			assetData.totalAvailable = assetData.balance
 
+			if (asset.isBaseAsset) {
 				const { total, specific, aaveWrapped } = asset.subAssets.reduce(
 					(data, subAddr) => {
 						const subData = assetsBalances[subAddr]
@@ -74,13 +78,13 @@ async function getAssetsData({ identityAddress, authType }) {
 					{ total: ZERO, specific: [], aaveWrapped: ZERO }
 				)
 
-				assetData.total = total.add(assetData.balance)
+				assetData.total = assetData.total.add(total)
 				assetData.aaveWrapped = aaveWrapped
-				assetData.totalAvailable = assetData.balance.add(aaveWrapped)
+				assetData.totalAvailable = assetData.totalAvailable.add(aaveWrapped)
 				assetData.specific = specific
-
-				data[address] = assetData
 			}
+
+			data[address] = assetData
 
 			return data
 		},
@@ -148,43 +152,46 @@ export async function getAccountStatsWallet({ account, prices }) {
 		assetsData
 	).reduce(
 		(data, [key, asset]) => {
-			const assetTotalValueFloat = utils.formatUnits(
-				asset.total,
-				asset.decimals
-			)
-			const assetTotalToMainCurrenciesValues = withPricesValue({
-				prices: prices[asset.symbol],
-				value: assetTotalValueFloat,
-			})
-
-			const assetBalanceValueFloat = utils.formatUnits(
-				asset.balance,
-				asset.decimals
-			)
-
-			const assetBalanceToMainCurrenciesValues = withPricesValue({
-				prices: prices[asset.symbol],
-				value: assetBalanceValueFloat,
-			})
-
 			data.withUsdValue[key] = { ...asset }
-			data.withUsdValue[
-				key
-			].assetTotalToMainCurrenciesValues = assetTotalToMainCurrenciesValues
+			if (asset.isBaseAsset) {
+				const assetTotalValueFloat = utils.formatUnits(
+					asset.total,
+					asset.decimals
+				)
+				const assetTotalToMainCurrenciesValues = withPricesValue({
+					prices: prices[asset.symbol],
+					value: assetTotalValueFloat,
+				})
 
-			data.withUsdValue[
-				key
-			].assetBalanceToMainCurrenciesValues = assetBalanceToMainCurrenciesValues
+				const assetBalanceValueFloat = utils.formatUnits(
+					asset.balance,
+					asset.decimals
+				)
 
-			data.totalMainCurrenciesValues = sumPricesValues([
-				assetTotalToMainCurrenciesValues,
-				data.totalMainCurrenciesValues,
-			])
+				const assetBalanceToMainCurrenciesValues = withPricesValue({
+					prices: prices[asset.symbol],
+					value: assetBalanceValueFloat,
+				})
 
+				data.withUsdValue[
+					key
+				].assetTotalToMainCurrenciesValues = assetTotalToMainCurrenciesValues
+
+				data.withUsdValue[
+					key
+				].assetBalanceToMainCurrenciesValues = assetBalanceToMainCurrenciesValues
+
+				data.totalMainCurrenciesValues = sumPricesValues([
+					assetTotalToMainCurrenciesValues,
+					data.totalMainCurrenciesValues,
+				])
+			}
 			return data
 		},
 		{ withUsdValue: {}, totalMainCurrenciesValues: {} }
 	)
+
+	// console.log('assetsData', assetsData)
 
 	// BigNumber values for balances
 	const raw = {
@@ -201,8 +208,9 @@ export async function getAccountStatsWallet({ account, prices }) {
 				assets[key].decimals
 			)
 
-			formattedValue.baseTokenBalance = formatTokenAmount(
-				value.baseTokenBalance,
+			formattedValue.baseTokenBalance = [...value.baseTokenBalance]
+			formattedValue.baseTokenBalance[1] = formatTokenAmount(
+				value.baseTokenBalance[1],
 				assets[key].decimals
 			)
 
@@ -221,21 +229,23 @@ export async function getAccountStatsWallet({ account, prices }) {
 				assets[key].decimals
 			)
 
-			formattedValue.specific = [...value.specific].map(v => {
-				const specificFormatted = { ...v }
-				specificFormatted.balance = formatTokenAmount(
-					v.balance,
-					assets[v.address].decimals
-				)
+			formattedValue.specific = value.specific
+				? [...value.specific].map(v => {
+						const specificFormatted = { ...v }
+						specificFormatted.balance = formatTokenAmount(
+							v.balance,
+							assets[v.address].decimals
+						)
 
-				specificFormatted.baseTokenBalance = [...v.baseTokenBalance]
-				specificFormatted.baseTokenBalance[1] = formatTokenAmount(
-					v.baseTokenBalance[1],
-					assets[key].decimals
-				)
+						specificFormatted.baseTokenBalance = [...v.baseTokenBalance]
+						specificFormatted.baseTokenBalance[1] = formatTokenAmount(
+							v.baseTokenBalance[1],
+							assets[key].decimals
+						)
 
-				return specificFormatted
-			})
+						return specificFormatted
+				  })
+				: null
 
 			formatted[key] = formattedValue
 			return formatted
