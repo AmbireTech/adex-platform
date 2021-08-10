@@ -36,7 +36,9 @@ export function validateWalletFees({
 			? assetsData[spendTokenAddr]
 			: assetsData[feeTokenAddr]
 
-		const availableBalanceFeeAsset = feeAssetData.totalAvailable
+		// NOTE: WETH specific
+		const availableBalanceFeeAsset =
+			feeAssetData.totalAvailableMainAsset || feeAssetData.totalAvailable
 
 		const { symbol } = feeAssetData
 
