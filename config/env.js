@@ -129,6 +129,7 @@ function getClientEnvironment(publicUrl) {
 				UNISWAP_ROUTER_V3: process.env.UNISWAP_ROUTER_V3,
 				UNISWAP_QUOTER_V3: process.env.UNISWAP_QUOTER_V3,
 				AAVE_LENDING_POOL_ADDR: process.env.AAVE_LENDING_POOL_ADDR,
+				WETH_ADDR: process.env.WETH_ADDR,
 			}
 		)
 

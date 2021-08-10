@@ -14,6 +14,7 @@ import UniSwapRouterV2Abi from 'services/smart-contracts/abi/UniSwapRouterV2.jso
 import UniSwapRouterV3Abi from 'services/smart-contracts/abi/UniSwapRouterV3.json'
 import UniSwapQuoterV3Abi from 'services/smart-contracts/abi/UniSwapQuoterV3.json'
 import AAVELendingPoolAbi from 'services/smart-contracts/abi/AAVELendingPool.json'
+import WETHAbi from 'services/smart-contracts/abi/WETH.json'
 
 export const contracts = {
 	Identity: {
@@ -89,5 +90,9 @@ export const contracts = {
 	AaveLendingPool: {
 		address: process.env.AAVE_LENDING_POOL_ADDR,
 		abi: AAVELendingPoolAbi,
+	},
+	WETH: {
+		address: process.env.WETH_ADDR,
+		abi: WETHAbi,
 	},
 }
