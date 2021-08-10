@@ -9,9 +9,10 @@ import { getEthers } from 'services/smart-contracts/ethers'
 import {
 	utils,
 	Contract,
+	BigNumber,
 	//   BigNumber
 } from 'ethers'
-
+import { contracts } from 'services/smart-contracts/contractsCfg'
 import {
 	AUTH_TYPES,
 	// EXECUTE_ACTIONS
@@ -51,9 +52,17 @@ import {
 	// processExecuteWalletTxns,
 	// getWalletApproveTxns,
 } from './walletIdentity'
+// const ZERO = BigNumber.from(0)
 
 const UNI_V3_FACTORY_ADDR = '0x1F98431c8aD98523631AE4a59f267346ea31F984'
 const SIGNIFICANT_DIGITS = 6
+
+const { Interface, parseUnits } = utils
+
+const ZapperInterface = new Interface(contracts.WalletZapper.abi)
+const ERC20 = new Interface(contracts.ERC20.abi)
+const AaveLendingPool = new Interface(contracts.AaveLendingPool.abi)
+const WETH = new Interface(contracts.WETH.abi)
 
 export async function getUniToken({ address, tokenData, provider }) {
 	const { chainId } = await provider.getNetwork()
@@ -290,7 +299,9 @@ export async function getTradeOutData({
 			SIGNIFICANT_DIGITS
 		)
 
-		const routeTokens = trade.route.path.map(x => x.symbol)
+		const routeTokens = trade.route.path.map(x =>
+			x.symbol === 'WETH' ? 'ETH' : x.symbol
+		)
 
 		return {
 			minimumAmountOut,
@@ -392,4 +403,162 @@ export async function getTradeOutData({
 	}
 
 	throw new Error('Invalid path')
+}
+
+export async function unwrapAAVEInterestToken({
+	feeTokenAddr,
+	underlyingAssetAddr,
+	amount,
+	withdrawToAddr,
+	identityAddr,
+}) {
+	const txns = []
+	const unwrapTx = {
+		identityContract: identityAddr,
+		feeTokenAddr,
+		to: contracts.AaveLendingPool.address,
+		data: AaveLendingPool.encodeFunctionData('withdraw', [
+			underlyingAssetAddr,
+			amount.toHexString(),
+			withdrawToAddr,
+		]),
+		operationsGasLimits: [GAS_LIMITS.unwrap],
+	}
+
+	txns.push(unwrapTx)
+	return txns
+}
+
+export async function txnsETHtoWETH({
+	feeTokenAddr,
+	addrWETH,
+	amount,
+	identityAddr,
+}) {
+	if (addrWETH !== contracts.WETH.address) {
+		throw new Error('txnsETHtoWETH - WETH addr does not match')
+	}
+	const txns = []
+	const unwrapTx = {
+		identityContract: identityAddr,
+		feeTokenAddr,
+		to: contracts.WETH.address,
+		data: WETH.encodeFunctionData('deposit'),
+		value: amount,
+		operationsGasLimits: [GAS_LIMITS.wrap],
+	}
+
+	txns.push(unwrapTx)
+	return txns
+}
+
+// TODO: assume all ETH based tokens has the same 18 decimals
+export async function getEthBasedTokensToWETHTxns({
+	feeTokenAddr,
+	identityAddr,
+	amountNeeded,
+	assetsDataRaw,
+	// usable exchangeV2
+	// return transfer to Zapper txns instead unwrap,
+	getAWETHasAssetsToUnwrap,
+	zapperAddress,
+}) {
+	console.log('assetsDataRaw', assetsDataRaw)
+	const txns = []
+	const balanceWETH = assetsDataRaw[tokens.WETH].balance
+	let amountReached = balanceWETH
+
+	if (BigNumber.from(amountNeeded).gte(balanceWETH)) {
+		const otherETHBalancesSorted = [
+			// {
+			// 	asset: assetsDataRaw[tokens.WETH].symbol,
+			// 	balance: assetsDataRaw[tokens.WETH].balance,
+			// },
+			{
+				address: tokens.ETH,
+				getTxns: amount =>
+					txnsETHtoWETH({
+						feeTokenAddr,
+						identityAddr,
+						addrWETH: tokens.WETH,
+						amount,
+					}),
+			},
+			{
+				address: tokens.aWETH,
+				getTxns: amount =>
+					unwrapAAVEInterestToken({
+						feeTokenAddr,
+						underlyingAssetAddr: tokens.WETH,
+						amount,
+						withdrawToAddr: identityAddr,
+						identityAddr,
+					}),
+			},
+			{
+				address: tokens.aETH,
+				getTxns: amount => {
+					const aETHtoWETHtxns = []
+					// 1. - aETH to ETH to identity
+					// TODO: param send to identity or zapper
+					aETHtoWETHtxns.push(
+						unwrapAAVEInterestToken({
+							feeTokenAddr,
+							// Hope it works that way for ETH
+							// https://etherscan.io/address/0x3a3a65aab0dd2a17e3f1947ba16138cd37d08c04#readContract
+							// aETH underlyingAssetAddress  0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee as tokens['ETH']
+							underlyingAssetAddr: tokens.ETH,
+							amount,
+							withdrawToAddr: identityAddr,
+							identityAddr,
+						})
+					)
+					// TODO: getAWETHasAssetsToUnwrap, zapperAddress,...
+					//
+					// 2. wrap toWETH
+					aETHtoWETHtxns.push(
+						txnsETHtoWETH({
+							feeTokenAddr,
+							identityAddr,
+							addrWETH: tokens.WETH,
+							amount,
+						})
+					)
+				},
+			},
+		]
+			.filter(x => x.address)
+			.map(x => ({
+				...x,
+				balance: assetsDataRaw[x.address].balance,
+			}))
+			.sort((a, b) =>
+				a.balance.lt(b.balance) ? -1 : a.balance.gte(b.balance) ? 1 : 0
+			)
+
+		for (const balanceData of otherETHBalancesSorted) {
+			const {
+				balance,
+				// address,
+				// symbol,
+				getTxns,
+				//  decimals
+			} = balanceData
+
+			const amountNeededLeft = amountNeeded.sub(amountReached)
+
+			const amount = amountNeededLeft.gt(balance) ? balance : amountNeededLeft
+
+			txns.push(getTxns(amount))
+			amountReached = amountReached.add(amount)
+
+			if (amountReached.gte(amountNeeded)) {
+				break
+			}
+		}
+
+		console.log('txns', txns)
+	}
+
+	return txns
 }

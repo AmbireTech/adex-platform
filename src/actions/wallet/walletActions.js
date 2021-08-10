@@ -95,6 +95,7 @@ export function validateWalletTrade({
 			await beforeWeb3(validateId)(dispatch, getState)
 		}
 		const state = getState()
+		const { assetsData: assetsDataRaw = {} } = selectAccountStatsRaw(state)
 		// const account = selectAccount(state)
 		const {
 			fromAsset,
@@ -144,6 +145,7 @@ export function validateWalletTrade({
 					toAsset,
 					toAssetAmount,
 					lendOutputToAAVE,
+					assetsDataRaw,
 				})
 
 			isValid = await handleWalletTxnsAndFeesData({
