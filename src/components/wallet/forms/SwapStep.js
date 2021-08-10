@@ -170,7 +170,8 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	const selectedToAsset = assetsData[toAsset] || {}
 
 	const fromAssetUserBalance = selectedFromAsset
-		? selectedFromAsset.totalAvailable
+		? selectedFromAsset.totalAvailableMainAsset ||
+		  selectedFromAsset.totalAvailable
 		: ZERO
 
 	const toAssetUserCurrentBalance = selectedToAsset
@@ -254,7 +255,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 			updateNewTransaction({
 				tx: stepsId,
 				key: 'toAssetAmount',
-				value: toAssetAmount || '0',
+				value: fromAssetAmount || '0',
 			})
 		)
 		setSelectedPercent(0)
