@@ -31,8 +31,9 @@ import {
 	// getPollStateData,
 	// getUniv2RouteAndTokens,
 	getUniv3Route,
-	// isETHBasedToken,
+	isETHBasedToken,
 	getTradeOutData,
+	getEthBasedTokensToWETHTxns,
 } from './walletCommon'
 
 const { Interface, parseUnits } = utils
@@ -52,8 +53,10 @@ async function getWalletTradeTxns({
 	fromAsset,
 	fromAssetAmount,
 	fromAssetAmountAfterFeesCalcBN,
+	feeTokenAddr,
 	toAsset,
 	lendOutputToAAVE = false,
+	assetsDataRaw,
 }) {
 	const { wallet, identity } = account
 	const { authType } = wallet
@@ -72,8 +75,6 @@ async function getWalletTradeTxns({
 		// UniSwapQuoterV3,
 	} = await getEthers(authType)
 
-	const feeTokenAddr = fromAsset
-
 	const from = assets[fromAsset]
 	const to = assets[toAsset]
 
@@ -86,6 +87,16 @@ async function getWalletTradeTxns({
 		getFeesOnly || !fromAssetAmountAfterFeesCalcBN
 			? fromAssetAmountUserInputBN
 			: fromAssetAmountAfterFeesCalcBN
+
+	const isETHToken = isETHBasedToken({ address: fromAsset })
+	const txns = isETHToken
+		? getEthBasedTokensToWETHTxns({
+				feeTokenAddr,
+				identityAddr,
+				amountNeeded: fromAmount,
+				assetsDataRaw,
+		  })
+		: []
 
 	const fromAmountHex = fromAmount.toHexString()
 
@@ -105,7 +116,7 @@ async function getWalletTradeTxns({
 	const toAmount = utils.parseUnits(expectedAmountOut.toString(), to.decimals)
 	const minOut = utils.parseUnits(minimumAmountOut.toString(), to.decimals)
 
-	const txns = []
+	// const txns = []
 
 	txns.push({
 		identityContract: identityAddr,
@@ -238,9 +249,14 @@ export async function walletTradeTransaction({
 	fromAsset,
 	fromAssetAmount, // User input amount
 	toAsset,
+	assetsDataRaw,
 	lendOutputToAAVE = false,
 }) {
-	const from = assets[fromAsset]
+	const isETHToken = isETHBasedToken({ address: fromAsset })
+	const fromAssetTradableAddr = isETHToken ? tokens['WETH'] : fromAsset
+
+	const feeTokenAddr = fromAssetTradableAddr
+	const from = assets[fromAssetTradableAddr]
 
 	// Pre call to get fees
 	const {
@@ -249,10 +265,12 @@ export async function walletTradeTransaction({
 	} = await getWalletTradeTxns({
 		getFeesOnly: true,
 		account,
-		fromAsset,
+		fromAsset: fromAssetTradableAddr,
 		fromAssetAmount,
+		feeTokenAddr,
 		// fromAssetAmountAfterFeesCalcBN,
 		toAsset,
+		assetsDataRaw,
 		lendOutputToAAVE,
 	})
 
@@ -286,10 +304,11 @@ export async function walletTradeTransaction({
 	} = await getWalletTradeTxns({
 		getFeesOnly: false, // Important on actual call
 		account,
-		fromAsset,
+		fromAsset: fromAssetTradableAddr,
 		fromAssetAmount,
 		fromAssetAmountAfterFeesCalcBN: mainActionAmountBN,
 		toAsset,
+		assetsDataRaw,
 		lendOutputToAAVE,
 	})
 
@@ -308,7 +327,7 @@ export async function walletTradeTransaction({
 		// feeTokenAddr, //in ..rest
 		// actionMinAmountBN, // in ...rest
 		// actionMinAmountFormatted, // in ...rest
-		spendTokenAddr: fromAsset,
+		spendTokenAddr: fromAssetTradableAddr,
 		totalAmountToSpendBN: fromAssetAmountUserInputBN, // Total amount out
 		totalAmountToSpendFormatted: fromAssetAmount, // Total amount out
 		mainActionAmountBN,
