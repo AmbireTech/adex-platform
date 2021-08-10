@@ -53,7 +53,6 @@ async function getWalletTradeTxns({
 	fromAsset,
 	fromAssetAmount,
 	fromAssetAmountAfterFeesCalcBN,
-	feeTokenAddr,
 	toAsset,
 	lendOutputToAAVE = false,
 	assetsDataRaw,
@@ -75,6 +74,7 @@ async function getWalletTradeTxns({
 		// UniSwapQuoterV3,
 	} = await getEthers(authType)
 
+	const feeTokenAddr = fromAsset
 	const from = assets[fromAsset]
 	const to = assets[toAsset]
 
@@ -255,7 +255,6 @@ export async function walletTradeTransaction({
 	const isETHToken = isETHBasedToken({ address: fromAsset })
 	const fromAssetTradableAddr = isETHToken ? tokens['WETH'] : fromAsset
 
-	const feeTokenAddr = fromAssetTradableAddr
 	const from = assets[fromAssetTradableAddr]
 
 	// Pre call to get fees
@@ -267,7 +266,6 @@ export async function walletTradeTransaction({
 		account,
 		fromAsset: fromAssetTradableAddr,
 		fromAssetAmount,
-		feeTokenAddr,
 		// fromAssetAmountAfterFeesCalcBN,
 		toAsset,
 		assetsDataRaw,
