@@ -41,7 +41,7 @@ import { execute, checkNetworkCongestion } from 'actions'
 import { HelpSharp as HelpIcon } from '@material-ui/icons'
 import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
 import { getMainCurrencyValue } from 'helpers/wallet'
-
+import { isETHBasedToken } from 'services/smart-contracts/actions/walletCommon'
 const useStyles = makeStyles(styles)
 
 function TransactionPreview(props) {
@@ -55,12 +55,21 @@ function TransactionPreview(props) {
 		feesData = {},
 		errors = [],
 		withdrawTo,
+		fromAsset,
+		toAsset,
 	} = useSelector(state => selectNewTransactionById(state, txId))
 	const [networkCongested, setNetworkCongested] = useState(false)
 	const { assetsData = {} } = useSelector(selectAccountStatsRaw)
-	const { totalFeesFormatted, feeTokenSymbol } = feesData
+	const { totalFeesFormatted, feeTokenSymbol: dataFeeTokenSymbol } = feesData
 	const prices = useSelector(selectBaseAssetsPrices)
 	const mainCurrency = useSelector(selectMainCurrency)
+
+	// WETH specific
+	const isFromETHToken = isETHBasedToken({ address: fromAsset })
+	const isToETHToken = isETHBasedToken({ address: toAsset })
+	const { symbol } = assetsData[fromAsset] || {}
+
+	const feeTokenSymbol = isFromETHToken ? symbol : dataFeeTokenSymbol
 
 	const feesMainCurrencyValue = getMainCurrencyValue({
 		asset: feeTokenSymbol,
@@ -131,7 +140,16 @@ function TransactionPreview(props) {
 
 						{stepsId === 'walletSwapForm' && (
 							<TradePreview
-								{...{ prices, mainCurrency, assetsData, feesData }}
+								{...{
+									prices,
+									mainCurrency,
+									assetsData,
+									feesData,
+									isFromETHToken,
+									isToETHToken,
+									fromAsset,
+									toAsset,
+								}}
 							/>
 						)}
 
@@ -171,10 +189,10 @@ function TransactionPreview(props) {
 											<Box>
 												{t('WALLET_FEES_BREAKDOWN_ADVANCED_LABEL', {
 													args: [
-														totalFeesFormatted,
-														feeTokenSymbol,
 														feesMainCurrencyValue,
 														mainCurrency.symbol,
+														totalFeesFormatted,
+														feeTokenSymbol,
 													],
 												})}
 											</Box>
