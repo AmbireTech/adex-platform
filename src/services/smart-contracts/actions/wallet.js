@@ -34,6 +34,7 @@ import {
 	isETHBasedToken,
 	getTradeOutData,
 	getEthBasedTokensToWETHTxns,
+	getEthBasedTokensToETHTxns,
 } from './walletCommon'
 
 const { Interface, parseUnits } = utils
@@ -735,6 +736,8 @@ async function getWithdrawTxns({
 	withdrawAssetAddr,
 	// getMinAmountToSpend,
 	tokenData,
+	isFromETHToken,
+	assetsDataRaw,
 }) {
 	const { wallet, identity } = account
 	const { authType } = wallet
@@ -753,9 +756,16 @@ async function getWithdrawTxns({
 		throw new Error('walletWithdraw - invalid withdraw token address')
 	}
 
-	const txns = []
-
 	const amountToWithdrawBN = parseUnits(amountToWithdraw, token.decimals)
+
+	const txns = isFromETHToken
+		? getEthBasedTokensToETHTxns({
+				feeTokenAddr,
+				identityAddr,
+				amountNeeded: amountToWithdrawBN,
+				assetsDataRaw,
+		  })
+		: []
 
 	const amountToUnwrap = BigNumber.from(tokenData.balance)
 		.sub(amountToWithdrawBN)
@@ -822,10 +832,16 @@ export async function walletWithdrawTransaction({
 	account,
 	amountToWithdraw,
 	withdrawTo,
-	withdrawAssetAddr,
+	withdrawAssetAddr: useInputWithdrawAsset,
 	assetsDataRaw,
 	getMinAmountToSpend,
 }) {
+	const isFromETHToken = isETHBasedToken({ address: useInputWithdrawAsset })
+
+	const withdrawAssetAddr = isFromETHToken
+		? tokens['ETH']
+		: useInputWithdrawAsset
+
 	const tokenData = assetsDataRaw[withdrawAssetAddr]
 
 	// Pre call to get fees
@@ -841,6 +857,8 @@ export async function walletWithdrawTransaction({
 		withdrawAssetAddr,
 		tokenData,
 		getMinAmountToSpend,
+		assetsDataRaw,
+		isFromETHToken,
 	})
 
 	const {
@@ -877,6 +895,8 @@ export async function walletWithdrawTransaction({
 		withdrawAssetAddr,
 		tokenData,
 		getMinAmountToSpend,
+		assetsDataRaw,
+		isFromETHToken,
 	})
 
 	const {
