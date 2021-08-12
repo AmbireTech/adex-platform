@@ -252,8 +252,11 @@ export async function walletTradeTransaction({
 	assetsDataRaw,
 	lendOutputToAAVE = false,
 }) {
-	const isETHToken = isETHBasedToken({ address: fromAsset })
-	const fromAssetTradableAddr = isETHToken ? tokens['WETH'] : fromAsset
+	const isFromETHToken = isETHBasedToken({ address: fromAsset })
+	const fromAssetTradableAddr = isFromETHToken ? tokens['WETH'] : fromAsset
+
+	const isToETHToken = isETHBasedToken({ address: toAsset })
+	const toAssetTradableAddr = isToETHToken ? tokens['WETH'] : toAsset
 
 	const from = assets[fromAssetTradableAddr]
 
@@ -267,7 +270,7 @@ export async function walletTradeTransaction({
 		fromAsset: fromAssetTradableAddr,
 		fromAssetAmount,
 		// fromAssetAmountAfterFeesCalcBN,
-		toAsset,
+		toAsset: toAssetTradableAddr,
 		assetsDataRaw,
 		lendOutputToAAVE,
 	})
@@ -305,7 +308,7 @@ export async function walletTradeTransaction({
 		fromAsset: fromAssetTradableAddr,
 		fromAssetAmount,
 		fromAssetAmountAfterFeesCalcBN: mainActionAmountBN,
-		toAsset,
+		toAsset: toAssetTradableAddr,
 		assetsDataRaw,
 		lendOutputToAAVE,
 	})

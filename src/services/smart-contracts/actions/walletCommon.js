@@ -239,6 +239,9 @@ export async function getTradeOutData({
 	const fromAssetTradableAddr = isETHBasedToken({ address: fromAsset })
 		? tokens['WETH']
 		: fromAsset
+	const toAssetTradableAddr = isETHBasedToken({ address: toAsset })
+		? tokens['WETH']
+		: toAsset
 
 	const {
 		// UniSwapRouterV2,
@@ -248,7 +251,7 @@ export async function getTradeOutData({
 
 	const { path, router, pools } = await getPath({
 		from: fromAssetTradableAddr,
-		to: toAsset,
+		to: toAssetTradableAddr,
 		uniV3Only,
 	})
 
@@ -259,7 +262,7 @@ export async function getTradeOutData({
 	}
 
 	const from = assets[fromAssetTradableAddr]
-	const to = assets[toAsset]
+	const to = assets[toAssetTradableAddr]
 
 	const fromAmount =
 		fromAssetAmountBN ||
