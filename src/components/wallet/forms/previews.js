@@ -173,18 +173,27 @@ export const TradePreview = ({
 	assetsData,
 	prices,
 	mainCurrency,
+	isFromETHToken,
+	isToETHToken,
+	fromAsset,
+	toAsset,
 }) => {
 	const classes = useStyles()
 
 	const { tradeData = {} } = feesData.actionMeta || {}
-	const fromAssetData = assetsData[tradeData.fromAsset] || {}
+
+	const fromAddr = isFromETHToken ? fromAsset : tradeData.fromAsset
+	const toAddr = isToETHToken ? toAsset : tradeData.toAsset
+
+	const fromAssetData = assetsData[fromAddr] || {}
 
 	// console.log('fromAssetData', fromAssetData)
 	// console.log('feesData', feesData)
 
 	const { name, symbol } = fromAssetData
-	const { name: outName, symbol: outSymbol } =
-		assetsData[tradeData.toAsset] || {}
+	const { name: outName, symbol: outSymbol } = assetsData[toAddr] || {}
+
+	const feeTokenSymbol = isFromETHToken ? symbol : feesData.feeTokenSymbol
 
 	const fromMainCurrencyValue = getMainCurrencyValue({
 		asset: symbol,
@@ -212,7 +221,7 @@ export const TradePreview = ({
 				right={
 					<TokenRow
 						{...{
-							address: feesData.spendTokenAddr,
+							address: fromAddr,
 							name,
 							classes,
 							symbol,
@@ -222,7 +231,7 @@ export const TradePreview = ({
 							secondary: t('AMOUNT_SWAP_INFO', {
 								args: [
 									feesData.totalFeesFormatted,
-									feesData.feeTokenSymbol,
+									feeTokenSymbol,
 									feesData.mainActionAmountFormatted,
 									symbol,
 								],
