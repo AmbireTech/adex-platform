@@ -41,7 +41,7 @@ async function getAssetsData({ identityAddress, authType }) {
 						isSwappable,
 						isBaseAsset,
 						isAaveInterestToken,
-						rest,
+						...rest,
 					}
 				}
 			)
