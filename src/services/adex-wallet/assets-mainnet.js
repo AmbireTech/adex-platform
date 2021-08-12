@@ -98,6 +98,7 @@ const assets = {
 		isSwappable: false,
 		isBaseAsset: false,
 		mainAssetSymbol: 'ETH',
+		mainAssetAddr: tokens.ETH,
 		// subAssets: [tokens.aWETH],
 		subAssets: [],
 		decimals: 18,
