@@ -57,8 +57,6 @@ function TransactionPreview(props) {
 		withdrawTo,
 		fromAsset,
 		toAsset,
-		withdrawAsset,
-		stepProps,
 	} = useSelector(state => selectNewTransactionById(state, txId))
 	const [networkCongested, setNetworkCongested] = useState(false)
 	const { assetsData = {} } = useSelector(selectAccountStatsRaw)
@@ -66,12 +64,16 @@ function TransactionPreview(props) {
 	const prices = useSelector(selectBaseAssetsPrices)
 	const mainCurrency = useSelector(selectMainCurrency)
 
+	const formAssetAddr = fromAsset || feesData.spendTokenAddr
+
 	// WETH specific
-	const isFromETHToken = isETHBasedToken({
-		address: fromAsset || feesData.spendTokenAddr,
-	})
-	const isToETHToken = isETHBasedToken({ address: toAsset })
-	const { symbol } = assetsData[fromAsset] || {}
+	const isFromETHToken = formAssetAddr
+		? isETHBasedToken({
+				address: formAssetAddr,
+		  })
+		: false
+	const isToETHToken = toAsset ? isETHBasedToken({ address: toAsset }) : false
+	const { symbol } = assetsData[formAssetAddr] || {}
 
 	const feeTokenSymbol = isFromETHToken ? symbol : dataFeeTokenSymbol
 

@@ -781,7 +781,7 @@ async function getWithdrawTxns({
 	// 	BigNumber.from(aaveInterestToken.balance).toString()
 	// )
 
-	if (amountToUnwrap.gt(ZERO) && aaveInterestToken) {
+	if (!isFromETHToken && amountToUnwrap.gt(ZERO) && aaveInterestToken) {
 		const unwrapTx = {
 			identityContract: identityAddr,
 			feeTokenAddr,
@@ -797,18 +797,29 @@ async function getWithdrawTxns({
 		txns.push(unwrapTx)
 	}
 
-	const withdrawTx = {
-		identityContract: identityAddr,
-		feeTokenAddr,
-		to: withdrawAssetAddr,
-		data: ERC20.encodeFunctionData('transfer', [
-			withdrawTo,
-			getFeesOnly
-				? amountToWithdrawBN.sub(amountToUnwrap).toHexString()
-				: amountToWithdrawAfterFeesCalcBN.toHexString(),
-		]),
-		operationsGasLimits: [GAS_LIMITS.transfer],
-	}
+	const withdrawTx = isFromETHToken
+		? {
+				identityContract: identityAddr,
+				feeTokenAddr,
+				to: withdrawAssetAddr,
+				data: '0x',
+				value: getFeesOnly
+					? amountToWithdrawBN.sub(amountToUnwrap).toHexString()
+					: amountToWithdrawAfterFeesCalcBN.toHexString(),
+				operationsGasLimits: [GAS_LIMITS.transfer],
+		  }
+		: {
+				identityContract: identityAddr,
+				feeTokenAddr,
+				to: withdrawAssetAddr,
+				data: ERC20.encodeFunctionData('transfer', [
+					withdrawTo,
+					getFeesOnly
+						? amountToWithdrawBN.sub(amountToUnwrap).toHexString()
+						: amountToWithdrawAfterFeesCalcBN.toHexString(),
+				]),
+				operationsGasLimits: [GAS_LIMITS.transfer],
+		  }
 
 	txns.push(withdrawTx)
 
