@@ -1,4 +1,10 @@
-import { assets, getPath, uniswapRouters, tokens } from 'services/adex-wallet'
+import {
+	assets,
+	getPath,
+	uniswapRouters,
+	tokens,
+	isETHBasedToken,
+} from 'services/adex-wallet'
 import { getEthers } from 'services/smart-contracts/ethers'
 import { utils, BigNumber } from 'ethers'
 import { contracts } from 'services/smart-contracts/contractsCfg'
@@ -31,11 +37,10 @@ import {
 	// getPollStateData,
 	// getUniv2RouteAndTokens,
 	getUniv3Route,
-	isETHBasedToken,
 	getTradeOutData,
 	getEthBasedTokensToWETHTxns,
 	getEthBasedTokensToETHTxns,
-} from './walletCommon'
+} from 'services/smart-contracts/actions/walletCommon'
 
 const { Interface, parseUnits } = utils
 
@@ -351,6 +356,8 @@ async function getDiversificationTxns({
 	fromAssetAmountAfterFeesCalcBN,
 	diversificationAssets,
 	lendOutputToAAVE = false,
+	isFromETHToken,
+	assetsDataRaw,
 }) {
 	const { wallet, identity } = account
 	const { authType } = wallet
@@ -397,7 +404,14 @@ async function getDiversificationTxns({
 			? fromAssetAmountUserInputBN
 			: fromAssetAmountAfterFeesCalcBN
 
-	const txns = []
+	const txns = isFromETHToken
+		? getEthBasedTokensToWETHTxns({
+				feeTokenAddr,
+				identityAddr,
+				amountNeeded: fromAmount,
+				assetsDataRaw,
+		  })
+		: []
 	const tokensOutData = []
 
 	const tokenIn = await getUniToken({
@@ -638,8 +652,14 @@ export async function walletDiversificationTransaction({
 	fromAssetAmount,
 	fromAssetAmountBN,
 	diversificationAssets,
+	assetsDataRaw,
 }) {
-	const from = assets[fromAsset]
+	const isFromETHToken = isETHBasedToken({ address: fromAsset })
+	const fromAssetTradableAddr = isFromETHToken ? tokens['WETH'] : fromAsset
+
+	console.log('isFromETHToken', isFromETHToken)
+
+	const from = assets[fromAssetTradableAddr]
 	// Pre call to get fees
 	const {
 		txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
@@ -647,11 +667,13 @@ export async function walletDiversificationTransaction({
 	} = await getDiversificationTxns({
 		getFeesOnly: true,
 		account,
-		fromAsset,
+		fromAsset: fromAssetTradableAddr,
 		fromAssetAmount,
 		fromAssetAmountBN,
 		// fromAssetAmountAfterFeesCalcBN,
 		diversificationAssets,
+		isFromETHToken,
+		assetsDataRaw,
 	})
 
 	const {
@@ -691,11 +713,13 @@ export async function walletDiversificationTransaction({
 	} = await getDiversificationTxns({
 		getFeesOnly: false,
 		account,
-		fromAsset,
+		fromAsset: fromAssetTradableAddr,
 		fromAssetAmount,
 		fromAssetAmountBN,
 		fromAssetAmountAfterFeesCalcBN: mainActionAmountBN,
 		diversificationAssets,
+		isFromETHToken,
+		assetsDataRaw,
 	})
 
 	const {
@@ -713,7 +737,7 @@ export async function walletDiversificationTransaction({
 		// feeTokenAddr, //in ..rest
 		// actionMinAmountBN, // in ...rest
 		// actionMinAmountFormatted, // in ...rest
-		spendTokenAddr: fromAsset,
+		spendTokenAddr: fromAssetTradableAddr,
 		totalAmountToSpendBN: fromAssetAmountUserInputBN, // Total amount out
 		totalAmountToSpendFormatted: fromAssetAmount, // Total amount out
 		mainActionAmountBN,

@@ -3,7 +3,7 @@ import {
 	getPath,
 	// uniswapRouters,
 	tokens,
-	ETH_TOKENS,
+	isETHBasedToken,
 } from 'services/adex-wallet'
 import { getEthers } from 'services/smart-contracts/ethers'
 import {
@@ -221,11 +221,6 @@ export async function getUniv3Route({ pools, tokenIn, tokenOut, provider }) {
 	const route = new RouteV3(poolsWithData, tokenIn, tokenOut)
 
 	return route
-}
-
-export function isETHBasedToken({ address }) {
-	const token = assets[address]
-	return ETH_TOKENS.includes(token.symbol)
 }
 
 export async function getTradeOutData({

@@ -4,6 +4,11 @@ import ADX_WALLET_LOGO from 'resources/wallet/logo.png'
 
 export const ETH_TOKENS = ['ETH', 'WETH', 'aETH', 'aWETH']
 
+export function isETHBasedToken({ address }) {
+	const token = assets[address]
+	return ETH_TOKENS.includes(token.symbol)
+}
+
 export const { assets, tokens, mappers, logos } =
 	process.env.NODE_ENV === 'production' ? assetsMainnet : assetsKovan
 
