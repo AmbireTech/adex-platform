@@ -5,7 +5,7 @@ import {
 } from 'selectors'
 import { createSelector } from 'reselect'
 import { assets } from 'services/adex-wallet'
-import { getPath, tokens, getLogo } from 'services/adex-wallet'
+import { getPath, tokens, getLogo, isETHBasedToken } from 'services/adex-wallet'
 
 export const selectTradableAssetsFromSources = createSelector(
 	[selectAccountStatsFormatted],
@@ -28,11 +28,14 @@ export const selectDiversifiableAssetsFromSources = createSelector(
 				if (!x.isSwappable) {
 					return false
 				}
-				if (x.address === tokens['WETH']) {
-					return true
-				}
+
+				const isFromETHToken = isETHBasedToken({ address: x.address })
+				const from = isFromETHToken ? tokens['WETH'] : x.address
+				// if (x.address === tokens['WETH']) {
+				// 	return true
+				// }
 				const { router, pools } = getPath({
-					from: x.address,
+					from,
 					to: tokens['WETH'],
 				})
 

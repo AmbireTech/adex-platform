@@ -311,6 +311,7 @@ export function validateWalletDiversify({
 			fromAssetAmount,
 			diversificationAssets,
 		} = selectNewTransactionById(state, stepsId)
+		const { assetsData: assetsDataRaw = {} } = selectAccountStatsRaw(state)
 
 		// const authType = selectAuthType(state)
 
@@ -348,6 +349,7 @@ export function validateWalletDiversify({
 					fromAsset,
 					fromAssetAmount,
 					diversificationAssets,
+					assetsDataRaw,
 				})
 
 			isValid = await handleWalletTxnsAndFeesData({

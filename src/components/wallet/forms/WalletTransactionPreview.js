@@ -41,7 +41,7 @@ import { execute, checkNetworkCongestion } from 'actions'
 import { HelpSharp as HelpIcon } from '@material-ui/icons'
 import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
 import { getMainCurrencyValue } from 'helpers/wallet'
-import { isETHBasedToken } from 'services/smart-contracts/actions/walletCommon'
+import { isETHBasedToken } from 'services/adex-wallet'
 const useStyles = makeStyles(styles)
 
 function TransactionPreview(props) {
