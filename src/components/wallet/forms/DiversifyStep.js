@@ -88,6 +88,12 @@ const styles = theme => {
 				backgroundColor: fade(theme.palette.primary.main, 0.69),
 			},
 		},
+		selectIcon: {
+			color: theme.palette.primary.main,
+			width: '1.2em',
+			height: '1.2em',
+			top: `calc(50% - 0.6em)`,
+		},
 	}
 }
 
@@ -126,6 +132,17 @@ const useStyles = makeStyles(styles)
 const useSliderStyles = makeStyles(sliderStyles)
 
 const ZERO = BigNumber.from(0)
+
+const safeNumberValue = (value, stateValue) => {
+	const numValue = Number(value)
+	if (!value && value !== 0) {
+		return ''
+	} else if (isNaN(numValue)) {
+		return stateValue
+	} else {
+		return value
+	}
+}
 
 const SelectedDoughnut = ({
 	diversificationAssets,
@@ -339,7 +356,9 @@ const AssetSelector = ({
 						aria-labelledby={`asset-${symbol}-share-slider`}
 						step={5}
 						marks={false}
-						onChange={(ev, value) => onChange(address, value)}
+						onChange={(ev, value) =>
+							onChange(address, safeNumberValue(value, share))
+						}
 						min={0}
 						max={100}
 						value={share}
@@ -358,7 +377,9 @@ const AssetSelector = ({
 					<OutlinedInput
 						id={`asset-${symbol}-share-input`}
 						value={share}
-						onChange={ev => onChange(address, ev.target.value)}
+						onChange={ev =>
+							onChange(address, safeNumberValue(ev.target.value, share))
+						}
 						endAdornment={<InputAdornment position='end'>%</InputAdornment>}
 						labelWidth={0}
 					/>
@@ -398,9 +419,10 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 
 	const selectedFromAsset = assetsData[fromAsset] || {}
 
-	const fromAssetUserBalance = selectedFromAsset.balance
-		? selectedFromAsset.balance
-		: ZERO
+	const fromAssetUserBalance =
+		selectedFromAsset.totalAvailableMainAsset ||
+		selectedFromAsset.totalAvailable ||
+		ZERO
 
 	const sharesUsed = diversificationAssets.reduce(
 		(left, asset) => left + (asset.share || 0),
@@ -632,7 +654,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 											<Divider className={classes.divider} />
 										</Box>
 									))}
-									{availableAssetsSrc.length && (
+									{!!availableAssetsSrc.length && (
 										<Box
 											display='flex'
 											flexDirection='row'
@@ -644,7 +666,10 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 													fullWidth
 													variant='standard'
 													onChange={value => {
-														value && setNewSelectedAsset(value)
+														if (value) {
+															updateDiversifications(value, 0)
+															setNewSelectedAsset('')
+														}
 													}}
 													source={availableAssetsSrc}
 													value={selectedNewAsset}
@@ -658,22 +683,13 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 																	.substr(0, 20) + '...'
 													}
 													htmlId='diversify-new-asset-dd'
+													// IconComponent={() => <AddIcon color='secondary' />}
+													IconComponent={AddIcon}
+													selectClasses={{
+														icon: classes.selectIcon,
+													}}
 												/>
 											</Box>
-											<IconButton
-												className={classes.addBtn}
-												size='small'
-												edge='end'
-												aria-label='add'
-												onClick={() => {
-													if (selectedNewAsset) {
-														updateDiversifications(selectedNewAsset, 0)
-														setNewSelectedAsset('')
-													}
-												}}
-											>
-												<AddIcon />
-											</IconButton>
 										</Box>
 									)}
 								</Grid>

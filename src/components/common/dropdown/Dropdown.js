@@ -80,6 +80,7 @@ function Dropdown(props) {
 		helperText,
 		fullWidth = false,
 		className,
+		selectClasses,
 		required,
 		loading,
 		noSrcLabel,
@@ -114,7 +115,7 @@ function Dropdown(props) {
 						onChange={handleChange}
 						IconComponent={IconComponent}
 						input={inputComponent}
-						classes={{ selectMenu: classes.select }}
+						classes={{ selectMenu: classes.select, ...selectClasses }}
 						MenuProps={{
 							PaperProps: {
 								square: true,
