@@ -13,7 +13,7 @@ import { InfoCard } from './WalletInfoCard'
 import { Stop as StopIcon } from '@material-ui/icons'
 import {
 	TradeAssets,
-	// DiversifyAssets,
+	DiversifyAssets,
 } from 'components/wallet/forms/walletTransactions'
 import { Doughnut } from 'react-chartjs-2'
 
@@ -194,7 +194,7 @@ function WalletStats() {
 									dialogHeight={800}
 								/>
 							</Box>
-							{/* <Box m={0.5}>
+							<Box m={0.5}>
 								<DiversifyAssets
 									variant='contained'
 									color='primary'
@@ -202,7 +202,7 @@ function WalletStats() {
 									dialogWidth={512}
 									dialogHeight={800}
 								/>
-							</Box> */}
+							</Box>
 						</Box>
 					</Box>
 				</InfoCard>

@@ -6,6 +6,7 @@ import { PropRow } from 'components/common/dialog/content'
 import { t } from 'selectors'
 import { getLogo } from 'services/adex-wallet'
 import { getMainCurrencyValue } from 'helpers/wallet'
+import { isETHBasedToken } from 'services/adex-wallet'
 
 const styles = theme => {
 	return {
@@ -85,8 +86,20 @@ export const DiversifyPreview = ({
 	const classes = useStyles()
 	const { spendTokenAddr } = feesData
 	const { tokensOutData = [] } = feesData.actionMeta || {}
+
+	const isFromETHToken = spendTokenAddr
+		? isETHBasedToken({
+				address: spendTokenAddr,
+		  })
+		: false
+
 	const fromAssetData = assetsData[spendTokenAddr] || {}
-	const { name, symbol } = fromAssetData
+	const displayFromAssetData = isFromETHToken
+		? assetsData[fromAssetData.mainAssetAddr] || {}
+		: fromAssetData
+
+	const { name, symbol } = displayFromAssetData
+
 	const fromMainCurrencyValue = getMainCurrencyValue({
 		asset: symbol,
 		floatAmount: feesData.totalAmountToSpendFormatted,
@@ -135,7 +148,16 @@ export const DiversifyPreview = ({
 				right={
 					<Box>
 						{tokensOutData.map(({ address, amountOutMin, share }) => {
-							const { name, symbol } = assetsData[address]
+							const isToETHToken = address
+								? isETHBasedToken({
+										address,
+								  })
+								: false
+							const toAssetData = assetsData[address] || {}
+							const displayToAssetData = isToETHToken
+								? assetsData[toAssetData.mainAssetAddr] || {}
+								: toAssetData
+							const { name, symbol } = displayToAssetData
 							const amountMainCurrency = getMainCurrencyValue({
 								asset: symbol,
 								floatAmount: amountOutMin,
