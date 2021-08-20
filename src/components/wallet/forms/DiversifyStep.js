@@ -46,7 +46,7 @@ import Dropdown from 'components/common/dropdown'
 import { formatTokenAmount } from 'helpers/formatters'
 import { diversificationPresets } from 'services/adex-wallet/diversifications'
 import { IconButton } from '@material-ui/core'
-import { getLogo } from 'services/adex-wallet'
+import { getLogo, isETHBasedToken } from 'services/adex-wallet'
 
 const styles = theme => {
 	return {
@@ -138,9 +138,9 @@ const safeNumberValue = (value, stateValue) => {
 	if (!value && value !== 0) {
 		return ''
 	} else if (isNaN(numValue)) {
-		return stateValue
+		return Number(stateValue)
 	} else {
-		return value
+		return numValue
 	}
 }
 
@@ -313,14 +313,25 @@ const SelectedDoughnut = ({
 const AssetSelector = ({
 	index,
 	address,
-	symbol,
-	name,
+	assetsData,
+	// symbol,
+	// name,
 	share,
 	maxPercent,
 	onChange,
 }) => {
 	const classes = useStyles()
 	const sliderClasses = useSliderStyles({ index })
+	const isToETHToken = address
+		? isETHBasedToken({
+				address,
+		  })
+		: false
+	const toAssetData = assetsData[address] || {}
+	const displayToAssetData = isToETHToken
+		? assetsData[toAssetData.mainAssetAddr || address] || {}
+		: toAssetData
+	const { name, symbol } = displayToAssetData
 
 	return (
 		<Box
@@ -414,7 +425,13 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	} = useSelector(state => selectNewTransactionById(state, stepsId))
 
 	const availableAssetsSrc = [...assetsFromSource].filter(
-		x => !diversificationAssets.some(y => y.address === x.value)
+		x =>
+			!diversificationAssets.some(
+				y =>
+					y.address === x.value ||
+					(isETHBasedToken({ address: y.address }) &&
+						isETHBasedToken({ address: x.value }))
+			)
 	)
 
 	const selectedFromAsset = assetsData[fromAsset] || {}
@@ -648,7 +665,8 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 											<AssetSelector
 												index={index}
 												share={share}
-												{...assetsData[address]}
+												address={address}
+												assetsData={assetsData}
 												onChange={updateDiversifications}
 											/>
 											<Divider className={classes.divider} />
@@ -674,14 +692,14 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 													source={availableAssetsSrc}
 													value={selectedNewAsset}
 													size='small'
-													label={
-														selectedNewAsset
-															? t('DIVERSIFY_ADD_NEW_ASSET')
-															: availableAssetsSrc
-																	.map(x => x.label)
-																	.join(', ')
-																	.substr(0, 20) + '...'
-													}
+													label={t('DIVERSIFY_ADD_NEW_ASSET', {
+														args: [
+															availableAssetsSrc
+																.map(x => x.label)
+																.join(', ')
+																.substr(0, 20) + '...',
+														],
+													})}
 													htmlId='diversify-new-asset-dd'
 													// IconComponent={() => <AddIcon color='secondary' />}
 													IconComponent={AddIcon}
