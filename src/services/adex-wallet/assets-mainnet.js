@@ -38,9 +38,9 @@ const {
 
 const tokens = {
 	ETH: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
-	// aETH: '0x3a3A65aAb0dd2A17E3F1947bA16138cd37d08c04',
+	aETH: '0x3a3A65aAb0dd2A17E3F1947bA16138cd37d08c04',
 	WETH: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-	// aWETH: '0x030bA81f1c18d280636F32af80b9AAd02Cf0854e',
+	aWETH: '0x030bA81f1c18d280636F32af80b9AAd02Cf0854e',
 	// USDT: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
 	USDC: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
 	WBTC: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
@@ -74,20 +74,20 @@ const assets = {
 		subAssets: [tokens.WETH],
 		decimals: 18,
 	},
-	// [tokens.aETH]: {
-	// 	symbol: 'aETH',
-	// 	name: 'Aave interest bearing ETH',
-	// 	getBalance: async function({ address }) {
-	// 		return await getERC20Balance({ tokenAddress: tokens.aETH, address })
-	// 	},
-	// 	isSwappable: false,
-	// 	isBaseAsset: false,
-	//  mainAssetSymbol: 'ETH',
-	// 	isAaveInterestToken: true,
-	// 	subAssets: [],
-	// 	decimals: 18,
-	// 	logoSrc: ETH_LOGO,
-	// },
+	[tokens.aETH]: {
+		symbol: 'aETH',
+		name: 'Aave interest bearing ETH',
+		getBalance: async function({ address }) {
+			return await getERC20Balance({ tokenAddress: tokens.aETH, address })
+		},
+		isSwappable: false,
+		isBaseAsset: false,
+		mainAssetSymbol: 'ETH',
+		isAaveInterestToken: true,
+		subAssets: [],
+		decimals: 18,
+		logoSrc: ETH_LOGO,
+	},
 	[tokens.WETH]: {
 		symbol: 'WETH',
 		name: 'Wrapped ETH',
@@ -103,20 +103,20 @@ const assets = {
 		subAssets: [],
 		decimals: 18,
 	},
-	// [tokens.aWETH]: {
-	// 	symbol: 'aWETH',
-	// 	name: 'Aave interest bearing WETH',
-	// 	getBalance: async function({ address }) {
-	// 		return await getERC20Balance({ tokenAddress: tokens.aWETH, address })
-	// 	},
-	// 	isSwappable: false,
-	// 	isBaseAsset: false,
-	//  mainAssetSymbol: 'ETH',
-	// 	isAaveInterestToken: true,
-	// 	subAssets: [],
-	// 	decimals: 18,
-	// 	logoSrc: ETH_LOGO,
-	// },
+	[tokens.aWETH]: {
+		symbol: 'aWETH',
+		name: 'Aave interest bearing WETH',
+		getBalance: async function({ address }) {
+			return await getERC20Balance({ tokenAddress: tokens.aWETH, address })
+		},
+		isSwappable: false,
+		isBaseAsset: false,
+		mainAssetSymbol: 'ETH',
+		isAaveInterestToken: true,
+		subAssets: [],
+		decimals: 18,
+		logoSrc: ETH_LOGO,
+	},
 	[ADXToken.address]: {
 		symbol: ADXToken.symbol,
 		name: 'AdEx Network',
