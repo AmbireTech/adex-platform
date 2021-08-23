@@ -52,7 +52,7 @@ import {
 	// processExecuteWalletTxns,
 	// getWalletApproveTxns,
 } from './walletIdentity'
-// const ZERO = BigNumber.from(0)
+const ZERO = BigNumber.from(0)
 
 const UNI_V3_FACTORY_ADDR = '0x1F98431c8aD98523631AE4a59f267346ea31F984'
 const SIGNIFICANT_DIGITS = 6
@@ -689,4 +689,39 @@ export function getEthBasedTokensToETHTxns({
 	}
 
 	return txns
+}
+
+export function aaveUnwrapTokenAmount({
+	underlyingAssetAddr,
+	amountNeeded,
+	assetsDataRaw,
+}) {
+	const underlyingAssetTotalAvailable = BigNumber.from(
+		assetsDataRaw[underlyingAssetAddr].totalAvailable
+	)
+	if (amountNeeded.gt(underlyingAssetTotalAvailable)) {
+		throw new Error(
+			`aaveUnwrapToken Insufficient balance ${underlyingAssetAddr}`
+		)
+	}
+
+	const underlyingAssetBalance = BigNumber.from(
+		assetsDataRaw[underlyingAssetAddr].balance
+	)
+
+	if (underlyingAssetBalance.lt(amountNeeded)) {
+		return amountNeeded.sub(underlyingAssetBalance)
+	} else {
+		return ZERO
+	}
+}
+
+export function getAAVEInterestTokenAddr({ underlyingAssetAddr }) {
+	const symbol = assets[underlyingAssetAddr].symbol
+	// TODO: make it better
+	const aaveInterestTokenAddr = tokens[`a${symbol}`]
+	if (!aaveInterestTokenAddr) {
+		throw new Error('getAAVEInterestTokenAddr - AAVE interest token not found')
+	}
+	return aaveInterestTokenAddr
 }
