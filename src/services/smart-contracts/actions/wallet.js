@@ -40,6 +40,8 @@ import {
 	getTradeOutData,
 	getEthBasedTokensToWETHTxns,
 	getEthBasedTokensToETHTxns,
+	aaveUnwrapTokenAmount,
+	getAAVEInterestTokenAddr,
 } from 'services/smart-contracts/actions/walletCommon'
 
 const { Interface, parseUnits } = utils
@@ -135,6 +137,14 @@ async function getWalletTradeTxns({
 		operationsGasLimits: [GAS_LIMITS.transfer],
 	})
 
+	const aaveUnwrapAmount = isETHToken
+		? ZERO
+		: aaveUnwrapTokenAmount({
+				underlyingAssetAddr: fromAsset,
+				amountNeeded: fromAmount,
+				assetsDataRaw,
+		  })
+
 	if (router === 'uniV2') {
 		const tradeTuple = [
 			uniswapRouters.uniV2,
@@ -144,8 +154,28 @@ async function getWalletTradeTxns({
 			lendOutputToAAVE,
 		]
 
+		const assetsToUnwrap = []
+
+		if (aaveUnwrapAmount.gt(ZERO)) {
+			const aaveInterestToken = getAAVEInterestTokenAddr({
+				underlyingAssetAddr: fromAsset,
+			})
+			txns.push({
+				identityContract: identityAddr,
+				to: aaveInterestToken,
+				feeTokenAddr,
+				data: ERC20.encodeFunctionData('transfer', [
+					WalletZapper.address,
+					aaveUnwrapAmount.toHexString(),
+				]),
+				operationsGasLimits: [GAS_LIMITS.transfer],
+			})
+
+			assetsToUnwrap.push(aaveInterestToken)
+		}
+
 		const data = ZapperInterface.encodeFunctionData('exchangeV2', [
-			[],
+			assetsToUnwrap,
 			[tradeTuple],
 		])
 
