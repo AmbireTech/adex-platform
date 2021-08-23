@@ -42,6 +42,7 @@ import {
 	getEthBasedTokensToETHTxns,
 	aaveUnwrapTokenAmount,
 	getAAVEInterestTokenAddr,
+	txnsUnwrapAAVEInterestToken,
 } from 'services/smart-contracts/actions/walletCommon'
 
 const { Interface, parseUnits } = utils
@@ -126,17 +127,6 @@ async function getWalletTradeTxns({
 
 	// const txns = []
 
-	txns.push({
-		identityContract: identityAddr,
-		to: fromAsset,
-		feeTokenAddr,
-		data: ERC20.encodeFunctionData('transfer', [
-			WalletZapper.address,
-			fromAmountHex,
-		]),
-		operationsGasLimits: [GAS_LIMITS.transfer],
-	})
-
 	const aaveUnwrapAmount = isETHToken
 		? ZERO
 		: aaveUnwrapTokenAmount({
@@ -144,6 +134,17 @@ async function getWalletTradeTxns({
 				amountNeeded: fromAmount,
 				assetsDataRaw,
 		  })
+
+	txns.push({
+		identityContract: identityAddr,
+		to: fromAsset,
+		feeTokenAddr,
+		data: ERC20.encodeFunctionData('transfer', [
+			WalletZapper.address,
+			fromAmount.sub(aaveUnwrapAmount).toHexString(),
+		]),
+		operationsGasLimits: [GAS_LIMITS.transfer],
+	})
 
 	if (router === 'uniV2') {
 		const tradeTuple = [
@@ -194,6 +195,18 @@ async function getWalletTradeTxns({
 
 		// console.log('lendOutputToAAVE', lendOutputToAAVE)
 		if (pools.length === 1) {
+			if (aaveUnwrapAmount.gt(ZERO)) {
+				txns.push(
+					...txnsUnwrapAAVEInterestToken({
+						feeTokenAddr,
+						underlyingAssetAddr: fromAsset,
+						amount: aaveUnwrapAmount,
+						withdrawToAddr: WalletZapper.address,
+						identityAddr,
+					})
+				)
+			}
+
 			data = ZapperInterface.encodeFunctionData('tradeV3Single', [
 				UniSwapRouterV3.address,
 				[
