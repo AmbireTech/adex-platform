@@ -523,7 +523,7 @@ export function getEthBasedTokensToWETHTxns({
 					// 1. - aETH to ETH to identity
 					// TODO: param send to identity or zapper
 					aETHtoWETHtxns.push(
-						txnsUnwrapAAVEInterestToken({
+						...txnsUnwrapAAVEInterestToken({
 							feeTokenAddr,
 							// Hope it works that way for ETH
 							// https://etherscan.io/address/0x3a3a65aab0dd2a17e3f1947ba16138cd37d08c04#readContract
@@ -538,7 +538,7 @@ export function getEthBasedTokensToWETHTxns({
 					//
 					// 2. wrap toWETH
 					aETHtoWETHtxns.push(
-						txnsETHtoWETH({
+						...txnsETHtoWETH({
 							feeTokenAddr,
 							identityAddr,
 							addrWETH: tokens.WETH,
