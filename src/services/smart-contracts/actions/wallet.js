@@ -538,13 +538,33 @@ async function getDiversificationTxns({
 	}
 
 	if (!toTransferAmountIn.isZero()) {
+		const aaveUnwrapAmount = isFromETHToken
+			? ZERO
+			: aaveUnwrapTokenAmount({
+					underlyingAssetAddr: fromAsset,
+					amountNeeded: toTransferAmountIn,
+					assetsDataRaw,
+			  })
+
+		if (aaveUnwrapAmount.gt(ZERO)) {
+			txns.push(
+				...txnsUnwrapAAVEInterestToken({
+					feeTokenAddr,
+					underlyingAssetAddr: fromAsset,
+					amount: aaveUnwrapAmount,
+					withdrawToAddr: WalletZapper.address,
+					identityAddr,
+				})
+			)
+		}
+
 		txns.push({
 			identityContract: identityAddr,
 			to: fromAsset,
 			feeTokenAddr,
 			data: ERC20.encodeFunctionData('transfer', [
 				WalletZapper.address,
-				toTransferAmountIn.toHexString(),
+				toTransferAmountIn.sub(aaveUnwrapAmount).toHexString(),
 			]),
 			operationsGasLimits: [GAS_LIMITS.transfer],
 		})
@@ -700,7 +720,7 @@ export async function walletDiversificationTransaction({
 	const isFromETHToken = isETHBasedToken({ address: fromAsset })
 	const fromAssetTradableAddr = isFromETHToken ? tokens['WETH'] : fromAsset
 
-	console.log('isFromETHToken', isFromETHToken)
+	// console.log('isFromETHToken', isFromETHToken)
 
 	const from = assets[fromAssetTradableAddr]
 	// Pre call to get fees
