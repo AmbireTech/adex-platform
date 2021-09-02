@@ -442,7 +442,7 @@ export function txnsETHtoWETH({
 		feeTokenAddr,
 		to: contracts.WETH.address,
 		data: WETH.encodeFunctionData('deposit'),
-		value: amount,
+		value: amount.toHexString(),
 		operationsGasLimits: [GAS_LIMITS.wrap],
 	}
 
