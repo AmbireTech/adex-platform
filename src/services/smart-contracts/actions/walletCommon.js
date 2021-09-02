@@ -417,7 +417,7 @@ export function txnsUnwrapAAVEInterestToken({
 		to: contracts.AaveLendingPool.address,
 		data: AaveLendingPool.encodeFunctionData('withdraw', [
 			underlyingAssetAddr,
-			amount.toHexString(),
+			BigNumber.from(amount).toHexString(),
 			withdrawToAddr,
 		]),
 		operationsGasLimits: [GAS_LIMITS.unwrap],
@@ -545,6 +545,8 @@ export function getEthBasedTokensToWETHTxns({
 							amount,
 						})
 					)
+
+					return aETHtoWETHtxns
 				},
 			},
 		]
@@ -554,7 +556,11 @@ export function getEthBasedTokensToWETHTxns({
 				balance: assetsDataRaw[x.address].balance,
 			}))
 			.sort((a, b) =>
-				a.balance.lt(b.balance) ? -1 : a.balance.gte(b.balance) ? 1 : 0
+				BigNumber.from(a.balance).lt(b.balance)
+					? -1
+					: BigNumber.from(a.balance).gte(b.balance)
+					? 1
+					: 0
 			)
 
 		for (const balanceData of otherETHBalancesSorted) {
@@ -570,7 +576,8 @@ export function getEthBasedTokensToWETHTxns({
 
 			const amount = amountNeededLeft.gt(balance) ? balance : amountNeededLeft
 
-			txns.push(...getTxns(amount))
+			const dataTxns = getTxns(amount)
+			txns.push(...dataTxns)
 			amountReached = amountReached.add(amount)
 
 			if (amountReached.gte(amountNeeded)) {
@@ -625,7 +632,7 @@ export function getEthBasedTokensToETHTxns({
 					// 1. - aWETH to WETH to identity
 					// TODO: param send to identity or zapper
 					aWETHtoETHtxns.push(
-						txnsUnwrapAAVEInterestToken({
+						...txnsUnwrapAAVEInterestToken({
 							underlyingAssetAddr: tokens.WETH,
 							amount,
 							withdrawToAddr: identityAddr,
@@ -636,13 +643,15 @@ export function getEthBasedTokensToETHTxns({
 					//
 					// 2. unwrap to ETH
 					aWETHtoETHtxns.push(
-						txnsWETHtoETH({
+						...txnsWETHtoETH({
 							feeTokenAddr,
 							identityAddr,
 							addrWETH: tokens.WETH,
 							amount,
 						})
 					)
+
+					return aWETHtoETHtxns
 				},
 			},
 			{
@@ -678,8 +687,8 @@ export function getEthBasedTokensToETHTxns({
 			const amountNeededLeft = amountNeeded.sub(amountReached)
 
 			const amount = amountNeededLeft.gt(balance) ? balance : amountNeededLeft
-
-			txns.push(...getTxns(amount))
+			const dataTxns = getTxns(amount)
+			txns.push(...dataTxns)
 			amountReached = amountReached.add(amount)
 
 			if (amountReached.gte(amountNeeded)) {
