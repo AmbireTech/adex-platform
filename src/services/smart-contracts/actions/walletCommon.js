@@ -47,6 +47,7 @@ import {
 import { abi as IUniswapV3PoolABI } from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json'
 import {
 	GAS_LIMITS,
+	ON_CHAIN_ACTIONS,
 	// getWalletIdentityTxnsWithNoncesAndFees,
 	// getWalletIdentityTxnsTotalFees,
 	// processExecuteWalletTxns,
@@ -420,7 +421,7 @@ export function txnsUnwrapAAVEInterestToken({
 			BigNumber.from(amount).toHexString(),
 			withdrawToAddr,
 		]),
-		operationsGasLimits: [GAS_LIMITS.unwrap],
+		onChainActionData: [ON_CHAIN_ACTIONS.withdrawAAVE],
 	}
 
 	txns.push(unwrapTx)
@@ -443,7 +444,7 @@ export function txnsETHtoWETH({
 		to: contracts.WETH.address,
 		data: WETH.encodeFunctionData('deposit'),
 		value: amount.toHexString(),
-		operationsGasLimits: [GAS_LIMITS.wrap],
+		onChainActionData: [ON_CHAIN_ACTIONS.depositWETH],
 	}
 
 	txns.push(unwrapTx)
@@ -465,7 +466,7 @@ export function txnsWETHtoETH({
 		feeTokenAddr,
 		to: contracts.WETH.address,
 		data: WETH.encodeFunctionData('withdraw', [amount.toHexString()]),
-		operationsGasLimits: [GAS_LIMITS.unwrap],
+		onChainActionData: [ON_CHAIN_ACTIONS.withdrawWETH],
 	}
 
 	txns.push(unwrapTx)
