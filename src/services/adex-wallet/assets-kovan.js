@@ -13,6 +13,8 @@ import {
 	mapAAVEInterestToken,
 	mapADXLoyaltyPoolToken,
 	mapADXStakingPoolToken,
+	getETHBalance,
+	mapWrappedETH,
 	// getAdxToken,
 	// getADXLoyaltyPoolToken,
 	// getADXStakingPoolToken,
@@ -31,6 +33,8 @@ const {
 // 0xE592427A0AEce92De3Edee1F18E0157C05861564
 
 const tokens = {
+	ETH: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+	aETH: '0x7d375837948238b45e40f0458efd608969f49efe',
 	USDT: '0x13512979ade267ab5100878e2e0f485b568328a4',
 	aUSDT: '0xFF3c8bc103682FA918c954E84F5056aB4DD5189d', // AAVE USDT
 	WETH: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
@@ -133,6 +137,34 @@ export const assets = {
 		subAssets: [],
 		decimals: 6,
 		logoSrc: USDT_LOGO,
+	},
+	[tokens.ETH]: {
+		symbol: 'ETH',
+		name: 'Ethereum',
+		getBalance: async function({ address }) {
+			return await getETHBalance({ address })
+		},
+		isETH: true,
+		isSwappable: true,
+		isBaseAsset: true,
+		// subAssets: [ADXLoyaltyPoolToken.address, StakingPool.address],
+		// subAssets: [tokens.WETH, tokens.aWETH],
+		subAssets: [tokens.WETH],
+		decimals: 18,
+	},
+	[tokens.aETH]: {
+		symbol: 'aETH',
+		name: 'Aave interest bearing ETH',
+		getBalance: async function({ address }) {
+			return await getERC20Balance({ tokenAddress: tokens.aETH, address })
+		},
+		isSwappable: false,
+		isBaseAsset: false,
+		mainAssetSymbol: 'ETH',
+		isAaveInterestToken: true,
+		subAssets: [],
+		decimals: 18,
+		logoSrc: ETH_LOGO,
 	},
 	[tokens.WETH]: {
 		symbol: 'WETH',
@@ -240,8 +272,10 @@ export const mappers = {
 	[ADXLoyaltyPoolToken.address]: mapADXLoyaltyPoolToken.bind(null),
 	[StakingPool.address]: mapADXStakingPoolToken.bind(null),
 	[tokens.aUSDT]: mapAAVEInterestToken.bind(null, assets[tokens.USDT].symbol),
+	[tokens.aETH]: mapAAVEInterestToken.bind(null, assets[tokens.aETH].symbol),
 	[tokens.aWETH]: mapAAVEInterestToken.bind(null, assets[tokens.WETH].symbol),
 	[tokens.aDAI]: mapAAVEInterestToken.bind(null, assets[tokens.DAI].symbol),
+	[tokens.WETH]: mapWrappedETH.bind(null, assets[tokens.ETH].symbol),
 	[tokens.aLINK]: mapAAVEInterestToken.bind(null, assets[tokens.LINK].symbol),
 }
 
