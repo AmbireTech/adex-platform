@@ -26,6 +26,61 @@ export const GAS_LIMITS = {
 	approve: BigNumber.from(70_000),
 }
 
+export const ON_CHAIN_ACTIONS = {
+	transferERC20: {
+		name: 'SC_ACTION_TRANSFER_ERC20',
+		gasCost: GAS_LIMITS.transfer,
+	},
+	swapUniV2Single: {
+		name: 'SC_ACTION_SWAP_UNI_V2_DIRECT',
+		gasCost: GAS_LIMITS.swapV2,
+	},
+	zapperExchangeV2: {
+		name: 'SC_ACTION_ZAPPER_EXCHANGE_V2',
+		// gasCost - get from inner txns e.g. swapUniV2MultiHopSingle
+	},
+	swapUniV2MultiHopSingle: {
+		name: 'SC_ACTION_SWAP_UNI_V2_MULTIHOP_SINGLE',
+		gasCost: GAS_LIMITS.swapV2,
+	},
+	zapperTradeV3Single: {
+		name: 'SC_ACTION_ZAPPER_EXCHANGE_V2',
+		// gasCost - get from inner txns e.g. uniV3Router.exactInputSingle, lendingPool.deposit ..
+	},
+	swapUniV3Single: {
+		name: 'SC_ACTION_SWAP_UNI_V3_DIRECT',
+		gasCost: GAS_LIMITS.swapV3,
+	},
+	swapUniV3MultiHopSingle: {
+		name: 'SC_ACTION_SWAP_UNI_V3_MULTIHOP_SINGLE',
+		gasCost: GAS_LIMITS.swapV3,
+	},
+	depositAAVE: {
+		name: 'SC_ACTION_AAVE_DEPOSIT',
+		gasCost: GAS_LIMITS.wrap,
+	},
+	withdrawAAVE: {
+		name: 'SC_ACTION_AAVE_WITHDRAW',
+		gasCost: GAS_LIMITS.unwrap,
+	},
+	approve: {
+		name: 'SC_ACTION_APPROVE',
+		gasCost: GAS_LIMITS.approve,
+	},
+	deploy: {
+		name: 'SC_ACTION_IDENTITY_DEPLOY',
+		gasCost: GAS_LIMITS.deploy,
+	},
+	depositWETH: {
+		name: 'SC_ACTION_WETH_DEPOSIT',
+		gasCost: GAS_LIMITS.wrap,
+	},
+	withdrawWETH: {
+		name: 'SC_ACTION_WETH_WITHDRAW',
+		gasCost: GAS_LIMITS.unwrap,
+	},
+}
+
 // Calc nonces and
 export async function getWalletIdentityTxnsWithNoncesAndFees({
 	txns = [],
