@@ -91,6 +91,10 @@ export const ON_CHAIN_ACTIONS = {
 		name: 'SC_ACTION_WETH_WITHDRAW',
 		gasCost: GAS_LIMITS.unwrap,
 	},
+	feeTransfer: {
+		name: 'SC_ACTION_FEE_TRANSFER',
+		gasCost: GAS_LIMITS.transfer,
+	},
 }
 
 // Calc nonces and
@@ -154,6 +158,16 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 			}
 			return total.add(actionData.gasCost || '0')
 		}, ZERO)
+
+		const txnsData = [{ txAction, txInnerActions }]
+		if (isDeployTx) {
+			txnsData.push({ txAction: { ...ON_CHAIN_ACTIONS.deploy } })
+		}
+
+		if (addFeeTx) {
+			txnsData.push({ txAction: { ...ON_CHAIN_ACTIONS.feeTransfer } })
+		}
+
 		const operationsGasLimitSumBN = txGasCost.add(innerActionsTGasCost)
 
 		const txEstimatedGasLimitBN = operationsGasLimitSumBN
@@ -162,7 +176,10 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 			.add(addFeeTx ? GAS_LIMITS.transfer : ZERO)
 
 		const calculatedOperationsCount =
-			1 + txInnerActions.length + (isDeployTx ? 1 : 0) + (addFeeTx ? 1 : 0)
+			txnsData.length +
+			txInnerActions.length +
+			(isDeployTx ? 1 : 0) +
+			(addFeeTx ? 1 : 0)
 
 		const txFeeAmountETH = parseFloat(
 			formatUnits(
@@ -188,6 +205,7 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 			txEstimatedGasLimitBN,
 			calculatedGasPriceBN: gasPrice,
 			calculatedOperationsCount,
+			txnsData,
 			nonce: currentNonce,
 			isDeployTx,
 		}
@@ -211,6 +229,7 @@ export async function getWalletIdentityTxnsTotalFees({ txnsWithNonceAndFees }) {
 		totalEstimatedGasLimitBN,
 		calculatedGasPriceBN,
 		calculatedOperationsCount,
+		txnsData,
 	} = txnsWithNonceAndFees.reduce(
 		(result, tx) => {
 			const {
@@ -219,6 +238,7 @@ export async function getWalletIdentityTxnsTotalFees({ txnsWithNonceAndFees }) {
 				txEstimatedGasLimitBN,
 				calculatedOperationsCount,
 				calculatedGasPriceBN,
+				txnsData,
 			} = tx
 
 			const {
@@ -238,6 +258,7 @@ export async function getWalletIdentityTxnsTotalFees({ txnsWithNonceAndFees }) {
 				result.calculatedGasPriceBN || calculatedGasPriceBN
 			result.calculatedOperationsCount =
 				result.calculatedOperationsCount + calculatedOperationsCount
+			result.txnsData.push(...txnsData)
 
 			return result
 		},
@@ -248,6 +269,7 @@ export async function getWalletIdentityTxnsTotalFees({ txnsWithNonceAndFees }) {
 			totalEstimatedGasLimitBN: ZERO,
 			calculatedGasPriceBN: null,
 			calculatedOperationsCount: 0,
+			txnsData: [],
 		}
 	)
 
@@ -258,6 +280,19 @@ export async function getWalletIdentityTxnsTotalFees({ txnsWithNonceAndFees }) {
 	)
 
 	const actionMinAmountBN = totalFeesBN.mul(1)
+
+	const txnsDataFormatted = txnsData.map(
+		({ txAction, txInnerActions = [] }) => ({
+			txAction: {
+				...txAction,
+				gasCost: BigNumber.from(txAction.gasCost || '0').toString(),
+			},
+			txInnerActions: txInnerActions.map(inner => ({
+				...inner,
+				gasCost: BigNumber.from(inner.gasCost || '0').toString(),
+			})),
+		})
+	)
 
 	const fees = {
 		totalFeesFormatted: formatTokenAmount(
@@ -287,6 +322,7 @@ export async function getWalletIdentityTxnsTotalFees({ txnsWithNonceAndFees }) {
 			'gwei'
 		),
 		calculatedOperationsCount,
+		txnsData: txnsDataFormatted,
 	}
 
 	return fees
