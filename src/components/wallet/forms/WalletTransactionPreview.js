@@ -263,6 +263,20 @@ function TransactionPreview(props) {
 											primary={feesData.calculatedGasPriceGWEI + ' Gwei'}
 										/>
 									</ListItem>
+									<ListItem>
+										<Accordion variant='outlined'>
+											<AccordionSummary
+												expandIcon={<ExpandMoreIcon />}
+												aria-controls='txns-data'
+												id='txns-data'
+											>
+												<Typography>{t('TXNS_FULL_DATA')}</Typography>
+											</AccordionSummary>
+											<Box p={1} color='grey.contrastText' bgcolor='grey.main'>
+												<pre>{JSON.stringify(feesData.txnsData, null, 2)}</pre>
+											</Box>
+										</Accordion>
+									</ListItem>
 								</List>
 							</Accordion>
 						</Box>
