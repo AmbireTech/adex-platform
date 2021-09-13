@@ -369,10 +369,6 @@ async function getWalletTradeTxns({
 					}
 				})
 			)
-
-			// = pools.map(
-			// 	() => ON_CHAIN_ACTIONS.swapUniV3MultiHopSingle
-			// )
 		}
 
 		txns.push({
@@ -682,16 +678,38 @@ async function getDiversificationTxns({
 				WalletZapper.address,
 				toTransferAmountIn.sub(aaveUnwrapAmount).toHexString(),
 			]),
-			operationsGasLimits: [GAS_LIMITS.transfer],
+			// operationsGasLimits: [GAS_LIMITS.transfer],
+			onChainActionData: {
+				txAction: {
+					...ON_CHAIN_ACTIONS.transferERC20,
+					specific: {
+						token: `${from.symbol}`,
+						amount: `${toTransferAmountIn.sub(aaveUnwrapAmount).toString()}`,
+						from: `Identity (${identityAddr})`,
+						to: `Zapper (${WalletZapper.address})`,
+					},
+				},
+			},
 		})
 	}
 
 	const extraGasOperations = []
 
+	const txInnerActions = []
+
 	if (!toSwapAmountInToWETH.isZero()) {
 		// NOTE: last version of zapper returns the dust WETH
 		// Can be used to swap WETH only once
 		extraGasOperations.push(GAS_LIMITS.transfer)
+		txInnerActions.push({
+			...ON_CHAIN_ACTIONS.transferERC20,
+			specific: {
+				token: `WETH`,
+				amount: `${toSwapAmountInToWETH.toString()}`,
+				from: `Zapper (${WalletZapper.address})`,
+				to: `Identity (${identityAddr})`,
+			},
+		})
 
 		// Only for preview info
 		const toWETHAmountOutData = await getTradeOutData({
@@ -772,6 +790,26 @@ async function getDiversificationTxns({
 				wrap,
 			})
 
+			txInnerActions.push({
+				...ON_CHAIN_ACTIONS.swapUniV3Single,
+				specific: {
+					from: `${weth.symbol}`,
+					to: `${to.symbol}`,
+					amountIn: amountIn.toString(),
+					minOut: minimumAmountOut.toString(),
+				},
+			})
+
+			if (wrap) {
+				txInnerActions.push({
+					...ON_CHAIN_ACTIONS.depositAAVE,
+					specific: {
+						asset: `${to.symbol}`,
+						depositFor: identityAddr,
+					},
+				})
+			}
+
 			return [
 				asset.address,
 				pool.fee,
@@ -804,13 +842,25 @@ async function getDiversificationTxns({
 		to: WalletZapper.address,
 		feeTokenAddr,
 		data: ZapperInterface.encodeFunctionData('diversifyV3', args),
-		operationsGasLimits: diversificationTrades.reduce((limits, trade) => {
-			const tradeLimits = trade.wrap
-				? [GAS_LIMITS.swapV3, GAS_LIMITS.wrap]
-				: [GAS_LIMITS.swapV3]
-			limits = [...limits, ...tradeLimits]
-			return limits
-		}, extraGasOperations),
+		onChainActionData: {
+			txAction: {
+				...ON_CHAIN_ACTIONS.zapperDiversifyV3,
+				specific: {
+					fromAsset: `${from.symbol}`,
+					fromAmount: `${fromAmount.toString()}`,
+					toAssets: diversificationTrades.map(data => assets[data[0]].symbol),
+					// TODO: more data
+				},
+			},
+			txInnerActions,
+		},
+		// operationsGasLimits: diversificationTrades.reduce((limits, trade) => {
+		// 	const tradeLimits = trade.wrap
+		// 		? [GAS_LIMITS.swapV3, GAS_LIMITS.wrap]
+		// 		: [GAS_LIMITS.swapV3]
+		// 	limits = [...limits, ...tradeLimits]
+		// 	return limits
+		// }, extraGasOperations),
 	})
 
 	const txnsWithNonceAndFees = await getWalletIdentityTxnsWithNoncesAndFees({
