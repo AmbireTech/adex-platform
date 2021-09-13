@@ -47,6 +47,14 @@ export const ON_CHAIN_ACTIONS = {
 		name: 'SC_ACTION_ZAPPER_EXCHANGE_V2',
 		// gasCost - get from inner txns e.g. uniV3Router.exactInputSingle, lendingPool.deposit ..
 	},
+	zapperDiversifyV3: {
+		name: 'SC_ACTION_ZAPPER_DIVERSIFYv3',
+		// gasCost - GET FROM INNET TXNS?\\
+	},
+	zapperDiversifyInnerExchange: {
+		name: 'SC_ACTION_ZAPPER_EXCHANGE_INNER',
+		gasCost: GAS_LIMITS.swapV3,
+	},
 	swapUniV3Single: {
 		name: 'SC_ACTION_SWAP_UNI_V3_DIRECT',
 		gasCost: GAS_LIMITS.swapV3,

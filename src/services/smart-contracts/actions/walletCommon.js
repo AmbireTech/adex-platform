@@ -421,7 +421,15 @@ export function txnsUnwrapAAVEInterestToken({
 			BigNumber.from(amount).toHexString(),
 			withdrawToAddr,
 		]),
-		onChainActionData: [ON_CHAIN_ACTIONS.withdrawAAVE],
+		onChainActionData: {
+			txAction: {
+				...ON_CHAIN_ACTIONS.withdrawAAVE,
+				specific: {
+					token: `${assets[underlyingAssetAddr].symbol}`,
+					amount: `${amount.toString()}`,
+				},
+			},
+		},
 	}
 
 	txns.push(unwrapTx)
