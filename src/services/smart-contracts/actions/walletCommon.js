@@ -452,7 +452,14 @@ export function txnsETHtoWETH({
 		to: contracts.WETH.address,
 		data: WETH.encodeFunctionData('deposit'),
 		value: amount.toString(),
-		onChainActionData: [ON_CHAIN_ACTIONS.depositWETH],
+		onChainActionData: {
+			txAction: {
+				...ON_CHAIN_ACTIONS.depositWETH,
+				specific: {
+					amount: `${amount.toString()}`,
+				},
+			},
+		},
 	}
 
 	txns.push(wrapTx)
@@ -474,7 +481,14 @@ export function txnsWETHtoETH({
 		feeTokenAddr,
 		to: contracts.WETH.address,
 		data: WETH.encodeFunctionData('withdraw', [amount.toString()]),
-		onChainActionData: [ON_CHAIN_ACTIONS.withdrawWETH],
+		onChainActionData: {
+			txAction: {
+				...ON_CHAIN_ACTIONS.withdrawWETH,
+				specific: {
+					amount: `${amount.toString()}`,
+				},
+			},
+		},
 	}
 
 	txns.push(unwrapTx)
