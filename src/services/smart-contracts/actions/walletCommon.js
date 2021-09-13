@@ -438,16 +438,16 @@ export function txnsETHtoWETH({
 		throw new Error('txnsETHtoWETH - WETH addr does not match')
 	}
 	const txns = []
-	const unwrapTx = {
+	const wrapTx = {
 		identityContract: identityAddr,
 		feeTokenAddr,
 		to: contracts.WETH.address,
 		data: WETH.encodeFunctionData('deposit'),
-		value: amount.toHexString(),
+		value: amount.toString(),
 		onChainActionData: [ON_CHAIN_ACTIONS.depositWETH],
 	}
 
-	txns.push(unwrapTx)
+	txns.push(wrapTx)
 	return txns
 }
 
@@ -465,7 +465,7 @@ export function txnsWETHtoETH({
 		identityContract: identityAddr,
 		feeTokenAddr,
 		to: contracts.WETH.address,
-		data: WETH.encodeFunctionData('withdraw', [amount.toHexString()]),
+		data: WETH.encodeFunctionData('withdraw', [amount.toString()]),
 		onChainActionData: [ON_CHAIN_ACTIONS.withdrawWETH],
 	}
 
