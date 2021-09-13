@@ -51,6 +51,10 @@ export const ON_CHAIN_ACTIONS = {
 		name: 'SC_ACTION_SWAP_UNI_V3_DIRECT',
 		gasCost: GAS_LIMITS.swapV3,
 	},
+	swapUniV3MultiHop: {
+		name: 'SC_ACTION_SWAP_UNI_V3_MULTIHOP',
+		gasCost: GAS_LIMITS.swapV3,
+	},
 	swapUniV3MultiHopSingle: {
 		name: 'SC_ACTION_SWAP_UNI_V3_MULTIHOP_SINGLE',
 		gasCost: GAS_LIMITS.swapV3,

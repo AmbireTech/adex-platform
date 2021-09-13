@@ -160,6 +160,7 @@ async function getWalletTradeTxns({
 	})
 
 	if (router === 'uniV2') {
+		// TODO: multi hop univ v2 trades
 		const tradeTuple = [
 			uniswapRouters.uniV2,
 			fromAmountHex,
@@ -228,12 +229,22 @@ async function getWalletTradeTxns({
 						return {
 							...ON_CHAIN_ACTIONS.swapUniV2MultiHopSingle,
 							specific: {
-								from: `${from}`,
-								to: `${to}`,
+								from: `${from.symbol}`,
+								to: `${to.symbol}`,
 							},
 						}
 				  }))
 		)
+
+		if (lendOutputToAAVE) {
+			txInnerActions.push({
+				...ON_CHAIN_ACTIONS.depositAAVE,
+				specific: {
+					asset: to.symbol,
+					to: identityAddr,
+				},
+			})
+		}
 
 		txns.push({
 			identityContract: identityAddr,
@@ -247,6 +258,9 @@ async function getWalletTradeTxns({
 					specific: {
 						from: `${from.symbol} (${fromAsset})`,
 						to: `${to.symbol} (${toAsset})`,
+						fromAmount: fromAmount.toString(),
+						minOut: minOut.toString(),
+						tradeTuple,
 					},
 				},
 				txInnerActions,
@@ -287,7 +301,22 @@ async function getWalletTradeTxns({
 				],
 				lendOutputToAAVE, // TODO: update Zapper to accept wrap param on tradeV3Single
 			])
-			onChainActionData.txAction = { ...ON_CHAIN_ACTIONS.swapUniV3Single }
+			onChainActionData.txAction = {
+				...ON_CHAIN_ACTIONS.swapUniV3Single,
+				specific: {
+					fromAmount: fromAmount.toString(),
+					minOut: minOut.toString(),
+				},
+			}
+			if (lendOutputToAAVE) {
+				onChainActionData.txInnerActions.push({
+					...ON_CHAIN_ACTIONS.depositAAVE,
+					specific: {
+						asset: to.symbol,
+						to: identityAddr,
+					},
+				})
+			}
 		} else if (pools.length > 1) {
 			if (lendOutputToAAVE) {
 				return walletDiversificationTransaction({
@@ -324,9 +353,26 @@ async function getWalletTradeTxns({
 				[v3Path, identityAddr, deadline, fromAmount, minOut.toHexString()],
 			])
 
-			onChainActionData = pools.map(
-				() => ON_CHAIN_ACTIONS.swapUniV3MultiHopSingle
+			onChainActionData.txAction = {
+				...ON_CHAIN_ACTIONS.swapUniV3MultiHop,
+				specific: {
+					fromAmount: fromAmount.toString(),
+					minOut: minOut.toString(),
+				},
+			}
+
+			onChainActionData.txInnerActions.push(
+				...pools.map(pool => {
+					return {
+						...ON_CHAIN_ACTIONS.swapUniV3MultiHop.swapUniV3MultiHopSingle,
+						// specific :{} TODO
+					}
+				})
 			)
+
+			// = pools.map(
+			// 	() => ON_CHAIN_ACTIONS.swapUniV3MultiHopSingle
+			// )
 		}
 
 		txns.push({
