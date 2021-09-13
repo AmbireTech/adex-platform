@@ -137,15 +137,24 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 		prices[feeToken.mainAssetSymbol || feeToken.symbol]['USD']
 
 	const withNonceAndFees = txns.map((tx, txIndex) => {
-		const { operationsGasLimits = [] } = tx
+		const { onChainActionData = {} } = tx
 		// const feeToken = feeTokenWhitelist[tx.feeTokenAddr]
 		const isDeployTx = currentNonce === 0
 		const addFeeTx = txIndex === txns.length - 1
 
-		const operationsGasLimitSumBN = operationsGasLimits.reduce(
-			(a, b) => a.add(b),
-			ZERO
-		)
+		const { txAction = {}, txInnerActions = [] } = onChainActionData
+
+		if (!txAction.name) {
+			throw new Error('txAction.name not provided')
+		}
+		const txGasCost = BigNumber.from(txAction.gasCost || '0')
+		const innerActionsTGasCost = txInnerActions.reduce((total, actionData) => {
+			if (!actionData.name) {
+				throw new Error('actionData.name not provided')
+			}
+			return total.add(actionData.gasCost || '0')
+		}, ZERO)
+		const operationsGasLimitSumBN = txGasCost.add(innerActionsTGasCost)
 
 		const txEstimatedGasLimitBN = operationsGasLimitSumBN
 			.add(isDeployTx ? GAS_LIMITS.deploy : ZERO)
@@ -153,7 +162,7 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 			.add(addFeeTx ? GAS_LIMITS.transfer : ZERO)
 
 		const calculatedOperationsCount =
-			operationsGasLimits.length + (isDeployTx ? 1 : 0) + (addFeeTx ? 1 : 0)
+			1 + txInnerActions.length + (isDeployTx ? 1 : 0) + (addFeeTx ? 1 : 0)
 
 		const txFeeAmountETH = parseFloat(
 			formatUnits(
