@@ -61,6 +61,7 @@ const logos = {
 
 const assets = {
 	[tokens.ETH]: {
+		address: tokens.ETH,
 		symbol: 'ETH',
 		name: 'Ethereum',
 		getBalance: async function({ address }) {
@@ -75,6 +76,7 @@ const assets = {
 		decimals: 18,
 	},
 	// [tokens.aETH]: {
+	//	address: tokens.aETH,
 	// 	symbol: 'aETH',
 	// 	name: 'Aave interest bearing ETH',
 	// 	getBalance: async function({ address }) {
@@ -90,6 +92,7 @@ const assets = {
 	// },
 	[tokens.WETH]: {
 		symbol: 'WETH',
+		address: tokens.WETH,
 		name: 'Wrapped ETH',
 		getBalance: async function({ address }) {
 			return await getERC20Balance({ tokenAddress: tokens.WETH, address })
@@ -105,6 +108,7 @@ const assets = {
 	},
 	[tokens.aWETH]: {
 		symbol: 'aWETH',
+		address: tokens.aWETH,
 		name: 'Aave interest bearing WETH',
 		getBalance: async function({ address }) {
 			return await getERC20Balance({ tokenAddress: tokens.aWETH, address })
@@ -119,6 +123,7 @@ const assets = {
 	},
 	[ADXToken.address]: {
 		symbol: ADXToken.symbol,
+		address: ADXToken.address,
 		name: 'AdEx Network',
 		getBalance: async function({ address }) {
 			return await getERC20Balance({ tokenAddress: ADXToken.address, address })
@@ -131,6 +136,7 @@ const assets = {
 	},
 	// [ADXLoyaltyPoolToken.address]: {
 	// 	symbol: ADXLoyaltyPoolToken.symbol,
+	//  address: ADXLoyaltyPoolToken.address,
 	// 	name: 'AdEx Loyalty pool',
 	// 	getBalance: async function({ address }) {
 	// 		return await getERC20Balance({
@@ -146,6 +152,7 @@ const assets = {
 	// },
 	// [StakingPool.address]: {
 	// 	symbol: StakingPool.symbol,
+	//  address: StakingPool.address,
 	// 	name: 'AdEx Staking pool',
 	// 	getBalance: async function({ address }) {
 	// 		return await getERC20Balance({
@@ -161,6 +168,7 @@ const assets = {
 	// },
 	// [tokens.USDT]: {
 	// 	symbol: 'USDT',
+	//  address: tokens.USDT,
 	// 	name: 'Tether',
 	// 	getBalance: async function({ address }) {
 	// 		return await getERC20Balance({ tokenAddress: tokens.USDT, address })
@@ -175,6 +183,7 @@ const assets = {
 	// },
 	// [tokens.aUSDT]: {
 	// 	symbol: 'aUSDT',
+	//  address: tokens.aUSDT,
 	// 	name: 'Aave interest bearing USDT',
 	// 	getBalance: async function({ address }) {
 	// 		return await getERC20Balance({ tokenAddress: tokens.aUSDT, address })
@@ -188,6 +197,7 @@ const assets = {
 	// },
 	[tokens.USDC]: {
 		symbol: 'USDC',
+		address: tokens.USDC,
 		name: 'USD Coin',
 		getBalance: async function({ address }) {
 			return await getERC20Balance({ tokenAddress: tokens.USDC, address })
@@ -202,6 +212,7 @@ const assets = {
 	},
 	[tokens.WBTC]: {
 		symbol: 'WBTC',
+		address: tokens.WBTC,
 		name: 'Wrapped BTC',
 		getBalance: async function({ address }) {
 			return await getERC20Balance({ tokenAddress: tokens.WBTC, address })
