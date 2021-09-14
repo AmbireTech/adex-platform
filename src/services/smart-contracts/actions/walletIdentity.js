@@ -27,15 +27,35 @@ export const GAS_LIMITS = {
 }
 
 export const ON_CHAIN_ACTIONS = {
-	transferERC20: {
+	transferERC20: ({
+		tokenData = {},
+		tokenNamePrefix,
+		amount,
+		sender,
+		recipient,
+	}) => ({
+		contract: 'ERC20',
+		method: 'transfer',
 		name: 'SC_ACTION_TRANSFER_ERC20',
 		gasCost: GAS_LIMITS.transfer,
-	},
-	swapUniV2Single: {
+		token: `${tokenNamePrefix ? tokenNamePrefix + ' ' : ''}${
+			tokenData.symbol
+		} (${tokenData.address})`,
+		amount: formatTokenAmount(amount, tokenData.decimals),
+		sender,
+		recipient,
+	}),
+	swapInnerUniV2: (path = []) => ({
+		contract: 'IUniswapSimple',
+		method: 'swapExactTokensForTokens',
 		name: 'SC_ACTION_SWAP_UNI_V2_DIRECT',
-		gasCost: GAS_LIMITS.swapV2,
-	},
+		gasCost: GAS_LIMITS.swapV2.mul(path.length - 1),
+		path,
+		swaps: path.length - 1,
+	}),
 	zapperExchangeV2: {
+		contract: 'Zapper',
+		method: 'exchangeV2',
 		name: 'SC_ACTION_ZAPPER_EXCHANGE_V2',
 		// gasCost - get from inner txns e.g. swapUniV2MultiHopSingle
 	},

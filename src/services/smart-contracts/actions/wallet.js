@@ -148,13 +148,12 @@ async function getWalletTradeTxns({
 		]),
 		onChainActionData: {
 			txAction: {
-				...ON_CHAIN_ACTIONS.transferERC20,
-				specific: {
-					token: `${from.symbol} (${fromAsset})`,
-					amount: `${fromAmountToTransfer.toString()}`,
-					from: `Identity (${identityAddr})`,
-					to: `Zapper (${WalletZapper.address})`,
-				},
+				...ON_CHAIN_ACTIONS.transferERC20({
+					tokenData: from,
+					amount: fromAmountToTransfer,
+					sender: `Identity (${identityAddr})`,
+					recipient: `Zapper (${WalletZapper.address})`,
+				}),
 			},
 		},
 	})
@@ -185,13 +184,13 @@ async function getWalletTradeTxns({
 				]),
 				onChainActionData: {
 					txAction: {
-						...ON_CHAIN_ACTIONS.transferERC20,
-						specific: {
-							token: `aaveInterestToken ${from.symbol} (${aaveInterestToken})`,
-							amount: `${aaveUnwrapAmount.toString()}`,
-							from: `Identity (${identityAddr})`,
-							to: `Zapper (${WalletZapper.address})`,
-						},
+						...ON_CHAIN_ACTIONS.transferERC20({
+							tokenData: aaveInterestToken,
+							tokenNamePrefix: 'aaveInterestToken',
+							amount: aaveUnwrapAmount,
+							sender: `Identity (${identityAddr})`,
+							recipient: `Zapper (${WalletZapper.address})`,
+						}),
 					},
 				},
 			})
@@ -212,29 +211,11 @@ async function getWalletTradeTxns({
 				},
 			}
 		})
-		txInnerActions.push(
-			...(path.length === 2
-				? [
-						{
-							...ON_CHAIN_ACTIONS.swapUniV2Single,
-							specific: {
-								from: `${path[0]}`,
-								to: `${path[1]}`,
-							},
-						},
-				  ]
-				: [...path].slice(1).map((_, index) => {
-						const from = path[index]
-						const to = path[index + 1]
-						return {
-							...ON_CHAIN_ACTIONS.swapUniV2MultiHopSingle,
-							specific: {
-								from: `${from.symbol}`,
-								to: `${to.symbol}`,
-							},
-						}
-				  }))
-		)
+		txInnerActions.push([
+			{
+				...ON_CHAIN_ACTIONS.swapInnerUniV2(path),
+			},
+		])
 
 		if (lendOutputToAAVE) {
 			txInnerActions.push({
@@ -670,24 +651,25 @@ async function getDiversificationTxns({
 			)
 		}
 
+		const amountToTransferFromAsset = toTransferAmountIn.sub(aaveUnwrapAmount)
+
 		txns.push({
 			identityContract: identityAddr,
 			to: fromAsset,
 			feeTokenAddr,
 			data: ERC20.encodeFunctionData('transfer', [
 				WalletZapper.address,
-				toTransferAmountIn.sub(aaveUnwrapAmount).toHexString(),
+				amountToTransferFromAsset.toHexString(),
 			]),
 			// operationsGasLimits: [GAS_LIMITS.transfer],
 			onChainActionData: {
 				txAction: {
-					...ON_CHAIN_ACTIONS.transferERC20,
-					specific: {
-						token: `${from.symbol}`,
-						amount: `${toTransferAmountIn.sub(aaveUnwrapAmount).toString()}`,
-						from: `Identity (${identityAddr})`,
-						to: `Zapper (${WalletZapper.address})`,
-					},
+					...ON_CHAIN_ACTIONS.transferERC20({
+						tokenData: from,
+						amount: amountToTransferFromAsset,
+						sender: `Identity (${identityAddr})`,
+						recipient: `Zapper (${WalletZapper.address})`,
+					}),
 				},
 			},
 		})
@@ -702,13 +684,12 @@ async function getDiversificationTxns({
 		// Can be used to swap WETH only once
 		extraGasOperations.push(GAS_LIMITS.transfer)
 		txInnerActions.push({
-			...ON_CHAIN_ACTIONS.transferERC20,
-			specific: {
-				token: `WETH`,
-				amount: `${toSwapAmountInToWETH.toString()}`,
-				from: `Zapper (${WalletZapper.address})`,
-				to: `Identity (${identityAddr})`,
-			},
+			...ON_CHAIN_ACTIONS.transferERC20({
+				tokenData: weth,
+				amount: toSwapAmountInToWETH,
+				sender: `Identity (${identityAddr})`,
+				recipient: `Zapper (${WalletZapper.address})`,
+			}),
 		})
 
 		// Only for preview info
