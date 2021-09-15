@@ -42,7 +42,7 @@ import {
 	getEthBasedTokensToWETHTxns,
 	getEthBasedTokensToETHTxns,
 	aaveUnwrapTokenAmount,
-	getAAVEInterestTokenAddr,
+	getAAVEInterestToken,
 	txnsUnwrapAAVEInterestToken,
 } from 'services/smart-contracts/actions/walletCommon'
 
@@ -171,12 +171,12 @@ async function getWalletTradeTxns({
 		const assetsToUnwrap = []
 
 		if (aaveUnwrapAmount.gt(ZERO)) {
-			const aaveInterestToken = getAAVEInterestTokenAddr({
+			const aaveInterestToken = getAAVEInterestToken({
 				underlyingAssetAddr: fromAsset,
 			})
 			txns.push({
 				identityContract: identityAddr,
-				to: aaveInterestToken,
+				to: aaveInterestToken.address,
 				feeTokenAddr,
 				data: ERC20.encodeFunctionData('transfer', [
 					WalletZapper.address,
@@ -195,37 +195,13 @@ async function getWalletTradeTxns({
 				},
 			})
 
-			assetsToUnwrap.push(aaveInterestToken)
+			assetsToUnwrap.push({ aaveInterestToken, aaveUnwrapAmount })
 		}
 
 		const data = ZapperInterface.encodeFunctionData('exchangeV2', [
-			assetsToUnwrap,
+			assetsToUnwrap.map(({ address }) => address),
 			[tradeTuple],
 		])
-
-		const txInnerActions = assetsToUnwrap.map(asset => {
-			return {
-				...ON_CHAIN_ACTIONS.withdrawAAVE,
-				specific: {
-					unwrap: `${asset}`,
-				},
-			}
-		})
-		txInnerActions.push([
-			{
-				...ON_CHAIN_ACTIONS.swapInnerUniV2(path),
-			},
-		])
-
-		if (lendOutputToAAVE) {
-			txInnerActions.push({
-				...ON_CHAIN_ACTIONS.depositAAVE,
-				specific: {
-					asset: to.symbol,
-					to: identityAddr,
-				},
-			})
-		}
 
 		txns.push({
 			identityContract: identityAddr,
@@ -235,16 +211,17 @@ async function getWalletTradeTxns({
 			// TODO: gas limits for each swap in the trade
 			onChainActionData: {
 				txAction: {
-					...ON_CHAIN_ACTIONS.zapperExchangeV2,
-					specific: {
-						from: `${from.symbol} (${fromAsset})`,
-						to: `${to.symbol} (${toAsset})`,
-						fromAmount: fromAmount.toString(),
-						minOut: minOut.toString(),
-						tradeTuple,
-					},
+					...ON_CHAIN_ACTIONS.zapperExchangeV2({
+						assetsToUnwrap,
+						path,
+						outputTokenData: to,
+						inputTokenData: from,
+						lendOutputToAAVE,
+						recipient: `Identity (${identityAddr})`,
+						minOut,
+						fromAmount,
+					}),
 				},
-				txInnerActions,
 			},
 		})
 	} else if (router === 'uniV3') {
@@ -283,20 +260,14 @@ async function getWalletTradeTxns({
 				lendOutputToAAVE, // TODO: update Zapper to accept wrap param on tradeV3Single
 			])
 			onChainActionData.txAction = {
-				...ON_CHAIN_ACTIONS.swapUniV3Single,
-				specific: {
-					fromAmount: fromAmount.toString(),
-					minOut: minOut.toString(),
-				},
-			}
-			if (lendOutputToAAVE) {
-				onChainActionData.txInnerActions.push({
-					...ON_CHAIN_ACTIONS.depositAAVE,
-					specific: {
-						asset: to.symbol,
-						to: identityAddr,
-					},
-				})
+				...ON_CHAIN_ACTIONS.zapperTradeV3Single({
+					inputTokenData: from,
+					outputTokenData: to,
+					recipient: `Identity (${identityAddr})`,
+					fromAmount: fromAmount,
+					minOut,
+					lendOutputToAAVE,
+				}),
 			}
 		} else if (pools.length > 1) {
 			if (lendOutputToAAVE) {
@@ -335,21 +306,15 @@ async function getWalletTradeTxns({
 			])
 
 			onChainActionData.txAction = {
-				...ON_CHAIN_ACTIONS.swapUniV3MultiHop,
-				specific: {
-					fromAmount: fromAmount.toString(),
-					minOut: minOut.toString(),
-				},
+				...ON_CHAIN_ACTIONS.zapperTradeV3({
+					inputTokenData: from,
+					outputTokenData: to,
+					recipient: `Identity (${identityAddr})`,
+					fromAmount: fromAmount,
+					minOut,
+					path,
+				}),
 			}
-
-			onChainActionData.txInnerActions.push(
-				...pools.map(pool => {
-					return {
-						...ON_CHAIN_ACTIONS.swapUniV3MultiHop.swapUniV3MultiHopSingle,
-						// specific :{} TODO
-					}
-				})
-			)
 		}
 
 		txns.push({

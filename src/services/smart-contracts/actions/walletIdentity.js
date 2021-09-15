@@ -5,6 +5,7 @@ import {
 	getSigner,
 	getMultipleTxSignatures,
 } from 'services/smart-contracts/actions/ethers'
+import { getAAVEInterestToken } from 'services/smart-contracts/actions/walletCommon'
 import { executeTx } from 'services/adex-relayer'
 import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
 import { selectRelayerConfig } from 'selectors'
@@ -26,47 +27,155 @@ export const GAS_LIMITS = {
 	approve: BigNumber.from(70_000),
 }
 
-export const ON_CHAIN_ACTIONS = {
-	transferERC20: ({
-		tokenData = {},
-		tokenNamePrefix,
-		amount,
-		sender,
+const transferERC20 = ({
+	tokenData = {},
+	tokenNamePrefix,
+	amount,
+	sender,
+	recipient,
+}) => ({
+	contract: 'ERC20',
+	method: 'transfer',
+	name: 'SC_ACTION_TRANSFER_ERC20',
+	gasCost: GAS_LIMITS.transfer,
+	token: `${tokenNamePrefix ? tokenNamePrefix + ' ' : ''}${tokenData.symbol} (${
+		tokenData.address
+	})`,
+	amount: formatTokenAmount(amount, tokenData.decimals),
+	sender,
+	recipient,
+})
+
+const depositAAVE = ({ tokenData, recipient, minOut }) => {
+	const interestTokenData = getAAVEInterestToken({
+		underlyingAssetAddr: tokenData.address,
+	})
+	return {
+		contract: 'IAaveLendingPool',
+		method: 'deposit',
+		name: 'SC_ACTION_AAVE_DEPOSIT',
+		gasCost: GAS_LIMITS.wrap,
 		recipient,
-	}) => ({
-		contract: 'ERC20',
-		method: 'transfer',
-		name: 'SC_ACTION_TRANSFER_ERC20',
-		gasCost: GAS_LIMITS.transfer,
-		token: `${tokenNamePrefix ? tokenNamePrefix + ' ' : ''}${
-			tokenData.symbol
-		} (${tokenData.address})`,
-		amount: formatTokenAmount(amount, tokenData.decimals),
-		sender,
-		recipient,
-	}),
-	swapInnerUniV2: (path = []) => ({
-		contract: 'IUniswapSimple',
-		method: 'swapExactTokensForTokens',
-		name: 'SC_ACTION_SWAP_UNI_V2_DIRECT',
-		gasCost: GAS_LIMITS.swapV2.mul(path.length - 1),
-		path,
-		swaps: path.length - 1,
-	}),
-	zapperExchangeV2: {
+		underlingToken: `${tokenData.symbol} (${tokenData.address})`,
+		aaveInterestToken: `${interestTokenData.symbol} (${
+			getAAVEInterestToken({
+				underlyingAssetAddr: tokenData.address,
+			}).address
+		})`,
+		minOut: formatTokenAmount(minOut, tokenData.decimals),
+	}
+}
+const withdrawAAVE = ({ aaveInterestToken, aaveUnwrapAmount }) => ({
+	contract: 'IAaveLendingPool',
+	method: 'withdraw',
+	name: 'SC_ACTION_AAVE_WITHDRAW',
+	gasCost: GAS_LIMITS.unwrap,
+	token: `${aaveInterestToken.symbol} (${aaveInterestToken.address})`,
+	amount: formatTokenAmount(aaveUnwrapAmount, aaveInterestToken.decimals),
+})
+
+const swapInnerUniV2 = (path = []) => ({
+	contract: 'IUniswapSimple',
+	method: 'swapExactTokensForTokens',
+	name: 'SC_ACTION_SWAP_UNI_V2_DIRECT',
+	gasCost: GAS_LIMITS.swapV2.mul(path.length - 1),
+	path,
+	swaps: path.length - 1,
+})
+
+const zapperExchangeV2 = ({
+	assetsToUnwrap = [],
+	path,
+	inputTokenData,
+	outputTokenData,
+	lendOutputToAAVE,
+	recipient,
+	minOut,
+	fromAmount,
+}) => ({
+	contract: 'Zapper',
+	method: 'exchangeV2',
+	name: 'SC_ACTION_ZAPPER_EXCHANGE_V2',
+	fromAmount: formatTokenAmount(fromAmount, inputTokenData.decimals),
+	minOut: formatTokenAmount(minOut, outputTokenData.decimals),
+	txInnerActions: [
+		...assetsToUnwrap.map(({ aaveInterestToken, aaveUnwrapAmount }) =>
+			withdrawAAVE({ aaveInterestToken, aaveUnwrapAmount })
+		),
+		...[swapInnerUniV2(path)],
+		...(lendOutputToAAVE
+			? [depositAAVE({ outputTokenData, recipient, minOut })]
+			: []),
+	],
+})
+
+const swapInnerUniV3Single = ({ inputTokenData, outputTokenData }) => ({
+	contract: 'uniV3Router',
+	method: 'exactInputSingle',
+	name: 'SC_ACTION_SWAP_UNI_V3_SINGLE',
+	gasCost: GAS_LIMITS.swapV3,
+	path: [inputTokenData.symbol, outputTokenData.symbol],
+	swaps: 1,
+})
+
+const zapperTradeV3Single = ({
+	inputTokenData,
+	outputTokenData,
+	lendOutputToAAVE,
+	recipient,
+	minOut,
+	fromAmount,
+}) => {
+	return {
 		contract: 'Zapper',
-		method: 'exchangeV2',
-		name: 'SC_ACTION_ZAPPER_EXCHANGE_V2',
-		// gasCost - get from inner txns e.g. swapUniV2MultiHopSingle
-	},
-	swapUniV2MultiHopSingle: {
-		name: 'SC_ACTION_SWAP_UNI_V2_MULTIHOP_SINGLE',
-		gasCost: GAS_LIMITS.swapV2,
-	},
-	zapperTradeV3Single: {
-		name: 'SC_ACTION_ZAPPER_EXCHANGE_V2',
-		// gasCost - get from inner txns e.g. uniV3Router.exactInputSingle, lendingPool.deposit ..
-	},
+		method: 'tradeV3Single',
+		name: 'SC_ACTION_ZAPPER_EXCHANGE_V3_SINGLE',
+		fromAmount: formatTokenAmount(fromAmount, inputTokenData.decimals),
+		minOut: formatTokenAmount(minOut, outputTokenData.decimals),
+		recipient,
+		txInnerActions: [
+			...[swapInnerUniV3Single({ inputTokenData, outputTokenData })],
+			...(lendOutputToAAVE
+				? [depositAAVE({ outputTokenData, recipient, minOut })]
+				: []),
+		],
+	}
+}
+
+const swapInnerUniV3 = ({ path }) => ({
+	contract: 'uniV3Router',
+	method: 'exactInput',
+	name: 'SC_ACTION_SWAP_UNI_V3',
+	gasCost: GAS_LIMITS.swapV2.mul(path.length - 1),
+	path,
+	swaps: path.length - 1,
+})
+
+const zapperTradeV3 = ({
+	inputTokenData,
+	outputTokenData,
+	recipient,
+	minOut,
+	fromAmount,
+	path,
+}) => {
+	return {
+		contract: 'Zapper',
+		method: 'tradeV3',
+		name: 'SC_ACTION_ZAPPER_EXCHANGE_V3',
+		fromAmount: formatTokenAmount(fromAmount, inputTokenData.decimals),
+		minOut: formatTokenAmount(minOut, outputTokenData.decimals),
+		txInnerActions: [...[swapInnerUniV3({ path })]],
+		recipient,
+	}
+}
+
+export const ON_CHAIN_ACTIONS = {
+	transferERC20,
+	swapInnerUniV2,
+	zapperExchangeV2,
+	zapperTradeV3Single,
+	zapperTradeV3,
 	zapperDiversifyV3: {
 		name: 'SC_ACTION_ZAPPER_DIVERSIFYv3',
 		// gasCost - GET FROM INNET TXNS?\\
