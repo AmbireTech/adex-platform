@@ -748,12 +748,12 @@ export function aaveUnwrapTokenAmount({
 	}
 }
 
-export function getAAVEInterestTokenAddr({ underlyingAssetAddr }) {
+export function getAAVEInterestToken({ underlyingAssetAddr }) {
 	const symbol = assets[underlyingAssetAddr].symbol
 	// TODO: make it better
 	const aaveInterestTokenAddr = tokens[`a${symbol}`]
 	if (!aaveInterestTokenAddr) {
 		throw new Error('getAAVEInterestTokenAddr - AAVE interest token not found')
 	}
-	return aaveInterestTokenAddr
+	return assets[aaveInterestTokenAddr]
 }
