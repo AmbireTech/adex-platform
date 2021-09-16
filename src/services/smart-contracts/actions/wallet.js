@@ -595,6 +595,8 @@ async function getDiversificationTxns({
 		wethAmountIn = parseUnits(wethAmountInData.minimumAmountOut, weth.decimals)
 	}
 
+	const txInnerActions = []
+
 	if (!toTransferAmountIn.isZero()) {
 		const aaveUnwrapAmount = isFromETHToken
 			? ZERO
@@ -626,7 +628,6 @@ async function getDiversificationTxns({
 				WalletZapper.address,
 				amountToTransferFromAsset.toHexString(),
 			]),
-			// operationsGasLimits: [GAS_LIMITS.transfer],
 			onChainActionData: {
 				txAction: {
 					...ON_CHAIN_ACTIONS.transferERC20({
@@ -638,22 +639,32 @@ async function getDiversificationTxns({
 				},
 			},
 		})
+
+		if (fromAsset !== weth.address) {
+			// diversifyV3 inner swap to WETH
+			txInnerActions.push({
+				...ON_CHAIN_ACTIONS.swapInnerUniV3Single({
+					inputTokenData: from,
+					outputTokenData: weth,
+					fromAmount,
+					minOut: wethAmountIn,
+					amount: toSwapAmountInToWETH,
+					recipient: `Zapper (${WalletZapper.address})`,
+				}),
+			})
+		}
 	}
-
-	const extraGasOperations = []
-
-	const txInnerActions = []
 
 	if (!toSwapAmountInToWETH.isZero()) {
 		// NOTE: last version of zapper returns the dust WETH
 		// Can be used to swap WETH only once
-		extraGasOperations.push(GAS_LIMITS.transfer)
+
 		txInnerActions.push({
 			...ON_CHAIN_ACTIONS.transferERC20({
 				tokenData: weth,
 				amount: toSwapAmountInToWETH,
-				sender: `Identity (${identityAddr})`,
-				recipient: `Zapper (${WalletZapper.address})`,
+				sender: `Zapper (${WalletZapper.address})`,
+				recipient: `Identity (${identityAddr})`,
 			}),
 		})
 
@@ -737,21 +748,25 @@ async function getDiversificationTxns({
 			})
 
 			txInnerActions.push({
-				...ON_CHAIN_ACTIONS.swapUniV3Single,
-				specific: {
-					from: `${weth.symbol}`,
-					to: `${to.symbol}`,
-					amountIn: amountIn.toString(),
-					minOut: minimumAmountOut.toString(),
-				},
+				...ON_CHAIN_ACTIONS.swapInnerUniV3Single({
+					inputTokenData: weth,
+					outputTokenData: to,
+					recipient: `Identity (${identityAddr})`,
+					fromAmount: wethAmountIn,
+					minOut: minimumAmountOut,
+				}),
 			})
 
 			if (wrap) {
 				txInnerActions.push({
-					...ON_CHAIN_ACTIONS.depositAAVE,
+					...ON_CHAIN_ACTIONS.depositAAVE({
+						tokenData: to,
+						recipient: `Identity (${identityAddr})`,
+					}),
 					specific: {
 						asset: `${to.symbol}`,
 						depositFor: identityAddr,
+						minOut: minimumAmountOut,
 					},
 				})
 			}
@@ -790,23 +805,14 @@ async function getDiversificationTxns({
 		data: ZapperInterface.encodeFunctionData('diversifyV3', args),
 		onChainActionData: {
 			txAction: {
-				...ON_CHAIN_ACTIONS.zapperDiversifyV3,
-				specific: {
-					fromAsset: `${from.symbol}`,
-					fromAmount: `${fromAmount.toString()}`,
-					toAssets: diversificationTrades.map(data => assets[data[0]].symbol),
-					// TODO: more data
-				},
+				...ON_CHAIN_ACTIONS.zapperDiversifyV3({
+					inputTokenData: from,
+					fromAmount,
+					recipient: `Identity (${identityAddr})`,
+					txInnerActions,
+				}),
 			},
-			txInnerActions,
 		},
-		// operationsGasLimits: diversificationTrades.reduce((limits, trade) => {
-		// 	const tradeLimits = trade.wrap
-		// 		? [GAS_LIMITS.swapV3, GAS_LIMITS.wrap]
-		// 		: [GAS_LIMITS.swapV3]
-		// 	limits = [...limits, ...tradeLimits]
-		// 	return limits
-		// }, extraGasOperations),
 	})
 
 	const txnsWithNonceAndFees = await getWalletIdentityTxnsWithNoncesAndFees({
