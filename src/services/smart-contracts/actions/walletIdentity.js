@@ -33,6 +33,7 @@ const transferERC20 = ({
 	amount,
 	sender,
 	recipient,
+	...extra
 }) => ({
 	contract: 'ERC20',
 	method: 'transfer',
@@ -44,6 +45,7 @@ const transferERC20 = ({
 	amount: formatTokenAmount(amount, tokenData.decimals),
 	sender,
 	recipient,
+	...extra,
 })
 
 const depositAAVE = ({ tokenData, recipient, minOut }) => {
@@ -104,18 +106,31 @@ const zapperExchangeV2 = ({
 		),
 		...[swapInnerUniV2(path)],
 		...(lendOutputToAAVE
-			? [depositAAVE({ outputTokenData, recipient, minOut })]
+			? [depositAAVE({ tokenData: outputTokenData, recipient, minOut })]
 			: []),
 	],
 })
 
-const swapInnerUniV3Single = ({ inputTokenData, outputTokenData }) => ({
+const swapInnerUniV3Single = ({
+	inputTokenData,
+	outputTokenData,
+	fromAmount,
+	minOut,
+	recipient,
+}) => ({
 	contract: 'uniV3Router',
 	method: 'exactInputSingle',
 	name: 'SC_ACTION_SWAP_UNI_V3_SINGLE',
 	gasCost: GAS_LIMITS.swapV3,
 	path: [inputTokenData.symbol, outputTokenData.symbol],
 	swaps: 1,
+	...(fromAmount && {
+		fromAmount: formatTokenAmount(fromAmount, inputTokenData.decimals),
+	}),
+	...(minOut && {
+		minOut: formatTokenAmount(minOut, outputTokenData.decimals),
+	}),
+	...(recipient && { recipient }),
 })
 
 const zapperTradeV3Single = ({
@@ -136,7 +151,7 @@ const zapperTradeV3Single = ({
 		txInnerActions: [
 			...[swapInnerUniV3Single({ inputTokenData, outputTokenData })],
 			...(lendOutputToAAVE
-				? [depositAAVE({ outputTokenData, recipient, minOut })]
+				? [depositAAVE({ tokenData: outputTokenData, recipient, minOut })]
 				: []),
 		],
 	}
@@ -170,16 +185,31 @@ const zapperTradeV3 = ({
 	}
 }
 
+const zapperDiversifyV3 = ({
+	inputTokenData,
+	recipient,
+	fromAmount,
+	txInnerActions, // TODO: get the data here
+}) => {
+	return {
+		contract: 'Zapper',
+		method: 'diversifyV3',
+		name: 'SC_ACTION_ZAPPER_DIVERSIFYv3',
+		fromAmount: formatTokenAmount(fromAmount, inputTokenData.decimals),
+		recipient,
+		txInnerActions,
+	}
+}
+
 export const ON_CHAIN_ACTIONS = {
 	transferERC20,
 	swapInnerUniV2,
 	zapperExchangeV2,
 	zapperTradeV3Single,
 	zapperTradeV3,
-	zapperDiversifyV3: {
-		name: 'SC_ACTION_ZAPPER_DIVERSIFYv3',
-		// gasCost - GET FROM INNET TXNS?\\
-	},
+	swapInnerUniV3Single,
+	depositAAVE,
+	zapperDiversifyV3,
 	zapperDiversifyInnerExchange: {
 		name: 'SC_ACTION_ZAPPER_EXCHANGE_INNER',
 		gasCost: GAS_LIMITS.swapV3,
@@ -195,10 +225,6 @@ export const ON_CHAIN_ACTIONS = {
 	swapUniV3MultiHopSingle: {
 		name: 'SC_ACTION_SWAP_UNI_V3_MULTIHOP_SINGLE',
 		gasCost: GAS_LIMITS.swapV3,
-	},
-	depositAAVE: {
-		name: 'SC_ACTION_AAVE_DEPOSIT',
-		gasCost: GAS_LIMITS.wrap,
 	},
 	withdrawAAVE: {
 		name: 'SC_ACTION_AAVE_WITHDRAW',
@@ -280,15 +306,24 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 		if (!txAction.name) {
 			throw new Error('txAction.name not provided')
 		}
-		const txGasCost = BigNumber.from(txAction.gasCost || '0')
-		const innerActionsTGasCost = txInnerActions.reduce((total, actionData) => {
-			if (!actionData.name) {
-				throw new Error('actionData.name not provided')
-			}
-			return total.add(actionData.gasCost || '0')
-		}, ZERO)
 
-		const txnsData = [{ txAction, txInnerActions }]
+		// TODO: use only txAction.txInnerActions when ready
+		const allTxInnerActions = [
+			...txInnerActions,
+			...(txAction.txInnerActions || []),
+		]
+		const txGasCost = BigNumber.from(txAction.gasCost || '0')
+		const innerActionsTGasCost = allTxInnerActions.reduce(
+			(total, actionData) => {
+				if (!actionData.name) {
+					throw new Error('actionData.name not provided')
+				}
+				return total.add(actionData.gasCost || '0')
+			},
+			ZERO
+		)
+
+		const txnsData = [{ txAction, txInnerActions: allTxInnerActions }]
 		if (isDeployTx) {
 			txnsData.push({ txAction: { ...ON_CHAIN_ACTIONS.deploy } })
 		}
@@ -305,7 +340,7 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 			.add(addFeeTx ? GAS_LIMITS.transfer : ZERO)
 
 		const calculatedOperationsCount =
-			txnsData.length +
+			allTxInnerActions.length +
 			txInnerActions.length +
 			(isDeployTx ? 1 : 0) +
 			(addFeeTx ? 1 : 0)
