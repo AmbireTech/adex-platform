@@ -753,7 +753,9 @@ export function getAAVEInterestToken({ underlyingAssetAddr }) {
 	// TODO: make it better
 	const aaveInterestTokenAddr = tokens[`a${symbol}`]
 	if (!aaveInterestTokenAddr) {
-		throw new Error('getAAVEInterestTokenAddr - AAVE interest token not found')
+		throw new Error(
+			`getAAVEInterestToken - AAVE interest token not found ${symbol} ${underlyingAssetAddr}`
+		)
 	}
 	return assets[aaveInterestTokenAddr]
 }
