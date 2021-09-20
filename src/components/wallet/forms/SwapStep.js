@@ -48,6 +48,7 @@ import { Alert } from '@material-ui/lab'
 import Dropdown from 'components/common/dropdown'
 import { formatTokenAmount } from 'helpers/formatters'
 import { getMainCurrencyValue } from 'helpers/wallet'
+import { hasAAVEInterestToken } from 'services/smart-contracts/actions/walletCommon'
 
 const styles = theme => {
 	return {
@@ -168,6 +169,7 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 
 	const selectedFromAsset = assetsData[fromAsset] || {}
 	const selectedToAsset = assetsData[toAsset] || {}
+	const canLenndToAAVE = hasAAVEInterestToken({ underlyingAssetAddr: toAsset })
 
 	const fromAssetUserBalance = selectedFromAsset
 		? selectedFromAsset.totalAvailableMainAsset ||
@@ -564,37 +566,39 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 											</Box>
 										</Grid>
 									)}
-									<Grid item xs={12}>
-										<Box mt={2}>
-											<FormControl>
-												<FormGroup row>
-													<FormControlLabel
-														control={
-															<Checkbox
-																checked={!!lendOutputToAAVE}
-																onChange={ev => {
-																	execute(
-																		updateNewTransaction({
-																			tx: stepsId,
-																			key: 'lendOutputToAAVE',
-																			value: ev.target.checked,
-																		})
-																	)
-																}}
-																value='lendOutputToAAVE'
-															/>
-														}
-														label={t('WALLET_SWAP_LEND_TO_AAVE_INFO', {
-															args: [
-																selectedToAsset.symbol || '-',
-																selectedToAsset.currentToAaveAPY || '-',
-															],
-														})}
-													/>
-												</FormGroup>
-											</FormControl>
-										</Box>
-									</Grid>
+									{canLenndToAAVE && (
+										<Grid item xs={12}>
+											<Box mt={2}>
+												<FormControl>
+													<FormGroup row>
+														<FormControlLabel
+															control={
+																<Checkbox
+																	checked={!!lendOutputToAAVE}
+																	onChange={ev => {
+																		execute(
+																			updateNewTransaction({
+																				tx: stepsId,
+																				key: 'lendOutputToAAVE',
+																				value: ev.target.checked,
+																			})
+																		)
+																	}}
+																	value='lendOutputToAAVE'
+																/>
+															}
+															label={t('WALLET_SWAP_LEND_TO_AAVE_INFO', {
+																args: [
+																	selectedToAsset.symbol || '-',
+																	selectedToAsset.currentToAaveAPY || '-',
+																],
+															})}
+														/>
+													</FormGroup>
+												</FormControl>
+											</Box>
+										</Grid>
+									)}
 								</Grid>
 							</Box>
 						</Paper>
