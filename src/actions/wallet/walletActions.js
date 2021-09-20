@@ -24,6 +24,7 @@ import {
 	selectAccountStatsRaw,
 	selectWallet,
 	selectAccountIdentityAddr,
+	selectValidationsById,
 } from 'selectors'
 import {
 	walletTradeTransaction,
@@ -494,6 +495,135 @@ export function validateWalletWithdraw({
 				dirty,
 				actionName: 'walletWithdraw',
 				feeDataAction,
+				temp,
+			})(dispatch, getState)
+		}
+
+		await handleAfterValidation({ isValid, onValid, onInvalid })
+		await updateSpinner(validateId, false)(dispatch)
+	}
+}
+
+export function validateWalletWithdrawMultiple({
+	stepsId,
+	validateId,
+	dirty,
+	onValid,
+	onInvalid,
+	stepsProps = {},
+}) {
+	return async function(dispatch, getState) {
+		await updateSpinner(validateId, true)(dispatch)
+		if (!dirty) {
+			await beforeWeb3(validateId)(dispatch, getState)
+		}
+		const state = getState()
+		const account = selectAccount(state)
+		const {
+			withdrawAssets,
+			feeAssetAddress,
+			withdrawTo,
+			temp,
+		} = selectNewTransactionById(state, stepsId)
+		const { assetsData = {} } = selectAccountStatsRaw(state)
+		const { withdrawAsset } = stepsProps
+		const authType = selectAuthType(state)
+
+		// TEMP: reset all validations - because of removed assets
+
+		const validations = selectValidationsById(state, validateId)
+		const validationsToReset = Object.keys(validations).filter(key =>
+			['withdrawAsset', 'amountToWithdraw', 'tokenDecimals'].some(x =>
+				key.startsWith(x)
+			)
+		)
+
+		await Promise.all(
+			validationsToReset.map(prop =>
+				validate(validateId, prop, {
+					isValid: true,
+				})(dispatch)
+			)
+		)
+
+		const withdrawValidations = withdrawAssets
+			.map(({ address, amount }) => {
+				const { decimals } = assetsData[withdrawAsset]
+				return [
+					validateEthAddress({
+						validateId,
+						addr: withdrawAsset,
+						prop: `withdrawAsset-${address}`,
+						nonERC20: false,
+						nonZeroAddr: true,
+						authType,
+						dirty,
+						quickCheck: !dirty,
+					})(dispatch),
+					validateNumberString({
+						validateId,
+						prop: `amountToWithdraw-${address}`,
+						value: amount,
+						dirty,
+					})(dispatch),
+					validateNumberString({
+						validateId,
+						prop: `tokenDecimals-${decimals}`,
+						value: decimals,
+						integerOnly: true,
+						dirty,
+					})(dispatch),
+				]
+			})
+			.reduce((all, forAsset) => [...all, ...forAsset], [])
+
+		const inputValidations = await Promise.all([
+			validateEthAddress({
+				validateId,
+				addr: withdrawTo,
+				prop: 'withdrawTo',
+				nonERC20: true,
+				nonZeroAddr: true,
+				authType,
+				dirty,
+				quickCheck: !dirty,
+			})(dispatch),
+			...withdrawValidations,
+		])
+
+		let isValid = inputValidations.every(v => v === true)
+
+		if (isValid) {
+			const inputAmoutValidations = await Promise.all(
+				withdrawAsset.map(({ address, amount }) =>
+					validateActionInputAmount({
+						validateId,
+						prop: `amountToWithdraw-${address}`,
+						value: amount,
+						inputTokenAddr: address,
+						dirty,
+					})(dispatch, getState)
+				)
+			)
+			isValid = inputAmoutValidations.every(v => v === true)
+		}
+
+		if (isValid) {
+			// const feeDataAction = async () =>
+			// 	await walletWithdrawMultipleTransaction({
+			// 		account,
+			// 		withdrawTo,
+			// 		withdrawAsset,
+			// 		feeAssetAddress,
+			// 		assetsDataRaw: assetsData,
+			// 	})
+
+			isValid = await handleWalletTxnsAndFeesData({
+				stepsId,
+				validateId,
+				dirty,
+				actionName: 'walletWithdraw',
+				// feeDataAction,
 				temp,
 			})(dispatch, getState)
 		}
