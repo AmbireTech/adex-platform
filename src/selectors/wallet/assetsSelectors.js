@@ -50,6 +50,17 @@ export const selectDiversifiableAssetsFromSources = createSelector(
 	}
 )
 
+export const selectWithdrawAssetsFromSources = createSelector(
+	[selectAccountStatsFormatted],
+	({ assetsData = {} }) => {
+		return Object.values(assetsData).map(x => ({
+			value: x.address,
+			label: `${x.symbol}`,
+			imgSrc: getLogo(x.address),
+		}))
+	}
+)
+
 export const selectTradableAssetsToSources = createSelector(
 	[selectAccountStatsFormatted], // TODO: selected from
 	({ assetsData } = {}) => {
