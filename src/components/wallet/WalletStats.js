@@ -14,6 +14,7 @@ import { Stop as StopIcon } from '@material-ui/icons'
 import {
 	TradeAssets,
 	DiversifyAssets,
+	WithdrawMultipleAssets,
 } from 'components/wallet/forms/walletTransactions'
 import { Doughnut } from 'react-chartjs-2'
 
@@ -196,6 +197,15 @@ function WalletStats() {
 							</Box>
 							<Box m={0.5}>
 								<DiversifyAssets
+									variant='contained'
+									color='primary'
+									size='large'
+									dialogWidth={512}
+									dialogHeight={800}
+								/>
+							</Box>
+							<Box m={0.5}>
+								<WithdrawMultipleAssets
 									variant='contained'
 									color='primary'
 									size='large'

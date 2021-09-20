@@ -2,6 +2,7 @@ import React from 'react'
 import WalletSwapTokensStep from './SwapStep'
 import WalletDiversifyTokensStep from './DiversifyStep'
 import WalletWithdrawStep from './WalletWithdrawStep'
+import WalletWithdrawMultipleStep from './WalletWithdrawMultipleStep'
 import TransactionPreview from './WalletTransactionPreview'
 import SeAddressPrivilege from 'components/dashboard/forms/web3/SeAddressPrivilege'
 import FormSteps from 'components/common/stepper/FormSteps'
@@ -158,15 +159,15 @@ export const WithdrawMultipleAssets = props => (
 		btnLabel='WALLET_WITHDRAW_ASSET_BTN'
 		saveBtnLabel='WALLET_WITHDRAW_ASSET_SAVE_BTN'
 		title='WALLET_WITHDRAW_MULTIPLE_ASSETS_TITLE'
-		titleArgs={[props.stepsProps.name, props.stepsProps.symbol]}
+		// titleArgs={[props.stepsProps.name, props.stepsProps.symbol]}
 		stepsId={`walletWithdraw-multiple`}
 		{...txCommon}
 		hideNav={true}
 		steps={[
 			{
 				title: 'WALLET_WITHDRAW_ASSET_TITLE',
-				titleArgs: [props.stepsProps.name, props.stepsProps.symbol],
-				component: WalletWithdrawStep,
+				// titleArgs: [props.stepsProps.name, props.stepsProps.symbol],
+				component: WalletWithdrawMultipleStep,
 				validationFn: props => {
 					execute(validateWalletWithdrawMultiple(props))
 					ReactGA.event({
