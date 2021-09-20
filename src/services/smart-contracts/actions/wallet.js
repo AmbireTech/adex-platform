@@ -195,11 +195,15 @@ async function getWalletTradeTxns({
 				},
 			})
 
-			assetsToUnwrap.push({ aaveInterestToken, aaveUnwrapAmount })
+			assetsToUnwrap.push({
+				underlyingToken: from,
+				aaveInterestToken,
+				aaveUnwrapAmount,
+			})
 		}
 
 		const data = ZapperInterface.encodeFunctionData('exchangeV2', [
-			assetsToUnwrap.map(({ address }) => address),
+			assetsToUnwrap.map(({ underlyingToken }) => underlyingToken.address),
 			[tradeTuple],
 		])
 
@@ -648,7 +652,7 @@ async function getDiversificationTxns({
 					outputTokenData: weth,
 					fromAmount,
 					minOut: wethAmountIn,
-					amount: toSwapAmountInToWETH,
+					// amount: toSwapAmountInToWETH,
 					recipient: `Zapper (${WalletZapper.address})`,
 				}),
 			})
@@ -762,12 +766,8 @@ async function getDiversificationTxns({
 					...ON_CHAIN_ACTIONS.depositAAVE({
 						tokenData: to,
 						recipient: `Identity (${identityAddr})`,
-					}),
-					specific: {
-						asset: `${to.symbol}`,
-						depositFor: identityAddr,
 						minOut: minimumAmountOut,
-					},
+					}),
 				})
 			}
 
