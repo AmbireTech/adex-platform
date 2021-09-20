@@ -27,6 +27,18 @@ export const GAS_LIMITS = {
 	approve: BigNumber.from(70_000),
 }
 
+const getTokenAmount = ({ amount, tokenData }) => {
+	if (typeof amount === 'string') {
+		try {
+			return formatTokenAmount(amount, tokenData.decimals)
+		} catch {
+			return amount.toString()
+		}
+	} else {
+		return formatTokenAmount(amount, tokenData.decimals)
+	}
+}
+
 const transferERC20 = ({
 	tokenData = {},
 	tokenNamePrefix,
@@ -42,7 +54,7 @@ const transferERC20 = ({
 	token: `${tokenNamePrefix ? tokenNamePrefix + ' ' : ''}${tokenData.symbol} (${
 		tokenData.address
 	})`,
-	amount: formatTokenAmount(amount, tokenData.decimals),
+	amount: getTokenAmount({ amount, tokenData }),
 	sender,
 	recipient,
 	...extra,
@@ -64,16 +76,19 @@ const depositAAVE = ({ tokenData, recipient, minOut }) => {
 				underlyingAssetAddr: tokenData.address,
 			}).address
 		})`,
-		minOut: formatTokenAmount(minOut, tokenData.decimals),
+		minOut: getTokenAmount({ amount: minOut, tokenData }),
 	}
 }
-const withdrawAAVE = ({ aaveInterestToken, aaveUnwrapAmount }) => ({
+const withdrawAAVE = ({ underlyingToken, aaveUnwrapAmount }) => ({
 	contract: 'IAaveLendingPool',
 	method: 'withdraw',
 	name: 'SC_ACTION_AAVE_WITHDRAW',
 	gasCost: GAS_LIMITS.unwrap,
-	token: `${aaveInterestToken.symbol} (${aaveInterestToken.address})`,
-	amount: formatTokenAmount(aaveUnwrapAmount, aaveInterestToken.decimals),
+	token: `${underlyingToken.symbol} (${underlyingToken.address})`,
+	amount: getTokenAmount({
+		amount: aaveUnwrapAmount,
+		tokenData: underlyingToken,
+	}),
 })
 
 const swapInnerUniV2 = (path = []) => ({
@@ -98,11 +113,12 @@ const zapperExchangeV2 = ({
 	contract: 'Zapper',
 	method: 'exchangeV2',
 	name: 'SC_ACTION_ZAPPER_EXCHANGE_V2',
-	fromAmount: formatTokenAmount(fromAmount, inputTokenData.decimals),
-	minOut: formatTokenAmount(minOut, outputTokenData.decimals),
+	fromAmount: getTokenAmount({ amount: fromAmount, tokenData: inputTokenData }),
+	minOut: getTokenAmount({ amount: minOut, tokenData: outputTokenData }),
 	txInnerActions: [
-		...assetsToUnwrap.map(({ aaveInterestToken, aaveUnwrapAmount }) =>
-			withdrawAAVE({ aaveInterestToken, aaveUnwrapAmount })
+		...assetsToUnwrap.map(
+			({ underlyingToken, aaveInterestToken, aaveUnwrapAmount }) =>
+				withdrawAAVE({ underlyingToken, aaveUnwrapAmount })
 		),
 		...[swapInnerUniV2(path)],
 		...(lendOutputToAAVE
@@ -125,10 +141,13 @@ const swapInnerUniV3Single = ({
 	path: [inputTokenData.symbol, outputTokenData.symbol],
 	swaps: 1,
 	...(fromAmount && {
-		fromAmount: formatTokenAmount(fromAmount, inputTokenData.decimals),
+		fromAmount: getTokenAmount({
+			amount: fromAmount,
+			tokenData: inputTokenData,
+		}),
 	}),
 	...(minOut && {
-		minOut: formatTokenAmount(minOut, outputTokenData.decimals),
+		minOut: getTokenAmount({ amount: minOut, tokenData: outputTokenData }),
 	}),
 	...(recipient && { recipient }),
 })
@@ -145,8 +164,12 @@ const zapperTradeV3Single = ({
 		contract: 'Zapper',
 		method: 'tradeV3Single',
 		name: 'SC_ACTION_ZAPPER_EXCHANGE_V3_SINGLE',
-		fromAmount: formatTokenAmount(fromAmount, inputTokenData.decimals),
-		minOut: formatTokenAmount(minOut, outputTokenData.decimals),
+		fromToken: `${inputTokenData.symbol} (${inputTokenData.address})`,
+		fromAmount: getTokenAmount({
+			amount: fromAmount,
+			tokenData: inputTokenData,
+		}),
+		minOut: getTokenAmount({ amount: minOut, tokenData: outputTokenData }),
 		recipient,
 		txInnerActions: [
 			...[swapInnerUniV3Single({ inputTokenData, outputTokenData })],
@@ -178,8 +201,11 @@ const zapperTradeV3 = ({
 		contract: 'Zapper',
 		method: 'tradeV3',
 		name: 'SC_ACTION_ZAPPER_EXCHANGE_V3',
-		fromAmount: formatTokenAmount(fromAmount, inputTokenData.decimals),
-		minOut: formatTokenAmount(minOut, outputTokenData.decimals),
+		fromAmount: getTokenAmount({
+			amount: fromAmount,
+			tokenData: inputTokenData,
+		}),
+		minOut: getTokenAmount({ amount: minOut, tokenData: outputTokenData }),
 		txInnerActions: [...[swapInnerUniV3({ path })]],
 		recipient,
 	}
@@ -195,7 +221,10 @@ const zapperDiversifyV3 = ({
 		contract: 'Zapper',
 		method: 'diversifyV3',
 		name: 'SC_ACTION_ZAPPER_DIVERSIFYv3',
-		fromAmount: formatTokenAmount(fromAmount, inputTokenData.decimals),
+		fromAmount: getTokenAmount({
+			amount: fromAmount,
+			tokenData: inputTokenData,
+		}),
 		recipient,
 		txInnerActions,
 	}
@@ -210,6 +239,7 @@ export const ON_CHAIN_ACTIONS = {
 	swapInnerUniV3Single,
 	depositAAVE,
 	zapperDiversifyV3,
+	withdrawAAVE,
 	zapperDiversifyInnerExchange: {
 		name: 'SC_ACTION_ZAPPER_EXCHANGE_INNER',
 		gasCost: GAS_LIMITS.swapV3,
@@ -226,10 +256,6 @@ export const ON_CHAIN_ACTIONS = {
 		name: 'SC_ACTION_SWAP_UNI_V3_MULTIHOP_SINGLE',
 		gasCost: GAS_LIMITS.swapV3,
 	},
-	withdrawAAVE: {
-		name: 'SC_ACTION_AAVE_WITHDRAW',
-		gasCost: GAS_LIMITS.unwrap,
-	},
 	approve: {
 		name: 'SC_ACTION_APPROVE',
 		gasCost: GAS_LIMITS.approve,
@@ -238,9 +264,14 @@ export const ON_CHAIN_ACTIONS = {
 		name: 'SC_ACTION_IDENTITY_DEPLOY',
 		gasCost: GAS_LIMITS.deploy,
 	},
-	depositWETH: {
-		name: 'SC_ACTION_WETH_DEPOSIT',
-		gasCost: GAS_LIMITS.wrap,
+	depositWETH: ({ amount }) => {
+		return {
+			contract: 'WETH',
+			method: 'deposit',
+			name: 'SC_ACTION_WETH_DEPOSIT',
+			amount: getTokenAmount({ amount, tokenData: assets[tokens.WETH] }),
+			gasCost: GAS_LIMITS.wrap,
+		}
 	},
 	withdrawWETH: {
 		name: 'SC_ACTION_WETH_WITHDRAW',
@@ -296,7 +327,11 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 		prices[feeToken.mainAssetSymbol || feeToken.symbol]['USD']
 
 	const withNonceAndFees = txns.map((tx, txIndex) => {
-		const { onChainActionData = {} } = tx
+		const { onChainActionData } = tx
+		if (!onChainActionData || typeof onChainActionData !== 'object') {
+			throw new Error('onChainActionData not provided')
+		}
+
 		// const feeToken = feeTokenWhitelist[tx.feeTokenAddr]
 		const isDeployTx = currentNonce === 0
 		const addFeeTx = txIndex === txns.length - 1
@@ -445,18 +480,16 @@ export async function getWalletIdentityTxnsTotalFees({ txnsWithNonceAndFees }) {
 
 	const actionMinAmountBN = totalFeesBN.mul(1)
 
-	const txnsDataFormatted = txnsData.map(
-		({ txAction, txInnerActions = [] }) => ({
-			txAction: {
-				...txAction,
-				gasCost: BigNumber.from(txAction.gasCost || '0').toString(),
-			},
-			txInnerActions: txInnerActions.map(inner => ({
+	const txnsDataFormatted = txnsData.map(({ txAction }) => ({
+		txAction: {
+			...txAction,
+			gasCost: BigNumber.from(txAction.gasCost || '0').toString(),
+			txInnerActions: (txAction.txInnerActions || []).map(inner => ({
 				...inner,
 				gasCost: BigNumber.from(inner.gasCost || '0').toString(),
 			})),
-		})
-	)
+		},
+	}))
 
 	const fees = {
 		totalFeesFormatted: formatTokenAmount(
