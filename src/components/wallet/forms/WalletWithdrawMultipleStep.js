@@ -17,6 +17,7 @@ import {
 	InputAdornment,
 	Divider,
 	IconButton,
+	Chip,
 } from '@material-ui/core'
 import {
 	AddSharp as AddIcon,
@@ -44,6 +45,7 @@ import {
 } from 'selectors'
 import { execute, updateNewTransaction } from 'actions'
 import { Alert } from '@material-ui/lab'
+import Dropdown from 'components/common/dropdown'
 import { getLogo, isETHBasedToken } from 'services/adex-wallet'
 import { assets } from 'services/adex-wallet/assets-kovan'
 
@@ -77,7 +79,7 @@ const styles = theme => {
 			maxWidth: 77,
 		},
 		divider: {
-			marginBottom: theme.spacing(1),
+			marginBottom: theme.spacing(2),
 			marginTop: theme.spacing(0.5),
 		},
 		addBtn: {
@@ -146,6 +148,8 @@ const safeNumberValue = (value, stateValue) => {
 const AssetSelector = ({
 	index,
 	address,
+	percent,
+	amount,
 	assetsData,
 	// symbol,
 	// name,
@@ -158,14 +162,8 @@ const AssetSelector = ({
 	const { name, symbol } = withdrawAssetData
 
 	return (
-		<Box
-			display='flex'
-			flexDirection='row'
-			alignItems='center'
-			// justifyContent='space-between'
-		>
-			{' '}
-			<Box flexGrow='1'>
+		<Box>
+			<Box>
 				<Box
 					display='flex'
 					flexDirection='row'
@@ -184,56 +182,70 @@ const AssetSelector = ({
 					</Box>
 					<Box>avl</Box>
 				</Box>
-				<Box>
-					<Slider
-						defaultValue={0}
-						// getAriaValueText={valuetext}
-						aria-labelledby={`asset-${symbol}-share-slider`}
-						step={5}
-						marks={false}
-						onChange={(ev, value) =>
-							onChange(address, safeNumberValue(value, share))
-						}
-						min={0}
-						max={100}
-						value={share}
+				<Box
+					mt={2}
+					display='flex'
+					flexDirection='row'
+					alignItems='flex-start'
+					justifyContent='space-between'
+				>
+					<TextField
+						// disabled={spinner}
+						type='text'
+						variant='outlined'
+						fullWidth
+						required
 						size='small'
-						valueLabelDisplay='off'
-						classes={sliderClasses}
+						label={t('PROP_WITHDRAWAMOUNT')}
+						name='amountToWithdraw'
+						value={amount || ''}
+						onChange={ev =>
+							onChange({ address, amount: (ev.target.value || '').trim() })
+						}
+						// error={errAmount && !!errAmount.dirty}
+						helperText={
+							<Box mt={0.25}>
+								{[25, 50, 75, 100].map(percent => (
+									<Box display='inline-block' key={percent.toString()} p={0.2}>
+										<Chip
+											// variant={selectedPercent === percent ? 'contained' : 'outlined'}
+											variant='outlined'
+											clickable
+											size='small'
+											color='default'
+											// disabled={!selectedFromAsset}
+											onClick={() => {
+												// setTradePercent(percent)
+												// setSelectedPercent(percent)
+												onChange({
+													address,
+													percent: percent,
+												})
+											}}
+											label={`${percent}%`}
+										/>
+									</Box>
+								))}
+							</Box>
+						}
 					/>
+					<IconButton
+						size='small'
+						edge='end'
+						onClick={() => onChange(address, null, null, true)}
+					>
+						<CloseIcon />
+					</IconButton>
 				</Box>
 			</Box>
-			<Box mr={1}>
-				<FormControl
-					className={classes.shareInput}
-					variant='outlined'
-					size='small'
-				>
-					<OutlinedInput
-						id={`asset-${symbol}-share-input`}
-						value={share}
-						onChange={ev =>
-							onChange(address, safeNumberValue(ev.target.value, share))
-						}
-						endAdornment={<InputAdornment position='end'>%</InputAdornment>}
-						labelWidth={0}
-					/>
-				</FormControl>
-			</Box>
-			<IconButton
-				size='small'
-				edge='end'
-				onClick={() => onChange(address, null, null, true)}
-			>
-				<CloseIcon />
-			</IconButton>
 		</Box>
 	)
 }
 
 const WalletWithdrawStep = ({ stepsId, validateId, stepsProps = {} } = {}) => {
+	const classes = useStyles()
 	// const mainCurrency = useSelector(selectMainCurrency)
-	const { withdrawAsset } = stepsProps
+	// const { withdrawAsset } = stepsProps
 	// NOTE: RAW DATA - BNs - format in fields
 	const { assetsData = {} } = useSelector(selectAccountStatsFormatted)
 	const assetsFromSource = useSelector(selectWithdrawAssetsFromSources)
@@ -242,16 +254,20 @@ const WalletWithdrawStep = ({ stepsId, validateId, stepsProps = {} } = {}) => {
 
 	// const { assetsData = {} } = useSelector(selectAccountStatsFormatted)
 
-	const { symbol, balance } = assetsData[withdrawAsset] || {}
+	// const { symbol, balance } = assetsData[withdrawAsset] || {}
 
 	const {
-		amountToWithdraw,
+		// amountToWithdraw,
 		withdrawTo,
-		withdrawAssets,
+		withdrawAssets = [],
 		//   feesData = {} // TODO: min amount
 	} = useSelector(state => selectNewTransactionById(state, stepsId))
 
-	const max = balance
+	// const max = balance
+
+	const availableAssetsSrc = [...assetsFromSource].filter(
+		x => !withdrawAssets.some(y => y.address === x.value)
+	)
 
 	// const totalUsedValueMainCurrency =
 	// 	mainCurrency.symbol +
@@ -285,7 +301,7 @@ const WalletWithdrawStep = ({ stepsId, validateId, stepsProps = {} } = {}) => {
 
 		if (percent) {
 			updatedPercent = percent
-			updatedAmount = Math.max((balance * percent) / 100, balance)
+			updatedAmount = (balance * percent) / 100
 		} else if (amount) {
 			updatedAmount = amount
 			percent = (amount / balance) * 100
@@ -308,7 +324,7 @@ const WalletWithdrawStep = ({ stepsId, validateId, stepsProps = {} } = {}) => {
 		execute(
 			updateNewTransaction({
 				tx: stepsId,
-				key: 'withdrawMultiple',
+				key: 'withdrawAssets',
 				value: updated,
 			})
 		)
@@ -355,7 +371,58 @@ const WalletWithdrawStep = ({ stepsId, validateId, stepsProps = {} } = {}) => {
 						{spinner && <InputLoading />}
 					</Box>
 					<Box mb={2}>
-						<TextField
+						{withdrawAssets.map(({ address, amount, percent }, index) => (
+							<Box key={address}>
+								<AssetSelector
+									index={index}
+									amount={amount}
+									percent={percent}
+									address={address}
+									assetsData={assetsData}
+									onChange={updateWithdraws}
+								/>
+								<Divider className={classes.divider} />
+							</Box>
+						))}
+						{!!availableAssetsSrc.length && (
+							<Box
+								display='flex'
+								flexDirection='row'
+								alignItems='center'
+								justifyContent='stretch'
+							>
+								<Box width={1} mr={1}>
+									<Dropdown
+										fullWidth
+										variant='standard'
+										onChange={address => {
+											if (address) {
+												updateWithdraws({ address, percent: 0 })
+												setNewSelectedAsset('')
+											}
+										}}
+										source={availableAssetsSrc}
+										value={selectedNewAsset}
+										size='small'
+										label={t('WITHDRAW_NEW_ASSET', {
+											args: [
+												availableAssetsSrc
+													.map(x => x.label)
+													.join(', ')
+													.substr(0, 20) + '...',
+											],
+										})}
+										htmlId='withdraw-new-asset-dd'
+										// IconComponent={() => <AddIcon color='secondary' />}
+										IconComponent={AddIcon}
+										selectClasses={{
+											icon: classes.selectIcon,
+										}}
+									/>
+								</Box>
+							</Box>
+						)}
+						{/* <TextField
 							disabled={spinner}
 							type='text'
 							variant='outlined'
@@ -397,7 +464,7 @@ const WalletWithdrawStep = ({ stepsId, validateId, stepsProps = {} } = {}) => {
 									</span>
 								</span>
 							}
-						/>
+						/> */}
 					</Box>
 					{errFees && errFees.dirty && errFees.errMsg && (
 						<Alert variant='filled' severity='error'>
