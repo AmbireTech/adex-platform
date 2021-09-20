@@ -43,6 +43,7 @@ const tokens = {
 	aWETH: '0x030bA81f1c18d280636F32af80b9AAd02Cf0854e',
 	// USDT: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
 	USDC: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+	aUSDC: '0xBcca60bB61934080951369a648Fb03DF4F96263C',
 	WBTC: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
 	[ADXToken.symbol]: ADXToken.address,
 	// [StakingPool.symbol]: StakingPool.address,
@@ -209,6 +210,21 @@ const assets = {
 		decimals: 6,
 		logoSrc: USDC_LOGO,
 		isStableCoin: true,
+	},
+	[tokens.aUSDC]: {
+		symbol: 'aUSDC',
+		address: tokens.aUSDC,
+		name: 'Aave interest bearing USDC',
+		getBalance: async function({ address }) {
+			return await getERC20Balance({ tokenAddress: tokens.aUSDC, address })
+		},
+		isSwappable: false,
+		isBaseAsset: false,
+		mainAssetSymbol: 'USDC',
+		isAaveInterestToken: true,
+		subAssets: [],
+		decimals: 6,
+		logoSrc: USDC_LOGO,
 	},
 	[tokens.WBTC]: {
 		symbol: 'WBTC',
