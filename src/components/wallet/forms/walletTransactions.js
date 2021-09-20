@@ -17,6 +17,7 @@ import {
 	validateWalletDiversify,
 	walletDiversification,
 	validateWalletWithdraw,
+	validateWalletWithdrawMultiple,
 	walletWithdraw,
 	walletValidatePrivilegesChange,
 	walletUpdateIdentityPrivilege,
@@ -131,6 +132,46 @@ export const WithdrawAsset = props => (
 					ReactGA.event({
 						action: 'wallet',
 						category: 'withdraw',
+						label: 'continue',
+					})
+				},
+			},
+			{
+				title: 'PREVIEW_WALLET',
+				completeBtnTitle: 'PROCEED',
+				component: TransactionPreview,
+				completeFn: props =>
+					execute(
+						completeTx({
+							...props,
+							competeAction: walletWithdraw,
+						})
+					),
+			},
+		]}
+	/>
+)
+
+export const WithdrawMultipleAssets = props => (
+	<FormStepsWithDialog
+		{...props}
+		btnLabel='WALLET_WITHDRAW_ASSET_BTN'
+		saveBtnLabel='WALLET_WITHDRAW_ASSET_SAVE_BTN'
+		title='WALLET_WITHDRAW_MULTIPLE_ASSETS_TITLE'
+		titleArgs={[props.stepsProps.name, props.stepsProps.symbol]}
+		stepsId={`walletWithdraw-multiple`}
+		{...txCommon}
+		hideNav={true}
+		steps={[
+			{
+				title: 'WALLET_WITHDRAW_ASSET_TITLE',
+				titleArgs: [props.stepsProps.name, props.stepsProps.symbol],
+				component: WalletWithdrawStep,
+				validationFn: props => {
+					execute(validateWalletWithdrawMultiple(props))
+					ReactGA.event({
+						action: 'wallet',
+						category: 'withdrawMultiple',
 						label: 'continue',
 					})
 				},
