@@ -412,27 +412,34 @@ export function txnsUnwrapAAVEInterestToken({
 	identityAddr,
 }) {
 	const txns = []
-	const unwrapTx = {
-		identityContract: identityAddr,
-		feeTokenAddr,
-		to: contracts.AaveLendingPool.address,
-		data: AaveLendingPool.encodeFunctionData('withdraw', [
-			underlyingAssetAddr,
-			BigNumber.from(amount).toHexString(),
-			withdrawToAddr,
-		]),
-		onChainActionData: {
-			txAction: {
-				...ON_CHAIN_ACTIONS.withdrawAAVE,
-				specific: {
-					token: `${assets[underlyingAssetAddr].symbol}`,
-					amount: `${amount.toString()}`,
-				},
-			},
-		},
+
+	const amountBN = BigNumber.from(amount)
+	if (amountBN.lt(ZERO)) {
+		throw new Error('txnsUnwrapAAVEInterestToken - negative amount')
 	}
 
-	txns.push(unwrapTx)
+	if (amountBN.gt(ZERO)) {
+		const unwrapTx = {
+			identityContract: identityAddr,
+			feeTokenAddr,
+			to: contracts.AaveLendingPool.address,
+			data: AaveLendingPool.encodeFunctionData('withdraw', [
+				underlyingAssetAddr,
+				amountBN.toHexString(),
+				withdrawToAddr,
+			]),
+			onChainActionData: {
+				txAction: {
+					...ON_CHAIN_ACTIONS.withdrawAAVE({
+						underlyingToken: assets[underlyingAssetAddr],
+						aaveUnwrapAmount: amountBN,
+					}),
+				},
+			},
+		}
+
+		txns.push(unwrapTx)
+	}
 	return txns
 }
 
@@ -454,10 +461,7 @@ export function txnsETHtoWETH({
 		value: amount.toString(),
 		onChainActionData: {
 			txAction: {
-				...ON_CHAIN_ACTIONS.depositWETH,
-				specific: {
-					amount: `${amount.toString()}`,
-				},
+				...ON_CHAIN_ACTIONS.depositWETH({ amount }),
 			},
 		},
 	}
@@ -748,8 +752,16 @@ export function aaveUnwrapTokenAmount({
 	}
 }
 
+export function hasAAVEInterestToken({ underlyingAssetAddr, symbol }) {
+	const tokenSymbol = symbol || (assets[underlyingAssetAddr] || {}).symbol
+
+	const aaveInterestTokenAddr = tokens[`a${tokenSymbol}`]
+
+	return !!aaveInterestTokenAddr
+}
+
 export function getAAVEInterestToken({ underlyingAssetAddr }) {
-	const symbol = assets[underlyingAssetAddr].symbol
+	const symbol = (assets[underlyingAssetAddr] || {}).symbol
 	// TODO: make it better
 	const aaveInterestTokenAddr = tokens[`a${symbol}`]
 	if (!aaveInterestTokenAddr) {
