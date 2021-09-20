@@ -520,7 +520,7 @@ export function validateWalletWithdrawMultiple({
 		const state = getState()
 		const account = selectAccount(state)
 		const {
-			withdrawAssets,
+			withdrawAssets = [],
 			feeAssetAddress,
 			withdrawTo,
 			temp,
@@ -531,7 +531,7 @@ export function validateWalletWithdrawMultiple({
 
 		// TEMP: reset all validations - because of removed assets
 
-		const validations = selectValidationsById(state, validateId)
+		const validations = selectValidationsById(state, validateId) || {}
 		const validationsToReset = Object.keys(validations).filter(key =>
 			['withdrawAsset', 'amountToWithdraw', 'tokenDecimals'].some(x =>
 				key.startsWith(x)
