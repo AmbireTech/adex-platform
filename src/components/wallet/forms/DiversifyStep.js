@@ -22,6 +22,7 @@ import {
 	FormControl,
 	InputAdornment,
 	Divider,
+	IconButton,
 } from '@material-ui/core'
 import { Doughnut } from 'react-chartjs-2'
 // import { InputLoading } from 'components/common/spinners/'
@@ -45,7 +46,6 @@ import { Alert } from '@material-ui/lab'
 import Dropdown from 'components/common/dropdown'
 import { formatTokenAmount } from 'helpers/formatters'
 import { diversificationPresets } from 'services/adex-wallet/diversifications'
-import { IconButton } from '@material-ui/core'
 import { getLogo, isETHBasedToken } from 'services/adex-wallet'
 
 const styles = theme => {
