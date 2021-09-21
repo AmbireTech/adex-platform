@@ -548,11 +548,11 @@ export function validateWalletWithdrawMultiple({
 
 		const withdrawValidations = withdrawAssets
 			.map(({ address, amount }) => {
-				const { decimals } = assetsData[withdrawAsset]
+				const { decimals } = assetsData[address]
 				return [
 					validateEthAddress({
 						validateId,
-						addr: withdrawAsset,
+						addr: address,
 						prop: `withdrawAsset-${address}`,
 						nonERC20: false,
 						nonZeroAddr: true,
