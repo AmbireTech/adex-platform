@@ -91,6 +91,8 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 					symbol,
 					assetTotalToMainCurrenciesValues,
 					decimals,
+					name,
+					logoSrc,
 				} = balanceData
 
 				const Total = () => (
@@ -141,13 +143,39 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 								classes={{ label: classes.amountLabel }}
 								nodeId={address + '-balance'}
 								label={
-									<AmountWithCurrency
-										amount={balance}
-										unit={symbol}
-										mainFontVariant='subtitle1'
-										decimalsFontVariant='subtitle2'
-										toFixed={decimals}
-									/>
+									<Box key={address} display='flex' flexDirection='row'>
+										<Box>
+											<AmountWithCurrency
+												amount={balance}
+												unit={symbol}
+												mainFontVariant='subtitle1'
+												decimalsFontVariant='subtitle2'
+												toFixed={decimals}
+											/>
+										</Box>
+										<Box m={0.5}>
+											<WithdrawAsset
+												size='small'
+												// variant='contained'
+												color='secondary'
+												stepsProps={{ withdrawAsset: address, symbol, name }}
+												dialogWidth={512}
+												dialogHeight={800}
+												useChip
+											/>
+										</Box>
+										<Box m={0.5}>
+											<DepositAsset
+												size='small'
+												variant='contained'
+												color='primary'
+												dialogWidth={'100%'}
+												dialogHeight={'100%'}
+												topUpProps={{ address, symbol, name, logoSrc }}
+												useChip
+											/>
+										</Box>
+									</Box>
 								}
 							/>
 							{(specific || []).map((y, index) => (
@@ -156,26 +184,61 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 									key={y.address + '-' + index}
 									nodeId={`${y.address}-${index}`}
 									label={
-										<Box className={classes.amountContainer}>
-											<Box mr={0.5}>
-												<AmountWithCurrency
-													amount={y.balance}
-													unit={y.symbol}
-													mainFontVariant='subtitle1'
-													decimalsFontVariant='subtitle2'
-													toFixed={y.decimals}
+										<Box key={address} display='flex' flexDirection='row'>
+											<Box>
+												<Box className={classes.amountContainer}>
+													<Box mr={0.5}>
+														<AmountWithCurrency
+															amount={y.balance}
+															unit={y.symbol}
+															mainFontVariant='subtitle1'
+															decimalsFontVariant='subtitle2'
+															toFixed={y.decimals}
+														/>
+													</Box>
+													<Box>
+														{'('}
+														<AmountWithCurrency
+															amount={y.baseTokenBalance[1]}
+															unit={y.baseTokenBalance[0] || symbol}
+															mainFontVariant='subtitle1'
+															decimalsFontVariant='subtitle2'
+															toFixed={y.decimals}
+														/>
+														{')'}
+													</Box>
+												</Box>
+											</Box>
+											<Box m={0.5}>
+												<WithdrawAsset
+													size='small'
+													// variant='contained'
+													color='secondary'
+													stepsProps={{
+														withdrawAsset: y.address,
+														symbol: y.symbol,
+														name: y.name,
+													}}
+													dialogWidth={512}
+													dialogHeight={800}
+													useChip
 												/>
 											</Box>
-											<Box>
-												{'('}
-												<AmountWithCurrency
-													amount={y.baseTokenBalance[1]}
-													unit={y.baseTokenBalance[0] || symbol}
-													mainFontVariant='subtitle1'
-													decimalsFontVariant='subtitle2'
-													toFixed={y.decimals}
+											<Box m={0.5}>
+												<DepositAsset
+													size='small'
+													variant='contained'
+													color='primary'
+													dialogWidth={'100%'}
+													dialogHeight={'100%'}
+													topUpProps={{
+														address: y.address,
+														symbol: y.symbol,
+														name: y.name,
+														logoSrc: y.logoSrc,
+													}}
+													useChip
 												/>
-												{')'}
 											</Box>
 										</Box>
 									}
@@ -203,30 +266,33 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 			filter: false,
 			sort: false,
 			download: false,
-			customBodyRender: ({ address, symbol, name, logoSrc } = {}) => (
-				<Box key={address} display='flex' flexDirection='row'>
-					<Box m={0.5}>
-						<WithdrawAsset
-							size='small'
-							variant='contained'
-							color='secondary'
-							stepsProps={{ withdrawAsset: address, symbol, name }}
-							dialogWidth={512}
-							dialogHeight={800}
-						/>
+			customBodyRender: ({ address, symbol, name, hideBaseActions } = {}) =>
+				!hideBaseActions && (
+					<Box key={address} display='flex' flexDirection='row'>
+						<Box m={0.5}>
+							<WithdrawAsset
+								size='small'
+								// variant='contained'
+								color='secondary'
+								stepsProps={{ withdrawAsset: address, symbol, name }}
+								dialogWidth={512}
+								dialogHeight={800}
+								useChip
+							/>
+						</Box>
+						<Box m={0.5}>
+							<DepositAsset
+								size='small'
+								variant='contained'
+								color='primary'
+								dialogWidth={'100%'}
+								dialogHeight={'100%'}
+								topUpProps={{ address, symbol, name }}
+								useChip
+							/>
+						</Box>
 					</Box>
-					<Box m={0.5}>
-						<DepositAsset
-							size='small'
-							variant='contained'
-							color='primary'
-							dialogWidth={'100%'}
-							dialogHeight={'100%'}
-							topUpProps={{ address, symbol, name, logoSrc }}
-						/>
-					</Box>
-				</Box>
-			),
+				),
 		},
 	},
 ]
