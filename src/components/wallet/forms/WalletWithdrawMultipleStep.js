@@ -31,6 +31,7 @@ import {
 	ContentBody,
 	FullContentMessage,
 } from 'components/common/dialog/content'
+import OutlinedPropView from 'components/common/OutlinedPropView'
 import {
 	t,
 	selectValidationsById,
@@ -148,7 +149,6 @@ const safeNumberValue = (value, stateValue) => {
 const AssetSelector = ({
 	index,
 	address,
-	percent,
 	amount,
 	assetsData,
 	// symbol,
@@ -159,86 +159,120 @@ const AssetSelector = ({
 	const sliderClasses = useSliderStyles({ index })
 
 	const withdrawAssetData = assetsData[address] || {}
-	const { name, symbol } = withdrawAssetData
+	const { name, symbol, balance } = withdrawAssetData
 
 	return (
-		<Box>
-			<Box>
-				<Box
-					display='flex'
-					flexDirection='row'
-					alignItems='center'
-					justifyContent='space-between'
-				>
-					<Box display='flex' flexDirection='row' alignItems='center'>
-						<Avatar
-							src={getLogo(symbol)}
-							alt={name}
-							className={classes.labelImg}
-						/>
-						<Box>
-							{name} ({symbol})
-						</Box>
-					</Box>
-					<Box>avl</Box>
-				</Box>
-				<Box
-					mt={2}
-					display='flex'
-					flexDirection='row'
-					alignItems='flex-start'
-					justifyContent='space-between'
-				>
-					<TextField
-						// disabled={spinner}
-						type='text'
-						variant='outlined'
-						fullWidth
-						required
-						size='small'
-						label={t('PROP_WITHDRAWAMOUNT')}
-						name='amountToWithdraw'
-						value={amount || ''}
-						onChange={ev =>
-							onChange({ address, amount: (ev.target.value || '').trim() })
-						}
-						// error={errAmount && !!errAmount.dirty}
-						helperText={
-							<Box mt={0.25}>
-								{[25, 50, 75, 100].map(percent => (
-									<Box display='inline-block' key={percent.toString()} p={0.2}>
-										<Chip
-											// variant={selectedPercent === percent ? 'contained' : 'outlined'}
-											variant='outlined'
-											clickable
-											size='small'
-											color='default'
-											// disabled={!selectedFromAsset}
-											onClick={() => {
-												// setTradePercent(percent)
-												// setSelectedPercent(percent)
-												onChange({
-													address,
-													percent: percent,
-												})
-											}}
-											label={`${percent}%`}
-										/>
-									</Box>
-								))}
-							</Box>
-						}
-					/>
-					<IconButton
-						size='small'
-						edge='end'
-						onClick={() => onChange(address, null, null, true)}
+		<OutlinedPropView
+			margin='dense'
+			value={
+				<Box>
+					<Box
+						display='flex'
+						flexDirection='row'
+						alignItems='flex-start'
+						justifyContent='space-between'
+						// flexWrap='wrap'
+						flexGrow='1'
 					>
-						<CloseIcon />
-					</IconButton>
+						<Box
+							display='flex'
+							flexDirection='row'
+							alignItems='center'
+							justifyContent='space-between'
+							flexWrap='wrap'
+							flexGrow='1'
+						>
+							<Box m={0.25} flexGrow='100'>
+								<Chip
+									avatar={
+										<Avatar
+											src={getLogo(symbol)}
+											alt={name}
+											className={classes.labelImg}
+										/>
+									}
+									label={`${name} (${symbol})`}
+									size='small'
+									color='primary'
+								/>
+							</Box>
+							<Box
+								m={0.25}
+								display='flex'
+								justifyContent='space-between'
+								flexDirection='row'
+								alignItems='center'
+							>
+								<Chip
+									label={`${t('BAL')}: ${balance}`}
+									size='small'
+									variant='filled'
+								/>
+							</Box>
+						</Box>
+						<IconButton
+							size='small'
+							edge='end'
+							onClick={() => onChange({ address, remove: true })}
+						>
+							<CloseIcon />
+						</IconButton>
+					</Box>
+					<Box
+						mt={1}
+						display='flex'
+						flexDirection='row'
+						alignItems='flex-start'
+						justifyContent='space-between'
+					>
+						<TextField
+							// disabled={spinner}
+							type='text'
+							variant='outlined'
+							fullWidth
+							required
+							size='small'
+							label={t('PROP_WITHDRAWAMOUNT')}
+							name='amountToWithdraw'
+							value={amount || ''}
+							onChange={ev =>
+								onChange({ address, amount: (ev.target.value || '').trim() })
+							}
+							// error={errAmount && !!errAmount.dirty}
+							helperText={
+								<Box mt={0.25}>
+									{[25, 50, 75, 100].map(percent => (
+										<Box
+											display='inline-block'
+											key={percent.toString()}
+											p={0.2}
+										>
+											<Chip
+												// variant={selectedPercent === percent ? 'contained' : 'outlined'}
+												variant='outlined'
+												clickable
+												size='small'
+												color='default'
+												// disabled={!selectedFromAsset}
+												onClick={() => {
+													// setTradePercent(percent)
+													// setSelectedPercent(percent)
+													onChange({
+														address,
+														percent: percent,
+													})
+												}}
+												label={`${percent}%`}
+											/>
+										</Box>
+									))}
+								</Box>
+							}
+						/>
+					</Box>
 				</Box>
-			</Box>
-		</Box>
+			}
+		/>
 	)
 }
 
@@ -381,7 +415,6 @@ const WalletWithdrawStep = ({ stepsId, validateId, stepsProps = {} } = {}) => {
 									assetsData={assetsData}
 									onChange={updateWithdraws}
 								/>
-								<Divider className={classes.divider} />
 							</Box>
 						))}
 						{!!availableAssetsSrc.length && (
