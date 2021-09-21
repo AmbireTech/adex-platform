@@ -108,6 +108,7 @@ export const selectWalletAssetsTableData = createSelector(
 						},
 					],
 					actions: {
+						hideBaseActions: !!specific && specific.length,
 						address,
 						symbol,
 						name,
