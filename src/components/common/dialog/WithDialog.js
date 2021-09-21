@@ -5,6 +5,7 @@ import Button from '@material-ui/core/Button'
 import Fab from '@material-ui/core/Fab'
 import IconButton from '@material-ui/core/IconButton'
 import Dialog from '@material-ui/core/Dialog'
+import Chip from '@material-ui/core/Chip'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import DialogContent from '@material-ui/core/DialogContent'
 import classnames from 'classnames'
@@ -86,6 +87,7 @@ export default function WithDialogHoc(Decorated) {
 			iconButton,
 			textButton,
 			fabButton,
+			useChip,
 			variant,
 			color,
 			size,
@@ -148,6 +150,8 @@ export default function WithDialogHoc(Decorated) {
 			ButtonComponent = TextBtn
 		} else if (fabButton) {
 			ButtonComponent = Fab
+		} else if (useChip) {
+			ButtonComponent = Chip
 		} else {
 			ButtonComponent = Button
 			btnProps.fullWidth = fullWidth
