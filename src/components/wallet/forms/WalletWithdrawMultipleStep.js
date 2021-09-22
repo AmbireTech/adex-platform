@@ -1,27 +1,19 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
-import { makeStyles, useTheme } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 import { fade } from '@material-ui/core/styles/colorManipulator'
 import {
 	TextField,
-	Button,
 	Box,
-	Grid,
 	Avatar,
-	// InputAdornment,
 	Typography,
-	OutlinedInput,
-	Slider,
-	FormControl,
-	InputAdornment,
-	Divider,
 	IconButton,
+	Paper,
 	Chip,
 } from '@material-ui/core'
 import {
 	AddSharp as AddIcon,
-	StopSharp as StopIcon,
 	CloseSharp as CloseIcon,
 } from '@material-ui/icons'
 import { BigNumber } from 'ethers'
@@ -31,7 +23,6 @@ import {
 	ContentBody,
 	FullContentMessage,
 } from 'components/common/dialog/content'
-import OutlinedPropView from 'components/common/OutlinedPropView'
 import {
 	t,
 	selectValidationsById,
@@ -39,7 +30,7 @@ import {
 	selectSpinnerById,
 	selectWeb3SyncSpinnerByValidateId,
 	selectAccountStatsFormatted,
-	selectAccountStatsRaw,
+	// selectAccountStatsRaw,
 	selectMainCurrency,
 	selectWithdrawAssetsFromSources,
 	// selectMainCurrency,
@@ -47,8 +38,8 @@ import {
 import { execute, updateNewTransaction } from 'actions'
 import { Alert } from '@material-ui/lab'
 import Dropdown from 'components/common/dropdown'
-import { getLogo, isETHBasedToken } from 'services/adex-wallet'
-import { assets } from 'services/adex-wallet/assets-kovan'
+import { AmountWithCurrency } from 'components/common/amount'
+import { getLogo } from 'services/adex-wallet'
 
 const styles = theme => {
 	return {
@@ -99,41 +90,7 @@ const styles = theme => {
 	}
 }
 
-const sliderStyles = theme => {
-	const color = ({ index = 0 }) =>
-		theme.palette.chartColors.all[index % theme.palette.chartColors.all.length]
-
-	const height = 8
-	const borderRadius = height / 2
-
-	return {
-		track: {
-			borderRadius,
-			height,
-		},
-		root: {
-			color,
-			height,
-			borderRadius,
-			padding: `${theme.spacing(1)}px 0`,
-		},
-		rail: {
-			height,
-			borderRadius,
-			color: theme.palette.common.black,
-		},
-		thumb: {
-			marginTop: 0,
-			height,
-			width: height,
-		},
-	}
-}
-
 const useStyles = makeStyles(styles)
-const useSliderStyles = makeStyles(sliderStyles)
-
-const ZERO = BigNumber.from(0)
 
 const safeNumberValue = (value, stateValue) => {
 	const numValue = Number(value)
@@ -147,7 +104,7 @@ const safeNumberValue = (value, stateValue) => {
 }
 
 const AssetSelector = ({
-	index,
+	// index,
 	address,
 	amount,
 	assetsData,
@@ -156,123 +113,124 @@ const AssetSelector = ({
 	onChange,
 }) => {
 	const classes = useStyles()
-	const sliderClasses = useSliderStyles({ index })
 
 	const withdrawAssetData = assetsData[address] || {}
-	const { name, symbol, balance } = withdrawAssetData
+	const { name, symbol, balance, decimals } = withdrawAssetData
 
 	return (
-		<OutlinedPropView
-			margin='dense'
-			value={
-				<Box>
+		<Paper elevation={0}>
+			<Box p={1}>
+				<Box
+					display='flex'
+					flexDirection='row'
+					alignItems='flex-start'
+					justifyContent='space-between'
+					// flexWrap='wrap'
+					flexGrow='1'
+				>
 					<Box
 						display='flex'
 						flexDirection='row'
-						alignItems='flex-start'
+						alignItems='center'
 						justifyContent='space-between'
-						// flexWrap='wrap'
+						flexWrap='wrap'
 						flexGrow='1'
 					>
-						<Box
-							display='flex'
-							flexDirection='row'
-							alignItems='center'
-							justifyContent='space-between'
-							flexWrap='wrap'
-							flexGrow='1'
-						>
-							<Box m={0.25} flexGrow='100'>
-								<Chip
-									avatar={
-										<Avatar
-											src={getLogo(symbol)}
-											alt={name}
-											className={classes.labelImg}
-										/>
-									}
-									label={`${name} (${symbol})`}
-									size='small'
-									color='primary'
-								/>
-							</Box>
-							<Box
-								m={0.25}
-								display='flex'
-								justifyContent='space-between'
-								flexDirection='row'
-								alignItems='center'
-							>
-								<Chip
-									label={`${t('BAL')}: ${balance}`}
-									size='small'
-									variant='filled'
-								/>
-							</Box>
+						<Box flexGrow='100'>
+							<Chip
+								avatar={
+									<Avatar
+										src={getLogo(symbol)}
+										alt={name}
+										className={classes.labelImg}
+									/>
+								}
+								label={`${name} (${symbol})`}
+								size='small'
+								color='default'
+							/>
 						</Box>
-						<IconButton
-							size='small'
-							edge='end'
-							onClick={() => onChange({ address, remove: true })}
-						>
-							<CloseIcon />
-						</IconButton>
+						<Box display='inline'>
+							<Typography variant='body1'>
+								{t('BALANCE_SHORT')}
+								<AmountWithCurrency
+									amount={balance}
+									mainFontVariant='body1'
+									decimalsFontVariant='caption'
+									toFixed={Math.max(4, Math.floor(decimals / 2))}
+								/>
+							</Typography>
+						</Box>
 					</Box>
-					<Box
-						mt={1}
-						display='flex'
-						flexDirection='row'
-						alignItems='flex-start'
-						justifyContent='space-between'
+					<IconButton
+						size='small'
+						edge='end'
+						onClick={() => onChange({ address, remove: true })}
 					>
-						<TextField
-							// disabled={spinner}
-							type='text'
-							variant='outlined'
-							fullWidth
-							required
-							size='small'
-							label={t('PROP_WITHDRAWAMOUNT')}
-							name='amountToWithdraw'
-							value={amount || ''}
-							onChange={ev =>
-								onChange({ address, amount: (ev.target.value || '').trim() })
-							}
-							// error={errAmount && !!errAmount.dirty}
-							helperText={
-								<Box mt={0.25}>
-									{[25, 50, 75, 100].map(percent => (
-										<Box
-											display='inline-block'
-											key={percent.toString()}
-											p={0.2}
-										>
-											<Chip
-												// variant={selectedPercent === percent ? 'contained' : 'outlined'}
-												variant='outlined'
-												clickable
-												size='small'
-												color='default'
-												// disabled={!selectedFromAsset}
-												onClick={() => {
-													// setTradePercent(percent)
-													// setSelectedPercent(percent)
-													onChange({
-														address,
-														percent: percent,
-													})
-												}}
-												label={`${percent}%`}
-											/>
-										</Box>
-									))}
-								</Box>
-							}
-						/>
-					</Box>
+						<CloseIcon />
+					</IconButton>
 				</Box>
-			}
-		/>
+				<Box
+					mt={1}
+					display='flex'
+					flexDirection='row'
+					alignItems='flex-start'
+					justifyContent='space-between'
+				>
+					<TextField
+						// disabled={spinner}
+						type='text'
+						variant='outlined'
+						fullWidth
+						required
+						size='small'
+						label={t('PROP_WITHDRAWAMOUNT')}
+						name='amountToWithdraw'
+						value={amount || ''}
+						onChange={ev =>
+							onChange({
+								address,
+								amount: safeNumberValue((ev.target.value || '').trim(), amount),
+							})
+						}
+						// error={errAmount && !!errAmount.dirty}
+						FormHelperTextProps={{
+							margin: 'dense',
+							style: { marginLeft: 0, marginRight: 0 },
+						}}
+						helperText={
+							<Box mt={0.25}>
+								{[25, 50, 75, 100].map(percent => (
+									<Box
+										display='inline-block'
+										key={percent.toString()}
+										mr={0.25}
+									>
+										<Chip
+											// variant={selectedPercent === percent ? 'contained' : 'outlined'}
+											variant='outlined'
+											clickable
+											size='small'
+											color='default'
+											// disabled={!selectedFromAsset}
+											onClick={() => {
+												// setTradePercent(percent)
+												// setSelectedPercent(percent)
+												onChange({
+													address,
+													percent: percent,
+												})
+											}}
+											label={`${percent}%`}
+										/>
+									</Box>
+								))}
+							</Box>
+						}
+					/>
+				</Box>
+			</Box>
+		</Paper>
 	)
 }
 
@@ -406,7 +364,7 @@ const WalletWithdrawStep = ({ stepsId, validateId, stepsProps = {} } = {}) => {
 					</Box>
 					<Box mb={2}>
 						{withdrawAssets.map(({ address, amount, percent }, index) => (
-							<Box key={address}>
+							<Box key={address} mb={1}>
 								<AssetSelector
 									index={index}
 									amount={amount}
