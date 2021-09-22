@@ -1154,6 +1154,181 @@ export async function walletWithdrawTransaction({
 	}
 }
 
+async function getWithdrawMultipleTxns({
+	account,
+	withdrawAssets,
+	feeTokenAddr,
+	assetsToWithdrawAfeteFeesCalacBN,
+	amountToWithdrawAfterFeesCalcBN,
+	withdrawTo,
+	getFeesOnly,
+	assetsDataRaw,
+}) {
+	const { wallet, identity } = account
+	const { authType } = wallet
+	const {
+		provider,
+		IdentityPayable,
+		//   getToken
+	} = await getEthers(authType)
+	const identityAddr = identity.address
+
+	const txns = []
+
+	withdrawAssets.forEach(({ address, amount }) => {
+		const { isETH, decimals } = assetsDataRaw[address]
+		const amountToWithdrawBN = parseUnits(amount, decimals)
+		const tx = isETH
+			? {
+					identityContract: identityAddr,
+					feeTokenAddr,
+					to: address,
+					data: '0x',
+					value: getFeesOnly
+						? // ? amountToWithdrawBN.sub(amountToUnwrap).toHexString()
+						  amountToWithdrawBN.toHexString()
+						: amountToWithdrawAfterFeesCalcBN.toHexString(),
+					operationsGasLimits: [GAS_LIMITS.transfer],
+			  }
+			: {
+					identityContract: identityAddr,
+					feeTokenAddr,
+					to: address,
+					data: ERC20.encodeFunctionData('transfer', [
+						withdrawTo,
+						getFeesOnly
+							? // ? amountToWithdrawBN.sub(amountToUnwrap).toHexString()
+							  amountToWithdrawBN.toHexString()
+							: amountToWithdrawAfterFeesCalcBN.toHexString(),
+					]),
+					operationsGasLimits: [GAS_LIMITS.transfer],
+			  }
+		txns.push(tx)
+	})
+
+	const txnsWithNonceAndFees = await getWalletIdentityTxnsWithNoncesAndFees({
+		txns,
+		identityAddr,
+		provider,
+		Identity: IdentityPayable,
+		account,
+		feeTokenAddr,
+	})
+
+	return {
+		txnsWithNonceAndFees,
+		// amountToWithdrawBN,
+		//  tradeData
+	}
+}
+
+export async function walletWithdrawMultipleTransaction({
+	account,
+	amountToWithdraw,
+	withdrawTo,
+	withdrawAssets,
+	withdrawAssetAddr, //: useInputWithdrawAsset,
+	assetsDataRaw,
+	getMinAmountToSpend,
+}) {
+	// const isFromETHToken = isETHBasedToken({ address: useInputWithdrawAsset })
+
+	// const withdrawAssetAddr = isFromETHToken
+	// 	? tokens['ETH']
+	// 	: useInputWithdrawAsset
+
+	const tokenData = assetsDataRaw[withdrawAssetAddr]
+
+	// Pre call to get fees
+	const {
+		txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
+		amountToWithdrawBN: _preAmountToWithdrawBN,
+	} = await getWithdrawTxns({
+		account,
+		amountToWithdraw,
+		// amountToWithdrawAfterFeesCalcBN,
+		withdrawTo,
+		getFeesOnly: true,
+		withdrawAssetAddr,
+		tokenData,
+		getMinAmountToSpend,
+		assetsDataRaw,
+		// isFromETHToken,
+	})
+
+	const {
+		totalFeesBN: _preTotalFeesBN,
+		totalFeesFormatted: _preTotalFeesFormatted,
+	} = await getWalletIdentityTxnsTotalFees({
+		txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
+	})
+
+	// TODO: unified function
+	const mainActionAmountBN = _preAmountToWithdrawBN.sub(_preTotalFeesBN)
+	const mainActionAmountFormatted = formatTokenAmount(
+		mainActionAmountBN,
+		tokenData.decimals,
+		false,
+		tokenData.decimals
+	)
+
+	if (mainActionAmountBN.lt(ZERO)) {
+		throw new Error(
+			t('ERR_NO_BALANCE_FOR_FEES', {
+				args: [tokenData.symbol, _preTotalFeesFormatted],
+			})
+		)
+	}
+
+	// Actual call with fees pre calculated
+	const { txnsWithNonceAndFees, amountToWithdrawBN } = await getWithdrawTxns({
+		account,
+		amountToWithdraw,
+		amountToWithdrawAfterFeesCalcBN: mainActionAmountBN,
+		withdrawTo,
+		getFeesOnly: false, // !!Important
+		withdrawAssetAddr,
+		tokenData,
+		getMinAmountToSpend,
+		assetsDataRaw,
+		// isFromETHToken,
+	})
+
+	const {
+		totalFees,
+		totalFeesBN,
+		...rest
+	} = await getWalletIdentityTxnsTotalFees({
+		txnsWithNonceAndFees,
+	})
+
+	// NOTE: Use everywhere
+	// amountToWithdraw - spend token user amount (mey be different for all funcs)
+	// feesAmountBN - Get it form amountToWithdraw
+	// totalAmountToSpendBN - total amount for the action + fees (amountToWithdrawBN)
+	// mainActionAmountBN - amountToWithdraw.sub(feesAmountBN) - the actual amount to withdraw
+	// !!!!! mainActionAmountBN - use tis amount when calling functions for signatures
+	// actionMinAmountBN - should be more than 2x fees
+
+	return {
+		txnsWithNonceAndFees,
+		totalFeesBN,
+		// totalFeesFormatted, // in rest,
+		// feeTokenAddr, //in ..rest
+		// actionMinAmountBN, // in ...rest
+		// actionMinAmountFormatted, // in ...rest
+		spendTokenAddr: withdrawAssetAddr,
+		totalAmountToSpendBN: amountToWithdrawBN, // Total amount out
+		totalAmountToSpendFormatted: amountToWithdraw, // Total amount out
+		mainActionAmountBN,
+		mainActionAmountFormatted,
+		...rest,
+		actionMeta: {
+			withdrawAssetAddr,
+		},
+	}
+}
+
 export async function walletSetIdentityPrivilege({
 	account,
 	setAddr,
