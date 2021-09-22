@@ -941,7 +941,7 @@ async function getWithdrawTxns({
 	withdrawAssetAddr,
 	// getMinAmountToSpend,
 	tokenData,
-	isFromETHToken,
+	// isFromETHToken,
 	assetsDataRaw,
 }) {
 	const { wallet, identity } = account
@@ -963,22 +963,23 @@ async function getWithdrawTxns({
 
 	const amountToWithdrawBN = parseUnits(amountToWithdraw, token.decimals)
 
-	const txns = isFromETHToken
-		? getEthBasedTokensToETHTxns({
-				feeTokenAddr,
-				identityAddr,
-				amountNeeded: amountToWithdrawBN,
-				assetsDataRaw,
-		  })
-		: []
+	const txns = []
+	// isFromETHToken
+	// 	? getEthBasedTokensToETHTxns({
+	// 			feeTokenAddr,
+	// 			identityAddr,
+	// 			amountNeeded: amountToWithdrawBN,
+	// 			assetsDataRaw,
+	// 	  })
+	// 	: []
 
-	const amountToUnwrap = BigNumber.from(tokenData.balance)
-		.sub(amountToWithdrawBN)
-		.lt(ZERO)
-		? amountToWithdrawBN.sub(tokenData.balance)
-		: ZERO
+	// const amountToUnwrap = BigNumber.from(tokenData.balance)
+	// 	.sub(amountToWithdrawBN)
+	// 	.lt(ZERO)
+	// 	? amountToWithdrawBN.sub(tokenData.balance)
+	// 	: ZERO
 
-	const aaveInterestToken = tokenData.specific.find(x => x.isAaveInterestToken)
+	// const aaveInterestToken = tokenData.specific.find(x => x.isAaveInterestToken)
 
 	// console.log('amountToUnwrap', amountToUnwrap.toString())
 	// console.log(
@@ -986,30 +987,32 @@ async function getWithdrawTxns({
 	// 	BigNumber.from(aaveInterestToken.balance).toString()
 	// )
 
-	if (!isFromETHToken && amountToUnwrap.gt(ZERO) && aaveInterestToken) {
-		const unwrapTx = {
-			identityContract: identityAddr,
-			feeTokenAddr,
-			to: contracts.AaveLendingPool.address,
-			data: AaveLendingPool.encodeFunctionData('withdraw', [
-				withdrawAssetAddr,
-				amountToUnwrap.toHexString(),
-				identityAddr,
-			]),
-			operationsGasLimits: [GAS_LIMITS.unwrap],
-		}
+	// if (!isFromETHToken && amountToUnwrap.gt(ZERO) && aaveInterestToken) {
+	// 	const unwrapTx = {
+	// 		identityContract: identityAddr,
+	// 		feeTokenAddr,
+	// 		to: contracts.AaveLendingPool.address,
+	// 		data: AaveLendingPool.encodeFunctionData('withdraw', [
+	// 			withdrawAssetAddr,
+	// 			amountToUnwrap.toHexString(),
+	// 			identityAddr,
+	// 		]),
+	// 		operationsGasLimits: [GAS_LIMITS.unwrap],
+	// 	}
 
-		txns.push(unwrapTx)
-	}
+	// 	txns.push(unwrapTx)
+	// }
 
-	const withdrawTx = isFromETHToken
+	const { isETH } = tokenData
+	const withdrawTx = isETH
 		? {
 				identityContract: identityAddr,
 				feeTokenAddr,
 				to: withdrawAssetAddr,
 				data: '0x',
 				value: getFeesOnly
-					? amountToWithdrawBN.sub(amountToUnwrap).toHexString()
+					? // ? amountToWithdrawBN.sub(amountToUnwrap).toHexString()
+					  amountToWithdrawBN.toHexString()
 					: amountToWithdrawAfterFeesCalcBN.toHexString(),
 				operationsGasLimits: [GAS_LIMITS.transfer],
 		  }
@@ -1020,7 +1023,8 @@ async function getWithdrawTxns({
 				data: ERC20.encodeFunctionData('transfer', [
 					withdrawTo,
 					getFeesOnly
-						? amountToWithdrawBN.sub(amountToUnwrap).toHexString()
+						? // ? amountToWithdrawBN.sub(amountToUnwrap).toHexString()
+						  amountToWithdrawBN.toHexString()
 						: amountToWithdrawAfterFeesCalcBN.toHexString(),
 				]),
 				operationsGasLimits: [GAS_LIMITS.transfer],
@@ -1048,15 +1052,15 @@ export async function walletWithdrawTransaction({
 	account,
 	amountToWithdraw,
 	withdrawTo,
-	withdrawAssetAddr: useInputWithdrawAsset,
+	withdrawAssetAddr, //: useInputWithdrawAsset,
 	assetsDataRaw,
 	getMinAmountToSpend,
 }) {
-	const isFromETHToken = isETHBasedToken({ address: useInputWithdrawAsset })
+	// const isFromETHToken = isETHBasedToken({ address: useInputWithdrawAsset })
 
-	const withdrawAssetAddr = isFromETHToken
-		? tokens['ETH']
-		: useInputWithdrawAsset
+	// const withdrawAssetAddr = isFromETHToken
+	// 	? tokens['ETH']
+	// 	: useInputWithdrawAsset
 
 	const tokenData = assetsDataRaw[withdrawAssetAddr]
 
@@ -1074,7 +1078,7 @@ export async function walletWithdrawTransaction({
 		tokenData,
 		getMinAmountToSpend,
 		assetsDataRaw,
-		isFromETHToken,
+		// isFromETHToken,
 	})
 
 	const {
@@ -1112,7 +1116,7 @@ export async function walletWithdrawTransaction({
 		tokenData,
 		getMinAmountToSpend,
 		assetsDataRaw,
-		isFromETHToken,
+		// isFromETHToken,
 	})
 
 	const {
