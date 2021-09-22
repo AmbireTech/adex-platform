@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import { SwapVert } from '@material-ui/icons'
 import {
 	TextField,
-	Button,
+	Chip,
 	Box,
 	Grid,
 	Paper,
@@ -425,11 +425,9 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 													key={percent.toString()}
 													p={0.25}
 												>
-													<Button
+													<Chip
 														variant={
-															selectedPercent === percent
-																? 'contained'
-																: 'outlined'
+															selectedPercent === percent ? 'filled' : null
 														}
 														size='small'
 														color='default'
@@ -438,9 +436,8 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 															setTradePercent(percent)
 															setSelectedPercent(percent)
 														}}
-													>
-														{percent}%
-													</Button>
+														label={`${percent}%`}
+													/>
 												</Box>
 											))}
 										</Box>
