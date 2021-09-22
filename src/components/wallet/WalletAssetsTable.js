@@ -153,28 +153,6 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 												toFixed={decimals}
 											/>
 										</Box>
-										<Box m={0.5}>
-											<WithdrawAsset
-												size='small'
-												// variant='contained'
-												color='secondary'
-												stepsProps={{ withdrawAsset: address, symbol, name }}
-												dialogWidth={512}
-												dialogHeight={800}
-												useChip
-											/>
-										</Box>
-										<Box m={0.5}>
-											<DepositAsset
-												size='small'
-												variant='contained'
-												color='primary'
-												dialogWidth={'100%'}
-												dialogHeight={'100%'}
-												topUpProps={{ address, symbol, name, logoSrc }}
-												useChip
-											/>
-										</Box>
 									</Box>
 								}
 							/>
@@ -209,37 +187,6 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 													</Box>
 												</Box>
 											</Box>
-											<Box m={0.5}>
-												<WithdrawAsset
-													size='small'
-													// variant='contained'
-													color='secondary'
-													stepsProps={{
-														withdrawAsset: y.address,
-														symbol: y.symbol,
-														name: y.name,
-													}}
-													dialogWidth={512}
-													dialogHeight={800}
-													useChip
-												/>
-											</Box>
-											<Box m={0.5}>
-												<DepositAsset
-													size='small'
-													variant='contained'
-													color='primary'
-													dialogWidth={'100%'}
-													dialogHeight={'100%'}
-													topUpProps={{
-														address: y.address,
-														symbol: y.symbol,
-														name: y.name,
-														logoSrc: y.logoSrc,
-													}}
-													useChip
-												/>
-											</Box>
 										</Box>
 									}
 								/>
@@ -266,33 +213,41 @@ const getCols = ({ classes, mainCurrency = {} }) => [
 			filter: false,
 			sort: false,
 			download: false,
-			customBodyRender: ({ address, symbol, name, hideBaseActions } = {}) =>
-				!hideBaseActions && (
-					<Box key={address} display='flex' flexDirection='row'>
-						<Box m={0.5}>
-							<WithdrawAsset
-								size='small'
-								// variant='contained'
-								color='secondary'
-								stepsProps={{ withdrawAsset: address, symbol, name }}
-								dialogWidth={512}
-								dialogHeight={800}
-								useChip
-							/>
+			customBodyRender: ({ actionsData } = {}) => (
+				<Box display='flex' flexDirection='column'>
+					{actionsData.map(({ address, symbol, name }) => (
+						<Box
+							key={address}
+							display='flex'
+							flexDirection='row'
+							justifyContent='space-between'
+						>
+							<Box m={0.5}>
+								<WithdrawAsset
+									size='small'
+									// variant='contained'
+									color='secondary'
+									stepsProps={{ withdrawAsset: address, symbol, name }}
+									dialogWidth={512}
+									dialogHeight={800}
+									useChip
+								/>
+							</Box>
+							<Box m={0.5}>
+								<DepositAsset
+									size='small'
+									variant='contained'
+									color='primary'
+									dialogWidth={'100%'}
+									dialogHeight={'100%'}
+									topUpProps={{ address, symbol, name }}
+									useChip
+								/>
+							</Box>
 						</Box>
-						<Box m={0.5}>
-							<DepositAsset
-								size='small'
-								variant='contained'
-								color='primary'
-								dialogWidth={'100%'}
-								dialogHeight={'100%'}
-								topUpProps={{ address, symbol, name }}
-								useChip
-							/>
-						</Box>
-					</Box>
-				),
+					))}
+				</Box>
+			),
 		},
 	},
 ]
