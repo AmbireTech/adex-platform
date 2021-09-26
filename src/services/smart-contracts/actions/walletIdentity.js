@@ -45,11 +45,14 @@ const transferETH = ({
 	amount,
 	sender,
 	recipient,
+	relayerFeeTx,
 	...extra
 }) => ({
 	contract: 'identity',
 	method: 'value',
-	name: 'SC_ACTION_TRANSFER_ETH',
+	name: relayerFeeTx
+		? 'SC_ACTION_TRANSFER_ETH_RELAYER_FEE'
+		: 'SC_ACTION_TRANSFER_ETH',
 	gasCost: GAS_LIMITS.transferETH,
 	amount: getTokenAmount({ amount, tokenData }),
 	sender,
@@ -63,11 +66,14 @@ const transferERC20 = ({
 	amount,
 	sender,
 	recipient,
+	relayerFeeTx,
 	...extra
 }) => ({
 	contract: 'ERC20',
 	method: 'transfer',
-	name: 'SC_ACTION_TRANSFER_ERC20',
+	name: relayerFeeTx
+		? 'SC_ACTION_TRANSFER_ERC20_RELAYER_FEE'
+		: 'SC_ACTION_TRANSFER_ERC20',
 	gasCost: GAS_LIMITS.transfer,
 	token: `${tokenNamePrefix ? tokenNamePrefix + ' ' : ''}${tokenData.symbol} (${
 		tokenData.address
@@ -468,7 +474,7 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 	const feeTx = feeToken.isETH
 		? {
 				identityContract: identityAddr,
-				feeTokenAddr,
+				// feeTokenAddr,
 				to: relayerAddr,
 				data: '0x',
 				value: txnsFEES.toHexString(),
@@ -479,13 +485,14 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 							amount: txnsFEES,
 							sender: `Identity (${identityAddr})`,
 							recipient: `Relayer ${relayerAddr}`,
+							relayerFeeTx: true,
 						}),
 					},
 				},
 		  }
 		: {
 				identityContract: identityAddr,
-				feeTokenAddr,
+				// feeTokenAddr,
 				to: feeTokenAddr,
 				data: ERC20.encodeFunctionData('transfer', [
 					relayerAddr,
@@ -498,6 +505,7 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 							amount: txnsFEES,
 							sender: `Identity (${identityAddr})`,
 							recipient: `Relayer ${relayerAddr}`,
+							relayerFeeTx: true,
 						}),
 					},
 				},
