@@ -110,11 +110,13 @@ export const selectWalletAssetsTableData = createSelector(
 					actions: {
 						actionsData: [{ address, symbol, name }].concat(
 							!!specific && specific.length
-								? specific.map(({ adderess, symbol, name }) => ({
-										address,
-										symbol,
-										name,
-								  }))
+								? specific.map(
+										({ address: specificAddress, symbol, name }) => ({
+											address: specificAddress,
+											symbol,
+											name,
+										})
+								  )
 								: []
 						),
 					},
