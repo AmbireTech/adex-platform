@@ -184,7 +184,8 @@ function WalletStats() {
 							mt={4}
 							display='flex'
 							flexDirection='row'
-							// justifyContent='space-between'
+							flexWrap='wrap'
+							justifyContent='stretch'
 						>
 							<Box m={0.5}>
 								<TradeAssets
