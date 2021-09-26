@@ -31,6 +31,7 @@ import {
 	walletDiversificationTransaction,
 	walletWithdrawTransaction,
 	walletSetIdentityPrivilege,
+	walletWithdrawMultipleTransaction,
 } from 'services/smart-contracts/actions/wallet'
 import { getTradeOutData } from 'services/smart-contracts/actions/walletCommon'
 import { processExecuteWalletTxns } from 'services/smart-contracts/actions/walletIdentity'
@@ -521,12 +522,11 @@ export function validateWalletWithdrawMultiple({
 		const account = selectAccount(state)
 		const {
 			withdrawAssets = [],
-			feeAssetAddress,
+			feeTokenAddr,
 			withdrawTo,
 			temp,
 		} = selectNewTransactionById(state, stepsId)
 		const { assetsData = {} } = selectAccountStatsRaw(state)
-		const { withdrawAsset } = stepsProps
 		const authType = selectAuthType(state)
 
 		// TEMP: reset all validations - because of removed assets
@@ -588,6 +588,16 @@ export function validateWalletWithdrawMultiple({
 				dirty,
 				quickCheck: !dirty,
 			})(dispatch),
+			// validateEthAddress({
+			// 	validateId,
+			// 	addr: feeTokenAddr,
+			// 	prop: `feeTokenAddr-${feeTokenAddr}`,
+			// 	nonERC20: false,
+			// 	nonZeroAddr: true,
+			// 	authType,
+			// 	dirty,
+			// 	quickCheck: !dirty,
+			// })(dispatch),
 			...withdrawValidations,
 		])
 
@@ -595,7 +605,7 @@ export function validateWalletWithdrawMultiple({
 
 		if (isValid) {
 			const inputAmoutValidations = await Promise.all(
-				withdrawAsset.map(({ address, amount }) =>
+				withdrawAssets.map(({ address, amount }) =>
 					validateActionInputAmount({
 						validateId,
 						prop: `amountToWithdraw-${address}`,
@@ -609,21 +619,21 @@ export function validateWalletWithdrawMultiple({
 		}
 
 		if (isValid) {
-			// const feeDataAction = async () =>
-			// 	await walletWithdrawMultipleTransaction({
-			// 		account,
-			// 		withdrawTo,
-			// 		withdrawAsset,
-			// 		feeAssetAddress,
-			// 		assetsDataRaw: assetsData,
-			// 	})
+			const feeDataAction = async () =>
+				await walletWithdrawMultipleTransaction({
+					account,
+					withdrawTo,
+					withdrawAssets,
+					feeTokenAddr: feeTokenAddr || withdrawAssets[0].address,
+					assetsDataRaw: assetsData,
+				})
 
 			isValid = await handleWalletTxnsAndFeesData({
 				stepsId,
 				validateId,
 				dirty,
 				actionName: 'walletWithdraw',
-				// feeDataAction,
+				feeDataAction,
 				temp,
 			})(dispatch, getState)
 		}
