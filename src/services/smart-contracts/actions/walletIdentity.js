@@ -25,6 +25,7 @@ export const GAS_LIMITS = {
 	deploy: BigNumber.from(120_000),
 	base: BigNumber.from(30_000), // Base for each identity tx
 	approve: BigNumber.from(70_000),
+	transferETH: BigNumber.from(21_000),
 }
 
 const getTokenAmount = ({ amount, tokenData }) => {
@@ -38,6 +39,23 @@ const getTokenAmount = ({ amount, tokenData }) => {
 		return formatTokenAmount(amount, tokenData.decimals)
 	}
 }
+
+const transferETH = ({
+	tokenData = {},
+	amount,
+	sender,
+	recipient,
+	...extra
+}) => ({
+	contract: 'identity',
+	method: 'value',
+	name: 'SC_ACTION_TRANSFER_ETH',
+	gasCost: GAS_LIMITS.transferETH,
+	amount: getTokenAmount({ amount, tokenData }),
+	sender,
+	recipient,
+	...extra,
+})
 
 const transferERC20 = ({
 	tokenData = {},
@@ -240,6 +258,7 @@ export const ON_CHAIN_ACTIONS = {
 	depositAAVE,
 	zapperDiversifyV3,
 	withdrawAAVE,
+	transferETH,
 	zapperDiversifyInnerExchange: {
 		name: 'SC_ACTION_ZAPPER_EXCHANGE_INNER',
 		gasCost: GAS_LIMITS.swapV3,
@@ -283,6 +302,96 @@ export const ON_CHAIN_ACTIONS = {
 	},
 }
 
+function getOperationsGasLimitSumBN(txnsData) {
+	return txnsData.reduce((total, { txAction, txInnerActions }) => {
+		const txGasCost = BigNumber.from(txAction.gasCost || '0')
+		const innerActionsTGasCost = txInnerActions.reduce((total, actionData) => {
+			if (!actionData.name) {
+				throw new Error('actionData.name not provided')
+			}
+			return total.add(actionData.gasCost || '0')
+		}, ZERO)
+
+		return total.add(txGasCost).add(innerActionsTGasCost)
+	}, ZERO)
+}
+function mapWithFeeAndNonce({
+	txns,
+	currentNonce,
+	gasPrice,
+	feeTokenAddr,
+	prices,
+	feeToken,
+	feeTokenAddrUSDPrice,
+}) {
+	let nonce = currentNonce
+	const withNonceAndFees = txns.map((tx, txIndex) => {
+		const { onChainActionData } = tx
+		if (!onChainActionData || typeof onChainActionData !== 'object') {
+			throw new Error('onChainActionData not provided')
+		}
+
+		const isDeployTx = nonce === 0
+
+		const { txAction = {}, txInnerActions = [] } = onChainActionData
+
+		if (!txAction.name) {
+			throw new Error('txAction.name not provided')
+		}
+
+		// TODO: use only txAction.txInnerActions when ready
+		const allTxInnerActions = [
+			...txInnerActions,
+			...(txAction.txInnerActions || []),
+		]
+
+		const txnsData = [{ txAction, txInnerActions: allTxInnerActions }]
+		if (isDeployTx) {
+			// TODO full operationData for deploy
+			txnsData.push({ txAction: { ...ON_CHAIN_ACTIONS.deploy } })
+		}
+
+		const txEstimatedGasLimitBN = getOperationsGasLimitSumBN(txnsData)
+
+		const calculatedOperationsCount =
+			allTxInnerActions.length + txInnerActions.length + (isDeployTx ? 1 : 0) //+
+
+		const txFeeAmountETH = parseFloat(
+			formatUnits(
+				txEstimatedGasLimitBN.mul(gasPrice),
+				assets[tokens['WETH']].decimals
+			)
+		)
+
+		// TODO: BN
+		const txFeeAmountUSD = txFeeAmountETH * prices['WETH']['USD']
+		const txFeeAmountFeeToken = parseUnits(
+			(txFeeAmountUSD / feeTokenAddrUSDPrice).toFixed(feeToken.decimals),
+			feeToken.decimals
+		)
+
+		// Total relayer fees for the transaction
+		const feeAmount = txFeeAmountFeeToken.toString()
+
+		const txWithNonce = {
+			...tx,
+			feeTokenAddr,
+			feeAmount,
+			txEstimatedGasLimitBN,
+			calculatedGasPriceBN: gasPrice,
+			calculatedOperationsCount,
+			txnsData,
+			nonce,
+			isDeployTx,
+		}
+
+		nonce += 1
+
+		return txWithNonce
+	})
+
+	return { withNonceAndFees, nonce }
+}
 // Calc nonces and
 export async function getWalletIdentityTxnsWithNoncesAndFees({
 	txns = [],
@@ -291,10 +400,16 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 	Identity,
 	account,
 	feeTokenAddr,
+	simulatedFeeAmount,
 }) {
-	const { gasPriceRatio = 1.07, gasPriceCap } = selectRelayerConfig()
+	const {
+		gasPriceRatio = 1.07,
+		gasPriceCap,
+		relayerAddr,
+	} = selectRelayerConfig()
 	const allSameFeeToken = txns.every(x => x.feeTokenAddr === feeTokenAddr)
 
+	console.log('txns', txns)
 	if (!allSameFeeToken) {
 		throw new Error('TXNS_FEES_NOT_SAME_FEE_TOKEN')
 	}
@@ -326,94 +441,81 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 	const feeTokenAddrUSDPrice =
 		prices[feeToken.mainAssetSymbol || feeToken.symbol]['USD']
 
-	const withNonceAndFees = txns.map((tx, txIndex) => {
-		const { onChainActionData } = tx
-		if (!onChainActionData || typeof onChainActionData !== 'object') {
-			throw new Error('onChainActionData not provided')
-		}
-
-		// const feeToken = feeTokenWhitelist[tx.feeTokenAddr]
-		const isDeployTx = currentNonce === 0
-		const addFeeTx = txIndex === txns.length - 1
-
-		const { txAction = {}, txInnerActions = [] } = onChainActionData
-
-		if (!txAction.name) {
-			throw new Error('txAction.name not provided')
-		}
-
-		// TODO: use only txAction.txInnerActions when ready
-		const allTxInnerActions = [
-			...txInnerActions,
-			...(txAction.txInnerActions || []),
-		]
-		const txGasCost = BigNumber.from(txAction.gasCost || '0')
-		const innerActionsTGasCost = allTxInnerActions.reduce(
-			(total, actionData) => {
-				if (!actionData.name) {
-					throw new Error('actionData.name not provided')
-				}
-				return total.add(actionData.gasCost || '0')
-			},
-			ZERO
-		)
-
-		const txnsData = [{ txAction, txInnerActions: allTxInnerActions }]
-		if (isDeployTx) {
-			txnsData.push({ txAction: { ...ON_CHAIN_ACTIONS.deploy } })
-		}
-
-		if (addFeeTx) {
-			txnsData.push({ txAction: { ...ON_CHAIN_ACTIONS.feeTransfer } })
-		}
-
-		const operationsGasLimitSumBN = txGasCost.add(innerActionsTGasCost)
-
-		const txEstimatedGasLimitBN = operationsGasLimitSumBN
-			.add(isDeployTx ? GAS_LIMITS.deploy : ZERO)
-			// Add fee transfer fee
-			.add(addFeeTx ? GAS_LIMITS.transfer : ZERO)
-
-		const calculatedOperationsCount =
-			allTxInnerActions.length +
-			txInnerActions.length +
-			(isDeployTx ? 1 : 0) +
-			(addFeeTx ? 1 : 0)
-
-		const txFeeAmountETH = parseFloat(
-			formatUnits(
-				txEstimatedGasLimitBN.mul(gasPrice),
-				assets[tokens['WETH']].decimals
-			)
-		)
-
-		// TODO: BN
-		const txFeeAmountUSD = txFeeAmountETH * prices['WETH']['USD']
-		const txFeeAmountFeeToken = parseUnits(
-			(txFeeAmountUSD / feeTokenAddrUSDPrice).toFixed(feeToken.decimals),
-			feeToken.decimals
-		)
-
-		// Total relayer fees for the transaction
-		const feeAmount = txFeeAmountFeeToken.toString()
-
-		const txWithNonce = {
-			...tx,
-			feeTokenAddr,
-			feeAmount,
-			txEstimatedGasLimitBN,
-			calculatedGasPriceBN: gasPrice,
-			calculatedOperationsCount,
-			txnsData,
-			nonce: currentNonce,
-			isDeployTx,
-		}
-
-		currentNonce += 1
-
-		return txWithNonce
+	const { withNonceAndFees, nonce } = mapWithFeeAndNonce({
+		txns,
+		currentNonce,
+		gasPrice,
+		feeTokenAddr,
+		prices,
+		feeToken,
+		feeTokenAddrUSDPrice,
 	})
 
+	const feeTxGasCost = (feeToken.isETH
+		? ON_CHAIN_ACTIONS.transferETH({
+				tokenData: feeToken,
+		  })
+		: ON_CHAIN_ACTIONS.transferERC20({
+				tokenData: feeToken,
+		  })
+	).gasCost
+
+	const txnsFEES = withNonceAndFees.reduce((sum, { txEstimatedGasLimitBN }) => {
+		return sum.add(txEstimatedGasLimitBN)
+	}, feeTxGasCost)
+
+	// NOTE: add fee tx
+	const feeTx = feeToken.isETH
+		? {
+				identityContract: identityAddr,
+				feeTokenAddr,
+				to: relayerAddr,
+				data: '0x',
+				value: txnsFEES.toHexString(),
+				onChainActionData: {
+					txAction: {
+						...ON_CHAIN_ACTIONS.transferETH({
+							tokenData: feeToken,
+							amount: txnsFEES,
+							sender: `Identity (${identityAddr})`,
+							recipient: `Relayer ${relayerAddr}`,
+						}),
+					},
+				},
+		  }
+		: {
+				identityContract: identityAddr,
+				feeTokenAddr,
+				to: feeTokenAddr,
+				data: ERC20.encodeFunctionData('transfer', [
+					relayerAddr,
+					txnsFEES.toHexString(),
+				]),
+				onChainActionData: {
+					txAction: {
+						...ON_CHAIN_ACTIONS.transferERC20({
+							tokenData: feeToken,
+							amount: txnsFEES,
+							sender: `Identity (${identityAddr})`,
+							recipient: `Relayer ${relayerAddr}`,
+						}),
+					},
+				},
+		  }
+
+	const { withNonceAndFees: feeTxWithNonceAndFeesData } = mapWithFeeAndNonce({
+		txns: [feeTx],
+		currentNonce: nonce,
+		gasPrice,
+		feeTokenAddr,
+		prices,
+		feeToken,
+		feeTokenAddrUSDPrice,
+	})
+
+	withNonceAndFees.push(...feeTxWithNonceAndFeesData)
+
+	// console.log('withNonceAndFees', withNonceAndFees)
 	return withNonceAndFees
 }
 
@@ -533,13 +635,21 @@ export async function processExecuteWalletTxns({
 	extraData = {},
 }) {
 	// console.log('txnsWithNonceAndFees', txnsWithNonceAndFees)
+
+	// NOTE: identity  v5.2 will not have feeAmount
+	// TEMP: used for total fee calc until updated relayer integration
+	const noFeeAmountTxns = txnsWithNonceAndFees.map(
+		({ feeAmount, ...rest }) => ({
+			...rest,
+		})
+	)
 	const signer = await getSigner({ wallet, provider })
 	const signatures = await getMultipleTxSignatures({
-		txns: txnsWithNonceAndFees,
+		txns: noFeeAmountTxns,
 		signer,
 	})
 	const data = {
-		txnsRaw: txnsWithNonceAndFees,
+		txnsRaw: noFeeAmountTxns,
 		signatures,
 		identityAddr,
 		...extraData,
