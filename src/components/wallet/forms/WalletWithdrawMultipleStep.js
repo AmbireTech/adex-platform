@@ -252,8 +252,8 @@ const AssetSelector = ({
 											}}
 											label={
 												feeTokenAddr === address
-													? 'SELECTED_FOR_FEES'
-													: 'SELECT_THIS_FOR_FEES'
+													? t('SELECTED_FOR_FEES')
+													: t('SELECT_THIS_FOR_FEES')
 											}
 										/>
 									</Box>

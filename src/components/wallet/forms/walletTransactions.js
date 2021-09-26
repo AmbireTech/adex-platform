@@ -157,7 +157,7 @@ export const WithdrawAsset = props => (
 export const WithdrawMultipleAssets = props => (
 	<FormStepsWithDialog
 		{...props}
-		btnLabel='WALLET_WITHDRAW_ASSET_BTN'
+		btnLabel='WALLET_WITHDRAW_MULTIPLE_ASSETS_BTN'
 		saveBtnLabel='WALLET_WITHDRAW_ASSET_SAVE_BTN'
 		title='WALLET_WITHDRAW_MULTIPLE_ASSETS_TITLE'
 		// titleArgs={[props.stepsProps.name, props.stepsProps.symbol]}
@@ -166,7 +166,7 @@ export const WithdrawMultipleAssets = props => (
 		hideNav={true}
 		steps={[
 			{
-				title: 'WALLET_WITHDRAW_ASSET_TITLE',
+				title: 'WALLET_WITHDRAW_MULTIPLE_ASSET_TITLE',
 				// titleArgs: [props.stepsProps.name, props.stepsProps.symbol],
 				component: WalletWithdrawMultipleStep,
 				validationFn: props => {
