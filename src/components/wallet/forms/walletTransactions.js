@@ -117,6 +117,7 @@ export const WithdrawAsset = props => (
 	<FormStepsWithDialog
 		{...props}
 		btnLabel='WALLET_WITHDRAW_ASSET_BTN'
+		btnLabelArgs={[props.stepsProps.symbol]}
 		saveBtnLabel='WALLET_WITHDRAW_ASSET_SAVE_BTN'
 		title='WALLET_WITHDRAW_ASSET_TITLE'
 		titleArgs={[props.stepsProps.name, props.stepsProps.symbol]}
