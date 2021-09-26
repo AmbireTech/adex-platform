@@ -685,6 +685,7 @@ export function validateEthAddress({
 	dirty,
 	authType,
 	quickCheck,
+	errMsg,
 }) {
 	return async function(dispatch, getState) {
 		const { msg } = await validEthAddress({
@@ -699,7 +700,7 @@ export function validateEthAddress({
 
 		await validate(validateId, prop, {
 			isValid,
-			err: { msg },
+			err: { msg: errMsg || msg },
 			dirty,
 		})(dispatch)
 
