@@ -548,12 +548,12 @@ export function validateWalletWithdrawMultiple({
 
 		const withdrawValidations = withdrawAssets
 			.map(({ address, amount }) => {
-				const { decimals } = assetsData[address]
+				const { decimals, symbol } = assetsData[address]
 				return [
 					validateEthAddress({
 						validateId,
 						addr: address,
-						prop: `withdrawAsset-${address}`,
+						prop: `withdrawAsset-${symbol}`,
 						nonERC20: false,
 						nonZeroAddr: true,
 						authType,
@@ -562,13 +562,13 @@ export function validateWalletWithdrawMultiple({
 					})(dispatch),
 					validateNumberString({
 						validateId,
-						prop: `amountToWithdraw-${address}`,
+						prop: `${symbol}`,
 						value: amount,
 						dirty,
 					})(dispatch),
 					validateNumberString({
 						validateId,
-						prop: `tokenDecimals-${decimals}`,
+						prop: `tokenDecimals-${symbol}`,
 						value: decimals,
 						integerOnly: true,
 						dirty,
@@ -588,16 +588,17 @@ export function validateWalletWithdrawMultiple({
 				dirty,
 				quickCheck: !dirty,
 			})(dispatch),
-			// validateEthAddress({
-			// 	validateId,
-			// 	addr: feeTokenAddr,
-			// 	prop: `feeTokenAddr-${feeTokenAddr}`,
-			// 	nonERC20: false,
-			// 	nonZeroAddr: true,
-			// 	authType,
-			// 	dirty,
-			// 	quickCheck: !dirty,
-			// })(dispatch),
+			validateEthAddress({
+				validateId,
+				addr: feeTokenAddr,
+				prop: `feeTokenAddr-${feeTokenAddr}`,
+				nonERC20: false,
+				nonZeroAddr: true,
+				authType,
+				dirty,
+				quickCheck: !dirty,
+				errMsg: 'FEE_TOKEN_NOT_SELECTED',
+			})(dispatch),
 			...withdrawValidations,
 		])
 
@@ -605,15 +606,16 @@ export function validateWalletWithdrawMultiple({
 
 		if (isValid) {
 			const inputAmoutValidations = await Promise.all(
-				withdrawAssets.map(({ address, amount }) =>
-					validateActionInputAmount({
+				withdrawAssets.map(({ address, amount }) => {
+					const { symbol } = assetsData[address]
+					return validateActionInputAmount({
 						validateId,
-						prop: `amountToWithdraw-${address}`,
+						prop: `${symbol}`,
 						value: amount,
 						inputTokenAddr: address,
 						dirty,
 					})(dispatch, getState)
-				)
+				})
 			)
 			isValid = inputAmoutValidations.every(v => v === true)
 		}

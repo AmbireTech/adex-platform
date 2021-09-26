@@ -16,7 +16,6 @@ import {
 	AddSharp as AddIcon,
 	CloseSharp as CloseIcon,
 } from '@material-ui/icons'
-import { BigNumber } from 'ethers'
 import { InputLoading } from 'components/common/spinners/'
 import {
 	ContentBox,
@@ -111,11 +110,16 @@ const AssetSelector = ({
 	// symbol,
 	// name,
 	onChange,
+	feeTokenAddr,
+	onFeeCheckboxChange,
+	errors = {},
 }) => {
 	const classes = useStyles()
 
 	const withdrawAssetData = assetsData[address] || {}
 	const { name, symbol, balance, decimals } = withdrawAssetData
+	const assetErrors = Object.keys(errors).filter(x => x.includes(symbol))
+	const hasErrors = assetErrors.some(x => !!errors[x].dirty)
 
 	return (
 		<Paper elevation={0}>
@@ -198,33 +202,69 @@ const AssetSelector = ({
 							margin: 'dense',
 							style: { marginLeft: 0, marginRight: 0 },
 						}}
+						error={hasErrors}
 						helperText={
-							<Box mt={0.25}>
-								{[25, 50, 75, 100].map(percent => (
-									<Box
-										display='inline-block'
-										key={percent.toString()}
-										mr={0.25}
-									>
+							<Box>
+								<Box
+									mt={0.25}
+									display='flex'
+									flexDirection='row'
+									alignItems='flex-start'
+									justifyContent='space-between'
+								>
+									<Box>
+										{[25, 50, 75, 100].map(percent => (
+											<Box
+												display='inline-block'
+												key={percent.toString()}
+												mr={0.25}
+											>
+												<Chip
+													// variant={selectedPercent === percent ? 'contained' : 'outlined'}
+													variant='outlined'
+													clickable
+													size='small'
+													color='default'
+													// disabled={!selectedFromAsset}
+													onClick={() => {
+														// setTradePercent(percent)
+														// setSelectedPercent(percent)
+														onChange({
+															address,
+															percent: percent,
+														})
+													}}
+													label={`${percent}%`}
+												/>
+											</Box>
+										))}
+									</Box>
+									<Box>
 										<Chip
-											// variant={selectedPercent === percent ? 'contained' : 'outlined'}
-											variant='outlined'
+											variant={
+												feeTokenAddr === address ? undefined : 'outlined'
+											}
+											color={feeTokenAddr === address ? 'secondary' : 'default'}
 											clickable
 											size='small'
-											color='default'
-											// disabled={!selectedFromAsset}
 											onClick={() => {
-												// setTradePercent(percent)
-												// setSelectedPercent(percent)
-												onChange({
-													address,
-													percent: percent,
-												})
+												onFeeCheckboxChange(address)
 											}}
-											label={`${percent}%`}
+											label={
+												feeTokenAddr === address
+													? 'SELECTED_FOR_FEES'
+													: 'SELECT_THIS_FOR_FEES'
+											}
 										/>
 									</Box>
-								))}
+								</Box>
+								<Box>
+									{hasErrors &&
+										assetErrors.map(x => {
+											const err = errors[x]
+											return err && !!err.dirty ? err.errMsg : ''
+										})}
+								</Box>
 							</Box>
 						}
 					/>
@@ -252,6 +292,7 @@ const WalletWithdrawStep = ({ stepsId, validateId, stepsProps = {} } = {}) => {
 		// amountToWithdraw,
 		withdrawTo,
 		withdrawAssets = [],
+		feeTokenAddr,
 		//   feesData = {} // TODO: min amount
 	} = useSelector(state => selectNewTransactionById(state, stepsId))
 
@@ -275,10 +316,21 @@ const WalletWithdrawStep = ({ stepsId, validateId, stepsProps = {} } = {}) => {
 	)
 
 	const {
-		amountToWithdraw: errAmount,
+		// amountToWithdraw: errAmount,
 		withdrawTo: errAddr,
 		fees: errFees,
+		...assetsErrors
 	} = useSelector(state => selectValidationsById(state, validateId) || {})
+
+	const onFeeCheckboxChange = address => {
+		execute(
+			updateNewTransaction({
+				tx: stepsId,
+				key: 'feeTokenAddr',
+				value: address,
+			})
+		)
+	}
 
 	const updateWithdraws = ({ address, percent, amount, remove }) => {
 		const updated = [...withdrawAssets]
@@ -320,6 +372,10 @@ const WalletWithdrawStep = ({ stepsId, validateId, stepsProps = {} } = {}) => {
 				value: updated,
 			})
 		)
+
+		if (!feeTokenAddr) {
+			onFeeCheckboxChange(address)
+		}
 	}
 
 	return (
@@ -372,6 +428,9 @@ const WalletWithdrawStep = ({ stepsId, validateId, stepsProps = {} } = {}) => {
 									address={address}
 									assetsData={assetsData}
 									onChange={updateWithdraws}
+									feeTokenAddr={feeTokenAddr}
+									onFeeCheckboxChange={onFeeCheckboxChange}
+									errors={assetsErrors}
 								/>
 							</Box>
 						))}
