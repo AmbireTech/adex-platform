@@ -1131,8 +1131,7 @@ async function getWithdrawMultipleTxns({
 	account,
 	withdrawAssets,
 	feeTokenAddr,
-	assetsToWithdrawAfeteFeesCalacBN,
-	amountToWithdrawAfterFeesCalcBN,
+	amountToWithdrawFeeTokenAfterFeesCalcBN,
 	withdrawTo,
 	getFeesOnly,
 	assetsDataRaw,
@@ -1148,20 +1147,39 @@ async function getWithdrawMultipleTxns({
 
 	const txns = []
 
+	let amountToWithdrawFeeAssetBN = null
+
 	withdrawAssets.forEach(({ address, amount }) => {
-		const { isETH, decimals } = assetsDataRaw[address]
+		const token = assetsDataRaw[address]
+		const { isETH, decimals } = token
+
 		const amountToWithdrawBN = parseUnits(amount, decimals)
+
+		if (address === feeTokenAddr) {
+			amountToWithdrawFeeAssetBN = amountToWithdrawBN
+		}
+
+		const amountToWithdrawFinal = getFeesOnly
+			? // ? amountToWithdrawBN.sub(amountToUnwrap).toHexString()
+			  amountToWithdrawBN
+			: amountToWithdrawFeeTokenAfterFeesCalcBN
 		const tx = isETH
 			? {
 					identityContract: identityAddr,
 					feeTokenAddr,
-					to: address,
+					to: withdrawTo,
 					data: '0x',
-					value: getFeesOnly
-						? // ? amountToWithdrawBN.sub(amountToUnwrap).toHexString()
-						  amountToWithdrawBN.toHexString()
-						: amountToWithdrawAfterFeesCalcBN.toHexString(),
-					operationsGasLimits: [GAS_LIMITS.transfer],
+					value: amountToWithdrawFinal.toHexString(),
+					onChainActionData: {
+						txAction: {
+							...ON_CHAIN_ACTIONS.transferETH({
+								tokenData: token,
+								amount: amountToWithdrawFinal,
+								sender: `Identity (${identityAddr})`,
+								recipient: `${withdrawTo}`,
+							}),
+						},
+					},
 			  }
 			: {
 					identityContract: identityAddr,
@@ -1169,12 +1187,18 @@ async function getWithdrawMultipleTxns({
 					to: address,
 					data: ERC20.encodeFunctionData('transfer', [
 						withdrawTo,
-						getFeesOnly
-							? // ? amountToWithdrawBN.sub(amountToUnwrap).toHexString()
-							  amountToWithdrawBN.toHexString()
-							: amountToWithdrawAfterFeesCalcBN.toHexString(),
+						amountToWithdrawFinal.toHexString(),
 					]),
-					operationsGasLimits: [GAS_LIMITS.transfer],
+					onChainActionData: {
+						txAction: {
+							...ON_CHAIN_ACTIONS.transferERC20({
+								tokenData: token,
+								amount: amountToWithdrawFinal,
+								sender: `Identity (${identityAddr})`,
+								recipient: `${withdrawTo}`,
+							}),
+						},
+					},
 			  }
 		txns.push(tx)
 	})
@@ -1190,6 +1214,7 @@ async function getWithdrawMultipleTxns({
 
 	return {
 		txnsWithNonceAndFees,
+		amountToWithdrawFeeAssetBN,
 		// amountToWithdrawBN,
 		//  tradeData
 	}
@@ -1197,12 +1222,13 @@ async function getWithdrawMultipleTxns({
 
 export async function walletWithdrawMultipleTransaction({
 	account,
-	amountToWithdraw,
+	// amountToWithdraw,
 	withdrawTo,
 	withdrawAssets,
-	withdrawAssetAddr, //: useInputWithdrawAsset,
+	// withdrawAssetAddr, //: useInputWithdrawAsset,
 	assetsDataRaw,
 	getMinAmountToSpend,
+	feeTokenAddr,
 }) {
 	// const isFromETHToken = isETHBasedToken({ address: useInputWithdrawAsset })
 
@@ -1210,21 +1236,20 @@ export async function walletWithdrawMultipleTransaction({
 	// 	? tokens['ETH']
 	// 	: useInputWithdrawAsset
 
-	const tokenData = assetsDataRaw[withdrawAssetAddr]
+	const tokenData = assetsDataRaw[feeTokenAddr]
 
 	// Pre call to get fees
 	const {
 		txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
-		amountToWithdrawBN: _preAmountToWithdrawBN,
-	} = await getWithdrawTxns({
+		amountToWithdrawFeeAssetBN: _preAmountToWithdrawBN,
+	} = await getWithdrawMultipleTxns({
 		account,
-		amountToWithdraw,
+		withdrawAssets,
 		// amountToWithdrawAfterFeesCalcBN,
 		withdrawTo,
 		getFeesOnly: true,
-		withdrawAssetAddr,
-		tokenData,
-		getMinAmountToSpend,
+		feeTokenAddr,
+		// tokenData,
 		assetsDataRaw,
 		// isFromETHToken,
 	})
@@ -1254,15 +1279,18 @@ export async function walletWithdrawMultipleTransaction({
 	}
 
 	// Actual call with fees pre calculated
-	const { txnsWithNonceAndFees, amountToWithdrawBN } = await getWithdrawTxns({
+	const {
+		txnsWithNonceAndFees,
+		// amountToWithdrawFeeTokenBN,
+	} = await getWithdrawMultipleTxns({
 		account,
-		amountToWithdraw,
-		amountToWithdrawAfterFeesCalcBN: mainActionAmountBN,
+		withdrawAssets,
+		amountToWithdrawFeeTokenAfterFeesCalcBN: mainActionAmountBN,
 		withdrawTo,
 		getFeesOnly: false, // !!Important
-		withdrawAssetAddr,
-		tokenData,
-		getMinAmountToSpend,
+		feeTokenAddr,
+		// tokenData,
+		// getMinAmountToSpend,
 		assetsDataRaw,
 		// isFromETHToken,
 	})
@@ -1290,14 +1318,17 @@ export async function walletWithdrawMultipleTransaction({
 		// feeTokenAddr, //in ..rest
 		// actionMinAmountBN, // in ...rest
 		// actionMinAmountFormatted, // in ...rest
-		spendTokenAddr: withdrawAssetAddr,
-		totalAmountToSpendBN: amountToWithdrawBN, // Total amount out
-		totalAmountToSpendFormatted: amountToWithdraw, // Total amount out
+		spendTokenAddr: feeTokenAddr,
+		totalAmountToSpendBN: _preAmountToWithdrawBN, // Total amount out
+		totalAmountToSpendFormatted: utils.formatUnits(
+			_preAmountToWithdrawBN,
+			tokenData.decimals
+		), // Total amount out for fee token address - kee it like work with validation
 		mainActionAmountBN,
 		mainActionAmountFormatted,
 		...rest,
 		actionMeta: {
-			withdrawAssetAddr,
+			withdrawAssets,
 		},
 	}
 }
