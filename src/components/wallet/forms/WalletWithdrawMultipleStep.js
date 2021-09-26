@@ -302,7 +302,7 @@ const WalletWithdrawStep = ({ stepsId, validateId, stepsProps = {} } = {}) => {
 		const newValue = {
 			address,
 			percent: updatedPercent,
-			amount: updatedAmount,
+			amount: updatedAmount.toString(),
 		}
 
 		if (toUpdateIndex > -1 && remove) {
