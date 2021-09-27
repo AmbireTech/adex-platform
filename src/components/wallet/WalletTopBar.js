@@ -27,7 +27,9 @@ import AccountBoxIcon from '@material-ui/icons/AccountBox'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import MenuIcon from '@material-ui/icons/Menu'
 import { makeStyles } from '@material-ui/core/styles'
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+// import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import NetworkSelect from 'components/wallet/NetworkSelect'
+
 import {
 	t,
 	selectAccount,
@@ -150,14 +152,23 @@ function TopNav({ handleDrawerToggle, side }) {
 							</Breadcrumbs>
 						</Box>
 					</Hidden> */}
+					</Box>
 
-						<Box display='flex' flexDirection='row' alignItems='center' pr={1}>
-							{/* <ChangeLang /> */}
+					<Box
+						flexGrow={1}
+						display='flex'
+						flexDirection='row'
+						alignItems='center'
+						justifyContent='space-between'
+						paddingRight={2}
+					>
+						{/* <ChangeLang /> */}
 
-							{/* <Jazzicon
+						{/* <Jazzicon
 								diameter={30}
 								seed={jsNumberForAddress(account.wallet.address)}
 							/> */}
+						<Box>
 							<ButtonMenu
 								id='menu-appbar'
 								// leftIconSrc={imgSrc}
@@ -208,10 +219,11 @@ function TopNav({ handleDrawerToggle, side }) {
 								</MenuItem>
 							</ButtonMenu>
 						</Box>
+						<Box>
+							<NetworkSelect />
+							{/* <ThemeSwitch /> */}
+						</Box>
 					</Box>
-					{/* <Box>
-						<ThemeSwitch />
-					</Box> */}
 				</Box>
 			</Toolbar>
 		</AppBar>
