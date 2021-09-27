@@ -15,7 +15,7 @@ const ImgIcon = ({ src }) => {
 
 function ButtonMenu({
 	children,
-	btnStyle,
+	color,
 	label,
 	rightIcon,
 	leftIconSrc,
@@ -38,7 +38,7 @@ function ButtonMenu({
 		<>
 			<Button
 				variant={variant}
-				style={btnStyle}
+				color={color}
 				onClick={handleMenu}
 				aria-haspopup='true'
 				aria-controls={id}
