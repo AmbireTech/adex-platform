@@ -56,6 +56,7 @@ let initialState = {
 		side: '',
 	},
 	language: 'en-US',
+	network: {},
 	validations: {},
 	newTransactions: {
 		default: {},

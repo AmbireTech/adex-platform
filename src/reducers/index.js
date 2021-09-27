@@ -23,6 +23,7 @@ import channels from './channelsReducer'
 import selectedItems from './selectedItemsReducer'
 import ensAddresses from './ensReducer'
 import tablesState from './tablesStateReducer'
+import network from './networkReducer'
 import { filterActions } from 'redux-ignore'
 import * as types from 'constants/actionTypes'
 
@@ -37,6 +38,7 @@ export const persistReducers = {
 	config,
 	ensAddresses,
 	tablesState,
+	network,
 }
 
 export const memoryReducers = {
