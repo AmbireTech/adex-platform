@@ -7,10 +7,10 @@ import { selectRelayerConfig } from 'selectors'
 // ethers.errors.setLogLevel('error')
 
 const {
-	AdExCore,
+	// AdExCore,
 	Identity,
 	IdentityPayable,
-	IdentityFactory,
+	// IdentityFactory,
 	WalletZapper,
 	UniSwapRouterV2,
 	UniSwapRouterV3,
@@ -21,19 +21,19 @@ const LocalProvider = process.env.WEB3_NODE_ADDR.startsWith('wss://')
 	? providers.WebSocketProvider
 	: providers.JsonRpcProvider
 
-const getAdexCore = provider => {
-	const { coreAddr } = selectRelayerConfig()
-	return new Contract(coreAddr, AdExCore.abi, provider)
-}
+// const getAdexCore = provider => {
+// 	const { coreAddr } = selectRelayerConfig()
+// 	return new Contract(coreAddr, AdExCore.abi, provider)
+// }
 
-const getMainToken = provider => {
-	const { mainToken = {} } = selectRelayerConfig()
-	return new Contract(
-		mainToken.address,
-		contracts[mainToken.standard].abi,
-		provider
-	)
-}
+// const getMainToken = provider => {
+// 	const { mainToken = {} } = selectRelayerConfig()
+// 	return new Contract(
+// 		mainToken.address,
+// 		contracts[mainToken.standard].abi,
+// 		provider
+// 	)
+// }
 
 const getToken = ({ provider, standard, address }) => {
 	return new Contract(address, contracts[standard].abi, provider)
@@ -55,10 +55,10 @@ const getIdentityPayable = ({ provider, address }) => {
 	return identityPayableContract
 }
 
-const getIdentityFactory = provider => {
-	const { identityFactoryAddr } = selectRelayerConfig()
-	return new Contract(identityFactoryAddr, IdentityFactory.abi, provider)
-}
+// const getIdentityFactory = provider => {
+// 	const { identityFactoryAddr } = selectRelayerConfig()
+// 	return new Contract(identityFactoryAddr, IdentityFactory.abi, provider)
+// }
 
 const getWalletZapper = provider => {
 	const walletZapperContract = new Contract(
@@ -101,9 +101,9 @@ const getUniQuoterV3 = provider => {
 }
 
 const getEthersResult = provider => {
-	const adexCore = getAdexCore(provider)
-	const mainToken = getMainToken(provider)
-	const identityFactory = getIdentityFactory(provider)
+	// const adexCore = getAdexCore(provider)
+	// const mainToken = getMainToken(provider)
+	// const identityFactory = getIdentityFactory(provider)
 	const walletZapper = getWalletZapper(provider)
 	const uniV2 = getUniRouterV2(provider)
 	const uniV3 = getUniRouterV3(provider)
@@ -111,12 +111,12 @@ const getEthersResult = provider => {
 
 	const results = {
 		provider,
-		AdExCore: adexCore,
+		// AdExCore: adexCore,
 		Identity: Identity,
 		IdentityPayable: IdentityPayable,
-		Dai: mainToken,
-		MainToken: mainToken,
-		IdentityFactory: identityFactory,
+		// Dai: mainToken,
+		// MainToken: mainToken,
+		// IdentityFactory: identityFactory,
 		WalletZapper: walletZapper,
 		UniSwapRouterV2: uniV2,
 		UniSwapRouterV3: uniV3,
