@@ -68,7 +68,8 @@ function WalletDashboard(props) {
 	const address = useSelector(selectAccountIdentityAddr)
 	const privileges = useSelector(selectWalletPrivileges)
 	const privilegesWarningAccepted = useSelector(selectPrivilegesWarningAccepted)
-	const showTxPrivLevelWarning = privileges <= 1 && !privilegesWarningAccepted
+	const showTxPrivLevelWarning =
+		privileges !== true && !privilegesWarningAccepted
 	const { debugIdentityAddr } = useSelector(selectDebugIdentity)
 
 	const classes = useStyles()
@@ -145,7 +146,11 @@ function WalletDashboard(props) {
 									}}
 								>
 									{t('PRIVILEGES_LEVEL_WARNING_MSG', {
-										args: [`PRIV_${privileges}_LABEL`],
+										args: [
+											`PRIV_${(privileges || '')
+												.toString()
+												.toUpperCase()}_LABEL`,
+										],
 									})}
 								</Alert>
 							</Box>
