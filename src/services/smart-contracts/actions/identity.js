@@ -15,14 +15,15 @@ import {
 	t,
 } from 'selectors'
 import { formatTokenAmount } from 'helpers/formatters'
-// import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy'
-import { getProxyDeployBytecode } from 'adex-protocol-eth-wallet/js/IdentityProxyDeploy'
-import solc from 'solcBrowser'
-import { RoutineAuthorization } from 'adex-protocol-eth/js/Identity'
 import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
 import ScdMcdMigrationABI from 'services/smart-contracts/abi/ScdMcdMigration'
 import { EXECUTE_ACTIONS } from 'constants/misc'
 import { contracts } from 'services/smart-contracts/contractsCfg'
+// import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy'
+// import { getProxyDeployBytecode } from 'adex-protocol-eth-wallet/js/IdentityProxyDeploy'
+const {
+	getProxyDeployBytecode,
+} = require('adex-protocol-eth/js/IdentityProxyDeploy2')
 const { AdExENSManager, ReverseRegistrar } = contracts
 const { Interface, getAddress, parseUnits, id, keccak256 } = utils
 
@@ -33,53 +34,30 @@ const ReverseRegistrarInterface = new Interface(ReverseRegistrar.abi)
 
 const { SCD_MCD_MIGRATION_ADDR } = process.env
 
-export async function getIdentityDeployData({
-	owner,
-	relayerRoutineAuthValidUntil = 10648454444,
-}) {
+export async function getIdentityDeployData({ owner }) {
 	const {
-		identityFactoryAddr,
-		relayerAddr,
-		baseIdentityAddr,
+		whitelistedFactories,
+		whitelistedBaseIdentities,
 		identityRecoveryAddr,
-		coreAddr,
-		mainToken,
 	} = selectRelayerConfig()
 
+	const identityFactoryAddr = whitelistedFactories[0]
+	const baseIdentityAddr = whitelistedBaseIdentities[0]
+
 	const privileges = [
-		[owner, 2],
-		[identityRecoveryAddr, 2],
+		[owner, true],
+		[identityRecoveryAddr, true],
 	]
 
-	const routineAuthorizationsRaw = [
-		{
-			relayer: relayerAddr,
-			outpace: coreAddr,
-			validUntil: relayerRoutineAuthValidUntil,
-			feeTokenAddr: mainToken.address,
-			feeTokenAmount: '0x00',
-		},
-	]
-
-	const bytecode = getProxyDeployBytecode(
-		baseIdentityAddr,
-		privileges,
-		{
-			privSlot: 0,
-			routineAuthsSlot: 1,
-			routineAuthorizations: routineAuthorizationsRaw.map(x =>
-				new RoutineAuthorization(x).hash()
-			),
-		},
-		solc
-	)
+	const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, {
+		privSlot: 0,
+	})
 
 	const salt = keccak256(owner)
 
 	const identityAddr = getAddress(
 		`0x${generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex')}`
 	)
-
 	return {
 		identityFactoryAddr,
 		baseIdentityAddr,
@@ -87,7 +65,6 @@ export async function getIdentityDeployData({
 		salt,
 		identityAddr,
 		privileges,
-		routineAuthorizationsRaw,
 	}
 }
 
