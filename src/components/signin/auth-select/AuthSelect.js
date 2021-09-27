@@ -24,6 +24,7 @@ import { formatAddress } from 'helpers/formatters'
 import { push } from 'connected-react-router'
 import { removeFromLocalStorage } from 'helpers/localStorageHelpers'
 import { PROJECTS } from 'constants/global'
+import NetworkSelect from 'components/wallet/NetworkSelect'
 
 const RRButton = withReactRouterLink(Button)
 const useStyles = makeStyles(styles)
@@ -88,6 +89,9 @@ const AuthSelect = () => {
 			alignItems='stretch'
 			justifyContent='space-between'
 		>
+			<Box p={2} alignItems='center'>
+				<NetworkSelect />
+			</Box>
 			<Box p={2} alignItems='center'>
 				<Typography align='center' variant='subtitle1' display='block'>
 					{t('SIGN_UP_IN_SELECT')}
