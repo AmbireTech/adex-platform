@@ -54,6 +54,7 @@ import {
 	selectUserLastSide,
 	selectEmail,
 	selectProject,
+	selectNetwork,
 } from 'selectors'
 import { logOut } from 'services/store-data/auth'
 import { getErrorMsg } from 'helpers/errors'
@@ -511,8 +512,20 @@ export function createSession({
 }
 
 export function getRelayerConfig() {
-	return async function(dispatch) {
+	return async function(dispatch, getState) {
 		const cfg = await getRelayerConfigData()
+		const network = selectNetwork(getState())
+
+		// TODO: get from cfg or env
+		if (!network.name) {
+			return dispatch({
+				type: types.CHANGE_NETWORK,
+				network: {
+					name: 'polygon',
+					...cfg.walletCfg.networks.polygon,
+				},
+			})
+		}
 		return dispatch({
 			type: types.UPDATE_RELAYER_CFG,
 			cfg,
