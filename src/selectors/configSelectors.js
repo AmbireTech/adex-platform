@@ -4,7 +4,13 @@ import { createCachedSelector } from 're-reselect'
 
 // can be used outside  components
 export const selectRelayerConfig = state => {
-	return (state || getState()).persist.config.relayer
+	const relayerConfig = (state || getState()).persist.config.relayer
+
+	const { walletCfg, ...cfg } = { ...relayerConfig }
+	return {
+		...walletCfg,
+		cfg,
+	}
 }
 
 // - relayer cfg
@@ -41,6 +47,18 @@ export const selectRelayerConfig = state => {
 // relayerAddr
 // gasPriceCap
 // gasPriceRatio
+
+// walletCfg: {
+// 	feeTokens: cfg.feeTokens,
+// 	feeCollector: cfg.feeCollector,
+// 	whitelistedFactories: cfg.whitelistedFactories,
+// 	whitelistedBaseIdentities: cfg.whitelistedBaseIdentities,
+// 	marginGas: cfg.marginGas,
+// 	gasMultipliers: cfg.gasMultipliers,
+// 	networks: cfg.networks,
+// 	pricesUpdateIntervalSeconds: cfg.pricesUpdateIntervalSeconds
+
+// }
 
 export const selectFeeTokenWhitelist = createSelector(
 	[selectRelayerConfig],
@@ -83,10 +101,7 @@ export const selectRoutineWithdrawTokensAddresses = createSelector(
 
 export const selectConfig = createSelector(
 	[selectRelayerConfig],
-	relayerConfig => {
-		const cfg = { ...relayerConfig }
-		return cfg
-	}
+	relayerConfig => relayerConfig
 )
 
 export const selectMainToken = createSelector(
