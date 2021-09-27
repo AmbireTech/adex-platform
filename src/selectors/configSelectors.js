@@ -13,6 +13,14 @@ export const selectRelayerConfig = state => {
 	}
 }
 
+// can be used outside  components
+export const selectNetwork = state => {
+	const network = (state || getState()).persist.network
+	return {
+		...network,
+	}
+}
+
 // - relayer cfg
 // network,
 // feeTokenWhitelist:
