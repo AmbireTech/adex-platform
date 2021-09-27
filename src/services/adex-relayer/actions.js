@@ -1,4 +1,5 @@
 import Requester, { handleRequesterErrorRes } from 'services/requester'
+import { selectNetwork } from 'selectors'
 
 const ADEX_RELAYER_HOST = process.env.ADEX_RELAYER_HOST
 const requester = new Requester({ baseUrl: ADEX_RELAYER_HOST })
@@ -22,10 +23,11 @@ export const getOwnerIdentities = ({ owner }) => {
 		.then(processResponse)
 }
 
-export const getIdentityData = ({ identityAddr }) => {
+export const getIdentityData = ({ identityAddr, networkName }) => {
+	const useNetwork = networkName || selectNetwork().name
 	return requester
 		.fetch({
-			route: `identity/${identityAddr}`,
+			route: `identity/${useNetwork}/${identityAddr}`,
 			method: 'GET',
 		})
 		.then(processResponse)
