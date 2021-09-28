@@ -40,6 +40,7 @@ import {
 	getEthereumProviderName,
 	ethereumNetworkId,
 	getMetamaskSelectedAddress,
+	getMetamaskEthereum,
 } from 'services/smart-contracts/ethers'
 import { AUTH_TYPES, ETHEREUM_NETWORKS } from 'constants/misc'
 import {
@@ -55,6 +56,7 @@ import {
 	selectEmail,
 	selectProject,
 	selectNetwork,
+	t,
 } from 'selectors'
 import { logOut } from 'services/store-data/auth'
 import { getErrorMsg } from 'helpers/errors'
@@ -567,20 +569,59 @@ export function onMetamaskNetworkChange({ id } = {}) {
 		// const state = getState()
 		const selectedNetwork = selectNetwork(getState())
 		const isMatters = await isMetamaskMatters(getState)
+		// But in the end, it doesn't even matter
 
-		if (
-			(await isMetamaskMatters(getState)) &&
-			process.env.NODE_ENV !== (ETHEREUM_NETWORKS[id] || {}).for
-		) {
+		if (isMatters && selectedNetwork.chainId !== id) {
+			const params = [
+				{
+					chainId: `0x${selectedNetwork.chainId.toString(16)}`,
+					rpcUrls: [selectedNetwork.rpc],
+					chainName: selectedNetwork.networkName,
+					nativeCurrency: {
+						name: selectedNetwork.id || selectNetwork.name,
+						symbol: selectedNetwork.currency.toUpperCase(), // 2-6 characters long
+						decimals: 18,
+					},
+					blockExplorerUrls: [selectedNetwork.blockExplorer],
+				},
+			]
+
+			const switchAction = async () => {
+				const ethereum = await getMetamaskEthereum()
+				try {
+					await ethereum.request({
+						method: 'wallet_switchEthereumChain',
+						params: [{ chainId: params[0].chainId }],
+					})
+				} catch (switchError) {
+					console.log('switchError', switchError)
+					// This error code indicates that the chain has not been added to MetaMask.
+					if (switchError.code === 4902) {
+						try {
+							await ethereum.request({
+								method: 'wallet_addEthereumChain',
+								params,
+							})
+						} catch (addError) {
+							// handle "add" error
+							console.log('addError', addError)
+						}
+					}
+					// handle other "switch" errors
+				}
+			}
 			confirmAction(
 				null,
-				null,
+				() => switchAction(),
 				{
-					title: translate('WARNING'),
-					text: translate('WATNING_METAMASK_INVALID_NETWORK', {
-						args: [ETHEREUM_NETWORKS[process.env.NODE_ENV].name],
+					cancelLabel: t('OK'),
+					title: t('WARNING'),
+					text: t('WATNING_METAMASK_INVALID_NETWORK', {
+						args: [selectedNetwork.networkName],
 					}),
 				},
+				false,
+				true,
 				true
 			)(dispatch)
 		} else {
