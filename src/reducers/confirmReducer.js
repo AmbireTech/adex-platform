@@ -14,6 +14,7 @@ export default function confirmReducer(state = initialState.confirm, action) {
 			newState.active =
 				action.confirm.active !== undefined ? action.confirm.active : true
 			newState.noActionBtns = !!action.confirm.noActionBtns
+			newState.keepOpenOnAction = !!action.confirm.keepOpenOnAction
 
 			// Force react-redux connect to update props if confirm is called again with same action
 			newState.calledOn = Date.now()
