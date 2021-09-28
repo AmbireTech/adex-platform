@@ -21,6 +21,7 @@ export function Confirm({ children }) {
 		calledOn,
 		noActionBtns,
 		data: { title = '', text = '', confirmLabel, cancelLabel },
+		keepOpenOnAction = false,
 	} = useSelector(selectConfirm)
 
 	useEffect(() => {
@@ -31,7 +32,9 @@ export function Confirm({ children }) {
 		if (typeof onConfirm === 'function') {
 			onConfirm()
 		}
-		setOpen(false)
+		if (!keepOpenOnAction) {
+			setOpen(false)
+		}
 	}
 
 	const cancel = () => {
@@ -39,7 +42,9 @@ export function Confirm({ children }) {
 			onCancel()
 		}
 
-		setOpen(false)
+		if (!keepOpenOnAction) {
+			setOpen(false)
+		}
 	}
 
 	return (

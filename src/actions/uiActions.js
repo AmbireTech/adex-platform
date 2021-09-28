@@ -145,7 +145,8 @@ export function confirmAction(
 		noConfirm = false,
 	} = {},
 	noActionBtns,
-	active
+	active,
+	keepOpenOnAction
 ) {
 	return async function(dispatch) {
 		return await dispatch({
@@ -163,6 +164,7 @@ export function confirmAction(
 				},
 				noActionBtns,
 				active,
+				keepOpenOnAction,
 			},
 		})
 	}
