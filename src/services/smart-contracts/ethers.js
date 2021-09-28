@@ -2,7 +2,7 @@ import { providers, Contract } from 'ethers'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { contracts } from './contractsCfg'
 import { AUTH_TYPES } from 'constants/misc'
-import { selectRelayerConfig } from 'selectors'
+import { selectRelayerConfig, selectNetwork } from 'selectors'
 
 // ethers.errors.setLogLevel('error')
 
@@ -17,9 +17,13 @@ const {
 	UniSwapQuoterV3,
 } = contracts
 
-const LocalProvider = process.env.WEB3_NODE_ADDR.startsWith('wss://')
-	? providers.WebSocketProvider
-	: providers.JsonRpcProvider
+function getLocalProvider(rpc) {
+	const LocalProvider = rpc.startsWith('wss://')
+		? providers.WebSocketProvider
+		: providers.JsonRpcProvider
+
+	return new LocalProvider(rpc)
+}
 
 // const getAdexCore = provider => {
 // 	const { coreAddr } = selectRelayerConfig()
@@ -131,14 +135,14 @@ const getEthersResult = provider => {
 	return results
 }
 
-function isProviderRelayerConfigChanged(currentProviderCfg) {
-	const cfg = selectRelayerConfig()
+function isNetworkChanged(currentNetworkUsed) {
+	const network = selectNetwork()
 
 	const isChanged =
-		currentProviderCfg.coreAddr !== cfg.coreAddr ||
-		JSON.stringify(currentProviderCfg.mainToken) !==
-			JSON.stringify(cfg.mainToken) ||
-		currentProviderCfg.identityFactoryAddr !== cfg.identityFactoryAddr
+		currentNetworkUsed.id !== network.id ||
+		currentNetworkUsed.name !== network.name ||
+		currentNetworkUsed.chainId !== network.chainId ||
+		currentNetworkUsed.rpc !== network.rpc
 
 	return isChanged
 }
@@ -147,16 +151,17 @@ function isProviderRelayerConfigChanged(currentProviderCfg) {
 // but it need result to be updated when some relayer cfg props are changed
 const localWeb3 = new (function() {
 	let localProvider
-	let relayerCfg
+	let network
 	let result
 
 	this.getEthers = () => {
 		if (!localProvider) {
-			localProvider = new LocalProvider(process.env.WEB3_NODE_ADDR)
-			relayerCfg = selectRelayerConfig()
+			network = selectNetwork()
+			localProvider = getLocalProvider(network.rpc)
 			result = getEthersResult(localProvider)
-		} else if (relayerCfg && isProviderRelayerConfigChanged(relayerCfg)) {
-			relayerCfg = selectRelayerConfig()
+		} else if (network && isNetworkChanged(network)) {
+			network = selectNetwork()
+			localProvider = getLocalProvider(network.rpc)
 			result = getEthersResult(localProvider)
 		}
 		return result
