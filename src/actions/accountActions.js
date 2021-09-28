@@ -519,16 +519,15 @@ export function getRelayerConfig() {
 		const network = selectNetwork(getState())
 
 		// TODO: get from cfg or env
-		if (!network.name) {
+		if (!network.id) {
 			return dispatch({
 				type: types.CHANGE_NETWORK,
 				network: {
-					name: 'polygon',
-					...cfg.walletCfg.networks.polygon,
+					...cfg.walletCfg.networks['polygon'],
 				},
 			})
 		} else {
-			const currentNetworkCfg = cfg.walletCfg.networks[network.name]
+			const currentNetworkCfg = cfg.walletCfg.networks[network.id]
 			const isChanged =
 				JSON.stringify(network) !== JSON.stringify(currentNetworkCfg)
 
@@ -536,7 +535,6 @@ export function getRelayerConfig() {
 				return dispatch({
 					type: types.CHANGE_NETWORK,
 					network: {
-						name: network.name,
 						...currentNetworkCfg,
 					},
 				})

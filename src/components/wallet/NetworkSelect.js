@@ -16,23 +16,27 @@ function NetworkSelect({ fullWidth }) {
 			color='secondary'
 			id='network-select'
 			rightIcon={<ArrowDropDown />}
-			label={t('NETWORK_SELECT_CURRENT', { args: [currentNetwork.name] })}
+			label={t('NETWORK_SELECT_CURRENT', {
+				args: [currentNetwork.networkName],
+			})}
 			variant='contained'
 			fullWidth={fullWidth}
 		>
-			{Object.keys(networks).map(key => (
-				<MenuItem
-					value='logout'
-					onClick={() => {
-						execute(updateNetwork(key))
-					}}
-				>
-					<ListItemText
-						// classes={{ primary: classes.primary }}
-						primary={key}
-					/>
-				</MenuItem>
-			))}
+			{Object.keys(networks).map(key => {
+				return (
+					<MenuItem
+						value='logout'
+						onClick={() => {
+							execute(updateNetwork(key))
+						}}
+					>
+						<ListItemText
+							// classes={{ primary: classes.primary }}
+							primary={networks[key].networkName}
+						/>
+					</MenuItem>
+				)
+			})}
 		</ButtonMenu>
 	)
 }
