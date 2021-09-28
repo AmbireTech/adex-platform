@@ -117,10 +117,10 @@ export async function getAddressBalances({ address, getFullBalances }) {
 
 	const calls = [
 		provider.getBalance(address.address),
-		getWithdrawTokensBalances({
-			address: address.address,
-			getFullBalances,
-		}),
+		// getWithdrawTokensBalances({
+		// 	address: address.address,
+		// 	getFullBalances,
+		// }),
 	]
 
 	const balances = await Promise.all(calls)
@@ -129,12 +129,12 @@ export async function getAddressBalances({ address, getFullBalances }) {
 		address: address.address,
 		path: address.serializedPath || address.path, // we are going to keep the entire path
 		balanceEth: utils.formatEther(balances[0].toString()),
-		tokensBalances: balances[1].balances.map(({ token, balance }) => {
-			return {
-				balance: formatTokenAmount(balance, token.decimals, false, 2),
-				symbol: token.symbol,
-			}
-		}),
+		// tokensBalances: balances[1].balances.map(({ token, balance }) => {
+		// 	return {
+		// 		balance: formatTokenAmount(balance, token.decimals, false, 2),
+		// 		symbol: token.symbol,
+		// 	}
+		// }),
 	}
 
 	return formatted
