@@ -90,7 +90,7 @@ const AuthSelect = () => {
 			justifyContent='space-between'
 		>
 			<Box p={2} alignItems='center'>
-				<NetworkSelect />
+				<NetworkSelect fullWidth />
 			</Box>
 			<Box p={2} alignItems='center'>
 				<Typography align='center' variant='subtitle1' display='block'>

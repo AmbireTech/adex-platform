@@ -21,6 +21,7 @@ function ButtonMenu({
 	leftIconSrc,
 	id,
 	variant,
+	fullWidth,
 }) {
 	const [anchorEl, setAnchorEl] = useState(null)
 
@@ -42,6 +43,7 @@ function ButtonMenu({
 				onClick={handleMenu}
 				aria-haspopup='true'
 				aria-controls={id}
+				fullWidth={fullWidth}
 			>
 				{leftIcon}
 				<span

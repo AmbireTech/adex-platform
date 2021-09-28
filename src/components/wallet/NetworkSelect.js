@@ -8,7 +8,7 @@ import { execute, updateNetwork } from 'actions'
 
 import { t, selectNetwork, selectRelayerConfig } from 'selectors'
 
-function NetworkSelect() {
+function NetworkSelect({ fullWidth }) {
 	const currentNetwork = useSelector(selectNetwork)
 	const { networks } = useSelector(selectRelayerConfig)
 	return (
@@ -18,6 +18,7 @@ function NetworkSelect() {
 			rightIcon={<ArrowDropDown />}
 			label={t('NETWORK_SELECT_CURRENT', { args: [currentNetwork.name] })}
 			variant='contained'
+			fullWidth={fullWidth}
 		>
 			{Object.keys(networks).map(key => (
 				<MenuItem
