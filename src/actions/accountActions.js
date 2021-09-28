@@ -525,7 +525,22 @@ export function getRelayerConfig() {
 					...cfg.walletCfg.networks.polygon,
 				},
 			})
+		} else {
+			const currentNetworkCfg = cfg.walletCfg.networks[network.name]
+			const isChanged =
+				JSON.stringify(network) !== JSON.stringify(currentNetworkCfg)
+
+			if (isChanged) {
+				return dispatch({
+					type: types.CHANGE_NETWORK,
+					network: {
+						name: network.name,
+						...currentNetworkCfg,
+					},
+				})
+			}
 		}
+
 		return dispatch({
 			type: types.UPDATE_RELAYER_CFG,
 			cfg,
@@ -549,6 +564,10 @@ async function isMetamaskMatters(getState) {
 
 export function onMetamaskNetworkChange({ id } = {}) {
 	return async function(dispatch, getState) {
+		// const state = getState()
+		const selectedNetwork = selectNetwork(getState())
+		const isMatters = await isMetamaskMatters(getState)
+
 		if (
 			(await isMetamaskMatters(getState)) &&
 			process.env.NODE_ENV !== (ETHEREUM_NETWORKS[id] || {}).for
