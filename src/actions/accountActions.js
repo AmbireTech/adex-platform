@@ -42,7 +42,7 @@ import {
 	getMetamaskSelectedAddress,
 	getMetamaskEthereum,
 } from 'services/smart-contracts/ethers'
-import { AUTH_TYPES, ETHEREUM_NETWORKS } from 'constants/misc'
+import { AUTH_TYPES } from 'constants/misc'
 import {
 	selectAccount,
 	selectIdentity,
@@ -56,6 +56,7 @@ import {
 	selectEmail,
 	selectProject,
 	selectNetwork,
+	selectRelayerConfig,
 	t,
 } from 'selectors'
 import { logOut } from 'services/store-data/auth'
@@ -516,35 +517,27 @@ export function createSession({
 export function getRelayerConfig() {
 	return async function(dispatch, getState) {
 		const cfg = await getRelayerConfigData()
-		const network = selectNetwork(getState())
 
-		// TODO: get from cfg or env
-		if (!network.id) {
-			return dispatch({
-				type: types.CHANGE_NETWORK,
-				network: {
-					...cfg.walletCfg.networks['polygon'],
-				},
-			})
-		} else {
-			const currentNetworkCfg = cfg.walletCfg.networks[network.id]
-			const isChanged =
-				JSON.stringify(network) !== JSON.stringify(currentNetworkCfg)
-
-			if (isChanged) {
-				return dispatch({
-					type: types.CHANGE_NETWORK,
-					network: {
-						...currentNetworkCfg,
-					},
-				})
-			}
-		}
-
-		return dispatch({
+		await dispatch({
 			type: types.UPDATE_RELAYER_CFG,
 			cfg,
 		})
+
+		const network = selectNetwork(getState())
+
+		if (Object.keys(network).length === 0) {
+			return await updateNetwork('polygon')
+		} else {
+			const currentNetworkCfg = cfg.walletCfg.networks[network.id]
+			const isChanged =
+				JSON.stringify(network) !==
+				JSON.stringify({ id: network.id, ...currentNetworkCfg })
+			if (isChanged) {
+				return await updateNetwork(network.id)
+			}
+		}
+
+		return
 	}
 }
 
@@ -569,7 +562,11 @@ export function onMetamaskNetworkChange({ id } = {}) {
 		const isMatters = await isMetamaskMatters(getState)
 		// But in the end, it doesn't even matter
 
-		if (isMatters && selectedNetwork.chainId !== id) {
+		if (
+			isMatters &&
+			selectedNetwork.chainId &&
+			selectedNetwork.chainId !== id
+		) {
 			const params = [
 				{
 					chainId: `0x${selectedNetwork.chainId.toString(16)}`,
@@ -608,6 +605,7 @@ export function onMetamaskNetworkChange({ id } = {}) {
 					// handle other "switch" errors
 				}
 			}
+
 			confirmAction(
 				null,
 				() => switchAction(),
@@ -828,5 +826,19 @@ export function beforeWeb3(validateId = '') {
 
 		await new Promise(resolve => setTimeout(resolve, 300))
 		await updateSpinner(SYNC_WEB3_DATA + validateId, false)(dispatch)
+	}
+}
+
+export function updateNetwork(id) {
+	return function(dispatch, getState) {
+		const { networks } = selectRelayerConfig(getState())
+
+		return dispatch({
+			type: types.CHANGE_NETWORK,
+			network: {
+				id,
+				...networks[id],
+			},
+		})
 	}
 }

@@ -12,7 +12,6 @@ import {
 	selectAnalyticsLiveTimestamp,
 	selectAnalyticsMinAndMaxDates,
 	t,
-	selectRelayerConfig,
 } from 'selectors'
 import {
 	getTimePeriods,
@@ -519,18 +518,5 @@ export function updateDebuggingAddresses(search) {
 			updateMemoryUi('debugIdentityAddr', debugIdentityAddr)(dispatch)
 			updateMemoryUi('debuggerAddr', debuggerAddr)(dispatch)
 		}
-	}
-}
-
-export function updateNetwork(id) {
-	return function(dispatch, getState) {
-		const { networks } = selectRelayerConfig(getState())
-
-		return dispatch({
-			type: types.CHANGE_NETWORK,
-			network: {
-				...networks[id],
-			},
-		})
 	}
 }
