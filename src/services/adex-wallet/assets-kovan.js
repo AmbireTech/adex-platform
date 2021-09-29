@@ -279,7 +279,7 @@ export const mappers = {
 	[tokens.aLINK]: mapAAVEInterestToken.bind(null, assets[tokens.LINK].symbol),
 }
 
-export const assetsKovan = {
+export const kovan = {
 	tokens,
 	assets,
 	mappers,

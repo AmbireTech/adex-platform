@@ -1,4 +1,4 @@
-import { tokens, assets } from './assets'
+import { getTokens, getAssets } from './assets'
 
 export const uniswapRouters = {
 	uniV2:
@@ -27,7 +27,7 @@ export const TICK_SPACINGS = {
 	[FeeAmount.HIGH]: 200,
 }
 
-const wethPathsUniV3 = {
+const getWethPathsUniV3 = tokens => ({
 	[tokens.USDC]: {
 		fee: FeeAmount.MEDIUM,
 	},
@@ -37,16 +37,16 @@ const wethPathsUniV3 = {
 	[tokens.WETH]: {
 		fee: FeeAmount.MEDIUM,
 	},
-}
+})
 
-const wethPathsUniV2 = {
+const getWethPathsUniV2 = tokens => ({
 	[tokens.ADX]: true,
 	[tokens.USDC]: true,
 	[tokens.WBTC]: true,
 	[tokens.WETH]: true,
-}
+})
 
-const directPaths = {}
+const getDirectPaths = tokens => ({})
 
 function getDirectPathData({ from, to, router, reverse, fee }) {
 	if (router === 'uniV2') {
@@ -69,7 +69,8 @@ function getDirectPathData({ from, to, router, reverse, fee }) {
 	}
 }
 
-function getDirectPath({ from, to }) {
+function getDirectPath({ from, to, tokens }) {
+	const directPaths = getDirectPaths(tokens)
 	const match =
 		directPaths[from] && directPaths[from][to]
 			? directPaths[from][to]
@@ -89,7 +90,8 @@ function getDirectPath({ from, to }) {
 // - check for existing pools
 // - Get best price
 
-function getWETHPath({ from, to, uniV3Only }) {
+function getWETHPath({ from, to, uniV3Only, tokens }) {
+	const wethPathsUniV3 = getWethPathsUniV3(tokens)
 	const fromToWETH_V3 = wethPathsUniV3[from]
 	const toToWETH_V3 = wethPathsUniV3[to]
 	const isToWETH = tokens.WETH === to
@@ -138,8 +140,8 @@ function getWETHPath({ from, to, uniV3Only }) {
 	}
 
 	if (!uniV3Only) {
-		const fromToWETH_V2 = wethPathsUniV2[from]
-		const toToWETH_V2 = wethPathsUniV2[to]
+		const fromToWETH_V2 = getWethPathsUniV2(tokens)[from]
+		const toToWETH_V2 = getWethPathsUniV2(tokens)[to]
 
 		if (fromToWETH_V2 && (toToWETH_V2 || isToWETH)) {
 			return {
@@ -153,12 +155,14 @@ function getWETHPath({ from, to, uniV3Only }) {
 }
 
 export function getPath({ from, to, uniV3Only }) {
-	const directPath = getDirectPath({ from, to })
+	const assets = getAssets()
+	const tokens = getTokens()
+	const directPath = getDirectPath({ from, to, tokens })
 	if (directPath && (!uniV3Only || directPath.router === 'uniV3')) {
 		return directPath
 	}
 
-	const WETHThroughPath = getWETHPath({ from, to, uniV3Only })
+	const WETHThroughPath = getWETHPath({ from, to, uniV3Only, tokens })
 
 	if (WETHThroughPath) {
 		return WETHThroughPath

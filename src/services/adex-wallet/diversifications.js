@@ -1,6 +1,7 @@
-import { tokens } from 'services/adex-wallet/assets'
+import { getTokens } from 'services/adex-wallet/assets'
+import { selectNetwork } from 'selectors'
 
-export const mainnet = [
+const ethereum = tokens => [
 	{
 		label: 'DIV_PRESET_CONSERVATIVE',
 		assets: [
@@ -46,7 +47,7 @@ export const mainnet = [
 	},
 ]
 
-export const kovan = [
+export const kovan = tokens => [
 	{
 		label: 'DIV_PRESET_CONSERVATIVE',
 		assets: [
@@ -108,5 +109,15 @@ export const kovan = [
 	},
 ]
 
-export const diversificationPresets =
-	process.env.NODE_ENV === 'production' ? mainnet : kovan
+const diversificationsByNetwork = {
+	ethereum,
+	kovan,
+}
+
+export const getDiversificationPresets = () => {
+	const { id } = selectNetwork()
+	const tokens = getTokens()
+
+	return diversificationsByNetwork[id](tokens) || []
+}
+// process.env.NODE_ENV === 'production' ? mainnet : kovan

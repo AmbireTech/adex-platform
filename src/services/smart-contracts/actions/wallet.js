@@ -1,8 +1,8 @@
 import {
-	assets,
+	getAssets,
 	getPath,
 	uniswapRouters,
-	tokens,
+	getTokens,
 	isETHBasedToken,
 } from 'services/adex-wallet'
 import { getEthers } from 'services/smart-contracts/ethers'
@@ -67,6 +67,7 @@ async function getWalletTradeTxns({
 	lendOutputToAAVE = false,
 	assetsDataRaw,
 }) {
+	const assets = getAssets()
 	const { wallet, identity } = account
 	const { authType } = wallet
 	const { path, router, pools } = await getPath({
@@ -363,6 +364,8 @@ export async function walletTradeTransaction({
 	assetsDataRaw,
 	lendOutputToAAVE = false,
 }) {
+	const assets = getAssets()
+	const tokens = getTokens()
 	const isFromETHToken = isETHBasedToken({ address: fromAsset })
 	const fromAssetTradableAddr = isFromETHToken ? tokens['WETH'] : fromAsset
 
@@ -464,6 +467,8 @@ async function getDiversificationTxns({
 	isFromETHToken,
 	assetsDataRaw,
 }) {
+	const assets = getAssets()
+	const tokens = getTokens()
 	const { wallet, identity } = account
 	const { authType } = wallet
 
@@ -835,6 +840,8 @@ export async function walletDiversificationTransaction({
 	diversificationAssets,
 	assetsDataRaw,
 }) {
+	const assets = getAssets()
+	const tokens = getTokens()
 	const isFromETHToken = isETHBasedToken({ address: fromAsset })
 	const fromAssetTradableAddr = isFromETHToken ? tokens['WETH'] : fromAsset
 
@@ -953,6 +960,7 @@ async function getWithdrawTxns({
 	} = await getEthers(authType)
 	const identityAddr = identity.address
 
+	const assets = getAssets()
 	const token = assets[withdrawAssetAddr]
 
 	const feeTokenAddr = withdrawAssetAddr

@@ -1,4 +1,4 @@
-import { tokens, assets } from './assets'
+import { getTokens, getAssets } from './assets'
 
 export const uniswapRouters = {
 	uniV2: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
@@ -23,7 +23,7 @@ export const TICK_SPACINGS = {
 	[FeeAmount.HIGH]: 200,
 }
 
-const wethPathsUniV3 = {
+const getWethPathsUniV3 = tokens => ({
 	[tokens.USDT]: {
 		fee: FeeAmount.HIGH,
 	},
@@ -36,21 +36,21 @@ const wethPathsUniV3 = {
 	[tokens.LINK]: {
 		fee: FeeAmount.MEDIUM,
 	},
-}
+})
 
-const wethPathsUniV2 = {
+const getWethPathsUniV2 = tokens => ({
 	[tokens.UNI]: true,
 	[tokens.DAI]: true,
-}
+})
 
-const directPaths = {
+const getDirectPaths = tokens => ({
 	[tokens.USDT]: {
 		[tokens.DAI]: {
 			router: 'uniV3',
 			fee: FeeAmount.HIGH,
 		},
 	},
-}
+})
 
 function getDirectPathData({ from, to, router, reverse, fee }) {
 	if (router === 'uniV2') {
@@ -73,7 +73,8 @@ function getDirectPathData({ from, to, router, reverse, fee }) {
 	}
 }
 
-function getDirectPath({ from, to }) {
+function getDirectPath({ from, to, tokens }) {
+	const directPaths = getDirectPaths(tokens)
 	const match =
 		directPaths[from] && directPaths[from][to]
 			? directPaths[from][to]
@@ -93,7 +94,8 @@ function getDirectPath({ from, to }) {
 // - check for existing pools
 // - Get best price
 
-function getWETHPath({ from, to }) {
+function getWETHPath({ from, to, tokens }) {
+	const wethPathsUniV3 = getWethPathsUniV3(tokens)
 	const fromToWETH_V3 = wethPathsUniV3[from]
 	const toToWETH_V3 = wethPathsUniV3[to]
 	const isToWETH = tokens.WETH === to
@@ -141,8 +143,8 @@ function getWETHPath({ from, to }) {
 		}
 	}
 
-	const fromToWETH_V2 = wethPathsUniV2[from]
-	const toToWETH_V2 = wethPathsUniV2[to]
+	const fromToWETH_V2 = getWethPathsUniV2(tokens)[from]
+	const toToWETH_V2 = getWethPathsUniV2(tokens)[to]
 
 	if (fromToWETH_V2 && (toToWETH_V2 || isToWETH)) {
 		return {
@@ -155,12 +157,14 @@ function getWETHPath({ from, to }) {
 }
 
 export function getPath({ from, to }) {
-	const directPath = getDirectPath({ from, to })
+	const assets = getAssets()
+	const tokens = getTokens()
+	const directPath = getDirectPath({ from, to, tokens })
 	if (directPath) {
 		return directPath
 	}
 
-	const WETHThroughPath = getWETHPath({ from, to })
+	const WETHThroughPath = getWETHPath({ from, to, tokens })
 
 	if (WETHThroughPath) {
 		return WETHThroughPath

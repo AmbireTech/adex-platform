@@ -1,8 +1,8 @@
 import {
-	assets,
+	getAssets,
 	getPath,
 	// uniswapRouters,
-	tokens,
+	getTokens,
 	isETHBasedToken,
 } from 'services/adex-wallet'
 import { getEthers } from 'services/smart-contracts/ethers'
@@ -141,6 +141,9 @@ export async function getUniv2RouteAndTokens({ path, amountOut, provider }) {
 	if (!provider) {
 		throw new Error('getUniv2Route - INVALID_PROVIDER')
 	}
+
+	const assets = getAssets()
+
 	const tokens = path.map(tokenAddr => {
 		const tokenData = assets[tokenAddr]
 		if (!tokenData) {
@@ -174,6 +177,8 @@ export async function getUniv2RouteAndTokens({ path, amountOut, provider }) {
 }
 
 export async function getUniv3Route({ pools, tokenIn, tokenOut, provider }) {
+	const assets = getAssets()
+
 	const poolsWithData = await Promise.all(
 		pools.map(async ({ addressTokenA, addressTokenB, fee }) => {
 			const tokenA = await getUniToken({
@@ -232,6 +237,9 @@ export async function getTradeOutData({
 	uniV3Only,
 	// slippageTolerance, // TODO:!!!
 }) {
+	const assets = getAssets()
+	const tokens = getTokens()
+
 	const fromAssetTradableAddr = isETHBasedToken({ address: fromAsset })
 		? tokens['WETH']
 		: fromAsset
@@ -412,6 +420,7 @@ export function txnsUnwrapAAVEInterestToken({
 	identityAddr,
 }) {
 	const txns = []
+	const assets = getAssets()
 
 	const amountBN = BigNumber.from(amount)
 	if (amountBN.lt(ZERO)) {
@@ -513,7 +522,7 @@ export function getEthBasedTokensToWETHTxns({
 	const txns = []
 	// const balanceWETH = assetsDataRaw[tokens.WETH].balance
 	// console.log('balanceWETH', balanceWETH)
-
+	const tokens = getTokens()
 	let amountReached = BigNumber.from(assetsDataRaw[tokens.WETH].balance)
 
 	if (BigNumber.from(amountNeeded).gte(amountReached)) {
@@ -626,7 +635,7 @@ export function getEthBasedTokensToETHTxns({
 	const txns = []
 	// const balanceWETH = assetsDataRaw[tokens.WETH].balance
 	// console.log('balanceWETH', balanceWETH)
-
+	const tokens = getTokens()
 	let amountReached = BigNumber.from(assetsDataRaw[tokens.ETH].balance)
 
 	if (BigNumber.from(amountNeeded).gte(amountReached)) {
@@ -753,6 +762,8 @@ export function aaveUnwrapTokenAmount({
 }
 
 export function hasAAVEInterestToken({ underlyingAssetAddr, symbol }) {
+	const assets = getAssets()
+	const tokens = getTokens()
 	const tokenSymbol = symbol || (assets[underlyingAssetAddr] || {}).symbol
 
 	const aaveInterestTokenAddr = tokens[`a${tokenSymbol}`]
@@ -761,6 +772,8 @@ export function hasAAVEInterestToken({ underlyingAssetAddr, symbol }) {
 }
 
 export function getAAVEInterestToken({ underlyingAssetAddr }) {
+	const assets = getAssets()
+	const tokens = getTokens()
 	const symbol = (assets[underlyingAssetAddr] || {}).symbol
 	// TODO: make it better
 	const aaveInterestTokenAddr = tokens[`a${symbol}`]
