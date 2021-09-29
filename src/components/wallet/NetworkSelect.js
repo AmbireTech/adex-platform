@@ -10,7 +10,7 @@ import { t, selectNetwork, selectRelayerConfig } from 'selectors'
 
 function NetworkSelect({ fullWidth }) {
 	const currentNetwork = useSelector(selectNetwork)
-	const { networks } = useSelector(selectRelayerConfig)
+	const { networks = [] } = useSelector(selectRelayerConfig)
 	return (
 		<ButtonMenu
 			color='secondary'
@@ -21,6 +21,7 @@ function NetworkSelect({ fullWidth }) {
 			})}
 			variant='contained'
 			fullWidth={fullWidth}
+			// maxWidth={5000}
 		>
 			{Object.keys(networks).map(key => {
 				return (

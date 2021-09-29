@@ -22,6 +22,7 @@ function ButtonMenu({
 	id,
 	variant,
 	fullWidth,
+	// maxWidth = 150,
 }) {
 	const [anchorEl, setAnchorEl] = useState(null)
 
@@ -48,7 +49,7 @@ function ButtonMenu({
 				{leftIcon}
 				<span
 					style={{
-						maxWidth: 150,
+						// maxWidth,
 						overflow: 'hidden',
 						textOverflow: 'ellipsis',
 					}}

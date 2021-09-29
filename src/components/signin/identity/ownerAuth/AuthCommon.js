@@ -1,4 +1,5 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 import { List, ListItem, ListItemText } from '@material-ui/core'
 import {
 	ContentBox,
@@ -9,12 +10,14 @@ import {
 import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { selectWalletAddress, execute } from 'actions'
+import { selectNetwork } from 'selectors'
 
 const useStyles = makeStyles(styles)
 
 export function AddrItem({ stats }) {
-	const { balanceEth, tokensBalances, address } = stats
+	const { balanceEth, address } = stats
 	const classes = useStyles()
+	const { networkName, currency = '' } = useSelector(selectNetwork)
 
 	return (
 		<ListItemText
@@ -22,15 +25,10 @@ export function AddrItem({ stats }) {
 			secondary={
 				<span className={classes.addrInfo}>
 					<span>
-						<span> ETH </span>
+						<strong> {networkName} </strong>
+						<span> ({currency.toUpperCase()}) </span>
 						<strong> {balanceEth} </strong>
 					</span>
-					{tokensBalances.map(({ symbol, balance }) => (
-						<span>
-							<span> {symbol} </span>
-							<strong> {balance} </strong>
-						</span>
-					))}
 				</span>
 			}
 		/>
