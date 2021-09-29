@@ -14,20 +14,21 @@ const processResponse = res => {
 	})
 }
 
-export const getOwnerIdentities = ({ owner }) => {
+export const getOwnerIdentities = ({ owner, networkId }) => {
+	const network = networkId || selectNetwork().id
 	return requester
 		.fetch({
-			route: `identity/by-owner/${owner}`,
+			route: `identity/${network}/by-owner/${owner}`,
 			method: 'GET',
 		})
 		.then(processResponse)
 }
 
-export const getIdentityData = ({ identityAddr, networkName }) => {
-	const useNetwork = networkName || selectNetwork().name
+export const getIdentityData = ({ identityAddr, networkId }) => {
+	const network = networkId || selectNetwork().id
 	return requester
 		.fetch({
-			route: `identity/${useNetwork}/${identityAddr}`,
+			route: `identity/${network}/${identityAddr}`,
 			method: 'GET',
 		})
 		.then(processResponse)
