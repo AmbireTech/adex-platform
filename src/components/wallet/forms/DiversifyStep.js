@@ -45,7 +45,7 @@ import { execute, updateNewTransaction } from 'actions'
 import { Alert } from '@material-ui/lab'
 import Dropdown from 'components/common/dropdown'
 import { formatTokenAmount } from 'helpers/formatters'
-import { diversificationPresets } from 'services/adex-wallet/diversifications'
+import { getDiversificationPresets } from 'services/adex-wallet/diversifications'
 import { getLogo, isETHBasedToken } from 'services/adex-wallet'
 
 const styles = theme => {
@@ -417,6 +417,9 @@ const WalletSwapTokensStep = ({ stepsId, validateId } = {}) => {
 	// const estimatingSpinner = useSelector(state =>
 	// 	selectSpinnerById(state, validateId)
 	// )
+
+	// TODO: move it to selectors to use the cache
+	const diversificationPresets = getDiversificationPresets()
 
 	const {
 		fromAsset = '',

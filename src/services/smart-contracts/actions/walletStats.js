@@ -4,11 +4,14 @@ import { formatTokenAmount } from 'helpers/formatters'
 import { AUTH_TYPES } from 'constants/misc'
 import { privilegesNames } from './stats'
 // import { getPrices } from 'services/prices'
-import { assets, mappers, tokens } from 'services/adex-wallet'
+import { getAssets, getMappers, getTokens } from 'services/adex-wallet'
 
 const ZERO = BigNumber.from(0)
 
 async function getAssetsData({ identityAddress, authType }) {
+	const assets = getAssets()
+	const mappers = getMappers()
+	const tokens = getTokens()
 	const assetsBalances = (
 		await Promise.all(
 			Object.entries(assets).map(
@@ -150,6 +153,8 @@ export async function getAccountStatsWallet({ account, prices }) {
 		address,
 	})
 	let privilegesAction
+
+	const assets = getAssets()
 
 	try {
 		await identityContract.deployed()

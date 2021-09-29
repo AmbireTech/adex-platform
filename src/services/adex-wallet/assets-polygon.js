@@ -37,21 +37,22 @@ const {
 // 0xE592427A0AEce92De3Edee1F18E0157C05861564
 
 const tokens = {
-	ETH: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+	MATIC: '0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0',
 	// aETH: '0x3a3A65aAb0dd2A17E3F1947bA16138cd37d08c04',
-	WETH: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-	aWETH: '0x030bA81f1c18d280636F32af80b9AAd02Cf0854e',
+	WETH: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
+	// aWETH: '0x030bA81f1c18d280636F32af80b9AAd02Cf0854e',
 	// USDT: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-	USDC: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-	aUSDC: '0xBcca60bB61934080951369a648Fb03DF4F96263C',
-	WBTC: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
-	[ADXToken.symbol]: ADXToken.address,
+	USDC: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+	USDT: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+	// aUSDC: '0xBcca60bB61934080951369a648Fb03DF4F96263C',
+	// WBTC: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
+	// [ADXToken.symbol]: ADXToken.address,
 	// [StakingPool.symbol]: StakingPool.address,
 	// [ADXLoyaltyPoolToken.symbol]: ADXLoyaltyPoolToken.address,
 }
 
 const logos = {
-	[tokens.ETH]: ETH_LOGO,
+	[tokens.MATIC]: ETH_LOGO,
 	[ADXToken.address]: ADX_LOGO,
 	[ADXLoyaltyPoolToken.address]: ADX_LOGO,
 	[StakingPool.address]: ADX_LOGO,
@@ -61,12 +62,13 @@ const logos = {
 }
 
 const assets = {
-	[tokens.ETH]: {
+	[tokens.MATIC]: {
 		address: tokens.ETH,
-		symbol: 'ETH',
-		name: 'Ethereum',
+		symbol: 'MATIC',
+		name: 'Polygon',
 		getBalance: async function({ address }) {
-			return await getETHBalance({ address })
+			// return await getETHBalance({ address })
+			return await getERC20Balance({ tokenAddress: tokens.MATIC, address })
 		},
 		isETH: true,
 		isSwappable: true,
@@ -98,43 +100,43 @@ const assets = {
 		getBalance: async function({ address }) {
 			return await getERC20Balance({ tokenAddress: tokens.WETH, address })
 		},
-		isWrappedETH: true,
-		isSwappable: false,
-		isBaseAsset: false,
-		mainAssetSymbol: 'ETH',
-		mainAssetAddr: tokens.ETH,
+		// isWrappedETH: true,
+		isSwappable: true,
+		isBaseAsset: true,
+		// mainAssetSymbol: 'ETH',
+		// mainAssetAddr: tokens.ETH,
 		// subAssets: [tokens.aWETH],
 		subAssets: [],
 		decimals: 18,
 	},
-	[tokens.aWETH]: {
-		symbol: 'aWETH',
-		address: tokens.aWETH,
-		name: 'Aave interest bearing WETH',
-		getBalance: async function({ address }) {
-			return await getERC20Balance({ tokenAddress: tokens.aWETH, address })
-		},
-		isSwappable: false,
-		isBaseAsset: false,
-		mainAssetSymbol: 'ETH',
-		isAaveInterestToken: true,
-		subAssets: [],
-		decimals: 18,
-		logoSrc: ETH_LOGO,
-	},
-	[ADXToken.address]: {
-		symbol: ADXToken.symbol,
-		address: ADXToken.address,
-		name: 'AdEx Network',
-		getBalance: async function({ address }) {
-			return await getERC20Balance({ tokenAddress: ADXToken.address, address })
-		},
-		isSwappable: true,
-		isBaseAsset: true,
-		// subAssets: [ADXLoyaltyPoolToken.address, StakingPool.address],
-		subAssets: [],
-		decimals: ADXToken.decimals,
-	},
+	// [tokens.aWETH]: {
+	// 	symbol: 'aWETH',
+	// 	address: tokens.aWETH,
+	// 	name: 'Aave interest bearing WETH',
+	// 	getBalance: async function({ address }) {
+	// 		return await getERC20Balance({ tokenAddress: tokens.aWETH, address })
+	// 	},
+	// 	isSwappable: false,
+	// 	isBaseAsset: false,
+	// 	mainAssetSymbol: 'ETH',
+	// 	isAaveInterestToken: true,
+	// 	subAssets: [],
+	// 	decimals: 18,
+	// 	logoSrc: ETH_LOGO,
+	// },
+	// [ADXToken.address]: {
+	// 	symbol: ADXToken.symbol,
+	// 	address: ADXToken.address,
+	// 	name: 'AdEx Network',
+	// 	getBalance: async function({ address }) {
+	// 		return await getERC20Balance({ tokenAddress: ADXToken.address, address })
+	// 	},
+	// 	isSwappable: true,
+	// 	isBaseAsset: true,
+	// 	// subAssets: [ADXLoyaltyPoolToken.address, StakingPool.address],
+	// 	subAssets: [],
+	// 	decimals: ADXToken.decimals,
+	// },
 	// [ADXLoyaltyPoolToken.address]: {
 	// 	symbol: ADXLoyaltyPoolToken.symbol,
 	//  address: ADXLoyaltyPoolToken.address,
@@ -199,7 +201,7 @@ const assets = {
 	[tokens.USDC]: {
 		symbol: 'USDC',
 		address: tokens.USDC,
-		name: 'USD Coin',
+		name: 'USD Coin (PoS)',
 		getBalance: async function({ address }) {
 			return await getERC20Balance({ tokenAddress: tokens.USDC, address })
 		},
@@ -211,34 +213,49 @@ const assets = {
 		logoSrc: USDC_LOGO,
 		isStableCoin: true,
 	},
-	[tokens.aUSDC]: {
-		symbol: 'aUSDC',
-		address: tokens.aUSDC,
-		name: 'Aave interest bearing USDC',
+	// [tokens.aUSDC]: {
+	// 	symbol: 'aUSDC',
+	// 	address: tokens.aUSDC,
+	// 	name: 'Aave interest bearing USDC',
+	// 	getBalance: async function({ address }) {
+	// 		return await getERC20Balance({ tokenAddress: tokens.aUSDC, address })
+	// 	},
+	// 	isSwappable: false,
+	// 	isBaseAsset: false,
+	// 	mainAssetSymbol: 'USDC',
+	// 	isAaveInterestToken: true,
+	// 	subAssets: [],
+	// 	decimals: 6,
+	// 	logoSrc: USDC_LOGO,
+	// },
+	// [tokens.WBTC]: {
+	// 	symbol: 'WBTC',
+	// 	address: tokens.WBTC,
+	// 	name: 'Wrapped BTC',
+	// 	getBalance: async function({ address }) {
+	// 		return await getERC20Balance({ tokenAddress: tokens.WBTC, address })
+	// 	},
+	// 	isSwappable: true,
+	// 	isBaseAsset: true,
+	// 	// subAssets: [tokens.aWBTC],
+	// 	subAssets: [],
+	// 	decimals: 8,
+	// 	logoSrc: WBTC_LOGO,
+	// 	isStableCoin: true,
+	// },
+	[tokens.USDC]: {
+		symbol: 'USDT',
+		address: tokens.USDC,
+		name: '(PoS) Tether USD',
 		getBalance: async function({ address }) {
-			return await getERC20Balance({ tokenAddress: tokens.aUSDC, address })
-		},
-		isSwappable: false,
-		isBaseAsset: false,
-		mainAssetSymbol: 'USDC',
-		isAaveInterestToken: true,
-		subAssets: [],
-		decimals: 6,
-		logoSrc: USDC_LOGO,
-	},
-	[tokens.WBTC]: {
-		symbol: 'WBTC',
-		address: tokens.WBTC,
-		name: 'Wrapped BTC',
-		getBalance: async function({ address }) {
-			return await getERC20Balance({ tokenAddress: tokens.WBTC, address })
+			return await getERC20Balance({ tokenAddress: tokens.USDC, address })
 		},
 		isSwappable: true,
 		isBaseAsset: true,
-		// subAssets: [tokens.aWBTC],
+		// subAssets: [tokens.aUSDC],
 		subAssets: [],
-		decimals: 8,
-		logoSrc: WBTC_LOGO,
+		decimals: 6,
+		logoSrc: USDC_LOGO,
 		isStableCoin: true,
 	},
 }
@@ -247,14 +264,14 @@ const mappers = {
 	// 	[ADXLoyaltyPoolToken.address]: mapADXLoyaltyPoolToken.bind(null),
 	// 	[StakingPool.address]: mapADXStakingPoolToken.bind(null),
 	// 	[tokens.aUSDT]: mapAAVEInterestToken.bind(null, assets[tokens.USDT].symbol),
-	[tokens.aWETH]: mapAAVEInterestToken.bind(null, assets[tokens.WETH].symbol),
+	// [tokens.aWETH]: mapAAVEInterestToken.bind(null, assets[tokens.WETH].symbol),
 	// 	[tokens.aDAI]: mapAAVEInterestToken.bind(null, assets[tokens.DAI].symbol),
 	// 	[tokens.aLINK]: mapAAVEInterestToken.bind(null, assets[tokens.LINK].symbol),
-	[tokens.WETH]: mapWrappedETH.bind(null, assets[tokens.ETH].symbol),
+	// [tokens.WETH]: mapWrappedETH.bind(null, assets[tokens.ETH].symbol),
 	// [tokens.aETH]: mapAAVEInterestToken.bind(null, assets[tokens.aETH].symbol),
 }
 
-export const ethereum = {
+export const polygon = {
 	tokens,
 	assets,
 	mappers,

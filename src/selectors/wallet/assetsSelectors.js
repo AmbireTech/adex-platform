@@ -4,8 +4,13 @@ import {
 	selectIdentitySideUi,
 } from 'selectors'
 import { createSelector } from 'reselect'
-import { assets } from 'services/adex-wallet'
-import { getPath, tokens, getLogo, isETHBasedToken } from 'services/adex-wallet'
+import {
+	getAssets,
+	getPath,
+	getTokens,
+	getLogo,
+	isETHBasedToken,
+} from 'services/adex-wallet'
 
 export const selectTradableAssetsFromSources = createSelector(
 	[selectAccountStatsFormatted],
@@ -23,6 +28,7 @@ export const selectTradableAssetsFromSources = createSelector(
 export const selectDiversifiableAssetsFromSources = createSelector(
 	[selectAccountStatsFormatted],
 	({ assetsData = {} }) => {
+		const tokens = getTokens()
 		return Object.values(assetsData)
 			.filter(x => {
 				if (!x.isSwappable) {
@@ -64,6 +70,7 @@ export const selectWithdrawAssetsFromSources = createSelector(
 export const selectTradableAssetsToSources = createSelector(
 	[selectAccountStatsFormatted], // TODO: selected from
 	({ assetsData } = {}) => {
+		const assets = getAssets()
 		return Object.entries(assets)
 			.filter(x => x[1].isBaseAsset && x[1].isSwappable)
 			.map(([addr, x]) => ({

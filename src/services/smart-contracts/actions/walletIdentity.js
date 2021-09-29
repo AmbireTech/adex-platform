@@ -1,5 +1,5 @@
 import { Contract, BigNumber, utils, constants } from 'ethers'
-import { tokens, assets } from 'services/adex-wallet'
+import { getTokens, getAssets } from 'services/adex-wallet'
 import { formatTokenAmount } from 'helpers/formatters'
 import {
 	getSigner,
@@ -290,6 +290,8 @@ export const ON_CHAIN_ACTIONS = {
 		gasCost: GAS_LIMITS.deploy,
 	},
 	depositWETH: ({ amount }) => {
+		const assets = getAssets()
+		const tokens = getTokens()
 		return {
 			contract: 'WETH',
 			method: 'deposit',
@@ -362,6 +364,8 @@ function mapWithFeeAndNonce({
 		const calculatedOperationsCount =
 			allTxInnerActions.length + txInnerActions.length + (isDeployTx ? 1 : 0) //+
 
+		const assets = getAssets()
+		const tokens = getTokens()
 		const txFeeAmountETH = parseFloat(
 			formatUnits(
 				txEstimatedGasLimitBN.mul(gasPrice),
@@ -432,6 +436,7 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 		: 0
 
 	let currentNonce = initialNonce
+	const assets = getAssets()
 	const feeToken = assets[feeTokenAddr]
 
 	// TODO: move it from account
@@ -529,6 +534,7 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 
 export async function getWalletIdentityTxnsTotalFees({ txnsWithNonceAndFees }) {
 	const { feeTokenAddr } = txnsWithNonceAndFees[0]
+	const assets = getAssets()
 	const feeToken = assets[feeTokenAddr]
 
 	const {
