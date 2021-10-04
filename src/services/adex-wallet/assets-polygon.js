@@ -7,6 +7,7 @@ import USDC_LOGO from 'resources/token-logos/USDC.png'
 import WBTC_LOGO from 'resources/token-logos/WBTC.png'
 import ETH_LOGO from 'resources/token-logos/ETH.png'
 import MATIC_LOGO from 'resources/token-logos/MATIC.png'
+import WMATIC_LOGO from 'resources/token-logos/WMATIC.webp'
 import WETH_LOGO from 'resources/token-logos/WETH.png'
 // import ADX_WALLET_LOGO from 'resources/wallet/logo.png'
 // import UNI_LOGO from 'resources/token-logos/UNI.png'
@@ -39,6 +40,7 @@ const {
 
 const tokens = {
 	MATIC: '0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0',
+	WMATIC: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
 	// aETH: '0x3a3A65aAb0dd2A17E3F1947bA16138cd37d08c04',
 	WETH: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
 	// aWETH: '0x030bA81f1c18d280636F32af80b9AAd02Cf0854e',
@@ -54,6 +56,7 @@ const tokens = {
 
 const logos = {
 	[tokens.MATIC]: MATIC_LOGO,
+	[tokens.WMATIC]: WMATIC_LOGO,
 	// [ADXToken.address]: ADX_LOGO,
 	// [ADXLoyaltyPoolToken.address]: ADX_LOGO,
 	// [StakingPool.address]: ADX_LOGO,
@@ -74,9 +77,23 @@ const assets = {
 		isETH: true,
 		isSwappable: true,
 		isBaseAsset: true,
-		// subAssets: [ADXLoyaltyPoolToken.address, StakingPool.address],
-		// subAssets: [tokens.WETH, tokens.aWETH],
-		subAssets: [tokens.WETH],
+		subAssets: [tokens.WMATIC],
+		decimals: 18,
+	},
+	[tokens.WMATIC]: {
+		symbol: 'WMATIC',
+		address: tokens.WMATIC,
+		name: 'Wrapped MATIC',
+		getBalance: async function({ address }) {
+			return await getERC20Balance({ tokenAddress: tokens.WMATIC, address })
+		},
+		// isWrappedETH: true,
+		isSwappable: true,
+		isBaseAsset: true,
+		// mainAssetSymbol: 'ETH',
+		// mainAssetAddr: tokens.ETH,
+		// subAssets: [tokens.aWETH],
+		subAssets: [],
 		decimals: 18,
 	},
 	// [tokens.aETH]: {
@@ -94,6 +111,22 @@ const assets = {
 	// 	decimals: 18,
 	// 	logoSrc: ETH_LOGO,
 	// },
+	[tokens.WETH]: {
+		symbol: 'WETH',
+		address: tokens.WETH,
+		name: 'Wrapped ETH',
+		getBalance: async function({ address }) {
+			return await getERC20Balance({ tokenAddress: tokens.WETH, address })
+		},
+		// isWrappedETH: true,
+		isSwappable: true,
+		isBaseAsset: true,
+		// mainAssetSymbol: 'ETH',
+		// mainAssetAddr: tokens.ETH,
+		// subAssets: [tokens.aWETH],
+		subAssets: [],
+		decimals: 18,
+	},
 	[tokens.WETH]: {
 		symbol: 'WETH',
 		address: tokens.WETH,
