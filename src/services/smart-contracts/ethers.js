@@ -131,10 +131,14 @@ function isNetworkChanged(currentNetworkUsed) {
 	const network = selectNetwork()
 
 	const isChanged =
-		currentNetworkUsed.id !== network.id ||
-		currentNetworkUsed.name !== network.name ||
-		currentNetworkUsed.chainId !== network.chainId ||
-		currentNetworkUsed.rpc !== network.rpc
+		JSON.stringify(network) !== JSON.stringify(currentNetworkUsed)
+	// JSON.stringify({ id: network.id, ...currentNetworkUsed })
+
+	// const isChanged =
+	// 	currentNetworkUsed.id !== network.id ||
+	// 	currentNetworkUsed.name !== network.name ||
+	// 	currentNetworkUsed.chainId !== network.chainId ||
+	// 	currentNetworkUsed.rpc !== network.rpc
 
 	return isChanged
 }
@@ -145,19 +149,16 @@ const localWeb3 = new (function() {
 	let localProvider = null
 	let network = null
 	let result = null
-	let config = null
 
 	this.getEthers = () => {
 		if (!localProvider) {
 			network = selectNetwork()
-			config = selectRelayerConfig()
 			localProvider = getLocalProvider(network.rpc)
 			result = getEthersResult(localProvider, network)
 		} else if (network && isNetworkChanged(network)) {
 			network = selectNetwork()
-			config = selectRelayerConfig()
 			localProvider = getLocalProvider(network.rpc)
-			result = getEthersResult(localProvider, config)
+			result = getEthersResult(localProvider, network)
 		}
 		return result
 	}
