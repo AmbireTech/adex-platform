@@ -6,6 +6,7 @@ import ADX_LOGO from 'resources/token-logos/ADX.png'
 import USDC_LOGO from 'resources/token-logos/USDC.png'
 import WBTC_LOGO from 'resources/token-logos/WBTC.png'
 import ETH_LOGO from 'resources/token-logos/ETH.png'
+import MATIC_LOGO from 'resources/token-logos/MATIC.png'
 import WETH_LOGO from 'resources/token-logos/WETH.png'
 // import ADX_WALLET_LOGO from 'resources/wallet/logo.png'
 // import UNI_LOGO from 'resources/token-logos/UNI.png'
@@ -52,10 +53,10 @@ const tokens = {
 }
 
 const logos = {
-	[tokens.MATIC]: ETH_LOGO,
-	[ADXToken.address]: ADX_LOGO,
-	[ADXLoyaltyPoolToken.address]: ADX_LOGO,
-	[StakingPool.address]: ADX_LOGO,
+	[tokens.MATIC]: MATIC_LOGO,
+	// [ADXToken.address]: ADX_LOGO,
+	// [ADXLoyaltyPoolToken.address]: ADX_LOGO,
+	// [StakingPool.address]: ADX_LOGO,
 	[tokens.USDC]: USDC_LOGO,
 	[tokens.WETH]: WETH_LOGO,
 	[tokens.WBTC]: WBTC_LOGO,
