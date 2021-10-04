@@ -64,9 +64,10 @@ const getIdentityPayable = ({ provider, address }) => {
 // 	return new Contract(identityFactoryAddr, IdentityFactory.abi, provider)
 // }
 
-const getWalletZapper = provider => {
+const getWalletZapper = (provider, networkConfig) => {
+	const { walletZapper } = networkConfig
 	const walletZapperContract = new Contract(
-		WalletZapper.address,
+		walletZapper,
 		WalletZapper.abi,
 		provider
 	)
@@ -74,44 +75,35 @@ const getWalletZapper = provider => {
 	return walletZapperContract
 }
 
-const getUniRouterV2 = provider => {
-	const uniV2 = new Contract(
-		UniSwapRouterV2.address,
-		UniSwapRouterV2.abi,
-		provider
-	)
+const getUniRouterV2 = (provider, networkConfig) => {
+	const { swapRouterV2 } = networkConfig
+	const uniV2 = new Contract(swapRouterV2, UniSwapRouterV2.abi, provider)
 
 	return uniV2
 }
 
-const getUniRouterV3 = provider => {
-	const uniV3 = new Contract(
-		UniSwapRouterV3.address,
-		UniSwapRouterV3.abi,
-		provider
-	)
+const getUniRouterV3 = (provider, networkConfig) => {
+	const { swapRouterV3 } = networkConfig
+	const uniV3 = new Contract(swapRouterV3, UniSwapRouterV3.abi, provider)
 
 	return uniV3
 }
 
-const getUniQuoterV3 = provider => {
-	const uniQuoterV3 = new Contract(
-		UniSwapQuoterV3.address,
-		UniSwapQuoterV3.abi,
-		provider
-	)
+const getUniQuoterV3 = (provider, networkConfig) => {
+	const { quoterV3 } = networkConfig
+	const uniQuoterV3 = new Contract(quoterV3, UniSwapQuoterV3.abi, provider)
 
 	return uniQuoterV3
 }
 
-const getEthersResult = provider => {
+const getEthersResult = (provider, networkConfig) => {
 	// const adexCore = getAdexCore(provider)
 	// const mainToken = getMainToken(provider)
 	// const identityFactory = getIdentityFactory(provider)
-	const walletZapper = getWalletZapper(provider)
-	const uniV2 = getUniRouterV2(provider)
-	const uniV3 = getUniRouterV3(provider)
-	const quoterV3 = getUniQuoterV3(provider)
+	const walletZapper = getWalletZapper(provider, networkConfig)
+	const uniV2 = getUniRouterV2(provider, networkConfig)
+	const uniV3 = getUniRouterV3(provider, networkConfig)
+	const quoterV3 = getUniQuoterV3(provider, networkConfig)
 
 	const results = {
 		provider,
@@ -150,19 +142,22 @@ function isNetworkChanged(currentNetworkUsed) {
 // NOTE; We need one instance of local provider
 // but it need result to be updated when some relayer cfg props are changed
 const localWeb3 = new (function() {
-	let localProvider
-	let network
-	let result
+	let localProvider = null
+	let network = null
+	let result = null
+	let config = null
 
 	this.getEthers = () => {
 		if (!localProvider) {
 			network = selectNetwork()
+			config = selectRelayerConfig()
 			localProvider = getLocalProvider(network.rpc)
-			result = getEthersResult(localProvider)
+			result = getEthersResult(localProvider, network)
 		} else if (network && isNetworkChanged(network)) {
 			network = selectNetwork()
+			config = selectRelayerConfig()
 			localProvider = getLocalProvider(network.rpc)
-			result = getEthersResult(localProvider)
+			result = getEthersResult(localProvider, config)
 		}
 		return result
 	}
