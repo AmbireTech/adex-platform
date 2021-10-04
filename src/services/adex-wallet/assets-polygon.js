@@ -63,12 +63,12 @@ const logos = {
 
 const assets = {
 	[tokens.MATIC]: {
-		address: tokens.ETH,
+		address: tokens.MATIC,
 		symbol: 'MATIC',
 		name: 'Polygon',
 		getBalance: async function({ address }) {
 			// return await getETHBalance({ address })
-			return await getERC20Balance({ tokenAddress: tokens.MATIC, address })
+			return await getETHBalance({ address })
 		},
 		isETH: true,
 		isSwappable: true,
