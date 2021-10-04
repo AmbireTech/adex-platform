@@ -526,14 +526,15 @@ export function getRelayerConfig() {
 		const network = selectNetwork(getState())
 
 		if (Object.keys(network).length === 0) {
-			return await updateNetwork('polygon')
+			return await updateNetwork('polygon')(dispatch, getState)
 		} else {
 			const currentNetworkCfg = cfg.walletCfg.networks[network.id]
 			const isChanged =
 				JSON.stringify(network) !==
 				JSON.stringify({ id: network.id, ...currentNetworkCfg })
+
 			if (isChanged) {
-				return await updateNetwork(network.id)
+				return await updateNetwork(network.id)(dispatch, getState)
 			}
 		}
 
@@ -832,6 +833,8 @@ export function beforeWeb3(validateId = '') {
 export function updateNetwork(id) {
 	return function(dispatch, getState) {
 		const { networks } = selectRelayerConfig(getState())
+
+		console.log('networks', networks)
 
 		return dispatch({
 			type: types.CHANGE_NETWORK,
