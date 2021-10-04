@@ -8,32 +8,29 @@ import { getAssets, getMappers, getTokens } from 'services/adex-wallet'
 
 const ZERO = BigNumber.from(0)
 
-async function getAssetsData({ identityAddress, authType }) {
+async function getAssetsData({ identityAddress }) {
 	const assets = getAssets()
 	const mappers = getMappers()
 	const tokens = getTokens()
 	const assetsBalances = (
 		await Promise.all(
-			Object.entries(assets).map(
-				async ([
+			Object.values(assets).map(
+				async ({
 					address,
-					{
-						getBalance,
-						symbol,
-						decimals,
-						name,
-						isSwappable,
-						isBaseAsset,
-						isAaveInterestToken,
-						...rest
-					},
-				]) => {
+					getBalance,
+					symbol,
+					decimals,
+					name,
+					isSwappable,
+					isBaseAsset,
+					isAaveInterestToken,
+					...rest
+				}) => {
 					const balance = await getBalance({ address: identityAddress })
 					const baseTokenBalance = mappers[address]
 						? await mappers[address](balance)
 						: [symbol, balance]
 
-					// console.log('baseTokenBalance', symbol, baseTokenBalance)
 					return {
 						address,
 						symbol,
@@ -164,7 +161,10 @@ export async function getAccountStatsWallet({ account, prices }) {
 		privilegesAction = Promise.resolve(status.type || 'Not Deployed')
 	}
 
-	const calls = [getAssetsData({ identityAddress: address }), privilegesAction]
+	const calls = [
+		getAssetsData({ identityAddress: address, assets }),
+		privilegesAction,
+	]
 
 	const [assetsData, walletPrivileges] = await Promise.all(
 		calls.map(c =>
@@ -176,6 +176,8 @@ export async function getAccountStatsWallet({ account, prices }) {
 				})
 		)
 	)
+
+	console.log('assetsData', assetsData)
 
 	const { withUsdValue, totalMainCurrenciesValues } = Object.entries(
 		assetsData
