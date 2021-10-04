@@ -311,7 +311,7 @@ export const ON_CHAIN_ACTIONS = {
 }
 
 function getOperationsGasLimitSumBN(txnsData) {
-	return txnsData.reduce((total, { txAction, txInnerActions }) => {
+	return txnsData.reduce((total, { txAction, txInnerActions = [] }) => {
 		const txGasCost = BigNumber.from(txAction.gasCost || '0')
 		const innerActionsTGasCost = txInnerActions.reduce((total, actionData) => {
 			if (!actionData.name) {
@@ -360,16 +360,16 @@ function mapWithFeeAndNonce({
 		}
 
 		const txEstimatedGasLimitBN = getOperationsGasLimitSumBN(txnsData)
-
 		const calculatedOperationsCount =
 			allTxInnerActions.length + txInnerActions.length + (isDeployTx ? 1 : 0) //+
 
-		const assets = getAssets()
-		const tokens = getTokens()
+		// const assets = getAssets()
+		// const tokens = getTokens()
 		const txFeeAmountETH = parseFloat(
 			formatUnits(
 				txEstimatedGasLimitBN.mul(gasPrice),
-				assets[tokens['WETH']].decimals
+				// assets[tokens['WETH']].decimals
+				18
 			)
 		)
 
