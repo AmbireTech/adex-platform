@@ -1,8 +1,9 @@
 import { providers, Contract } from 'ethers'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { contracts } from './contractsCfg'
+import { contractsAddressesByNetwork } from './contractsCfgByNetwork'
 import { AUTH_TYPES } from 'constants/misc'
-import { selectRelayerConfig, selectNetwork } from 'selectors'
+import { selectNetwork, selectAuthType } from 'selectors'
 
 // ethers.errors.setLogLevel('error')
 
@@ -64,8 +65,8 @@ const getIdentityPayable = ({ provider, address }) => {
 // 	return new Contract(identityFactoryAddr, IdentityFactory.abi, provider)
 // }
 
-const getWalletZapper = (provider, networkConfig) => {
-	const { walletZapper } = networkConfig
+const getWalletZapper = (provider, networkId) => {
+	const { walletZapper } = contractsAddressesByNetwork[networkId]
 	const walletZapperContract = new Contract(
 		walletZapper,
 		WalletZapper.abi,
@@ -75,22 +76,22 @@ const getWalletZapper = (provider, networkConfig) => {
 	return walletZapperContract
 }
 
-const getUniRouterV2 = (provider, networkConfig) => {
-	const { swapRouterV2 } = networkConfig
+const getUniRouterV2 = (provider, networkId) => {
+	const { swapRouterV2 } = contractsAddressesByNetwork[networkId]
 	const uniV2 = new Contract(swapRouterV2, UniSwapRouterV2.abi, provider)
 
 	return uniV2
 }
 
-const getUniRouterV3 = (provider, networkConfig) => {
-	const { swapRouterV3 } = networkConfig
+const getUniRouterV3 = (provider, networkId) => {
+	const { swapRouterV3 } = contractsAddressesByNetwork[networkId]
 	const uniV3 = new Contract(swapRouterV3, UniSwapRouterV3.abi, provider)
 
 	return uniV3
 }
 
-const getUniQuoterV3 = (provider, networkConfig) => {
-	const { quoterV3 } = networkConfig
+const getUniQuoterV3 = (provider, networkId) => {
+	const { quoterV3 } = contractsAddressesByNetwork[networkId]
 	const uniQuoterV3 = new Contract(quoterV3, UniSwapQuoterV3.abi, provider)
 
 	return uniQuoterV3
@@ -154,11 +155,11 @@ const localWeb3 = new (function() {
 		if (!localProvider) {
 			network = selectNetwork()
 			localProvider = getLocalProvider(network.rpc)
-			result = getEthersResult(localProvider, network)
+			result = getEthersResult(localProvider, network.id)
 		} else if (network && isNetworkChanged(network)) {
 			network = selectNetwork()
 			localProvider = getLocalProvider(network.rpc)
-			result = getEthersResult(localProvider, network)
+			result = getEthersResult(localProvider, network.id)
 		}
 		return result
 	}
@@ -237,10 +238,17 @@ const getLocalWeb3Provider = async () => {
 	return localWeb3.getEthers()
 }
 
-const getEthers = mode => {
+const getEthersReadOnly = () => {
+	return getLocalWeb3Provider()
+}
+
+const getEthers = () => {
 	/* NOTE: use Promise wrapper because despite getWeb3 is Promise itself it is not called by user action
 	 *   and this results in Trezor popup block by the browser
 	 */
+
+	const mode = selectAuthType()
+
 	if (mode === AUTH_TYPES.METAMASK.name) {
 		return injectedWeb3Provider()
 	} else {
@@ -286,6 +294,7 @@ const getMetamaskEthereum = async () => {
 
 export {
 	getEthers,
+	getEthersReadOnly,
 	ethereumNetworkId,
 	getEthereumProviderName,
 	getMetamaskEthereum,
