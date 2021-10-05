@@ -1,6 +1,5 @@
-import { getEthers } from 'services/smart-contracts/ethers'
+import { getEthersReadOnly } from 'services/smart-contracts/ethers'
 import { Contract, BigNumber } from 'ethers'
-import { AUTH_TYPES } from 'constants/misc'
 import { contracts } from 'services/smart-contracts/contractsCfg.js'
 // import ADX_LOGO from 'resources/token-logos/ADX.png'
 // import WETH_LOGO from 'resources/token-logos/WETH.png'
@@ -24,7 +23,7 @@ export const getERC20Token = (provider, address) => {
 }
 
 export const getERC20Balance = async ({ tokenAddress, address }) => {
-	const { provider } = await getEthers(AUTH_TYPES.READONLY)
+	const { provider } = await getEthersReadOnly()
 	const token = getERC20Token(provider, tokenAddress)
 	const balance = await token.balanceOf(address)
 
@@ -32,7 +31,7 @@ export const getERC20Balance = async ({ tokenAddress, address }) => {
 }
 
 export const getETHBalance = async ({ address }) => {
-	const { provider } = await getEthers(AUTH_TYPES.READONLY)
+	const { provider } = await getEthersReadOnly()
 	const balance = await provider.getBalance(address)
 
 	return balance
@@ -73,7 +72,7 @@ export async function mapAAVEInterestToken(baseTokenSymbol, aTokenAmount) {
 }
 
 export async function mapADXLoyaltyPoolToken(loyaltyTokenAmount) {
-	const { provider } = await getEthers(AUTH_TYPES.READONLY)
+	const { provider } = await getEthersReadOnly()
 	const adexLoyaltyPoolToken = getADXLoyaltyPoolToken(provider)
 	const [shareValue] = await Promise.all([adexLoyaltyPoolToken.shareValue()])
 	const adxAmount = BigNumber.from(loyaltyTokenAmount)
@@ -83,7 +82,7 @@ export async function mapADXLoyaltyPoolToken(loyaltyTokenAmount) {
 }
 
 export async function mapADXStakingPoolToken(stakingTokenAmount) {
-	const { provider } = await getEthers(AUTH_TYPES.READONLY)
+	const { provider } = await getEthersReadOnly()
 	const adexStakingPoolToken = getADXStakingPoolToken(provider)
 	const [shareValue] = await Promise.all([adexStakingPoolToken.shareValue()])
 	const adxAmount = BigNumber.from(stakingTokenAmount)

@@ -1,8 +1,8 @@
 import { utils } from 'ethers'
 import { isEthAddressERC20 } from 'services/smart-contracts/actions/erc20'
 import { isConnectionLost } from 'services/smart-contracts/actions/common'
-import { getEthers } from 'services/smart-contracts/ethers'
-import { AUTH_TYPES } from 'constants/misc'
+import { getEthersReadOnly } from 'services/smart-contracts/ethers'
+
 /*eslint-disable */
 const urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/
 const onlyDigitsRegex = /^([1-9]+\d*)$/
@@ -110,7 +110,7 @@ export const freeAdExENS = async ({ username = '' }) => {
 		if (username === '') {
 			msg = 'ERR_ENS_REQUIRED'
 		} else {
-			const { provider } = await getEthers(AUTH_TYPES.READONLY)
+			const { provider } = await getEthersReadOnly()
 			const ensAddress = await provider.resolveName(
 				`${username}.${process.env.REVERSE_REGISTRAR_PARENT}`
 			)

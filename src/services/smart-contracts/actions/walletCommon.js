@@ -5,7 +5,7 @@ import {
 	getTokens,
 	isETHBasedToken,
 } from 'services/adex-wallet'
-import { getEthers } from 'services/smart-contracts/ethers'
+import { getEthersReadOnly } from 'services/smart-contracts/ethers'
 import {
 	utils,
 	Contract,
@@ -13,10 +13,6 @@ import {
 	//   BigNumber
 } from 'ethers'
 import { contracts } from 'services/smart-contracts/contractsCfg'
-import {
-	AUTH_TYPES,
-	// EXECUTE_ACTIONS
-} from 'constants/misc'
 
 import {
 	computePoolAddress,
@@ -251,7 +247,7 @@ export async function getTradeOutData({
 		// UniSwapRouterV2,
 		provider,
 		UniSwapQuoterV3,
-	} = await getEthers(AUTH_TYPES.READONLY)
+	} = await getEthersReadOnly()
 
 	const { path, router, pools } = await getPath({
 		from: fromAssetTradableAddr,

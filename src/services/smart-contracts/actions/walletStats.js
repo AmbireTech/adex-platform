@@ -1,7 +1,6 @@
-import { getEthers } from 'services/smart-contracts/ethers'
+import { getEthersReadOnly } from 'services/smart-contracts/ethers'
 import { BigNumber, utils } from 'ethers'
 import { formatTokenAmount } from 'helpers/formatters'
-import { AUTH_TYPES } from 'constants/misc'
 import { privilegesNames } from './stats'
 // import { getPrices } from 'services/prices'
 import { getAssets, getMappers, getTokens } from 'services/adex-wallet'
@@ -144,7 +143,7 @@ const sumPricesValues = currenciesValues => {
 export async function getAccountStatsWallet({ account, prices }) {
 	const { wallet, identity } = account
 	const { address } = identity
-	const { getIdentityPayable } = await getEthers(AUTH_TYPES.READONLY)
+	const { getIdentityPayable } = await getEthersReadOnly()
 	const { status = {} } = identity
 	const identityContract = getIdentityPayable({
 		address,

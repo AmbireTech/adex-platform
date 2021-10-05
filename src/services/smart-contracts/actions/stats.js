@@ -1,4 +1,4 @@
-import { getEthers } from 'services/smart-contracts/ethers'
+import { getEthersReadOnly } from 'services/smart-contracts/ethers'
 import { constants } from 'adex-models'
 import { getValidatorAuthToken } from 'services/adex-validator/actions'
 import { BigNumber, utils } from 'ethers'
@@ -9,7 +9,6 @@ import {
 	selectRoutineWithdrawTokens,
 	selectFeeTokenWhitelist,
 } from 'selectors'
-import { AUTH_TYPES } from 'constants/misc'
 
 export const privilegesNames = constants.valueToKey(
 	constants.IdentityPrivilegeLevel
@@ -63,7 +62,7 @@ export const getWithdrawTokensBalances = async ({
 	address,
 	getFullBalances,
 }) => {
-	const { getToken } = await getEthers(AUTH_TYPES.READONLY)
+	const { getToken } = await getEthersReadOnly()
 	const { routineWithdrawTokens, mainToken } = selectRelayerConfig()
 	const balancesCalls = routineWithdrawTokens.map(async token => {
 		const tokenContract = getToken(token)
@@ -113,7 +112,7 @@ export const getWithdrawTokensBalances = async ({
 }
 
 export async function getAddressBalances({ address, getFullBalances }) {
-	const { provider } = await getEthers(AUTH_TYPES.READONLY)
+	const { provider } = await getEthersReadOnly()
 
 	const calls = [
 		provider.getBalance(address.address),
@@ -154,7 +153,7 @@ export async function getAccountStats({
 }) {
 	const { wallet, identity } = account
 	const { address } = identity
-	const { getIdentity } = await getEthers(AUTH_TYPES.READONLY)
+	const { getIdentity } = await getEthersReadOnly()
 	const { decimals } = selectMainToken()
 
 	const { status = {} } = identity
