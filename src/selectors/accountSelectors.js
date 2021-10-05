@@ -1,12 +1,14 @@
 import dateUtils from 'helpers/dateUtils'
+import { getState } from 'store'
 import { createSelector } from 'reselect'
 import { createDeepEqualSelector } from 'selectors'
 import { utils } from 'ethers'
 
-export const selectAccountRaw = state => state.persist.account || {}
+export const selectAccountRaw = state =>
+	(state || getState()).persist.account || {}
 export const selectChannels = state => state.memory.channels
 
-export const selectMemoryUi = state => state.memory.uiMemory
+export const selectMemoryUi = state => (state || getState()).memory.uiMemory
 
 export const selectDebugIdentity = createSelector(
 	selectMemoryUi,
