@@ -21,12 +21,7 @@ import {
 	generateSalt,
 } from 'services/wallet/wallet'
 import { saveToLocalStorage } from 'helpers/localStorageHelpers'
-import {
-	selectLoginSelectedIdentity,
-	selectIdentity,
-	selectAuthType,
-	t,
-} from 'selectors'
+import { selectLoginSelectedIdentity, selectIdentity, t } from 'selectors'
 import { AUTH_TYPES } from 'constants/misc'
 import {
 	validate,
@@ -50,7 +45,7 @@ import {
 	AUTH_WAITING_TREZOR_ACTION,
 	AUTH_WAITING_ADDRESS_DATA,
 } from 'constants/spinners'
-import { getEthers } from 'services/smart-contracts/ethers'
+import { getEthers, getEthersReadOnly } from 'services/smart-contracts/ethers'
 import { getSigner } from 'services/smart-contracts/actions/ethers'
 import { getAddressBalances } from 'services/smart-contracts/actions/stats'
 
@@ -181,7 +176,7 @@ export function updateOwnerIdentities({ owner }) {
 	return async function(dispatch, getState) {
 		updateSpinner(GETTING_OWNER_IDENTITIES, true)(dispatch)
 		try {
-			const { provider } = await getEthers(AUTH_TYPES.READONLY)
+			const { provider } = await getEthersReadOnly()
 			const identityData = await getOwnerIdentities({ owner })
 			const loginSelectedIdentity = selectLoginSelectedIdentity(getState())
 			const data = Object.entries(identityData)
@@ -725,7 +720,7 @@ export function resolveEnsAddress({ address }) {
 		updateSpinner(`ens-${address}`, true)(dispatch)
 
 		try {
-			const { provider } = await getEthers(AUTH_TYPES.READONLY)
+			const { provider } = await getEthersReadOnly()
 			const name = await provider.lookupAddress(address)
 			return dispatch({
 				type: types.UPDATE_RESOLVE_ENS_ADDRESS,

@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 import { Channel, splitSig, RoutineOps } from 'adex-protocol-eth/js'
 import BalanceTree from 'adex-protocol-eth/js/BalanceTree'
-import { getEthers } from 'services/smart-contracts/ethers'
+import { getEthers, getEthersReadOnly } from 'services/smart-contracts/ethers'
 import {
 	getIdentityTxnsWithNoncesAndFees,
 	getIdentityTxnsTotalFees,
@@ -161,7 +161,7 @@ const getWithdrawnPerUserOutstanding = async ({
 	balance,
 	identityAddr,
 }) => {
-	const { AdExCore } = await getEthers(AUTH_TYPES.READONLY)
+	const { AdExCore } = await getEthersReadOnly()
 	const withdrawnPerUser = await AdExCore.functions.withdrawnPerUser(
 		channel.id,
 		identityAddr
@@ -400,7 +400,7 @@ export async function getSweepChannelsTxns({ account, amountToSweep }) {
 	// TODO: pass withBalance as prop
 	const withBalance = selectChannelsWithUserBalancesEligible(getState())
 
-	const { AdExCore } = await getEthers(AUTH_TYPES.READONLY)
+	const { AdExCore } = await getEthersReadOnly()
 	const identityAddr = identity.address
 	const channelsToSweep = await getChannelsToSweepFrom({
 		amountToSweep,
@@ -547,9 +547,7 @@ export async function openChannel({
 }) {
 	const { wallet, identity, stats } = account
 	const { availableIdentityBalanceMainToken } = stats.raw
-	const { provider, AdExCore, Identity, getToken } = await getEthers(
-		wallet.authType
-	)
+	const { provider, AdExCore, Identity, getToken } = await getEthers()
 
 	const mainToken = selectMainFeeToken()
 	const depositAmount = getMaxFees
