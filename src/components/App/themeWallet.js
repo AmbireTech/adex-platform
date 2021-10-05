@@ -1,5 +1,5 @@
 import {
-	createMuiTheme,
+	createTheme,
 	responsiveFontSizes,
 	alpha,
 } from '@material-ui/core/styles'
@@ -264,7 +264,7 @@ const typography = {
 
 const borderRadius = '1.75em'
 
-const defaultTheme = createMuiTheme({
+const defaultTheme = createTheme({
 	typography,
 	palette: { ...paletteCommon },
 	shape: {
@@ -286,7 +286,7 @@ const props = {
 	drawerWidth: 280,
 }
 
-const commonTheme = createMuiTheme({
+const commonTheme = createTheme({
 	...defaultTheme,
 	typography,
 	props,
@@ -506,14 +506,14 @@ const defaultThemeWithOverrides = responsiveFontSizes(commonTheme, {
 	factor: 3,
 })
 
-export const darkTheme = createMuiTheme({
+export const darkTheme = createTheme({
 	...defaultThemeWithOverrides,
 	palette: paletteDark,
 	shadows: darkShadows,
 	type: 'dark',
 })
 
-export const lightTheme = createMuiTheme({
+export const lightTheme = createTheme({
 	...defaultThemeWithOverrides,
 	palette: paletteLight,
 	shadows: lightShadows,
