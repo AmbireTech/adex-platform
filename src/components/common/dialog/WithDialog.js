@@ -118,12 +118,18 @@ export default function WithDialogHoc(Decorated) {
 		const [open, setOpen] = useState(false)
 		const location = useSelector(selectLocation)
 
-		const handleToggle = async () => {
+		const handleToggle = async (event, reason) => {
+			const shouldClose =
+				open &&
+				(disableBackdropClick
+					? !['escapeKeyDown', 'backdropClick'].includes(reason)
+					: true)
+
 			if (typeof onBeforeOpen === 'function' && !open) {
 				await onBeforeOpen()
 			}
 
-			setOpen(!open)
+			setOpen(!shouldClose)
 		}
 
 		const handleClick = async ev => {
@@ -182,7 +188,6 @@ export default function WithDialogHoc(Decorated) {
 				<Dialog
 					disableAutoFocus
 					disableEnforceFocus // must use both of those to prevent from autofocus away from canva iframe
-					disableBackdropClick={disableBackdropClick}
 					// disableEscapeKeyDown
 					// maxWidth="xs"
 					// fullScreen
