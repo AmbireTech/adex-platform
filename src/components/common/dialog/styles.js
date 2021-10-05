@@ -1,4 +1,4 @@
-import { fade } from '@material-ui/core/styles/colorManipulator'
+import { alpha } from '@material-ui/core/styles/colorManipulator'
 
 export const styles = theme => {
 	const spacing = theme.spacing(3)
@@ -20,11 +20,11 @@ export const styles = theme => {
 				theme.type === 'dark'
 					? `radial-gradient(
 				circle,
-				${fade(
+				${alpha(
 					theme.palette.background.special || theme.palette.background.default,
 					0.333
 				)} 0%,
-				${fade(theme.palette.background.default, 0.69)} 100%
+				${alpha(theme.palette.background.default, 0.69)} 100%
 			)`
 					: 0,
 			margin: 0,

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import { BigNumber } from 'ethers'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
-import { fade } from '@material-ui/core/styles/colorManipulator'
+import { alpha } from '@material-ui/core/styles/colorManipulator'
 import {
 	AddSharp as AddIcon,
 	StopSharp as StopIcon,
@@ -85,7 +85,7 @@ const styles = theme => {
 			backgroundColor: theme.palette.primary.main,
 			color: theme.palette.primary.contrastText,
 			'&:hover': {
-				backgroundColor: fade(theme.palette.primary.main, 0.69),
+				backgroundColor: alpha(theme.palette.primary.main, 0.69),
 			},
 		},
 		selectIcon: {

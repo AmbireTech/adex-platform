@@ -1,7 +1,7 @@
 import {
 	createMuiTheme,
 	responsiveFontSizes,
-	fade,
+	alpha,
 } from '@material-ui/core/styles'
 import { lime, grey } from '@material-ui/core/colors'
 
@@ -148,36 +148,36 @@ const paletteDark = {
 	// special: { main: WARNING, contrastText: BLACK },
 	// text: {
 	// 	main: TEXT_MAIN,
-	// 	primary: fade(WHITE, 0.69),
-	// 	secondary: fade(WHITE, 0.42),
-	// 	disabled: fade(WHITE, 0.1948),
-	// 	hint: fade(WHITE, 0.13),
+	// 	primary: alpha(WHITE, 0.69),
+	// 	secondary: alpha(WHITE, 0.42),
+	// 	disabled: alpha(WHITE, 0.1948),
+	// 	hint: alpha(WHITE, 0.13),
 	// },
-	divider: fade(WHITE, 0.13),
+	divider: alpha(WHITE, 0.13),
 	background: {
 		paper: DARK_PAPER,
 		default: DARK_BG_DEFAULT,
 		stepperPaper: TRANSPARENT,
 	},
 	action: {
-		action: fade(WHITE, 0.46),
-		hover: fade(WHITE, 0.069),
+		action: alpha(WHITE, 0.46),
+		hover: alpha(WHITE, 0.069),
 		hoverOpacity: 0.069,
-		selected: fade(WHITE, 0.1914),
+		selected: alpha(WHITE, 0.1914),
 		selectedOpacity: 0.1914,
-		disabled: fade(WHITE, 0.1948),
+		disabled: alpha(WHITE, 0.1948),
 		disabledOpacity: 0.48,
-		focus: fade(WHITE, 0.18),
+		focus: alpha(WHITE, 0.18),
 		focusOpacity: 0.18,
 		activatedOpacity: 0.18,
 	},
 	appBar: { main: DARK_APPBAR, contrastText: grey[200] },
 	text: {
-		icon: fade(WHITE, 0.42),
-		primary: fade(WHITE, 0.9),
-		secondary: fade(WHITE, 0.42),
-		disabled: fade(WHITE, 0.1948),
-		hint: fade(WHITE, 0.13),
+		icon: alpha(WHITE, 0.42),
+		primary: alpha(WHITE, 0.9),
+		secondary: alpha(WHITE, 0.42),
+		disabled: alpha(WHITE, 0.1948),
+		hint: alpha(WHITE, 0.13),
 		solid: grey[200],
 	},
 }
@@ -221,13 +221,13 @@ const paletteLight = {
 		disabledBackground: grey[200],
 		disabled: grey[500],
 	},
-	tooltipBgColor: fade(ALEX_GREY, 0.98),
+	tooltipBgColor: alpha(ALEX_GREY, 0.98),
 	text: {
-		icon: fade(BLACK, 0.69),
-		primary: fade(BLACK, 0.9),
-		secondary: fade(BLACK, 0.69),
-		disabled: fade(BLACK, 0.42),
-		hint: fade(BLACK, 0.13),
+		icon: alpha(BLACK, 0.69),
+		primary: alpha(BLACK, 0.9),
+		secondary: alpha(BLACK, 0.69),
+		disabled: alpha(BLACK, 0.42),
+		hint: alpha(BLACK, 0.13),
 		solid: grey[500],
 	},
 }
@@ -266,7 +266,7 @@ export const palette = {
 		disabledBackground: grey[200],
 		disabled: grey[500],
 	},
-	tooltipBgColor: fade(ALEX_GREY, 0.98),
+	tooltipBgColor: alpha(ALEX_GREY, 0.98),
 }
 
 const typography = {

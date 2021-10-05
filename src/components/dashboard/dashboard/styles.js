@@ -15,8 +15,8 @@ export const styles = theme => {
 			// 	theme.type === 'dark'
 			// 		? `linear-gradient(
 			// 	335deg,
-			// 	${fade(theme.palette.primary.main, 1)} -46%,
-			// 	${fade(theme.palette.background.default, 1)} 44%
+			// 	${alpha(theme.palette.primary.main, 1)} -46%,
+			// 	${alpha(theme.palette.background.default, 1)} 44%
 			// )`
 			// 		: 0,
 			// backgroundRepeat: 'no-repeat',
