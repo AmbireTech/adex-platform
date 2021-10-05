@@ -26,6 +26,7 @@ function NetworkSelect({ fullWidth }) {
 			{Object.keys(networks).map(key => {
 				return (
 					<MenuItem
+						key={key}
 						value='logout'
 						onClick={() => {
 							execute(updateNetwork(key))
