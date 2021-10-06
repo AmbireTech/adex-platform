@@ -144,6 +144,11 @@ export const selectAccountStatsFormatted = createSelector(
 	({ formatted }) => formatted || {}
 )
 
+export const selectAssetsPrices = createSelector(
+	selectAccountStats,
+	({ prices }) => prices || {}
+)
+
 export const selectAccountIdentityRoutineAuthTuple = createSelector(
 	selectAccountIdentity,
 	({ relayerData }) =>
