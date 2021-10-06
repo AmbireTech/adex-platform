@@ -23,7 +23,7 @@ import { contracts } from 'services/smart-contracts/contractsCfg'
 // import { getProxyDeployBytecode } from 'adex-protocol-eth-wallet/js/IdentityProxyDeploy'
 const {
 	getProxyDeployBytecode,
-} = require('adex-protocol-eth/js/IdentityProxyDeploy2')
+} = require('adex-protocol-eth/js/IdentityProxyDeploy')
 const { AdExENSManager, ReverseRegistrar } = contracts
 const { Interface, getAddress, parseUnits, id, keccak256 } = utils
 
