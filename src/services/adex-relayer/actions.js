@@ -138,3 +138,21 @@ export const resendEmail = ({ email }) => {
 		})
 		.then(processResponse)
 }
+
+export const getTransactionsEstimateData = ({
+	identityAddr,
+	networkId,
+	txns,
+}) => {
+	const network = networkId || selectNetwork().id
+	return requester
+		.fetch({
+			route: `identity/${identityAddr}/${network}/estimate`,
+			method: 'post',
+			body: JSON.stringify({
+				txns,
+			}),
+			headers: { 'Content-Type': 'application/json' },
+		})
+		.then(processResponse)
+}
