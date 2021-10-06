@@ -78,21 +78,28 @@ const getWalletZapper = (provider, networkId) => {
 
 const getUniRouterV2 = (provider, networkId) => {
 	const { swapRouterV2 } = contractsAddressesByNetwork[networkId]
-	const uniV2 = new Contract(swapRouterV2, UniSwapRouterV2.abi, provider)
+
+	const uniV2 = swapRouterV2
+		? new Contract(swapRouterV2, UniSwapRouterV2.abi, provider)
+		: null
 
 	return uniV2
 }
 
 const getUniRouterV3 = (provider, networkId) => {
 	const { swapRouterV3 } = contractsAddressesByNetwork[networkId]
-	const uniV3 = new Contract(swapRouterV3, UniSwapRouterV3.abi, provider)
+	const uniV3 = swapRouterV3
+		? new Contract(swapRouterV3, UniSwapRouterV3.abi, provider)
+		: null
 
 	return uniV3
 }
 
 const getUniQuoterV3 = (provider, networkId) => {
 	const { quoterV3 } = contractsAddressesByNetwork[networkId]
-	const uniQuoterV3 = new Contract(quoterV3, UniSwapQuoterV3.abi, provider)
+	const uniQuoterV3 = quoterV3
+		? new Contract(quoterV3, UniSwapQuoterV3.abi, provider)
+		: null
 
 	return uniQuoterV3
 }
