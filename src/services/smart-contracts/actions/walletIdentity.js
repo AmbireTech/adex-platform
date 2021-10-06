@@ -6,11 +6,24 @@ import {
 	getMultipleTxSignatures,
 } from 'services/smart-contracts/actions/ethers'
 import { getAAVEInterestToken } from 'services/smart-contracts/actions/walletCommon'
-import { executeTx } from 'services/adex-relayer'
+import { executeTx, getTransactionsEstimateData } from 'services/adex-relayer'
 import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
-import { selectRelayerConfig } from 'selectors'
+import { Bundle, signMsgHash } from 'adex-protocol-eth/js/Bundle'
+import {
+	// getEthers,
+	getEthersReadOnly,
+} from 'services/smart-contracts/ethers'
+import {
+	selectRelayerConfig,
+	selectAccountIdentityAddr,
+	selectAssetsPrices,
+	selectNetwork,
+	selectWalletAddress,
+} from 'selectors'
 const { parseUnits, formatUnits, Interface } = utils
 const { MaxInt256 } = constants
+
+const ADEX_RELAYER_HOST = process.env.ADEX_RELAYER_HOST
 
 const ERC20 = new Interface(ERC20TokenABI)
 
@@ -53,7 +66,7 @@ const transferETH = ({
 	name: relayerFeeTx
 		? 'SC_ACTION_TRANSFER_ETH_RELAYER_FEE'
 		: 'SC_ACTION_TRANSFER_ETH',
-	gasCost: GAS_LIMITS.transferETH,
+	// gasCost: GAS_LIMITS.transferETH,
 	amount: getTokenAmount({ amount, tokenData }),
 	sender,
 	recipient,
@@ -74,7 +87,7 @@ const transferERC20 = ({
 	name: relayerFeeTx
 		? 'SC_ACTION_TRANSFER_ERC20_RELAYER_FEE'
 		: 'SC_ACTION_TRANSFER_ERC20',
-	gasCost: GAS_LIMITS.transfer,
+	// gasCost: GAS_LIMITS.transfer,
 	token: `${tokenNamePrefix ? tokenNamePrefix + ' ' : ''}${tokenData.symbol} (${
 		tokenData.address
 	})`,
@@ -92,7 +105,7 @@ const depositAAVE = ({ tokenData, recipient, minOut }) => {
 		contract: 'IAaveLendingPool',
 		method: 'deposit',
 		name: 'SC_ACTION_AAVE_DEPOSIT',
-		gasCost: GAS_LIMITS.wrap,
+		// gasCost: GAS_LIMITS.wrap,
 		recipient,
 		underlingToken: `${tokenData.symbol} (${tokenData.address})`,
 		aaveInterestToken: `${interestTokenData.symbol} (${
@@ -107,7 +120,7 @@ const withdrawAAVE = ({ underlyingToken, aaveUnwrapAmount }) => ({
 	contract: 'IAaveLendingPool',
 	method: 'withdraw',
 	name: 'SC_ACTION_AAVE_WITHDRAW',
-	gasCost: GAS_LIMITS.unwrap,
+	// gasCost: GAS_LIMITS.unwrap,
 	token: `${underlyingToken.symbol} (${underlyingToken.address})`,
 	amount: getTokenAmount({
 		amount: aaveUnwrapAmount,
@@ -119,7 +132,7 @@ const swapInnerUniV2 = (path = []) => ({
 	contract: 'IUniswapSimple',
 	method: 'swapExactTokensForTokens',
 	name: 'SC_ACTION_SWAP_UNI_V2_DIRECT',
-	gasCost: GAS_LIMITS.swapV2.mul(path.length - 1),
+	// gasCost: GAS_LIMITS.swapV2.mul(path.length - 1),
 	path,
 	swaps: path.length - 1,
 })
@@ -208,7 +221,7 @@ const swapInnerUniV3 = ({ path }) => ({
 	contract: 'uniV3Router',
 	method: 'exactInput',
 	name: 'SC_ACTION_SWAP_UNI_V3',
-	gasCost: GAS_LIMITS.swapV2.mul(path.length - 1),
+	// gasCost: GAS_LIMITS.swapV2.mul(path.length - 1),
 	path,
 	swaps: path.length - 1,
 })
@@ -297,7 +310,7 @@ export const ON_CHAIN_ACTIONS = {
 			method: 'deposit',
 			name: 'SC_ACTION_WETH_DEPOSIT',
 			amount: getTokenAmount({ amount, tokenData: assets[tokens.WETH] }),
-			gasCost: GAS_LIMITS.wrap,
+			// gasCost: GAS_LIMITS.wrap,
 		}
 	},
 	withdrawWETH: {
@@ -408,21 +421,21 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 	identityAddr,
 	provider,
 	Identity,
-	account,
 	feeTokenAddr,
-	simulatedFeeAmount,
+	// simulatedFeeAmount,
 }) {
 	const {
 		gasPriceRatio = 1.07,
 		gasPriceCap,
-		relayerAddr,
+		// relayerAddr,
 	} = selectRelayerConfig()
-	const allSameFeeToken = txns.every(x => x.feeTokenAddr === feeTokenAddr)
 
 	console.log('txns', txns)
-	if (!allSameFeeToken) {
-		throw new Error('TXNS_FEES_NOT_SAME_FEE_TOKEN')
-	}
+	// const allSameFeeToken = txns.every(x => x.feeTokenAddr === feeTokenAddr)
+
+	// if (!allSameFeeToken) {
+	// 	throw new Error('TXNS_FEES_NOT_SAME_FEE_TOKEN')
+	// }
 
 	let isDeployed = (await provider.getCode(identityAddr)) !== '0x'
 	let identityContract = null
@@ -439,8 +452,7 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 	const assets = getAssets()
 	const feeToken = assets[feeTokenAddr]
 
-	// TODO: move it from account
-	const { prices } = account.stats
+	const prices = selectAssetsPrices()
 
 	const networkGasPrice = await provider.getGasPrice()
 
@@ -462,71 +474,73 @@ export async function getWalletIdentityTxnsWithNoncesAndFees({
 		feeTokenAddrUSDPrice,
 	})
 
-	const feeTxGasCost = (feeToken.isETH
-		? ON_CHAIN_ACTIONS.transferETH({
-				tokenData: feeToken,
-		  })
-		: ON_CHAIN_ACTIONS.transferERC20({
-				tokenData: feeToken,
-		  })
-	).gasCost
+	// We will ha
 
-	const txnsFEES = withNonceAndFees.reduce((sum, { txEstimatedGasLimitBN }) => {
-		return sum.add(txEstimatedGasLimitBN)
-	}, feeTxGasCost)
+	// const feeTxGasCost = (feeToken.isETH
+	// 	? ON_CHAIN_ACTIONS.transferETH({
+	// 			tokenData: feeToken,
+	// 	  })
+	// 	: ON_CHAIN_ACTIONS.transferERC20({
+	// 			tokenData: feeToken,
+	// 	  })
+	// ).gasCost
 
-	// NOTE: add fee tx
-	const feeTx = feeToken.isETH
-		? {
-				identityContract: identityAddr,
-				// feeTokenAddr,
-				to: relayerAddr,
-				data: '0x',
-				value: txnsFEES.toHexString(),
-				onChainActionData: {
-					txAction: {
-						...ON_CHAIN_ACTIONS.transferETH({
-							tokenData: feeToken,
-							amount: txnsFEES,
-							sender: `Identity (${identityAddr})`,
-							recipient: `Relayer ${relayerAddr}`,
-							relayerFeeTx: true,
-						}),
-					},
-				},
-		  }
-		: {
-				identityContract: identityAddr,
-				// feeTokenAddr,
-				to: feeTokenAddr,
-				data: ERC20.encodeFunctionData('transfer', [
-					relayerAddr,
-					txnsFEES.toHexString(),
-				]),
-				onChainActionData: {
-					txAction: {
-						...ON_CHAIN_ACTIONS.transferERC20({
-							tokenData: feeToken,
-							amount: txnsFEES,
-							sender: `Identity (${identityAddr})`,
-							recipient: `Relayer ${relayerAddr}`,
-							relayerFeeTx: true,
-						}),
-					},
-				},
-		  }
+	// const txnsFEES = withNonceAndFees.reduce((sum, { txEstimatedGasLimitBN }) => {
+	// 	return sum.add(txEstimatedGasLimitBN)
+	// }, feeTxGasCost)
 
-	const { withNonceAndFees: feeTxWithNonceAndFeesData } = mapWithFeeAndNonce({
-		txns: [feeTx],
-		currentNonce: nonce,
-		gasPrice,
-		feeTokenAddr,
-		prices,
-		feeToken,
-		feeTokenAddrUSDPrice,
-	})
+	// // NOTE: add fee tx
+	// const feeTx = feeToken.isETH
+	// 	? {
+	// 			identityContract: identityAddr,
+	// 			// feeTokenAddr,
+	// 			to: relayerAddr,
+	// 			data: '0x',
+	// 			value: txnsFEES.toHexString(),
+	// 			onChainActionData: {
+	// 				txAction: {
+	// 					...ON_CHAIN_ACTIONS.transferETH({
+	// 						tokenData: feeToken,
+	// 						amount: txnsFEES,
+	// 						sender: `Identity (${identityAddr})`,
+	// 						recipient: `Relayer ${relayerAddr}`,
+	// 						relayerFeeTx: true,
+	// 					}),
+	// 				},
+	// 			},
+	// 	  }
+	// 	: {
+	// 			identityContract: identityAddr,
+	// 			// feeTokenAddr,
+	// 			to: feeTokenAddr,
+	// 			data: ERC20.encodeFunctionData('transfer', [
+	// 				relayerAddr,
+	// 				txnsFEES.toHexString(),
+	// 			]),
+	// 			onChainActionData: {
+	// 				txAction: {
+	// 					...ON_CHAIN_ACTIONS.transferERC20({
+	// 						tokenData: feeToken,
+	// 						amount: txnsFEES,
+	// 						sender: `Identity (${identityAddr})`,
+	// 						recipient: `Relayer ${relayerAddr}`,
+	// 						relayerFeeTx: true,
+	// 					}),
+	// 				},
+	// 			},
+	// 	  }
 
-	withNonceAndFees.push(...feeTxWithNonceAndFeesData)
+	// const { withNonceAndFees: feeTxWithNonceAndFeesData } = mapWithFeeAndNonce({
+	// 	txns: [feeTx],
+	// 	currentNonce: nonce,
+	// 	gasPrice,
+	// 	feeTokenAddr,
+	// 	prices,
+	// 	feeToken,
+	// 	feeTokenAddrUSDPrice,
+	// })
+
+	// withNonceAndFees.push(...feeTxWithNonceAndFeesData)
 
 	// console.log('withNonceAndFees', withNonceAndFees)
 	return withNonceAndFees
@@ -722,4 +736,122 @@ export async function getWalletApproveTxns({
 	})
 
 	return approveTxns
+}
+
+export async function getTxnsEstimationData({
+	// identityAddr,
+	txns,
+	feeTokenAddr,
+	account,
+}) {
+	const assets = getAssets()
+	const {
+		// gasPriceRatio = 1.07,
+		// gasPriceCap,
+		feeCollector,
+	} = selectRelayerConfig()
+	const { provider, IdentityPayable } = await getEthersReadOnly()
+	const network = selectNetwork().id
+
+	// const { wallet, identity } = account
+	const identityAddr = selectAccountIdentityAddr()
+	const walletAddress = selectWalletAddress()
+
+	const feeToken = assets[feeTokenAddr]
+	const isNative = feeToken.isETH || feeToken.isNative
+	const minTxFee = BigNumber.from('1')
+	const estimateTxFee = isNative
+		? {
+				identityContract: identityAddr,
+				// feeTokenAddr,
+				to: feeCollector,
+				data: '0x',
+				value: minTxFee.toHexString(),
+				onChainActionData: {
+					txAction: {
+						...ON_CHAIN_ACTIONS.transferETH({
+							tokenData: feeToken,
+							amount: minTxFee,
+							sender: `Identity (${identityAddr})`,
+							recipient: `Relayer ${feeCollector}`,
+							relayerFeeTx: true,
+						}),
+					},
+				},
+		  }
+		: {
+				identityContract: identityAddr,
+				// feeTokenAddr,
+				to: feeTokenAddr,
+				data: ERC20.encodeFunctionData('transfer', [
+					feeCollector,
+					minTxFee.toHexString(),
+				]),
+				onChainActionData: {
+					txAction: {
+						...ON_CHAIN_ACTIONS.transferERC20({
+							tokenData: feeToken,
+							amount: minTxFee,
+							sender: `Identity (${identityAddr})`,
+							recipient: `Relayer ${feeCollector}`,
+							relayerFeeTx: true,
+						}),
+					},
+				},
+		  }
+
+	txns.push(estimateTxFee)
+
+	// console.log('allTxnss')
+
+	// const withNonces = await getWalletIdentityTxnsWithNoncesAndFees({
+	// 	txns,
+	// 	identityAddr,
+	// 	provider,
+	// 	Identity: IdentityPayable,
+	// 	feeTokenAddr,
+	// })
+
+	const bundle = new Bundle({
+		identity: identityAddr,
+		network,
+		txns,
+		signer: {
+			address: walletAddress,
+			// quickAccountManager: '',
+		},
+	})
+
+	const nonce = await bundle.getNonce(provider)
+
+	bundle.nonce = nonce
+
+	const estimatedData = await bundle.estimate({
+		fetch,
+		relayerURL: ADEX_RELAYER_HOST,
+	})
+
+	// TODO
+	estimatedData.feesInFeeToken = {
+		slow: '',
+		medium: '',
+		fast: '',
+	}
+
+	console.log('estimatedData', estimatedData)
+
+	// {
+	// 	"success": true,
+	// 	"gasLimit": 218240,
+	// 	"gasPrice": 16105100000,
+	// 	"feeInUSD": {
+	// 	  "slow": 0.003985757145216,
+	// 	  "medium": 0.004871480955264001,
+	// 	  "fast": 0.0057572047653120005
+	// 	}
+	//   }
+
+	return estimatedData
+
+	// console.log('estimatedData', estimatedData)
 }
