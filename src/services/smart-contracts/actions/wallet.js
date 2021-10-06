@@ -27,11 +27,12 @@ import {
 	ON_CHAIN_ACTIONS,
 	getWalletIdentityTxnsWithNoncesAndFees,
 	getWalletIdentityTxnsTotalFees,
+	getTxnsEstimationData,
 	// processExecuteWalletTxns,
 	// getWalletApproveTxns,
 } from './walletIdentity'
 import { formatTokenAmount } from 'helpers/formatters'
-import { t } from 'selectors'
+import { t, selectAccountIdentityAddr } from 'selectors'
 
 import {
 	getUniToken,
@@ -1019,17 +1020,18 @@ async function getWithdrawTxns({
 
 	txns.push(withdrawTx)
 
-	const txnsWithNonceAndFees = await getWalletIdentityTxnsWithNoncesAndFees({
-		txns,
-		identityAddr,
-		provider,
-		Identity: IdentityPayable,
-		account,
-		feeTokenAddr,
-	})
+	// const txnsWithNonceAndFees = await getWalletIdentityTxnsWithNoncesAndFees({
+	// 	txns,
+	// 	identityAddr,
+	// 	provider,
+	// 	Identity: IdentityPayable,
+	// 	account,
+	// 	feeTokenAddr,
+	// })
 
 	return {
-		txnsWithNonceAndFees,
+		txns,
+		// txnsWithNonceAndFees,
 		amountToWithdrawBN,
 		//  tradeData
 	}
@@ -1047,7 +1049,8 @@ export async function walletWithdrawTransaction({
 
 	// Pre call to get fees
 	const {
-		txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
+		txns,
+		// txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
 		amountToWithdrawBN: _preAmountToWithdrawBN,
 	} = await getWithdrawTxns({
 		account,
@@ -1062,15 +1065,24 @@ export async function walletWithdrawTransaction({
 		// isFromETHToken,
 	})
 
-	const {
-		totalFeesBN: _preTotalFeesBN,
-		totalFeesFormatted: _preTotalFeesFormatted,
-	} = await getWalletIdentityTxnsTotalFees({
-		txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
+	const estimatedDatTxnsData = await getTxnsEstimationData({
+		// account,
+		txns,
+		feeTokenAddr: withdrawAssetAddr,
 	})
 
+	const {
+		success,
+		gasLimit,
+		gasPrice,
+		feeInUSD,
+		feesInFeeToken,
+	} = estimatedDatTxnsData
+
+	const totalFeesBN = feesInFeeToken['medium']
+
 	// TODO: unified function
-	const mainActionAmountBN = _preAmountToWithdrawBN.sub(_preTotalFeesBN)
+	const mainActionAmountBN = _preAmountToWithdrawBN.sub(totalFeesBN)
 	const mainActionAmountFormatted = formatTokenAmount(
 		mainActionAmountBN,
 		tokenData.decimals,
@@ -1081,7 +1093,7 @@ export async function walletWithdrawTransaction({
 	if (mainActionAmountBN.lt(ZERO)) {
 		throw new Error(
 			t('ERR_NO_BALANCE_FOR_FEES', {
-				args: [tokenData.symbol, _preTotalFeesFormatted],
+				args: [tokenData.symbol, totalFeesBN],
 			})
 		)
 	}
@@ -1098,14 +1110,6 @@ export async function walletWithdrawTransaction({
 		getMinAmountToSpend,
 		assetsDataRaw,
 		// isFromETHToken,
-	})
-
-	const {
-		totalFees,
-		totalFeesBN,
-		...rest
-	} = await getWalletIdentityTxnsTotalFees({
-		txnsWithNonceAndFees,
 	})
 
 	// NOTE: Use everywhere
@@ -1128,7 +1132,7 @@ export async function walletWithdrawTransaction({
 		totalAmountToSpendFormatted: amountToWithdraw, // Total amount out
 		mainActionAmountBN,
 		mainActionAmountFormatted,
-		...rest,
+		// ...rest,
 		actionMeta: {
 			withdrawAssetAddr,
 		},
