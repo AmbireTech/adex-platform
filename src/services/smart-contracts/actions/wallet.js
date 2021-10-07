@@ -1031,6 +1031,7 @@ async function getWithdrawTxns({
 
 	return {
 		txns,
+		feeTokenAddr,
 		// txnsWithNonceAndFees,
 		amountToWithdrawBN,
 		//  tradeData
@@ -1051,6 +1052,7 @@ export async function walletWithdrawTransaction({
 	const {
 		txns,
 		// txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
+		feeTokenAddr,
 		amountToWithdrawBN: _preAmountToWithdrawBN,
 	} = await getWithdrawTxns({
 		account,
@@ -1077,6 +1079,8 @@ export async function walletWithdrawTransaction({
 		gasPrice,
 		feeInUSD,
 		feesInFeeToken,
+		actionMinAmountBN,
+		actionMinAmountFormatted, // in ...rest
 	} = estimatedDatTxnsData
 
 	const totalFeesBN = feesInFeeToken['medium']
@@ -1124,9 +1128,9 @@ export async function walletWithdrawTransaction({
 		txnsWithNonceAndFees,
 		totalFeesBN,
 		// totalFeesFormatted, // in rest,
-		// feeTokenAddr, //in ..rest
-		// actionMinAmountBN, // in ...rest
-		// actionMinAmountFormatted, // in ...rest
+		feeTokenAddr, //in ..rest
+		actionMinAmountBN, // in ...rest
+		actionMinAmountFormatted, // in ...rest
 		spendTokenAddr: withdrawAssetAddr,
 		totalAmountToSpendBN: amountToWithdrawBN, // Total amount out
 		totalAmountToSpendFormatted: amountToWithdraw, // Total amount out

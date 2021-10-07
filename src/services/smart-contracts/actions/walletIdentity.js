@@ -562,31 +562,16 @@ export async function getWalletIdentityTxnsTotalFees({ txnsWithNonceAndFees }) {
 	} = txnsWithNonceAndFees.reduce(
 		(result, tx) => {
 			const {
-				feeAmount,
 				isDeployTx,
-				txEstimatedGasLimitBN,
 				calculatedOperationsCount,
 				calculatedGasPriceBN,
 				txnsData,
 			} = tx
 
-			const {
-				totalFeesBN,
-				txnsCount,
-				hasDeployTx,
-				totalEstimatedGasLimitBN,
-			} = result
-			result.totalFeesBN = totalFeesBN.add(feeAmount)
+			const { txnsCount, hasDeployTx } = result
 			result.txnsCount = txnsCount + 1
 			result.hasDeployTx = hasDeployTx || isDeployTx
-			result.totalEstimatedGasLimitBN = totalEstimatedGasLimitBN.add(
-				txEstimatedGasLimitBN
-			)
 			// It's the same for all txns
-			result.calculatedGasPriceBN =
-				result.calculatedGasPriceBN || calculatedGasPriceBN
-			result.calculatedOperationsCount =
-				result.calculatedOperationsCount + calculatedOperationsCount
 			result.txnsData.push(...txnsData)
 
 			return result
@@ -608,12 +593,11 @@ export async function getWalletIdentityTxnsTotalFees({ txnsWithNonceAndFees }) {
 		formatUnits(calculatedGasPriceBN, 'gwei')
 	)
 
-	const actionMinAmountBN = totalFeesBN.mul(1)
+	// const actionMinAmountBN = totalFeesBN.mul(1)
 
 	const txnsDataFormatted = txnsData.map(({ txAction }) => ({
 		txAction: {
 			...txAction,
-			gasCost: BigNumber.from(txAction.gasCost || '0').toString(),
 			txInnerActions: (txAction.txInnerActions || []).map(inner => ({
 				...inner,
 				gasCost: BigNumber.from(inner.gasCost || '0').toString(),
@@ -634,13 +618,13 @@ export async function getWalletIdentityTxnsTotalFees({ txnsWithNonceAndFees }) {
 		feeTokenAddr,
 		feeTokenSymbol: feeToken.symbol,
 		feeTokenDecimals: feeToken.decimals,
-		actionMinAmountBN,
-		actionMinAmountFormatted: formatTokenAmount(
-			actionMinAmountBN,
-			feeToken.decimals,
-			false,
-			feeToken.decimals
-		),
+		// actionMinAmountBN,
+		// actionMinAmountFormatted: formatTokenAmount(
+		// 	actionMinAmountBN,
+		// 	feeToken.decimals,
+		// 	false,
+		// 	feeToken.decimals
+		// ),
 		totalEstimatedGasLimitBN,
 		totalEstimatedGasLimitFormatted: totalEstimatedGasLimitBN.toString(),
 		calculatedGasPriceBN,
@@ -738,11 +722,20 @@ export async function getWalletApproveTxns({
 	return approveTxns
 }
 
+function getPriceInToken({ token, prices, priceInUSD }) {
+	const feeTokenPriceUSD = prices[token.symbol]['USD']
+	const floatAmount = (feeTokenPriceUSD * priceInUSD).toString()
+	const feeTokenAmount = parseUnits(floatAmount, token.decimals)
+
+	return feeTokenAmount
+}
+
 export async function getTxnsEstimationData({
 	// identityAddr,
 	txns,
 	feeTokenAddr,
 	account,
+	// mainCurrencyId = 'USD',
 }) {
 	const assets = getAssets()
 	const {
@@ -756,6 +749,7 @@ export async function getTxnsEstimationData({
 	// const { wallet, identity } = account
 	const identityAddr = selectAccountIdentityAddr()
 	const walletAddress = selectWalletAddress()
+	const prices = selectAssetsPrices()
 
 	const feeToken = assets[feeTokenAddr]
 	const isNative = feeToken.isETH || feeToken.isNative
@@ -831,11 +825,25 @@ export async function getTxnsEstimationData({
 		relayerURL: ADEX_RELAYER_HOST,
 	})
 
+	const { feeInUSD } = estimatedData
+
 	// TODO
 	estimatedData.feesInFeeToken = {
-		slow: '',
-		medium: '',
-		fast: '',
+		slow: getPriceInToken({
+			token: feeToken,
+			prices,
+			priceInUSD: feeInUSD.slow,
+		}),
+		medium: getPriceInToken({
+			token: feeToken,
+			prices,
+			priceInUSD: feeInUSD.medium,
+		}),
+		fast: getPriceInToken({
+			token: feeToken,
+			prices,
+			priceInUSD: feeInUSD.fast,
+		}),
 	}
 
 	console.log('estimatedData', estimatedData)
@@ -851,7 +859,50 @@ export async function getTxnsEstimationData({
 	// 	}
 	//   }
 
-	return estimatedData
+	// const fees = {
+	// 	totalFeesFormatted: formatTokenAmount(
+	// 		totalFeesBN,
+	// 		feeToken.decimals,
+	// 		false,
+	// 		feeToken.decimals
+	// 	),
+	// 	totalFeesBN,
+	// 	txnsCount,
+	// 	hasDeployTx,
+	// 	feeTokenAddr,
+	// 	feeTokenSymbol: feeToken.symbol,
+	// 	feeTokenDecimals: feeToken.decimals,
+	// 	actionMinAmountBN,
+	// 	actionMinAmountFormatted: formatTokenAmount(
+	// 		actionMinAmountBN,
+	// 		feeToken.decimals,
+	// 		false,
+	// 		feeToken.decimals
+	// 	),
+	// 	totalEstimatedGasLimitBN,
+	// 	totalEstimatedGasLimitFormatted: totalEstimatedGasLimitBN.toString(),
+	// 	calculatedGasPriceBN,
+	// 	calculatedGasPriceGWEI: formatUnits(
+	// 		calculatedGasPriceBN.toString(),
+	// 		'gwei'
+	// 	),
+	// 	calculatedOperationsCount,
+	// 	txnsData: txnsDataFormatted,
+	// }
+
+	const actionMinAmountBN = estimatedData.feesInFeeToken.medium
+	return {
+		...estimatedData,
+		actionMinAmountBN,
+		actionMinAmountFormatted: formatTokenAmount(
+			actionMinAmountBN,
+			feeToken.decimals,
+			false,
+			feeToken.decimals
+		),
+	}
+
+	const feesData = await getWalletIdentityTxnsTotalFees({})
 
 	// console.log('estimatedData', estimatedData)
 }
