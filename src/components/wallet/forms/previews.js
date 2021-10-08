@@ -7,6 +7,7 @@ import { t } from 'selectors'
 import { getLogo } from 'services/adex-wallet'
 import { getMainCurrencyValue } from 'helpers/wallet'
 import { isETHBasedToken } from 'services/adex-wallet'
+import { formatCurrencyValue } from 'helpers/formatters'
 
 const styles = theme => {
 	return {
@@ -58,9 +59,7 @@ const TokenRow = ({
 							<Box mr={0.5}>{amount}</Box>
 							{amountMainCurrency && !!mainCurrency && (
 								<Box mr={0.5} color='primary.main' fontSize='caption.fontSize'>
-									{mainCurrency.symbolPosition === 'left'
-										? `(${mainCurrency.symbol} ${amountMainCurrency})`
-										: `${amountMainCurrency} {${mainCurrency.symbol}}`}
+									{formatCurrencyValue(mainCurrency, amountMainCurrency)}
 								</Box>
 							)}
 						</Box>
