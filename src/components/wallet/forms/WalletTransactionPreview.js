@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import ErrorIcon from '@material-ui/icons/Error'
 import WarningIcon from '@material-ui/icons/Warning'
 import { Alert, AlertTitle } from '@material-ui/lab'
+import Dropdown from 'components/common/dropdown'
 import {
 	Box,
 	List,
@@ -35,14 +36,101 @@ import {
 	selectAccountStatsRaw,
 	selectMainCurrency,
 	selectBaseAssetsPrices,
+	// selectAssetsPrices, // TODO: use one of selectAssetsPrices/selectBaseAssetsPrices
 } from 'selectors'
-import { execute, checkNetworkCongestion } from 'actions'
+import { formatTokenAmount, formatCurrencyValue } from 'helpers/formatters'
+import { execute, checkNetworkCongestion, updateNewTransaction } from 'actions'
 
 import { HelpSharp as HelpIcon } from '@material-ui/icons'
 import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
 import { getMainCurrencyValue } from 'helpers/wallet'
 import { isETHBasedToken } from 'services/adex-wallet'
 const useStyles = makeStyles(styles)
+
+// TODO: translate
+const speedSource = [
+	{
+		value: 'slow',
+		label: `slow`,
+	},
+	{
+		value: 'medium',
+		label: `medium`,
+	},
+	{
+		value: 'fast',
+		label: `fast`,
+	},
+]
+
+function getFeeDataLabel({
+	// feeInUSD,
+	txSpeed,
+	feeInFeeToken,
+	feeToken,
+	mainCurrency,
+	prices,
+}) {
+	const floatAmount = formatTokenAmount(
+		feeInFeeToken[txSpeed],
+		feeToken.decimals,
+		false,
+		feeToken.decimals
+	)
+	const feeMainCurrencyValue = getMainCurrencyValue({
+		asset: feeToken.symbol,
+		floatAmount,
+		prices,
+		mainCurrency,
+	})
+
+	return `${formatCurrencyValue(
+		mainCurrency,
+		feeMainCurrencyValue
+	)} (${floatAmount} ${feeToken.symbol})`
+}
+
+const TransactionSpeedSelect = ({ txId, mainCurrency, prices }) => {
+	const { feesData = {}, txSpeed = 'slow' } = useSelector(state =>
+		selectNewTransactionById(state, txId)
+	)
+
+	const {
+		// feeInUSD,
+		feeToken,
+		feeInFeeToken,
+	} = feesData
+	return (
+		<Dropdown
+			required
+			fullWidth
+			size='small'
+			variant='outlined'
+			name='selectTxSpeed'
+			label={t('SELECT_TX_SPEED')}
+			onChange={value =>
+				execute(
+					updateNewTransaction({
+						tx: txId,
+						key: 'txSpeed',
+						value,
+					})
+				)
+			}
+			source={speedSource}
+			value={txSpeed}
+			htmlId='select-tx-speed'
+			// error={userSide && !!userSide.dirty}
+			helperText={getFeeDataLabel({
+				txSpeed,
+				feeInFeeToken,
+				feeToken,
+				mainCurrency,
+				prices,
+			})}
+		/>
+	)
+}
 
 function TransactionPreview(props) {
 	const classes = useStyles()
@@ -60,7 +148,11 @@ function TransactionPreview(props) {
 	} = useSelector(state => selectNewTransactionById(state, txId))
 	const [networkCongested, setNetworkCongested] = useState(false)
 	const { assetsData = {} } = useSelector(selectAccountStatsRaw)
-	const { totalFeesFormatted, feeTokenSymbol: dataFeeTokenSymbol } = feesData
+	const {
+		totalFeesFormatted,
+		feeToken,
+		// feeTokenSymbol: dataFeeTokenSymbol,
+	} = feesData
 	const prices = useSelector(selectBaseAssetsPrices)
 	const mainCurrency = useSelector(selectMainCurrency)
 
@@ -73,9 +165,9 @@ function TransactionPreview(props) {
 		  })
 		: false
 	const isToETHToken = toAsset ? isETHBasedToken({ address: toAsset }) : false
-	const { symbol } = assetsData[formAssetAddr] || {}
+	// const { symbol } = assetsData[formAssetAddr] || {}
 
-	const feeTokenSymbol = isFromETHToken ? symbol : dataFeeTokenSymbol
+	const feeTokenSymbol = feeToken.symbol //isFromETHToken ? symbol : dataFeeTokenSymbol
 
 	const feesMainCurrencyValue = getMainCurrencyValue({
 		asset: feeTokenSymbol,
@@ -143,6 +235,12 @@ function TransactionPreview(props) {
 									/>
 							  ))
 							: null}
+
+						<TransactionSpeedSelect
+							txId={txId}
+							mainCurrency={mainCurrency}
+							prices={prices}
+						/>
 
 						{stepsId === 'walletSwapForm' && (
 							<TradePreview
