@@ -1,4 +1,4 @@
-export const PRICES_API_URL = `https://api.coingecko.com/api/v3/simple/price?ids=adex,tether,weth,ethereum,usdt,usd-coin,wrapped-bitcoin,matic-network&vs_currencies=usd,eur,dai`
+export const PRICES_API_URL = `https://api.coingecko.com/api/v3/simple/price?ids=adex,tether,weth,ethereum,usdt,usd-coin,wrapped-bitcoin,matic-network,eur,usd&vs_currencies=usd,eur,dai`
 
 const toStatsValue = data => {
 	return Object.entries(data).reduce((value, [key, prices]) => {
