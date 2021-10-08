@@ -1045,6 +1045,7 @@ export async function walletWithdrawTransaction({
 	withdrawAssetAddr, //: useInputWithdrawAsset,
 	assetsDataRaw,
 	getMinAmountToSpend,
+	txSpeed,
 }) {
 	const tokenData = assetsDataRaw[withdrawAssetAddr]
 
@@ -1064,26 +1065,29 @@ export async function walletWithdrawTransaction({
 		tokenData,
 		getMinAmountToSpend,
 		assetsDataRaw,
+		txSpeed,
 		// isFromETHToken,
 	})
 
-	const estimatedDatTxnsData = await getTxnsEstimationData({
+	const estimatedFeesData = await getTxnsEstimationData({
 		// account,
 		txns,
 		feeTokenAddr: withdrawAssetAddr,
+		txSpeed,
 	})
 
-	const {
-		success,
-		gasLimit,
-		gasPrice,
-		feeInUSD,
-		feesInFeeToken,
-		actionMinAmountBN,
-		actionMinAmountFormatted, // in ...rest
-	} = estimatedDatTxnsData
+	// const {
+	// 	// success,
+	// 	// gasLimit,
+	// 	// gasPrice,
+	// 	// feeInUSD,
+	// 	// feeInFeeToken,
+	// 	// actionMinAmountBN,
+	// 	// actionMinAmountFormatted, // in ...rest
+	// 	// ...rest
+	// } = estimatedFeesData
 
-	const totalFeesBN = feesInFeeToken['medium']
+	const totalFeesBN = estimatedFeesData.feeInFeeToken[txSpeed]
 
 	// TODO: unified function
 	const mainActionAmountBN = _preAmountToWithdrawBN.sub(totalFeesBN)
@@ -1129,14 +1133,14 @@ export async function walletWithdrawTransaction({
 		totalFeesBN,
 		// totalFeesFormatted, // in rest,
 		feeTokenAddr, //in ..rest
-		actionMinAmountBN, // in ...rest
-		actionMinAmountFormatted, // in ...rest
+		// actionMinAmountBN, // in ...rest
+		// actionMinAmountFormatted, // in ...rest
 		spendTokenAddr: withdrawAssetAddr,
 		totalAmountToSpendBN: amountToWithdrawBN, // Total amount out
 		totalAmountToSpendFormatted: amountToWithdraw, // Total amount out
 		mainActionAmountBN,
 		mainActionAmountFormatted,
-		// ...rest,
+		...estimatedFeesData,
 		actionMeta: {
 			withdrawAssetAddr,
 		},
