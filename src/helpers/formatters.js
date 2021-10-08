@@ -145,3 +145,9 @@ export const timeSinceEpoch = (
 		return [days, days > 1 ? 'DAYS' : 'DAY']
 	}
 }
+
+export const formatCurrencyValue = (currency, value) => {
+	return currency.symbolPosition === 'left'
+		? `${currency.symbol}${value}`
+		: `${value}{${currency.symbol}}`
+}
