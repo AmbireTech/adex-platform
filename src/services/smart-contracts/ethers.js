@@ -3,7 +3,11 @@ import detectEthereumProvider from '@metamask/detect-provider'
 import { contracts } from './contractsCfg'
 import { contractsAddressesByNetwork } from './contractsCfgByNetwork'
 import { AUTH_TYPES } from 'constants/misc'
-import { selectNetwork, selectAuthType } from 'selectors'
+import {
+	selectNetwork,
+	selectAuthType,
+	selectNetworkByChainId,
+} from 'selectors'
 
 // ethers.errors.setLogLevel('error')
 
@@ -104,14 +108,15 @@ const getUniQuoterV3 = (provider, networkId) => {
 	return uniQuoterV3
 }
 
-const getEthersResult = (provider, networkConfig) => {
+const getEthersResult = (provider, networkId) => {
 	// const adexCore = getAdexCore(provider)
 	// const mainToken = getMainToken(provider)
 	// const identityFactory = getIdentityFactory(provider)
-	const walletZapper = getWalletZapper(provider, networkConfig)
-	const uniV2 = getUniRouterV2(provider, networkConfig)
-	const uniV3 = getUniRouterV3(provider, networkConfig)
-	const quoterV3 = getUniQuoterV3(provider, networkConfig)
+
+	const walletZapper = getWalletZapper(provider, networkId)
+	const uniV2 = getUniRouterV2(provider, networkId)
+	const uniV3 = getUniRouterV3(provider, networkId)
+	const quoterV3 = getUniQuoterV3(provider, networkId)
 
 	const results = {
 		provider,
@@ -232,8 +237,11 @@ const injectedWeb3Provider = async () => {
 			await connectMetaMask(ethereum)
 
 			const provider = new providers.Web3Provider(ethereum)
+			const providerNetwork = await provider.getNetwork()
+			const { chainId } = providerNetwork
+			const networkId = selectNetworkByChainId(null, chainId)
 
-			return getEthersResult(provider)
+			return getEthersResult(provider, networkId)
 		} catch (err) {
 			console.error('Err getting injected ethereum.', err)
 			throw new Error(err.message)
@@ -249,12 +257,12 @@ const getEthersReadOnly = () => {
 	return getLocalWeb3Provider()
 }
 
-const getEthers = () => {
+const getEthers = authType => {
 	/* NOTE: use Promise wrapper because despite getWeb3 is Promise itself it is not called by user action
 	 *   and this results in Trezor popup block by the browser
 	 */
 
-	const mode = selectAuthType()
+	const mode = authType || selectAuthType()
 
 	if (mode === AUTH_TYPES.METAMASK.name) {
 		return injectedWeb3Provider()
