@@ -424,10 +424,12 @@ export function validateWalletWithdraw({
 		}
 		const state = getState()
 		const account = selectAccount(state)
-		const { amountToWithdraw, withdrawTo, temp } = selectNewTransactionById(
-			state,
-			stepsId
-		)
+		const {
+			amountToWithdraw,
+			withdrawTo,
+			temp,
+			txSpeed = 'slow',
+		} = selectNewTransactionById(state, stepsId)
 		const { assetsData = {} } = selectAccountStatsRaw(state)
 		const { withdrawAsset } = stepsProps
 		const { decimals: tokenDecimals } = assetsData[withdrawAsset]
@@ -488,6 +490,7 @@ export function validateWalletWithdraw({
 					withdrawTo,
 					withdrawAssetAddr: withdrawAsset,
 					assetsDataRaw: assetsData,
+					txSpeed,
 				})
 
 			isValid = await handleWalletTxnsAndFeesData({
