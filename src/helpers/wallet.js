@@ -6,5 +6,5 @@ export const getMainCurrencyValue = ({
 }) => {
 	const price = (prices[asset] || {})[mainCurrency.id || mainCurrency] || 0
 	const value = parseFloat(floatAmount) * price
-	return value.toFixed(2)
+	return value.toFixed(4)
 }
