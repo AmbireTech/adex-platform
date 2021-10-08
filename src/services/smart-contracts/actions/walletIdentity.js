@@ -724,7 +724,7 @@ export async function getWalletApproveTxns({
 
 function getPriceInToken({ token, prices, priceInUSD }) {
 	const feeTokenPriceUSD = prices[token.symbol]['USD']
-	const floatAmount = (feeTokenPriceUSD * priceInUSD).toString()
+	const floatAmount = (feeTokenPriceUSD * priceInUSD).toFixed(token.decimals)
 	const feeTokenAmount = parseUnits(floatAmount, token.decimals)
 
 	return feeTokenAmount
@@ -736,6 +736,7 @@ export async function getTxnsEstimationData({
 	feeTokenAddr,
 	account,
 	// mainCurrencyId = 'USD',
+	txSpeed = 'slow',
 }) {
 	const assets = getAssets()
 	const {
@@ -743,7 +744,10 @@ export async function getTxnsEstimationData({
 		// gasPriceCap,
 		feeCollector,
 	} = selectRelayerConfig()
-	const { provider, IdentityPayable } = await getEthersReadOnly()
+	const {
+		provider,
+		//  IdentityPayable
+	} = await getEthersReadOnly()
 	const network = selectNetwork().id
 
 	// const { wallet, identity } = account
@@ -828,7 +832,7 @@ export async function getTxnsEstimationData({
 	const { feeInUSD } = estimatedData
 
 	// TODO
-	estimatedData.feesInFeeToken = {
+	estimatedData.feeInFeeToken = {
 		slow: getPriceInToken({
 			token: feeToken,
 			prices,
@@ -845,8 +849,6 @@ export async function getTxnsEstimationData({
 			priceInUSD: feeInUSD.fast,
 		}),
 	}
-
-	console.log('estimatedData', estimatedData)
 
 	// {
 	// 	"success": true,
@@ -890,10 +892,11 @@ export async function getTxnsEstimationData({
 	// 	txnsData: txnsDataFormatted,
 	// }
 
-	const actionMinAmountBN = estimatedData.feesInFeeToken.medium
+	const actionMinAmountBN = estimatedData.feeInFeeToken[txSpeed]
 	return {
 		...estimatedData,
 		actionMinAmountBN,
+		feeToken,
 		actionMinAmountFormatted: formatTokenAmount(
 			actionMinAmountBN,
 			feeToken.decimals,
@@ -902,7 +905,6 @@ export async function getTxnsEstimationData({
 		),
 	}
 
+	// TODO: get this data here
 	const feesData = await getWalletIdentityTxnsTotalFees({})
-
-	// console.log('estimatedData', estimatedData)
 }
