@@ -21,6 +21,18 @@ export const selectNetwork = state => {
 	}
 }
 
+export const selectNetworkByChainId = createCachedSelector(
+	selectRelayerConfig,
+	(_state, chainId) => chainId,
+	({ networks }, chainId) => {
+		const id = (Object.entries(networks).find(
+			([_key, x]) => x.chainId === chainId
+		) || [])[0]
+
+		return id
+	}
+)((_state, chainId) => chainId)
+
 // - relayer cfg
 // network,
 // feeTokenWhitelist:
