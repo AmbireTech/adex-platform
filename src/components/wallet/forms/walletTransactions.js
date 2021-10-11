@@ -142,6 +142,14 @@ export const WithdrawAsset = props => (
 				title: 'PREVIEW_WALLET',
 				completeBtnTitle: 'PROCEED',
 				component: TransactionPreview,
+				validationFn: props => {
+					execute(validateWalletWithdraw(props))
+					// ReactGA.event({
+					// 	action: 'wallet',
+					// 	category: 'withdraw',
+					// 	label: 'continue',
+					// })
+				},
 				completeFn: props =>
 					execute(
 						completeTx({
