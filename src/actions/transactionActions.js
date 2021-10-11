@@ -37,8 +37,8 @@ import { validate } from './validationActions'
 
 // MEMORY STORAGE
 export function updateNewTransaction({ tx, key, value }) {
-	return function(dispatch) {
-		return dispatch({
+	return async function(dispatch) {
+		await dispatch({
 			type: types.UPDATE_NEW_TRANSACTION,
 			tx: tx,
 			key: key,

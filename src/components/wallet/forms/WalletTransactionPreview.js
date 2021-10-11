@@ -90,11 +90,14 @@ function getFeeDataLabel({
 	)} (${floatAmount} ${feeToken.symbol})`
 }
 
-const TransactionSpeedSelect = ({ txId, mainCurrency, prices }) => {
-	const { feesData = {}, txSpeed = 'slow' } = useSelector(state =>
-		selectNewTransactionById(state, txId)
-	)
-
+const TransactionSpeedSelect = ({
+	// txId,
+	feesData,
+	txSpeed,
+	mainCurrency,
+	prices,
+	onTxSpeedChange,
+}) => {
 	const {
 		// feeInUSD,
 		feeToken,
@@ -108,15 +111,7 @@ const TransactionSpeedSelect = ({ txId, mainCurrency, prices }) => {
 			variant='outlined'
 			name='selectTxSpeed'
 			label={t('SELECT_TX_SPEED')}
-			onChange={value =>
-				execute(
-					updateNewTransaction({
-						tx: txId,
-						key: 'txSpeed',
-						value,
-					})
-				)
-			}
+			onChange={onTxSpeedChange}
 			source={speedSource}
 			value={txSpeed}
 			htmlId='select-tx-speed'
@@ -134,7 +129,13 @@ const TransactionSpeedSelect = ({ txId, mainCurrency, prices }) => {
 
 function TransactionPreview(props) {
 	const classes = useStyles()
-	const { previewWarnMsgs, stepsId } = props
+	const {
+		previewWarnMsgs,
+		stepsId,
+		validateId,
+		validationFn,
+		stepsProps,
+	} = props
 	const txId = stepsId
 	const account = useSelector(selectAccount)
 	const spinner = useSelector(state => selectSpinnerById(state, stepsId))
@@ -145,8 +146,12 @@ function TransactionPreview(props) {
 		withdrawTo,
 		fromAsset,
 		toAsset,
+		txSpeed,
 	} = useSelector(state => selectNewTransactionById(state, txId))
-	const [networkCongested, setNetworkCongested] = useState(false)
+	const [
+		networkCongested,
+		// setNetworkCongested
+	] = useState(false)
 	const { assetsData = {} } = useSelector(selectAccountStatsRaw)
 	const {
 		totalFeesFormatted,
@@ -176,17 +181,36 @@ function TransactionPreview(props) {
 		mainCurrency,
 	})
 
-	useEffect(() => {
-		async function checkNetwork() {
-			const msg = await execute(checkNetworkCongestion())
+	const onTxSpeedChange = async value => {
+		await execute(
+			updateNewTransaction({
+				tx: txId,
+				key: 'txSpeed',
+				value,
+			})
+		)
 
-			if (msg) {
-				setNetworkCongested(msg)
-			}
-		}
+		if (validationFn) {
+			validationFn({
+				stepsId,
+				validateId,
+				dirty: true,
+				stepsProps,
+			})
+		} else console.error('wallet tx preview - no validation fn provided')
+	}
 
-		checkNetwork()
-	}, [])
+	// useEffect(() => {
+	// 	async function checkNetwork() {
+	// 		const msg = await execute(checkNetworkCongestion())
+
+	// 		if (msg) {
+	// 			setNetworkCongested(msg)
+	// 		}
+	// 	}
+
+	// 	checkNetwork()
+	// }, [])
 
 	return (
 		<div>
@@ -237,9 +261,11 @@ function TransactionPreview(props) {
 							: null}
 
 						<TransactionSpeedSelect
-							txId={txId}
+							feesData={feesData}
+							txSpeed={txSpeed}
 							mainCurrency={mainCurrency}
 							prices={prices}
+							onTxSpeedChange={onTxSpeedChange}
 						/>
 
 						{stepsId === 'walletSwapForm' && (

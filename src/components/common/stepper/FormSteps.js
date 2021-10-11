@@ -17,13 +17,15 @@ function FormSteps({
 	const { step = 0 } = useSelector(selectLocationQuery)
 
 	useEffect(() => {
-		const updatedSteps = steps.map((s, index) => ({
+		const updatedSteps = steps.map(({ validationFn, ...s }, index) => ({
 			...s,
+			validationFn,
 			stepsId,
 			title: t(s.title, { args: s.title.args || [] }),
 			cancelFunction,
 			props: {
 				...rest,
+				validationFn,
 				stepsId,
 				validateId: stepsId + '-' + index,
 				stepsProps,

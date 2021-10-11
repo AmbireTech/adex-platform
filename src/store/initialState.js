@@ -59,7 +59,7 @@ let initialState = {
 	network: {},
 	validations: {},
 	newTransactions: {
-		default: {},
+		default: { txSpeed: 'medium' },
 	},
 	web3Transactions: {},
 	targeting: {
