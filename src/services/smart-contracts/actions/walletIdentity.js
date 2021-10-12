@@ -736,8 +736,11 @@ export async function getTxnsEstimationData({
 	feeTokenAddr,
 	account,
 	// mainCurrencyId = 'USD',
-	txSpeed = 'slow',
+	txSpeed,
 }) {
+	if (!txSpeed) {
+		throw new Error('getTxnsEstimationData - txSpeed not provided')
+	}
 	const assets = getAssets()
 	const {
 		// gasPriceRatio = 1.07,
@@ -831,8 +834,7 @@ export async function getTxnsEstimationData({
 
 	const { feeInUSD } = estimatedData
 
-	// TODO
-	estimatedData.feeInFeeToken = {
+	const feeInFeeToken = {
 		slow: getPriceInToken({
 			token: feeToken,
 			prices,
@@ -849,6 +851,31 @@ export async function getTxnsEstimationData({
 			priceInUSD: feeInUSD.fast,
 		}),
 	}
+
+	const feeInFeeTokenFormatted = {
+		slow: formatTokenAmount(
+			feeInFeeToken.slow,
+			feeToken.decimals,
+			false,
+			feeToken.decimals
+		),
+		medium: formatTokenAmount(
+			feeInFeeToken.medium,
+			feeToken.decimals,
+			false,
+			feeToken.decimals
+		),
+		fast: formatTokenAmount(
+			feeInFeeToken.fast,
+			feeToken.decimals,
+			false,
+			feeToken.decimals
+		),
+	}
+
+	estimatedData.feeInFeeToken = feeInFeeToken
+	estimatedData.feeInFeeTokenFormatted = feeInFeeTokenFormatted
+	estimatedData.gasPriceGWEI = formatUnits(estimatedData.gasPrice, 'gwei')
 
 	// {
 	// 	"success": true,
@@ -906,5 +933,5 @@ export async function getTxnsEstimationData({
 	}
 
 	// TODO: get this data here
-	const feesData = await getWalletIdentityTxnsTotalFees({})
+	// const feesData = await getWalletIdentityTxnsTotalFees({})
 }
