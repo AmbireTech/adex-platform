@@ -59,7 +59,7 @@ const TokenRow = ({
 							<Box mr={0.5}>{amount}</Box>
 							{amountMainCurrency && !!mainCurrency && (
 								<Box mr={0.5} color='primary.main' fontSize='caption.fontSize'>
-									{formatCurrencyValue(mainCurrency, amountMainCurrency)}
+									{`(${formatCurrencyValue(mainCurrency, amountMainCurrency)})`}
 								</Box>
 							)}
 						</Box>
@@ -111,11 +111,11 @@ export const DiversifyPreview = ({
 
 	return (
 		<Box>
-			<Box p={1}>
+			{/* <Box p={1}>
 				<Alert variant='filled' severity='info'>
 					{t('WALLET_FEES_INFO_SWAP')}
 				</Alert>
-			</Box>
+			</Box> */}
 			<PropRow
 				key='fromAsset'
 				left={t('From')}
@@ -231,11 +231,11 @@ export const TradePreview = ({
 	})
 	return (
 		<Box>
-			<Box p={1}>
+			{/* <Box p={1}>
 				<Alert variant='filled' severity='info'>
 					{t('WALLET_FEES_INFO_SWAP')}
 				</Alert>
-			</Box>
+			</Box> */}
 			<PropRow
 				key='fromAsset'
 				left={t('SWAP_FROM')}
@@ -289,6 +289,8 @@ export const WithdrawPreview = ({
 	assetsData,
 	prices,
 	mainCurrency,
+	totalFeesFormatted,
+	feeTokenSymbol,
 }) => {
 	const classes = useStyles()
 	const { symbol, name } = assetsData[feesData.spendTokenAddr] || {}
@@ -302,11 +304,11 @@ export const WithdrawPreview = ({
 
 	return (
 		<Box>
-			<Box p={1}>
+			{/* <Box p={1}>
 				<Alert variant='filled' severity='info'>
 					{t('WALLET_FEES_INFO_SWAP')}
 				</Alert>
-			</Box>
+			</Box> */}
 
 			<PropRow
 				key='withdrawTo'
@@ -335,8 +337,8 @@ export const WithdrawPreview = ({
 							mainCurrency,
 							secondary: t('AMOUNT_WITHDRAW_INFO', {
 								args: [
-									feesData.totalFeesFormatted,
-									feesData.feeTokenSymbol,
+									totalFeesFormatted,
+									feeTokenSymbol,
 									feesData.mainActionAmountFormatted,
 									symbol,
 								],

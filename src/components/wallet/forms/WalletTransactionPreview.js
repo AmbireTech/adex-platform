@@ -36,10 +36,15 @@ import {
 	selectAccountStatsRaw,
 	selectMainCurrency,
 	selectBaseAssetsPrices,
+	selectNetwork,
 	// selectAssetsPrices, // TODO: use one of selectAssetsPrices/selectBaseAssetsPrices
 } from 'selectors'
 import { formatTokenAmount, formatCurrencyValue } from 'helpers/formatters'
-import { execute, checkNetworkCongestion, updateNewTransaction } from 'actions'
+import {
+	execute,
+	// checkNetworkCongestion,
+	updateNewTransaction,
+} from 'actions'
 
 import { HelpSharp as HelpIcon } from '@material-ui/icons'
 import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
@@ -139,6 +144,7 @@ function TransactionPreview(props) {
 	const txId = stepsId
 	const account = useSelector(selectAccount)
 	const spinner = useSelector(state => selectSpinnerById(state, stepsId))
+	const { networkName } = selectNetwork()
 	const {
 		waitingForWalletAction,
 		feesData = {},
@@ -154,7 +160,7 @@ function TransactionPreview(props) {
 	] = useState(false)
 	const { assetsData = {} } = useSelector(selectAccountStatsRaw)
 	const {
-		totalFeesFormatted,
+		feeInFeeTokenFormatted,
 		feeToken,
 		// feeTokenSymbol: dataFeeTokenSymbol,
 	} = feesData
@@ -173,6 +179,7 @@ function TransactionPreview(props) {
 	// const { symbol } = assetsData[formAssetAddr] || {}
 
 	const feeTokenSymbol = feeToken.symbol //isFromETHToken ? symbol : dataFeeTokenSymbol
+	const totalFeesFormatted = feeInFeeTokenFormatted[txSpeed]
 
 	const feesMainCurrencyValue = getMainCurrencyValue({
 		asset: feeTokenSymbol,
@@ -260,13 +267,20 @@ function TransactionPreview(props) {
 							  ))
 							: null}
 
-						<TransactionSpeedSelect
-							feesData={feesData}
-							txSpeed={txSpeed}
-							mainCurrency={mainCurrency}
-							prices={prices}
-							onTxSpeedChange={onTxSpeedChange}
-						/>
+						<Box p={1}>
+							<Box pb={1}>
+								<TransactionSpeedSelect
+									feesData={feesData}
+									txSpeed={txSpeed}
+									mainCurrency={mainCurrency}
+									prices={prices}
+									onTxSpeedChange={onTxSpeedChange}
+								/>
+							</Box>
+							<Alert variant='filled' severity='info'>
+								{t('WALLET_FEES_INFO', { args: [networkName] })}
+							</Alert>
+						</Box>
 
 						{stepsId === 'walletSwapForm' && (
 							<TradePreview
@@ -297,6 +311,8 @@ function TransactionPreview(props) {
 									assetsData,
 									feesData,
 									withdrawTo,
+									totalFeesFormatted,
+									feeTokenSymbol,
 									symbol: feeTokenSymbol,
 								}}
 							/>
@@ -319,6 +335,7 @@ function TransactionPreview(props) {
 											<Box>
 												{t('WALLET_FEES_BREAKDOWN_ADVANCED_LABEL', {
 													args: [
+														networkName,
 														feesMainCurrencyValue,
 														mainCurrency.symbol,
 														totalFeesFormatted,
@@ -378,7 +395,7 @@ function TransactionPreview(props) {
 									<ListItem>
 										<ListItemText
 											secondary={t('FEE_DATA_TXNS_TOTAOL_GAS_LIMIT')}
-											primary={feesData.totalEstimatedGasLimitFormatted}
+											primary={feesData.gasLimit}
 										/>
 									</ListItem>
 									<ListItem>
