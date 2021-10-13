@@ -128,7 +128,14 @@ const paletteCommon = {
 	},
 	chartColors: {
 		main: primary,
-		all: ['#DDFF4E', '#3CCCC3', '#80FFDB', '#AA6AFF', '#6930C3'],
+		all: [
+			// '#DDFF4E',
+			'#AA6AFF',
+			'#3CCCC3',
+			'#80FFDB',
+
+			'#6930C3',
+		],
 	},
 }
 
