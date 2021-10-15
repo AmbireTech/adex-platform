@@ -28,7 +28,7 @@ export const getIdentityData = ({ identityAddr, networkId }) => {
 	const network = networkId || selectNetwork().id
 	return requester
 		.fetch({
-			route: `identity/${network}/${identityAddr}`,
+			route: `identity/${identityAddr}/${network}`,
 			method: 'GET',
 		})
 		.then(processResponse)
