@@ -238,7 +238,7 @@ export function login() {
 			} = selectIdentity(getState())
 
 			if (registerAccount) {
-				await regAccount({
+				const { success } = await regAccount({
 					owner: wallet.address,
 					email: email.toLowerCase(),
 					knowFrom,
@@ -246,20 +246,23 @@ export function login() {
 					moreInfo,
 					...identityTxData,
 				})
+
+				if (!success) {
+					throw new Error('No success on registering identity')
+				}
 			}
 
 			const relayerData =
 				(await getIdentityData({
 					identityAddr: identityData.address,
 				})) || {}
+
 			const identity = {
-				...identityData,
-				address: relayerData.deployData._id,
-				currentPrivileges: relayerData.currentPrivileges,
-				isLimitedVolume: relayerData.isLimitedVolume,
-				relayerData,
+				...relayerData,
+				address: relayerData._id,
 			}
-			if (identity.currentPrivileges[wallet.address] > 0) {
+
+			if (identity.currentPrivileges[wallet.address] === true) {
 				// TODO: fix it when platform use this
 				await createSessionWallet({
 					identity,
