@@ -153,6 +153,7 @@ function Dropdown(props) {
 										/>
 									)}
 									{src.label}
+									{src.balance}
 									{!!src.extraLabel && (
 										<Tooltip
 											arrow

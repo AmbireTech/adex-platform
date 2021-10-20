@@ -30,6 +30,7 @@ import {
 import { useSelector } from 'react-redux'
 import clsx from 'clsx'
 import WalletStats from './WalletStats'
+import WalletPrivileges from './WalletPrivileges'
 
 const walletStyles = theme => {
 	return {
@@ -167,6 +168,11 @@ function WalletDashboard(props) {
 						<Switch>
 							<Route exact path={'/dashboard/account'} component={Account} />
 							<Route exact path='/dashboard/' component={WalletStats} />
+							<Route
+								exact
+								path={'/dashboard/privileges'}
+								component={WalletPrivileges}
+							/>
 							<Route component={PageNotFound} />
 						</Switch>
 					</Box>

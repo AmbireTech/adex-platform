@@ -80,6 +80,11 @@ export const selectNetworkByChainId = createCachedSelector(
 
 // }
 
+export const selectFeeTokens = createSelector(
+	[selectRelayerConfig],
+	({ feeTokens }) => feeTokens
+)
+
 export const selectFeeTokenWhitelist = createSelector(
 	[selectRelayerConfig],
 	({ feeTokenWhitelist }) => {
