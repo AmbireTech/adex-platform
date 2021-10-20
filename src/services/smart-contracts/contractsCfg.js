@@ -50,14 +50,15 @@ export const contracts = {
 		abi: ERC20,
 	},
 	ADXLoyaltyPoolToken: {
-		// address: process.env.ADDR_ADX_LOYALTY_POOL_TOKEN_ADDR,
+		// TODO: get ti from contrcts cfb by network
+		address: process.env.ADDR_ADX_LOYALTY_POOL_TOKEN_ADDR,
 		abi: ADXLoyaltyPoolTokenABI,
 		decimalsMultiplier: 1e18,
 		symbol: 'ADX-LOYALTY',
 		decimals: 18,
 	},
 	ADXToken: {
-		// address: process.env.ADX_TOKEN_ADDR,
+		address: process.env.ADX_TOKEN_ADDR,
 		abi: ERC20,
 		symbol: 'ADX',
 		decimals: 18,

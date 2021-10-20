@@ -112,7 +112,7 @@ const useStyles = makeStyles(theme => {
 			marginBottom: `${theme.spacing(2)}px`,
 		},
 		icon: {
-			height: 32,
+			height: 42,
 			width: 'auto',
 			maxWidth: '100%',
 			cursor: 'pointer',
@@ -136,8 +136,8 @@ const useStyles = makeStyles(theme => {
 			// match account btn
 			height: 42, // 42
 			display: 'flex',
-			flexDirection: 'column',
-			justifyContent: 'center',
+			flexDirection: 'row',
+			justifyContent: 'flex-start',
 		},
 	}
 })
@@ -290,7 +290,7 @@ function SideNav(props) {
 				</Box>
 			</Box>
 
-			<Box>
+			{/* <Box>
 				<Divider />
 				<ListItem>
 					<Box>
@@ -348,7 +348,7 @@ function SideNav(props) {
 						</div>
 					</Box>
 				</ListItem>
-			</Box>
+			</Box> */}
 		</Box>
 	)
 }

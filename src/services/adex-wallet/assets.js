@@ -11,22 +11,23 @@ const assetByNetwork = {
 }
 
 const getAssetsData = prop => {
-	const { id = 'ethereum' } = selectNetwork()
+	const { id } = selectNetwork()
+
 	return assetByNetwork[id][prop]
 }
 
 export const ETH_TOKENS = ['ETH', 'WETH', 'aETH', 'aWETH']
+
+export const getAssets = () => getAssetsData('assets')
+export const getTokens = () => getAssetsData('tokens')
+export const getLogos = () => getAssetsData('logos')
+export const getMappers = () => getAssetsData('mappers')
 
 export function isETHBasedToken({ address }) {
 	const assets = getAssets()
 	const token = assets[address]
 	return ETH_TOKENS.includes(token.symbol)
 }
-
-export const getAssets = () => getAssetsData('assets')
-export const getTokens = () => getAssetsData('tokens')
-export const getLogos = () => getAssetsData('logos')
-export const getMappers = () => getAssetsData('mappers')
 
 export const getLogo = addressOrSymbol => {
 	const logos = getLogos()

@@ -39,14 +39,16 @@ export async function getIdentityDeployData({ owner }) {
 		whitelistedFactories,
 		whitelistedBaseIdentities,
 		identityRecoveryAddr,
+		feeCollector,
 	} = selectRelayerConfig()
 
-	const identityFactoryAddr = whitelistedFactories[0]
-	const baseIdentityAddr = whitelistedBaseIdentities[0]
+	const identityFactoryAddr = whitelistedFactories[1]
+	const baseIdentityAddr = whitelistedBaseIdentities[1]
 
+	// TODO: quick account manager
 	const privileges = [
 		[owner, true],
-		[identityRecoveryAddr, true],
+		[identityRecoveryAddr || feeCollector, true],
 	]
 
 	const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, {
