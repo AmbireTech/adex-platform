@@ -6,7 +6,7 @@ import {
 	getMultipleTxSignatures,
 } from 'services/smart-contracts/actions/ethers'
 import { getAAVEInterestToken } from 'services/smart-contracts/actions/walletCommon'
-import { executeTx, getTransactionsEstimateData } from 'services/adex-relayer'
+import { executeTx } from 'services/adex-relayer'
 import ERC20TokenABI from 'services/smart-contracts/abi/ERC20Token'
 import { Bundle, signMsgHash } from 'adex-protocol-eth/js/Bundle'
 import {
@@ -803,20 +803,16 @@ export async function getTxnsEstimationData({
 
 	txns.push(estimateTxFee)
 
-	// console.log('allTxnss')
-
-	// const withNonces = await getWalletIdentityTxnsWithNoncesAndFees({
-	// 	txns,
-	// 	identityAddr,
-	// 	provider,
-	// 	Identity: IdentityPayable,
-	// 	feeTokenAddr,
-	// })
+	const bundleTxns = txns.map(({ to, value, data }) => [
+		to,
+		value === '0x' ? 0 : value || 0,
+		data || '0x',
+	])
 
 	const bundle = new Bundle({
 		identity: identityAddr,
 		network,
-		txns,
+		txns: bundleTxns,
 		signer: {
 			address: walletAddress,
 			// quickAccountManager: '',
@@ -832,7 +828,9 @@ export async function getTxnsEstimationData({
 		relayerURL: ADEX_RELAYER_HOST,
 	})
 
-	const { feeInUSD } = estimatedData
+	const { success, feeInUSD } = estimatedData
+
+	// TODO: handle err
 
 	const feeInFeeToken = {
 		slow: getPriceInToken({

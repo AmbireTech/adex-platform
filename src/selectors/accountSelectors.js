@@ -1,7 +1,7 @@
 import dateUtils from 'helpers/dateUtils'
 import { getState } from 'store'
 import { createSelector } from 'reselect'
-import { createDeepEqualSelector } from 'selectors'
+import { createDeepEqualSelector, selectNetwork } from 'selectors'
 import { utils } from 'ethers'
 
 export const selectAccountRaw = state =>
@@ -125,8 +125,8 @@ export const selectAccountIdentityAddr = createSelector(
 )
 
 export const selectAccountStats = createSelector(
-	selectAccount,
-	({ stats }) => stats || {}
+	[selectAccount, selectNetwork],
+	({ stats }, { id }) => stats[`stats-${id}`] || {}
 )
 
 export const selectAccountSettings = createSelector(

@@ -180,6 +180,7 @@ export function isAccountChanged(getState, account) {
 export function updateAccountStatsWallet() {
 	return async function(dispatch, getState) {
 		const account = selectAccount(getState())
+		const { id } = selectNetwork()
 		try {
 			const prices = await getPrices()
 			const { formatted, raw } = await getAccountStatsWallet({
@@ -190,7 +191,12 @@ export function updateAccountStatsWallet() {
 			if (!isAccountChanged(getState, account)) {
 				// TODO: new reducer for prices and stats?
 				await updateAccount({
-					newValues: { stats: { formatted, raw, prices } },
+					newValues: {
+						stats: {
+							...account.stats,
+							[`stats-${id}`]: { formatted, raw, prices },
+						},
+					},
 				})(dispatch)
 			}
 		} catch (err) {
@@ -547,6 +553,8 @@ async function isMetamaskMatters(getState) {
 	const searchParams = selectSearchParams(state)
 	const authType = selectAuthType(state)
 
+	console.log('authType', authType)
+
 	const doesItMatter =
 		authType === AUTH_TYPES.METAMASK.name ||
 		(!authType &&
@@ -562,6 +570,10 @@ export function onMetamaskNetworkChange({ id } = {}) {
 		const selectedNetwork = selectNetwork(getState())
 		const isMatters = await isMetamaskMatters(getState)
 		// But in the end, it doesn't even matter
+
+		console.log('onMetamaskNetworkChange', id)
+		console.log('isMatters', isMatters)
+		console.log('selectedNetwork', selectedNetwork)
 
 		if (
 			isMatters &&
@@ -831,17 +843,19 @@ export function beforeWeb3(validateId = '') {
 }
 
 export function updateNetwork(id) {
-	return function(dispatch, getState) {
+	return async function(dispatch, getState) {
 		const { networks } = selectRelayerConfig(getState())
 
 		console.log('networks', networks)
 
-		return dispatch({
+		await dispatch({
 			type: types.CHANGE_NETWORK,
 			network: {
 				id,
 				...networks[id],
 			},
 		})
+
+		updateAccountStatsWallet()(dispatch, getState)
 	}
 }

@@ -30,30 +30,36 @@ export const selectDiversifiableAssetsFromSources = createSelector(
 	[selectAccountStatsFormatted],
 	({ assetsData = {} }) => {
 		const tokens = getTokens()
-		return Object.values(assetsData)
+
+		const diversifiable = Object.values(assetsData)
 			.filter(x => {
 				if (!x.isSwappable) {
 					return false
 				}
 
-				const isFromETHToken = isETHBasedToken({ address: x.address })
-				const from = isFromETHToken ? tokens['WETH'] : x.address
+				// const isFromETHToken = isETHBasedToken({ address: x.address })
+				const from = x.address //  isFromETHToken ? tokens['WETH'] : x.address
 				// if (x.address === tokens['WETH']) {
 				// 	return true
 				// }
-				const { router, pools } = getPath({
-					from,
-					to: tokens['WETH'],
-				})
 
-				return router === 'uniV3' && pools && pools.length === 1
+				try {
+					const { router, pools } = getPath({
+						from,
+						to: tokens['WETH'],
+					})
+
+					return router === 'uniV3' && pools && pools.length === 1
+				} catch (err) {
+					console.log('err', err)
+				}
 			})
-
 			.map(x => ({
 				value: x.address,
 				label: `${x.symbol}`,
 				imgSrc: getLogo(x.address),
 			}))
+		return diversifiable
 	}
 )
 
