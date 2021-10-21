@@ -14,6 +14,7 @@ import {
 	getEthersReadOnly,
 } from 'services/smart-contracts/ethers'
 import {
+	t,
 	selectRelayerConfig,
 	selectAccountIdentityAddr,
 	selectAssetsPrices,
@@ -819,115 +820,124 @@ export async function getTxnsEstimationData({
 		},
 	})
 
-	const nonce = await bundle.getNonce(provider)
+	try {
+		const nonce = await bundle.getNonce(provider)
 
-	bundle.nonce = nonce
+		bundle.nonce = nonce
 
-	const estimatedData = await bundle.estimate({
-		fetch,
-		relayerURL: ADEX_RELAYER_HOST,
-	})
+		const estimatedData = await bundle.estimate({
+			fetch,
+			relayerURL: ADEX_RELAYER_HOST,
+		})
 
-	const { success, feeInUSD } = estimatedData
+		const { success, feeInUSD, message } = estimatedData
 
-	// TODO: handle err
+		if (!success) {
+			throw new Error(t('BUNDLE_ERR_ESTIMATE', { args: [message] }))
+		}
 
-	const feeInFeeToken = {
-		slow: getPriceInToken({
-			token: feeToken,
-			prices,
-			priceInUSD: feeInUSD.slow,
-		}),
-		medium: getPriceInToken({
-			token: feeToken,
-			prices,
-			priceInUSD: feeInUSD.medium,
-		}),
-		fast: getPriceInToken({
-			token: feeToken,
-			prices,
-			priceInUSD: feeInUSD.fast,
-		}),
-	}
+		// TODO: handle err
 
-	const feeInFeeTokenFormatted = {
-		slow: formatTokenAmount(
-			feeInFeeToken.slow,
-			feeToken.decimals,
-			false,
-			feeToken.decimals
-		),
-		medium: formatTokenAmount(
-			feeInFeeToken.medium,
-			feeToken.decimals,
-			false,
-			feeToken.decimals
-		),
-		fast: formatTokenAmount(
-			feeInFeeToken.fast,
-			feeToken.decimals,
-			false,
-			feeToken.decimals
-		),
-	}
+		const feeInFeeToken = {
+			slow: getPriceInToken({
+				token: feeToken,
+				prices,
+				priceInUSD: feeInUSD.slow,
+			}),
+			medium: getPriceInToken({
+				token: feeToken,
+				prices,
+				priceInUSD: feeInUSD.medium,
+			}),
+			fast: getPriceInToken({
+				token: feeToken,
+				prices,
+				priceInUSD: feeInUSD.fast,
+			}),
+		}
 
-	estimatedData.feeInFeeToken = feeInFeeToken
-	estimatedData.feeInFeeTokenFormatted = feeInFeeTokenFormatted
-	estimatedData.gasPriceGWEI = formatUnits(estimatedData.gasPrice, 'gwei')
+		const feeInFeeTokenFormatted = {
+			slow: formatTokenAmount(
+				feeInFeeToken.slow,
+				feeToken.decimals,
+				false,
+				feeToken.decimals
+			),
+			medium: formatTokenAmount(
+				feeInFeeToken.medium,
+				feeToken.decimals,
+				false,
+				feeToken.decimals
+			),
+			fast: formatTokenAmount(
+				feeInFeeToken.fast,
+				feeToken.decimals,
+				false,
+				feeToken.decimals
+			),
+		}
 
-	// {
-	// 	"success": true,
-	// 	"gasLimit": 218240,
-	// 	"gasPrice": 16105100000,
-	// 	"feeInUSD": {
-	// 	  "slow": 0.003985757145216,
-	// 	  "medium": 0.004871480955264001,
-	// 	  "fast": 0.0057572047653120005
-	// 	}
-	//   }
+		estimatedData.feeInFeeToken = feeInFeeToken
+		estimatedData.feeInFeeTokenFormatted = feeInFeeTokenFormatted
+		estimatedData.gasPriceGWEI = formatUnits(estimatedData.gasPrice, 'gwei')
 
-	// const fees = {
-	// 	totalFeesFormatted: formatTokenAmount(
-	// 		totalFeesBN,
-	// 		feeToken.decimals,
-	// 		false,
-	// 		feeToken.decimals
-	// 	),
-	// 	totalFeesBN,
-	// 	txnsCount,
-	// 	hasDeployTx,
-	// 	feeTokenAddr,
-	// 	feeTokenSymbol: feeToken.symbol,
-	// 	feeTokenDecimals: feeToken.decimals,
-	// 	actionMinAmountBN,
-	// 	actionMinAmountFormatted: formatTokenAmount(
-	// 		actionMinAmountBN,
-	// 		feeToken.decimals,
-	// 		false,
-	// 		feeToken.decimals
-	// 	),
-	// 	totalEstimatedGasLimitBN,
-	// 	totalEstimatedGasLimitFormatted: totalEstimatedGasLimitBN.toString(),
-	// 	calculatedGasPriceBN,
-	// 	calculatedGasPriceGWEI: formatUnits(
-	// 		calculatedGasPriceBN.toString(),
-	// 		'gwei'
-	// 	),
-	// 	calculatedOperationsCount,
-	// 	txnsData: txnsDataFormatted,
-	// }
+		// {
+		// 	"success": true,
+		// 	"gasLimit": 218240,
+		// 	"gasPrice": 16105100000,
+		// 	"feeInUSD": {
+		// 	  "slow": 0.003985757145216,
+		// 	  "medium": 0.004871480955264001,
+		// 	  "fast": 0.0057572047653120005
+		// 	}
+		//   }
 
-	const actionMinAmountBN = estimatedData.feeInFeeToken[txSpeed]
-	return {
-		...estimatedData,
-		actionMinAmountBN,
-		feeToken,
-		actionMinAmountFormatted: formatTokenAmount(
+		// const fees = {
+		// 	totalFeesFormatted: formatTokenAmount(
+		// 		totalFeesBN,
+		// 		feeToken.decimals,
+		// 		false,
+		// 		feeToken.decimals
+		// 	),
+		// 	totalFeesBN,
+		// 	txnsCount,
+		// 	hasDeployTx,
+		// 	feeTokenAddr,
+		// 	feeTokenSymbol: feeToken.symbol,
+		// 	feeTokenDecimals: feeToken.decimals,
+		// 	actionMinAmountBN,
+		// 	actionMinAmountFormatted: formatTokenAmount(
+		// 		actionMinAmountBN,
+		// 		feeToken.decimals,
+		// 		false,
+		// 		feeToken.decimals
+		// 	),
+		// 	totalEstimatedGasLimitBN,
+		// 	totalEstimatedGasLimitFormatted: totalEstimatedGasLimitBN.toString(),
+		// 	calculatedGasPriceBN,
+		// 	calculatedGasPriceGWEI: formatUnits(
+		// 		calculatedGasPriceBN.toString(),
+		// 		'gwei'
+		// 	),
+		// 	calculatedOperationsCount,
+		// 	txnsData: txnsDataFormatted,
+		// }
+
+		const actionMinAmountBN = estimatedData.feeInFeeToken[txSpeed]
+		return {
+			...estimatedData,
 			actionMinAmountBN,
-			feeToken.decimals,
-			false,
-			feeToken.decimals
-		),
+			feeToken,
+			actionMinAmountFormatted: formatTokenAmount(
+				actionMinAmountBN,
+				feeToken.decimals,
+				false,
+				feeToken.decimals
+			),
+			bundle,
+		}
+	} catch (err) {
+		throw new Error(err)
 	}
 
 	// TODO: get this data here
