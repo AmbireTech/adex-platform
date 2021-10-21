@@ -2,7 +2,10 @@ import { createSelector } from 'reselect'
 import { createCachedSelector } from 're-reselect'
 import dateUtils from 'helpers/dateUtils'
 import { selectAccountIdentityAddr } from './accountSelectors'
-import { SYNC_WEB3_DATA } from 'constants/spinners'
+import {
+	SYNC_WEB3_DATA,
+	UPDATING_DATA_ON_NETWORK_CHANGE,
+} from 'constants/spinners'
 
 const REGISTRATION_OPEN = false //process.env.REGISTRATION_OPEN === 'true'
 
@@ -128,6 +131,15 @@ export const selectInitialDataLoaded = createSelector(
 				'campaigns',
 				'advancedAnalytics',
 			].every(type => !!initialDataLoaded[type]))
+)
+
+export const selectNetworkChangeDataLoadingSpinner = state =>
+	selectSpinnerById(state, UPDATING_DATA_ON_NETWORK_CHANGE)
+
+export const selectWalletInitialDataLoaded = createSelector(
+	[selectMemoryUi, selectNetworkChangeDataLoadingSpinner],
+	({ initialDataLoaded = false }, updatingData = false) =>
+		initialDataLoaded === true && !updatingData
 )
 
 export const selectCampaignIdInDetails = createSelector(
