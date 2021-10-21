@@ -28,7 +28,7 @@ import {
 	selectLocation,
 	selectAccountIdentityAddr,
 	selectAccountStatsFormatted,
-	selectInitialDataLoaded,
+	selectWalletInitialDataLoaded,
 } from 'selectors'
 
 const RRListItem = withReactRouterLink(ListItem)
@@ -151,7 +151,7 @@ function SideNav(props) {
 
 	// TODO: test location
 	const location = routerLocation.pathname.split('/')[2]
-	const loaded = useSelector(selectInitialDataLoaded)
+	const loaded = useSelector(selectWalletInitialDataLoaded)
 	const { totalMainCurrenciesValues = {} } = useSelector(
 		selectAccountStatsFormatted
 	)
