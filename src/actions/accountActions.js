@@ -67,6 +67,7 @@ import {
 	QUICK_WALLET_BACKUP,
 	UPDATING_ACCOUNT_IDENTITY,
 	SYNC_WEB3_DATA,
+	UPDATING_DATA_ON_NETWORK_CHANGE,
 } from 'constants/spinners'
 import { campaignsLoop } from 'services/store-data/campaigns'
 import statsLoop from 'services/store-data/account'
@@ -842,20 +843,27 @@ export function beforeWeb3(validateId = '') {
 	}
 }
 
-export function updateNetwork(id) {
+export function updateNetwork(newId) {
 	return async function(dispatch, getState) {
-		const { networks } = selectRelayerConfig(getState())
+		const state = getState()
+		const { id } = selectNetwork(state)
 
-		console.log('networks', networks)
+		// NOTE: check here not in the reducer because of the stats update
+		if (newId !== id) {
+			updateSpinner(UPDATING_DATA_ON_NETWORK_CHANGE, true)(dispatch)
+			const { networks } = selectRelayerConfig(state)
+			// console.log('networks', networks)
 
-		await dispatch({
-			type: types.CHANGE_NETWORK,
-			network: {
-				id,
-				...networks[id],
-			},
-		})
+			await dispatch({
+				type: types.CHANGE_NETWORK,
+				network: {
+					id: newId,
+					...networks[newId],
+				},
+			})
 
-		updateAccountStatsWallet()(dispatch, getState)
+			await updateAccountStatsWallet()(dispatch, getState)
+			updateSpinner(UPDATING_DATA_ON_NETWORK_CHANGE, false)(dispatch)
+		}
 	}
 }
