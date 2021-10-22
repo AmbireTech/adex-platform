@@ -2,7 +2,7 @@ import { contracts } from 'services/smart-contracts/contractsCfg.js'
 import ADX_LOGO from 'resources/token-logos/ADX.png'
 // import WETH_LOGO from 'resources/token-logos/WETH.png'
 // import WBTC_LOGO from 'resources/token-logos/WBTC.png'
-// import USDT_LOGO from 'resources/token-logos/USDT.png'
+import USDT_LOGO from 'resources/token-logos/USDT.png'
 import USDC_LOGO from 'resources/token-logos/USDC.png'
 import WBTC_LOGO from 'resources/token-logos/WBTC.png'
 import ETH_LOGO from 'resources/token-logos/ETH.png'
@@ -277,19 +277,19 @@ const assets = {
 	// 	logoSrc: WBTC_LOGO,
 	// 	isStableCoin: true,
 	// },
-	[tokens.USDC]: {
+	[tokens.USDT]: {
 		symbol: 'USDT',
-		address: tokens.USDC,
+		address: tokens.USDT,
 		name: '(PoS) Tether USD',
 		getBalance: async function({ address }) {
-			return await getERC20Balance({ tokenAddress: tokens.USDC, address })
+			return await getERC20Balance({ tokenAddress: tokens.USDT, address })
 		},
 		isSwappable: true,
 		isBaseAsset: true,
 		// subAssets: [tokens.aUSDC],
 		subAssets: [],
 		decimals: 6,
-		logoSrc: USDC_LOGO,
+		logoSrc: USDT_LOGO,
 		isStableCoin: true,
 	},
 }
