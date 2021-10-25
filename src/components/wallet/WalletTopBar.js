@@ -34,7 +34,7 @@ import {
 	t,
 	selectAccount,
 	selectDashboardBreadcrumbs,
-	selectInitialDataLoaded,
+	selectWalletInitialDataLoaded,
 	selectProject,
 } from 'selectors'
 import { styles } from 'components/dashboard/dashboard/styles'
@@ -81,9 +81,9 @@ function TopNav({ handleDrawerToggle, side }) {
 	const walletClasses = useWalletStyles()
 	const project = useSelector(selectProject)
 	const account = useSelector(selectAccount)
-	const loaded = useSelector(selectInitialDataLoaded)
-	const imgSrc = getAuthLogo(account.wallet.authType)
-	const breadcrumbs = useSelector(selectDashboardBreadcrumbs)
+	const loaded = useSelector(selectWalletInitialDataLoaded)
+	// const imgSrc = getAuthLogo(account.wallet.authType)
+	// const breadcrumbs = useSelector(selectDashboardBreadcrumbs)
 	const btnMenuLabel =
 		account.wallet.authType === 'demo'
 			? t('DEMO_MODE')
