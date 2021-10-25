@@ -336,7 +336,7 @@ function SideNav(props) {
 				</Box>
 			</Box>
 
-			<Box>
+			{/* <Box>
 				<ListDivider />
 				<ListItem>
 					<Box>
@@ -394,7 +394,7 @@ function SideNav(props) {
 						</div>
 					</Box>
 				</ListItem>
-			</Box>
+			</Box> */}
 		</Box>
 	)
 }

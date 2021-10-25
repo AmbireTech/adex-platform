@@ -11,7 +11,7 @@ import { getLogo } from 'services/adex-wallet'
 import clsx from 'clsx'
 import {
 	t,
-	selectInitialDataLoaded,
+	selectWalletInitialDataLoaded,
 	selectWalletAssetsTableData,
 } from 'selectors'
 import { useTableData } from 'components/dashboard/containers/Tables/tableHooks'
@@ -272,7 +272,7 @@ const getOptions = ({ classes }) => ({
 
 function WalletAssetsTable(props) {
 	const classes = useStyles()
-	const itemsLoaded = useSelector(selectInitialDataLoaded)
+	const itemsLoaded = useSelector(selectWalletInitialDataLoaded)
 	const mainCurrency = useSelector(selectMainCurrency)
 
 	const [options, setOptions] = useState({})

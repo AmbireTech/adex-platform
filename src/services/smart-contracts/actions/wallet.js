@@ -1072,7 +1072,7 @@ export async function walletWithdrawTransaction({
 	const estimatedFeesData = await getTxnsEstimationData({
 		// account,
 		txns,
-		feeTokenAddr: withdrawAssetAddr,
+		feeTokenAddr,
 		txSpeed,
 	})
 
@@ -1107,7 +1107,11 @@ export async function walletWithdrawTransaction({
 	}
 
 	// Actual call with fees pre calculated
-	const { txnsWithNonceAndFees, amountToWithdrawBN } = await getWithdrawTxns({
+	const {
+		txns: txnsWithFee,
+		amountToWithdrawBN,
+		// txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
+	} = await getWithdrawTxns({
 		account,
 		amountToWithdraw,
 		amountToWithdrawAfterFeesCalcBN: mainActionAmountBN,
@@ -1128,8 +1132,15 @@ export async function walletWithdrawTransaction({
 	// !!!!! mainActionAmountBN - use tis amount when calling functions for signatures
 	// actionMinAmountBN - should be more than 2x fees
 
+	const { bundle, ...estimatedFeesDataWithFees } = await getTxnsEstimationData({
+		// account,
+		txns: txnsWithFee,
+		feeTokenAddr,
+		txSpeed,
+	})
+
 	return {
-		txnsWithNonceAndFees,
+		estimatedFeesDataWithFees,
 		totalFeesBN,
 		// totalFeesFormatted, // in rest,
 		feeTokenAddr, //in ..rest
@@ -1140,7 +1151,8 @@ export async function walletWithdrawTransaction({
 		totalAmountToSpendFormatted: amountToWithdraw, // Total amount out
 		mainActionAmountBN,
 		mainActionAmountFormatted,
-		...estimatedFeesData,
+		bundle,
+		...estimatedFeesDataWithFees,
 		actionMeta: {
 			withdrawAssetAddr,
 		},
