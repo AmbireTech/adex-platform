@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import {
@@ -21,7 +21,6 @@ import {
 	selectValidationsById,
 	selectNewTransactionById,
 	selectWeb3SyncSpinnerByValidateId,
-	selectFeeTokensBalance,
 } from 'selectors'
 import { execute, updateNewTransaction } from 'actions'
 import { Alert } from '@material-ui/lab'
@@ -36,7 +35,7 @@ const PRIV_LEVELS_SRC = Object.values(IdentityPrivilegeLevel).map(value => {
 	}
 })
 
-function WalletSeAddressPrivilege({ stepsId, validateId } = {}) {
+function SetAddressPrivilege({ stepsId, validateId } = {}) {
 	const {
 		setAddr,
 		privLevel,
@@ -55,8 +54,6 @@ function WalletSeAddressPrivilege({ stepsId, validateId } = {}) {
 		selectWeb3SyncSpinnerByValidateId(state, validateId)
 	)
 
-	const feeTokensNew = useSelector(selectFeeTokensBalance)
-
 	return (
 		<ContentBox>
 			{syncSpinner ? (
@@ -68,7 +65,7 @@ function WalletSeAddressPrivilege({ stepsId, validateId } = {}) {
 				<ContentBody>
 					<Box mb={2}>
 						<Typography variant='subtitle1' display='block'>
-							{t('SET_IDENTITY_PRIVILEGE_MAIN_INFO') + 'TEST'}:
+							{t('SET_IDENTITY_PRIVILEGE_MAIN_INFO')}:
 						</Typography>
 					</Box>
 					<Box mb={2}>
@@ -110,34 +107,6 @@ function WalletSeAddressPrivilege({ stepsId, validateId } = {}) {
 							}
 							source={PRIV_LEVELS_SRC}
 							value={typeof privLevel === 'number' ? privLevel : ''}
-							htmlId='label-privLevel'
-							fullWidth
-							error={errPrivLvl && !!errPrivLvl.dirty}
-							helperText={
-								errPrivLvl && !!errPrivLvl.dirty
-									? errPrivLvl.errMsg
-									: t('SELECT_PRIV_LEVEL_HELPER_TXT')
-							}
-						/>
-					</Box>
-					<Box mb={2}>
-						<Dropdown
-							required
-							variant='outlined'
-							// TODO: Add missing translations
-							label={t('SELECT_FEE_TOKEN_LABEL')}
-							// helperText={t('SELECT_PRIV_LEVEL_HELPER_TXT')}
-							onChange={val =>
-								execute(
-									updateNewTransaction({
-										tx: stepsId,
-										key: 'feeTokenAddr',
-										value: val,
-									})
-								)
-							}
-							source={feeTokensNew}
-							value={feeTokensNew[0]}
 							htmlId='label-privLevel'
 							fullWidth
 							error={errPrivLvl && !!errPrivLvl.dirty}
@@ -205,10 +174,10 @@ function WalletSeAddressPrivilege({ stepsId, validateId } = {}) {
 	)
 }
 
-WalletSeAddressPrivilege.propTypes = {
+SetAddressPrivilege.propTypes = {
 	stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 	validateId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 		.isRequired,
 }
 
-export default WalletSeAddressPrivilege
+export default SetAddressPrivilege

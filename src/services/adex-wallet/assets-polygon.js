@@ -277,12 +277,12 @@ const assets = {
 	// 	logoSrc: WBTC_LOGO,
 	// 	isStableCoin: true,
 	// },
-	[tokens.USDC]: {
+	[tokens.USDT]: {
 		symbol: 'USDT',
-		address: tokens.USDC,
+		address: tokens.USDT,
 		name: '(PoS) Tether USD',
 		getBalance: async function({ address }) {
-			return await getERC20Balance({ tokenAddress: tokens.USDC, address })
+			return await getERC20Balance({ tokenAddress: tokens.USDT, address })
 		},
 		isSwappable: true,
 		isBaseAsset: true,
