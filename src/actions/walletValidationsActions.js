@@ -1,8 +1,14 @@
 import { BigNumber, utils } from 'ethers'
-import { selectAccountStatsRaw, selectAccountStatsFormatted } from 'selectors'
+import {
+	selectAccountStatsRaw,
+	selectAccountStatsFormatted,
+	selectFeeTokens,
+} from 'selectors'
 import { validate } from 'actions'
-import { validations } from 'adex-models'
+import { validations, constants } from 'adex-models'
+
 const { isNumberString } = validations
+const { WalletIdentityPrivilegeLevel } = constants
 
 export function validateWalletFees({
 	validateId,
@@ -173,6 +179,38 @@ export function validateActionInputAmount({
 		await validate(validateId, prop, {
 			isValid,
 			err: { msg, args },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
+export function validateWalletPrivLevel({ validateId, privLevel, dirty }) {
+	return async function(dispatch, getState) {
+		const isValid =
+			Object.values(WalletIdentityPrivilegeLevel).indexOf(privLevel) > -1
+
+		await validate(validateId, 'privLevel', {
+			isValid,
+			err: { msg: 'ERR_PRIV_LEVEL_NOT_SELECTED' },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
+export function validateWalletFeeTokens({ validateId, feeTokenAddr, dirty }) {
+	return async function(dispatch, getState) {
+		const feeTokens = selectFeeTokens()
+
+		const isValid = feeTokens.findIndex(x => x.address === feeTokenAddr) !== -1
+		debugger
+		await validate(validateId, 'feeTokenAddr', {
+			isValid,
+			// TODO: Add missing translations
+			err: { msg: 'ERR_FEE_TOKEN_NOT_SELECTED' },
 			dirty,
 		})(dispatch)
 

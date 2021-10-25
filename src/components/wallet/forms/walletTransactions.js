@@ -4,7 +4,7 @@ import WalletDiversifyTokensStep from './DiversifyStep'
 import WalletWithdrawStep from './WalletWithdrawStep'
 import WalletWithdrawMultipleStep from './WalletWithdrawMultipleStep'
 import TransactionPreview from './WalletTransactionPreview'
-import WalletSeAddressPrivilege from 'components/dashboard/forms/web3/WalletSeAddressPrivilege'
+import WalletSetAddressPrivilege from 'components/dashboard/forms/web3/WalletSetAddressPrivilege'
 import FormSteps from 'components/common/stepper/FormSteps'
 import TopUp from 'components/dashboard/deposit/WalletTopUp'
 import WithDialog from 'components/common/dialog/WithDialog'
@@ -214,7 +214,7 @@ export const WalletSetIdentityPrivilege = ({ SaveBtn, label, ...props }) => {
 			steps={[
 				{
 					title: 'ACCOUNT_SET_IDENTITY_PRIVILEGE_STEP',
-					component: WalletSeAddressPrivilege,
+					component: WalletSetAddressPrivilege,
 					validationFn: props => execute(walletValidatePrivilegesChange(props)),
 				},
 				{

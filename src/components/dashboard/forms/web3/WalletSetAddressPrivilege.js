@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import {
@@ -8,6 +8,7 @@ import {
 	FormControl,
 	Checkbox,
 	Typography,
+	Switch,
 } from '@material-ui/core'
 import Dropdown from 'components/common/dropdown'
 import {
@@ -21,26 +22,30 @@ import {
 	selectValidationsById,
 	selectNewTransactionById,
 	selectWeb3SyncSpinnerByValidateId,
+	selectFeeTokensWithBalance,
 } from 'selectors'
 import { execute, updateNewTransaction } from 'actions'
 import { Alert } from '@material-ui/lab'
 
-const { IdentityPrivilegeLevel } = constants
+const { WalletIdentityPrivilegeLevel } = constants
 
-const PRIV_LEVELS_SRC = Object.values(IdentityPrivilegeLevel).map(value => {
-	return {
+const PRIV_LEVELS_SRC = Object.values(WalletIdentityPrivilegeLevel).map(
+	value => ({
 		value,
 		label: t(`PRIV_${value}_LABEL`),
 		info: t(`PRIV_${value}_INFO`),
-	}
-})
+	})
+)
 
-function SeAddressPrivilege({ stepsId, validateId } = {}) {
+function WalletSetAddressPrivilege({ stepsId, validateId } = {}) {
+	const feeTokens = useSelector(selectFeeTokensWithBalance)
+
 	const {
 		setAddr,
-		privLevel,
+		privLevel = true,
 		warningAccepted,
 		warningMsg,
+		feeTokenAddr = feeTokens[0],
 	} = useSelector(state => selectNewTransactionById(state, stepsId))
 
 	const {
@@ -53,6 +58,30 @@ function SeAddressPrivilege({ stepsId, validateId } = {}) {
 	const syncSpinner = useSelector(state =>
 		selectWeb3SyncSpinnerByValidateId(state, validateId)
 	)
+
+	const [checked, setChecked] = useState(privLevel)
+
+	const handleChange = event => {
+		setChecked(event.target.checked)
+
+		execute(
+			updateNewTransaction({
+				tx: stepsId,
+				key: 'privLevel',
+				value: !checked,
+			})
+		)
+	}
+
+	useEffect(() => {
+		execute(
+			updateNewTransaction({
+				tx: stepsId,
+				key: 'privLevel',
+				value: privLevel,
+			})
+		)
+	}, [])
 
 	return (
 		<ContentBox>
@@ -91,7 +120,7 @@ function SeAddressPrivilege({ stepsId, validateId } = {}) {
 						/>
 					</Box>
 					<Box mb={2}>
-						<Dropdown
+						{/* <Dropdown
 							required
 							variant='outlined'
 							label={t('SELECT_PRIV_LEVEL')}
@@ -109,6 +138,46 @@ function SeAddressPrivilege({ stepsId, validateId } = {}) {
 							value={typeof privLevel === 'number' ? privLevel : ''}
 							htmlId='label-privLevel'
 							fullWidth
+							error={errPrivLvl && !!errPrivLvl.dirty}
+							helperText={
+								errPrivLvl && !!errPrivLvl.dirty
+									? errPrivLvl.errMsg
+									: t('SELECT_PRIV_LEVEL_HELPER_TXT')
+							}
+						/> */}
+						<FormControlLabel
+							control={
+								<Switch
+									color='primary'
+									checked={checked}
+									onChange={handleChange}
+									inputProps={{ 'aria-label': 'controlled' }}
+								/>
+							}
+							label='Privileges'
+						/>
+					</Box>
+					<Box mb={2}>
+						<Dropdown
+							required
+							variant='outlined'
+							// TODO: Add missing translations
+							label={t('SELECT_FEE_TOKEN_LABEL')}
+							// helperText={t('SELECT_PRIV_LEVEL_HELPER_TXT')}
+							onChange={val =>
+								execute(
+									updateNewTransaction({
+										tx: stepsId,
+										key: 'feeTokenAddr',
+										value: val,
+									})
+								)
+							}
+							source={feeTokens}
+							value={feeTokenAddr}
+							htmlId='label-feeToken'
+							fullWidth
+							//TODO: Fix error and helper text
 							error={errPrivLvl && !!errPrivLvl.dirty}
 							helperText={
 								errPrivLvl && !!errPrivLvl.dirty
@@ -174,10 +243,10 @@ function SeAddressPrivilege({ stepsId, validateId } = {}) {
 	)
 }
 
-SeAddressPrivilege.propTypes = {
+WalletSetAddressPrivilege.propTypes = {
 	stepsId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 	validateId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 		.isRequired,
 }
 
-export default SeAddressPrivilege
+export default WalletSetAddressPrivilege

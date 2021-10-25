@@ -77,7 +77,7 @@ function WalletPrivileges() {
 	const { authType = '' } = useSelector(selectWallet)
 	// const identityAddress = useSelector(selectAccountIdentityAddr)
 	const privileges = useSelector(selectWalletPrivileges)
-	const canMakeTx = privileges > 1
+	const canMakeTx = privileges
 	const currentPrivileges = useSelector(selectAccountIdentityCurrentPrivileges)
 	const identityRecoveryAddr = useSelector(selectIdentityRecoveryAddr)
 	const { walletAddress, availableIdentityBalanceMainToken } = useSelector(
@@ -124,6 +124,7 @@ function WalletPrivileges() {
 								/>
 							) : (
 								<WalletSetIdentityPrivilege
+									// TODO: Remove comment below
 									// disabled={!canMakeTx}
 									fullWidth
 									variant='contained'
@@ -195,7 +196,7 @@ function WalletPrivileges() {
 function AccountPrivilageItem(props) {
 	const classes = useStyles()
 	const currUserPrivileges = useSelector(selectWalletPrivileges)
-	const canMakeTx = currUserPrivileges > 1
+	const canMakeTx = currUserPrivileges
 	const { address, privileges, current, authType } = props
 	const privColors = ['disabled', 'secondary', 'primary']
 	const { availableIdentityBalanceMainToken } = useSelector(
@@ -240,7 +241,8 @@ function AccountPrivilageItem(props) {
 						</Button>
 					) : (
 						<SetIdentityPrivilege
-							disabled={!canMakeTx}
+							// TODO: Remove comment below
+							// disabled={!canMakeTx}
 							fullWidth
 							color='default'
 							variant='contained'

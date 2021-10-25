@@ -63,11 +63,9 @@ export const selectDiversifiableAssetsFromSources = createSelector(
 	}
 )
 
-export const selectFeeTokensBalance = createSelector(
-	[selectAccountStatsFormatted],
-	({ assetsData = {} }) => {
-		const feeTokens = selectFeeTokens()
-
+export const selectFeeTokensWithBalance = createSelector(
+	[selectAccountStatsFormatted, selectFeeTokens],
+	({ assetsData = {} }, feeTokens) => {
 		return Object.values(assetsData)
 			.filter(x => {
 				return feeTokens.some(y => {
@@ -76,9 +74,8 @@ export const selectFeeTokensBalance = createSelector(
 			})
 			.map(x => ({
 				value: x.address,
-				label: `${x.symbol}`,
+				label: `${x.symbol} ${x.balance}`,
 				imgSrc: getLogo(x.address),
-				balance: x.balance,
 			}))
 	}
 )
