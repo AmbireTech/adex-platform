@@ -949,22 +949,26 @@ async function getWithdrawTxns({
 	withdrawAssetAddr,
 	// getMinAmountToSpend,
 	tokenData,
+	feeTokenAddr,
 	// isFromETHToken,
 	assetsDataRaw,
 }) {
-	const { wallet, identity } = account
-	const { authType } = wallet
 	const {
-		provider,
-		IdentityPayable,
-		//   getToken
-	} = await getEthers(authType)
+		//  wallet,
+		identity,
+	} = account
+	// const { authType } = wallet
+	// const {
+	// 	provider,
+	// 	IdentityPayable,
+	// 	//   getToken
+	// } = await getEthers(authType)
 	const identityAddr = identity.address
 
 	const assets = getAssets()
 	const token = assets[withdrawAssetAddr]
 
-	const feeTokenAddr = withdrawAssetAddr
+	// const feeTokenAddr = feeTokenAddr || withdrawAssetAddr
 
 	if (!tokenData) {
 		throw new Error('walletWithdraw - invalid withdraw token address')
@@ -983,7 +987,7 @@ async function getWithdrawTxns({
 	const withdrawTx = isETH
 		? {
 				identityContract: identityAddr,
-				feeTokenAddr,
+				// feeTokenAddr,
 				to: withdrawTo,
 				data: '0x',
 				value: amountToWithdrawFinal.toHexString(),
@@ -1000,7 +1004,7 @@ async function getWithdrawTxns({
 		  }
 		: {
 				identityContract: identityAddr,
-				feeTokenAddr,
+				// feeTokenAddr,
 				to: withdrawAssetAddr,
 				data: ERC20.encodeFunctionData('transfer', [
 					withdrawTo,
@@ -1031,7 +1035,7 @@ async function getWithdrawTxns({
 
 	return {
 		txns,
-		feeTokenAddr,
+		// feeTokenAddr,
 		// txnsWithNonceAndFees,
 		amountToWithdrawBN,
 		//  tradeData
@@ -1046,6 +1050,7 @@ export async function walletWithdrawTransaction({
 	assetsDataRaw,
 	getMinAmountToSpend,
 	txSpeed,
+	feeTokenAddr,
 }) {
 	const tokenData = assetsDataRaw[withdrawAssetAddr]
 
@@ -1053,7 +1058,7 @@ export async function walletWithdrawTransaction({
 	const {
 		txns,
 		// txnsWithNonceAndFees: _preTxnsWithNonceAndFees,
-		feeTokenAddr,
+		// feeTokenAddr,
 		amountToWithdrawBN: _preAmountToWithdrawBN,
 	} = await getWithdrawTxns({
 		account,
@@ -1066,6 +1071,7 @@ export async function walletWithdrawTransaction({
 		getMinAmountToSpend,
 		assetsDataRaw,
 		txSpeed,
+		feeTokenAddr,
 		// isFromETHToken,
 	})
 
