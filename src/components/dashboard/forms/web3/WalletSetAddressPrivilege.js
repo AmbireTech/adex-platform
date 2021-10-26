@@ -16,7 +16,7 @@ import {
 	ContentBody,
 	FullContentMessage,
 } from 'components/common/dialog/content'
-import { constants } from 'adex-models'
+// import { constants } from 'adex-models'
 import {
 	t,
 	selectValidationsById,
@@ -27,9 +27,9 @@ import {
 import { execute, updateNewTransaction } from 'actions'
 import { Alert } from '@material-ui/lab'
 
-const { WalletIdentityPrivilegeLevel } = constants
+// const { WalletIdentityPrivilegeLevel } = constants
 
-const PRIV_LEVELS_SRC = Object.values(WalletIdentityPrivilegeLevel).map(
+const PRIV_LEVELS_SRC = Object.values({ Allowed: true, NotAllowed: false }).map(
 	value => ({
 		value,
 		label: t(`PRIV_${value}_LABEL`),
