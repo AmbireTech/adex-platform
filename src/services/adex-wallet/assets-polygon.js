@@ -63,6 +63,7 @@ const logos = {
 	[tokens.USDC]: USDC_LOGO,
 	[tokens.WETH]: WETH_LOGO,
 	[tokens.WBTC]: WBTC_LOGO,
+	[tokens.USDT]: USDT_LOGO,
 }
 
 const assets = {
