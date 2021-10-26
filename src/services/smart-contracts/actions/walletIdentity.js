@@ -737,6 +737,7 @@ export async function getTxnsEstimationData({
 	feeTokenAddr,
 	account,
 	// mainCurrencyId = 'USD',
+	preEstimatedData = null,
 	txSpeed,
 }) {
 	if (!txSpeed) {
@@ -761,48 +762,49 @@ export async function getTxnsEstimationData({
 
 	const feeToken = assets[feeTokenAddr]
 	const isNative = feeToken.isETH || feeToken.isNative
-	const minTxFee = BigNumber.from('1')
-	const estimateTxFee = isNative
-		? {
-				identityContract: identityAddr,
-				// feeTokenAddr,
-				to: feeCollector,
-				data: '0x',
-				value: minTxFee.toHexString(),
-				onChainActionData: {
-					txAction: {
-						...ON_CHAIN_ACTIONS.transferETH({
-							tokenData: feeToken,
-							amount: minTxFee,
-							sender: `Identity (${identityAddr})`,
-							recipient: `Relayer ${feeCollector}`,
-							relayerFeeTx: true,
-						}),
+	if (preEstimatedData) {
+		const feeAmount = preEstimatedData.feeInFeeToken[txSpeed]
+		const feeTx = isNative
+			? {
+					identityContract: identityAddr,
+					// feeTokenAddr,
+					to: feeCollector,
+					data: '0x',
+					value: feeAmount.toHexString(),
+					onChainActionData: {
+						txAction: {
+							...ON_CHAIN_ACTIONS.transferETH({
+								tokenData: feeToken,
+								amount: feeAmount,
+								sender: `Identity (${identityAddr})`,
+								recipient: `Relayer ${feeCollector}`,
+								relayerFeeTx: true,
+							}),
+						},
 					},
-				},
-		  }
-		: {
-				identityContract: identityAddr,
-				// feeTokenAddr,
-				to: feeTokenAddr,
-				data: ERC20.encodeFunctionData('transfer', [
-					feeCollector,
-					minTxFee.toHexString(),
-				]),
-				onChainActionData: {
-					txAction: {
-						...ON_CHAIN_ACTIONS.transferERC20({
-							tokenData: feeToken,
-							amount: minTxFee,
-							sender: `Identity (${identityAddr})`,
-							recipient: `Relayer ${feeCollector}`,
-							relayerFeeTx: true,
-						}),
+			  }
+			: {
+					identityContract: identityAddr,
+					// feeTokenAddr,
+					to: feeTokenAddr,
+					data: ERC20.encodeFunctionData('transfer', [
+						feeCollector,
+						feeAmount.toHexString(),
+					]),
+					onChainActionData: {
+						txAction: {
+							...ON_CHAIN_ACTIONS.transferERC20({
+								tokenData: feeToken,
+								amount: feeAmount,
+								sender: `Identity (${identityAddr})`,
+								recipient: `Relayer ${feeCollector}`,
+								relayerFeeTx: true,
+							}),
+						},
 					},
-				},
-		  }
-
-	txns.push(estimateTxFee)
+			  }
+		txns.push(feeTx)
+	}
 
 	const bundleTxns = txns.map(({ to, value, data }) => [
 		to,

@@ -1069,7 +1069,7 @@ export async function walletWithdrawTransaction({
 		// isFromETHToken,
 	})
 
-	const estimatedFeesData = await getTxnsEstimationData({
+	const preEstimatedData = await getTxnsEstimationData({
 		// account,
 		txns,
 		feeTokenAddr,
@@ -1087,7 +1087,7 @@ export async function walletWithdrawTransaction({
 	// 	// ...rest
 	// } = estimatedFeesData
 
-	const totalFeesBN = estimatedFeesData.feeInFeeToken[txSpeed]
+	const totalFeesBN = preEstimatedData.feeInFeeToken[txSpeed]
 
 	// TODO: unified function
 	const mainActionAmountBN = _preAmountToWithdrawBN.sub(totalFeesBN)
@@ -1137,6 +1137,7 @@ export async function walletWithdrawTransaction({
 		txns: txnsWithFee,
 		feeTokenAddr,
 		txSpeed,
+		preEstimatedData,
 	})
 
 	return {
