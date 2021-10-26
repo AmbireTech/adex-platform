@@ -2,7 +2,7 @@ import { contracts } from 'services/smart-contracts/contractsCfg.js'
 import ADX_LOGO from 'resources/token-logos/ADX.png'
 // import WETH_LOGO from 'resources/token-logos/WETH.png'
 // import WBTC_LOGO from 'resources/token-logos/WBTC.png'
-// import USDT_LOGO from 'resources/token-logos/USDT.png'
+import USDT_LOGO from 'resources/token-logos/USDT.png'
 import USDC_LOGO from 'resources/token-logos/USDC.png'
 import WBTC_LOGO from 'resources/token-logos/WBTC.png'
 import ETH_LOGO from 'resources/token-logos/ETH.png'
@@ -63,6 +63,7 @@ const logos = {
 	[tokens.USDC]: USDC_LOGO,
 	[tokens.WETH]: WETH_LOGO,
 	[tokens.WBTC]: WBTC_LOGO,
+	[tokens.USDT]: USDT_LOGO,
 }
 
 const assets = {
@@ -289,7 +290,7 @@ const assets = {
 		// subAssets: [tokens.aUSDC],
 		subAssets: [],
 		decimals: 6,
-		logoSrc: USDC_LOGO,
+		logoSrc: USDT_LOGO,
 		isStableCoin: true,
 	},
 }

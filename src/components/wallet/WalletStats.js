@@ -5,7 +5,7 @@ import {
 	// Paper,
 	Grid,
 } from '@material-ui/core'
-import { useTheme } from '@material-ui/core/styles'
+import { useTheme, lighten } from '@material-ui/core/styles'
 // import { TreeView, TreeItem } from '@material-ui/lab'
 // import { ExpandMore, ChevronRight } from '@material-ui/icons'
 import { AmountWithCurrency } from 'components/common/amount'
@@ -29,10 +29,6 @@ const WalletDoughnut = ({
 }) => {
 	const theme = useTheme()
 
-	const chartColors = [
-		...(theme.palette.chartColors ? theme.palette.chartColors.all : []),
-	]
-
 	const { labels, values } = Object.values(assetsData)
 		.filter(x => x.isBaseAsset)
 		.reduce(
@@ -50,6 +46,24 @@ const WalletDoughnut = ({
 				values: [],
 			}
 		)
+
+	const paletteColors = [
+		...(theme.palette.chartColors ? theme.palette.chartColors.all : []),
+	]
+
+	const chartColors = paletteColors
+
+	for (
+		let index = 0;
+		index <= values.length;
+		index += paletteColors.length || 1
+	) {
+		chartColors.push(
+			...[...chartColors]
+				.slice(index, paletteColors.length)
+				.map(x => lighten(x, 0.42))
+		)
+	}
 
 	const data = {
 		labels,
@@ -207,6 +221,7 @@ function WalletStats() {
 							</Box>
 							<Box m={0.5}>
 								<WithdrawMultipleAssets
+									disableBackdropClick
 									variant='contained'
 									color='primary'
 									size='large'

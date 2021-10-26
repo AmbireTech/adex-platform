@@ -5,12 +5,7 @@ import { createCachedSelector } from 're-reselect'
 // can be used outside  components
 export const selectRelayerConfig = state => {
 	const relayerConfig = (state || getState()).persist.config.relayer
-
-	const { walletCfg, ...cfg } = { ...relayerConfig }
-	return {
-		...walletCfg,
-		cfg,
-	}
+	return relayerConfig
 }
 
 // can be used outside  components

@@ -21,7 +21,7 @@
     "@walletconnect/client": "^1.6.5",
     "adex-constants": "1.0.10",
     "adex-models": "git+https://git@github.com/AdExNetwork/adex-models.git#b7515882ccafad052dd8267dc0b1e7c9a90cd09c",
-    "adex-protocol-eth": "git+https://git@github.com/AdExNetwork/adex-protocol-eth.git#742e800c5a6aabe08c59625f3dfd85139223ee63",
+    "adex-protocol-eth": "git+https://git@github.com/AdExNetwork/adex-protocol-eth.git#8bf76967c08e2e7160bfbd931435171378ff4e85",
     "adex-translations": "git+https://git@github.com/AdExNetwork/adex-translations.git#d0989106be8da2ac37e869a428dfa61545978d4d",
     "base64url": "^3.0.1",
     "case-sensitive-paths-webpack-plugin": "2.2.0",

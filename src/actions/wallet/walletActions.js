@@ -37,6 +37,11 @@ import {
 import { getTradeOutData } from 'services/smart-contracts/actions/walletCommon'
 import { processExecuteWalletTxns } from 'services/smart-contracts/actions/walletIdentity'
 import { getEthers } from 'services/smart-contracts/ethers'
+// import {
+// 	getSigner,
+// 	getMultipleTxSignatures,
+// } from 'services/smart-contracts/actions/ethers'
+const ADEX_RELAYER_HOST = process.env.ADEX_RELAYER_HOST
 
 function checkStepId({ stepsId, functionName }) {
 	if (!stepsId) {
@@ -429,7 +434,7 @@ export function validateWalletWithdraw({
 			amountToWithdraw,
 			withdrawTo,
 			temp,
-			txSpeed = 'slow',
+			txSpeed,
 		} = selectNewTransactionById(state, stepsId)
 		const { assetsData = {} } = selectAccountStatsRaw(state)
 		const { withdrawAsset } = stepsProps
@@ -663,18 +668,14 @@ export function walletWithdraw({
 	return async function(dispatch, getState) {
 		try {
 			checkStepId({ stepsId, functionName: 'walletWithdraw' })
-			const state = getState()
-			const authType = selectAuthType(state)
-			const wallet = selectWallet(state)
-			const { provider } = await getEthers(authType)
-			const identityAddr = selectAccountIdentityAddr(state)
-			const { txnsWithNonceAndFees } = feesData
+			const { bundle } = feesData
 
-			const result = await processExecuteWalletTxns({
-				identityAddr,
-				txnsWithNonceAndFees,
-				wallet,
-				provider,
+			// TODO: bundle submit handler - catch errors
+			// and success msgs
+
+			const result = await bundle.submit({
+				fetch,
+				relayerURL: ADEX_RELAYER_HOST,
 			})
 
 			addToast({

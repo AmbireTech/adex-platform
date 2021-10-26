@@ -82,19 +82,20 @@ export default class TrezorSigner extends Signer {
 		})
 
 		if (success) {
-			const res = {
-				/*
-				 * NOTE: SignatureTypes.GETH
-				 * Current TrezorConnect window does not
-				 * accept device with old firmware
-				 */
-				signature: '0x' + payload.signature,
-				hash: message,
-				mode: constants.SignatureModes.GETH,
-				address: payload.address,
-			}
+			return '0x' + payload.signature
+			// const res = {
+			// 	/*
+			// 	 * NOTE: SignatureTypes.GETH
+			// 	 * Current TrezorConnect window does not
+			// 	 * accept device with old firmware
+			// 	 */
+			// 	signature: '0x' + payload.signature,
+			// 	hash: message,
+			// 	mode: constants.SignatureModes.GETH,
+			// 	address: payload.address,
+			// }
 
-			return res
+			// return res
 		} else {
 			throw new Error(payload.error)
 		}

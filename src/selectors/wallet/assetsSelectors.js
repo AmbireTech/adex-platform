@@ -63,7 +63,7 @@ export const selectDiversifiableAssetsFromSources = createSelector(
 	}
 )
 
-export const selectFeeTokensWithBalance = createSelector(
+export const selectFeeTokensWithBalanceSource = createSelector(
 	[selectAccountStatsFormatted, selectFeeTokens],
 	({ assetsData = {} }, feeTokens) => {
 		return Object.values(assetsData)
