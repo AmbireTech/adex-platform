@@ -6,6 +6,7 @@ import { t, selectLocationQuery } from 'selectors'
 
 function FormSteps({
 	cancelFunction,
+	loadDefaultData,
 	stepsId,
 	steps,
 	closeDialog,
@@ -31,6 +32,10 @@ function FormSteps({
 				stepsProps,
 			},
 		}))
+
+		if (loadDefaultData) {
+			loadDefaultData(stepsId)
+		}
 
 		setSteps(updatedSteps)
 		// eslint-disable-next-line react-hooks/exhaustive-deps

@@ -22,8 +22,11 @@ import {
 	walletWithdraw,
 	walletValidatePrivilegesChange,
 	walletUpdateIdentityPrivilege,
+	updateNewTransaction,
 } from 'actions'
+import { selectNewTransactionById, selectFeeTokens } from 'selectors'
 import ReactGA from 'react-ga'
+import { getState } from 'store'
 
 const FormStepsWithDialog = WithDialog(FormSteps)
 const TopUpWithDialog = WithDialog(TopUp)
@@ -36,9 +39,33 @@ const cancelFunction = stepsId => {
 	}
 }
 
+const loadDefaultData = stepsId => {
+	const state = getState()
+	const txData = selectNewTransactionById(state, stepsId)
+	const feeTokens = selectFeeTokens(state)
+	if (!Object.keys(txData || {}).length) {
+		execute(
+			updateNewTransaction({
+				tx: stepsId,
+				key: 'feeTokenAddr',
+				value: feeTokens[0].address,
+			})
+		)
+		// TODO: add it to persist by user
+		execute(
+			updateNewTransaction({
+				tx: stepsId,
+				key: 'txSpeed',
+				value: 'medium',
+			})
+		)
+	}
+}
+
 const txCommon = {
 	cancelFunction,
 	darkerBackground: true,
+	loadDefaultData,
 }
 
 export const TradeAssets = props => (
