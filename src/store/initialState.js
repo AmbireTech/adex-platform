@@ -1,4 +1,4 @@
-import { AdUnit, AdSlot, Campaign, Account, Audience } from 'adex-models'
+import { Account } from 'adex-models'
 import { PROJECTS } from 'constants/global'
 
 let initialState = {
@@ -13,33 +13,6 @@ let initialState = {
 		publicKey: '',
 		seedCheck: [],
 		authenticated: false,
-	},
-	newItem: {
-		Campaign: new Campaign({
-			audienceInput: { version: '1', inputs: { devices: { apply: 'allin' } } },
-			temp: { useUtmTags: true, useUtmSrcWithPub: true },
-		}).plainObj(),
-		AdUnit: new AdUnit({ temp: { addUtmLink: true } }).plainObj(),
-		AdSlot: new AdSlot({
-			rulesInput: { version: '1', inputs: { autoSetMinCPM: false } },
-		}).plainObj(),
-		Audience: new Audience({
-			inputs: { version: '1', devices: { apply: 'allin' } },
-		}).plainObj(),
-		Website: {},
-	},
-	currentItem: {},
-	selectedItems: {
-		campaigns: [],
-		adUnits: [],
-		slots: [],
-	},
-	items: {
-		Campaign: {},
-		AdUnit: {},
-		AdSlot: {},
-		Website: {},
-		Audience: {},
 	},
 	spinners: {},
 	ui: {
@@ -61,12 +34,6 @@ let initialState = {
 	newTransactions: {
 		default: {},
 	},
-	web3Transactions: {},
-	targeting: {
-		targetingData: [],
-		minByCategory: {},
-		countryTiersCoefficients: {},
-	},
 	identity: {},
 	ethNetwork: {
 		networkId: null,
@@ -77,11 +44,6 @@ let initialState = {
 		relayer: {},
 		market: {},
 		validators: {},
-	},
-	analytics: {},
-	channels: {
-		withBalanceAll: {},
-		withOutstandingBalance: [],
 	},
 	ensAddresses: {},
 }
