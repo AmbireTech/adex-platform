@@ -22,7 +22,7 @@ import {
 	selectValidationsById,
 	selectNewTransactionById,
 	selectWeb3SyncSpinnerByValidateId,
-	selectFeeTokensWithBalance,
+	selectFeeTokensWithBalanceSource,
 } from 'selectors'
 import { execute, updateNewTransaction } from 'actions'
 import { Alert } from '@material-ui/lab'
@@ -38,7 +38,7 @@ const PRIV_LEVELS_SRC = Object.values(WalletIdentityPrivilegeLevel).map(
 )
 
 function WalletSetAddressPrivilege({ stepsId, validateId } = {}) {
-	const feeTokens = useSelector(selectFeeTokensWithBalance)
+	const feeTokens = useSelector(selectFeeTokensWithBalanceSource)
 
 	const {
 		setAddr,
@@ -81,7 +81,7 @@ function WalletSetAddressPrivilege({ stepsId, validateId } = {}) {
 				value: privLevel,
 			})
 		)
-	}, [])
+	}, [privLevel, stepsId])
 
 	return (
 		<ContentBox>
