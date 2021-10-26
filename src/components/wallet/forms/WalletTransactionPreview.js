@@ -37,6 +37,8 @@ import {
 	selectMainCurrency,
 	selectBaseAssetsPrices,
 	selectNetwork,
+	selectFeeTokens,
+	selectFeeTokensWithBalanceSource,
 	// selectAssetsPrices, // TODO: use one of selectAssetsPrices/selectBaseAssetsPrices
 } from 'selectors'
 import { formatTokenAmount, formatCurrencyValue } from 'helpers/formatters'
@@ -132,6 +134,44 @@ const TransactionSpeedSelect = ({
 	)
 }
 
+const TransactionFeeTokenSelect = ({
+	// txId,
+	// feesData,
+	feeTokensSource,
+	// mainCurrency,
+	// prices,
+	feeTokenAddr,
+	onTxFeeTokenChange,
+}) => {
+	// const {
+	// 	// feeInUSD,
+	// 	feeToken,
+	// 	feeInFeeToken,
+	// } = feesData
+	return (
+		<Dropdown
+			required
+			fullWidth
+			size='small'
+			variant='outlined'
+			name='selectTxFeeTokenAddr'
+			label={t('SELECT_TX_FEE_TOKEN')}
+			onChange={onTxFeeTokenChange}
+			source={feeTokensSource}
+			value={feeTokenAddr}
+			htmlId='select-tx-fee-token'
+			// error={userSide && !!userSide.dirty}
+			// helperText={getFeeDataLabel({
+			// 	txSpeed,
+			// 	feeInFeeToken,
+			// 	feeToken,
+			// 	mainCurrency,
+			// 	prices,
+			// })}
+		/>
+	)
+}
+
 function TransactionPreview(props) {
 	const classes = useStyles()
 	const {
@@ -153,6 +193,7 @@ function TransactionPreview(props) {
 		fromAsset,
 		toAsset,
 		txSpeed,
+		feeTokenAddr,
 	} = useSelector(state => selectNewTransactionById(state, txId))
 	const [
 		networkCongested,
@@ -166,6 +207,7 @@ function TransactionPreview(props) {
 	} = feesData
 	const prices = useSelector(selectBaseAssetsPrices)
 	const mainCurrency = useSelector(selectMainCurrency)
+	const feeTokensSource = useSelector(selectFeeTokensWithBalanceSource)
 
 	const formAssetAddr = fromAsset || feesData.spendTokenAddr
 
@@ -205,6 +247,28 @@ function TransactionPreview(props) {
 				stepsProps,
 			})
 		} else console.error('wallet tx preview - no validation fn provided')
+	}
+
+	const onTxFeeTokenChange = async value => {
+		await execute(
+			updateNewTransaction({
+				tx: txId,
+				key: 'feeTokenAddr',
+				value,
+			})
+		)
+
+		if (validationFn) {
+			validationFn({
+				stepsId,
+				validateId,
+				dirty: true,
+				stepsProps,
+			})
+		} else
+			console.error(
+				'wallet tx preview fee token addr change - no validation fn provided'
+			)
 	}
 
 	// useEffect(() => {
@@ -272,14 +336,23 @@ function TransactionPreview(props) {
 								<TransactionSpeedSelect
 									feesData={feesData}
 									txSpeed={txSpeed}
-									mainCurrency={mainCurrency}
 									prices={prices}
 									onTxSpeedChange={onTxSpeedChange}
+									mainCurrency={mainCurrency}
 								/>
 							</Box>
-							<Alert variant='filled' severity='info'>
+							<Box pb={1}>
+								<TransactionFeeTokenSelect
+									feesData={feesData}
+									feeTokenAddr={feeTokenAddr}
+									feeTokensSource={feeTokensSource}
+									prices={prices}
+									onTxFeeTokenChange={onTxFeeTokenChange}
+								/>
+							</Box>
+							{/* <Alert variant='filled' severity='info'>
 								{t('WALLET_FEES_INFO', { args: [networkName] })}
-							</Alert>
+							</Alert> */}
 						</Box>
 
 						{stepsId === 'walletSwapForm' && (
