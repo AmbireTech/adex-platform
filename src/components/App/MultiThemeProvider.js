@@ -1,60 +1,35 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { MuiThemeProvider } from '@material-ui/core/styles'
-import { darkTheme, lightTheme } from './themeMUi'
 import {
 	darkTheme as darkThemeWallet,
 	lightTheme as lightThemeWallet,
 } from './themeWallet'
-import {
-	loadFromLocalStorage,
-	saveToLocalStorage,
-} from 'helpers/localStorageHelpers'
-import { selectProject } from 'selectors'
-import { PROJECTS } from 'constants/global'
+import { saveToLocalStorage } from 'helpers/localStorageHelpers'
 
 const THEMES = {
-	[PROJECTS.platform]: {
-		light: lightTheme,
-		dark: darkTheme,
-	},
-	[PROJECTS.wallet]: {
-		light: lightThemeWallet,
-		dark: darkThemeWallet,
-	},
+	light: lightThemeWallet,
+	dark: darkThemeWallet,
 }
 
 export const MultiThemeContext = React.createContext()
 
 const MultiThemeProvider = ({ children }) => {
-	const project = useSelector(selectProject)
 	const [themeType, setThemeType] = useState('dark')
-	const [theme, setTheme] = useState(darkTheme)
+	const [theme, setTheme] = useState(darkThemeWallet)
 
 	useEffect(() => {
-		if (project === PROJECTS.wallet) {
-			setTheme(darkThemeWallet)
-		} else {
-			const lastTheme = loadFromLocalStorage('themeType') || 'dark'
-			setThemeType(lastTheme)
-			setTheme(THEMES[project][lastTheme])
-		}
-	}, [project])
+		setTheme(darkThemeWallet)
+	}, [])
 
 	const switchTheme = () => {
-		// Until we have proper light theme
-		if (project === PROJECTS.wallet) {
-			setTheme(darkThemeWallet)
+		if (themeType === 'light') {
+			saveToLocalStorage('dark', 'themeType')
+			setThemeType('dark')
+			setTheme(THEMES['dark'])
 		} else {
-			if (themeType === 'light') {
-				saveToLocalStorage('dark', 'themeType')
-				setThemeType('dark')
-				setTheme(THEMES[project]['dark'])
-			} else {
-				saveToLocalStorage('light', 'themeType')
-				setThemeType('light')
-				setTheme(THEMES[project]['light'])
-			}
+			saveToLocalStorage('light', 'themeType')
+			setThemeType('light')
+			setTheme(THEMES['light'])
 		}
 	}
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import Button from '@material-ui/core/Button'
-import { Box, Divider, Tooltip } from '@material-ui/core'
+import { Box, Divider } from '@material-ui/core'
 import { Close } from '@material-ui/icons'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import { Typography } from '@material-ui/core'
@@ -16,14 +16,11 @@ import {
 	selectAuth,
 	selectAccount,
 	selectRegistrationAllowed,
-	selectUserLastSide,
-	selectProject,
 } from 'selectors'
 import { logOut } from 'services/store-data/auth'
 import { formatAddress } from 'helpers/formatters'
 import { push } from 'connected-react-router'
 import { removeFromLocalStorage } from 'helpers/localStorageHelpers'
-import { PROJECTS } from 'constants/global'
 import NetworkSelect from 'components/wallet/NetworkSelect'
 
 const RRButton = withReactRouterLink(Button)
@@ -35,14 +32,8 @@ const AuthSelect = () => {
 
 	const showRegistration = useSelector(selectRegistrationAllowed)
 	const auth = useSelector(selectAuth)
-	const project = useSelector(selectProject)
-	const side = useSelector(selectUserLastSide) || 'publisher'
 	const account = useSelector(selectAccount)
 	const { wallet, identity } = account || {}
-	const userSide =
-		project === PROJECTS.platform && ['advertiser', 'publisher'].includes(side)
-			? side
-			: ''
 
 	useEffect(() => {
 		const allWallets = getAllWallets()
@@ -111,7 +102,7 @@ const AuthSelect = () => {
 				<Box m={1}>
 					<RRButton
 						variant='contained'
-						to={`/dashboard/${userSide}`}
+						to={`/dashboard/}`}
 						size='large'
 						color='default'
 						fullWidth

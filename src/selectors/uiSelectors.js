@@ -36,11 +36,6 @@ export const selectCompanyData = createSelector(
 	({ companyData }) => companyData || {}
 )
 
-export const selectUserLastSide = createSelector(
-	[selectIdentityUi],
-	({ userLastSide }) => userLastSide || ''
-)
-
 export const selectSpinnerById = createCachedSelector(
 	selectSpinners,
 	(_, id) => id,
@@ -104,11 +99,6 @@ export const selectGettingStartedExpanded = createSelector(
 export const selectSelectedCampaigns = createSelector(
 	selectSelectedItems,
 	({ campaigns }) => campaigns || []
-)
-
-export const selectLoginDirectSide = createSelector(
-	selectGlobalUi,
-	({ goToSide }) => goToSide || ''
 )
 
 export const selectInitialDataLoadedByData = createCachedSelector(

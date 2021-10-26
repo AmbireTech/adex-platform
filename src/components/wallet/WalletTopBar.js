@@ -30,13 +30,7 @@ import { makeStyles } from '@material-ui/core/styles'
 // import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import NetworkSelect from 'components/wallet/NetworkSelect'
 
-import {
-	t,
-	selectAccount,
-	selectDashboardBreadcrumbs,
-	selectWalletInitialDataLoaded,
-	selectProject,
-} from 'selectors'
+import { t, selectAccount, selectWalletInitialDataLoaded } from 'selectors'
 import { styles } from 'components/dashboard/dashboard/styles'
 import { formatAddress } from 'helpers/formatters'
 import { PROJECTS } from 'constants/global'
@@ -79,7 +73,6 @@ const useWalletStyles = makeStyles(walletStyles)
 function TopNav({ handleDrawerToggle, side }) {
 	const classes = useStyles()
 	const walletClasses = useWalletStyles()
-	const project = useSelector(selectProject)
 	const account = useSelector(selectAccount)
 	const loaded = useSelector(selectWalletInitialDataLoaded)
 	// const imgSrc = getAuthLogo(account.wallet.authType)
@@ -91,10 +84,7 @@ function TopNav({ handleDrawerToggle, side }) {
 			  formatAddress(account.wallet.address) ||
 			  t('NOT_LOGGED')
 
-	const accountPagePath =
-		project === PROJECTS.platform
-			? `/dashboard/${side}/account`
-			: `/dashboard/account`
+	const accountPagePath = `/dashboard/account`
 
 	return (
 		<AppBar

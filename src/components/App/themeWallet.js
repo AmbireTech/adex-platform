@@ -133,7 +133,6 @@ const paletteCommon = {
 			'#AA6AFF',
 			'#3CCCC3',
 			'#80FFDB',
-
 			'#6930C3',
 		],
 	},

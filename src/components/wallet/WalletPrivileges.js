@@ -40,14 +40,9 @@ import {
 	selectEnsAddressByAddr,
 	selectAccountIdentityCurrentPrivileges,
 	selectIdentityRecoveryAddr,
-	selectIsPlatform,
 } from 'selectors'
 import { execute, addToast, updateNewTransaction } from 'actions'
 import { formatAddress } from 'helpers/formatters'
-import {
-	PlatformBalance,
-	PlatformAdvanced,
-} from 'components/dashboard/account/accountPlatform'
 
 const AccountItem = ({ left, right }) => {
 	const classes = useStyles()
@@ -94,12 +89,6 @@ function WalletPrivileges() {
 
 	const classes = useStyles()
 
-	// const handleExpandChange = () => {
-	// 	setExpanded(!expanded)
-	// }
-
-	const isPlatform = useSelector(selectIsPlatform)
-
 	return (
 		<Fragment>
 			<Box mt={1}>
@@ -113,26 +102,15 @@ function WalletPrivileges() {
 							/>
 						}
 						right={
-							isPlatform ? (
-								<SetIdentityPrivilege
-									disabled={!canMakeTx}
-									fullWidth
-									variant='contained'
-									color='secondary'
-									size='large'
-									identityAvailable={availableIdentityBalanceMainToken}
-								/>
-							) : (
-								<WalletSetIdentityPrivilege
-									// TODO: Remove comment below
-									// disabled={!canMakeTx}
-									fullWidth
-									variant='contained'
-									color='secondary'
-									size='large'
-									identityAvailable={availableIdentityBalanceMainToken}
-								/>
-							)
+							<WalletSetIdentityPrivilege
+								// TODO: Remove comment below
+								// disabled={!canMakeTx}
+								fullWidth
+								variant='contained'
+								color='secondary'
+								size='large'
+								identityAvailable={availableIdentityBalanceMainToken}
+							/>
 						}
 					/>
 					<ListDivider />
@@ -158,7 +136,6 @@ function WalletPrivileges() {
 							))}
 					</List>
 					<ListDivider />
-					{isPlatform && <PlatformAdvanced />}
 
 					<List classes={{ root: classes.advancedList }}>
 						{allowEasterEggs && (

@@ -40,11 +40,9 @@ import {
 	selectEnsAddressByAddr,
 	selectAccountIdentityCurrentPrivileges,
 	selectIdentityRecoveryAddr,
-	selectIsPlatform,
 } from 'selectors'
 import { execute, addToast, updateNewTransaction } from 'actions'
 import { formatAddress } from 'helpers/formatters'
-import { PlatformBalance, PlatformAdvanced } from './accountPlatform'
 
 const AccountItem = ({ left, right }) => {
 	const classes = useStyles()
@@ -74,12 +72,10 @@ function AccountInfo() {
 	const { authType = '' } = useSelector(selectWallet)
 	const identityAddress = useSelector(selectAccountIdentityAddr)
 	const privileges = useSelector(selectWalletPrivileges)
-	const canMakeTx = privileges > 1
+	// const canMakeTx = privileges > 1
 	const currentPrivileges = useSelector(selectAccountIdentityCurrentPrivileges)
 	const identityRecoveryAddr = useSelector(selectIdentityRecoveryAddr)
-	const { walletAddress, availableIdentityBalanceMainToken } = useSelector(
-		selectAccountStatsFormatted
-	)
+	const { walletAddress } = useSelector(selectAccountStatsFormatted)
 
 	const identityEnsName = useSelector(state =>
 		selectEnsAddressByAddr(state, identityAddress)
@@ -94,9 +90,6 @@ function AccountInfo() {
 	const handleExpandChange = () => {
 		setExpanded(!expanded)
 	}
-
-	const isPlatform = useSelector(selectIsPlatform)
-
 	return (
 		<Fragment>
 			<Paper variant='outlined'>
@@ -169,7 +162,6 @@ function AccountInfo() {
 						// 	)
 						// }
 					/>
-					{isPlatform && <PlatformBalance />}
 				</List>
 			</Paper>
 			<Box mt={1}>
@@ -242,7 +234,6 @@ function AccountInfo() {
 								))}
 						</List>
 						<ListDivider />
-						{isPlatform && <PlatformAdvanced />}
 
 						<List classes={{ root: classes.advancedList }}>
 							{allowEasterEggs && (

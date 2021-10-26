@@ -1,6 +1,5 @@
 import * as types from 'constants/actionTypes'
 import { addSig, getSig } from 'services/auth/auth'
-import { getSession, checkSession } from 'services/adex-market/actions'
 import {
 	getRelayerConfigData,
 	getQuickWallet,
@@ -17,25 +16,14 @@ import {
 	generateSalt,
 	getRecoveryWalletData,
 } from 'services/wallet/wallet'
-import { getValidatorAuthToken } from 'services/adex-validator/actions'
-import {
-	getAccountStats,
-	getOutstandingBalance,
-} from 'services/smart-contracts/actions/stats'
 import { getAccountStatsWallet } from 'services/smart-contracts/actions/walletStats'
 import { getPrices } from 'services/prices'
-import { getChannelsWithOutstanding } from 'services/smart-contracts/actions/core'
 import {
 	addToast,
 	confirmAction,
 	updateMemoryUi,
 	updateInitialDataLoaded,
 } from './uiActions'
-import { getAllItems } from './itemActions'
-import {
-	updateSlotsDemandThrottled,
-	updateTargetingDataThrottled,
-} from './analyticsActions'
 import {
 	getEthereumProviderName,
 	ethereumNetworkId,
@@ -51,10 +39,7 @@ import {
 	selectSearchParams,
 	selectAuthType,
 	selectAccountIdentity,
-	selectLoginDirectSide,
-	selectUserLastSide,
 	selectEmail,
-	selectProject,
 	selectNetwork,
 	selectRelayerConfig,
 	t,
@@ -76,9 +61,6 @@ import {
 	analyticsLoop,
 	advancedAnalyticsLoop,
 } from 'services/store-data/analytics'
-import { PROJECTS } from 'constants/global'
-
-const VALIDATOR_LEADER_ID = process.env.VALIDATOR_LEADER_ID
 
 // MEMORY STORAGE
 export function updateSignin(prop, value) {
@@ -128,40 +110,6 @@ export function updateAccount({ meta, newValues }) {
 	}
 }
 
-export function updateChannelsWithBalanceAll(channels) {
-	return function(dispatch) {
-		return dispatch({
-			type: types.UPDATE_CHANNELS_WITH_BALANCE_ALL,
-			channels,
-		})
-	}
-}
-
-export function resetChannelsWithBalanceAll() {
-	return function(dispatch) {
-		return dispatch({
-			type: types.RESET_CHANNELS_WITH_BALANCE_ALL,
-		})
-	}
-}
-
-export function updateChannelsWithOutstandingBalance(channels) {
-	return function(dispatch) {
-		return dispatch({
-			type: types.UPDATE_CHANNELS_WITH_OUTSTANDING_BALANCE,
-			channels,
-		})
-	}
-}
-
-export function resetChannelsWithOutstandingBalance() {
-	return function(dispatch) {
-		return dispatch({
-			type: types.RESET_CHANNELS_WITH_OUTSTANDING_BALANCE,
-		})
-	}
-}
-
 // getIdentityStatistics tooks to long some times
 // if the account is change we do not update the account
 // TODO: we can use something for abortable tasks
@@ -198,63 +146,6 @@ export function updateAccountStatsWallet() {
 							[`stats-${id}`]: { formatted, raw, prices },
 						},
 					},
-				})(dispatch)
-			}
-		} catch (err) {
-			console.error('ERR_STATS', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_STATS', { args: [getErrorMsg(err)] }),
-				timeout: 20000,
-			})(dispatch)
-		}
-	}
-}
-
-export function updateAccountStatsPlatform() {
-	return async function(dispatch, getState) {
-		const account = selectAccount(getState())
-		try {
-			const { identity } = account
-			const { address } = identity
-			const {
-				all,
-				withOutstandingBalance,
-				withOutstandingBalanceAll,
-			} = await getChannelsWithOutstanding({
-				identityAddr: address,
-			})
-
-			if (!isAccountChanged(getState, account)) {
-				updateChannelsWithBalanceAll(all)(dispatch)
-				updateInitialDataLoaded('allChannels', true)(dispatch, getState)
-			}
-
-			const outstandingBalanceMainToken = await getOutstandingBalance({
-				withBalance: withOutstandingBalance,
-			}).catch(err => {
-				console.error('ERR_OUTSTANDING_BALANCES', err)
-			})
-
-			const outstandingBalanceAllMainToken = await getOutstandingBalance({
-				withBalance: withOutstandingBalanceAll,
-			}).catch(err => {
-				console.error('ERR_OUTSTANDING_BALANCES_ALL', err)
-			})
-
-			const { formatted, raw } = await getAccountStats({
-				account,
-				outstandingBalanceMainToken,
-				outstandingBalanceAllMainToken,
-				all,
-			})
-
-			if (!isAccountChanged(getState, account)) {
-				await updateChannelsWithOutstandingBalance(withOutstandingBalance)(
-					dispatch
-				)
-				await updateAccount({
-					newValues: { stats: { formatted, raw } },
 				})(dispatch)
 			}
 		} catch (err) {
@@ -385,124 +276,6 @@ export function createSessionWallet({
 			await updateMemoryUi('initialDataLoaded', false)(dispatch, getState)
 
 			const goTo = ''
-
-			dispatch(push(`/dashboard/${goTo}`))
-			updateGlobalUi('goToSide', goTo)(dispatch)
-
-			// dispatch(push('/side-select'))
-		} catch (err) {
-			console.error('ERR_GETTING_SESSION', err)
-			addToast({
-				type: 'cancel',
-				label: translate('ERR_GETTING_SESSION', { args: [getErrorMsg(err)] }),
-				timeout: 20000,
-			})(dispatch)
-		}
-
-		updateSpinner(CREATING_SESSION, false)(dispatch)
-	}
-}
-
-export function createSession({
-	wallet,
-	identity = {},
-	email,
-	deleteLegacyKey,
-	walletSession,
-}) {
-	return async function(dispatch, getState) {
-		updateSpinner(CREATING_SESSION, true)(dispatch)
-		try {
-			const newWallet = { ...wallet }
-			const sessionSignature =
-				getSig({
-					addr: newWallet.address,
-					mode: newWallet.authType,
-					identity: identity.address,
-				}) || null
-
-			const hasSession =
-				!!sessionSignature &&
-				(await checkSession({
-					authSig: sessionSignature,
-					skipErrToast: true,
-				}))
-
-			if (hasSession) {
-				newWallet.authSig = sessionSignature
-			} else {
-				const {
-					signature,
-					mode,
-					authToken,
-					hash,
-					typedData,
-				} = await getAuthSig({ wallet: newWallet })
-
-				const { status, expiryTime } = await getSession({
-					identity: identity.address,
-					mode: mode,
-					signature,
-					authToken,
-					hash,
-					typedData,
-					signerAddress: newWallet.address,
-				})
-
-				if (status === 'OK') {
-					addSig({
-						addr: wallet.address,
-						sig: signature,
-						mode: wallet.authType,
-						expiryTime: expiryTime,
-						identity: identity.address,
-					})
-					newWallet.authSig = signature
-				}
-			}
-
-			const account = {
-				email: email,
-				wallet: newWallet,
-				identity: { ...identity },
-			}
-
-			const leaderValidatorAuth = await getValidatorAuthToken({
-				validatorId: VALIDATOR_LEADER_ID,
-				account,
-			})
-
-			account.identity.validatorAuthTokens = {
-				[VALIDATOR_LEADER_ID]: leaderValidatorAuth,
-			}
-
-			await updateAccount({
-				newValues: { ...account },
-			})(dispatch)
-
-			if (deleteLegacyKey) {
-				await removeLegacyKey({
-					email: wallet.email,
-					password: wallet.password,
-				})
-			}
-
-			const redirectSide = selectLoginDirectSide(getState())
-			await updateMemoryUi('initialDataLoaded', false)(dispatch, getState)
-
-			const state = getState() // after account is updated
-			const persistUserSide = selectUserLastSide(state)
-			const project = selectProject(state)
-
-			const { userSide } = (identity.relayerData || {}).meta || {}
-
-			const side = persistUserSide || userSide || redirectSide
-
-			const goTo =
-				project === PROJECTS.platform &&
-				['advertiser', 'publisher'].includes(side)
-					? side
-					: ''
 
 			dispatch(push(`/dashboard/${goTo}`))
 			updateGlobalUi('goToSide', goTo)(dispatch)
@@ -733,40 +506,6 @@ export function ensureQuickWalletBackup() {
 			}
 		} catch (err) {}
 		updateSpinner(QUICK_WALLET_BACKUP, false)(dispatch)
-	}
-}
-
-export function loadPlatformAccountData() {
-	return async function(dispatch, getState) {
-		updateMemoryUi('initialDataLoaded', false)(dispatch, getState)
-		const account = selectAccount(getState())
-		!isAccountChanged(getState, account) &&
-			(await updateAccountIdentityData(() =>
-				updateInitialDataLoaded('accountIdentityData', true)(dispatch, getState)
-			)(dispatch, getState))
-
-		const items = await getAllItems(() =>
-			updateInitialDataLoaded('allItems', true)(dispatch, getState)
-		)(dispatch, getState)
-
-		const advancedAnalytics = advancedAnalyticsLoop.start(() =>
-			updateInitialDataLoaded('advancedAnalytics', true)(dispatch, getState)
-		)
-		const campaigns = campaignsLoop.start(() =>
-			updateInitialDataLoaded('campaigns', true)(dispatch, getState)
-		)
-		const demand = updateSlotsDemandThrottled()(dispatch, getState)
-		const targetingData = updateTargetingDataThrottled()(dispatch, getState)
-
-		await Promise.all[
-			(items, advancedAnalytics, campaigns, demand, targetingData)
-		]
-
-		await statsLoop.start(() =>
-			updateInitialDataLoaded('stats', true)(dispatch, getState)
-		)
-
-		updateMemoryUi('initialDataLoaded', true)(dispatch, getState)
 	}
 }
 

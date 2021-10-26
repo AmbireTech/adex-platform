@@ -27,8 +27,8 @@ export default {
 // execute(addTost())
 export * from './common'
 export * from './projectActions'
+export * from './uiActions'
 export * from './validationActions'
-export * from './itemActions'
 export * from './accountActions'
 export * from './identityActions'
 export * from './transactionActions'
