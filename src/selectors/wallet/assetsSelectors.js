@@ -2,6 +2,7 @@ import {
 	selectAccountStatsFormatted,
 	selectAccountStats,
 	selectIdentitySideUi,
+	selectFeeTokens,
 } from 'selectors'
 import { createSelector } from 'reselect'
 import {
@@ -59,6 +60,23 @@ export const selectDiversifiableAssetsFromSources = createSelector(
 				imgSrc: getLogo(x.address),
 			}))
 		return diversifiable
+	}
+)
+
+export const selectFeeTokensWithBalance = createSelector(
+	[selectAccountStatsFormatted, selectFeeTokens],
+	({ assetsData = {} }, feeTokens) => {
+		return Object.values(assetsData)
+			.filter(x => {
+				return feeTokens.some(y => {
+					return x.address === y.address
+				})
+			})
+			.map(x => ({
+				value: x.address,
+				label: `${x.symbol} ${x.balance}`,
+				imgSrc: getLogo(x.address),
+			}))
 	}
 )
 

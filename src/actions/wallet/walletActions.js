@@ -11,9 +11,10 @@ import {
 	validate,
 	validateWalletDiversificationAssets,
 	validateEthAddress,
-	validatePrivLevel,
+	validateWalletPrivLevel,
 	validatePrivilegesAddress,
 	validateActionInputAmount,
+	validateWalletFeeTokens,
 } from 'actions'
 import {
 	selectNewTransactionById,
@@ -711,10 +712,12 @@ export function walletValidatePrivilegesChange({
 			await beforeWeb3(validateId)(dispatch, getState)
 		}
 		const state = getState()
-		const { setAddr, warningAccepted, privLevel } = selectNewTransactionById(
-			state,
-			stepsId
-		)
+		const {
+			setAddr,
+			warningAccepted,
+			privLevel,
+			feeTokenAddr,
+		} = selectNewTransactionById(state, stepsId)
 		const walletAddr = selectWalletAddress(state)
 		const authType = selectAuthType(state)
 
@@ -729,9 +732,14 @@ export function walletValidatePrivilegesChange({
 				dirty,
 				quickCheck: !dirty,
 			})(dispatch),
-			validatePrivLevel({
+			validateWalletPrivLevel({
 				validateId,
 				privLevel,
+				dirty,
+			})(dispatch),
+			validateWalletFeeTokens({
+				validateId,
+				feeTokenAddr,
 				dirty,
 			})(dispatch),
 		])

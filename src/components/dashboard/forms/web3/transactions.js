@@ -1,7 +1,7 @@
 import React from 'react'
 import WithdrawFromIdentity from './WithdrawFromIdentity'
 import WithdrawAnyTokenFromIdentityPage from './WithdrawAnyTokenFromIdentity'
-import SeAddressPrivilege from './SeAddressPrivilege'
+import SetAddressPrivilege from './SetAddressPrivilege'
 import SetAccountENSPage from './SetAccountENSPage'
 import TransactionPreview from './TransactionPreview'
 import FormSteps from 'components/common/stepper/FormSteps'
@@ -81,7 +81,7 @@ export const SetIdentityPrivilege = ({ SaveBtn, label, ...props }) => {
 			steps={[
 				{
 					title: 'ACCOUNT_SET_IDENTITY_PRIVILEGE_STEP',
-					component: SeAddressPrivilege,
+					component: SetAddressPrivilege,
 					validationFn: props => execute(validatePrivilegesChange(props)),
 				},
 				{

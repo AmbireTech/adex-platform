@@ -258,6 +258,18 @@ function SideNav(props) {
 							</ListItemIcon>
 							<ListItemText primary={t('ACCOUNT')} />
 						</RRListItem>
+						<RRListItem
+							button
+							to={{ pathname: '/dashboard/privileges' }}
+							className={classnames(classes.navLink, {
+								[classes.active]: location === 'privileges',
+							})}
+						>
+							<ListItemIcon>
+								<AccountBoxIcon />
+							</ListItemIcon>
+							<ListItemText primary={t('PRIVILEGES_LABEL')} />
+						</RRListItem>
 					</List>
 				</Box>
 				<Box>
