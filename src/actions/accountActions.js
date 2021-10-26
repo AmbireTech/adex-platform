@@ -535,7 +535,7 @@ export function getRelayerConfig() {
 		if (Object.keys(network).length === 0) {
 			return await updateNetwork('polygon')(dispatch, getState)
 		} else {
-			const currentNetworkCfg = cfg.walletCfg.networks[network.id]
+			const currentNetworkCfg = cfg.networks[network.id]
 			const isChanged =
 				JSON.stringify(network) !==
 				JSON.stringify({ id: network.id, ...currentNetworkCfg })
