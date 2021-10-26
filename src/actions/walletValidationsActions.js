@@ -206,7 +206,7 @@ export function validateWalletFeeTokens({ validateId, feeTokenAddr, dirty }) {
 		const feeTokens = selectFeeTokens()
 
 		const isValid = feeTokens.findIndex(x => x.address === feeTokenAddr) !== -1
-		
+
 		await validate(validateId, 'feeTokenAddr', {
 			isValid,
 			// TODO: Add missing translations
