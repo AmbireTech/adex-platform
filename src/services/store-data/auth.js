@@ -1,14 +1,8 @@
 import {
 	getState,
 	execute,
-	resetAllNewItems,
-	resetAllItems,
-	resetAllBids,
 	resetIdentity,
 	resetAccount,
-	resetAnalytics,
-	resetChannelsWithBalanceAll,
-	resetChannelsWithOutstandingBalance,
 	resetAllNewTransaction,
 	updateMemoryUi,
 	resetAllTableState,
@@ -34,12 +28,6 @@ export const logOut = skipRedirect => {
 		execute(push('/'))
 	}
 	execute(resetIdentity())
-	execute(resetAllItems())
-	execute(resetAllNewItems())
-	execute(resetAllBids())
-	execute(resetAnalytics())
-	execute(resetChannelsWithBalanceAll())
-	execute(resetChannelsWithOutstandingBalance())
 	execute(resetAllNewTransaction())
 	execute(resetAllTableState())
 }
