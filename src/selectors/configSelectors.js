@@ -76,8 +76,8 @@ export const selectNetworkByChainId = createCachedSelector(
 // }
 
 export const selectFeeTokens = createSelector(
-	[selectRelayerConfig],
-	({ feeTokens }) => feeTokens
+	[selectRelayerConfig, selectNetwork],
+	({ feeTokens }, { id }) => feeTokens.filter(x => x.network === id)
 )
 
 export const selectFeeTokenWhitelist = createSelector(
