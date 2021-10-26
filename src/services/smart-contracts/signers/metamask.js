@@ -26,15 +26,17 @@ export default class MetaMaskSigner extends Signer {
 		}
 
 		const signature = await this._signer.signMessage(message)
-		// TODO: support EIP712
-		const res = {
-			signature,
-			hash: message,
-			mode: constants.SignatureModes.GETH,
-			address: await this._signer.getAddress(),
-		}
 
-		return res
+		return signature
+		// // TODO: support EIP712
+		// const res = {
+		// 	signature,
+		// 	hash: message,
+		// 	mode: constants.SignatureModes.GETH,
+		// 	address: await this._signer.getAddress(),
+		// }
+
+		// return res
 	}
 
 	connect = provider => {

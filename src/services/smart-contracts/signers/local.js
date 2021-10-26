@@ -53,14 +53,16 @@ export default class LocalSigner extends Signer {
 		const wallet = await this.getWallet()
 
 		const signature = await wallet.signMessage(message)
-		const res = {
-			signature,
-			hash: message,
-			mode: constants.SignatureModes.GETH,
-			address: wallet.address,
-		}
 
-		return res
+		return signature
+		// const res = {
+		// 	signature,
+		// 	hash: message,
+		// 	mode: constants.SignatureModes.GETH,
+		// 	address: wallet.address,
+		// }
+
+		// return res
 	}
 
 	connect = provider => {
