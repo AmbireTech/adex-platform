@@ -102,7 +102,7 @@ const AuthSelect = () => {
 				<Box m={1}>
 					<RRButton
 						variant='contained'
-						to={`/dashboard/}`}
+						to={`/dashboard/`}
 						size='large'
 						color='default'
 						fullWidth
