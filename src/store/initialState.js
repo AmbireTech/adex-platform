@@ -1,8 +1,6 @@
 import { Account } from 'adex-models'
-import { PROJECTS } from 'constants/global'
 
 let initialState = {
-	project: PROJECTS.platform,
 	account: new Account(),
 	signin: {
 		name: '',

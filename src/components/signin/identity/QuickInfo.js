@@ -22,14 +22,12 @@ import {
 	selectValidationsById,
 	selectSpinnerById,
 	selectKnowUsFromSource,
-	selectUserSides,
 } from 'selectors'
 import { execute, updateIdentity } from 'actions'
 
 import { CREATING_SESSION } from 'constants/spinners'
 
 const knowFromSource = selectKnowUsFromSource()
-const userSides = selectUserSides()
 
 const QuickInfo = props => {
 	const { validateId } = props

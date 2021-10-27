@@ -9,7 +9,6 @@ import { getEthers } from 'services/smart-contracts/ethers'
 import { utils, BigNumber } from 'ethers'
 import { contracts } from 'services/smart-contracts/contractsCfg'
 import { selectMainToken } from 'selectors'
-import { EXECUTE_ACTIONS } from 'constants/misc'
 
 import {
 	encodeRouteToPath,

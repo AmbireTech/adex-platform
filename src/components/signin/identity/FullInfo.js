@@ -12,7 +12,6 @@ import {
 	selectValidationsById,
 	selectSpinnerById,
 	selectKnowUsFromSource,
-	selectUserSides,
 } from 'selectors'
 import { ExternalAnchor } from 'components/common/anchor'
 import { execute, updateIdentity } from 'actions'
@@ -26,7 +25,6 @@ import { CREATING_SESSION } from 'constants/spinners'
 import { WALLET_ACTIONS_MSGS } from 'constants/misc'
 
 const knowFromSource = selectKnowUsFromSource()
-const userSides = selectUserSides()
 
 const FulInfo = props => {
 	const { validateId } = props

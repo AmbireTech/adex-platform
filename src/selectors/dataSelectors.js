@@ -1,6 +1,6 @@
 import { t } from 'selectors'
 import { createSelector } from 'reselect'
-import { WHERE_YOU_KNOW_US, USER_SIDES } from 'constants/misc'
+import { WHERE_YOU_KNOW_US } from 'constants/misc'
 export const selectFromSource = createSelector(
 	labelValueMapping => labelValueMapping,
 	source =>
@@ -19,10 +19,5 @@ export const selectFromSource = createSelector(
 
 export const selectKnowUsFromSource = createSelector(
 	() => selectFromSource(WHERE_YOU_KNOW_US),
-	source => source
-)
-
-export const selectUserSides = createSelector(
-	() => selectFromSource(USER_SIDES),
 	source => source
 )

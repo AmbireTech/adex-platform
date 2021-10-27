@@ -33,7 +33,6 @@ import NetworkSelect from 'components/wallet/NetworkSelect'
 import { t, selectAccount, selectWalletInitialDataLoaded } from 'selectors'
 import { styles } from './styles'
 import { formatAddress } from 'helpers/formatters'
-import { PROJECTS } from 'constants/global'
 import clsx from 'clsx'
 
 const RRMenuItem = withReactRouterLink(MenuItem)
