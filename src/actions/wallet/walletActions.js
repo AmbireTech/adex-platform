@@ -435,6 +435,7 @@ export function validateWalletWithdraw({
 			withdrawTo,
 			temp,
 			txSpeed,
+			feeTokenAddr,
 		} = selectNewTransactionById(state, stepsId)
 		const { assetsData = {} } = selectAccountStatsRaw(state)
 		const { withdrawAsset } = stepsProps
@@ -497,6 +498,7 @@ export function validateWalletWithdraw({
 					withdrawAssetAddr: withdrawAsset,
 					assetsDataRaw: assetsData,
 					txSpeed,
+					feeTokenAddr,
 				})
 
 			isValid = await handleWalletTxnsAndFeesData({

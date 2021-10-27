@@ -10,7 +10,7 @@ import {
 	//  createSession,
 	createSessionWallet,
 } from './accountActions'
-import { getIdentityDeployData } from 'services/smart-contracts/actions/identity'
+import { getIdentityDeployData } from 'services/smart-contracts/actions/walletIdentity'
 import {
 	addDataToWallet,
 	getWalletHash,
@@ -47,7 +47,7 @@ import {
 } from 'constants/spinners'
 import { getEthers, getEthersReadOnly } from 'services/smart-contracts/ethers'
 import { getSigner } from 'services/smart-contracts/actions/ethers'
-import { getAddressBalances } from 'services/smart-contracts/actions/stats'
+import { getAddressBalances } from 'services/smart-contracts/actions/walletStats'
 
 // MEMORY STORAGE
 export function updateIdentity(prop, value) {

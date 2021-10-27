@@ -31,7 +31,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import NetworkSelect from 'components/wallet/NetworkSelect'
 
 import { t, selectAccount, selectWalletInitialDataLoaded } from 'selectors'
-import { styles } from 'components/dashboard/dashboard/styles'
+import { styles } from './styles'
 import { formatAddress } from 'helpers/formatters'
 import { PROJECTS } from 'constants/global'
 import clsx from 'clsx'

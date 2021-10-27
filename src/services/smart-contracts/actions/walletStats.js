@@ -1,11 +1,26 @@
 import { getEthersReadOnly } from 'services/smart-contracts/ethers'
 import { BigNumber, utils } from 'ethers'
 import { formatTokenAmount } from 'helpers/formatters'
-import { privilegesNames } from './stats'
 // import { getPrices } from 'services/prices'
 import { getAssets, getMappers, getTokens } from 'services/adex-wallet'
 
 const ZERO = BigNumber.from(0)
+
+export async function getAddressBalances({ address, getFullBalances }) {
+	const { provider } = await getEthersReadOnly()
+
+	const calls = [provider.getBalance(address.address)]
+
+	const balances = await Promise.all(calls)
+
+	const formatted = {
+		address: address.address,
+		path: address.serializedPath || address.path, // we are going to keep the entire path
+		balanceEth: utils.formatEther(balances[0].toString()),
+	}
+
+	return formatted
+}
 
 async function getAssetsData({ identityAddress }) {
 	const assets = getAssets()
@@ -25,7 +40,12 @@ async function getAssetsData({ identityAddress }) {
 					isAaveInterestToken,
 					...rest
 				}) => {
-					const balance = await getBalance({ address: identityAddress })
+					const balance =
+						// // address === '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
+						// address === '0xc2132D05D31c914a87C6611C10748AEb04B58e8F'
+						// 	? BigNumber.from((10000 * 10 ** 6).toString())
+						// :
+						await getBalance({ address: identityAddress })
 					const baseTokenBalance = mappers[address]
 						? await mappers[address](balance)
 						: [symbol, balance]
@@ -34,6 +54,8 @@ async function getAssetsData({ identityAddress }) {
 						address,
 						symbol,
 						balance,
+						// NOTE: if we use formatted stats sometimes 0 is not 0
+						isZeroBalance: balance.isZero,
 						baseTokenBalance,
 						decimals,
 						name,
@@ -177,6 +199,7 @@ export async function getAccountStatsWallet({ account, prices }) {
 	)
 
 	console.log('assetsData', assetsData)
+	console.log('walletPrivileges', walletPrivileges)
 
 	const { withUsdValue, totalMainCurrenciesValues } = Object.entries(
 		assetsData
@@ -292,7 +315,7 @@ export async function getAccountStatsWallet({ account, prices }) {
 		assetsData: formattedAssetsData,
 		walletAddress: wallet.address,
 		walletAuthType: wallet.authType,
-		walletPrivileges: privilegesNames[walletPrivileges],
+		// walletPrivileges: privilegesNames[walletPrivileges],
 		identityAddress: identity.address,
 	}
 

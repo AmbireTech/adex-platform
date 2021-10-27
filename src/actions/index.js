@@ -1,5 +1,4 @@
 import * as common from './common'
-import * as projectActions from './projectActions'
 import * as uiActions from './uiActions'
 import * as validationActions from './validationActions'
 import * as accountActions from './accountActions'
@@ -12,7 +11,6 @@ import * as walletValidationsActions from './wallet/walletActions'
 // without needing to change the code
 export default {
 	...common,
-	...projectActions,
 	...uiActions,
 	...validationActions,
 	...accountActions,
@@ -26,7 +24,6 @@ export default {
 // import { execute, addTost } from 'actions'
 // execute(addTost())
 export * from './common'
-export * from './projectActions'
 export * from './uiActions'
 export * from './validationActions'
 export * from './accountActions'

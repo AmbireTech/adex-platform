@@ -5,6 +5,7 @@ const ADEX_RELAYER_HOST = process.env.ADEX_RELAYER_HOST
 const requester = new Requester({ baseUrl: ADEX_RELAYER_HOST })
 
 const processResponse = res => {
+	// TODO: request timeout (Promise race)
 	if (res.status >= 200 && res.status < 400) {
 		return res.json()
 	}

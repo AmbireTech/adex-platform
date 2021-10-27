@@ -37,10 +37,6 @@ const App = () => {
 		}
 	})
 
-	useEffect(() => {
-		execute(updateProject(window.location.hostname))
-	}, [])
-
 	return (
 		<React.Fragment>
 			<Provider store={store}>

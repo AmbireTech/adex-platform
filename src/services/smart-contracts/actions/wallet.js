@@ -8,11 +8,6 @@ import {
 import { getEthers } from 'services/smart-contracts/ethers'
 import { utils, BigNumber } from 'ethers'
 import { contracts } from 'services/smart-contracts/contractsCfg'
-import {
-	getIdentityTxnsTotalFees,
-	processExecuteByFeeTokens,
-	getIdentityTxnsWithNoncesAndFees,
-} from 'services/smart-contracts/actions/identity'
 import { selectMainToken } from 'selectors'
 import { EXECUTE_ACTIONS } from 'constants/misc'
 
@@ -1400,45 +1395,6 @@ export async function walletSetIdentityPrivilege({
 	}
 
 	const txns = [tx1]
-	const txnsByFeeToken = await getIdentityTxnsWithNoncesAndFees({
-		txns,
-		identityAddr,
-		provider,
-		Identity: IdentityPayable,
-		account,
-		getToken,
-		executeAction: EXECUTE_ACTIONS.privilegesChange,
-	})
 
-	if (getFeesOnly) {
-		const {
-			// total,
-			totalBN,
-			breakdownFormatted,
-		} = await getIdentityTxnsTotalFees({
-			txnsByFeeToken,
-		})
-		return {
-			feesAmountBN: totalBN,
-			feeTokenAddr,
-			spendTokenAddr: feeTokenAddr,
-			amountToSpendBN: totalBN,
-			breakdownFormatted,
-		}
-	}
-
-	const result = await processExecuteByFeeTokens({
-		txnsByFeeToken,
-		identityAddr,
-		wallet,
-		provider,
-		extraData: {
-			setAddr,
-			privLevel,
-		},
-	})
-
-	return {
-		result,
-	}
+	// TODO
 }

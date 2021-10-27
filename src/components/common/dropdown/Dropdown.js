@@ -127,7 +127,8 @@ function Dropdown(props) {
 							const isDisabledSrc =
 								!!disabledValues[srcValue.key] ||
 								!!disabledValues[srcValue.id] ||
-								!!disabledValues[src.value]
+								!!disabledValues[src.value] ||
+								src.disabled
 							return src.group ? (
 								<ListSubheader
 									className={classes.groupHeader}

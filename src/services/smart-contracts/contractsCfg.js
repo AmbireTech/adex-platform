@@ -1,6 +1,4 @@
 import Identity from './build/Identity.json'
-import AdExCore from './build/AdExCore.json'
-import Dai from './build/Dai.json'
 // import IdentityFactory from './build/IdentityFactory.json'
 import AdExENSManager from './abi/AdExENSManager.json'
 import IdentityPayable from './abi/IdentityPayable.json'
@@ -32,15 +30,6 @@ export const contracts = {
 		// address: process.env.REVERSE_REGISTRAR_ADDR,
 		parentDomain: process.env.REVERSE_REGISTRAR_PARENT,
 		abi: ReverseRegistrar,
-	},
-	AdExCore: {
-		// address: process.env.ADEX_CORE_ADDR,
-		abi: AdExCore.abi,
-	},
-	DAI: {
-		// address: process.env.DAI_TOKEN_ADDR,
-		abi: Dai.abi,
-		decimals: 18,
 	},
 	IdentityFactory: {
 		// address: process.env.IDENTITY_FACTORY_ADDR,

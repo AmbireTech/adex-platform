@@ -18,7 +18,7 @@ import {
 	Tooltip,
 	Grid,
 } from '@material-ui/core'
-import { WalletAction } from 'components/dashboard/forms/FormsCommon'
+import { WalletAction } from './FormsCommon'
 import {
 	PropRow,
 	ContentBox,
@@ -26,7 +26,7 @@ import {
 	ContentStickyTop,
 	FullContentSpinner,
 } from 'components/common/dialog/content'
-import { styles } from 'components/dashboard/forms/web3/styles'
+import { styles } from './styles'
 import { DiversifyPreview, WithdrawPreview, TradePreview } from './previews'
 import {
 	t,
@@ -42,11 +42,7 @@ import {
 	// selectAssetsPrices, // TODO: use one of selectAssetsPrices/selectBaseAssetsPrices
 } from 'selectors'
 import { formatTokenAmount, formatCurrencyValue } from 'helpers/formatters'
-import {
-	execute,
-	// checkNetworkCongestion,
-	updateNewTransaction,
-} from 'actions'
+import { execute, updateNewTransaction } from 'actions'
 
 import { HelpSharp as HelpIcon } from '@material-ui/icons'
 import { ExpandMoreSharp as ExpandMoreIcon } from '@material-ui/icons'
@@ -270,18 +266,6 @@ function TransactionPreview(props) {
 				'wallet tx preview fee token addr change - no validation fn provided'
 			)
 	}
-
-	// useEffect(() => {
-	// 	async function checkNetwork() {
-	// 		const msg = await execute(checkNetworkCongestion())
-
-	// 		if (msg) {
-	// 			setNetworkCongested(msg)
-	// 		}
-	// 	}
-
-	// 	checkNetwork()
-	// }, [])
 
 	return (
 		<div>

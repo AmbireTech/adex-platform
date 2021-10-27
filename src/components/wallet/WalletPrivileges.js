@@ -1,10 +1,5 @@
 import React, { useState, Fragment } from 'react'
 import { useSelector } from 'react-redux'
-import {
-	WithdrawAnyTokenFromIdentity,
-	SetIdentityPrivilege,
-	SetAccountENS,
-} from 'components/dashboard/forms/web3/transactions'
 import { WalletSetIdentityPrivilege } from 'components/wallet/forms/walletTransactions'
 import { makeStyles } from '@material-ui/core/styles'
 import {
@@ -149,16 +144,7 @@ function WalletPrivileges() {
 										justifyContent='space-between'
 										alignItems='center'
 									>
-										<Box flexGrow='1'>
-											<Box py={1}>
-												<WithdrawAnyTokenFromIdentity
-													fullWidth
-													variant='contained'
-													color='default'
-													size='large'
-												/>
-											</Box>
-										</Box>
+										<Box flexGrow='1'></Box>
 									</Box>
 								</ListItem>
 							</Fragment>
@@ -217,7 +203,7 @@ function AccountPrivilageItem(props) {
 							{`${t('CURRENT_AUTH')} : ${authType}`}
 						</Button>
 					) : (
-						<SetIdentityPrivilege
+						<WalletSetIdentityPrivilege
 							// TODO: Remove comment below
 							// disabled={!canMakeTx}
 							fullWidth

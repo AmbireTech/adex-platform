@@ -12,7 +12,7 @@ import {
 import { Alert } from '@material-ui/lab'
 import PageNotFound from 'components/page_not_found/PageNotFound'
 import { makeStyles } from '@material-ui/core/styles'
-import { styles } from 'components/dashboard/dashboard/styles'
+import { styles } from './styles'
 import {
 	execute,
 	resolveEnsAddress,
@@ -132,11 +132,11 @@ function WalletDashboard(props) {
 			<main className={clsx(classes.content, walletClasses.content)}>
 				<div className={classes.contentInner}>
 					<Box>
-						<Box mb={2}>
+						{/* <Box mb={2}>
 							<Alert variant='filled' severity='info'>
 								{t('BETA_WARNING_MSG')}
 							</Alert>
-						</Box>
+						</Box> */}
 						{showTxPrivLevelWarning && (
 							<Box mb={2}>
 								<Alert

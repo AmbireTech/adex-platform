@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-import { PROJECTS } from 'constants/global'
 import { useSelector } from 'react-redux'
 import {
 	metamaskChecks,
@@ -24,7 +23,6 @@ import {
 	LoginQuickIdentity,
 } from 'components/signin/identity/Identity'
 import PageNotFound from 'components/page_not_found/PageNotFound'
-import Home from 'components/signin/Home'
 import WalletHome from 'components/signin/WalletHome'
 import JustDialog from 'components/common/dialog/JustDialog'
 import { migrateLegacyWallet, removeLegacyKey } from 'services/wallet/wallet'

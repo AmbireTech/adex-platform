@@ -13,6 +13,7 @@ import {
 	// getEthers,
 	getEthersReadOnly,
 } from 'services/smart-contracts/ethers'
+import { generateAddress2 } from 'ethereumjs-util'
 import {
 	t,
 	selectRelayerConfig,
@@ -21,6 +22,11 @@ import {
 	selectNetwork,
 	selectWalletAddress,
 } from 'selectors'
+
+const {
+	getProxyDeployBytecode,
+} = require('adex-protocol-eth/js/IdentityProxyDeploy')
+const { getAddress, keccak256 } = utils
 const { parseUnits, formatUnits, Interface } = utils
 const { MaxInt256 } = constants
 
@@ -40,6 +46,42 @@ export const GAS_LIMITS = {
 	base: BigNumber.from(30_000), // Base for each identity tx
 	approve: BigNumber.from(70_000),
 	transferETH: BigNumber.from(21_000),
+}
+
+export async function getIdentityDeployData({ owner }) {
+	const {
+		whitelistedFactories,
+		whitelistedBaseIdentities,
+		identityRecoveryAddr,
+		feeCollector,
+	} = selectRelayerConfig()
+
+	const identityFactoryAddr = whitelistedFactories[1]
+	const baseIdentityAddr = whitelistedBaseIdentities[1]
+
+	// TODO: quick account manager
+	const privileges = [
+		[owner, true],
+		[identityRecoveryAddr || feeCollector, true],
+	]
+
+	const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, {
+		privSlot: 0,
+	})
+
+	const salt = keccak256(owner)
+
+	const identityAddr = getAddress(
+		`0x${generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex')}`
+	)
+	return {
+		identityFactoryAddr,
+		baseIdentityAddr,
+		bytecode,
+		salt,
+		identityAddr,
+		privileges,
+	}
 }
 
 const getTokenAmount = ({ amount, tokenData }) => {
@@ -738,6 +780,8 @@ export async function getTxnsEstimationData({
 	account,
 	// mainCurrencyId = 'USD',
 	preEstimatedData = null,
+	mainActionAmountBN,
+	mainActionAssetAddr,
 	txSpeed,
 }) {
 	if (!txSpeed) {

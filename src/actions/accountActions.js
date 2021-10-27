@@ -54,13 +54,7 @@ import {
 	SYNC_WEB3_DATA,
 	UPDATING_DATA_ON_NETWORK_CHANGE,
 } from 'constants/spinners'
-import { campaignsLoop } from 'services/store-data/campaigns'
-import statsLoop from 'services/store-data/account'
 import walletStatsLoop from 'services/store-data/statsWallet'
-import {
-	analyticsLoop,
-	advancedAnalyticsLoop,
-} from 'services/store-data/analytics'
 
 // MEMORY STORAGE
 export function updateSignin(prop, value) {
@@ -506,16 +500,6 @@ export function ensureQuickWalletBackup() {
 			}
 		} catch (err) {}
 		updateSpinner(QUICK_WALLET_BACKUP, false)(dispatch)
-	}
-}
-
-export function stopAccountDataUpdate() {
-	return async function(dispatch, getState) {
-		updateMemoryUi('initialDataLoaded', false)(dispatch, getState)
-		analyticsLoop.stop()
-		advancedAnalyticsLoop.stop()
-		campaignsLoop.stop()
-		statsLoop.stop()
 	}
 }
 

@@ -1,10 +1,5 @@
 import React, { useState, Fragment } from 'react'
 import { useSelector } from 'react-redux'
-import {
-	WithdrawAnyTokenFromIdentity,
-	SetIdentityPrivilege,
-	SetAccountENS,
-} from 'components/dashboard/forms/web3/transactions'
 import { WalletSetIdentityPrivilege } from 'components/wallet/forms/walletTransactions'
 import { makeStyles } from '@material-ui/core/styles'
 import {
@@ -216,7 +211,7 @@ function AccountInfo() {
 							{t('WALLETS_WITH_PRIVILEGES')}
 						</ListSubheader>
 						<List disablePadding>
-							<AccountPrivilageItem
+							<AccountPrivilegeItem
 								address={walletAddress}
 								privileges={privileges}
 								authType={authType}
@@ -226,7 +221,7 @@ function AccountInfo() {
 								.filter(a => a !== identityRecoveryAddr && a !== walletAddress)
 								.map((address, key) => (
 									<Fragment key={key}>
-										<AccountPrivilageItem
+										<AccountPrivilegeItem
 											address={address}
 											privileges={currentPrivileges[address]}
 										/>
@@ -248,14 +243,7 @@ function AccountInfo() {
 											alignItems='center'
 										>
 											<Box flexGrow='1'>
-												<Box py={1}>
-													<WithdrawAnyTokenFromIdentity
-														fullWidth
-														variant='contained'
-														color='default'
-														size='large'
-													/>
-												</Box>
+												<Box py={1}></Box>
 											</Box>
 										</Box>
 									</ListItem>
@@ -269,7 +257,7 @@ function AccountInfo() {
 	)
 }
 
-function AccountPrivilageItem(props) {
+function AccountPrivilegeItem(props) {
 	const classes = useStyles()
 	const currUserPrivileges = useSelector(selectWalletPrivileges)
 	const canMakeTx = currUserPrivileges > 1
@@ -316,7 +304,7 @@ function AccountPrivilageItem(props) {
 							{`${t('CURRENT_AUTH')} : ${authType}`}
 						</Button>
 					) : (
-						<SetIdentityPrivilege
+						<WalletSetIdentityPrivilege
 							disabled={!canMakeTx}
 							fullWidth
 							color='default'

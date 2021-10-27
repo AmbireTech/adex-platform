@@ -8,9 +8,7 @@ import {
 	resetAllTableState,
 } from 'actions'
 import ReactGA from 'react-ga'
-import { campaignsLoop } from 'services/store-data/campaigns'
-import statsLoop from 'services/store-data/account'
-import { advancedAnalyticsLoop } from 'services/store-data/analytics'
+import statsLoop from 'services/store-data/statsWallet'
 
 import { push } from 'connected-react-router'
 const DIMENSIONS_NOT_SET_OR_LOADING = null
@@ -21,8 +19,6 @@ export const logOut = skipRedirect => {
 		dimension2: DIMENSIONS_NOT_SET_OR_LOADING,
 	}) //reset dimensions after logout
 	execute(resetAccount())
-	advancedAnalyticsLoop.stop()
-	campaignsLoop.stop()
 	statsLoop.stop()
 	if (!skipRedirect) {
 		execute(push('/'))
