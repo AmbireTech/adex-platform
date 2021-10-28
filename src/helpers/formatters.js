@@ -1,37 +1,10 @@
 import { utils } from 'ethers'
-import MomentUtils from '@date-io/moment'
 
 const HOUR = 60 * 60 * 1000
 const DAY = 24 * HOUR
 
-const moment = new MomentUtils()
-
 export const DEFAULT_DATETIME_FORMAT = 'YYYY/MM/DD HH:mm'
 export const DEFAULT_DATE_FORMAT = 'YYYY/MM/DD'
-
-export const formatDateTime = (
-	timestamp,
-	format = DEFAULT_DATETIME_FORMAT,
-	noDateLabel = 'no date'
-) => {
-	if (!timestamp) {
-		return noDateLabel
-	}
-	const date = moment.date(timestamp)
-	return date.format(format)
-}
-
-export const formatDate = (
-	timestamp,
-	format = DEFAULT_DATE_FORMAT,
-	noDateLabel = 'no date'
-) => {
-	if (!timestamp) {
-		return noDateLabel
-	}
-	const date = moment.date(timestamp)
-	return date.format(format)
-}
 
 export const formatTokenAmount = (
 	amountString = '0',

@@ -1,5 +1,3 @@
-import moment from 'moment'
-
 // TODO: separate exports - not class
 class Helper {
 	getGuid() {
@@ -38,18 +36,6 @@ class Helper {
 	getRandomKeyFromObj(obj) {
 		var keys = Object.keys(obj)
 		return keys[(keys.length * Math.random()) << 0]
-	}
-
-	geRandomMoment(maxDaysPast, maxDaysAhead, initialMoment) {
-		// TODO: fix +/- 1 day bug
-		let initial = moment.isMoment(initialMoment)
-			? initialMoment.valueOf()
-			: undefined
-
-		return moment(initial)
-			.add(this.getRandomInt(-maxDaysPast, maxDaysAhead), 'd')
-			.add(this.getRandomInt(-24, 24), 'h')
-			.add(this.getRandomInt(-60, 60), 'm')
 	}
 
 	hexToRgbaColorString = (hex, alpha) => {
