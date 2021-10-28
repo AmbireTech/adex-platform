@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import NO_IMAGE from 'resources/no-image-box-eddie.jpg'
 import VIDEO_IMAGE from 'resources/video-placeholder.jpg'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import classnames from 'classnames'
+import clsx from 'clsx'
 import FullscreenIcon from '@material-ui/icons/Fullscreen'
 // import IconButton from '@material-ui/core/IconButton'
 import Dialog from '@material-ui/core/Dialog'
@@ -243,8 +243,8 @@ const Media = ({
 			>
 				<DialogContent className={classes.dialogImageParent}>
 					{renderMedia({
-						imgClasses: classnames(classes.dialogImage, classes.imgLoading),
-						videoClasses: classnames(classes.dialogImage, classes.imgLoading),
+						imgClasses: clsx(classes.dialogImage, classes.imgLoading),
+						videoClasses: clsx(classes.dialogImage, classes.imgLoading),
 					})}
 				</DialogContent>
 				<DialogActions>
@@ -262,7 +262,7 @@ const Media = ({
 				<Fab
 					size='small'
 					color='default'
-					className={classnames(classes.fullscreenIcon)}
+					className={clsx(classes.fullscreenIcon)}
 					onClick={() => {
 						handleToggle()
 					}}
@@ -276,21 +276,21 @@ const Media = ({
 
 	return media && media.src ? (
 		<div
-			className={classnames(className, classes.wrapper, {
+			className={clsx(className, classes.wrapper, {
 				[classes.cellImg]: !!isCellImg,
 			})}
 		>
 			{renderMedia({
 				onclick: onClick || (fullScreenOnClick && handleToggle),
-				imgClasses: classnames(classes.imgLoading, classes.img, classNameImg),
-				videoClasses: classnames(classes.imgLoading, classes.img),
+				imgClasses: clsx(classes.imgLoading, classes.img, classNameImg),
+				videoClasses: clsx(classes.imgLoading, classes.img),
 				controls: !!controls,
 			})}
 			{allowFullscreen && fullScreenBtn()}
 			{fullScreenOnClick && renderFullscreenDialog()}
 		</div>
 	) : (
-		<span className={classnames(classes.imgLoading, className)}>
+		<span className={clsx(classes.imgLoading, className)}>
 			<span className={classes.circular}>
 				<CircularProgress />
 			</span>

@@ -3,7 +3,7 @@ import React from 'react'
 import { CircularProgress, Typography, Box } from '@material-ui/core'
 import OutlinedPropView from 'components/common/OutlinedPropView'
 import { styles } from './styles.js'
-import classnames from 'classnames'
+import clsx from 'clsx'
 import { withStyles } from '@material-ui/core/styles'
 import { t } from 'selectors'
 
@@ -33,11 +33,11 @@ const contentBody = ({ classes, children, className }) => (
 )
 
 const contentStickyTop = ({ classes, children, className }) => (
-	<div className={classnames(classes.contentStickyTop)}>{children}</div>
+	<div className={clsx(classes.contentStickyTop)}>{children}</div>
 )
 
 const topLoading = ({ classes, msg, subMsg, className }) => (
-	<div className={classnames(classes.contentTopLoading)}>
+	<div className={clsx(classes.contentTopLoading)}>
 		<CircularProgress className={classes.contentTopLoadingCircular} size={50} />
 		<div>
 			<Typography component='div'> {msg} </Typography>
@@ -52,7 +52,7 @@ const topLoading = ({ classes, msg, subMsg, className }) => (
 
 const fullContentSpinner = ({ classes }) => (
 	<CircularProgress
-		className={classnames(classes.progressCircleCenter)}
+		className={clsx(classes.progressCircleCenter)}
 		size={50}
 	/>
 )

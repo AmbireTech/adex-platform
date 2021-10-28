@@ -8,7 +8,7 @@ import Dialog from '@material-ui/core/Dialog'
 import Chip from '@material-ui/core/Chip'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import DialogContent from '@material-ui/core/DialogContent'
-import classnames from 'classnames'
+import clsx from 'clsx'
 import Slide from '@material-ui/core/Slide'
 import { withStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
@@ -23,7 +23,7 @@ import ReactGA from 'react-ga'
 const textBtn = ({ label, className, classes, style, onClick, ...rest }) => {
 	return (
 		<span
-			className={classnames(classes.textBtn, className)}
+			className={clsx(classes.textBtn, className)}
 			style={style}
 			onClick={onClick}
 		>
@@ -175,7 +175,7 @@ export default function WithDialogHoc(Decorated) {
 					label={btnLabelTranslated}
 					onClick={ev => handleClick(ev)}
 					{...btnProps}
-					className={classnames(
+					className={clsx(
 						className,
 						{ [classes.floating]: !!fabButton },
 						{ [classes.first]: color === 'first' },
@@ -201,7 +201,7 @@ export default function WithDialogHoc(Decorated) {
 					<DialogTitle
 						disableTypography
 						classes={{
-							root: classnames(classes.dialogTitle, classes.breakLong),
+							root: clsx(classes.dialogTitle, classes.breakLong),
 						}}
 					>
 						<Typography variant='subtitle1'>

@@ -16,7 +16,7 @@ import {
 import { InfoSharp } from '@material-ui/icons'
 
 import { InputLoading } from 'components/common/spinners/'
-import classnames from 'classnames'
+import clsx from 'clsx'
 import { t } from 'selectors'
 
 export const styles = theme => ({
@@ -99,7 +99,7 @@ function Dropdown(props) {
 		<Fragment>
 			{!!source.length && !loading ? (
 				<FormControl
-					className={classnames(className, classes.formControl)}
+					className={clsx(className, classes.formControl)}
 					disabled={disabled}
 					error={error}
 					fullWidth={fullWidth}

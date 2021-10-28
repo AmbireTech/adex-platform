@@ -8,7 +8,7 @@ import {
 	Divider,
 } from '@material-ui/core'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
-import classnames from 'classnames'
+import clsx from 'clsx'
 import packageJson from './../../../package.json'
 import Anchor from 'components/common/anchor/anchor'
 import AdexIconTxt from 'components/common/icons/AdexIconTxt'
@@ -209,7 +209,7 @@ function SideNav(props) {
 						<RRListItem
 							button
 							to={{ pathname: '/dashboard/' }}
-							className={classnames(
+							className={clsx(
 								{
 									[classes.active]: !location,
 								},
@@ -224,7 +224,7 @@ function SideNav(props) {
 						{/* <RRListItem
 							button
 							to={{ pathname: '/dashboard/topup' }}
-							className={classnames(classes.navLink, {
+							className={clsx(classes.navLink, {
 								[classes.active]: location === 'topup',
 							})}
 						>
@@ -239,7 +239,7 @@ function SideNav(props) {
 							target='_blank'
 							href={`${ETH_SCAN_ADDR_HOST + identity}`}
 						>
-							<ListItem button className={classnames(classes.navLink)}>
+							<ListItem button className={clsx(classes.navLink)}>
 								<ListItemIcon>
 									<SwapHorizontalIcon />
 								</ListItemIcon>
@@ -249,7 +249,7 @@ function SideNav(props) {
 						<RRListItem
 							button
 							to={{ pathname: '/dashboard/account' }}
-							className={classnames(classes.navLink, {
+							className={clsx(classes.navLink, {
 								[classes.active]: location === 'account',
 							})}
 						>
@@ -261,7 +261,7 @@ function SideNav(props) {
 						<RRListItem
 							button
 							to={{ pathname: '/dashboard/privileges' }}
-							className={classnames(classes.navLink, {
+							className={clsx(classes.navLink, {
 								[classes.active]: location === 'privileges',
 							})}
 						>

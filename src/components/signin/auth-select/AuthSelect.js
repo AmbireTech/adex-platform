@@ -8,7 +8,7 @@ import { Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { getAuthLogo } from 'helpers/logosHelpers'
-import classnames from 'classnames'
+import clsx from 'clsx'
 import { getAllWallets } from 'services/wallet/wallet'
 import { execute, initIdentity, confirmAction } from 'actions'
 import {
@@ -199,7 +199,7 @@ const AuthSelect = () => {
 					size='large'
 					color='default'
 					fullWidth
-					className={classnames(classes.metamaskBtn, classes.limitedWidthBtn)}
+					className={clsx(classes.metamaskBtn, classes.limitedWidthBtn)}
 					onClick={() => goTo('/login/full?external=metamask', true)}
 				>
 					<img
@@ -222,7 +222,7 @@ const AuthSelect = () => {
 					<img
 						src={getAuthLogo('trezor')}
 						alt={t('AUTH_WITH_TREZOR')}
-						className={classnames(
+						className={clsx(
 							classes.btnLogo,
 							classes.btnLogoNoTxt,
 							classes.limitedWidthBtn
