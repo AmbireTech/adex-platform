@@ -64,7 +64,7 @@ export async function getAuthSig({ wallet }) {
 	const signature = await signer.signMessage(hash, { hex: true })
 
 	return {
-		...signature,
+		signature,
 		authToken,
 		hash,
 	}
@@ -81,7 +81,7 @@ export async function signTx({ tx, signer }) {
 	const sig = await signer.signMessage(new Transaction(tx).hashHex(), {
 		hex: true,
 	})
-	const signature = splitSig(sig.signature)
+	const signature = splitSig(sig)
 	return signature
 }
 
