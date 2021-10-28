@@ -4,18 +4,16 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from 'actions'
-import FlagIconFactory from 'react-flag-icon-css'
-import adexTranslations from 'adex-translations'
+import adexTranslations from 'translations'
 import IconButton from '@material-ui/core/IconButton'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
+import ReactCountryFlag from 'react-country-flag'
 
 const allLangs = adexTranslations.onlyTranslated
 
-// const FlagIcon = FlagIconFactory(React)
-const FlagIcon = FlagIconFactory(React, { useCssModules: false })
 const ITEM_HEIGHT = 48
 
 class ChangeLang extends Component {
@@ -47,7 +45,10 @@ class ChangeLang extends Component {
 					aria-haspopup='true'
 					onClick={this.handleClick}
 				>
-					<FlagIcon code={this.props.language.split('-')[1].toLowerCase()} />
+					<ReactCountryFlag
+						countryCode={this.props.language.split('-')[1].toLowerCase()}
+						svg
+					/>
 				</IconButton>
 				<Menu
 					id='long-menu'
@@ -70,7 +71,10 @@ class ChangeLang extends Component {
 								onClick={() => this.changeLanguage(lng)}
 							>
 								<ListItemIcon>
-									<FlagIcon code={lng.split('-')[1].toLowerCase()} />
+									<ReactCountryFlag
+										countryCode={lng.split('-')[1].toLowerCase()}
+										svg
+									/>
 								</ListItemIcon>
 								<ListItemText primary={lng} />
 							</MenuItem>

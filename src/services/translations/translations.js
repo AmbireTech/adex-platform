@@ -1,4 +1,4 @@
-import adexTranslations from 'adex-translations'
+import adexTranslations from 'translations'
 import { removeTags } from 'helpers/sanitizer'
 import { isValidElement, cloneElement } from 'react'
 

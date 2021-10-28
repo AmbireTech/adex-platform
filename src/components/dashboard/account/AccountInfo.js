@@ -89,7 +89,7 @@ function AccountInfo() {
 		<Fragment>
 			<Paper variant='outlined'>
 				<List className={classes.root} disablePadding>
-					<ListSubheader disableSticky>{t('ADEX_ACCOUNT')}</ListSubheader>
+					<ListSubheader disableSticky>{t('AMBIRE_ACCOUNT')}</ListSubheader>
 					<AccountItem
 						left={
 							<Box display='flex' flexDirection='row' flexWrap='wrap'>

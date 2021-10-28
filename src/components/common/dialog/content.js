@@ -51,10 +51,7 @@ const topLoading = ({ classes, msg, subMsg, className }) => (
 )
 
 const fullContentSpinner = ({ classes }) => (
-	<CircularProgress
-		className={clsx(classes.progressCircleCenter)}
-		size={50}
-	/>
+	<CircularProgress className={clsx(classes.progressCircleCenter)} size={50} />
 )
 
 const fullContentMessage = ({
