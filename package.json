@@ -4,7 +4,6 @@
   "tosVersion": "1.0.0",
   "private": true,
   "dependencies": {
-    "@date-io/moment": "^1.1.0",
     "@material-ui/core": "4.12.3",
     "@material-ui/icons": "4.11.2",
     "@material-ui/lab": "4.0.0-alpha.60",
@@ -19,11 +18,8 @@
     "@uniswap/sdk-core": "^3.0.0",
     "@uniswap/v3-sdk": "^3.1.0",
     "@walletconnect/client": "^1.6.5",
-    "adex-constants": "1.0.10",
-    "adex-models": "git+https://git@github.com/AdExNetwork/adex-models.git#499114f10e52f06fe59199b187c7a9a79173a12e",
     "adex-protocol-eth": "git+https://git@github.com/AdExNetwork/adex-protocol-eth.git#8bf76967c08e2e7160bfbd931435171378ff4e85",
     "adex-translations": "git+https://git@github.com/AdExNetwork/adex-translations.git#d0989106be8da2ac37e869a428dfa61545978d4d",
-    "base64url": "^3.0.1",
     "case-sensitive-paths-webpack-plugin": "2.2.0",
     "chart.js": "^2.9.4",
     "classnames": "^2.2.5",
@@ -96,8 +92,7 @@
     "webpack-dev-server": "3.11.0",
     "webpack-manifest-plugin": "2.0.4",
     "whatwg-fetch": "^3.4.0",
-    "workbox-webpack-plugin": "4.2.0",
-    "world-atlas": "^2.0.2"
+    "workbox-webpack-plugin": "4.2.0"
   },
   "scripts": {
     "start": "node scripts/generate-build-version.js && node --max-old-space-size=4096 scripts/start.js",
