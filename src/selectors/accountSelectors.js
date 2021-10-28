@@ -1,4 +1,3 @@
-import dateUtils from 'helpers/dateUtils'
 import { getState } from 'store'
 import { createSelector } from 'reselect'
 import { createDeepEqualSelector, selectNetwork } from 'selectors'
@@ -164,16 +163,6 @@ export const selectAccountIdentityDeployData = createSelector(
 	({ relayerData = {} }) => relayerData.deployData || {}
 )
 
-export const selectChannelsWithUserBalancesEligible = createSelector(
-	selectChannels,
-	({ withOutstandingBalance }) => [...(withOutstandingBalance || [])]
-)
-
-export const selectChannelsWithUserBalancesAll = createSelector(
-	selectChannels,
-	({ withBalanceAll }) => ({ ...(withBalanceAll || {}) })
-)
-
 export const selectAccountIdentityCurrentPrivileges = createSelector(
 	selectAccountIdentity,
 	({ relayerData: { currentPrivileges } = {} }) => currentPrivileges || {}
@@ -182,9 +171,4 @@ export const selectAccountIdentityCurrentPrivileges = createSelector(
 export const selectWalletPrivileges = createSelector(
 	[selectAccountIdentityCurrentPrivileges, selectWalletAddress],
 	(privileges = {}, address) => privileges[address] || 0
-)
-
-export const selectAccountIdentityCreatedDate = createSelector(
-	selectAccountIdentityDeployData,
-	({ created }) => dateUtils.date(created || '2018-10-01')
 )

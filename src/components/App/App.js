@@ -9,8 +9,6 @@ import Toast from 'components/toast/Toast'
 import Confirm from 'components/confirm/Confirm'
 import { PersistGate } from 'redux-persist/integration/react'
 import Root from './Root'
-import { DateUtils } from 'helpers/dateUtils'
-import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import CacheBuster from './CacheBuster'
 import { updateWindowReloading, updateProject, execute } from 'actions'
@@ -49,15 +47,13 @@ const App = () => {
 						<MultiThemeProvider>
 							<CssBaseline />
 							<NetworkErrorDetector />
-							<MuiPickersUtilsProvider utils={DateUtils}>
-								<CacheBuster>
-									<div className='adex-dapp'>
-										<Root />
-										<Toast />
-										<Confirm />
-									</div>
-								</CacheBuster>
-							</MuiPickersUtilsProvider>
+							<CacheBuster>
+								<div className='adex-dapp'>
+									<Root />
+									<Toast />
+									<Confirm />
+								</div>
+							</CacheBuster>
 						</MultiThemeProvider>
 					</ConnectedRouter>
 				</PersistGate>

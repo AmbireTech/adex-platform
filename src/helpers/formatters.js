@@ -5,7 +5,6 @@ const HOUR = 60 * 60 * 1000
 const DAY = 24 * HOUR
 
 const moment = new MomentUtils()
-//TODO: use dateUtils
 
 export const DEFAULT_DATETIME_FORMAT = 'YYYY/MM/DD HH:mm'
 export const DEFAULT_DATE_FORMAT = 'YYYY/MM/DD'

@@ -1,6 +1,5 @@
 import { createSelector } from 'reselect'
 import { createCachedSelector } from 're-reselect'
-import dateUtils from 'helpers/dateUtils'
 import { selectAccountIdentityAddr } from './accountSelectors'
 import {
 	SYNC_WEB3_DATA,
@@ -140,26 +139,6 @@ export const selectCampaignIdInDetails = createSelector(
 export const selectLoginSelectedIdentity = createSelector(
 	selectMemoryUi,
 	({ loginSelectedIdentity }) => loginSelectedIdentity
-)
-
-export const selectAnalyticsDataSide = createSelector(
-	[selectSide, selectCampaignIdInDetails],
-	(side, campaignId) => (campaignId ? campaignId : side ? `for-${side}` : '')
-)
-
-export const selectIdentitySideAnalyticsTimeframe = createSelector(
-	[selectIdentitySideUi],
-	({ sideAnalyticsTimeframe = 'day' } = {}) => sideAnalyticsTimeframe
-)
-
-export const selectIdentitySideAnalyticsPeriod = createSelector(
-	[selectIdentitySideUi],
-	({
-		sideAnalyticsPeriod = {
-			start: dateUtils.startOfDay(dateUtils.date()),
-			end: dateUtils.endOfDay(dateUtils.date()),
-		},
-	} = {}) => sideAnalyticsPeriod
 )
 
 export const selectWindowReloading = createSelector(
