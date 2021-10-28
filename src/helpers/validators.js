@@ -3,6 +3,14 @@ import { isEthAddressERC20 } from 'services/smart-contracts/actions/erc20'
 import { isConnectionLost } from 'services/smart-contracts/actions/common'
 import { getEthersReadOnly } from 'services/smart-contracts/ethers'
 
+const ipfsRegex = /(ipfs):\/\/(.){46}?$/
+// const ipfsIdRegex = /^Qm[a-zA-z0-9]{44}$/
+// const addressRegex = /^0x[0-9A-Fa-f]{40}$/
+// const signatureRegex = /^0x[0-9A-Fa-f]{130}$/
+// const hashRegex = /^0x[0-9A-Fa-f]{64}$/
+const numberStringRegex = /^([0-9]+\.?[0-9]*)$/
+const emailRegex = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
+
 /*eslint-disable */
 const urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/
 const onlyDigitsRegex = /^([1-9]+\d*)$/
@@ -28,25 +36,6 @@ export const validPositiveInt = intStr => {
 	intStr = intStr || ''
 	const isValid = onlyDigitsRegex.test(intStr)
 	return isValid
-}
-
-export const validName = name => {
-	let msg = ''
-	const errMsgArgs = []
-	if (!name) {
-		msg = 'ERR_REQUIRED_FIELD'
-	} else if (name.length < 4) {
-		msg = 'ERR_MIN_LENGTH'
-		errMsgArgs.push(4)
-	} else if (name.length > 128) {
-		msg = 'ERR_MAX_LENGTH'
-		errMsgArgs.push(128)
-	}
-
-	return {
-		msg,
-		errMsgArgs,
-	}
 }
 
 export const validPassword = password => {
@@ -125,4 +114,19 @@ export const freeAdExENS = async ({ username = '' }) => {
 		}
 	}
 	return { msg }
+}
+
+export function isNumberString(str) {
+	const isValid = numberStringRegex.test(str)
+	return isValid
+}
+
+export function isValidEmail(str) {
+	const isValid = emailRegex.test(str)
+	return isValid
+}
+
+export function isValidIPFS(str) {
+	const isValid = ipfsRegex.test(str)
+	return isValid
 }

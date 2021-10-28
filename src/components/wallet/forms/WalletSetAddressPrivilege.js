@@ -16,7 +16,6 @@ import {
 	ContentBody,
 	FullContentMessage,
 } from 'components/common/dialog/content'
-// import { constants } from 'adex-models'
 import {
 	t,
 	selectValidationsById,

@@ -1,6 +1,6 @@
 import { Signer, utils, Wallet } from 'ethers'
 import { getLocalWallet } from 'services/wallet/wallet'
-import { constants } from 'adex-models'
+// import { SignatureModes } from 'constants/identity'
 
 export default class LocalSigner extends Signer {
 	constructor(provider, opts = {}) {
@@ -58,7 +58,7 @@ export default class LocalSigner extends Signer {
 		// const res = {
 		// 	signature,
 		// 	hash: message,
-		// 	mode: constants.SignatureModes.GETH,
+		// 	mode: SignatureModes.GETH,
 		// 	address: wallet.address,
 		// }
 

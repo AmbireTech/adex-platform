@@ -3,23 +3,18 @@ import { validEthAddress, freeAdExENS } from '../helpers/validators'
 import { translate } from 'services/translations/translations'
 import { addToast, updateSpinner } from './uiActions'
 import { BigNumber, utils } from 'ethers'
-import { validations, Joi, schemas, constants, helpers } from 'adex-models'
-import { validPassword } from 'helpers/validators'
+import { validPassword, isValidEmail, isNumberString } from 'helpers/validators'
 import {
 	t,
 	selectAuthType,
 	selectAccountStatsRaw,
 	selectAccountStatsFormatted,
 	selectMainToken,
+	selectFeeTokens,
 } from 'selectors'
 import { getErrorMsg } from 'helpers/errors'
 import { getEmail } from 'services/adex-relayer/actions'
 import { formatTokenAmount } from 'helpers/formatters'
-const { IdentityPrivilegeLevel, CountryTiers, OsGroups } = constants
-const { bondPerActionToUserInputPerMileValue } = helpers
-
-const { campaignPut, account } = schemas
-const { isNumberString } = validations
 
 export function validateAddress({ addr, dirty, validate, name, nonERC20 }) {
 	return async function(dispatch, getState) {
@@ -452,25 +447,10 @@ export function validatePrivilegesAddress({
 	}
 }
 
-export function validatePrivLevel({ validateId, privLevel, dirty }) {
-	return async function(dispatch, getState) {
-		const isValid =
-			Object.values(IdentityPrivilegeLevel).indexOf(privLevel) > -1
-		await validate(validateId, 'privLevel', {
-			isValid,
-			err: { msg: 'ERR_PRIV_LEVEL_NOT_SELECTED' },
-			dirty,
-		})(dispatch)
-
-		return isValid
-	}
-}
-
 export function validateEmail(validateId, email, dirty, validateNotExisting) {
 	return async function(dispatch) {
-		const result = Joi.validate(email, account.email)
-		let isValid = !result.error
-		let msg = result.error ? result.error.message : ''
+		let isValid = isValidEmail(email)
+		let msg = isValid ? '' : 'INVALID_EMAIL'
 
 		if (validateNotExisting && isValid) {
 			const { existing } = (await getEmail({ email })) || {}
@@ -481,6 +461,213 @@ export function validateEmail(validateId, email, dirty, validateNotExisting) {
 		await validate(validateId, 'email', {
 			isValid,
 			err: { msg },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
+export function validateWalletFees({
+	validateId,
+	actionName,
+	// totalFeesBN,
+	feeTokenAddr,
+	totalAmountToSpendBN,
+	totalAmountToSpendFormatted,
+	// mainActionAmountBN,
+	actionMinAmountBN,
+	actionMinAmountFormatted,
+	spendTokenAddr,
+	errorMsg = '',
+	dirty,
+	skipStateUpdateIfInvalid,
+}) {
+	return async function(dispatch, getState) {
+		let isValid = true
+		let msg = errorMsg
+		let args = []
+		const state = getState()
+
+		const { assetsData = {} } = selectAccountStatsRaw(state)
+		const {
+			assetsData: assetsDataFormatted = {},
+		} = selectAccountStatsFormatted(state)
+
+		const feeAssetAsSpendAsset = spendTokenAddr === feeTokenAddr
+
+		const feeAssetData = feeAssetAsSpendAsset
+			? assetsData[spendTokenAddr]
+			: assetsData[feeTokenAddr]
+
+		// NOTE: WETH specific
+		const availableBalanceFeeAsset = feeAssetData.balance
+		// feeAssetData.totalAvailableMainAsset || feeAssetData.totalAvailable
+
+		const { symbol } = feeAssetData
+
+		if (totalAmountToSpendBN.gt(BigNumber.from(availableBalanceFeeAsset))) {
+			isValid = false
+			msg = 'ERR_TX_INSUFFICIENT_BALANCE'
+			args = [
+				totalAmountToSpendFormatted,
+				symbol,
+				assetsDataFormatted[feeTokenAddr].totalAvailable,
+				symbol,
+			]
+		}
+
+		if (actionMinAmountBN.gt(totalAmountToSpendBN)) {
+			isValid = false
+			msg = 'ERR_TX_SUB_MIN_ACTION_AMOUNT'
+			args = [
+				actionName,
+				actionMinAmountFormatted,
+				symbol,
+				totalAmountToSpendFormatted,
+				symbol,
+			]
+		}
+
+		if (isValid || (!isValid && !skipStateUpdateIfInvalid)) {
+			await validate(validateId, 'fees', {
+				isValid,
+				err: { msg, args },
+				dirty,
+			})(dispatch)
+		}
+
+		return isValid
+	}
+}
+
+export function validateWalletDiversificationAssets({
+	validateId,
+	// fromAsset,
+	// fromAssetAmount,
+	diversificationAssets,
+	dirty,
+}) {
+	return async function(dispatch, getState) {
+		let isValid = true
+		let msg = ''
+		let args = []
+		const hasDiversifications =
+			!!diversificationAssets && diversificationAssets.length
+
+		const isValidDiversification =
+			hasDiversifications &&
+			diversificationAssets.every(asset => asset.address && asset.share)
+
+		const diversificationShares = hasDiversifications
+			? diversificationAssets.reduce(
+					(used, asset) => used + asset.share,
+
+					0
+			  )
+			: 0
+
+		if (!hasDiversifications) {
+			isValid = false
+			msg = 'ERR_NO_DIVERSIFICATION_ASSETS_SELECTED'
+		} else if (!isValidDiversification) {
+			isValid = false
+			msg = 'ERR_INVALID_DIVERSIFICATION_ASSETS'
+			// TODO: args
+		} else if (diversificationShares < 100) {
+			isValid = false
+			msg = 'ERR_DIVERSIFICATION_ASSETS_NOT_DISTRIBUTED'
+			args = [diversificationShares]
+		} else if (diversificationShares > 100) {
+			isValid = false
+			msg = 'ERR_DIVERSIFICATION_ASSETS_OVER_MAX'
+			args = [diversificationShares]
+		}
+
+		await validate(validateId, 'diversificationAssets', {
+			isValid,
+			err: { msg, args },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
+export function validateActionInputAmount({
+	validateId,
+	// actionName,
+	value,
+	inputTokenAddr,
+	prop,
+	// errorMsg = '',
+	dirty,
+}) {
+	return async function(dispatch, getState) {
+		let isValid = isNumberString(value)
+		let msg = 'ERR_INVALID_AMOUNT_VALUE'
+		let args = []
+		const state = getState()
+
+		const { assetsData = {} } = selectAccountStatsRaw(state)
+		const {
+			assetsData: assetsDataFormatted = {},
+		} = selectAccountStatsFormatted(state)
+
+		const tokenData = assetsData[inputTokenAddr]
+
+		const availableBalanceFeeAsset = tokenData.totalAvailable
+		const { symbol, decimals } = tokenData
+
+		const amount = isValid ? utils.parseUnits(value, decimals) : null
+		if (isValid && amount.isZero()) {
+			isValid = false
+			msg = 'ERR_ZERO_AMOUNT'
+		} else if (isValid && amount.gt(BigNumber.from(availableBalanceFeeAsset))) {
+			isValid = false
+			msg = 'ERR_TX_INSUFFICIENT_BALANCE'
+			args = [
+				value,
+				symbol,
+				assetsDataFormatted[inputTokenAddr].totalAvailable,
+				symbol,
+			]
+		}
+
+		await validate(validateId, prop, {
+			isValid,
+			err: { msg, args },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
+export function validateWalletPrivLevel({ validateId, privLevel, dirty }) {
+	return async function(dispatch, getState) {
+		const isValid = privLevel === true
+
+		await validate(validateId, 'privLevel', {
+			isValid,
+			err: { msg: 'ERR_PRIV_LEVEL_NOT_SELECTED' },
+			dirty,
+		})(dispatch)
+
+		return isValid
+	}
+}
+
+export function validateWalletFeeTokens({ validateId, feeTokenAddr, dirty }) {
+	return async function(dispatch, getState) {
+		const feeTokens = selectFeeTokens()
+
+		const isValid = feeTokens.findIndex(x => x.address === feeTokenAddr) !== -1
+
+		await validate(validateId, 'feeTokenAddr', {
+			isValid,
+			// TODO: Add missing translations
+			err: { msg: 'ERR_FEE_TOKEN_NOT_SELECTED' },
 			dirty,
 		})(dispatch)
 

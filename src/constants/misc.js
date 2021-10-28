@@ -1,6 +1,5 @@
-import { constants } from 'adex-models'
+import { SignatureModes } from 'constants/identity'
 
-const { SignatureModes } = constants
 export const AUTH_TYPES = {
 	READONLY: { name: 'readonly' },
 	METAMASK: { name: 'metamask', signType: SignatureModes.GETH, limit: 0 },

@@ -1,5 +1,5 @@
 import { Signer, utils } from 'ethers'
-import { constants } from 'adex-models'
+// import { SignatureModes } from 'constants/identity'
 
 export default class MetaMaskSigner extends Signer {
 	constructor(provider, opts = {}) {
@@ -32,7 +32,7 @@ export default class MetaMaskSigner extends Signer {
 		// const res = {
 		// 	signature,
 		// 	hash: message,
-		// 	mode: constants.SignatureModes.GETH,
+		// 	mode: SignatureModes.GETH,
 		// 	address: await this._signer.getAddress(),
 		// }
 

@@ -1,8 +1,7 @@
 import React from 'react'
 import { Box } from '@material-ui/core'
 import { formatFloatNumberWithCommas } from 'helpers/formatters'
-import { validations } from 'adex-models'
-const { isNumberString } = validations
+import { isNumberString } from 'helpers/validators'
 
 const AmountUnit = ({ unit }) => (
 	<Box

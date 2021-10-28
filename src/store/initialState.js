@@ -1,7 +1,32 @@
-import { Account } from 'adex-models'
-
-let initialState = {
-	account: new Account(),
+const initialState = {
+	account: {
+		email: '',
+		identity: {
+			address: '',
+			status: 'pending',
+			currentPrivileges: {},
+			isLimitedVolume: true,
+			relayerData: {},
+			validatorAuthTokens: {},
+		},
+		wallet: {
+			authSig: '', // Signature for adex-market session
+			signType: '', // Sing type (Eip, Trezor, personal, etc..)
+			authType: '', // Auth type (Metamask, Trezor, Ledger, Local)
+			lsKey: '',
+			path: '', // We are going to keep the entire path instead using path + index
+			chainId: null, // need this for hd wallets
+			balanceEth: '0',
+			balanceDai: '0',
+			// To unlock local wallet
+			email: '',
+			password: '',
+		},
+		temp: {},
+		// TODO: think on this
+		stats: {},
+		settings: {},
+	},
 	signin: {
 		name: '',
 		email: '',

@@ -1,6 +1,6 @@
 import { Signer, utils } from 'ethers'
 import TrezorConnect from 'trezor-connect'
-import { constants } from 'adex-models'
+// import { SignatureModes } from 'constants/identity'
 
 const DEFAULT_HD_PATH = "m/44'/60'/0'/0"
 
@@ -91,7 +91,7 @@ export default class TrezorSigner extends Signer {
 			// 	 */
 			// 	signature: '0x' + payload.signature,
 			// 	hash: message,
-			// 	mode: constants.SignatureModes.GETH,
+			// 	mode: SignatureModes.GETH,
 			// 	address: payload.address,
 			// }
 
