@@ -2,18 +2,7 @@ import React from 'react'
 import Button from '@material-ui/core/Button'
 import * as types from 'constants/actionTypes'
 import Helper from 'helpers/miscHelpers'
-import {
-	selectCompanyData,
-	selectAccountIdentityAddr,
-	selectIdentitySideAnalyticsTimeframe,
-	selectIdentitySideAnalyticsPeriod,
-	selectSide,
-	selectMemoryUi,
-	selectAnalyticsLiveTimestamp,
-	selectAnalyticsMinAndMaxDates,
-	t,
-} from 'selectors'
-import { getErrorMsg } from 'helpers/errors'
+import { selectAccountIdentityAddr, selectMemoryUi, t } from 'selectors'
 
 export function updateSpinner(item, value) {
 	return function(dispatch) {
@@ -71,21 +60,6 @@ export function updateUiByIdentity(item, value, category) {
 			item: item,
 			value: value,
 			category: category,
-		})
-	}
-}
-
-export function updateIdentitySideUi(item, value) {
-	return function(dispatch, getState) {
-		const state = getState()
-		const identity = selectAccountIdentityAddr(state)
-		const side = selectSide(state)
-		return dispatch({
-			type: types.UPDATE_UI_BY_IDENTITY_AND_SIDE,
-			identity,
-			item,
-			value,
-			side,
 		})
 	}
 }
@@ -193,23 +167,6 @@ export function updateRegistrationAllowed(search) {
 	}
 }
 
-export function updateCompanyData(newData) {
-	return async function(dispatch, getState) {
-		try {
-			const companyData = selectCompanyData(getState())
-			const newCompanyData = { ...companyData, ...newData }
-			updateUiByIdentity('companyData', newCompanyData)(dispatch, getState)
-		} catch (err) {
-			console.error('ERR_UPDATING_COMPANY_DATA', err)
-			addToast({
-				type: 'cancel',
-				label: t('ERR_UPDATING_COMPANY_DATA'),
-				timeout: 20000,
-			})(dispatch)
-		}
-	}
-}
-
 export function updateSelectedItems(collection, selectedItems) {
 	return function(dispatch) {
 		return dispatch({
@@ -225,12 +182,6 @@ export function resetSelectedItems() {
 		return dispatch({
 			type: types.RESET_SELECTED_ITEMS,
 		})
-	}
-}
-
-export function updateSelectedCampaigns(selectedItems) {
-	return function(dispatch) {
-		return updateSelectedItems('campaigns', selectedItems)(dispatch)
 	}
 }
 

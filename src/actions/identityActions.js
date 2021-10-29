@@ -34,7 +34,6 @@ import {
 	validateIdentityContractOwner,
 	validateAccessWarning,
 	validateKnowFrom,
-	validateUserSide,
 	validateMoreInfo,
 } from './validationActions'
 import { getErrorMsg } from 'helpers/errors'

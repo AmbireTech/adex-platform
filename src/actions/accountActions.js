@@ -189,24 +189,6 @@ export function updateAccountIdentityData(onDataUpdated) {
 	}
 }
 
-export function updateValidatorAuthTokens({ newAuth }) {
-	return async function(dispatch, getState) {
-		const { identity } = getState().persist.account
-
-		const newIdentity = { ...identity }
-		const newTokens = { ...(newIdentity.validatorAuthTokens || {}), ...newAuth }
-
-		// We don't want to update account if there is no actual change
-		if (
-			JSON.stringify(newIdentity.validatorAuthTokens) !==
-			JSON.stringify(newTokens)
-		) {
-			newIdentity.validatorAuthTokens = newTokens
-			updateAccount({ newValues: { identity: newIdentity } })(dispatch)
-		}
-	}
-}
-
 export function createSessionWallet({
 	wallet,
 	identity = {},

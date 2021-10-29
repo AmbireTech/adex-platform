@@ -9,12 +9,10 @@ import {
 	selectAuthType,
 	selectAccountStatsRaw,
 	selectAccountStatsFormatted,
-	selectMainToken,
 	selectFeeTokens,
 } from 'selectors'
 import { getErrorMsg } from 'helpers/errors'
 import { getEmail } from 'services/adex-relayer/actions'
-import { formatTokenAmount } from 'helpers/formatters'
 
 export function validateAddress({ addr, dirty, validate, name, nonERC20 }) {
 	return async function(dispatch, getState) {
@@ -255,95 +253,6 @@ export function validateAccessWarning(validateId, accepted, dirty) {
 		validate(validateId, 'accessWarningCheck', {
 			isValid,
 			err: { msg: 'ERR_ACCESS_WARNING_CHECK' },
-			dirty,
-		})(dispatch)
-
-		return isValid
-	}
-}
-
-export function validateFees({
-	validateId,
-	feesAmountBN,
-	amountToSpendBN,
-	errorMsg = '',
-	dirty,
-}) {
-	return async function(dispatch, getState) {
-		let isValid = true
-		let msg = errorMsg
-		let args = []
-		const state = getState()
-
-		const {
-			availableIdentityBalanceMainToken: availableIdentityBalanceMainTokenRaw,
-		} = selectAccountStatsRaw(state)
-		const {
-			availableIdentityBalanceMainToken: availableIdentityBalanceMainTokenFormatted,
-		} = selectAccountStatsFormatted(state)
-		const amountNeeded = BigNumber.from(feesAmountBN).add(
-			BigNumber.from(amountToSpendBN)
-		)
-
-		const { symbol, decimals } = selectMainToken(state)
-
-		if (amountNeeded.gt(BigNumber.from(availableIdentityBalanceMainTokenRaw))) {
-			const amountNeededFormatted = formatTokenAmount(
-				amountNeeded,
-				decimals,
-				null,
-				2
-			)
-			isValid = false
-			msg = 'ERR_TX_INSUFFICIENT_BALANCE'
-			args = [
-				amountNeededFormatted,
-				symbol,
-				availableIdentityBalanceMainTokenFormatted,
-				symbol,
-			]
-		}
-
-		await validate(validateId, 'fees', {
-			isValid,
-			err: { msg, args },
-			dirty,
-		})(dispatch)
-
-		return isValid
-	}
-}
-
-export function validateWithdrawAmount({
-	validateId,
-	amountToWithdraw,
-	availableIdentityBalanceMainTokenRaw,
-	availableIdentityBalanceMainTokenFormatted,
-	decimals,
-	symbol,
-	dirty,
-}) {
-	return async function(dispatch) {
-		let isValid = isNumberString(amountToWithdraw)
-
-		let msg = 'ERR_INVALID_AMOUNT_VALUE'
-		let args = []
-		const amount = isValid ? utils.parseUnits(amountToWithdraw, decimals) : null
-		if (isValid && amount.isZero()) {
-			isValid = false
-			msg = 'ERR_ZERO_WITHDRAW_AMOUNT'
-		} else if (
-			isValid &&
-			amount.gt(BigNumber.from(availableIdentityBalanceMainTokenRaw))
-		) {
-			isValid = false
-			msg = 'ERR_MAX_AMOUNT_TO_WITHDRAW'
-			args = [availableIdentityBalanceMainTokenFormatted, symbol]
-		}
-
-		await validate(validateId, 'amountToWithdraw', {
-			isValid,
-			err: { msg, args },
 			dirty,
 		})(dispatch)
 
