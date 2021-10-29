@@ -466,5 +466,9 @@
     "PROP_WITHDRAWTO": "Withdraw to",
     "PROP_AMOUNTTOWITHDRAW": "Amount to withdraw",
     "PROP_WITHDRAWAMOUNT": "Withdraw amount",
-    "WITHDRAW_ADDRESS_WARNING": "Please double check the wallet address you are withdrawing to. Funds sent to the wrong address cannot be recovered."
+    "WITHDRAW_ADDRESS_WARNING": "Please double check the wallet address you are withdrawing to. Funds sent to the wrong address cannot be recovered.",
+    "WALLETS_WITH_PRIVILEGES": "Wallets with privileges",
+    "WALLET_PRIV_LABEL": "Privileges: ${0}",
+    "PRIV_TRUE_LABEL": "Yes",
+    "PRIV_FALSE_LABEL": "No"
 }
