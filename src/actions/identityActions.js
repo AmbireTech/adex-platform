@@ -19,7 +19,7 @@ import {
 	walletInfo,
 	createLocalWallet,
 	generateSalt,
-} from 'services/wallet/wallet'
+} from 'services/localWallet'
 import { saveToLocalStorage } from 'helpers/localStorageHelpers'
 import { selectLoginSelectedIdentity, selectIdentity, t } from 'selectors'
 import { AUTH_TYPES } from 'constants/misc'

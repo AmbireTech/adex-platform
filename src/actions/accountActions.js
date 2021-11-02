@@ -15,7 +15,7 @@ import {
 	getWalletHash,
 	generateSalt,
 	getRecoveryWalletData,
-} from 'services/wallet/wallet'
+} from 'services/localWallet'
 import { getAccountStatsWallet } from 'services/smart-contracts/actions/walletStats'
 import { getPrices } from 'services/prices'
 import {

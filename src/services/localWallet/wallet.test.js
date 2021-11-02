@@ -5,7 +5,7 @@ const {
 	generateWallet,
 	encrData,
 	decrData,
-} = require('./wallet')
+} = require('.')
 
 describe('generateSalt', () => {
 	it('should generate different values every time', () => {

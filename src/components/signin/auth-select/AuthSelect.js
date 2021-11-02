@@ -9,7 +9,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import { getAuthLogo } from 'helpers/logosHelpers'
 import clsx from 'clsx'
-import { getAllWallets } from 'services/wallet/wallet'
+import { getAllWallets } from 'services/localWallet'
 import { execute, initIdentity, confirmAction } from 'actions'
 import {
 	t,

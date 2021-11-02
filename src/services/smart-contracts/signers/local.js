@@ -1,5 +1,5 @@
 import { Signer, utils, Wallet } from 'ethers'
-import { getLocalWallet } from 'services/wallet/wallet'
+import { getLocalWallet } from 'services/localWallet'
 // import { SignatureModes } from 'constants/identity'
 
 export default class LocalSigner extends Signer {
