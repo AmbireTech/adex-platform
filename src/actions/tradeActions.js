@@ -18,7 +18,7 @@ import {
 	selectWallet,
 	selectAccountIdentityAddr,
 } from 'selectors'
-import { walletTradeTransaction } from 'services/smart-contracts/actions/wallet'
+import { walletTradeTransaction } from 'services/smart-contracts/actions/walletTrade'
 import { getTradeOutData } from 'services/smart-contracts/actions/walletCommon'
 import { processExecuteWalletTxns } from 'services/smart-contracts/actions/walletIdentity'
 import { getEthers } from 'services/smart-contracts/ethers'

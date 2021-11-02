@@ -20,7 +20,7 @@ import {
 import {
 	walletWithdrawTransaction,
 	walletWithdrawMultipleTransaction,
-} from 'services/smart-contracts/actions/wallet'
+} from 'services/smart-contracts/actions/walletWithdraw'
 
 // import {
 // 	getSigner,

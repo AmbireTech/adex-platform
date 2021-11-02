@@ -18,7 +18,7 @@ import {
 	selectWalletAddress,
 	t,
 } from 'selectors'
-import { walletSetIdentityPrivilege } from 'services/smart-contracts/actions/wallet'
+import { walletSetIdentityPrivilege } from 'services/smart-contracts/actions/walletPrivileges'
 
 export function walletValidatePrivilegesChange({
 	stepsId,
