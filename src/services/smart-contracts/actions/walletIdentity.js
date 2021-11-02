@@ -109,7 +109,6 @@ const transferETH = ({
 	name: relayerFeeTx
 		? 'SC_ACTION_TRANSFER_ETH_RELAYER_FEE'
 		: 'SC_ACTION_TRANSFER_ETH',
-	// gasCost: GAS_LIMITS.transferETH,
 	amount: getTokenAmount({ amount, tokenData }),
 	sender,
 	recipient,
@@ -130,7 +129,6 @@ const transferERC20 = ({
 	name: relayerFeeTx
 		? 'SC_ACTION_TRANSFER_ERC20_RELAYER_FEE'
 		: 'SC_ACTION_TRANSFER_ERC20',
-	// gasCost: GAS_LIMITS.transfer,
 	token: `${tokenNamePrefix ? tokenNamePrefix + ' ' : ''}${tokenData.symbol} (${
 		tokenData.address
 	})`,
@@ -148,7 +146,6 @@ const depositAAVE = ({ tokenData, recipient, minOut }) => {
 		contract: 'IAaveLendingPool',
 		method: 'deposit',
 		name: 'SC_ACTION_AAVE_DEPOSIT',
-		// gasCost: GAS_LIMITS.wrap,
 		recipient,
 		underlingToken: `${tokenData.symbol} (${tokenData.address})`,
 		aaveInterestToken: `${interestTokenData.symbol} (${
@@ -163,7 +160,6 @@ const withdrawAAVE = ({ underlyingToken, aaveUnwrapAmount }) => ({
 	contract: 'IAaveLendingPool',
 	method: 'withdraw',
 	name: 'SC_ACTION_AAVE_WITHDRAW',
-	// gasCost: GAS_LIMITS.unwrap,
 	token: `${underlyingToken.symbol} (${underlyingToken.address})`,
 	amount: getTokenAmount({
 		amount: aaveUnwrapAmount,
@@ -175,7 +171,6 @@ const swapInnerUniV2 = (path = []) => ({
 	contract: 'IUniswapSimple',
 	method: 'swapExactTokensForTokens',
 	name: 'SC_ACTION_SWAP_UNI_V2_DIRECT',
-	// gasCost: GAS_LIMITS.swapV2.mul(path.length - 1),
 	path,
 	swaps: path.length - 1,
 })
@@ -264,7 +259,6 @@ const swapInnerUniV3 = ({ path }) => ({
 	contract: 'uniV3Router',
 	method: 'exactInput',
 	name: 'SC_ACTION_SWAP_UNI_V3',
-	// gasCost: GAS_LIMITS.swapV2.mul(path.length - 1),
 	path,
 	swaps: path.length - 1,
 })
@@ -323,27 +317,21 @@ export const ON_CHAIN_ACTIONS = {
 	transferETH,
 	zapperDiversifyInnerExchange: {
 		name: 'SC_ACTION_ZAPPER_EXCHANGE_INNER',
-		gasCost: GAS_LIMITS.swapV3,
 	},
 	swapUniV3Single: {
 		name: 'SC_ACTION_SWAP_UNI_V3_DIRECT',
-		gasCost: GAS_LIMITS.swapV3,
 	},
 	swapUniV3MultiHop: {
 		name: 'SC_ACTION_SWAP_UNI_V3_MULTIHOP',
-		gasCost: GAS_LIMITS.swapV3,
 	},
 	swapUniV3MultiHopSingle: {
 		name: 'SC_ACTION_SWAP_UNI_V3_MULTIHOP_SINGLE',
-		gasCost: GAS_LIMITS.swapV3,
 	},
 	approve: {
 		name: 'SC_ACTION_APPROVE',
-		gasCost: GAS_LIMITS.approve,
 	},
 	deploy: {
 		name: 'SC_ACTION_IDENTITY_DEPLOY',
-		gasCost: GAS_LIMITS.deploy,
 	},
 	depositWETH: ({ amount }) => {
 		const assets = getAssets()
@@ -358,11 +346,9 @@ export const ON_CHAIN_ACTIONS = {
 	},
 	withdrawWETH: {
 		name: 'SC_ACTION_WETH_WITHDRAW',
-		gasCost: GAS_LIMITS.unwrap,
 	},
 	feeTransfer: {
 		name: 'SC_ACTION_FEE_TRANSFER',
-		gasCost: GAS_LIMITS.transfer,
 	},
 }
 
