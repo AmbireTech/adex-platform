@@ -967,6 +967,7 @@ export async function getTxnsEstimationData({
 				feeToken.decimals
 			),
 			bundle,
+			txnsData: txns,
 		}
 	} catch (err) {
 		throw new Error(err)

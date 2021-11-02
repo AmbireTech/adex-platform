@@ -419,9 +419,8 @@
     "FEE_HAS_DEPLOY_FEE_INFO": "Identity contract deploy fee included. (First interaction)",
     "FEE_DATA_TXNS_COUNT": "Transactions count",
     "FEE_DATA_TXNS_OPERATIONS_COUNT": "Transactions operations count",
-    "FEE_DATA_TXNS_TOTAOL_GAS_LIMIT": "Total precalculated gas limit",
+    "FEE_DATA_TXNS_TOTAOL_GAS_LIMIT": "Gas limit",
     "FEE_DATA_CALCULATED_GAS_PRICE": "Current gas price",
-    "TOOLTIP_EXPLAIN_WALLET_TRANSACTION_FEE": "Ethereum netwok fees are paied with transaction input token ${0}",
     "ERR_ZERO_AMOUNT": "Input amount can NOT be 0",
     "AMOUNT_SWAP_INFO": "Ethereum network fees: ${0} ${1}, you will swap ${2} ${3}",
     "WALLET_FEES_INFO": "${0} network fees are deducted from input asset.",
@@ -470,5 +469,7 @@
     "WALLETS_WITH_PRIVILEGES": "Wallets with privileges",
     "WALLET_PRIV_LABEL": "Privileges: ${0}",
     "PRIV_TRUE_LABEL": "Yes",
-    "PRIV_FALSE_LABEL": "No"
+    "PRIV_FALSE_LABEL": "No",
+    "SELECT_TX_FEE_TOKEN": "Select fee token",
+    "TXNS_FULL_DATA": "Transactions full data"
 }

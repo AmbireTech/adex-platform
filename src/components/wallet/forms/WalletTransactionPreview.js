@@ -11,12 +11,10 @@ import {
 	List,
 	ListItem,
 	ListItemText,
-	ListSubheader,
 	Accordion,
 	AccordionSummary,
 	Typography,
 	Tooltip,
-	Grid,
 } from '@material-ui/core'
 import { WalletAction } from './FormsCommon'
 import {
@@ -37,7 +35,6 @@ import {
 	selectMainCurrency,
 	selectBaseAssetsPrices,
 	selectNetwork,
-	selectFeeTokens,
 	selectFeeTokensWithBalanceSource,
 	// selectAssetsPrices, // TODO: use one of selectAssetsPrices/selectBaseAssetsPrices
 } from 'selectors'
@@ -199,8 +196,11 @@ function TransactionPreview(props) {
 	const {
 		feeInFeeTokenFormatted,
 		feeToken,
+		bundle,
 		// feeTokenSymbol: dataFeeTokenSymbol,
 	} = feesData
+
+	const { txns, gasLimit } = bundle
 	const prices = useSelector(selectBaseAssetsPrices)
 	const mainCurrency = useSelector(selectMainCurrency)
 	const feeTokensSource = useSelector(selectFeeTokensWithBalanceSource)
@@ -400,67 +400,23 @@ function TransactionPreview(props) {
 													],
 												})}
 											</Box>
-											<Box>
-												<Box
-													display='flex'
-													flexDirection='row'
-													justify='center'
-													alignItems='center'
-												>
-													<Tooltip
-														style={{ fontSize: '1em', marginLeft: '0.5em' }}
-														title={t('TOOLTIP_EXPLAIN_WALLET_TRANSACTION_FEE', {
-															args: [feeTokenSymbol],
-														})}
-														interactive
-													>
-														<HelpIcon color={'primary'} />
-													</Tooltip>
-												</Box>
-											</Box>
 										</Box>
 									</Typography>
 								</AccordionSummary>
-								<List
-									disablePadding
-									dense
-									subheader={
-										<ListSubheader component='div'>
-											{t('BD_TOTAL_FEE', {
-												args: [totalFeesFormatted, feeTokenSymbol],
-											})}
-										</ListSubheader>
-									}
-								>
+								<List disablePadding dense>
 									{!!feesData.hasDeployTx && (
 										<ListItem>
 											<ListItemText primary={t('FEE_HAS_DEPLOY_FEE_INFO')} />
 										</ListItem>
 									)}
-									<ListItem>
-										<ListItemText
-											secondary={t('FEE_DATA_TXNS_COUNT')}
-											primary={feesData.txnsCount}
-										/>
-									</ListItem>
-									<ListItem>
-										<ListItemText
-											secondary={t('FEE_DATA_TXNS_OPERATIONS_COUNT')}
-											primary={feesData.calculatedOperationsCount}
-										/>
-									</ListItem>
+
 									<ListItem>
 										<ListItemText
 											secondary={t('FEE_DATA_TXNS_TOTAOL_GAS_LIMIT')}
-											primary={feesData.gasLimit}
+											primary={gasLimit}
 										/>
 									</ListItem>
-									<ListItem>
-										<ListItemText
-											secondary={t('FEE_DATA_CALCULATED_GAS_PRICE')}
-											primary={feesData.calculatedGasPriceGWEI + ' Gwei'}
-										/>
-									</ListItem>
+
 									<ListItem>
 										<Accordion variant='outlined'>
 											<AccordionSummary

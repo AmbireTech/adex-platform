@@ -55,7 +55,7 @@ async function getAssetsData({ identityAddress }) {
 						symbol,
 						balance,
 						// NOTE: if we use formatted stats sometimes 0 is not 0
-						isZeroBalance: balance.isZero,
+						isZeroBalance: balance.isZero(),
 						baseTokenBalance,
 						decimals,
 						name,
