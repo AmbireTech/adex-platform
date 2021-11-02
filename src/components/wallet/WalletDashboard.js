@@ -15,14 +15,14 @@ import { makeStyles } from '@material-ui/core/styles'
 import { styles } from './styles'
 import {
 	execute,
-	resolveEnsAddress,
+	// resolveEnsAddress,
 	updatePrivilegesWarningAccepted,
 	loadWalletAccountData,
 	stopWalletAccountDataUpdate,
 } from 'actions'
 import {
 	t,
-	selectAccountIdentityAddr,
+	// selectAccountIdentityAddr,
 	selectWalletPrivileges,
 	selectPrivilegesWarningAccepted,
 	selectDebugIdentity,
@@ -66,7 +66,7 @@ const useWalletStyles = makeStyles(walletStyles)
 
 function WalletDashboard(props) {
 	const [mobileOpen, setMobileOpen] = useState(false)
-	const address = useSelector(selectAccountIdentityAddr)
+	// const address = useSelector(selectAccountIdentityAddr)
 	const privileges = useSelector(selectWalletPrivileges)
 	const privilegesWarningAccepted = useSelector(selectPrivilegesWarningAccepted)
 	const showTxPrivLevelWarning =
@@ -88,9 +88,9 @@ function WalletDashboard(props) {
 		}
 	}, [])
 
-	useEffect(() => {
-		execute(resolveEnsAddress({ address }))
-	}, [address])
+	// useEffect(() => {
+	// 	execute(resolveEnsAddress({ address }))
+	// }, [address])
 
 	const handleDrawerToggle = () => {
 		setMobileOpen(!mobileOpen)

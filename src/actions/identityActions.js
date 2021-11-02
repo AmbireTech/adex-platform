@@ -175,7 +175,7 @@ export function updateOwnerIdentities({ owner }) {
 	return async function(dispatch, getState) {
 		updateSpinner(GETTING_OWNER_IDENTITIES, true)(dispatch)
 		try {
-			const { provider } = await getEthersReadOnly()
+			// const { provider } = await getEthersReadOnly()
 			const identityData = await getOwnerIdentities({ owner })
 			const loginSelectedIdentity = selectLoginSelectedIdentity(getState())
 			const data = Object.entries(identityData)
@@ -188,20 +188,20 @@ export function updateOwnerIdentities({ owner }) {
 							: true)
 				)
 				.map(async ([identityAddr, privLevel]) => {
-					try {
-						const ens = await provider.lookupAddress(identityAddr)
-						return {
-							identity: identityAddr,
-							privLevel,
-							ens,
-						}
-					} catch {
-						return {
-							identity: identityAddr,
-							privLevel,
-							ens: null,
-						}
+					// try {
+					// const ens = await provider.lookupAddress(identityAddr)
+					return {
+						identity: identityAddr,
+						privLevel,
+						// ens,
 					}
+					// } catch {
+					// 	return {
+					// 		identity: identityAddr,
+					// 		privLevel,
+					// 		ens: null,
+					// 	}
+					// }
 				})
 
 			const ownerIdentities = (await Promise.all(data)).filter(x => !!x)
@@ -717,31 +717,31 @@ export function handleSignupLink(search) {
 	}
 }
 
-export function resolveEnsAddress({ address }) {
-	return async function(dispatch, getState) {
-		updateSpinner(`ens-${address}`, true)(dispatch)
+// export function resolveEnsAddress({ address }) {
+// 	return async function(dispatch, getState) {
+// 		updateSpinner(`ens-${address}`, true)(dispatch)
 
-		try {
-			const { provider } = await getEthersReadOnly()
-			const name = await provider.lookupAddress(address)
-			return dispatch({
-				type: types.UPDATE_RESOLVE_ENS_ADDRESS,
-				item: address,
-				value: name,
-			})
-		} catch (err) {
-			console.error('ERR_RESOLVING_ENS_ADDRESS', err)
-			addToast({
-				type: 'cancel',
-				label: t('ERR_RESOLVING_ENS_ADDRESS', {
-					args: [getErrorMsg(err)],
-				}),
-				timeout: 20000,
-			})(dispatch)
-		}
-		updateSpinner(`ens-${address}`, false)(dispatch)
-	}
-}
+// 		try {
+// 			const { provider } = await getEthersReadOnly()
+// 			const name = await provider.lookupAddress(address)
+// 			return dispatch({
+// 				type: types.UPDATE_RESOLVE_ENS_ADDRESS,
+// 				item: address,
+// 				value: name,
+// 			})
+// 		} catch (err) {
+// 			console.error('ERR_RESOLVING_ENS_ADDRESS', err)
+// 			addToast({
+// 				type: 'cancel',
+// 				label: t('ERR_RESOLVING_ENS_ADDRESS', {
+// 					args: [getErrorMsg(err)],
+// 				}),
+// 				timeout: 20000,
+// 			})(dispatch)
+// 		}
+// 		updateSpinner(`ens-${address}`, false)(dispatch)
+// 	}
+// }
 
 export function checkAuthMetamask() {
 	return async function(dispatch, getState) {

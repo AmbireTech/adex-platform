@@ -791,8 +791,8 @@ export async function getTxnsEstimationData({
 	const prices = selectAssetsPrices()
 
 	const feeToken = assets[feeTokenAddr]
-	const isNative = feeToken.isETH || feeToken.isNative
 	if (preEstimatedData) {
+		const isNative = feeToken.isETH || feeToken.isNative
 		const feeAmount = preEstimatedData.feeInFeeToken[txSpeed]
 		const feeTx = isNative
 			? {
