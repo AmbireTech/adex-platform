@@ -751,6 +751,14 @@ export async function getWalletApproveTxns({
 	return approveTxns
 }
 
+function getBundleTxns({ txns }) {
+	return txns.map(({ to, value, data }) => [
+		to,
+		value === '0x' ? 0 : value || 0,
+		data || '0x',
+	])
+}
+
 function getPriceInToken({ token, prices, priceInUSD }) {
 	const feeTokenPriceUSD = prices[token.symbol]['USD']
 	const floatAmount = (feeTokenPriceUSD * priceInUSD).toFixed(token.decimals)
@@ -759,88 +767,13 @@ function getPriceInToken({ token, prices, priceInUSD }) {
 	return feeTokenAmount
 }
 
-export async function getTxnsEstimationData({
-	// identityAddr,
-	txns,
-	feeTokenAddr,
-	account,
-	// mainCurrencyId = 'USD',
-	preEstimatedData = null,
-	mainActionAmountBN,
-	mainActionAssetAddr,
-	txSpeed,
-}) {
-	if (!txSpeed) {
-		throw new Error('getTxnsEstimationData - txSpeed not provided')
-	}
-	const assets = getAssets()
-	const {
-		// gasPriceRatio = 1.07,
-		// gasPriceCap,
-		feeCollector,
-	} = selectRelayerConfig()
-	const {
-		provider,
-		//  IdentityPayable
-	} = await getEthersReadOnly()
+async function getBundle({ txns }) {
 	const network = selectNetwork().id
-
-	// const { wallet, identity } = account
+	const bundleTxns = getBundleTxns({ txns })
 	const identityAddr = selectAccountIdentityAddr()
 	const walletAddress = selectWalletAddress()
-	const prices = selectAssetsPrices()
 
-	const feeToken = assets[feeTokenAddr]
-	if (preEstimatedData) {
-		const isNative = feeToken.isETH || feeToken.isNative
-		const feeAmount = preEstimatedData.feeInFeeToken[txSpeed]
-		const feeTx = isNative
-			? {
-					identityContract: identityAddr,
-					// feeTokenAddr,
-					to: feeCollector,
-					data: '0x',
-					value: feeAmount.toHexString(),
-					onChainActionData: {
-						txAction: {
-							...ON_CHAIN_ACTIONS.transferETH({
-								tokenData: feeToken,
-								amount: feeAmount,
-								sender: `Identity (${identityAddr})`,
-								recipient: `Relayer ${feeCollector}`,
-								relayerFeeTx: true,
-							}),
-						},
-					},
-			  }
-			: {
-					identityContract: identityAddr,
-					// feeTokenAddr,
-					to: feeTokenAddr,
-					data: ERC20.encodeFunctionData('transfer', [
-						feeCollector,
-						feeAmount.toHexString(),
-					]),
-					onChainActionData: {
-						txAction: {
-							...ON_CHAIN_ACTIONS.transferERC20({
-								tokenData: feeToken,
-								amount: feeAmount,
-								sender: `Identity (${identityAddr})`,
-								recipient: `Relayer ${feeCollector}`,
-								relayerFeeTx: true,
-							}),
-						},
-					},
-			  }
-		txns.push(feeTx)
-	}
-
-	const bundleTxns = txns.map(({ to, value, data }) => [
-		to,
-		value === '0x' ? 0 : value || 0,
-		data || '0x',
-	])
+	const { provider } = await getEthersReadOnly()
 
 	const bundle = new Bundle({
 		identity: identityAddr,
@@ -857,122 +790,159 @@ export async function getTxnsEstimationData({
 
 		bundle.nonce = nonce
 
-		const estimatedData = await bundle.estimate({
-			fetch,
-			relayerURL: ADEX_RELAYER_HOST,
-		})
-
-		const { success, feeInUSD, message } = estimatedData
-
-		if (!success) {
-			throw new Error(t('BUNDLE_ERR_ESTIMATE', { args: [message] }))
-		}
-
-		// TODO: handle err
-
-		const feeInFeeToken = {
-			slow: getPriceInToken({
-				token: feeToken,
-				prices,
-				priceInUSD: feeInUSD.slow,
-			}),
-			medium: getPriceInToken({
-				token: feeToken,
-				prices,
-				priceInUSD: feeInUSD.medium,
-			}),
-			fast: getPriceInToken({
-				token: feeToken,
-				prices,
-				priceInUSD: feeInUSD.fast,
-			}),
-		}
-
-		const feeInFeeTokenFormatted = {
-			slow: formatTokenAmount(
-				feeInFeeToken.slow,
-				feeToken.decimals,
-				false,
-				feeToken.decimals
-			),
-			medium: formatTokenAmount(
-				feeInFeeToken.medium,
-				feeToken.decimals,
-				false,
-				feeToken.decimals
-			),
-			fast: formatTokenAmount(
-				feeInFeeToken.fast,
-				feeToken.decimals,
-				false,
-				feeToken.decimals
-			),
-		}
-
-		estimatedData.feeInFeeToken = feeInFeeToken
-		estimatedData.feeInFeeTokenFormatted = feeInFeeTokenFormatted
-		estimatedData.gasPriceGWEI = formatUnits(estimatedData.gasPrice, 'gwei')
-
-		// {
-		// 	"success": true,
-		// 	"gasLimit": 218240,
-		// 	"gasPrice": 16105100000,
-		// 	"feeInUSD": {
-		// 	  "slow": 0.003985757145216,
-		// 	  "medium": 0.004871480955264001,
-		// 	  "fast": 0.0057572047653120005
-		// 	}
-		//   }
-
-		// const fees = {
-		// 	totalFeesFormatted: formatTokenAmount(
-		// 		totalFeesBN,
-		// 		feeToken.decimals,
-		// 		false,
-		// 		feeToken.decimals
-		// 	),
-		// 	totalFeesBN,
-		// 	txnsCount,
-		// 	hasDeployTx,
-		// 	feeTokenAddr,
-		// 	feeTokenSymbol: feeToken.symbol,
-		// 	feeTokenDecimals: feeToken.decimals,
-		// 	actionMinAmountBN,
-		// 	actionMinAmountFormatted: formatTokenAmount(
-		// 		actionMinAmountBN,
-		// 		feeToken.decimals,
-		// 		false,
-		// 		feeToken.decimals
-		// 	),
-		// 	totalEstimatedGasLimitBN,
-		// 	totalEstimatedGasLimitFormatted: totalEstimatedGasLimitBN.toString(),
-		// 	calculatedGasPriceBN,
-		// 	calculatedGasPriceGWEI: formatUnits(
-		// 		calculatedGasPriceBN.toString(),
-		// 		'gwei'
-		// 	),
-		// 	calculatedOperationsCount,
-		// 	txnsData: txnsDataFormatted,
-		// }
-
-		const actionMinAmountBN = estimatedData.feeInFeeToken[txSpeed]
-		return {
-			...estimatedData,
-			actionMinAmountBN,
-			feeToken,
-			actionMinAmountFormatted: formatTokenAmount(
-				actionMinAmountBN,
-				feeToken.decimals,
-				false,
-				feeToken.decimals
-			),
-			bundle,
-			txnsData: txns,
-		}
+		return bundle
 	} catch (err) {
 		throw new Error(err)
 	}
+}
 
-	// TODO: get this data here
-	// const feesData = await getWalletIdentityTxnsTotalFees({})
+export async function getTxnsBundleWithEstimatedFeesData({
+	txns,
+	feeTokenAddr,
+	// txSpeed,
+}) {
+	const assets = getAssets()
+	const bundle = await getBundle({ txns })
+
+	const feeToken = assets[feeTokenAddr]
+
+	const estimatedData = await bundle.estimate({
+		fetch,
+		relayerURL: ADEX_RELAYER_HOST,
+	})
+
+	const { success, feeInUSD, message } = estimatedData
+
+	if (!success) {
+		throw new Error(t('BUNDLE_ERR_ESTIMATE', { args: [message] }))
+	}
+
+	// TODO: handle err
+	const prices = selectAssetsPrices()
+
+	const feeInFeeToken = {
+		slow: getPriceInToken({
+			token: feeToken,
+			prices,
+			priceInUSD: feeInUSD.slow,
+		}),
+		medium: getPriceInToken({
+			token: feeToken,
+			prices,
+			priceInUSD: feeInUSD.medium,
+		}),
+		fast: getPriceInToken({
+			token: feeToken,
+			prices,
+			priceInUSD: feeInUSD.fast,
+		}),
+	}
+
+	const feeInFeeTokenFormatted = {
+		slow: formatTokenAmount(
+			feeInFeeToken.slow,
+			feeToken.decimals,
+			false,
+			feeToken.decimals
+		),
+		medium: formatTokenAmount(
+			feeInFeeToken.medium,
+			feeToken.decimals,
+			false,
+			feeToken.decimals
+		),
+		fast: formatTokenAmount(
+			feeInFeeToken.fast,
+			feeToken.decimals,
+			false,
+			feeToken.decimals
+		),
+	}
+
+	estimatedData.feeInFeeToken = feeInFeeToken
+	estimatedData.feeInFeeTokenFormatted = feeInFeeTokenFormatted
+	estimatedData.gasPriceGWEI = formatUnits(estimatedData.gasPrice, 'gwei')
+
+	return { bundle, estimatedData }
+}
+
+export async function getBundleWithFeesTxnsAndFeesData({
+	txns,
+	feeInFeeToken,
+	feeTokenAddr,
+	txSpeed,
+}) {
+	const assets = getAssets()
+	const feeToken = assets[feeTokenAddr]
+
+	const isNative = feeToken.isETH || feeToken.isNative
+	const feeAmount = feeInFeeToken[txSpeed]
+	const {
+		// gasPriceRatio = 1.07,
+		// gasPriceCap,
+		feeCollector,
+	} = selectRelayerConfig()
+
+	const identityAddr = selectAccountIdentityAddr()
+
+	const feeTx = isNative
+		? {
+				identityContract: identityAddr,
+				// feeTokenAddr,
+				to: feeCollector,
+				data: '0x',
+				value: feeAmount.toHexString(),
+				onChainActionData: {
+					txAction: {
+						...ON_CHAIN_ACTIONS.transferETH({
+							tokenData: feeToken,
+							amount: feeAmount,
+							sender: `Identity (${identityAddr})`,
+							recipient: `Relayer ${feeCollector}`,
+							relayerFeeTx: true,
+						}),
+					},
+				},
+		  }
+		: {
+				identityContract: identityAddr,
+				// feeTokenAddr,
+				to: feeTokenAddr,
+				data: ERC20.encodeFunctionData('transfer', [
+					feeCollector,
+					feeAmount.toHexString(),
+				]),
+				onChainActionData: {
+					txAction: {
+						...ON_CHAIN_ACTIONS.transferERC20({
+							tokenData: feeToken,
+							amount: feeAmount,
+							sender: `Identity (${identityAddr})`,
+							recipient: `Relayer ${feeCollector}`,
+							relayerFeeTx: true,
+						}),
+					},
+				},
+		  }
+
+	const txnsWithFeeTx = [...txns, feeTx]
+
+	const { bundle, estimatedData } = getTxnsBundleWithEstimatedFeesData({
+		txns: txnsWithFeeTx,
+		feeTokenAddr,
+	})
+
+	return {
+		bundle,
+		estimatedData,
+		feeToken,
+		txnsData: txns,
+		// actionMinAmountBN,
+		// actionMinAmountFormatted: formatTokenAmount(
+		// 	actionMinAmountBN,
+		// 	feeToken.decimals,
+		// 	false,
+		// 	feeToken.decimals
+		// ),
+	}
 }
