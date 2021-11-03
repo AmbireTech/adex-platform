@@ -927,7 +927,7 @@ export async function getBundleWithFeesTxnsAndFeesData({
 
 	const txnsWithFeeTx = [...txns, feeTx]
 
-	const { bundle, estimatedData } = getTxnsBundleWithEstimatedFeesData({
+	const { bundle, estimatedData } = await getTxnsBundleWithEstimatedFeesData({
 		txns: txnsWithFeeTx,
 		feeTokenAddr,
 	})
