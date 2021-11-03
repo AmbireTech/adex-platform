@@ -17,7 +17,7 @@ import {
 	selectWallet,
 	selectAccountIdentityAddr,
 } from 'selectors'
-import { walletDiversificationTransaction } from 'services/smart-contracts/actions/wallet'
+import { walletDiversificationTransaction } from 'services/smart-contracts/actions/walletTrade'
 import { processExecuteWalletTxns } from 'services/smart-contracts/actions/walletIdentity'
 import { getEthers } from 'services/smart-contracts/ethers'
 
