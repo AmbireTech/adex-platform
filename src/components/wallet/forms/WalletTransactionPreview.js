@@ -101,7 +101,7 @@ const TransactionSpeedSelect = ({
 	const {
 		// feeInUSD,
 		feeToken,
-		feeInFeeToken,
+		estimatedData,
 	} = feesData
 	return (
 		<Dropdown
@@ -118,7 +118,7 @@ const TransactionSpeedSelect = ({
 			// error={userSide && !!userSide.dirty}
 			helperText={getFeeDataLabel({
 				txSpeed,
-				feeInFeeToken,
+				feeInFeeToken: estimatedData.feeInFeeToken,
 				feeToken,
 				mainCurrency,
 				prices,
@@ -187,6 +187,7 @@ function TransactionPreview(props) {
 		toAsset,
 		txSpeed,
 		feeTokenAddr,
+		bundle = {},
 	} = useSelector(state => selectNewTransactionById(state, txId))
 	const [
 		networkCongested,
@@ -194,9 +195,9 @@ function TransactionPreview(props) {
 	] = useState(false)
 	const { assetsData = {} } = useSelector(selectAccountStatsRaw)
 	const {
-		feeInFeeTokenFormatted,
+		estimatedData,
 		feeToken,
-		bundle,
+		// bundle,
 		// feeTokenSymbol: dataFeeTokenSymbol,
 	} = feesData
 
@@ -217,7 +218,7 @@ function TransactionPreview(props) {
 	// const { symbol } = assetsData[formAssetAddr] || {}
 
 	const feeTokenSymbol = feeToken.symbol //isFromETHToken ? symbol : dataFeeTokenSymbol
-	const totalFeesFormatted = feeInFeeTokenFormatted[txSpeed]
+	const totalFeesFormatted = estimatedData.feeInFeeTokenFormatted[txSpeed]
 
 	const feesMainCurrencyValue = getMainCurrencyValue({
 		asset: feeTokenSymbol,

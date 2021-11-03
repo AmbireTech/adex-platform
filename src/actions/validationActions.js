@@ -426,17 +426,17 @@ export function validateWalletFees({
 			]
 		}
 
-		if (actionMinAmountBN.gt(totalAmountToSpendBN)) {
-			isValid = false
-			msg = 'ERR_TX_SUB_MIN_ACTION_AMOUNT'
-			args = [
-				actionName,
-				actionMinAmountFormatted,
-				symbol,
-				totalAmountToSpendFormatted,
-				symbol,
-			]
-		}
+		// if (actionMinAmountBN.gt(totalAmountToSpendBN)) {
+		// 	isValid = false
+		// 	msg = 'ERR_TX_SUB_MIN_ACTION_AMOUNT'
+		// 	args = [
+		// 		actionName,
+		// 		actionMinAmountFormatted,
+		// 		symbol,
+		// 		totalAmountToSpendFormatted,
+		// 		symbol,
+		// 	]
+		// }
 
 		if (isValid || (!isValid && !skipStateUpdateIfInvalid)) {
 			await validate(validateId, 'fees', {
