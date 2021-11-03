@@ -179,12 +179,12 @@ export async function walletWithdrawTransaction({
 
 	// TODO: unified function
 	const mainActionAmountBN = _preAmountToWithdrawBN.sub(totalFeesBN)
-	// const mainActionAmountFormatted = formatTokenAmount(
-	// 	mainActionAmountBN,
-	// 	tokenData.decimals,
-	// 	false,
-	// 	tokenData.decimals
-	// )
+	const mainActionAmountFormatted = formatTokenAmount(
+		mainActionAmountBN,
+		tokenData.decimals,
+		false,
+		tokenData.decimals
+	)
 
 	if (mainActionAmountBN.lt(ZERO)) {
 		throw new Error(
@@ -230,7 +230,7 @@ export async function walletWithdrawTransaction({
 		txns: txnsWithFee,
 		feeTokenAddr,
 		txSpeed,
-		// preEstimatedData,
+		feeInFeeToken: preEstimatedData.feeInFeeToken,
 	})
 
 	return {
@@ -247,8 +247,8 @@ export async function walletWithdrawTransaction({
 		// spendTokenAddr: withdrawAssetAddr,
 		totalAmountToSpendBN: amountToWithdrawBN, // Total amount out
 		totalAmountToSpendFormatted: amountToWithdraw, // Total amount out
-		// mainActionAmountBN,
-		// mainActionAmountFormatted,
+		mainActionAmountBN,
+		mainActionAmountFormatted,
 	}
 }
 
