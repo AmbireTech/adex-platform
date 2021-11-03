@@ -10,6 +10,8 @@ import { selectNewTransactionById, t } from 'selectors'
 import Helper from 'helpers/miscHelpers'
 import { getErrorMsg } from 'helpers/errors'
 
+const ADEX_RELAYER_HOST = process.env.ADEX_RELAYER_HOST
+
 // MEMORY STORAGE
 export function updateNewTransaction({ tx, key, value }) {
 	return async function(dispatch) {
@@ -97,7 +99,7 @@ export function handleWalletTxnsAndFeesData({
 	return async function(dispatch, getState) {
 		let isValid = false
 		try {
-			const feesData = await feeDataAction()
+			const { bundle, ...feesData } = await feeDataAction()
 
 			isValid = await validateWalletFees({
 				validateId,
@@ -112,6 +114,16 @@ export function handleWalletTxnsAndFeesData({
 				key: 'feesData',
 				value: feesData,
 			})(dispatch, getState)
+			await updateNewTransaction({
+				tx: stepsId,
+				key: 'bundle',
+				value: bundle,
+			})(dispatch, getState)
+			await updateNewTransaction({
+				tx: stepsId,
+				key: 'actionName',
+				value: actionName,
+			})(dispatch, getState)
 		} catch (err) {
 			console.error(actionName, err)
 
@@ -124,5 +136,43 @@ export function handleWalletTxnsAndFeesData({
 		}
 
 		return isValid
+	}
+}
+
+export function handleTxSubmit({ stepsId }) {
+	return async function(dispatch, getState) {
+		const state = getState()
+		try {
+			if (!stepsId) {
+				throw new Error('No steps id provided')
+			}
+			const { bundle, actionName } = selectNewTransactionById(state, stepsId)
+
+			const { success, txId } = await bundle.submit({
+				fetch,
+				relayerURL: ADEX_RELAYER_HOST,
+			})
+
+			if (success) {
+				throw new Error()
+			}
+
+			addToast({
+				type: 'accept',
+				label: t('TX_SUCCESS_MSG', {
+					args: [actionName, txId],
+				}),
+				timeout: 20000,
+			})(dispatch)
+		} catch (err) {
+			console.error(err)
+			addToast({
+				type: 'cancel',
+				label: t('TX_ERROR_MSG', {
+					args: [getErrorMsg(err)],
+				}),
+				timeout: 5000,
+			})(dispatch)
+		}
 	}
 }
