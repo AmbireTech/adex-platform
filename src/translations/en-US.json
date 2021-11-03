@@ -471,5 +471,7 @@
     "PRIV_TRUE_LABEL": "Yes",
     "PRIV_FALSE_LABEL": "No",
     "SELECT_TX_FEE_TOKEN": "Select fee token",
-    "TXNS_FULL_DATA": "Transactions full data"
+    "TXNS_FULL_DATA": "Transactions full data",
+    "TX_SUCCESS_MSG": "${0}: transaction with ID: ${1} sent!",
+    "TX_ERROR_MSG": "${1}: transaction failed!"
 }
