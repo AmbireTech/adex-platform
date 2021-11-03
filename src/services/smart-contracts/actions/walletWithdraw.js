@@ -6,7 +6,9 @@ import {
 	ON_CHAIN_ACTIONS,
 	getWalletIdentityTxnsWithNoncesAndFees,
 	getWalletIdentityTxnsTotalFees,
-	getTxnsEstimationData,
+	// getTxnsEstimationData,
+	getTxnsBundleWithEstimatedFeesData,
+	getBundleWithFeesTxnsAndFeesData,
 	// processExecuteWalletTxns,
 	// getWalletApproveTxns,
 } from './walletIdentity'
@@ -153,7 +155,9 @@ export async function walletWithdrawTransaction({
 		// isFromETHToken,
 	})
 
-	const preEstimatedData = await getTxnsEstimationData({
+	const {
+		estimatedData: preEstimatedData,
+	} = await getTxnsBundleWithEstimatedFeesData({
 		// account,
 		txns,
 		feeTokenAddr,
@@ -168,19 +172,19 @@ export async function walletWithdrawTransaction({
 	// 	// feeInFeeToken,
 	// 	// actionMinAmountBN,
 	// 	// actionMinAmountFormatted, // in ...rest
-	// 	// ...rest
+	// 	// ...rests
 	// } = estimatedFeesData
 
 	const totalFeesBN = preEstimatedData.feeInFeeToken[txSpeed]
 
 	// TODO: unified function
 	const mainActionAmountBN = _preAmountToWithdrawBN.sub(totalFeesBN)
-	const mainActionAmountFormatted = formatTokenAmount(
-		mainActionAmountBN,
-		tokenData.decimals,
-		false,
-		tokenData.decimals
-	)
+	// const mainActionAmountFormatted = formatTokenAmount(
+	// 	mainActionAmountBN,
+	// 	tokenData.decimals,
+	// 	false,
+	// 	tokenData.decimals
+	// )
 
 	if (mainActionAmountBN.lt(ZERO)) {
 		throw new Error(
@@ -216,31 +220,35 @@ export async function walletWithdrawTransaction({
 	// !!!!! mainActionAmountBN - use tis amount when calling functions for signatures
 	// actionMinAmountBN - should be more than 2x fees
 
-	const { bundle, ...estimatedFeesDataWithFees } = await getTxnsEstimationData({
+	const {
+		bundle,
+		estimatedData,
+		feeToken,
+		txnsData,
+	} = await getBundleWithFeesTxnsAndFeesData({
 		// account,
 		txns: txnsWithFee,
 		feeTokenAddr,
 		txSpeed,
-		preEstimatedData,
+		// preEstimatedData,
 	})
 
 	return {
-		estimatedFeesDataWithFees,
-		totalFeesBN,
+		bundle,
+		estimatedData,
+		feeToken,
+		txnsData,
+		feeTokenAddr,
+		// estimatedFeesDataWithFees,
+		// totalFeesBN,
 		// totalFeesFormatted, // in rest,
-		feeTokenAddr, //in ..rest
 		// actionMinAmountBN, // in ...rest
 		// actionMinAmountFormatted, // in ...rest
-		spendTokenAddr: withdrawAssetAddr,
+		// spendTokenAddr: withdrawAssetAddr,
 		totalAmountToSpendBN: amountToWithdrawBN, // Total amount out
 		totalAmountToSpendFormatted: amountToWithdraw, // Total amount out
-		mainActionAmountBN,
-		mainActionAmountFormatted,
-		bundle,
-		...estimatedFeesDataWithFees,
-		actionMeta: {
-			withdrawAssetAddr,
-		},
+		// mainActionAmountBN,
+		// mainActionAmountFormatted,
 	}
 }
 
