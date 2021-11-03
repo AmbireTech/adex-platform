@@ -22,18 +22,6 @@ import {
 	walletWithdrawMultipleTransaction,
 } from 'services/smart-contracts/actions/walletWithdraw'
 
-// import {
-// 	getSigner,
-// 	getMultipleTxSignatures,
-// } from 'services/smart-contracts/actions/ethers'
-const ADEX_RELAYER_HOST = process.env.ADEX_RELAYER_HOST
-
-function checkStepId({ stepsId, functionName }) {
-	if (!stepsId) {
-		throw new Error('No steps id provided - ' + functionName)
-	}
-}
-
 export function validateWalletWithdraw({
 	stepsId,
 	validateId,
@@ -124,7 +112,7 @@ export function validateWalletWithdraw({
 				stepsId,
 				validateId,
 				dirty,
-				actionName: 'walletWithdraw',
+				actionName: 'WALLET_WITHDRAW_ASSET_TITLE',
 				feeDataAction,
 				temp,
 			})(dispatch, getState)
@@ -272,49 +260,5 @@ export function validateWalletWithdrawMultiple({
 
 		await handleAfterValidation({ isValid, onValid, onInvalid })
 		await updateSpinner(validateId, false)(dispatch)
-	}
-}
-
-export function walletWithdraw({
-	stepsId,
-	// validateId,
-	// dirty,
-	// onValid,
-	// onInvalid,
-	// stepsProps = {},
-	// amountToWithdraw,
-	// withdrawTo,
-	feesData = {},
-}) {
-	return async function(dispatch, getState) {
-		try {
-			checkStepId({ stepsId, functionName: 'walletWithdraw' })
-			const { bundle } = feesData
-
-			// TODO: bundle submit handler - catch errors
-			// and success msgs
-
-			const result = await bundle.submit({
-				fetch,
-				relayerURL: ADEX_RELAYER_HOST,
-			})
-
-			addToast({
-				type: 'accept',
-				label: t('WALLET_WITHDRAW_TRANSACTION_SUCCESS', {
-					args: [result],
-				}),
-				timeout: 20000,
-			})(dispatch)
-		} catch (err) {
-			console.error(err)
-			addToast({
-				type: 'cancel',
-				label: t('ERR_WALLET_WITHDRAW_TRADE', {
-					args: [err.message],
-				}),
-				timeout: 5000,
-			})(dispatch)
-		}
 	}
 }

@@ -19,10 +19,10 @@ import {
 	walletDiversification,
 	validateWalletWithdraw,
 	validateWalletWithdrawMultiple,
-	walletWithdraw,
 	walletValidatePrivilegesChange,
 	walletUpdateIdentityPrivilege,
 	updateNewTransaction,
+	handleTxSubmit,
 } from 'actions'
 import { selectNewTransactionById, selectFeeTokens } from 'selectors'
 import ReactGA from 'react-ga'
@@ -181,7 +181,7 @@ export const WithdrawAsset = props => (
 					execute(
 						completeTx({
 							...props,
-							competeAction: walletWithdraw,
+							competeAction: handleTxSubmit,
 						})
 					),
 			},
@@ -221,7 +221,7 @@ export const WithdrawMultipleAssets = props => (
 					execute(
 						completeTx({
 							...props,
-							competeAction: walletWithdraw,
+							competeAction: handleTxSubmit,
 						})
 					),
 			},
