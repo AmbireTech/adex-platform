@@ -862,6 +862,7 @@ export async function getTxnsBundleWithEstimatedFeesData({
 	estimatedData.feeInFeeToken = feeInFeeToken
 	estimatedData.feeInFeeTokenFormatted = feeInFeeTokenFormatted
 	estimatedData.gasPriceGWEI = formatUnits(estimatedData.gasPrice, 'gwei')
+	estimatedData.hasDeployTx = bundle.nonce === 0
 
 	return { bundle, estimatedData }
 }
@@ -937,6 +938,7 @@ export async function getBundleWithFeesTxnsAndFeesData({
 		estimatedData,
 		feeToken,
 		txnsData: txns,
+		hasDeployTx: bundle.nonce === 0,
 		// actionMinAmountBN,
 		// actionMinAmountFormatted: formatTokenAmount(
 		// 	actionMinAmountBN,
