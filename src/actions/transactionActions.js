@@ -99,25 +99,54 @@ export function handleWalletTxnsAndFeesData({
 	return async function(dispatch, getState) {
 		let isValid = false
 		try {
-			const { bundle, ...feesData } = await feeDataAction()
+			const {
+				bundle,
+				estimatedData,
+				txnsData,
+				txnsMeta,
+				feeToken,
+				// txnsMeta: {
+				//  spendTokenAddr,
+				// 	totalAmountToSpendBN: amountToWithdrawBN, // Total amount out
+				// 	totalAmountToSpendFormatted: amountToWithdraw, // Total amount out
+				// 	mainActionAmountBN,
+				// 	mainActionAmountFormatted,
+				// },
+			} = await feeDataAction()
 
 			isValid = await validateWalletFees({
 				validateId,
-				...feesData,
+				...txnsMeta,
+				feeToken,
 				dirty,
 			})(dispatch, getState)
 
-			// TODO: rename feesData to txnsData, and feesData to be prop of txnsData
-			// temp txnsWithNonceAndFees is prop of feesData
+			// TODO: make multiple props update at once
+			// Keep it as is until unified for all transactions
 			await updateNewTransaction({
 				tx: stepsId,
-				key: 'feesData',
-				value: feesData,
+				key: 'txnsData',
+				value: txnsData,
+			})(dispatch, getState)
+			await updateNewTransaction({
+				tx: stepsId,
+				key: 'estimatedData',
+				value: estimatedData,
+			})(dispatch, getState)
+			await updateNewTransaction({
+				tx: stepsId,
+				key: 'txnsMeta',
+				value: txnsMeta,
 			})(dispatch, getState)
 			await updateNewTransaction({
 				tx: stepsId,
 				key: 'bundle',
 				value: bundle,
+			})(dispatch, getState)
+			await updateNewTransaction({
+				tx: stepsId,
+				key: 'feeToken',
+				value: feeToken,
 			})(dispatch, getState)
 			await updateNewTransaction({
 				tx: stepsId,
