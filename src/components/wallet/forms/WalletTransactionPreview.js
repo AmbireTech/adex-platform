@@ -92,17 +92,19 @@ function getFeeDataLabel({
 
 const TransactionSpeedSelect = ({
 	// txId,
-	feesData,
+	// feesData,
 	txSpeed,
 	mainCurrency,
 	prices,
 	onTxSpeedChange,
+	estimatedData,
+	feeToken,
 }) => {
-	const {
-		// feeInUSD,
-		feeToken,
-		estimatedData,
-	} = feesData
+	// const {
+	// 	// feeInUSD,
+	// 	// feeToken,
+	// 	// estimatedData,
+	// } = feesData
 	return (
 		<Dropdown
 			required
@@ -180,42 +182,35 @@ function TransactionPreview(props) {
 	const { networkName } = selectNetwork()
 	const {
 		waitingForWalletAction,
-		feesData = {},
+		// feesData = {},
 		errors = [],
-		withdrawTo,
-		fromAsset,
-		toAsset,
-		txSpeed,
+		// withdrawTo,
+		// fromAsset,
+		// toAsset,
+		// txSpeed,
 		feeTokenAddr,
-		bundle = {},
+		// bundle = {},
+		txnsData,
+		estimatedData,
+		txnsMeta,
+		bundle,
+		actionName,
+		feeToken,
+		txSpeed,
+		...txSpecific
 	} = useSelector(state => selectNewTransactionById(state, txId))
 	const [
 		networkCongested,
 		// setNetworkCongested
 	] = useState(false)
 	const { assetsData = {} } = useSelector(selectAccountStatsRaw)
-	const {
-		estimatedData,
-		feeToken,
-		// bundle,
-		// feeTokenSymbol: dataFeeTokenSymbol,
-	} = feesData
+
+	const { spendTokenAddr } = txnsMeta
 
 	const { txns, gasLimit } = bundle
 	const prices = useSelector(selectBaseAssetsPrices)
 	const mainCurrency = useSelector(selectMainCurrency)
 	const feeTokensSource = useSelector(selectFeeTokensWithBalanceSource)
-
-	const formAssetAddr = fromAsset || feesData.spendTokenAddr
-
-	// WETH specific
-	const isFromETHToken = formAssetAddr
-		? isETHBasedToken({
-				address: formAssetAddr,
-		  })
-		: false
-	const isToETHToken = toAsset ? isETHBasedToken({ address: toAsset }) : false
-	// const { symbol } = assetsData[formAssetAddr] || {}
 
 	const feeTokenSymbol = feeToken.symbol //isFromETHToken ? symbol : dataFeeTokenSymbol
 	const totalFeesFormatted = estimatedData.feeInFeeTokenFormatted[txSpeed]
@@ -319,7 +314,8 @@ function TransactionPreview(props) {
 						<Box p={1}>
 							<Box pb={1}>
 								<TransactionSpeedSelect
-									feesData={feesData}
+									estimatedData={estimatedData}
+									feeToken={feeToken}
 									txSpeed={txSpeed}
 									prices={prices}
 									onTxSpeedChange={onTxSpeedChange}
@@ -328,8 +324,8 @@ function TransactionPreview(props) {
 							</Box>
 							<Box pb={1}>
 								<TransactionFeeTokenSelect
-									feesData={feesData}
-									feeTokenAddr={feeTokenAddr}
+									estimatedData={estimatedData}
+									feeToken={feeToken.address}
 									feeTokensSource={feeTokensSource}
 									prices={prices}
 									onTxFeeTokenChange={onTxFeeTokenChange}
@@ -340,7 +336,7 @@ function TransactionPreview(props) {
 							</Alert> */}
 						</Box>
 
-						{stepsId === 'walletSwapForm' && (
+						{/* {stepsId === 'walletSwapForm' && (
 							<TradePreview
 								{...{
 									prices,
@@ -353,13 +349,13 @@ function TransactionPreview(props) {
 									toAsset,
 								}}
 							/>
-						)}
+						)} */}
 
-						{stepsId === 'walletDiversifyForm' && (
+						{/* {stepsId === 'walletDiversifyForm' && (
 							<DiversifyPreview
 								{...{ prices, mainCurrency, assetsData, feesData }}
 							/>
-						)}
+						)} */}
 
 						{stepsId.includes('walletWithdraw-') && (
 							<WithdrawPreview
@@ -367,11 +363,11 @@ function TransactionPreview(props) {
 									prices,
 									mainCurrency,
 									assetsData,
-									feesData,
-									withdrawTo,
-									totalFeesFormatted,
+									txnsMeta,
+									estimatedData,
 									feeTokenSymbol,
 									symbol: feeTokenSymbol,
+									...txSpecific,
 								}}
 							/>
 						)}
@@ -405,7 +401,7 @@ function TransactionPreview(props) {
 									</Typography>
 								</AccordionSummary>
 								<List disablePadding dense>
-									{!!feesData.hasDeployTx && (
+									{!!estimatedData.hasDeployTx && (
 										<ListItem>
 											<ListItemText primary={t('FEE_HAS_DEPLOY_FEE_INFO')} />
 										</ListItem>
@@ -428,7 +424,7 @@ function TransactionPreview(props) {
 												<Typography>{t('TXNS_FULL_DATA')}</Typography>
 											</AccordionSummary>
 											<Box p={1} color='grey.contrastText' bgcolor='grey.main'>
-												<pre>{JSON.stringify(feesData.txnsData, null, 2)}</pre>
+												<pre>{JSON.stringify(txnsData, null, 2)}</pre>
 											</Box>
 										</Accordion>
 									</ListItem>

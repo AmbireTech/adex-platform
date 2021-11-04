@@ -285,7 +285,8 @@ export const TradePreview = ({
 
 export const WithdrawPreview = ({
 	withdrawTo,
-	feesData,
+	// estimatedData,
+	txnsMeta,
 	assetsData,
 	prices,
 	mainCurrency,
@@ -293,11 +294,11 @@ export const WithdrawPreview = ({
 	feeTokenSymbol,
 }) => {
 	const classes = useStyles()
-	const { symbol, name } = assetsData[feesData.spendTokenAddr] || {}
+	const { symbol, name } = assetsData[txnsMeta.spendTokenAddr] || {}
 
 	const amountMainCurrency = getMainCurrencyValue({
 		asset: symbol,
-		floatAmount: feesData.totalAmountToSpendFormatted,
+		floatAmount: txnsMeta.totalAmountToSpendFormatted,
 		prices,
 		mainCurrency,
 	})
@@ -328,18 +329,18 @@ export const WithdrawPreview = ({
 				right={
 					<TokenRow
 						{...{
-							address: feesData.spendTokenAddr,
+							address: txnsMeta.spendTokenAddr,
 							name,
 							classes,
 							symbol,
-							amount: feesData.totalAmountToSpendFormatted,
+							amount: txnsMeta.totalAmountToSpendFormatted,
 							amountMainCurrency,
 							mainCurrency,
 							secondary: t('AMOUNT_WITHDRAW_INFO', {
 								args: [
 									totalFeesFormatted,
 									feeTokenSymbol,
-									feesData.mainActionAmountFormatted,
+									txnsMeta.mainActionAmountFormatted,
 									symbol,
 								],
 							}),
