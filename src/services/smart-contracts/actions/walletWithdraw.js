@@ -245,10 +245,13 @@ export async function walletWithdrawTransaction({
 		// actionMinAmountBN, // in ...rest
 		// actionMinAmountFormatted, // in ...rest
 		// spendTokenAddr: withdrawAssetAddr,
-		totalAmountToSpendBN: amountToWithdrawBN, // Total amount out
-		totalAmountToSpendFormatted: amountToWithdraw, // Total amount out
-		mainActionAmountBN,
-		mainActionAmountFormatted,
+		txnsMeta: {
+			spendTokenAddr: withdrawAssetAddr,
+			totalAmountToSpendBN: amountToWithdrawBN, // Total amount out
+			totalAmountToSpendFormatted: amountToWithdraw, // Total amount out
+			mainActionAmountBN,
+			mainActionAmountFormatted,
+		},
 	}
 }
 
