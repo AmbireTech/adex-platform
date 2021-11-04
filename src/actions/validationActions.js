@@ -381,13 +381,12 @@ export function validateWalletFees({
 	validateId,
 	actionName,
 	// totalFeesBN,
-	feeTokenAddr,
+	feeToken,
 	totalAmountToSpendBN,
 	totalAmountToSpendFormatted,
 	// mainActionAmountBN,
 	actionMinAmountBN,
 	actionMinAmountFormatted,
-	spendTokenAddr,
 	errorMsg = '',
 	dirty,
 	skipStateUpdateIfInvalid,
@@ -403,25 +402,17 @@ export function validateWalletFees({
 			assetsData: assetsDataFormatted = {},
 		} = selectAccountStatsFormatted(state)
 
-		const feeAssetAsSpendAsset = spendTokenAddr === feeTokenAddr
+		const { address } = feeToken
 
-		const feeAssetData = feeAssetAsSpendAsset
-			? assetsData[spendTokenAddr]
-			: assetsData[feeTokenAddr]
+		const { balance, symbol } = assetsData[address]
 
-		// NOTE: WETH specific
-		const availableBalanceFeeAsset = feeAssetData.balance
-		// feeAssetData.totalAvailableMainAsset || feeAssetData.totalAvailable
-
-		const { symbol } = feeAssetData
-
-		if (totalAmountToSpendBN.gt(BigNumber.from(availableBalanceFeeAsset))) {
+		if (totalAmountToSpendBN.gt(BigNumber.from(balance))) {
 			isValid = false
 			msg = 'ERR_TX_INSUFFICIENT_BALANCE'
 			args = [
 				totalAmountToSpendFormatted,
 				symbol,
-				assetsDataFormatted[feeTokenAddr].totalAvailable,
+				assetsDataFormatted[address].balance,
 				symbol,
 			]
 		}
