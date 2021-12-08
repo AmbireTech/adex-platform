@@ -94,14 +94,16 @@ const AudiencePreview = ({ audienceInput = {}, title, subHeader }) => {
 								label={t('ALL_PUBLISHERS')}
 							/>
 						) : (
-							(publishers[publishers.apply] || []).map((x, index) => (
-								<Chip
-									key={index}
-									variant='outlined'
-									size='small'
-									label={(JSON.parse(x) || {}).hostname}
-								/>
-							))
+							(publishers[publishers.apply] || []).map((x, index) => {
+								return (
+									<Chip
+										key={index}
+										variant='outlined'
+										size='small'
+										label={(JSON.parse(x || '{}') || {}).hostname}
+									/>
+								)
+							})
 						)
 					}
 				/>
