@@ -106,6 +106,8 @@
     "deploy": "npm run build && cp ./domains/platform/CNAME ./build && gh-pages -d build",
     "deploy-staging": "npm run build-staging && cp ./domains/staging/CNAME ./build && gh-pages -d build -r git@github.com:AdExNetwork/adex-platform-staging.git",
     "deploy-goerli": "npm run build-dev && cp ./domains/goerli/CNAME ./build && gh-pages -d build -r git@github.com:AdExNetwork/adex-platform-goerli.git",
+    "win-staging-deploy": "npm run build-staging && copy \".\\domains\\staging\\CNAME\" \".\\build\" && gh-pages -d build -r git@github.com:AdExNetwork/adex-platform-staging.git",
+    "win-deploy": "npm run build && copy \".\\domains\\platform\\CNAME\" \".\\build\" && gh-pages -d build",
     "test": "eslint src/",
     "unit-tests": "node scripts/test.js --env=jsdom",
     "lint": "eslint \"src/**/*.{js,jsx}\" && echo Linting check finished",
