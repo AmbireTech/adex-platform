@@ -13,8 +13,10 @@ import {
 	TableContainer,
 } from '@material-ui/core'
 import classnames from 'classnames'
-import { makeStyles } from '@material-ui/core/styles'
-import AdexIconTxt from 'components/common/icons/AdexIconTxt'
+import { makeStyles, useTheme } from '@material-ui/core/styles'
+import AdexIconTxt from 'resources/adex-logo-txt-sm.svg'
+import AdexIconTxtDark from 'resources/adex-logo-txt-dark-theme.svg'
+import Media from 'components/common/media'
 import {
 	t,
 	selectMainToken,
@@ -35,6 +37,7 @@ import { styles } from './styles'
 const useStyles = makeStyles(styles)
 
 export function PublisherReceiptTpl({ date } = {}) {
+	const theme = useTheme()
 	const classes = useStyles()
 	const { symbol } = useSelector(selectMainToken)
 	const identityAddr = useSelector(selectAccountIdentityAddr)
@@ -51,6 +54,8 @@ export function PublisherReceiptTpl({ date } = {}) {
 	const { companyName, firstLastName, address, country } = useSelector(
 		selectCompanyData
 	)
+
+	const AdxIcon = theme.type === 'dark' ? AdexIconTxtDark : AdexIconTxt
 	return (
 		<Box p={2} mb={5} className={classnames(classes.pageBreak)} width={1}>
 			<Box mb={2} display='flex' justifyContent='space-between' flexWrap='wrap'>
@@ -76,7 +81,7 @@ export function PublisherReceiptTpl({ date } = {}) {
 					})}`}</Typography>
 				</Box>
 				<Box>
-					<AdexIconTxt className={classnames(classes.icon)} />
+					<Media src={AdxIcon} classNameImg={classes.icon} />
 				</Box>
 			</Box>
 			<Divider />

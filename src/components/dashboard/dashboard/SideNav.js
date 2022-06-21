@@ -12,8 +12,8 @@ import classnames from 'classnames'
 import packageJson from './../../../../package.json'
 import Anchor from 'components/common/anchor/anchor'
 import SideSwitch from './SideSwitch'
-import AdexIconTxt from 'components/common/icons/AdexIconTxt'
-import AdexIconTxtDark from 'components/common/icons/AdexIconTxtDark'
+import AdexIconTxt from 'resources/adex-logo-txt-sm.svg'
+import AdexIconTxtDark from 'resources/adex-logo-txt-dark-theme.svg'
 import DashboardIcon from '@material-ui/icons/Dashboard'
 import SwapHorizontalIcon from '@material-ui/icons/SwapHoriz'
 import { Receipt } from '@material-ui/icons'
@@ -34,10 +34,15 @@ import {
 	selectAccountStatsFormatted,
 	selectMainToken,
 } from 'selectors'
+import Media from 'components/common/media'
 
 const RRListItem = withReactRouterLink(ListItem)
-const RRAdexIconTxt = withReactRouterLink(AdexIconTxt)
-const RRAdexIconTxtDark = withReactRouterLink(AdexIconTxtDark)
+const RRAdexIconTxt = withReactRouterLink(props => (
+	<Media {...props} src={AdexIconTxt} />
+))
+const RRAdexIconTxtDark = withReactRouterLink(props => (
+	<Media {...props} src={AdexIconTxtDark} />
+))
 const { ETH_SCAN_ADDR_HOST } = process.env
 
 const useStyles = makeStyles(theme => {
@@ -112,7 +117,7 @@ const useStyles = makeStyles(theme => {
 			marginBottom: `${theme.spacing(2)}px`,
 		},
 		icon: {
-			height: 32,
+			height: 42,
 			width: 'auto',
 			cursor: 'pointer',
 		},
@@ -155,7 +160,7 @@ function SideNav(props) {
 							<AdxIcon
 								// @cryptofan
 								to={{ pathname: '/dashboard/' + side }}
-								className={classes.icon}
+								classNameImg={classes.icon}
 							/>
 							<LoadingSection
 								loading={

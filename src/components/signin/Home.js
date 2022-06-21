@@ -1,11 +1,12 @@
 import React from 'react'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
 import Box from '@material-ui/core/Box'
-import Logo from 'components/common/icons/AdexIconTxt'
-import LogoDark from 'components/common/icons/AdexIconTxtDark'
+import Logo from 'resources/adex-logo-txt-sm.svg'
+import LogoDark from 'resources/adex-logo-txt-dark-theme.svg'
 import Typography from '@material-ui/core/Typography'
 import Anchor from 'components/common/anchor/anchor'
 import SNT_VITALIK_BUTERIN_RIDES_EDDIE_WHILE_PUMPING_IT_UP from 'resources/eddie/eddie-14.png'
+import Media from 'components/common/media'
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -92,7 +93,8 @@ export default function Home({ t, ...rest }) {
 				className={classes.container}
 			>
 				<Box p={2}>
-					<AdxIcon className={classes.logo} />
+					{/* <AdxIcon className={classes.logo} /> */}
+					<Media className={classes.logo} src={AdxIcon} />
 				</Box>
 
 				{/* <Box p={2}>

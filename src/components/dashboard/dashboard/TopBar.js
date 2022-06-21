@@ -1,6 +1,5 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-// import AdexIconTxt from 'components/common/icons/AdexIconTxt'
 import ButtonMenu from 'components/common/button_menu/ButtonMenuMui'
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 import Translate from 'components/translate/Translate'

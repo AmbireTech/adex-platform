@@ -1,14 +1,14 @@
 import React from 'react'
 import { useTheme } from '@material-ui/core/styles'
 import { LinearProgress, Box } from '@material-ui/core'
-import AdexIconTxt from 'components/common/icons/AdexIconTxt'
-import AdexIconTxtDark from 'components/common/icons/AdexIconTxtDark'
+import AdexIconTxt from 'resources/adex-logo-txt-sm.svg'
+import AdexIconTxtDark from 'resources/adex-logo-txt-dark-theme.svg'
+import Media from 'components/common/media'
 
 export default function Loading() {
 	const theme = useTheme()
 
-	const AdxIcon = theme.type === 'dark' ? AdexIconTxt : AdexIconTxtDark
-
+	const AdxIcon = theme.type === 'dark' ? AdexIconTxtDark : AdexIconTxt
 	return (
 		<Box
 			display='flex'
@@ -20,7 +20,7 @@ export default function Loading() {
 			position='absolute'
 		>
 			<Box mb={1}>
-				<AdxIcon style={{ width: 200, height: 'auto' }} />
+				<Media src={AdxIcon} style={{ width: 200, height: 'auto' }} />
 			</Box>
 			<Box width={200}>
 				<LinearProgress color='secondary' />

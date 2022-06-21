@@ -13,8 +13,10 @@ import {
 	TableContainer,
 } from '@material-ui/core'
 import classnames from 'classnames'
-import { makeStyles } from '@material-ui/core/styles'
-import AdexIconTxt from 'components/common/icons/AdexIconTxt'
+import { makeStyles, useTheme } from '@material-ui/core/styles'
+import AdexIconTxt from 'resources/adex-logo-txt-sm.svg'
+import AdexIconTxtDark from 'resources/adex-logo-txt-dark-theme.svg'
+import Media from 'components/common/media'
 import PageNotFound from 'components/page_not_found/PageNotFound'
 import {
 	t,
@@ -34,6 +36,7 @@ import { styles } from './styles'
 const useStyles = makeStyles(styles)
 
 export function CampaignReceiptTpl({ campaignId } = {}) {
+	const theme = useTheme()
 	const classes = useStyles()
 	const { symbol, decimals } = useSelector(selectMainToken)
 	const identityAddr = useSelector(selectAccountIdentityAddr)
@@ -46,6 +49,7 @@ export function CampaignReceiptTpl({ campaignId } = {}) {
 	const { companyName, firstLastName, address, country } = useSelector(
 		selectCompanyData
 	)
+	const AdxIcon = theme.type === 'dark' ? AdexIconTxtDark : AdexIconTxt
 	const humanFriendlyName = (campaign.status || {}).humanFriendlyName
 	const receiptReady =
 		humanFriendlyName === 'Closed' || humanFriendlyName === 'Completed'
@@ -77,7 +81,7 @@ export function CampaignReceiptTpl({ campaignId } = {}) {
 					})}`}</Typography>
 				</Box>
 				<Box>
-					<AdexIconTxt className={classnames(classes.icon)} />
+					<Media src={AdxIcon} classNameImg={classes.icon} />
 				</Box>
 			</Box>
 			<Divider />
