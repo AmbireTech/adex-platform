@@ -89,7 +89,7 @@ export const FeesBreakdown = ({ breakdownFormatted = {}, symbol }) => (
 					<ListItemText
 						primary={t('BD_TXNS_FEE', {
 							args: [
-								breakdownFormatted.executeAction,
+								breakdownFormatted.executeAction || '- ',
 								breakdownFormatted.txnsFee,
 								symbol,
 							],
