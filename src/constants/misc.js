@@ -178,4 +178,5 @@ export const EXECUTE_ACTIONS = {
 	ensChange: 'ENS_CHANGE',
 	openCampaign: 'OPEN_CAMPAIGN',
 	default: 'DEFAULT',
+	relayerFee: 'RELAYER_FEE',
 }
