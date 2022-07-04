@@ -379,7 +379,7 @@ export async function getIdentityTxnsWithNoncesAndFees({
 }) {
 	const feeTokenWhitelist = selectFeeTokenWhitelist()
 	const saiToken = selectSaiToken()
-	const { mainToken, daiAddr, saiAddr } = selectRelayerConfig()
+	const { mainToken, daiAddr, saiAddr, relayerAddr } = selectRelayerConfig()
 	const mainTokenWithFees = feeTokenWhitelist[mainToken.address]
 
 	let isDeployed = (await provider.getCode(identityAddr)) !== '0x'
@@ -485,7 +485,7 @@ export async function getIdentityTxnsWithNoncesAndFees({
 	let baseFeeAdded = false
 
 	Object.keys(txnsByFeeToken).forEach(key => {
-		txnsByFeeToken[key] = txnsByFeeToken[key].map(tx => {
+		const withFeesAndNonce = txnsByFeeToken[key].map(tx => {
 			const { routinesSweepTxCount = 0, extraTxFeesCount = 0, isSweepTx } = tx
 			const feeToken = feeTokenWhitelist[tx.feeTokenAddr]
 			const isDeployTx = currentNonce === 0
@@ -524,11 +524,11 @@ export async function getIdentityTxnsWithNoncesAndFees({
 			const feesBreakdown = {
 				...(addBaseFee ? { baseFee } : {}),
 				routinesSweepTxCount,
-				sweepRoutinesFeeAmount,
+				sweepRoutinesFeeAmount: '0',
 				extraTxFeesCount,
-				extraFeesAmount,
-				feeAmount,
-				txFeeAmount,
+				extraFeesAmount: '0',
+				feeAmount: '0',
+				txFeeAmount: '0',
 				isDeployTx,
 				isSweepTx,
 			}
@@ -547,9 +547,61 @@ export async function getIdentityTxnsWithNoncesAndFees({
 
 			return txWithNonce
 		})
+
+		const txnsWithFeeRecipient = withFeeRecipient({
+			txns: withFeesAndNonce,
+			identityAddr,
+			feeCollectorAddr: relayerAddr,
+			currentNonce,
+		})
+
+		currentNonce += 1
+
+		txnsByFeeToken[key] = txnsWithFeeRecipient
 	})
 
 	return txnsByFeeToken
+}
+
+function withFeeRecipient({
+	txns,
+	identityAddr,
+	feeCollectorAddr,
+	currentNonce,
+}) {
+	const { total, feeTokenAddr } = txns.reduce(
+		({ total, feeTokenAddr }, tx) => ({
+			total: total.add(tx.feeAmount),
+			feeTokenAddr: feeTokenAddr || tx.feeTokenAddr,
+		}),
+		{ total: BigNumber.from('0'), feeTokenAddr: null }
+	)
+
+	const feesBreakdown = {
+		feeAmount: total,
+		txFeeAmount: total,
+		routinesSweepTxCount: 0,
+		sweepRoutinesFeeAmount: '0',
+		extraTxFeesCount: 0,
+		extraFeesAmount: 0,
+	}
+
+	const withdrawTx = {
+		identityContract: identityAddr,
+		feeTokenAddr: feeTokenAddr,
+		feeAmount: total,
+		nonIdentityBalanceFeeAmount: '0',
+		feesBreakdown,
+		to: feeTokenAddr,
+		data: ERC20.encodeFunctionData('transfer', [feeCollectorAddr, total]),
+		nonce: currentNonce,
+		executeAction: EXECUTE_ACTIONS.default,
+	}
+
+	// NOTE: set other txns feeAmount to 0 after the total fee is calculated
+	const withFeeTx = [...txns.map(x => ({ ...x, feeAmount: 0 })), withdrawTx]
+
+	return withFeeTx
 }
 
 export async function getApproveTxns({
@@ -781,7 +833,8 @@ export async function processExecuteByFeeTokens({
 	extraData = {},
 }) {
 	const signer = await getSigner({ wallet, provider })
-	const all = Object.values(txnsByFeeToken).map(async txnsRaw => {
+	const all = Object.values(txnsByFeeToken).map(async txnsRawWithFeeAmount => {
+		const txnsRaw = txnsRawWithFeeAmount.map(x => ({ ...x, feeAmount: '0' }))
 		const signatures = await getMultipleTxSignatures({ txns: txnsRaw, signer })
 		const data = {
 			txnsRaw,
