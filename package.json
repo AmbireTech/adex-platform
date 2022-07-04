@@ -99,7 +99,7 @@
     "start": "node scripts/generate-build-version.js && node --max-old-space-size=4096 scripts/start.js",
     "generate-build-version": "node scripts/generate-build-version.js",
     "prebuild": "npm run generate-build-version",
-    "build": "node scripts/build.js",
+    "build": "node --max-old-space-size=4096 scripts/build.js",
     "build-staging": "npm run prebuild && set BUILD_TYPE=staging&& node scripts/build.js",
     "build-dev": "npm run prebuild && SET NODE_ENV=development&& node scripts/build.js",
     "serve": "serve build -p 3333",
