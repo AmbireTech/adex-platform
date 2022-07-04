@@ -524,11 +524,11 @@ export async function getIdentityTxnsWithNoncesAndFees({
 			const feesBreakdown = {
 				...(addBaseFee ? { baseFee } : {}),
 				routinesSweepTxCount,
-				sweepRoutinesFeeAmount,
+				sweepRoutinesFeeAmount: '0',
 				extraTxFeesCount,
-				extraFeesAmount,
-				feeAmount,
-				txFeeAmount,
+				extraFeesAmount: '0',
+				feeAmount: '0',
+				txFeeAmount: '0',
 				isDeployTx,
 				isSweepTx,
 			}
@@ -590,15 +590,16 @@ function withFeeRecipient({
 		identityContract: identityAddr,
 		feeTokenAddr: feeTokenAddr,
 		feeAmount: total,
-		nonIdentityBalanceFeeAmount: total,
+		nonIdentityBalanceFeeAmount: '0',
 		feesBreakdown,
 		to: feeTokenAddr,
 		data: ERC20.encodeFunctionData('transfer', [feeCollectorAddr, total]),
 		nonce: currentNonce,
-		executeAction: EXECUTE_ACTIONS.relayerFee,
+		executeAction: EXECUTE_ACTIONS.default,
 	}
 
-	const withFeeTx = [...txns, withdrawTx]
+	// NOTE: set other txns feeAmount to 0 after the total fee is calculated
+	const withFeeTx = [...txns.map(x => ({ ...x, feeAmount: 0 })), withdrawTx]
 
 	return withFeeTx
 }
