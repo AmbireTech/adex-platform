@@ -85,22 +85,12 @@ const getCols = ({ symbol }) => [
 	},
 ]
 
-const onDownload = (buildHead, buildBody, columns, data) => {
-	const mappedData = data.map(i => ({
-		index: i.index,
-		data: [i.data[0].id, i.data[1].replace('legacy_', ''), i.data[2]],
-	}))
-	return `${buildHead(columns)}${buildBody(mappedData)}`.trim()
-}
-
 const getOptions = () => ({
 	filterType: 'multiselect',
 	sortOrder: {
 		name: 'ctr',
 		direction: 'desc',
 	},
-	onDownload: (buildHead, buildBody, columns, data) =>
-		onDownload(buildHead, buildBody, columns, data),
 	rowsPerPage: 5,
 })
 

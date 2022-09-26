@@ -138,19 +138,6 @@ const getCols = ({ symbol }) => [
 	},
 ]
 
-const onDownload = (buildHead, buildBody, columns, data) => {
-	const mappedData = data.map(i => ({
-		index: i.index,
-		data: [
-			i.data[0].id,
-			i.data[1],
-			i.data[2].replace('legacy_', ''),
-			formatDateTime(i.data[3]),
-		],
-	}))
-	return `${buildHead(columns)}${buildBody(mappedData)}`.trim()
-}
-
 const getOptions = () => ({
 	filterType: 'multiselect',
 	sortOrder: {
@@ -158,8 +145,6 @@ const getOptions = () => ({
 		direction: 'desc',
 	},
 	selectableRows: 'none',
-	onDownload: (buildHead, buildBody, columns, data) =>
-		onDownload(buildHead, buildBody, columns, data),
 })
 
 function AdSlotsTable(props) {
