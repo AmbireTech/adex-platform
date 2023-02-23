@@ -38,6 +38,7 @@ import {
 } from 'selectors'
 import { getMetamaskEthereum } from 'services/smart-contracts/ethers'
 import { ImportantNotifications } from './ImportantNotifications'
+import { ExternalAnchor } from 'components/common/anchor/anchor'
 
 const ConnectedCreateQuickIdentity = ConnectHoc(JustDialog(CreateQuickIdentity))
 const ConnectedQuickLogin = ConnectHoc(JustDialog(LoginQuickIdentity))
@@ -121,18 +122,30 @@ const Root = () => {
 					severity='success'
 					action={
 						<Button
-							color='primary'
+							color='secondary'
 							size='large'
 							variant='contained'
 							onClick={() => {
 								execute(refreshCacheAndReload({ version }))
 							}}
 						>
-							{t('RELOAD_NOW')}
+							{t('Read more here.')}
 						</Button>
 					}
 				/>
 			)}
+			<ImportantNotifications
+				title={t('Important announcement for AdEx users!')}
+				message={
+					<ExternalAnchor
+						href={`https://help.ambire.com/hc/en-us/articles/7813085169436`}
+						color='inherit'
+					>
+						{t('Read more here.')}
+					</ExternalAnchor>
+				}
+				severity='info'
+			/>
 			<Switch>
 				<PrivateRoute
 					auth={auth}

@@ -1,12 +1,13 @@
-import { fade } from '@material-ui/core/styles/colorManipulator'
+// import { fade } from '@material-ui/core/styles/colorManipulator'
 
 const drawerWidth = 250
 const lastRowRightReserved = 169
+const infoBannerHeight = 74
 
 export const styles = theme => {
 	return {
 		root: {
-			marginTop: 69,
+			marginTop: 69 + infoBannerHeight,
 			flexGrow: 1,
 			overflow: 'hidden',
 			position: 'relative',
@@ -25,7 +26,7 @@ export const styles = theme => {
 			// backgroundRepeat: 'no-repeat',
 		},
 		appBar: {
-			top: 0,
+			top: infoBannerHeight,
 			left: 0,
 			right: 0,
 			width: 'auto',
@@ -73,11 +74,13 @@ export const styles = theme => {
 				position: 'fixed',
 			},
 			backgroundColor: theme.palette.appBar.main,
+			top: 74,
+			height: `calc(100% - ${infoBannerHeight}px)`,
 		},
 		content: {
 			flexGrow: 1,
 			padding: theme.spacing(2),
-			paddingTop: theme.spacing(2),
+			paddingTop: theme.spacing(2) + infoBannerHeight,
 			overflow: 'auto',
 			[theme.breakpoints.up('md')]: {
 				marginLeft: drawerWidth,
@@ -95,7 +98,7 @@ export const styles = theme => {
 			marginBottom: theme.spacing(2),
 			// Because of the floating button and table paging
 			[theme.breakpoints.down('sm')]: {
-				paddingBottom: 146 + theme.spacing(2),
+				paddingBottom: 146 + theme.spacing(2) + infoBannerHeight,
 			},
 		},
 		breadcrumbElement: {

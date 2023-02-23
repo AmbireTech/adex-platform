@@ -4,6 +4,7 @@ export const styles = theme => {
 		root: {
 			// flexGrow: 1,
 			height: '100vh',
+			paddingTop: 74,
 		},
 		signinContainer: {
 			overflowX: 'hidden',
@@ -15,7 +16,7 @@ export const styles = theme => {
 			position: 'relative',
 		},
 		container: {
-			height: '100vh',
+			height: '100%',
 			flexGrow: '1',
 		},
 		actions: {
