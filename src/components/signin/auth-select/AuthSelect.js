@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import Button from '@material-ui/core/Button'
-import { Box, Divider } from '@material-ui/core'
+import { Box, Divider, Tooltip } from '@material-ui/core'
 import { Close } from '@material-ui/icons'
 import { withReactRouterLink } from 'components/common/rr_hoc/RRHoc.js'
 import { Typography } from '@material-ui/core'
@@ -22,6 +22,7 @@ import { logOut } from 'services/store-data/auth'
 import { formatAddress } from 'helpers/formatters'
 import { push } from 'connected-react-router'
 import { removeFromLocalStorage } from 'helpers/localStorageHelpers'
+import { ExternalAnchor } from 'components/common/anchor/anchor'
 
 const RRButton = withReactRouterLink(Button)
 const useStyles = makeStyles(styles)
@@ -154,18 +155,36 @@ const AuthSelect = () => {
 			{(wallets.length > 0 || auth) && <Divider />}
 			{showRegistration && (
 				<Box m={1}>
-					<Button
-						variant='contained'
-						size='large'
-						color='secondary'
-						fullWidth
-						className={classes.limitedWidthBtn}
-						onClick={() => {
-							goTo('/signup/quick', true)
-						}}
+					<Tooltip
+						title={
+							<ExternalAnchor
+								color='inherit'
+								href='https://help.ambire.com/hc/en-us/articles/7813085169436'
+							>
+								{t(
+									'Creating new accounts is temporarily disabled. See why here.'
+								)}
+							</ExternalAnchor>
+						}
+						aria-label='CREATE_QUICK_ACCOUNT'
+						interactive
 					>
-						{t('CREATE_QUICK_ACCOUNT')}
-					</Button>
+						<div>
+							<Button
+								variant='contained'
+								size='large'
+								color='secondary'
+								fullWidth
+								className={classes.limitedWidthBtn}
+								disabled
+								onClick={() => {
+									goTo('/signup/quick', true)
+								}}
+							>
+								{t('CREATE_QUICK_ACCOUNT')}
+							</Button>
+						</div>
+					</Tooltip>
 				</Box>
 			)}
 			<Box m={1}>

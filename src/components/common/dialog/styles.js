@@ -1,8 +1,9 @@
 export const styles = theme => {
-	const spacing = theme.spacing(1)
+	const spacing = theme.spacing(2)
 	return {
 		dialog: {
-			height: `calc(100vh - ${spacing}px)`,
+			marginTop: 74 + spacing * 2,
+			height: `calc(100vh - ${spacing}px - 74px)`,
 			minWidth: 1024,
 			maxWidth: 1080,
 			backgroundColor: theme.palette.appBar.main,
