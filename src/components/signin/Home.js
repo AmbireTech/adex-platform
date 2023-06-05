@@ -122,7 +122,7 @@ export default function Home({ t, ...rest }) {
 				<Box p={2}>
 					<Typography variant='h2' gutterBottom>
 						<Box fontWeight='fontWeightNormal' m={1}>
-							{t(' The new AdEx platform is under coming soon!')}
+							{t(' The new AdEx platform is coming soon!')}
 						</Box>
 					</Typography>
 				</Box>
