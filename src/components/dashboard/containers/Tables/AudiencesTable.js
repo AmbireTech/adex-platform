@@ -68,13 +68,14 @@ const getCols = () => [
 							<Visibility color='primary' />
 						</RRIconButton>
 					</Tooltip>
-					<Tooltip
+					{/* <Tooltip
 						arrow
 						title={t('LABEL_NEW_CAMPAIGN_FROM_AUDIENCE')}
 						aria-label='new-campaign'
 					>
 						<span>
 							<NewCampaignFromAudience
+								disabled
 								onBeforeOpen={() =>
 									execute(
 										updateNewCampaign('audienceInput', {
@@ -86,7 +87,7 @@ const getCols = () => [
 								iconButton
 							/>
 						</span>
-					</Tooltip>
+					</Tooltip> */}
 					<ArchiveItemBtn
 						itemType='Audience'
 						itemId={id}
