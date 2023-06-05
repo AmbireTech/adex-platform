@@ -136,7 +136,7 @@ const Root = () => {
 			)}
 			<ImportantNotifications
 				title={t(
-					'All users should withdraw their funds from AdEx before the 31st of July 2023.!'
+					'All users should withdraw their funds from AdEx before the 31st of July 2023!'
 				)}
 				message={
 					<ExternalAnchor

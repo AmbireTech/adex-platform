@@ -122,7 +122,7 @@ export default function Home({ t, ...rest }) {
 				<Box p={2}>
 					<Typography variant='h2' gutterBottom>
 						<Box fontWeight='fontWeightNormal' m={1}>
-							{t(' The new AdEx platform is under construction! 🛠')}
+							{t(' The new AdEx platform is under coming soon!')}
 						</Box>
 					</Typography>
 				</Box>
@@ -152,12 +152,12 @@ export default function Home({ t, ...rest }) {
 						{t('GET_IN_TOUCH')}
 					</Typography>
 				</Box> */}
-				<Box
+				{/* <Box
 					height='30%'
 					position='relative'
 					className={classes.vitalik}
 					alignSelf='stretch'
-				></Box>
+				></Box> */}
 			</Box>
 		</Box>
 	)
