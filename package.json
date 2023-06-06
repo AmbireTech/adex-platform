@@ -100,7 +100,7 @@
     "generate-build-version": "node scripts/generate-build-version.js",
     "prebuild": "npm run generate-build-version",
     "build": "node --max-old-space-size=4096 scripts/build.js",
-    "build-staging": "npm run prebuild && set BUILD_TYPE=staging&& node scripts/build.js",
+    "build-staging": "npm run prebuild && set BUILD_TYPE=staging && node scripts/build.js",
     "build-dev": "npm run prebuild && SET NODE_ENV=development&& node scripts/build.js",
     "serve": "serve build -p 3333",
     "deploy": "npm run build && cp ./domains/platform/CNAME ./build && gh-pages -d build",
