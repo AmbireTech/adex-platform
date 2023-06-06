@@ -6,7 +6,9 @@
 			name="viewport"
 			content="width=device-width, initial-scale=1, shrink-to-fit=no"
 		/>
-		<meta name="robots" content="noindex">
+		<% if (process.env.NODE_ENV !== 'production') { %>
+			<meta name="robots" content="noindex" />
+		<% } %>
 		<meta name="theme-color" content="#000000" />
 		<!--
       manifest.json provides metadata used when your web app is added to the

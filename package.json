@@ -104,7 +104,7 @@
     "build-dev": "npm run prebuild && SET NODE_ENV=development&& node scripts/build.js",
     "serve": "serve build -p 3333",
     "deploy": "npm run build && cp ./domains/platform/CNAME ./build && gh-pages -d build",
-    "deploy-staging": "npm run build-staging && cp ./domains/staging/CNAME ./build && gh-pages -d build -r git@github.com:AmbireTech/adex-platform-staging.git",
+    "deploy-staging": "npm run build-staging && cp ./domains/staging/CNAME ./build && cp ./src/robots.txt && gh-pages -d build -r git@github.com:AmbireTech/adex-platform-staging.git",
     "deploy-goerli": "npm run build-dev && cp ./domains/goerli/CNAME ./build && gh-pages -d build -r git@github.com:AmbireTech/adex-platform-goerli.git",
     "win-goerli-deploy": "npm run build-dev && copy \".\\domains\\goerli\\CNAME\" \".\\build\" && gh-pages -d build -r git@github.com:AmbireTech/adex-platform-goerli.git",
     "win-staging-deploy": "npm run build-staging && copy \".\\domains\\staging\\CNAME\" \".\\build\" && gh-pages -d build -r git@github.com:AmbireTech/adex-platform-staging.git",
