@@ -18,7 +18,7 @@ export const INFO = '#1b75bc'
 export const ERROR = '#ff6969'
 
 // Light theme
-export const PRIMARY = '#1B75BC'
+export const PRIMARY = '#2C5CDE'
 export const PRIMARY_LIGHT = '#5fa3ef'
 export const PRIMARY_LIGHTEST = '#96d4ff'
 export const PRIMARY_DARK = '#004a8b'

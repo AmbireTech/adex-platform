@@ -135,16 +135,18 @@ const Root = () => {
 				/>
 			)}
 			<ImportantNotifications
-				title={t('Important announcement for AdEx users!')}
+				title={t(
+					'All users should withdraw their funds from AdEx before the 31st of July 2023!'
+				)}
 				message={
 					<ExternalAnchor
 						href={`https://help.ambire.com/hc/en-us/articles/7813085169436`}
 						color='inherit'
 					>
-						{t('Read more here.')}
+						{t('Learn more here.')}
 					</ExternalAnchor>
 				}
-				severity='info'
+				severity='error'
 			/>
 			<Switch>
 				<PrivateRoute

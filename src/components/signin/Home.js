@@ -7,6 +7,7 @@ import Typography from '@material-ui/core/Typography'
 import Anchor from 'components/common/anchor/anchor'
 import SNT_VITALIK_BUTERIN_RIDES_EDDIE_WHILE_PUMPING_IT_UP from 'resources/eddie/eddie-14.png'
 import Media from 'components/common/media'
+import { ExternalAnchor } from 'components/common/anchor/anchor'
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -26,6 +27,9 @@ const useStyles = makeStyles(theme => ({
 		height: '5rem',
 		width: '100%',
 	},
+	link: {
+		color: theme.palette.primary.main,
+	},
 }))
 
 export default function Home({ t, ...rest }) {
@@ -44,7 +48,7 @@ export default function Home({ t, ...rest }) {
 			alignItems='center'
 			justifyContent='center'
 		>
-			<Box
+			{/* <Box
 				className={classes.container}
 				display='flex'
 				flexDirection='row'
@@ -82,7 +86,7 @@ export default function Home({ t, ...rest }) {
 						{t('LINK_BENEFITS_FOR_ADVERTISERS')}
 					</Anchor>
 				</Box>
-			</Box>
+			</Box> */}
 			<Box
 				flexGrow={1}
 				display='flex'
@@ -118,14 +122,28 @@ export default function Home({ t, ...rest }) {
 				<Box p={2}>
 					<Typography variant='h2' gutterBottom>
 						<Box fontWeight='fontWeightNormal' m={1}>
-							{t('HOME_TITLE')}
+							{t(' The new AdEx platform is coming soon!')}
 						</Box>
 					</Typography>
 				</Box>
 				<Box p={2}>
-					<Typography variant='h3' gutterBottom>
+					<Typography variant='h4' gutterBottom>
 						<Box fontWeight='fontWeightLight' m={1}>
-							{t('HOME_SUBTITLE')}
+							{/* {t('HOME_SUBTITLE')} */}
+							Stay tuned for updates on our &nbsp;
+							<ExternalAnchor
+								href={`https://twitter.com/AmbireAdEx`}
+								// color='info'
+							>
+								{t(' Twitter ')}
+							</ExternalAnchor>
+							&nbsp; and learn more about what's next &nbsp;
+							<ExternalAnchor
+								href={`https://blog.ambire.com/ambire-adex-2023-roadmap/`}
+								// color='info'
+							>
+								{t(' here ')}
+							</ExternalAnchor>
 						</Box>
 					</Typography>
 				</Box>
@@ -134,12 +152,12 @@ export default function Home({ t, ...rest }) {
 						{t('GET_IN_TOUCH')}
 					</Typography>
 				</Box> */}
-				<Box
+				{/* <Box
 					height='30%'
 					position='relative'
 					className={classes.vitalik}
 					alignSelf='stretch'
-				></Box>
+				></Box> */}
 			</Box>
 		</Box>
 	)

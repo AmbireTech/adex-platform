@@ -55,8 +55,8 @@ import { useSelector } from 'react-redux'
 import GettingStarted from '../getting-started/GettingStarted'
 
 const Campaigns = () => {
-	const privileges = useSelector(selectWalletPrivileges)
-	const disabled = privileges <= 1
+	// const privileges = useSelector(selectWalletPrivileges)
+	const disabled = true //privileges <= 1
 	return (
 		<Box>
 			<NewCampaignDialog
@@ -67,6 +67,7 @@ const Campaigns = () => {
 				btnLabel='NEW_CAMPAIGN'
 				size='medium'
 				icon={<Add />}
+				dis
 			/>
 			<Paper variant='outlined'>
 				<CampaignsTable tableId='dashboardCampaigns' />
@@ -116,6 +117,7 @@ const Audiences = () => (
 			btnLabel='NEW_AUDIENCE'
 			size='medium'
 			icon={<Add />}
+			disabled
 		/>
 		<Paper variant='outlined'>
 			<AudiencesTable tableId='dashboardAudiences' />

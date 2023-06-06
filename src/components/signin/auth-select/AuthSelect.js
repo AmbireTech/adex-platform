@@ -31,7 +31,7 @@ const AuthSelect = () => {
 	const classes = useStyles()
 	const [wallets, setWallets] = useState([])
 
-	const showRegistration = useSelector(selectRegistrationAllowed)
+	const showRegistration = false // useSelector(selectRegistrationAllowed)
 	const auth = useSelector(selectAuth)
 	const userSide = useSelector(selectUserLastSide) || 'publisher'
 	const account = useSelector(selectAccount)

@@ -45,7 +45,7 @@ export default function ConnectHoc(Decorated) {
 							<Box p={4} alignItems='center'>
 								<ThemeSwitch />
 								<Typography align='center' variant='h3'>
-									{t('SIGN_UP_IN')}
+									{t('Log in')}
 								</Typography>
 							</Box>
 							<Box p={2}>
