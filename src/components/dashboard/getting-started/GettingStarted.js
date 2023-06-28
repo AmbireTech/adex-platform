@@ -49,7 +49,7 @@ import {
 	placeAdSlot,
 } from './Tutorials'
 // import { useEffectDebugger } from 'hooks/useEffectDebugger'
-import ReactGA from 'react-ga'
+// import ReactGA from 'react-ga'
 import ResendConfirm from './ResendConfirm'
 
 const useStyles = makeStyles(theme => {
@@ -218,18 +218,18 @@ export default function GettingStarted(props) {
 	}, [stepsData])
 
 	useEffect(() => {
-		const advertiserStep = getSteps(stepsData).advertiser.findIndex(
-			step => !step.check
-		)
-		const publisherStep = getSteps(stepsData).publisher.findIndex(
-			step => !step.check
-		)
-		ReactGA.set({
-			dimension1:
-				advertiserStep === -1 ? 'completed' : `step${advertiserStep + 1}`,
-			dimension2:
-				publisherStep === -1 ? 'completed' : `step${publisherStep + 1}`,
-		})
+		// const advertiserStep = getSteps(stepsData).advertiser.findIndex(
+		// 	step => !step.check
+		// )
+		// const publisherStep = getSteps(stepsData).publisher.findIndex(
+		// 	step => !step.check
+		// )
+		// ReactGA.set({
+		// 	dimension1:
+		// 		advertiserStep === -1 ? 'completed' : `step${advertiserStep + 1}`,
+		// 	dimension2:
+		// 		publisherStep === -1 ? 'completed' : `step${publisherStep + 1}`,
+		// })
 	}, [stepsData])
 
 	useEffect(() => {

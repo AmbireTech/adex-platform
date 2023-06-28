@@ -17,7 +17,7 @@ import Typography from '@material-ui/core/Typography'
 import { t } from 'selectors'
 import { selectLocation } from 'selectors'
 import { useSelector } from 'react-redux'
-import ReactGA from 'react-ga'
+// import ReactGA from 'react-ga'
 
 const textBtn = ({ label, className, classes, style, onClick, ...rest }) => {
 	return (
@@ -125,7 +125,7 @@ export default function WithDialogHoc(Decorated) {
 			const locationWithDash = location.pathname.split('/').join('-')
 			const eventMapFound = eventMap(locationWithDash)[btnLabel]
 			if (eventMapFound) {
-				ReactGA.event(eventMapFound)
+				// ReactGA.event(eventMapFound)
 			}
 			ev && ev.stopPropagation && ev.stopPropagation()
 			ev && ev.preventDefault && ev.preventDefault()
