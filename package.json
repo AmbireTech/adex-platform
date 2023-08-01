@@ -1,6 +1,6 @@
 {
   "name": "adex-dapp",
-  "version": "4.20.75",
+  "version": "4.20.78",
   "tosVersion": "1.0.0",
   "private": true,
   "dependencies": {
@@ -15,6 +15,7 @@
     "@transak/transak-sdk": "^1.0.28",
     "@typescript-eslint/eslint-plugin": "1.6.0",
     "@typescript-eslint/parser": "1.6.0",
+    "@walletconnect/ethereum-provider": "^2.9.0",
     "adex-constants": "1.0.10",
     "adex-models": "git+https://git@github.com/AdExBlockchain/adex-models.git#499114f10e52f06fe59199b187c7a9a79173a12e",
     "adex-protocol-eth": "4.2.4",
@@ -209,10 +210,10 @@
     "babel-eslint": "10.0.1",
     "babel-jest": "^24.8.0",
     "babel-loader": "8.0.5",
+    "babel-plugin-import": "^1.13.0",
     "babel-plugin-named-asset-import": "^0.3.2",
     "babel-preset-react-app": "^9.0.0",
     "babel-runtime": "6.26.0",
-    "babel-plugin-import": "^1.13.0",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^6.0.0",
     "eslint-config-react-app": "^4.0.1",
