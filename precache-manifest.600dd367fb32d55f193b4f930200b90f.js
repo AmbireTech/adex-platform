@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "c826033794d63b9743b1455cbba78ff3",
+    "revision": "84fb8f09b89ddf70dc5f3e099bbb8885",
     "url": "/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/css/2.59399743.chunk.css"
   },
   {
-    "revision": "93b6ac4ac35416147515",
+    "revision": "0255729c2f5bfa8234b1",
     "url": "/static/css/main.a2d4de0d.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/js/2.3f6925c8.chunk.js"
   },
   {
-    "revision": "93b6ac4ac35416147515",
-    "url": "/static/js/main.8a33f125.chunk.js"
+    "revision": "0255729c2f5bfa8234b1",
+    "url": "/static/js/main.836edcf7.chunk.js"
   },
   {
     "revision": "42ac5946195a7306e2a5",
@@ -52,12 +52,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/media/Roboto-Regular.11eabca2.ttf"
   },
   {
-    "revision": "75ad268ca0364da3fbca4610ef2a8e80",
-    "url": "/static/media/adex-logo-txt-dark-theme.75ad268c.svg"
+    "revision": "e1e5f25300f7f54315daba5bec566996",
+    "url": "/static/media/adex-logo-txt-dark-theme.e1e5f253.svg"
   },
   {
-    "revision": "b2d6bf8dc8d7d262c763a456fbe8fd16",
-    "url": "/static/media/adex-logo-txt-sm.b2d6bf8d.svg"
+    "revision": "2a40d150b1d1619b857fb586ee8eb3a2",
+    "url": "/static/media/adex-logo-txt-sm.2a40d150.svg"
   },
   {
     "revision": "d1beb98c0773cf0925280d25bc461ed5",
