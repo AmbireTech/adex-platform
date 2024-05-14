@@ -14,6 +14,7 @@ import {
 } from 'actions'
 import { makeStyles } from '@material-ui/core/styles'
 import { useSelector } from 'react-redux'
+import CustomTableViewCol from './custom/CustomTableViewCol'
 
 const generalTableOptions = {
 	rowsPerPage: 5,
@@ -132,6 +133,22 @@ function MUIDataTableEnhanced(props) {
 				title={title}
 				data={data}
 				columns={columnsWithFilters}
+				components={{
+					TableViewCol: props => (
+						<CustomTableViewCol
+							{...props}
+							// override updateColumns
+							updateColumns={newViewColumns => {
+								execute(
+									updateTableState(tableId, {
+										...tableState,
+										viewColumnsState: newViewColumns,
+									})
+								)
+							}}
+						/>
+					),
+				}}
 				options={{
 					...generalTableOptions,
 					...options,
@@ -154,6 +171,7 @@ function MUIDataTableEnhanced(props) {
 								'propsUpdate',
 								'filterChange',
 								'rowSelectionChange',
+								'viewColumnsChange',
 							].includes(action)
 						) {
 							execute(

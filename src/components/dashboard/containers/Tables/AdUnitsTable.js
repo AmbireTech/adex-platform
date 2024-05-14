@@ -166,27 +166,12 @@ const getCols = ({ noActions, noClone, maxImpressions, maxClicks, maxCTR }) => [
 	},
 ]
 
-const onDownload = (buildHead, buildBody, columns, data) => {
-	const mappedData = data.map(i => ({
-		index: i.index,
-		data: [
-			i.data[0].id,
-			i.data[1],
-			i.data[2].replace('legacy_', ''),
-			formatDateTime(i.data[3]),
-		],
-	}))
-	return `${buildHead(columns)}${buildBody(mappedData)}`.trim()
-}
-
 const getOptions = () => ({
 	filterType: 'multiselect',
 	sortOrder: {
 		name: 'created',
 		direction: 'desc',
 	},
-	onDownload: (buildHead, buildBody, columns, data) =>
-		onDownload(buildHead, buildBody, columns, data),
 })
 
 function AdUnitsTable(props) {
